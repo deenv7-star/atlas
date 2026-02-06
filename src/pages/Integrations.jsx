@@ -112,6 +112,10 @@ export default function IntegrationsPage() {
             <Settings2 className="h-4 w-4" />
             מערכות PMS
           </TabsTrigger>
+          <TabsTrigger value="accounting" className="flex items-center gap-2">
+            <CreditCard className="h-4 w-4" />
+            חשבונאות
+          </TabsTrigger>
         </TabsList>
 
         {/* Calendars Tab */}
@@ -450,6 +454,107 @@ export default function IntegrationsPage() {
                   Discord
                 </CardTitle>
                 <CardDescription>התראות ב-Discord</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Accounting Tab */}
+        <TabsContent value="accounting" className="mt-6 space-y-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#00A6ED] flex items-center justify-center text-white">☀️</div>
+                  Morning (מורנינג)
+                </CardTitle>
+                <CardDescription>מערכת לניהול חשבוניות וקבלות ישראלית</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white">📊</div>
+                  Green Invoice
+                </CardTitle>
+                <CardDescription>מערכת חשבוניות דיגיטלית</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center text-white">💼</div>
+                  QuickBooks
+                </CardTitle>
+                <CardDescription>תוכנת חשבונאות מקיפה</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white">🧾</div>
+                  Zoho Books
+                </CardTitle>
+                <CardDescription>ניהול פיננסי מקוון</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-700 flex items-center justify-center text-white">📈</div>
+                  Xero
+                </CardTitle>
+                <CardDescription>חשבונאות מבוססת ענן</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center text-white">🧮</div>
+                  HashavShevet (חשבשבת)
+                </CardTitle>
+                <CardDescription>תוכנת הנהלת חשבונות ישראלית</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="outline" className="w-full" disabled>
