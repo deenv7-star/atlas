@@ -93,7 +93,7 @@ export default function Landing() {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm mb-8"
               >
                 <div className="w-2 h-2 rounded-full bg-[#00D1C1] animate-pulse" />
-                <span className="text-sm text-gray-600">AI-Powered Property Management</span>
+                <span className="text-sm text-gray-600">מערכת מונעת בינה מלאכותית</span>
               </motion.div>
 
               <motion.h1
@@ -187,8 +187,8 @@ export default function Landing() {
                       <Sparkles className="h-4 w-4 text-[#00D1C1]" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-[#0B1220]">Dashboard</div>
-                      <div className="text-xs text-gray-400">Real-time overview</div>
+                      <div className="text-sm font-semibold text-[#0B1220]">לוח בקרה</div>
+                      <div className="text-xs text-gray-400">סקירה בזמן אמת</div>
                     </div>
                   </div>
                   <motion.div
@@ -214,8 +214,8 @@ export default function Landing() {
                           <Sparkles className="h-5 w-5 text-[#00D1C1]" />
                         </div>
                         <div>
-                          <div className="text-white/90 font-medium mb-1">AI Recommendation</div>
-                          <div className="text-white/60 text-sm">3 new leads match your criteria</div>
+                          <div className="text-white/90 font-medium mb-1">המלצת AI</div>
+                          <div className="text-white/60 text-sm">3 לידים חדשים תואמים את הקריטריונים</div>
                         </div>
                       </div>
                       <motion.div
@@ -229,8 +229,8 @@ export default function Landing() {
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-3">
                     {[
-                      { label: 'Active Bookings', value: '24', change: '+12%', trend: 'up' },
-                      { label: 'Revenue', value: '₪89K', change: '+8%', trend: 'up' },
+                      { label: 'הזמנות פעילות', value: '24', change: '+12%', trend: 'up' },
+                      { label: 'הכנסות', value: '₪89K', change: '+8%', trend: 'up' },
                     ].map((stat, i) => (
                       <motion.div
                         key={i}
@@ -261,8 +261,8 @@ export default function Landing() {
                     className="space-y-2"
                   >
                     {[
-                      { icon: CheckCircle2, text: 'Booking confirmed', time: '2m ago', color: 'text-green-600 bg-green-50' },
-                      { icon: MessageSquare, text: 'New message received', time: '5m ago', color: 'text-blue-600 bg-blue-50' },
+                      { icon: CheckCircle2, text: 'הזמנה אושרה', time: 'לפני 2 דקות', color: 'text-green-600 bg-green-50' },
+                      { icon: MessageSquare, text: 'הודעה חדשה התקבלה', time: 'לפני 5 דקות', color: 'text-blue-600 bg-blue-50' },
                     ].map((item, i) => (
                       <motion.div
                         key={i}
@@ -296,7 +296,7 @@ export default function Landing() {
                   <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                   </div>
-                  <div className="text-sm font-semibold text-[#0B1220]">100% Uptime</div>
+                  <div className="text-sm font-semibold text-[#0B1220]">זמינות 100%</div>
                 </div>
               </motion.div>
 
@@ -313,7 +313,7 @@ export default function Landing() {
                   >
                     <Sparkles className="h-4 w-4 text-[#00D1C1]" />
                   </motion.div>
-                  <div className="text-sm font-semibold text-[#0B1220]">AI Powered</div>
+                  <div className="text-sm font-semibold text-[#0B1220]">מונע AI</div>
                 </div>
               </motion.div>
             </motion.div>
