@@ -200,8 +200,13 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
     navigate(`${createPageUrl('Bookings')}?id=${booking.id}`);
   };
 
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['leads'] });
+  };
+
   return (
-    <div className="space-y-6">
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
