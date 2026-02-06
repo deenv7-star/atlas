@@ -47,34 +47,40 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Landing from './pages/Landing';
-import Privacy from './pages/Privacy';
-import Terms from './pages/Terms';
-import Dashboard from './pages/Dashboard';
-import Leads from './pages/Leads';
 import Bookings from './pages/Bookings';
-import Messages from './pages/Messages';
 import Cleaning from './pages/Cleaning';
-import Payments from './pages/Payments';
 import Contracts from './pages/Contracts';
+import Dashboard from './pages/Dashboard';
+import Landing from './pages/Landing';
+import Leads from './pages/Leads';
+import Messages from './pages/Messages';
+import Payments from './pages/Payments';
+import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import Settings from './pages/Settings';
+import Terms from './pages/Terms';
+import Automations from './pages/Automations';
+import Insights from './pages/Insights';
+import Integrations from './pages/Integrations';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Landing": Landing,
-    "Privacy": Privacy,
-    "Terms": Terms,
-    "Dashboard": Dashboard,
-    "Leads": Leads,
     "Bookings": Bookings,
-    "Messages": Messages,
     "Cleaning": Cleaning,
-    "Payments": Payments,
     "Contracts": Contracts,
+    "Dashboard": Dashboard,
+    "Landing": Landing,
+    "Leads": Leads,
+    "Messages": Messages,
+    "Payments": Payments,
+    "Privacy": Privacy,
     "Reviews": Reviews,
     "Settings": Settings,
+    "Terms": Terms,
+    "Automations": Automations,
+    "Insights": Insights,
+    "Integrations": Integrations,
 }
 
 export const pagesConfig = {
