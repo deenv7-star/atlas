@@ -313,7 +313,7 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
                 <TableRow 
                  key={lead.id} 
                  className="cursor-pointer hover:bg-gray-50 select-none"
-                 onClick={() => navigate(`${createPageUrl('Leads')}/${lead.id}`)}
+                 onClick={() => setSelectedLead(lead)}
                 >
                   <TableCell className="font-medium">{lead.name}</TableCell>
                   <TableCell dir="ltr" className="text-left">{lead.phone}</TableCell>
@@ -377,6 +377,106 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
           </TableBody>
         </Table>
       </Card>
+
+      {/* Lead Details Sheet */}
+      {selectedLead && (
+        <Sheet open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
+          <SheetContent side="left" className="w-full sm:max-w-lg overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>פרטי ליד</SheetTitle>
+            </SheetHeader>
+            
+            <div className="space-y-6 py-6">
+              {/* Contact Info */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-lg">{selectedLead.name}</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Phone className="h-4 w-4 text-gray-400" />
+                    <a href={`tel:${selectedLead.phone}`} className="text-[#00D1C1] hover:underline" dir="ltr">
+                      {selectedLead.phone}
+                    </a>
+                  </div>
+                  {selectedLead.email && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Mail className="h-4 w-4 text-gray-400" />
+                      <a href={`mailto:${selectedLead.email}`} className="text-[#00D1C1] hover:underline">
+                        {selectedLead.email}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <Label>סטטוס</Label>
+                <Select 
+                  value={selectedLead.status} 
+                  onValueChange={(value) => handleStatusChange(selectedLead.id, value)}
+                >
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(statusLabels).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Details */}
+              <div className="space-y-3 pt-3 border-t">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">מקור</span>
+                  <span className="flex items-center gap-1">
+                    {sourceIcons[selectedLead.source]}
+                    {sourceLabels[selectedLead.source]}
+                  </span>
+                </div>
+                {selectedLead.desired_checkin_date && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">תאריכים רצויים</span>
+                    <span>
+                      {format(parseISO(selectedLead.desired_checkin_date), 'd/M/yy')} - {format(parseISO(selectedLead.desired_checkout_date), 'd/M/yy')}
+                    </span>
+                  </div>
+                )}
+                {selectedLead.guests_count && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">מספר אורחים</span>
+                    <span>{selectedLead.guests_count}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">נוצר בתאריך</span>
+                  <span>{format(parseISO(selectedLead.created_date), 'd/M/yy', { locale: he })}</span>
+                </div>
+              </div>
+
+              {/* Notes */}
+              {selectedLead.notes && (
+                <div className="space-y-2 pt-3 border-t">
+                  <Label>הערות</Label>
+                  <p className="text-sm text-gray-600">{selectedLead.notes}</p>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="space-y-2 pt-3 border-t">
+                <Button 
+                  className="w-full bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+                  onClick={() => handleConvertToBooking(selectedLead)}
+                >
+                  <ArrowLeftRight className="h-4 w-4 ml-2" />
+                  הפוך להזמנה
+                </Button>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
 
       {/* Create Lead Dialog */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
