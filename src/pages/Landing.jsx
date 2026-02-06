@@ -459,12 +459,12 @@ export default function Landing() {
       {/* Pricing */}
       <section className="py-12 sm:py-16 md:py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-3 sm:mb-4">
             תוכניות ומחירים
           </h2>
-          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
+          <p className="text-sm sm:text-base text-gray-600 text-center mb-8 sm:mb-12">בחר את התוכנית המתאימה לך</p>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {Object.entries(t.pricing).map(([key, plan], i) => (
               <motion.div
                 key={key}
