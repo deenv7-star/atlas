@@ -68,7 +68,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section - Minimalist & Premium */}
-      <section className="relative pt-32 pb-20 px-4 overflow-hidden bg-white">
+      <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 overflow-hidden bg-white">
         {/* Subtle Grid Background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:64px_64px]" />
         
@@ -83,7 +83,7 @@ export default function Landing() {
         />
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* Left Content */}
             <div>
               <motion.div
@@ -100,7 +100,7 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-6xl md:text-7xl lg:text-8xl font-bold text-[#0B1220] leading-[1.1] mb-6"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#0B1220] leading-[1.1] mb-6"
               >
                 ניהול נכסים
                 <br />
@@ -111,7 +111,7 @@ export default function Landing() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-xl text-gray-500 mb-10 leading-relaxed max-w-lg"
+                className="text-base sm:text-lg md:text-xl text-gray-500 mb-8 sm:mb-10 leading-relaxed max-w-lg"
               >
                 אוטומציה מלאה, בינה מלאכותית מתקדמת, וממשק אינטואיטיבי שחוסך לך שעות כל יום
               </motion.p>
@@ -120,11 +120,11 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex items-center gap-4"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
               >
                 <Button
                   size="lg"
-                  className="group relative bg-[#0B1220] hover:bg-[#0B1220]/90 text-white px-8 h-14 rounded-xl font-medium overflow-hidden"
+                  className="group relative bg-[#0B1220] hover:bg-[#0B1220]/90 text-white px-6 sm:px-8 h-12 sm:h-14 rounded-xl font-medium overflow-hidden w-full sm:w-auto"
                   onClick={() => navigate(createPageUrl('Dashboard'))}
                 >
                   <span className="relative z-10 flex items-center">
@@ -136,7 +136,7 @@ export default function Landing() {
                 <Button
                   size="lg"
                   variant="ghost"
-                  className="text-gray-600 hover:text-[#0B1220] px-8 h-14 rounded-xl font-medium"
+                  className="text-gray-600 hover:text-[#0B1220] px-6 sm:px-8 h-12 sm:h-14 rounded-xl font-medium w-full sm:w-auto"
                 >
                   צפה בדמו
                   <motion.div
@@ -152,21 +152,21 @@ export default function Landing() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="mt-16 flex items-center gap-12"
+                className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-12"
               >
                 <div>
-                  <div className="text-3xl font-bold text-[#0B1220] mb-1">200+</div>
-                  <div className="text-sm text-gray-500">בעלי נכסים</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">200+</div>
+                  <div className="text-xs sm:text-sm text-gray-500">בעלי נכסים</div>
                 </div>
-                <div className="w-px h-12 bg-gray-200" />
+                <div className="hidden sm:block w-px h-12 bg-gray-200" />
                 <div>
-                  <div className="text-3xl font-bold text-[#0B1220] mb-1">50K+</div>
-                  <div className="text-sm text-gray-500">הזמנות מנוהלות</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">50K+</div>
+                  <div className="text-xs sm:text-sm text-gray-500">הזמנות מנוהלות</div>
                 </div>
-                <div className="w-px h-12 bg-gray-200" />
+                <div className="hidden sm:block w-px h-12 bg-gray-200" />
                 <div>
-                  <div className="text-3xl font-bold text-[#0B1220] mb-1">99.9%</div>
-                  <div className="text-sm text-gray-500">זמינות</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">99.9%</div>
+                  <div className="text-xs sm:text-sm text-gray-500">זמינות</div>
                 </div>
               </motion.div>
             </div>
@@ -176,7 +176,7 @@ export default function Landing() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
+              className="relative mt-12 lg:mt-0"
             >
               {/* Main Dashboard Card */}
               <div className="relative bg-white rounded-3xl border border-gray-200 shadow-2xl shadow-black/5 overflow-hidden">
@@ -290,7 +290,7 @@ export default function Landing() {
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 3, repeat: Infinity }}
-                className="absolute -top-4 -right-4 bg-white rounded-2xl p-4 shadow-lg border border-gray-200"
+                className="hidden lg:block absolute -top-4 -right-4 bg-white rounded-2xl p-4 shadow-lg border border-gray-200"
               >
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
@@ -303,7 +303,7 @@ export default function Landing() {
               <motion.div
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-                className="absolute -bottom-4 left-4 bg-white rounded-2xl p-4 shadow-lg border border-gray-200"
+                className="hidden lg:block absolute -bottom-4 left-4 bg-white rounded-2xl p-4 shadow-lg border border-gray-200"
               >
                 <div className="flex items-center gap-2">
                   <motion.div
@@ -322,19 +322,19 @@ export default function Landing() {
       </section>
 
       {/* Problem Section */}
-      <section className="py-20 px-4 bg-[#0B1220]">
+      <section className="py-12 sm:py-16 md:py-20 px-4 bg-[#0B1220]">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 sm:mb-12">
               {t.problemTitle}
             </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {t.problemBullets.map((bullet, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 text-white/80 flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
                   <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
                   <span>{bullet}</span>
                 </div>
@@ -345,7 +345,7 @@ export default function Landing() {
       </section>
 
       {/* Solution Section */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-16 md:py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -371,7 +371,7 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
+      <section className="py-12 sm:py-16 md:py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
@@ -398,12 +398,12 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-16 md:py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
             איך זה עובד?
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {t.howItWorks.map((step, i) => (
               <motion.div
                 key={i}
@@ -425,7 +425,7 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-[#0B1220]">
+      <section className="py-12 sm:py-16 md:py-20 px-4 bg-[#0B1220]">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
             מה אומרים עלינו
@@ -457,7 +457,7 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-16 md:py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
             תוכניות ומחירים
@@ -510,7 +510,7 @@ export default function Landing() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
+      <section className="py-12 sm:py-16 md:py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
             שאלות נפוצות
@@ -551,7 +551,7 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
+      <section className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
