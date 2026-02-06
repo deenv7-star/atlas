@@ -146,15 +146,15 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
   const isLoading = leadsLoading || bookingsLoading || paymentsLoading || cleaningLoading;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 pb-6">
       {/* Command Center Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#0B1220]">שלום, {user?.full_name?.split(' ')[0] || 'משתמש'} 👋</h1>
-          <p className="text-gray-500">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#0B1220]">שלום, {user?.full_name?.split(' ')[0] || 'משתמש'} 👋</h1>
+          <p className="text-sm md:text-base text-gray-500">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
         </div>
-        <Link to={createPageUrl('Bookings')}>
-          <Button className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2">
+        <Link to={createPageUrl('Bookings')} className="w-full sm:w-auto">
+          <Button className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2 w-full sm:w-auto">
             <Plus className="h-4 w-4" />
             הזמנה חדשה
           </Button>
@@ -166,22 +166,22 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-red-50 border border-red-200 rounded-2xl p-4"
+          className="bg-red-50 border border-red-200 rounded-xl md:rounded-2xl p-3 md:p-4"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="h-4 w-4 md:h-5 md:w-5 text-red-600" />
             </div>
             <div className="flex-1">
-              <p className="font-medium text-red-800">דרושה תשומת לב</p>
-              <p className="text-sm text-red-600">
+              <p className="text-sm md:text-base font-medium text-red-800">דרושה תשומת לב</p>
+              <p className="text-xs md:text-sm text-red-600">
                 {overduePayments.length > 0 && `${overduePayments.length} תשלומים באיחור`}
                 {overduePayments.length > 0 && criticalInsights.length > 0 && ' • '}
                 {criticalInsights.length > 0 && `${criticalInsights.length} התראות קריטיות`}
               </p>
             </div>
-            <Link to={createPageUrl('Insights')}>
-              <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-100">
+            <Link to={createPageUrl('Insights')} className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-100 w-full sm:w-auto text-xs md:text-sm">
                 צפה בפרטים
               </Button>
             </Link>
@@ -190,7 +190,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
       )}
 
       {/* Today's Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         {[
           { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, color: 'text-green-600 bg-green-50', link: 'Bookings' },
           { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, color: 'text-orange-600 bg-orange-50', link: 'Bookings' },
@@ -204,15 +204,15 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
             transition={{ delay: i * 0.05 }}
           >
             <Link to={createPageUrl(stat.link)}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-all rounded-2xl cursor-pointer">
-                <CardContent className="p-4">
+              <Card className="border-0 shadow-sm hover:shadow-md transition-all rounded-xl md:rounded-2xl cursor-pointer">
+                <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">{stat.label}</p>
-                      <p className="text-2xl font-bold text-[#0B1220]">{stat.value}</p>
+                      <p className="text-[10px] md:text-xs text-gray-500 mb-0.5 md:mb-1 leading-tight">{stat.label}</p>
+                      <p className="text-xl md:text-2xl font-bold text-[#0B1220]">{stat.value}</p>
                     </div>
-                    <div className={`p-2 rounded-xl ${stat.color}`}>
-                      <stat.icon className="h-5 w-5" />
+                    <div className={`p-1.5 md:p-2 rounded-lg md:rounded-xl ${stat.color}`}>
+                      <stat.icon className="h-4 w-4 md:h-5 md:w-5" />
                     </div>
                   </div>
                 </CardContent>
@@ -223,19 +223,19 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
         {/* Left Column - Revenue & Occupancy */}
-        <div className="space-y-6">
-          <Card className="border-0 shadow-sm rounded-2xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">ביצועים חודשיים</CardTitle>
+        <div className="space-y-4 md:space-y-6">
+          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
+            <CardHeader className="pb-2 p-4 md:p-6">
+              <CardTitle className="text-sm md:text-base font-semibold">ביצועים חודשיים</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+              <div className="space-y-3 md:space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-gray-500">הכנסות החודש</span>
-                    <span className="font-bold text-lg text-[#0B1220]">₪{paidThisMonth.toLocaleString()}</span>
+                    <span className="text-xs md:text-sm text-gray-500">הכנסות החודש</span>
+                    <span className="font-bold text-base md:text-lg text-[#0B1220]">₪{paidThisMonth.toLocaleString()}</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div className="h-full bg-green-500 rounded-full" style={{ width: '65%' }} />
@@ -243,14 +243,14 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-gray-500">יתרות פתוחות</span>
-                    <span className="font-bold text-lg text-orange-600">₪{openBalances.toLocaleString()}</span>
+                    <span className="text-xs md:text-sm text-gray-500">יתרות פתוחות</span>
+                    <span className="font-bold text-base md:text-lg text-orange-600">₪{openBalances.toLocaleString()}</span>
                   </div>
                 </div>
-                <div className="pt-3 border-t">
+                <div className="pt-2 md:pt-3 border-t">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">תפוסה</span>
-                    <span className="font-bold text-lg text-[#0B1220]">{occupancyRate}%</span>
+                    <span className="text-xs md:text-sm text-gray-500">תפוסה</span>
+                    <span className="font-bold text-base md:text-lg text-[#0B1220]">{occupancyRate}%</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden mt-1">
                     <div className="h-full bg-[#00D1C1] rounded-full" style={{ width: `${occupancyRate}%` }} />
@@ -261,31 +261,31 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
           </Card>
 
           {/* AI Insights Preview */}
-          <Card className="border-0 shadow-sm rounded-2xl bg-gradient-to-br from-[#0A2540] to-[#0B1220] text-white">
-            <CardHeader className="pb-2">
+          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl bg-gradient-to-br from-[#0A2540] to-[#0B1220] text-white">
+            <CardHeader className="pb-2 p-4 md:p-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-[#00D1C1]" />
+                <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
+                  <Brain className="h-4 w-4 md:h-5 md:w-5 text-[#00D1C1]" />
                   תובנות AI
                 </CardTitle>
                 <Link to={createPageUrl('Insights')}>
-                  <Button variant="ghost" size="sm" className="text-[#00D1C1] hover:text-white hover:bg-white/10">
-                    עוד <ChevronRight className="h-4 w-4 mr-1" />
+                  <Button variant="ghost" size="sm" className="text-[#00D1C1] hover:text-white hover:bg-white/10 text-xs md:text-sm">
+                    עוד <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   </Button>
                 </Link>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
               {insights.length > 0 ? (
                 <div className="space-y-2">
                   {insights.slice(0, 3).map((insight, i) => (
-                    <div key={insight.id || i} className="p-2 bg-white/10 rounded-lg">
-                      <p className="text-sm text-white/90">{insight.title}</p>
+                    <div key={insight.id || i} className="p-2 md:p-2.5 bg-white/10 rounded-lg">
+                      <p className="text-xs md:text-sm text-white/90 leading-snug">{insight.title}</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-white/60 text-center py-4">
+                <p className="text-xs md:text-sm text-white/60 text-center py-3 md:py-4">
                   לחץ על "עדכן תובנות" בדף התובנות
                 </p>
               )}
@@ -294,31 +294,31 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
         </div>
 
         {/* Middle Column - Check-ins/Check-outs */}
-        <div className="space-y-6">
-          <Card className="border-0 shadow-sm rounded-2xl">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <ArrowDownRight className="h-4 w-4 text-green-500" />
+        <div className="space-y-4 md:space-y-6">
+          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
+            <CardHeader className="pb-3 p-4 md:p-6">
+              <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
+                <ArrowDownRight className="h-3.5 w-3.5 md:h-4 md:w-4 text-green-500" />
                 כניסות קרובות
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 p-4 md:p-6">
               {isLoading ? (
                 <div className="space-y-2">
-                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-10 md:h-12 w-full rounded-lg md:rounded-xl" />)}
                 </div>
               ) : upcomingCheckins.length > 0 ? (
                 <div className="space-y-2">
                   {upcomingCheckins.slice(0, 5).map(booking => (
                     <Link key={booking.id} to={`${createPageUrl('Bookings')}?id=${booking.id}`}>
-                      <div className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
-                        <div>
-                          <p className="font-medium text-sm">{booking.guest_name}</p>
-                          <p className="text-xs text-gray-500">
+                      <div className="flex items-center justify-between p-2.5 md:p-3 bg-gray-50 hover:bg-gray-100 rounded-lg md:rounded-xl transition-colors">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-xs md:text-sm truncate">{booking.guest_name}</p>
+                          <p className="text-[10px] md:text-xs text-gray-500">
                             {format(parseISO(booking.checkin_date), 'EEEE, d/M', { locale: he })}
                           </p>
                         </div>
-                        <Badge className={statusColors[booking.status]}>
+                        <Badge className={`${statusColors[booking.status]} text-[10px] md:text-xs whitespace-nowrap ml-2`}>
                           {statusLabels[booking.status]}
                         </Badge>
                       </div>
@@ -326,35 +326,35 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 text-center py-4">אין כניסות ב-7 הימים הקרובים</p>
+                <p className="text-xs md:text-sm text-gray-500 text-center py-3 md:py-4">אין כניסות ב-7 הימים הקרובים</p>
               )}
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm rounded-2xl">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <ArrowUpLeft className="h-4 w-4 text-orange-500" />
+          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
+            <CardHeader className="pb-3 p-4 md:p-6">
+              <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
+                <ArrowUpLeft className="h-3.5 w-3.5 md:h-4 md:w-4 text-orange-500" />
                 יציאות קרובות
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 p-4 md:p-6">
               {isLoading ? (
                 <div className="space-y-2">
-                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-10 md:h-12 w-full rounded-lg md:rounded-xl" />)}
                 </div>
               ) : upcomingCheckouts.length > 0 ? (
                 <div className="space-y-2">
                   {upcomingCheckouts.slice(0, 5).map(booking => (
                     <Link key={booking.id} to={`${createPageUrl('Bookings')}?id=${booking.id}`}>
-                      <div className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
-                        <div>
-                          <p className="font-medium text-sm">{booking.guest_name}</p>
-                          <p className="text-xs text-gray-500">
+                      <div className="flex items-center justify-between p-2.5 md:p-3 bg-gray-50 hover:bg-gray-100 rounded-lg md:rounded-xl transition-colors">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-xs md:text-sm truncate">{booking.guest_name}</p>
+                          <p className="text-[10px] md:text-xs text-gray-500">
                             {format(parseISO(booking.checkout_date), 'EEEE, d/M', { locale: he })}
                           </p>
                         </div>
-                        <Badge className={statusColors[booking.status]}>
+                        <Badge className={`${statusColors[booking.status]} text-[10px] md:text-xs whitespace-nowrap ml-2`}>
                           {statusLabels[booking.status]}
                         </Badge>
                       </div>
@@ -362,89 +362,89 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 text-center py-4">אין יציאות ב-7 הימים הקרובים</p>
+                <p className="text-xs md:text-sm text-gray-500 text-center py-3 md:py-4">אין יציאות ב-7 הימים הקרובים</p>
               )}
             </CardContent>
           </Card>
         </div>
 
         {/* Right Column - Tasks & Leads */}
-        <div className="space-y-6">
-          <Card className="border-0 shadow-sm rounded-2xl">
-            <CardHeader className="pb-3">
+        <div className="space-y-4 md:space-y-6">
+          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
+            <CardHeader className="pb-3 p-4 md:p-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#00D1C1]" />
+                <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5 md:h-4 md:w-4 text-[#00D1C1]" />
                   משימות ניקיון
                 </CardTitle>
                 <Link to={createPageUrl('Cleaning')}>
-                  <Button variant="ghost" size="sm" className="text-[#00D1C1]">צפה בכל</Button>
+                  <Button variant="ghost" size="sm" className="text-[#00D1C1] text-xs md:text-sm">צפה בכל</Button>
                 </Link>
               </div>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 p-4 md:p-6">
               {isLoading ? (
                 <div className="space-y-2">
-                  {[1, 2].map(i => <Skeleton key={i} className="h-14 w-full rounded-xl" />)}
+                  {[1, 2].map(i => <Skeleton key={i} className="h-12 md:h-14 w-full rounded-lg md:rounded-xl" />)}
                 </div>
               ) : pendingCleaning.length > 0 ? (
                 <div className="space-y-2">
                   {pendingCleaning.slice(0, 4).map(task => (
-                    <div key={task.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-2 h-2 rounded-full ${
+                    <div key={task.id} className="flex items-center justify-between p-2.5 md:p-3 bg-gray-50 rounded-lg md:rounded-xl">
+                      <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                        <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full flex-shrink-0 ${
                           task.status === 'DONE' ? 'bg-green-500' :
                           task.status === 'IN_PROGRESS' ? 'bg-yellow-500' : 'bg-blue-500'
                         }`} />
-                        <div>
-                          <p className="font-medium text-sm">{task.assigned_to_name || 'לא הוקצה'}</p>
-                          <p className="text-xs text-gray-500">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-xs md:text-sm truncate">{task.assigned_to_name || 'לא הוקצה'}</p>
+                          <p className="text-[10px] md:text-xs text-gray-500">
                             {task.scheduled_for && format(parseISO(task.scheduled_for), 'HH:mm')}
                           </p>
                         </div>
                       </div>
-                      <Badge className={statusColors[task.status]}>
+                      <Badge className={`${statusColors[task.status]} text-[10px] md:text-xs whitespace-nowrap ml-2`}>
                         {statusLabels[task.status]}
                       </Badge>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 text-center py-4">אין משימות ממתינות</p>
+                <p className="text-xs md:text-sm text-gray-500 text-center py-3 md:py-4">אין משימות ממתינות</p>
               )}
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm rounded-2xl">
-            <CardHeader className="pb-3">
+          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
+            <CardHeader className="pb-3 p-4 md:p-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <Users className="h-4 w-4 text-blue-500" />
+                <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
+                  <Users className="h-3.5 w-3.5 md:h-4 md:w-4 text-blue-500" />
                   לידים חדשים
                 </CardTitle>
                 <Link to={createPageUrl('Leads')}>
-                  <Button variant="ghost" size="sm" className="text-[#00D1C1]">צפה בכל</Button>
+                  <Button variant="ghost" size="sm" className="text-[#00D1C1] text-xs md:text-sm">צפה בכל</Button>
                 </Link>
               </div>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 p-4 md:p-6">
               {isLoading ? (
                 <div className="space-y-2">
-                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-10 w-full rounded-xl" />)}
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-9 md:h-10 w-full rounded-lg md:rounded-xl" />)}
                 </div>
               ) : (
                 <div className="space-y-2">
                   {leads.filter(l => l.status === 'NEW').slice(0, 4).map(lead => (
-                    <div key={lead.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                      <div>
-                        <p className="font-medium text-sm">{lead.name}</p>
-                        <p className="text-xs text-gray-500">{lead.phone}</p>
+                    <div key={lead.id} className="flex items-center justify-between p-2.5 md:p-3 bg-gray-50 rounded-lg md:rounded-xl">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-xs md:text-sm truncate">{lead.name}</p>
+                        <p className="text-[10px] md:text-xs text-gray-500 truncate">{lead.phone}</p>
                       </div>
-                      <Badge className={statusColors.NEW}>חדש</Badge>
+                      <Badge className={`${statusColors.NEW} text-[10px] md:text-xs whitespace-nowrap ml-2`}>חדש</Badge>
                     </div>
                   ))}
                   {leads.filter(l => l.status === 'NEW').length === 0 && (
-                    <p className="text-sm text-gray-500 text-center py-4">אין לידים חדשים</p>
+                    <p className="text-xs md:text-sm text-gray-500 text-center py-3 md:py-4">אין לידים חדשים</p>
                   )}
                 </div>
               )}

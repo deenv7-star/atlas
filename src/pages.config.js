@@ -47,10 +47,13 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Automations from './pages/Automations';
 import Bookings from './pages/Bookings';
 import Cleaning from './pages/Cleaning';
 import Contracts from './pages/Contracts';
 import Dashboard from './pages/Dashboard';
+import Insights from './pages/Insights';
+import Integrations from './pages/Integrations';
 import Landing from './pages/Landing';
 import Leads from './pages/Leads';
 import Messages from './pages/Messages';
@@ -59,17 +62,17 @@ import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import Settings from './pages/Settings';
 import Terms from './pages/Terms';
-import Automations from './pages/Automations';
-import Insights from './pages/Insights';
-import Integrations from './pages/Integrations';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Automations": Automations,
     "Bookings": Bookings,
     "Cleaning": Cleaning,
     "Contracts": Contracts,
     "Dashboard": Dashboard,
+    "Insights": Insights,
+    "Integrations": Integrations,
     "Landing": Landing,
     "Leads": Leads,
     "Messages": Messages,
@@ -78,9 +81,6 @@ export const PAGES = {
     "Reviews": Reviews,
     "Settings": Settings,
     "Terms": Terms,
-    "Automations": Automations,
-    "Insights": Insights,
-    "Integrations": Integrations,
 }
 
 export const pagesConfig = {
