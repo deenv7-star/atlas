@@ -13,7 +13,11 @@ import {
   ArrowUpLeft,
   ArrowDownRight,
   Sparkles,
-  Plus
+  Plus,
+  Brain,
+  AlertTriangle,
+  TrendingUp,
+  ChevronRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -29,6 +33,7 @@ const statusColors = {
   LOST: 'bg-gray-100 text-gray-700',
   PENDING: 'bg-yellow-100 text-yellow-700',
   CONFIRMED: 'bg-green-100 text-green-700',
+  CHECKED_IN: 'bg-cyan-100 text-cyan-700',
   OPEN: 'bg-blue-100 text-blue-700',
   IN_PROGRESS: 'bg-yellow-100 text-yellow-700',
   DONE: 'bg-green-100 text-green-700'
@@ -42,6 +47,7 @@ const statusLabels = {
   LOST: 'הפסיד',
   PENDING: 'ממתין',
   CONFIRMED: 'מאושר',
+  CHECKED_IN: 'בנכס',
   OPEN: 'פתוח',
   IN_PROGRESS: 'בתהליך',
   DONE: 'הושלם'
@@ -49,13 +55,14 @@ const statusLabels = {
 
 export default function Dashboard({ user, selectedPropertyId, orgId }) {
   const today = new Date();
+  const todayStr = format(today, 'yyyy-MM-dd');
   const weekStart = startOfWeek(today, { weekStartsOn: 0 });
   const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
   const monthStart = startOfMonth(today);
   const monthEnd = endOfMonth(today);
   const next7Days = addDays(today, 7);
 
-  // Fetch leads
+  // Fetch all data
   const { data: leads = [], isLoading: leadsLoading } = useQuery({
     queryKey: ['leads', orgId, selectedPropertyId],
     queryFn: () => orgId ? base44.entities.Lead.filter(
@@ -67,7 +74,6 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
     enabled: !!orgId
   });
 
-  // Fetch bookings
   const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
     queryKey: ['bookings', orgId, selectedPropertyId],
     queryFn: () => orgId ? base44.entities.Booking.filter(
@@ -79,14 +85,12 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
     enabled: !!orgId
   });
 
-  // Fetch payments
   const { data: payments = [], isLoading: paymentsLoading } = useQuery({
     queryKey: ['payments', orgId],
     queryFn: () => orgId ? base44.entities.Payment.filter({ org_id: orgId }) : [],
     enabled: !!orgId
   });
 
-  // Fetch cleaning tasks
   const { data: cleaningTasks = [], isLoading: cleaningLoading } = useQuery({
     queryKey: ['cleaningTasks', orgId, selectedPropertyId],
     queryFn: () => orgId ? base44.entities.CleaningTask.filter(
@@ -98,16 +102,17 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
     enabled: !!orgId
   });
 
-  // Calculate KPIs
-  const newLeadsThisWeek = leads.filter(l => {
-    const createdDate = parseISO(l.created_date);
-    return isWithinInterval(createdDate, { start: weekStart, end: weekEnd });
-  }).length;
+  const { data: insights = [] } = useQuery({
+    queryKey: ['insights', orgId],
+    queryFn: () => orgId ? base44.entities.AIInsight.filter({ org_id: orgId, is_dismissed: false }, '-created_date', 5) : [],
+    enabled: !!orgId
+  });
 
-  const bookingsThisMonth = bookings.filter(b => {
-    const createdDate = parseISO(b.created_date);
-    return isWithinInterval(createdDate, { start: monthStart, end: monthEnd });
-  }).length;
+  // Calculate metrics
+  const todayCheckins = bookings.filter(b => b.checkin_date === todayStr && b.status !== 'CANCELLED');
+  const todayCheckouts = bookings.filter(b => b.checkout_date === todayStr && b.status !== 'CANCELLED');
+  const overduePayments = payments.filter(p => p.status === 'DUE' && p.due_date && p.due_date < todayStr);
+  const pendingCleaning = cleaningTasks.filter(t => t.status !== 'DONE' && t.scheduled_for?.split('T')[0] <= todayStr);
 
   const paidThisMonth = payments
     .filter(p => p.status === 'PAID' && p.paid_at)
@@ -121,7 +126,10 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
     .filter(p => p.status === 'DUE')
     .reduce((sum, p) => sum + (p.amount || 0), 0);
 
-  // Upcoming check-ins/check-outs
+  const occupancyRate = bookings.length > 0 
+    ? Math.round((bookings.filter(b => b.status === 'CHECKED_IN' || b.status === 'CONFIRMED').length / bookings.length) * 100)
+    : 0;
+
   const upcomingCheckins = bookings.filter(b => {
     if (!b.checkin_date) return false;
     const checkinDate = parseISO(b.checkin_date);
@@ -134,38 +142,16 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
     return checkoutDate >= today && checkoutDate <= next7Days && b.status !== 'CANCELLED';
   });
 
-  // Today's cleaning tasks
-  const todaysTasks = cleaningTasks.filter(t => {
-    if (!t.scheduled_for) return false;
-    const scheduledDate = parseISO(t.scheduled_for);
-    return format(scheduledDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd');
-  });
-
-  // Lead pipeline counts
-  const leadPipeline = {
-    NEW: leads.filter(l => l.status === 'NEW').length,
-    CONTACTED: leads.filter(l => l.status === 'CONTACTED').length,
-    OFFER_SENT: leads.filter(l => l.status === 'OFFER_SENT').length,
-    WON: leads.filter(l => l.status === 'WON').length,
-    LOST: leads.filter(l => l.status === 'LOST').length
-  };
-
-  const kpis = [
-    { title: 'לידים חדשים השבוע', value: newLeadsThisWeek, icon: Users, color: 'bg-blue-500' },
-    { title: 'הזמנות החודש', value: bookingsThisMonth, icon: CalendarDays, color: 'bg-purple-500' },
-    { title: 'נגבה החודש', value: `₪${paidThisMonth.toLocaleString()}`, icon: Wallet, color: 'bg-green-500' },
-    { title: 'יתרות פתוחות', value: `₪${openBalances.toLocaleString()}`, icon: AlertCircle, color: 'bg-orange-500' }
-  ];
-
+  const criticalInsights = insights.filter(i => i.severity === 'CRITICAL');
   const isLoading = leadsLoading || bookingsLoading || paymentsLoading || cleaningLoading;
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
+      {/* Command Center Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#0B1220]">שלום, {user?.full_name?.split(' ')[0] || 'משתמש'} 👋</h1>
-          <p className="text-gray-500">הנה הסיכום של היום</p>
+          <p className="text-gray-500">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
         </div>
         <Link to={createPageUrl('Bookings')}>
           <Button className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2">
@@ -175,126 +161,221 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
         </Link>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi, i) => (
+      {/* Alert Banner */}
+      {(criticalInsights.length > 0 || overduePayments.length > 0) && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-50 border border-red-200 rounded-2xl p-4"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-red-800">דרושה תשומת לב</p>
+              <p className="text-sm text-red-600">
+                {overduePayments.length > 0 && `${overduePayments.length} תשלומים באיחור`}
+                {overduePayments.length > 0 && criticalInsights.length > 0 && ' • '}
+                {criticalInsights.length > 0 && `${criticalInsights.length} התראות קריטיות`}
+              </p>
+            </div>
+            <Link to={createPageUrl('Insights')}>
+              <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-100">
+                צפה בפרטים
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Today's Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, color: 'text-green-600 bg-green-50', link: 'Bookings' },
+          { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, color: 'text-orange-600 bg-orange-50', link: 'Bookings' },
+          { label: 'ניקיונות ממתינים', value: pendingCleaning.length, icon: Sparkles, color: 'text-cyan-600 bg-cyan-50', link: 'Cleaning' },
+          { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, color: overduePayments.length > 0 ? 'text-red-600 bg-red-50' : 'text-gray-600 bg-gray-50', link: 'Payments' }
+        ].map((stat, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ delay: i * 0.05 }}
           >
-            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
-              <CardContent className="p-5">
-                {isLoading ? (
-                  <div className="space-y-3">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-8 w-16" />
-                  </div>
-                ) : (
-                  <div className="flex items-start justify-between">
+            <Link to={createPageUrl(stat.link)}>
+              <Card className="border-0 shadow-sm hover:shadow-md transition-all rounded-2xl cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">{kpi.title}</p>
-                      <p className="text-2xl font-bold text-[#0B1220]">{kpi.value}</p>
+                      <p className="text-xs text-gray-500 mb-1">{stat.label}</p>
+                      <p className="text-2xl font-bold text-[#0B1220]">{stat.value}</p>
                     </div>
-                    <div className={`p-2.5 rounded-xl ${kpi.color} bg-opacity-10`}>
-                      <kpi.icon className={`h-5 w-5 ${kpi.color.replace('bg-', 'text-')}`} />
+                    <div className={`p-2 rounded-xl ${stat.color}`}>
+                      <stat.icon className="h-5 w-5" />
                     </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           </motion.div>
         ))}
       </div>
 
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Upcoming Check-ins/Check-outs */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="grid sm:grid-cols-2 gap-4">
-            {/* Check-ins */}
-            <Card className="border-0 shadow-sm rounded-2xl">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <ArrowDownRight className="h-4 w-4 text-green-500" />
-                  כניסות קרובות
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                {isLoading ? (
-                  <div className="space-y-2">
-                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
+        {/* Left Column - Revenue & Occupancy */}
+        <div className="space-y-6">
+          <Card className="border-0 shadow-sm rounded-2xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold">ביצועים חודשיים</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-gray-500">הכנסות החודש</span>
+                    <span className="font-bold text-lg text-[#0B1220]">₪{paidThisMonth.toLocaleString()}</span>
                   </div>
-                ) : upcomingCheckins.length > 0 ? (
-                  <div className="space-y-2">
-                    {upcomingCheckins.slice(0, 5).map(booking => (
-                      <Link key={booking.id} to={`${createPageUrl('Bookings')}?id=${booking.id}`}>
-                        <div className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
-                          <div>
-                            <p className="font-medium text-sm">{booking.guest_name}</p>
-                            <p className="text-xs text-gray-500">
-                              {format(parseISO(booking.checkin_date), 'EEEE, d/M', { locale: he })}
-                            </p>
-                          </div>
-                          <Badge className={statusColors[booking.status]}>
-                            {statusLabels[booking.status]}
-                          </Badge>
-                        </div>
-                      </Link>
-                    ))}
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-green-500 rounded-full" style={{ width: '65%' }} />
                   </div>
-                ) : (
-                  <p className="text-sm text-gray-500 text-center py-4">אין כניסות ב-7 הימים הקרובים</p>
-                )}
-              </CardContent>
-            </Card>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-gray-500">יתרות פתוחות</span>
+                    <span className="font-bold text-lg text-orange-600">₪{openBalances.toLocaleString()}</span>
+                  </div>
+                </div>
+                <div className="pt-3 border-t">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">תפוסה</span>
+                    <span className="font-bold text-lg text-[#0B1220]">{occupancyRate}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden mt-1">
+                    <div className="h-full bg-[#00D1C1] rounded-full" style={{ width: `${occupancyRate}%` }} />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Check-outs */}
-            <Card className="border-0 shadow-sm rounded-2xl">
-              <CardHeader className="pb-3">
+          {/* AI Insights Preview */}
+          <Card className="border-0 shadow-sm rounded-2xl bg-gradient-to-br from-[#0A2540] to-[#0B1220] text-white">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <ArrowUpLeft className="h-4 w-4 text-orange-500" />
-                  יציאות קרובות
+                  <Brain className="h-5 w-5 text-[#00D1C1]" />
+                  תובנות AI
                 </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                {isLoading ? (
-                  <div className="space-y-2">
-                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
-                  </div>
-                ) : upcomingCheckouts.length > 0 ? (
-                  <div className="space-y-2">
-                    {upcomingCheckouts.slice(0, 5).map(booking => (
-                      <Link key={booking.id} to={`${createPageUrl('Bookings')}?id=${booking.id}`}>
-                        <div className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
-                          <div>
-                            <p className="font-medium text-sm">{booking.guest_name}</p>
-                            <p className="text-xs text-gray-500">
-                              {format(parseISO(booking.checkout_date), 'EEEE, d/M', { locale: he })}
-                            </p>
-                          </div>
-                          <Badge className={statusColors[booking.status]}>
-                            {statusLabels[booking.status]}
-                          </Badge>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500 text-center py-4">אין יציאות ב-7 הימים הקרובים</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                <Link to={createPageUrl('Insights')}>
+                  <Button variant="ghost" size="sm" className="text-[#00D1C1] hover:text-white hover:bg-white/10">
+                    עוד <ChevronRight className="h-4 w-4 mr-1" />
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {insights.length > 0 ? (
+                <div className="space-y-2">
+                  {insights.slice(0, 3).map((insight, i) => (
+                    <div key={insight.id || i} className="p-2 bg-white/10 rounded-lg">
+                      <p className="text-sm text-white/90">{insight.title}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-white/60 text-center py-4">
+                  לחץ על "עדכן תובנות" בדף התובנות
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-          {/* Cleaning Tasks Today */}
+        {/* Middle Column - Check-ins/Check-outs */}
+        <div className="space-y-6">
+          <Card className="border-0 shadow-sm rounded-2xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <ArrowDownRight className="h-4 w-4 text-green-500" />
+                כניסות קרובות
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {isLoading ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
+                </div>
+              ) : upcomingCheckins.length > 0 ? (
+                <div className="space-y-2">
+                  {upcomingCheckins.slice(0, 5).map(booking => (
+                    <Link key={booking.id} to={`${createPageUrl('Bookings')}?id=${booking.id}`}>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
+                        <div>
+                          <p className="font-medium text-sm">{booking.guest_name}</p>
+                          <p className="text-xs text-gray-500">
+                            {format(parseISO(booking.checkin_date), 'EEEE, d/M', { locale: he })}
+                          </p>
+                        </div>
+                        <Badge className={statusColors[booking.status]}>
+                          {statusLabels[booking.status]}
+                        </Badge>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 text-center py-4">אין כניסות ב-7 הימים הקרובים</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-sm rounded-2xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <ArrowUpLeft className="h-4 w-4 text-orange-500" />
+                יציאות קרובות
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {isLoading ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
+                </div>
+              ) : upcomingCheckouts.length > 0 ? (
+                <div className="space-y-2">
+                  {upcomingCheckouts.slice(0, 5).map(booking => (
+                    <Link key={booking.id} to={`${createPageUrl('Bookings')}?id=${booking.id}`}>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
+                        <div>
+                          <p className="font-medium text-sm">{booking.guest_name}</p>
+                          <p className="text-xs text-gray-500">
+                            {format(parseISO(booking.checkout_date), 'EEEE, d/M', { locale: he })}
+                          </p>
+                        </div>
+                        <Badge className={statusColors[booking.status]}>
+                          {statusLabels[booking.status]}
+                        </Badge>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 text-center py-4">אין יציאות ב-7 הימים הקרובים</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column - Tasks & Leads */}
+        <div className="space-y-6">
           <Card className="border-0 shadow-sm rounded-2xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-[#00D1C1]" />
-                  משימות ניקיון היום
+                  משימות ניקיון
                 </CardTitle>
                 <Link to={createPageUrl('Cleaning')}>
                   <Button variant="ghost" size="sm" className="text-[#00D1C1]">צפה בכל</Button>
@@ -306,9 +387,9 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                 <div className="space-y-2">
                   {[1, 2].map(i => <Skeleton key={i} className="h-14 w-full rounded-xl" />)}
                 </div>
-              ) : todaysTasks.length > 0 ? (
+              ) : pendingCleaning.length > 0 ? (
                 <div className="space-y-2">
-                  {todaysTasks.map(task => (
+                  {pendingCleaning.slice(0, 4).map(task => (
                     <div key={task.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                       <div className="flex items-center gap-3">
                         <div className={`w-2 h-2 rounded-full ${
@@ -329,47 +410,47 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 text-center py-4">אין משימות ניקיון להיום</p>
+                <p className="text-sm text-gray-500 text-center py-4">אין משימות ממתינות</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-sm rounded-2xl">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Users className="h-4 w-4 text-blue-500" />
+                  לידים חדשים
+                </CardTitle>
+                <Link to={createPageUrl('Leads')}>
+                  <Button variant="ghost" size="sm" className="text-[#00D1C1]">צפה בכל</Button>
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {isLoading ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-10 w-full rounded-xl" />)}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {leads.filter(l => l.status === 'NEW').slice(0, 4).map(lead => (
+                    <div key={lead.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                      <div>
+                        <p className="font-medium text-sm">{lead.name}</p>
+                        <p className="text-xs text-gray-500">{lead.phone}</p>
+                      </div>
+                      <Badge className={statusColors.NEW}>חדש</Badge>
+                    </div>
+                  ))}
+                  {leads.filter(l => l.status === 'NEW').length === 0 && (
+                    <p className="text-sm text-gray-500 text-center py-4">אין לידים חדשים</p>
+                  )}
+                </div>
               )}
             </CardContent>
           </Card>
         </div>
-
-        {/* Lead Pipeline */}
-        <Card className="border-0 shadow-sm rounded-2xl h-fit">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold">צינור לידים</CardTitle>
-              <Link to={createPageUrl('Leads')}>
-                <Button variant="ghost" size="sm" className="text-[#00D1C1]">צפה בכל</Button>
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            {isLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-10 w-full rounded-xl" />)}
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {Object.entries(leadPipeline).map(([status, count]) => (
-                  <div key={status} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full ${
-                        status === 'NEW' ? 'bg-blue-500' :
-                        status === 'CONTACTED' ? 'bg-yellow-500' :
-                        status === 'OFFER_SENT' ? 'bg-purple-500' :
-                        status === 'WON' ? 'bg-green-500' : 'bg-gray-400'
-                      }`} />
-                      <span className="text-sm">{statusLabels[status]}</span>
-                    </div>
-                    <span className="font-semibold text-[#0B1220]">{count}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
