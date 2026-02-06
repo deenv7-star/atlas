@@ -37,7 +37,7 @@ export default function Logo({ variant = 'dark', size = 'default' }) {
           fontSize: size === 'small' ? '1rem' : size === 'large' ? '1.5rem' : '1.25rem'
         }}
       >
-        STAY+
+        ATLAS
       </span>
     </div>
   );

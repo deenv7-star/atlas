@@ -606,7 +606,7 @@ export default function Landing() {
               </Link>
             </div>
             <p className="text-white/40 text-sm">
-              © 2026 STAY+. {t.allRightsReserved}
+              © 2026 ATLAS. {t.allRightsReserved}
             </p>
           </div>
         </div>
