@@ -61,6 +61,7 @@ import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import PullToRefresh from '@/components/common/PullToRefresh';
 
 const statusColors = {
   NEW: 'bg-blue-100 text-blue-700 border-blue-200',
