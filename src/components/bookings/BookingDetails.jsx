@@ -113,8 +113,30 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   // Update booking mutation
   const updateBookingMutation = useMutation({
     mutationFn: (data) => base44.entities.Booking.update(booking.id, data),
-    onSuccess: () => {
+    onMutate: async (data) => {
+      await queryClient.cancelQueries({ queryKey: ['bookings'] });
+      await queryClient.cancelQueries({ queryKey: ['booking', booking.id] });
+      
+      const previousBookings = queryClient.getQueryData(['bookings']);
+      const previousBooking = queryClient.getQueryData(['booking', booking.id]);
+      
+      // Optimistically update booking in list
+      queryClient.setQueryData(['bookings'], (old) =>
+        old?.map(b => b.id === booking.id ? { ...b, ...data } : b)
+      );
+      
+      // Optimistically update single booking
+      queryClient.setQueryData(['booking', booking.id], (old) => ({ ...old, ...data }));
+      
+      return { previousBookings, previousBooking };
+    },
+    onError: (err, data, context) => {
+      queryClient.setQueryData(['bookings'], context.previousBookings);
+      queryClient.setQueryData(['booking', booking.id], context.previousBooking);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['booking', booking.id] });
     }
   });
 
@@ -144,7 +166,22 @@ export default function BookingDetails({ booking, onClose, orgId }) {
       status: 'PAID',
       paid_at: new Date().toISOString()
     }),
-    onSuccess: () => {
+    onMutate: async (paymentId) => {
+      await queryClient.cancelQueries({ queryKey: ['payments', booking.id] });
+      
+      const previousPayments = queryClient.getQueryData(['payments', booking.id]);
+      
+      // Optimistically update payment status
+      queryClient.setQueryData(['payments', booking.id], (old) =>
+        old?.map(p => p.id === paymentId ? { ...p, status: 'PAID', paid_at: new Date().toISOString() } : p)
+      );
+      
+      return { previousPayments };
+    },
+    onError: (err, paymentId, context) => {
+      queryClient.setQueryData(['payments', booking.id], context.previousPayments);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['payments', booking.id] });
     }
   });

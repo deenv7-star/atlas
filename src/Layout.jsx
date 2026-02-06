@@ -86,7 +86,7 @@ export default function Layout({ children, currentPageName }) {
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 font-['Heebo',sans-serif] overscroll-y-none">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-        
+
         :root {
           --bg-primary: #F8FAFC;
           --bg-secondary: #FFFFFF;
@@ -95,7 +95,7 @@ export default function Layout({ children, currentPageName }) {
           --border-color: #E2E8F0;
           --accent: #00D1C1;
         }
-        
+
         @media (prefers-color-scheme: dark) {
           :root {
             --bg-primary: #030712;
@@ -106,9 +106,24 @@ export default function Layout({ children, currentPageName }) {
             --accent: #00D1C1;
           }
         }
-        
+
         body {
           overscroll-behavior-y: none;
+        }
+
+        /* Prevent text selection on interactive elements */
+        button,
+        [role="button"],
+        a,
+        nav,
+        nav *,
+        header,
+        h1, h2, h3, h4, h5, h6,
+        svg,
+        .select-none {
+          user-select: none;
+          -webkit-user-select: none;
+          -webkit-touch-callout: none;
         }
       `}</style>
       
