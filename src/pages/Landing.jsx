@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
@@ -31,6 +30,7 @@ import { motion } from 'framer-motion';
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
+  const navigate = useNavigate();
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -52,13 +52,13 @@ export default function Landing() {
               <Button 
                 variant="ghost" 
                 className="text-[#0F172A]"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => navigate(createPageUrl('Dashboard'))}
               >
                 כניסה
               </Button>
               <Button 
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => navigate(createPageUrl('Dashboard'))}
               >
                 {t.startTrial}
               </Button>
@@ -86,7 +86,7 @@ export default function Landing() {
                 <Button 
                   size="lg" 
                   className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                  onClick={() => navigate(createPageUrl('Dashboard'))}
                 >
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
@@ -325,7 +325,7 @@ export default function Landing() {
                       className={`w-full rounded-xl ${key === 'pro' 
                         ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
                         : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                      onClick={() => navigate(createPageUrl('Dashboard'))}
                     >
                       {t.startTrial}
                     </Button>
@@ -393,7 +393,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              onClick={() => navigate(createPageUrl('Dashboard'))}
             >
               {t.startTrial}
               <ArrowLeft className="mr-2 h-5 w-5" />
