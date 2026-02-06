@@ -26,6 +26,7 @@ const navItems = [
   { key: 'dashboard', icon: LayoutDashboard, page: 'Dashboard', label: 'לוח בקרה' },
   { key: 'leads', icon: Users, page: 'Leads', label: 'לידים' },
   { key: 'bookings', icon: CalendarDays, page: 'Bookings', label: 'הזמנות' },
+  { key: 'invoices', icon: FileText, page: 'Invoices', label: 'חשבוניות' },
   { key: 'messages', icon: MessageSquare, page: 'Messages', label: 'הודעות' },
   { key: 'cleaning', icon: Sparkles, page: 'Cleaning', label: 'ניקיון' },
   { key: 'payments', icon: CreditCard, page: 'Payments', label: 'תשלומים' },

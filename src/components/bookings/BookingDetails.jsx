@@ -38,7 +38,8 @@ import {
   Plus,
   CheckCircle2,
   Circle,
-  Clock
+  Clock,
+  Receipt
 } from 'lucide-react';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -324,16 +325,30 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             {/* Payments Section */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold">תשלומים</h3>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="rounded-lg gap-1"
-                  onClick={() => setIsPaymentDialogOpen(true)}
-                >
-                  <Plus className="h-3 w-3" />
-                  הוסף
-                </Button>
+                <h3 className="font-semibold">תשלומים וחשבוניות</h3>
+                <div className="flex gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="rounded-lg gap-1"
+                    onClick={() => {
+                      // Navigate to create invoice with this booking
+                      window.location.href = `/Invoices?booking=${booking.id}`;
+                    }}
+                  >
+                    <Receipt className="h-3 w-3" />
+                    חשבונית
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="rounded-lg gap-1"
+                    onClick={() => setIsPaymentDialogOpen(true)}
+                  >
+                    <Plus className="h-3 w-3" />
+                    תשלום
+                  </Button>
+                </div>
               </div>
               
               {/* Payment Summary */}
