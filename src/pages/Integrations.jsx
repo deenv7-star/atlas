@@ -108,6 +108,10 @@ export default function IntegrationsPage() {
             <MessageSquare className="h-4 w-4" />
             הודעות
           </TabsTrigger>
+          <TabsTrigger value="pms" className="flex items-center gap-2">
+            <Settings2 className="h-4 w-4" />
+            מערכות PMS
+          </TabsTrigger>
         </TabsList>
 
         {/* Calendars Tab */}
@@ -257,8 +261,8 @@ export default function IntegrationsPage() {
 
         {/* Payments Tab */}
         <TabsContent value="payments" className="mt-6 space-y-6">
-          <div className="grid md:grid-cols-2 gap-4">
-            <Card>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-[#635BFF] flex items-center justify-center text-white font-bold">S</div>
@@ -274,7 +278,7 @@ export default function IntegrationsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-[#003087] flex items-center justify-center text-white font-bold">P</div>
@@ -289,13 +293,77 @@ export default function IntegrationsPage() {
                 </Button>
               </CardContent>
             </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white">💳</div>
+                  Bit
+                </CardTitle>
+                <CardDescription>קבל תשלומים דרך Bit</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white">💰</div>
+                  Tranzila
+                </CardTitle>
+                <CardDescription>עיבוד תשלומים ישראלי</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white">🏦</div>
+                  Meshulam
+                </CardTitle>
+                <CardDescription>תשלומים מאובטחים</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center text-white">🔐</div>
+                  Cardcom
+                </CardTitle>
+                <CardDescription>שער תשלומים ישראלי</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
         {/* Messaging Tab */}
         <TabsContent value="messaging" className="mt-6 space-y-6">
-          <div className="grid md:grid-cols-2 gap-4">
-            <Card>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-[#25D366] flex items-center justify-center text-white">💬</div>
@@ -311,13 +379,226 @@ export default function IntegrationsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-600 flex items-center justify-center text-white">📧</div>
                   Email (SMTP)
                 </CardTitle>
                 <CardDescription>שלח אימיילים אוטומטיים</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#0088cc] flex items-center justify-center text-white">✈️</div>
+                  Telegram
+                </CardTitle>
+                <CardDescription>שלח הודעות דרך Telegram Bot</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#F89800] flex items-center justify-center text-white">📱</div>
+                  SMS (Twilio)
+                </CardTitle>
+                <CardDescription>שלח הודעות SMS</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center text-white">📬</div>
+                  SendGrid
+                </CardTitle>
+                <CardDescription>שירות דיוור מתקדם</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#5865F2] flex items-center justify-center text-white">🎮</div>
+                  Discord
+                </CardTitle>
+                <CardDescription>התראות ב-Discord</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* PMS Tab */}
+        <TabsContent value="pms" className="mt-6 space-y-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#5B21B6] flex items-center justify-center text-white font-bold">G</div>
+                  Guesty
+                </CardTitle>
+                <CardDescription>סנכרון עם Guesty PMS</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">H</div>
+                  Hostaway
+                </CardTitle>
+                <CardDescription>אינטגרציה עם Hostaway</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white font-bold">L</div>
+                  Lodgify
+                </CardTitle>
+                <CardDescription>ניהול ערוצי הפצה</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold">C</div>
+                  Cloudbeds
+                </CardTitle>
+                <CardDescription>פלטפורמת ניהול מלונות</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold">O</div>
+                  Opera PMS
+                </CardTitle>
+                <CardDescription>מערכת ניהול מלונאית</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-cyan-600 flex items-center justify-center text-white font-bold">M</div>
+                  Mews
+                </CardTitle>
+                <CardDescription>Cloud Hotel Management</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white">🏨</div>
+                  Apaleo
+                </CardTitle>
+                <CardDescription>Open Hospitality Platform</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-pink-600 flex items-center justify-center text-white">🔗</div>
+                  Channel Manager
+                </CardTitle>
+                <CardDescription>ניהול ערוצי הפצה מרוכז</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" disabled>
+                  <Link2 className="h-4 w-4 ml-2" />
+                  בקרוב
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center text-white">⚡</div>
+                  Zapier
+                </CardTitle>
+                <CardDescription>חיבור ל-5000+ אפליקציות</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="outline" className="w-full" disabled>
