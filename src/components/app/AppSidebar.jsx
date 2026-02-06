@@ -15,7 +15,10 @@ import {
   Star,
   Settings,
   LogOut,
-  ChevronLeft
+  ChevronLeft,
+  Zap,
+  Brain,
+  Link2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -28,6 +31,9 @@ const navItems = [
   { key: 'payments', icon: CreditCard, page: 'Payments', label: 'תשלומים' },
   { key: 'contracts', icon: FileText, page: 'Contracts', label: 'חוזים' },
   { key: 'reviews', icon: Star, page: 'Reviews', label: 'ביקורות' },
+  { key: 'automations', icon: Zap, page: 'Automations', label: 'אוטומציות' },
+  { key: 'insights', icon: Brain, page: 'Insights', label: 'תובנות AI' },
+  { key: 'integrations', icon: Link2, page: 'Integrations', label: 'אינטגרציות' },
   { key: 'settings', icon: Settings, page: 'Settings', label: 'הגדרות' }
 ];
 
