@@ -67,83 +67,265 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
-        <div className="max-w-7xl mx-auto">
+      {/* Hero Section - Enhanced */}
+      <section className="relative pt-32 pb-20 px-4 overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#F8FAFC] via-[#E8F5F4] to-[#F0F9FF]">
+          <div className="absolute inset-0 opacity-30">
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full bg-gradient-to-r from-[#00D1C1] to-[#00B8A9]"
+                style={{
+                  width: Math.random() * 300 + 50,
+                  height: Math.random() * 300 + 50,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  filter: 'blur(60px)',
+                }}
+                animate={{
+                  x: [0, Math.random() * 100 - 50],
+                  y: [0, Math.random() * 100 - 50],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: Math.random() * 10 + 10,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, type: "spring" }}
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
-                {t.heroTitle}
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                {t.heroSubtitle}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button 
-                  size="lg" 
-                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
-                  onClick={() => navigate(createPageUrl('Dashboard'))}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-[#00D1C1]/20"
+              >
+                <Sparkles className="h-4 w-4 text-[#00D1C1]" />
+                <span className="text-sm font-medium text-[#0B1220]">המערכת המתקדמת לניהול נכסים</span>
+              </motion.div>
+
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#0B1220] leading-tight mb-6">
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="block"
                 >
-                  {t.startTrial}
-                  <ArrowLeft className="mr-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
-                  {t.bookDemo}
-                </Button>
-              </div>
+                  {t.heroTitle.split(' ')[0]}
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="block bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] bg-clip-text text-transparent"
+                >
+                  {t.heroTitle.split(' ').slice(1).join(' ')}
+                </motion.span>
+              </h1>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed"
+              >
+                {t.heroSubtitle}
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="flex flex-wrap gap-4"
+              >
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:from-[#00B8A9] hover:to-[#00A89A] text-white font-bold px-10 py-7 text-lg rounded-2xl shadow-xl shadow-[#00D1C1]/30"
+                    onClick={() => navigate(createPageUrl('Dashboard'))}
+                  >
+                    {t.startTrial}
+                    <ArrowLeft className="mr-2 h-6 w-6" />
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="border-2 border-[#0B1220] text-[#0B1220] hover:bg-[#0B1220] hover:text-white px-10 py-7 text-lg rounded-2xl font-semibold"
+                  >
+                    {t.bookDemo}
+                  </Button>
+                </motion.div>
+              </motion.div>
+
+              {/* Social Proof */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="mt-12 flex items-center gap-8 text-sm"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-3">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] border-2 border-white flex items-center justify-center text-white font-bold">
+                        {String.fromCharCode(65 + i)}
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[#0B1220]">200+ בעלי נכסים</p>
+                    <p className="text-gray-500">כבר סומכים עלינו</p>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
             
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
+              initial={{ opacity: 0, x: 50, rotateY: 25 }}
+              animate={{ opacity: 1, x: 0, rotateY: 0 }}
+              transition={{ duration: 0.8, type: "spring" }}
+              className="relative perspective-1000"
             >
-              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
-                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
-                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
+              {/* Floating Elements */}
+              <motion.div
+                animate={{ 
+                  y: [0, -20, 0],
+                  rotate: [0, 5, 0]
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="absolute -top-10 -right-10 bg-white rounded-2xl p-4 shadow-2xl border border-[#00D1C1]/20 z-10"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <CheckCircle2 className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[#0B1220]">הזמנה אושרה!</p>
+                    <p className="text-xs text-gray-500">משפחת כהן • ₪2,400</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                animate={{ 
+                  y: [0, 15, 0],
+                  rotate: [0, -3, 0]
+                }}
+                transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+                className="absolute -bottom-6 right-10 bg-white rounded-2xl p-4 shadow-2xl border border-[#00D1C1]/20 z-10"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#00D1C1] rounded-xl flex items-center justify-center">
+                    <MessageSquare className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[#0B1220]">3 הודעות חדשות</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Main Dashboard Preview */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="relative bg-gradient-to-br from-[#0B1220] via-[#1a2744] to-[#0B1220] rounded-3xl p-6 shadow-2xl"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00D1C1]/10 to-transparent rounded-3xl" />
+                
+                <div className="relative bg-white rounded-2xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-[#0B1220] to-[#1a2744] px-4 py-3 flex items-center gap-2">
                     <div className="flex gap-1.5">
                       <div className="w-3 h-3 rounded-full bg-red-400"></div>
                       <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
                       <div className="w-3 h-3 rounded-full bg-green-400"></div>
                     </div>
-                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
+                    <span className="text-sm text-white/60 mr-4">dashboard.stayflow.io</span>
                   </div>
-                  <div className="p-6 space-y-4">
+                  
+                  <div className="p-6 space-y-4 bg-gradient-to-br from-[#F8FAFC] to-white">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
-                        <p className="text-sm text-gray-500">לידים חדשים</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
-                      </div>
-                      <div className="bg-[#F2E9DB] rounded-xl p-4">
-                        <p className="text-sm text-gray-500">הזמנות החודש</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
-                      </div>
+                      <motion.div 
+                        whileHover={{ scale: 1.05, y: -5 }}
+                        className="bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] rounded-2xl p-4 shadow-lg"
+                      >
+                        <p className="text-sm text-white/80">לידים חדשים</p>
+                        <p className="text-3xl font-bold text-white">12</p>
+                        <div className="text-xs text-white/60 mt-1">+3 היום</div>
+                      </motion.div>
+                      <motion.div 
+                        whileHover={{ scale: 1.05, y: -5 }}
+                        className="bg-gradient-to-br from-[#F59E0B] to-[#D97706] rounded-2xl p-4 shadow-lg"
+                      >
+                        <p className="text-sm text-white/80">הזמנות החודש</p>
+                        <p className="text-3xl font-bold text-white">28</p>
+                        <div className="text-xs text-white/60 mt-1">+8 משבוע שעבר</div>
+                      </motion.div>
                     </div>
-                    <div className="bg-white rounded-xl border p-4">
+                    
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }}
+                      className="bg-white rounded-2xl border-2 border-[#00D1C1]/20 p-4 shadow-sm"
+                    >
                       <div className="flex justify-between items-center mb-3">
-                        <span className="font-medium">כניסות היום</span>
-                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
+                        <span className="font-bold text-[#0B1220]">כניסות היום</span>
+                        <span className="bg-[#00D1C1] text-white text-xs font-bold px-3 py-1 rounded-full">3 אורחים</span>
                       </div>
                       <div className="space-y-2">
-                        {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
-                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
-                            <span>{item}</span>
-                            <span className="text-green-600">מאושר</span>
-                          </div>
+                        {[
+                          { name: 'משפחת כהן', property: 'וילה צפון', color: 'from-green-400 to-emerald-500' },
+                          { name: 'דני לוי', property: 'סוויטה', color: 'from-blue-400 to-cyan-500' }
+                        ].map((item, i) => (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.8 + i * 0.1 }}
+                            whileHover={{ x: 5 }}
+                            className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-white rounded-xl p-3 border border-gray-100"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center text-white font-bold`}>
+                                {item.name.charAt(0)}
+                              </div>
+                              <div>
+                                <p className="font-semibold text-sm text-[#0B1220]">{item.name}</p>
+                                <p className="text-xs text-gray-500">{item.property}</p>
+                              </div>
+                            </div>
+                            <span className="text-green-600 font-semibold text-sm">✓ מאושר</span>
+                          </motion.div>
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
-              </div>
-              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
-                ✓ 0 הזמנות כפולות
-              </div>
+
+                {/* Success Badge */}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 1, type: "spring" }}
+                  className="absolute -bottom-6 -left-6 bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] text-white px-6 py-3 rounded-2xl shadow-2xl font-bold flex items-center gap-2"
+                >
+                  <CheckCircle2 className="h-5 w-5" />
+                  0 הזמנות כפולות
+                </motion.div>
+              </motion.div>
+
+              {/* Decorative Elements */}
+              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-r from-[#00D1C1]/10 to-transparent rounded-full blur-3xl" />
             </motion.div>
           </div>
         </div>
