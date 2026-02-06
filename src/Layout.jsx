@@ -23,6 +23,17 @@ export default function Layout({ children, currentPageName }) {
         try {
           const userData = await base44.auth.me();
           setUser(userData);
+          
+          // If user doesn't have an org_id, create one or assign demo org
+          if (!userData.org_id) {
+            // For demo purposes, assign the demo organization
+            const orgs = await base44.entities.Organization.list('-created_date', 1);
+            if (orgs.length > 0) {
+              await base44.auth.updateMe({ org_id: orgs[0].id, app_role: 'OWNER' });
+              setUser({ ...userData, org_id: orgs[0].id, app_role: 'OWNER' });
+            }
+          }
+          
           if (userData.selected_property_id) {
             setSelectedPropertyId(userData.selected_property_id);
           }
