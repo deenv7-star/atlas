@@ -10,6 +10,7 @@ const publicPages = ['Landing', 'Login', 'Privacy', 'Terms'];
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const queryClient = useQueryClient();
@@ -83,15 +84,39 @@ export default function Layout({ children, currentPageName }) {
         @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
       `}</style>
       
-      <AppSidebar 
-        collapsed={sidebarCollapsed} 
-        onCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-        onLogout={handleLogout}
-      />
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block">
+        <AppSidebar 
+          collapsed={sidebarCollapsed} 
+          onCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          onLogout={handleLogout}
+        />
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar */}
+      <div className={cn(
+        "fixed top-0 right-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 lg:hidden",
+        sidebarOpen ? "translate-x-0" : "translate-x-full"
+      )}>
+        <AppSidebar 
+          collapsed={false} 
+          onCollapse={() => setSidebarOpen(false)}
+          onLogout={handleLogout}
+        />
+      </div>
 
       <div className={cn(
         "transition-all duration-300",
-        sidebarCollapsed ? "mr-20" : "mr-64"
+        "lg:mr-20 lg:mr-64",
+        sidebarCollapsed ? "lg:mr-20" : "lg:mr-64"
       )}>
         <AppHeader 
           user={user}
@@ -99,9 +124,10 @@ export default function Layout({ children, currentPageName }) {
           selectedPropertyId={selectedPropertyId}
           onPropertyChange={handlePropertyChange}
           onLogout={handleLogout}
+          onMenuClick={() => setSidebarOpen(true)}
         />
 
-        <main className="p-6">
+        <main className="p-3 sm:p-4 md:p-6">
           {React.cloneElement(children, { 
             user, 
             selectedPropertyId, 
