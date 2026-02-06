@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import AppSidebar from '@/components/app/AppSidebar';
 import AppHeader from '@/components/app/AppHeader';
 import BottomTabs from '@/components/app/BottomTabs';
@@ -10,6 +12,7 @@ import { cn } from '@/lib/utils';
 const publicPages = ['Landing', 'Login', 'Privacy', 'Terms'];
 
 export default function Layout({ children, currentPageName }) {
+  const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -155,12 +158,15 @@ export default function Layout({ children, currentPageName }) {
         </div>
 
         <main className="p-3 sm:p-4 md:p-6 pb-20 lg:pb-6">
-          {React.cloneElement(children, { 
-            user, 
-            selectedPropertyId, 
-            properties,
-            orgId: user?.org_id 
-          })}
+          <AnimatePresence mode="wait" initial={false}>
+            {React.cloneElement(children, { 
+              key: location.pathname,
+              user, 
+              selectedPropertyId, 
+              properties,
+              orgId: user?.org_id 
+            })}
+          </AnimatePresence>
         </main>
       </div>
 

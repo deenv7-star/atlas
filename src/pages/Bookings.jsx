@@ -173,6 +173,10 @@ export default function Bookings({ user, selectedPropertyId, orgId, properties }
     await queryClient.invalidateQueries({ queryKey: ['bookings'] });
   };
 
+  const handleBookingClick = (bookingId) => {
+    navigate(`${createPageUrl('Bookings')}/${bookingId}`);
+  };
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
       <div className="space-y-6">

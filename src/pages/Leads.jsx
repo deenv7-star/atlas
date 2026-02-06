@@ -155,7 +155,18 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
   // Update lead mutation
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
-    onSuccess: () => {
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries({ queryKey: ['leads'] });
+      const previousLeads = queryClient.getQueryData(['leads', orgId, selectedPropertyId]);
+      queryClient.setQueryData(['leads', orgId, selectedPropertyId], (old) =>
+        old?.map(lead => lead.id === id ? { ...lead, ...data } : lead)
+      );
+      return { previousLeads };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(['leads', orgId, selectedPropertyId], context.previousLeads);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['leads'] });
     }
   });
@@ -300,9 +311,9 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
             ) : (
               filteredLeads.map(lead => (
                 <TableRow 
-                  key={lead.id} 
-                  className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => setSelectedLead(lead)}
+                 key={lead.id} 
+                 className="cursor-pointer hover:bg-gray-50 select-none"
+                 onClick={() => navigate(`${createPageUrl('Leads')}/${lead.id}`)}
                 >
                   <TableCell className="font-medium">{lead.name}</TableCell>
                   <TableCell dir="ltr" className="text-left">{lead.phone}</TableCell>
@@ -367,8 +378,8 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
         </Table>
       </Card>
 
-      {/* Lead Details Sheet */}
-      <Sheet open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
+      {/* Lead Details Sheet - Removed, now using routes */}
+      {false && <Sheet open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
         <SheetContent side="left" className="w-full sm:w-[500px] overflow-y-auto">
           {selectedLead && (
             <>

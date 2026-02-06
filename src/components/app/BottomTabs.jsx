@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { LayoutDashboard, CalendarCheck, Users, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,18 @@ const tabs = [
 
 export default function BottomTabs() {
   const location = useLocation();
+  const navigate = useNavigate();
   const currentPath = location.pathname;
+
+  const handleTabClick = (e, tab) => {
+    const tabPath = createPageUrl(tab.name);
+    const isActive = currentPath.includes(tab.name.toLowerCase());
+    
+    if (isActive && currentPath !== tabPath) {
+      e.preventDefault();
+      navigate(tabPath);
+    }
+  };
 
   return (
     <div 
@@ -22,11 +33,12 @@ export default function BottomTabs() {
     >
       <nav className="flex items-center justify-around h-16">
         {tabs.map((tab) => {
-          const isActive = currentPath.includes(tab.name);
+          const isActive = currentPath.includes(tab.name.toLowerCase());
           return (
             <Link
               key={tab.name}
               to={createPageUrl(tab.name)}
+              onClick={(e) => handleTabClick(e, tab)}
               className={cn(
                 "flex flex-col items-center justify-center flex-1 h-full transition-colors select-none",
                 isActive 

@@ -15,7 +15,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Building2, User, Settings, LogOut, Bell, Plus, Menu } from 'lucide-react';
+import { Building2, User, Settings, LogOut, Bell, Plus, Menu, ArrowRight } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function AppHeader({ 
   user, 
@@ -25,8 +26,12 @@ export default function AppHeader({
   onLogout,
   onMenuClick
 }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const selectedProperty = properties.find(p => p.id === selectedPropertyId);
   const initials = user?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U';
+  
+  const isChildRoute = location.pathname.split('/').length > 2;
 
   return (
     <header className="h-14 sm:h-16 bg-white border-b flex items-center justify-between px-3 sm:px-4 md:px-6">
@@ -42,7 +47,7 @@ export default function AppHeader({
         </Button>
         {/* Property Selector */}
         <Select value={selectedPropertyId || ''} onValueChange={onPropertyChange}>
-          <SelectTrigger className="w-[140px] sm:w-[180px] md:w-[200px] border-gray-200 rounded-lg md:rounded-xl text-xs sm:text-sm">
+          <SelectTrigger className={`w-[140px] sm:w-[180px] md:w-[200px] border-gray-200 rounded-lg md:rounded-xl text-xs sm:text-sm select-none ${isChildRoute ? 'hidden lg:flex' : ''}`}>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400" />
               <SelectValue placeholder="בחר נכס" />
