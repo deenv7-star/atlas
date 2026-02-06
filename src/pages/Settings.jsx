@@ -115,6 +115,10 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
     }
   });
 
+  // Delete account states
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+
   const resetPropertyForm = () => {
     setNewProperty({
       name: '',
@@ -336,6 +340,58 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Delete Account Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle className="text-red-600">מחיקת חשבון</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+              <p className="text-sm text-red-800 font-medium mb-2">אזהרה: פעולה בלתי הפיכה</p>
+              <p className="text-xs text-red-600">
+                מחיקת החשבון תמחק את כל הנתונים שלך לצמיתות, כולל נכסים, הזמנות, לידים ותשלומים.
+              </p>
+            </div>
+
+            <div>
+              <Label>הקלד "מחק את החשבון שלי" לאישור</Label>
+              <Input 
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                className="mt-1 rounded-xl"
+                placeholder="מחק את החשבון שלי"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setDeleteConfirmText('');
+              }} 
+              className="rounded-xl"
+            >
+              ביטול
+            </Button>
+            <Button 
+              disabled={deleteConfirmText !== 'מחק את החשבון שלי'}
+              onClick={() => {
+                toast.error('פונקציונליות זו תתווסף בקרוב');
+                setIsDeleteDialogOpen(false);
+                setDeleteConfirmText('');
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white rounded-xl"
+            >
+              מחק חשבון לצמיתות
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Property Dialog */}
       <Dialog open={isPropertyDialogOpen} onOpenChange={setIsPropertyDialogOpen}>

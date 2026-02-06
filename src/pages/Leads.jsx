@@ -577,6 +577,7 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </PullToRefresh>
   );
 }

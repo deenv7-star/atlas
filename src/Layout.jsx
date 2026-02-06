@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import AppSidebar from '@/components/app/AppSidebar';
 import AppHeader from '@/components/app/AppHeader';
+import BottomTabs from '@/components/app/BottomTabs';
 import { cn } from '@/lib/utils';
 
 // Pages that don't need the app layout
@@ -79,9 +80,33 @@ export default function Layout({ children, currentPageName }) {
 
   // App layout
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
+    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 font-['Heebo',sans-serif] overscroll-y-none">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+          --bg-primary: #F8FAFC;
+          --bg-secondary: #FFFFFF;
+          --text-primary: #0B1220;
+          --text-secondary: #64748B;
+          --border-color: #E2E8F0;
+          --accent: #00D1C1;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --bg-primary: #030712;
+            --bg-secondary: #111827;
+            --text-primary: #F9FAFB;
+            --text-secondary: #9CA3AF;
+            --border-color: #374151;
+            --accent: #00D1C1;
+          }
+        }
+        
+        body {
+          overscroll-behavior-y: none;
+        }
       `}</style>
       
       {/* Desktop Sidebar */}
@@ -118,16 +143,18 @@ export default function Layout({ children, currentPageName }) {
         "lg:mr-20 lg:mr-64",
         sidebarCollapsed ? "lg:mr-20" : "lg:mr-64"
       )}>
-        <AppHeader 
-          user={user}
-          properties={properties}
-          selectedPropertyId={selectedPropertyId}
-          onPropertyChange={handlePropertyChange}
-          onLogout={handleLogout}
-          onMenuClick={() => setSidebarOpen(true)}
-        />
+        <div style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+          <AppHeader 
+            user={user}
+            properties={properties}
+            selectedPropertyId={selectedPropertyId}
+            onPropertyChange={handlePropertyChange}
+            onLogout={handleLogout}
+            onMenuClick={() => setSidebarOpen(true)}
+          />
+        </div>
 
-        <main className="p-3 sm:p-4 md:p-6">
+        <main className="p-3 sm:p-4 md:p-6 pb-20 lg:pb-6">
           {React.cloneElement(children, { 
             user, 
             selectedPropertyId, 
@@ -136,6 +163,8 @@ export default function Layout({ children, currentPageName }) {
           })}
         </main>
       </div>
+
+      <BottomTabs />
     </div>
   );
 }
