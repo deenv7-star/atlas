@@ -298,6 +298,21 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
                 <Save className="h-4 w-4" />
                 {updateUserMutation.isPending ? 'שומר...' : 'שמור שינויים'}
               </Button>
+
+              <div className="pt-6 mt-6 border-t border-gray-200">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-red-600">אזור מסוכן</h4>
+                  <p className="text-xs text-gray-500">פעולה זו תמחק את החשבון שלך לצמיתות</p>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    className="w-full border-red-200 text-red-600 hover:bg-red-50 rounded-xl gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    מחק חשבון
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
