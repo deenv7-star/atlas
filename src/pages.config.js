@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Automations from './pages/Automations';
+import BookingDetail from './pages/BookingDetail';
 import Bookings from './pages/Bookings';
 import Cleaning from './pages/Cleaning';
 import Contracts from './pages/Contracts';
@@ -55,6 +56,7 @@ import Dashboard from './pages/Dashboard';
 import Insights from './pages/Insights';
 import Integrations from './pages/Integrations';
 import Landing from './pages/Landing';
+import LeadDetail from './pages/LeadDetail';
 import Leads from './pages/Leads';
 import Messages from './pages/Messages';
 import Payments from './pages/Payments';
@@ -62,13 +64,13 @@ import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import Settings from './pages/Settings';
 import Terms from './pages/Terms';
-import BookingDetail from './pages/BookingDetail';
-import LeadDetail from './pages/LeadDetail';
+import Invoices from './pages/Invoices';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Automations": Automations,
+    "BookingDetail": BookingDetail,
     "Bookings": Bookings,
     "Cleaning": Cleaning,
     "Contracts": Contracts,
@@ -76,6 +78,7 @@ export const PAGES = {
     "Insights": Insights,
     "Integrations": Integrations,
     "Landing": Landing,
+    "LeadDetail": LeadDetail,
     "Leads": Leads,
     "Messages": Messages,
     "Payments": Payments,
@@ -83,8 +86,7 @@ export const PAGES = {
     "Reviews": Reviews,
     "Settings": Settings,
     "Terms": Terms,
-    "BookingDetail": BookingDetail,
-    "LeadDetail": LeadDetail,
+    "Invoices": Invoices,
 }
 
 export const pagesConfig = {
