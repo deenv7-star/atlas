@@ -20,15 +20,15 @@ import {
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { key: 'dashboard', icon: LayoutDashboard, page: 'Dashboard' },
-  { key: 'leads', icon: Users, page: 'Leads' },
-  { key: 'bookings', icon: CalendarDays, page: 'Bookings' },
-  { key: 'messages', icon: MessageSquare, page: 'Messages' },
-  { key: 'cleaning', icon: Sparkles, page: 'Cleaning' },
-  { key: 'payments', icon: CreditCard, page: 'Payments' },
-  { key: 'contracts', icon: FileText, page: 'Contracts' },
-  { key: 'reviews', icon: Star, page: 'Reviews' },
-  { key: 'settings', icon: Settings, page: 'Settings' }
+  { key: 'dashboard', icon: LayoutDashboard, page: 'Dashboard', label: 'לוח בקרה' },
+  { key: 'leads', icon: Users, page: 'Leads', label: 'לידים' },
+  { key: 'bookings', icon: CalendarDays, page: 'Bookings', label: 'הזמנות' },
+  { key: 'messages', icon: MessageSquare, page: 'Messages', label: 'הודעות' },
+  { key: 'cleaning', icon: Sparkles, page: 'Cleaning', label: 'ניקיון' },
+  { key: 'payments', icon: CreditCard, page: 'Payments', label: 'תשלומים' },
+  { key: 'contracts', icon: FileText, page: 'Contracts', label: 'חוזים' },
+  { key: 'reviews', icon: Star, page: 'Reviews', label: 'ביקורות' },
+  { key: 'settings', icon: Settings, page: 'Settings', label: 'הגדרות' }
 ];
 
 export default function AppSidebar({ collapsed, onCollapse, onLogout }) {
@@ -81,7 +81,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout }) {
                   )}
                 >
                   <item.icon className="h-5 w-5 flex-shrink-0" />
-                  {!collapsed && <span>{t[item.key]}</span>}
+                  {!collapsed && <span>{item.label}</span>}
                 </Link>
               </li>
             );
