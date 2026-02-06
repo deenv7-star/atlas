@@ -26,7 +26,7 @@ export default function Layout({ children, currentPageName }) {
     const link = document.querySelector("link[rel~='icon']") || document.createElement('link');
     link.type = 'image/png';
     link.rel = 'icon';
-    link.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6985b1fe56d9d0df97ea2f90/a8bf088be_66452C78-3479-445B-A742-9175A3E3BF81.png';
+    link.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6985b1fe56d9d0df97ea2f90/43db556ef_47A174FB-1051-43C1-BE98-3DCC56AE051E.png';
     document.head.appendChild(link);
   }, []);
 
