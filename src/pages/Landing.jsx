@@ -404,22 +404,40 @@ export default function Landing() {
             איך זה עובד?
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            {t.howItWorks.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="text-center"
-              >
-                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                  {step.step}
-                </div>
-                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.desc}</p>
-              </motion.div>
-            ))}
+            {t.howItWorks.map((step, i) => {
+              const images = [
+                'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=300&fit=crop'
+              ];
+              
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
+                  className="text-center"
+                >
+                  <div className="relative mb-6 mx-auto w-full max-w-xs">
+                    <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-lg">
+                      <img 
+                        src={images[i]} 
+                        alt={step.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220]/80 to-transparent" />
+                    </div>
+                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#00D1C1] text-[#0B1220] rounded-2xl flex items-center justify-center shadow-xl text-2xl font-bold">
+                      {step.step}
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                  <p className="text-gray-600">{step.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>

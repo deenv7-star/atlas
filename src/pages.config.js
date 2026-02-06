@@ -55,6 +55,7 @@ import Contracts from './pages/Contracts';
 import Dashboard from './pages/Dashboard';
 import Insights from './pages/Insights';
 import Integrations from './pages/Integrations';
+import Invoices from './pages/Invoices';
 import Landing from './pages/Landing';
 import LeadDetail from './pages/LeadDetail';
 import Leads from './pages/Leads';
@@ -64,7 +65,6 @@ import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import Settings from './pages/Settings';
 import Terms from './pages/Terms';
-import Invoices from './pages/Invoices';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +77,7 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Insights": Insights,
     "Integrations": Integrations,
+    "Invoices": Invoices,
     "Landing": Landing,
     "LeadDetail": LeadDetail,
     "Leads": Leads,
@@ -86,7 +87,6 @@ export const PAGES = {
     "Reviews": Reviews,
     "Settings": Settings,
     "Terms": Terms,
-    "Invoices": Invoices,
 }
 
 export const pagesConfig = {
