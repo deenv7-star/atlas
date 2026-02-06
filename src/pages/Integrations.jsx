@@ -90,7 +90,7 @@ export default function IntegrationsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">אינטגרציות</h1>
-          <p className="text-gray-500 mt-1">חבר את הכלים שלך ל-STAYFLOW</p>
+          <p className="text-gray-500 mt-1">חבר את הכלים שלך ל-STAY+</p>
         </div>
       </div>
 
