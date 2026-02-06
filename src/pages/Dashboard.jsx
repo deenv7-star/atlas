@@ -146,77 +146,94 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
   const isLoading = leadsLoading || bookingsLoading || paymentsLoading || cleaningLoading;
 
   return (
-    <div className="space-y-4 md:space-y-6 pb-6">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6 pb-6"
+    >
       {/* Command Center Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      >
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#0B1220]">שלום, {user?.full_name?.split(' ')[0] || 'משתמש'} 👋</h1>
-          <p className="text-sm md:text-base text-gray-500">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
+          <h1 className="text-3xl font-bold text-[#0B1220]">שלום, {user?.full_name?.split(' ')[0] || 'משתמש'}</h1>
+          <p className="text-gray-500 mt-1">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
         </div>
         <Link to={createPageUrl('Bookings')} className="w-full sm:w-auto">
-          <Button className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2 w-full sm:w-auto">
-            <Plus className="h-4 w-4" />
-            הזמנה חדשה
-          </Button>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button className="bg-[#0B1220] hover:bg-[#0B1220]/90 text-white rounded-xl gap-2 w-full sm:w-auto h-11 shadow-sm">
+              <Plus className="h-4 w-4" />
+              הזמנה חדשה
+            </Button>
+          </motion.div>
         </Link>
-      </div>
+      </motion.div>
 
       {/* Alert Banner */}
       {(criticalInsights.length > 0 || overduePayments.length > 0) && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-red-50 border border-red-200 rounded-xl md:rounded-2xl p-3 md:p-4"
+          transition={{ delay: 0.1 }}
+          className="relative overflow-hidden bg-white border border-red-100 rounded-2xl p-4 shadow-sm"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
-              <AlertTriangle className="h-4 w-4 md:h-5 md:w-5 text-red-600" />
+          <div className="absolute inset-0 bg-gradient-to-r from-red-50 to-transparent opacity-50" />
+          <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm md:text-base font-medium text-red-800">דרושה תשומת לב</p>
-              <p className="text-xs md:text-sm text-red-600">
+              <p className="font-semibold text-[#0B1220]">דרושה תשומת לב</p>
+              <p className="text-sm text-gray-600 mt-0.5">
                 {overduePayments.length > 0 && `${overduePayments.length} תשלומים באיחור`}
                 {overduePayments.length > 0 && criticalInsights.length > 0 && ' • '}
                 {criticalInsights.length > 0 && `${criticalInsights.length} התראות קריטיות`}
               </p>
             </div>
-            <Link to={createPageUrl('Insights')} className="w-full sm:w-auto">
-              <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-100 w-full sm:w-auto text-xs md:text-sm">
-                צפה בפרטים
-              </Button>
+            <Link to={createPageUrl('Insights')}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-sm">
+                  צפה בפרטים
+                </Button>
+              </motion.div>
             </Link>
           </div>
         </motion.div>
       )}
 
       {/* Today's Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, color: 'text-green-600 bg-green-50', link: 'Bookings' },
-          { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, color: 'text-orange-600 bg-orange-50', link: 'Bookings' },
-          { label: 'ניקיונות ממתינים', value: pendingCleaning.length, icon: Sparkles, color: 'text-cyan-600 bg-cyan-50', link: 'Cleaning' },
-          { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, color: overduePayments.length > 0 ? 'text-red-600 bg-red-50' : 'text-gray-600 bg-gray-50', link: 'Payments' }
+          { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, gradient: 'from-green-500 to-emerald-500', link: 'Bookings' },
+          { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, gradient: 'from-orange-500 to-amber-500', link: 'Bookings' },
+          { label: 'ניקיונות ממתינים', value: pendingCleaning.length, icon: Sparkles, gradient: 'from-cyan-500 to-blue-500', link: 'Cleaning' },
+          { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, gradient: overduePayments.length > 0 ? 'from-red-500 to-rose-500' : 'from-gray-400 to-gray-500', link: 'Payments' }
         ].map((stat, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 + i * 0.05, type: "spring" }}
           >
             <Link to={createPageUrl(stat.link)}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-all rounded-xl md:rounded-2xl cursor-pointer">
-                <CardContent className="p-3 md:p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] md:text-xs text-gray-500 mb-0.5 md:mb-1 leading-tight">{stat.label}</p>
-                      <p className="text-xl md:text-2xl font-bold text-[#0B1220]">{stat.value}</p>
+              <motion.div whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
+                <Card className="relative overflow-hidden border-0 bg-white shadow-sm hover:shadow-lg transition-all rounded-2xl cursor-pointer group">
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className={`p-2.5 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg`}>
+                        <stat.icon className="h-5 w-5 text-white" />
+                      </div>
                     </div>
-                    <div className={`p-1.5 md:p-2 rounded-lg md:rounded-xl ${stat.color}`}>
-                      <stat.icon className="h-4 w-4 md:h-5 md:w-5" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    <p className="text-3xl font-bold text-[#0B1220] mb-1">{stat.value}</p>
+                    <p className="text-xs text-gray-500">{stat.label}</p>
+                  </CardContent>
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-right" />
+                </Card>
+              </motion.div>
             </Link>
           </motion.div>
         ))}
@@ -225,72 +242,107 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
         {/* Left Column - Revenue & Occupancy */}
-        <div className="space-y-4 md:space-y-6">
-          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
-            <CardHeader className="pb-2 p-4 md:p-6">
-              <CardTitle className="text-sm md:text-base font-semibold">ביצועים חודשיים</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-              <div className="space-y-3 md:space-y-4">
+        <div className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+              <CardHeader className="pb-4 p-6 bg-gradient-to-br from-gray-50 to-white">
+                <CardTitle className="font-semibold flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
+                  ביצועים חודשיים
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 pt-0 space-y-5">
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs md:text-sm text-gray-500">הכנסות החודש</span>
-                    <span className="font-bold text-base md:text-lg text-[#0B1220]">₪{paidThisMonth.toLocaleString()}</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-500">הכנסות החודש</span>
+                    <span className="text-2xl font-bold text-[#0B1220]">₪{paidThisMonth.toLocaleString()}</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: '65%' }} />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs md:text-sm text-gray-500">יתרות פתוחות</span>
-                    <span className="font-bold text-base md:text-lg text-orange-600">₪{openBalances.toLocaleString()}</span>
-                  </div>
-                </div>
-                <div className="pt-2 md:pt-3 border-t">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs md:text-sm text-gray-500">תפוסה</span>
-                    <span className="font-bold text-base md:text-lg text-[#0B1220]">{occupancyRate}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden mt-1">
-                    <div className="h-full bg-[#00D1C1] rounded-full" style={{ width: `${occupancyRate}%` }} />
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: '65%' }}
+                      transition={{ duration: 1, delay: 0.5 }}
+                      className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+                    />
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-500">יתרות פתוחות</span>
+                    <span className="text-xl font-bold text-orange-600">₪{openBalances.toLocaleString()}</span>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-500">תפוסה</span>
+                    <span className="text-2xl font-bold text-[#0B1220]">{occupancyRate}%</span>
+                  </div>
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${occupancyRate}%` }}
+                      transition={{ duration: 1, delay: 0.6 }}
+                      className="h-full bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] rounded-full"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* AI Insights Preview */}
-          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl bg-gradient-to-br from-[#0A2540] to-[#0B1220] text-white">
-            <CardHeader className="pb-2 p-4 md:p-6">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
-                  <Brain className="h-4 w-4 md:h-5 md:w-5 text-[#00D1C1]" />
-                  תובנות AI
-                </CardTitle>
-                <Link to={createPageUrl('Insights')}>
-                  <Button variant="ghost" size="sm" className="text-[#00D1C1] hover:text-white hover:bg-white/10 text-xs md:text-sm">
-                    עוד <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-              {insights.length > 0 ? (
-                <div className="space-y-2">
-                  {insights.slice(0, 3).map((insight, i) => (
-                    <div key={insight.id || i} className="p-2 md:p-2.5 bg-white/10 rounded-lg">
-                      <p className="text-xs md:text-sm text-white/90 leading-snug">{insight.title}</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="relative overflow-hidden border-0 shadow-lg rounded-2xl bg-gradient-to-br from-[#0B1220] via-[#1a2744] to-[#0B1220]">
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50" />
+              <CardHeader className="relative pb-3 p-6">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="font-semibold flex items-center gap-2 text-white">
+                    <div className="w-9 h-9 rounded-xl bg-[#00D1C1]/20 flex items-center justify-center">
+                      <Brain className="h-5 w-5 text-[#00D1C1]" />
                     </div>
-                  ))}
+                    תובנות AI
+                  </CardTitle>
+                  <Link to={createPageUrl('Insights')}>
+                    <Button variant="ghost" size="sm" className="text-[#00D1C1] hover:bg-white/10 rounded-lg">
+                      עוד <ChevronRight className="h-4 w-4 mr-1" />
+                    </Button>
+                  </Link>
                 </div>
-              ) : (
-                <p className="text-xs md:text-sm text-white/60 text-center py-3 md:py-4">
-                  לחץ על "עדכן תובנות" בדף התובנות
-                </p>
-              )}
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent className="relative p-6 pt-0">
+                {insights.length > 0 ? (
+                  <div className="space-y-2.5">
+                    {insights.slice(0, 3).map((insight, i) => (
+                      <motion.div 
+                        key={insight.id || i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 + i * 0.1 }}
+                        className="p-3 bg-white/10 hover:bg-white/15 backdrop-blur-sm rounded-xl transition-colors cursor-pointer"
+                      >
+                        <p className="text-sm text-white/90 leading-relaxed">{insight.title}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <Sparkles className="h-10 w-10 mx-auto mb-3 text-white/20" />
+                    <p className="text-sm text-white/60">
+                      לחץ על "עדכן תובנות" בדף התובנות
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
 
         {/* Middle Column - Check-ins/Check-outs */}
@@ -452,6 +504,6 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
           </Card>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
