@@ -588,7 +588,7 @@ export default function Landing() {
               </Link>
             </div>
             <p className="text-white/40 text-sm">
-              © 2024 STAYFLOW. {t.allRightsReserved}
+              © 2026 STAY+. {t.allRightsReserved}
             </p>
           </div>
         </div>
