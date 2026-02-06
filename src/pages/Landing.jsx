@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
@@ -48,14 +49,19 @@ export default function Landing() {
           <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
             <div className="flex items-center gap-4">
-              <Link to={createPageUrl('Login')}>
-                <Button variant="ghost" className="text-[#0F172A]">כניסה</Button>
-              </Link>
-              <Link to={createPageUrl('Login')}>
-                <Button className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium">
-                  {t.startTrial}
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                className="text-[#0F172A]"
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              >
+                כניסה
+              </Button>
+              <Button 
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              >
+                {t.startTrial}
+              </Button>
             </div>
           </div>
         </div>
@@ -77,12 +83,14 @@ export default function Landing() {
                 {t.heroSubtitle}
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link to={createPageUrl('Login')}>
-                  <Button size="lg" className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl">
-                    {t.startTrial}
-                    <ArrowLeft className="mr-2 h-5 w-5" />
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
+                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                >
+                  {t.startTrial}
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                </Button>
                 <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
                   {t.bookDemo}
                 </Button>
@@ -313,15 +321,14 @@ export default function Landing() {
                         </li>
                       ))}
                     </ul>
-                    <Link to={createPageUrl('Login')}>
-                      <Button 
-                        className={`w-full rounded-xl ${key === 'pro' 
-                          ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
-                          : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      >
-                        {t.startTrial}
-                      </Button>
-                    </Link>
+                    <Button 
+                      className={`w-full rounded-xl ${key === 'pro' 
+                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
+                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
+                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                    >
+                      {t.startTrial}
+                    </Button>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -383,12 +390,14 @@ export default function Landing() {
               {t.finalCta}
             </h2>
             <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
-            <Link to={createPageUrl('Login')}>
-              <Button size="lg" className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl">
-                {t.startTrial}
-                <ArrowLeft className="mr-2 h-5 w-5" />
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+            >
+              {t.startTrial}
+              <ArrowLeft className="mr-2 h-5 w-5" />
+            </Button>
           </motion.div>
         </div>
       </section>
