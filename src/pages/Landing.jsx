@@ -67,265 +67,255 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero Section - Enhanced */}
-      <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#F8FAFC] via-[#E8F5F4] to-[#F0F9FF]">
-          <div className="absolute inset-0 opacity-30">
-            {[...Array(20)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute rounded-full bg-gradient-to-r from-[#00D1C1] to-[#00B8A9]"
-                style={{
-                  width: Math.random() * 300 + 50,
-                  height: Math.random() * 300 + 50,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  filter: 'blur(60px)',
-                }}
-                animate={{
-                  x: [0, Math.random() * 100 - 50],
-                  y: [0, Math.random() * 100 - 50],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: Math.random() * 10 + 10,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                }}
-              />
-            ))}
-          </div>
-        </div>
+      {/* Hero Section - Minimalist & Premium */}
+      <section className="relative pt-32 pb-20 px-4 overflow-hidden bg-white">
+        {/* Subtle Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:64px_64px]" />
+        
+        {/* Ambient Light Effect */}
+        <motion.div
+          className="absolute top-0 right-1/4 w-96 h-96 bg-[#00D1C1]/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, type: "spring" }}
-            >
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content */}
+            <div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-[#00D1C1]/20"
+                transition={{ duration: 0.6 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm mb-8"
               >
-                <Sparkles className="h-4 w-4 text-[#00D1C1]" />
-                <span className="text-sm font-medium text-[#0B1220]">המערכת המתקדמת לניהול נכסים</span>
+                <div className="w-2 h-2 rounded-full bg-[#00D1C1] animate-pulse" />
+                <span className="text-sm text-gray-600">AI-Powered Property Management</span>
               </motion.div>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#0B1220] leading-tight mb-6">
-                <motion.span
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="block"
-                >
-                  {t.heroTitle.split(' ')[0]}
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="block bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] bg-clip-text text-transparent"
-                >
-                  {t.heroTitle.split(' ').slice(1).join(' ')}
-                </motion.span>
-              </h1>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-6xl md:text-7xl lg:text-8xl font-bold text-[#0B1220] leading-[1.1] mb-6"
+              >
+                ניהול נכסים
+                <br />
+                <span className="text-gray-400">שונה לחלוטין</span>
+              </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed"
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-xl text-gray-500 mb-10 leading-relaxed max-w-lg"
               >
-                {t.heroSubtitle}
+                אוטומציה מלאה, בינה מלאכותית מתקדמת, וממשק אינטואיטיבי שחוסך לך שעות כל יום
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="flex flex-wrap gap-4"
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex items-center gap-4"
               >
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:from-[#00B8A9] hover:to-[#00A89A] text-white font-bold px-10 py-7 text-lg rounded-2xl shadow-xl shadow-[#00D1C1]/30"
-                    onClick={() => navigate(createPageUrl('Dashboard'))}
-                  >
-                    {t.startTrial}
-                    <ArrowLeft className="mr-2 h-6 w-6" />
-                  </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    className="border-2 border-[#0B1220] text-[#0B1220] hover:bg-[#0B1220] hover:text-white px-10 py-7 text-lg rounded-2xl font-semibold"
-                  >
-                    {t.bookDemo}
-                  </Button>
-                </motion.div>
+                <Button
+                  size="lg"
+                  className="group relative bg-[#0B1220] hover:bg-[#0B1220]/90 text-white px-8 h-14 rounded-xl font-medium overflow-hidden"
+                  onClick={() => navigate(createPageUrl('Dashboard'))}
+                >
+                  <span className="relative z-10 flex items-center">
+                    התחל בחינם
+                    <ArrowLeft className="mr-2 h-5 w-5 transition-transform group-hover:-translate-x-1" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#00D1C1]/20 to-transparent translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="ghost"
+                  className="text-gray-600 hover:text-[#0B1220] px-8 h-14 rounded-xl font-medium"
+                >
+                  צפה בדמו
+                  <motion.div
+                    className="mr-2 w-2 h-2 rounded-full bg-red-500"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                </Button>
               </motion.div>
 
-              {/* Social Proof */}
+              {/* Stats */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="mt-12 flex items-center gap-8 text-sm"
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="mt-16 flex items-center gap-12"
               >
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-3">
-                    {[...Array(4)].map((_, i) => (
-                      <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] border-2 border-white flex items-center justify-center text-white font-bold">
-                        {String.fromCharCode(65 + i)}
+                <div>
+                  <div className="text-3xl font-bold text-[#0B1220] mb-1">200+</div>
+                  <div className="text-sm text-gray-500">בעלי נכסים</div>
+                </div>
+                <div className="w-px h-12 bg-gray-200" />
+                <div>
+                  <div className="text-3xl font-bold text-[#0B1220] mb-1">50K+</div>
+                  <div className="text-sm text-gray-500">הזמנות מנוהלות</div>
+                </div>
+                <div className="w-px h-12 bg-gray-200" />
+                <div>
+                  <div className="text-3xl font-bold text-[#0B1220] mb-1">99.9%</div>
+                  <div className="text-sm text-gray-500">זמינות</div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right Visual */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
+            >
+              {/* Main Dashboard Card */}
+              <div className="relative bg-white rounded-3xl border border-gray-200 shadow-2xl shadow-black/5 overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0B1220] to-[#1a2744] flex items-center justify-center">
+                      <Sparkles className="h-4 w-4 text-[#00D1C1]" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-[#0B1220]">Dashboard</div>
+                      <div className="text-xs text-gray-400">Real-time overview</div>
+                    </div>
+                  </div>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="w-2 h-2 rounded-full bg-[#00D1C1]"
+                  />
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-4">
+                  {/* AI Insights */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="group relative bg-gradient-to-r from-[#0B1220] to-[#1a2744] rounded-2xl p-5 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50" />
+                    <div className="relative flex items-start justify-between">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-[#00D1C1]/20 backdrop-blur-sm flex items-center justify-center">
+                          <Sparkles className="h-5 w-5 text-[#00D1C1]" />
+                        </div>
+                        <div>
+                          <div className="text-white/90 font-medium mb-1">AI Recommendation</div>
+                          <div className="text-white/60 text-sm">3 new leads match your criteria</div>
+                        </div>
                       </div>
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="w-2 h-2 rounded-full bg-[#00D1C1]"
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { label: 'Active Bookings', value: '24', change: '+12%', trend: 'up' },
+                      { label: 'Revenue', value: '₪89K', change: '+8%', trend: 'up' },
+                    ].map((stat, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 + i * 0.1 }}
+                        whileHover={{ y: -2 }}
+                        className="group relative bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-100 cursor-pointer overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#00D1C1]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="relative">
+                          <div className="text-2xl font-bold text-[#0B1220] mb-1">{stat.value}</div>
+                          <div className="text-xs text-gray-500 mb-2">{stat.label}</div>
+                          <div className="flex items-center gap-1 text-xs text-green-600">
+                            <span>↗</span>
+                            <span>{stat.change}</span>
+                          </div>
+                        </div>
+                      </motion.div>
                     ))}
                   </div>
-                  <div>
-                    <p className="font-semibold text-[#0B1220]">200+ בעלי נכסים</p>
-                    <p className="text-gray-500">כבר סומכים עלינו</p>
-                  </div>
+
+                  {/* Recent Activity */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.9 }}
+                    className="space-y-2"
+                  >
+                    {[
+                      { icon: CheckCircle2, text: 'Booking confirmed', time: '2m ago', color: 'text-green-600 bg-green-50' },
+                      { icon: MessageSquare, text: 'New message received', time: '5m ago', color: 'text-blue-600 bg-blue-50' },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1 + i * 0.1 }}
+                        whileHover={{ x: 4 }}
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group"
+                      >
+                        <div className={`w-8 h-8 rounded-lg ${item.color} flex items-center justify-center`}>
+                          <item.icon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-sm text-[#0B1220] font-medium">{item.text}</div>
+                          <div className="text-xs text-gray-400">{item.time}</div>
+                        </div>
+                        <ArrowLeft className="h-4 w-4 text-gray-300 group-hover:text-gray-600 transition-colors" />
+                      </motion.div>
+                    ))}
+                  </motion.div>
                 </div>
-              </motion.div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 50, rotateY: 25 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
-              transition={{ duration: 0.8, type: "spring" }}
-              className="relative perspective-1000"
-            >
+              </div>
+
               {/* Floating Elements */}
               <motion.div
-                animate={{ 
-                  y: [0, -20, 0],
-                  rotate: [0, 5, 0]
-                }}
-                transition={{ duration: 4, repeat: Infinity }}
-                className="absolute -top-10 -right-10 bg-white rounded-2xl p-4 shadow-2xl border border-[#00D1C1]/20 z-10"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute -top-4 -right-4 bg-white rounded-2xl p-4 shadow-lg border border-gray-200"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <CheckCircle2 className="h-6 w-6 text-green-600" />
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#0B1220]">הזמנה אושרה!</p>
-                    <p className="text-xs text-gray-500">משפחת כהן • ₪2,400</p>
-                  </div>
+                  <div className="text-sm font-semibold text-[#0B1220]">100% Uptime</div>
                 </div>
               </motion.div>
 
               <motion.div
-                animate={{ 
-                  y: [0, 15, 0],
-                  rotate: [0, -3, 0]
-                }}
-                transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-                className="absolute -bottom-6 right-10 bg-white rounded-2xl p-4 shadow-2xl border border-[#00D1C1]/20 z-10"
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                className="absolute -bottom-4 left-4 bg-white rounded-2xl p-4 shadow-lg border border-gray-200"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#00D1C1] rounded-xl flex items-center justify-center">
-                    <MessageSquare className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#0B1220]">3 הודעות חדשות</p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 rounded-lg bg-[#00D1C1]/10 flex items-center justify-center"
+                  >
+                    <Sparkles className="h-4 w-4 text-[#00D1C1]" />
+                  </motion.div>
+                  <div className="text-sm font-semibold text-[#0B1220]">AI Powered</div>
                 </div>
               </motion.div>
-
-              {/* Main Dashboard Preview */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="relative bg-gradient-to-br from-[#0B1220] via-[#1a2744] to-[#0B1220] rounded-3xl p-6 shadow-2xl"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00D1C1]/10 to-transparent rounded-3xl" />
-                
-                <div className="relative bg-white rounded-2xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-[#0B1220] to-[#1a2744] px-4 py-3 flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                    </div>
-                    <span className="text-sm text-white/60 mr-4">dashboard.stayflow.io</span>
-                  </div>
-                  
-                  <div className="p-6 space-y-4 bg-gradient-to-br from-[#F8FAFC] to-white">
-                    <div className="grid grid-cols-2 gap-4">
-                      <motion.div 
-                        whileHover={{ scale: 1.05, y: -5 }}
-                        className="bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] rounded-2xl p-4 shadow-lg"
-                      >
-                        <p className="text-sm text-white/80">לידים חדשים</p>
-                        <p className="text-3xl font-bold text-white">12</p>
-                        <div className="text-xs text-white/60 mt-1">+3 היום</div>
-                      </motion.div>
-                      <motion.div 
-                        whileHover={{ scale: 1.05, y: -5 }}
-                        className="bg-gradient-to-br from-[#F59E0B] to-[#D97706] rounded-2xl p-4 shadow-lg"
-                      >
-                        <p className="text-sm text-white/80">הזמנות החודש</p>
-                        <p className="text-3xl font-bold text-white">28</p>
-                        <div className="text-xs text-white/60 mt-1">+8 משבוע שעבר</div>
-                      </motion.div>
-                    </div>
-                    
-                    <motion.div 
-                      whileHover={{ scale: 1.02 }}
-                      className="bg-white rounded-2xl border-2 border-[#00D1C1]/20 p-4 shadow-sm"
-                    >
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="font-bold text-[#0B1220]">כניסות היום</span>
-                        <span className="bg-[#00D1C1] text-white text-xs font-bold px-3 py-1 rounded-full">3 אורחים</span>
-                      </div>
-                      <div className="space-y-2">
-                        {[
-                          { name: 'משפחת כהן', property: 'וילה צפון', color: 'from-green-400 to-emerald-500' },
-                          { name: 'דני לוי', property: 'סוויטה', color: 'from-blue-400 to-cyan-500' }
-                        ].map((item, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.8 + i * 0.1 }}
-                            whileHover={{ x: 5 }}
-                            className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-white rounded-xl p-3 border border-gray-100"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center text-white font-bold`}>
-                                {item.name.charAt(0)}
-                              </div>
-                              <div>
-                                <p className="font-semibold text-sm text-[#0B1220]">{item.name}</p>
-                                <p className="text-xs text-gray-500">{item.property}</p>
-                              </div>
-                            </div>
-                            <span className="text-green-600 font-semibold text-sm">✓ מאושר</span>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  </div>
-                </div>
-
-                {/* Success Badge */}
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 1, type: "spring" }}
-                  className="absolute -bottom-6 -left-6 bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] text-white px-6 py-3 rounded-2xl shadow-2xl font-bold flex items-center gap-2"
-                >
-                  <CheckCircle2 className="h-5 w-5" />
-                  0 הזמנות כפולות
-                </motion.div>
-              </motion.div>
-
-              {/* Decorative Elements */}
-              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-r from-[#00D1C1]/10 to-transparent rounded-full blur-3xl" />
             </motion.div>
           </div>
         </div>
