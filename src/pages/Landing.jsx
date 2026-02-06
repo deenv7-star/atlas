@@ -405,10 +405,150 @@ export default function Landing() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {t.howItWorks.map((step, i) => {
-              const images = [
-                'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop',
-                'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop',
-                'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=300&fit=crop'
+              // Illustration SVGs for each step
+              const illustrations = [
+                // Step 1: Register
+                <svg viewBox="0 0 200 200" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: '#00D1C1', stopOpacity: 0.2 }} />
+                      <stop offset="100%" style={{ stopColor: '#00D1C1', stopOpacity: 0.05 }} />
+                    </linearGradient>
+                  </defs>
+                  {/* Background circle */}
+                  <circle cx="100" cy="100" r="80" fill="url(#grad1)" />
+                  {/* User icon */}
+                  <circle cx="100" cy="85" r="25" fill="#00D1C1" />
+                  <path d="M 60 150 Q 100 130 140 150" stroke="#00D1C1" strokeWidth="20" fill="none" strokeLinecap="round" />
+                  {/* Plus icon */}
+                  <motion.g
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <circle cx="150" cy="60" r="15" fill="#0B1220" />
+                    <line x1="150" y1="52" x2="150" y2="68" stroke="white" strokeWidth="3" strokeLinecap="round" />
+                    <line x1="142" y1="60" x2="158" y2="60" stroke="white" strokeWidth="3" strokeLinecap="round" />
+                  </motion.g>
+                </svg>,
+                
+                // Step 2: Connect
+                <svg viewBox="0 0 200 200" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: '#00D1C1', stopOpacity: 0.2 }} />
+                      <stop offset="100%" style={{ stopColor: '#00D1C1', stopOpacity: 0.05 }} />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="100" cy="100" r="80" fill="url(#grad2)" />
+                  {/* Calendar grid */}
+                  <rect x="60" y="70" width="80" height="70" rx="8" fill="#00D1C1" />
+                  <rect x="65" y="75" width="70" height="60" rx="4" fill="white" />
+                  {/* Grid lines */}
+                  {[0, 1, 2, 3].map((row) => 
+                    [0, 1, 2].map((col) => (
+                      <motion.rect
+                        key={`${row}-${col}`}
+                        x={70 + col * 20}
+                        y={80 + row * 13}
+                        width="15"
+                        height="8"
+                        rx="2"
+                        fill={row === 2 && col === 1 ? "#00D1C1" : "#E5E7EB"}
+                        animate={{ opacity: [0.3, 1, 0.3] }}
+                        transition={{ duration: 2, repeat: Infinity, delay: (row + col) * 0.2 }}
+                      />
+                    ))
+                  )}
+                  {/* Sync arrows */}
+                  <motion.path
+                    d="M 145 100 L 160 100"
+                    stroke="#0B1220"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  />
+                  <motion.path
+                    d="M 155 95 L 160 100 L 155 105"
+                    stroke="#0B1220"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    fill="none"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  />
+                </svg>,
+                
+                // Step 3: Automate
+                <svg viewBox="0 0 200 200" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: '#00D1C1', stopOpacity: 0.2 }} />
+                      <stop offset="100%" style={{ stopColor: '#00D1C1', stopOpacity: 0.05 }} />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="100" cy="100" r="80" fill="url(#grad3)" />
+                  {/* AI Brain/Sparkle */}
+                  <motion.g
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    style={{ transformOrigin: '100px 100px' }}
+                  >
+                    <circle cx="100" cy="100" r="35" fill="#00D1C1" opacity="0.3" />
+                    <motion.circle
+                      cx="100"
+                      cy="100"
+                      r="25"
+                      fill="#00D1C1"
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                  </motion.g>
+                  {/* Sparkles */}
+                  <motion.circle
+                    cx="65"
+                    cy="70"
+                    r="4"
+                    fill="#0B1220"
+                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0 }}
+                  />
+                  <motion.circle
+                    cx="135"
+                    cy="75"
+                    r="4"
+                    fill="#0B1220"
+                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                  />
+                  <motion.circle
+                    cx="130"
+                    cy="130"
+                    r="4"
+                    fill="#0B1220"
+                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                  />
+                  <motion.circle
+                    cx="70"
+                    cy="135"
+                    r="4"
+                    fill="#0B1220"
+                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
+                  />
+                  {/* Lightning bolt */}
+                  <motion.path
+                    d="M 100 70 L 95 100 L 105 100 L 100 130"
+                    stroke="white"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  />
+                </svg>
               ];
               
               return (
@@ -421,19 +561,22 @@ export default function Landing() {
                   className="text-center"
                 >
                   <div className="relative mb-6 mx-auto w-full max-w-xs">
-                    <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-lg">
-                      <img 
-                        src={images[i]} 
-                        alt={step.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220]/80 to-transparent" />
-                    </div>
-                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#00D1C1] text-[#0B1220] rounded-2xl flex items-center justify-center shadow-xl text-2xl font-bold">
-                      {step.step}
+                    {/* Illustration container */}
+                    <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-gradient-to-br from-gray-50 to-white border border-gray-100 p-8 relative">
+                      {illustrations[i]}
+                      {/* Step number overlay */}
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.2 + 0.3, type: "spring" }}
+                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#00D1C1] text-[#0B1220] rounded-2xl flex items-center justify-center shadow-xl text-2xl font-bold z-10"
+                      >
+                        {step.step}
+                      </motion.div>
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                  <h3 className="text-xl font-bold text-[#0B1220] mb-2 mt-6">{step.title}</h3>
                   <p className="text-gray-600">{step.desc}</p>
                 </motion.div>
               );
