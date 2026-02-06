@@ -56,6 +56,9 @@ import Bookings from './pages/Bookings';
 import Messages from './pages/Messages';
 import Cleaning from './pages/Cleaning';
 import Payments from './pages/Payments';
+import Contracts from './pages/Contracts';
+import Reviews from './pages/Reviews';
+import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
@@ -69,6 +72,9 @@ export const PAGES = {
     "Messages": Messages,
     "Cleaning": Cleaning,
     "Payments": Payments,
+    "Contracts": Contracts,
+    "Reviews": Reviews,
+    "Settings": Settings,
 }
 
 export const pagesConfig = {
