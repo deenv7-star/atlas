@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import InfoTooltip from '@/components/common/InfoTooltip';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,

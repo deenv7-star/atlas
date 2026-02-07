@@ -25,7 +25,8 @@ import {
   Brush,
   Send,
   FileSignature,
-  Star
+  Star,
+  PlayCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 

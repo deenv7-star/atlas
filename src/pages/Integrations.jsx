@@ -108,7 +108,7 @@ export default function IntegrationsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">אינטגרציות</h1>
-        <p className="text-gray-500 mt-1">חבר את הכלים שלך ל-ATLAS</p>
+        <p className="text-gray-500 mt-1">חבר את הכלים שלך ל-ATLAS - יומנים, תשלומים, הודעות, חשבונאות ומערכות PMS. האינטגרציות הזמינות יתווספו בהמשך (יומנים זמינים עכשיו).</p>
       </div>
 
       <Tabs defaultValue="calendars">
