@@ -112,30 +112,30 @@ export default function IntegrationsPage() {
       </div>
 
       <Tabs defaultValue="calendars">
-        <ScrollArea className="w-full">
-          <TabsList className="bg-gray-100 w-max sm:w-full">
-            <TabsTrigger value="calendars" className="flex items-center gap-2">
+        <div className="overflow-x-auto -mx-6 px-6">
+          <TabsList className="bg-gray-100 w-max sm:w-full inline-flex">
+            <TabsTrigger value="calendars" className="flex items-center gap-2 whitespace-nowrap">
               <Calendar className="h-4 w-4" />
               יומנים
             </TabsTrigger>
-            <TabsTrigger value="payments" className="flex items-center gap-2">
+            <TabsTrigger value="payments" className="flex items-center gap-2 whitespace-nowrap">
               <CreditCard className="h-4 w-4" />
               תשלומים
             </TabsTrigger>
-            <TabsTrigger value="messaging" className="flex items-center gap-2">
+            <TabsTrigger value="messaging" className="flex items-center gap-2 whitespace-nowrap">
               <MessageSquare className="h-4 w-4" />
               הודעות
             </TabsTrigger>
-            <TabsTrigger value="pms" className="flex items-center gap-2">
+            <TabsTrigger value="pms" className="flex items-center gap-2 whitespace-nowrap">
               <Settings2 className="h-4 w-4" />
               מערכות PMS
             </TabsTrigger>
-            <TabsTrigger value="accounting" className="flex items-center gap-2">
+            <TabsTrigger value="accounting" className="flex items-center gap-2 whitespace-nowrap">
               <CreditCard className="h-4 w-4" />
               חשבונאות
             </TabsTrigger>
           </TabsList>
-        </ScrollArea>
+        </div>
 
         {/* Calendars Tab */}
         <TabsContent value="calendars" className="mt-6 space-y-6">
