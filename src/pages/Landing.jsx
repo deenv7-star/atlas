@@ -300,84 +300,225 @@ export default function Landing() {
                 </div>
               </div>
 
-              {/* Organized Chaos Desktop */}
-              <div className="relative aspect-video bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 p-8">
-                {/* Modern Notification Stack */}
-                <div className="absolute top-6 left-6 space-y-2 z-20">
+              {/* Premium Chaos Visualization */}
+              <div className="relative aspect-video bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 overflow-hidden">
+                {/* Animated Background Grid */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute inset-0" style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                    backgroundSize: '50px 50px'
+                  }}></div>
+                </div>
+
+                {/* Glowing Orbs */}
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.6, 0.3]
+                  }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                  className="absolute top-1/4 right-1/4 w-64 h-64 bg-red-500/30 rounded-full blur-3xl"
+                />
+                <motion.div
+                  animate={{ 
+                    scale: [1.2, 1, 1.2],
+                    opacity: [0.3, 0.5, 0.3]
+                  }}
+                  transition={{ duration: 5, repeat: Infinity }}
+                  className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-yellow-500/20 rounded-full blur-3xl"
+                />
+
+                {/* Cascading Notifications */}
+                <div className="absolute top-4 left-6 space-y-3 z-20">
                   {[
-                    { app: 'WhatsApp', text: '3 לידים חדשים מחכים', icon: MessageSquare, color: 'from-green-500 to-green-600' },
-                    { app: 'Gmail', text: 'תזכורת: תשלום פקע אתמול', icon: AlertCircle, color: 'from-red-500 to-red-600' },
-                    { app: 'Airbnb', text: 'הזמנה חדשה לדירה 4', icon: Calendar, color: 'from-rose-500 to-rose-600' }
+                    { app: 'WhatsApp', text: '8 לידים חדשים מחכים', icon: MessageSquare, color: 'from-green-500 to-emerald-600', delay: 0.3 },
+                    { app: 'Gmail', text: 'דחוף: 3 תשלומים פקעו', icon: AlertCircle, color: 'from-red-500 to-rose-600', delay: 0.6 },
+                    { app: 'Airbnb', text: 'הזמנה חדשה דורשת אישור', icon: Calendar, color: 'from-rose-500 to-pink-600', delay: 0.9 },
+                    { app: 'Booking', text: 'שינוי תאריך - צריך לעדכן', icon: Calendar, color: 'from-blue-500 to-indigo-600', delay: 1.2 }
                   ].map((notif, i) => (
                     <motion.div
                       key={i}
-                      initial={{ opacity: 0, x: -50, scale: 0.9 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      transition={{ delay: 0.3 + i * 0.2, duration: 0.4 }}
-                      className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 min-w-[280px] backdrop-blur-sm"
+                      initial={{ opacity: 0, x: -100, rotate: -5 }}
+                      animate={{ 
+                        opacity: [0, 1, 1, 0.8],
+                        x: [-100, 0, 0, -20],
+                        rotate: [-5, 0, 0, 2]
+                      }}
+                      transition={{ 
+                        delay: notif.delay,
+                        duration: 0.6,
+                        times: [0, 0.3, 0.7, 1]
+                      }}
+                      whileHover={{ scale: 1.05, rotate: 0 }}
+                      className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-4 min-w-[300px] relative overflow-hidden group"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${notif.color} flex items-center justify-center flex-shrink-0`}>
-                          <notif.icon className="h-5 w-5 text-white" />
-                        </div>
+                      {/* Shine effect */}
+                      <motion.div
+                        animate={{ x: [-100, 400] }}
+                        transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                        className="absolute inset-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+                      />
+                      
+                      <div className="flex items-start gap-3 relative z-10">
+                        <motion.div 
+                          animate={{ rotate: [0, 5, 0, -5, 0] }}
+                          transition={{ duration: 2, repeat: Infinity, delay: notif.delay }}
+                          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${notif.color} flex items-center justify-center flex-shrink-0 shadow-lg`}
+                        >
+                          <notif.icon className="h-6 w-6 text-white" />
+                        </motion.div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold text-gray-900 mb-0.5">{notif.app}</p>
-                          <p className="text-xs text-gray-600 leading-tight">{notif.text}</p>
+                          <p className="text-sm font-bold text-gray-900 mb-1">{notif.app}</p>
+                          <p className="text-xs text-gray-600 leading-relaxed">{notif.text}</p>
                         </div>
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 1, repeat: Infinity, delay: notif.delay }}
+                          className="w-2 h-2 bg-red-500 rounded-full"
+                        />
                       </div>
                     </motion.div>
                   ))}
                 </div>
 
-                {/* Task Management Cards */}
-                <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 grid grid-cols-3 gap-4">
+                {/* Floating Task Cards with Depth */}
+                <div className="absolute right-8 top-1/2 -translate-y-1/2 space-y-4 z-10">
                   {[
-                    { title: 'משימות דחופות', count: 8, color: 'border-red-200 bg-red-50/50', badge: 'bg-red-500' },
-                    { title: 'תשלומים ממתינים', count: 12, color: 'border-yellow-200 bg-yellow-50/50', badge: 'bg-yellow-500' },
-                    { title: 'הזמנות חדשות', count: 5, color: 'border-blue-200 bg-blue-50/50', badge: 'bg-blue-500' }
+                    { title: 'משימות דחופות', count: 12, color: 'from-red-500/90 to-rose-600/90', items: 4, delay: 0.5 },
+                    { title: 'תשלומים ממתינים', count: 18, color: 'from-amber-500/90 to-orange-600/90', items: 3, delay: 0.7 },
+                    { title: 'בעיות לטיפול', count: 7, color: 'from-purple-500/90 to-violet-600/90', items: 3, delay: 0.9 }
                   ].map((card, i) => (
                     <motion.div
                       key={i}
-                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ delay: 0.6 + i * 0.15 }}
-                      className={`${card.color} border-2 rounded-xl p-4 backdrop-blur-sm shadow-lg`}
+                      initial={{ opacity: 0, x: 100, rotateY: -20 }}
+                      animate={{ 
+                        opacity: 1, 
+                        x: 0,
+                        rotateY: 0,
+                        y: [0, -10, 0]
+                      }}
+                      transition={{ 
+                        delay: card.delay,
+                        y: { duration: 3, repeat: Infinity, delay: i * 0.5 }
+                      }}
+                      whileHover={{ scale: 1.05, rotateY: 5 }}
+                      className={`bg-gradient-to-br ${card.color} backdrop-blur-xl rounded-2xl p-5 w-64 shadow-2xl border border-white/20 relative overflow-hidden`}
+                      style={{ transformStyle: 'preserve-3d' }}
                     >
-                      <div className="flex items-start justify-between mb-3">
-                        <h4 className="text-sm font-bold text-[#0F172A]">{card.title}</h4>
-                        <span className={`${card.badge} text-white text-xs font-bold px-2 py-1 rounded-full`}>
-                          {card.count}
-                        </span>
-                      </div>
-                      <div className="space-y-1.5">
-                        {[1, 2, 3].map((_, j) => (
-                          <div key={j} className="h-2 bg-white/60 rounded-full w-full"></div>
-                        ))}
+                      {/* Animated background pattern */}
+                      <motion.div
+                        animate={{ opacity: [0.3, 0.6, 0.3] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"
+                      />
+                      
+                      <div className="relative z-10">
+                        <div className="flex items-start justify-between mb-4">
+                          <h4 className="text-sm font-bold text-white">{card.title}</h4>
+                          <motion.span 
+                            animate={{ scale: [1, 1.1, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                            className="bg-white/30 text-white text-sm font-black px-3 py-1 rounded-full backdrop-blur-sm"
+                          >
+                            {card.count}
+                          </motion.span>
+                        </div>
+                        <div className="space-y-2.5">
+                          {[...Array(card.items)].map((_, j) => (
+                            <motion.div
+                              key={j}
+                              initial={{ width: 0 }}
+                              animate={{ width: ['0%', '100%', '80%', '100%'] }}
+                              transition={{ 
+                                delay: card.delay + j * 0.2,
+                                duration: 2,
+                                repeat: Infinity,
+                                repeatDelay: 3
+                              }}
+                              className="h-2.5 bg-white/40 backdrop-blur-sm rounded-full"
+                            />
+                          ))}
+                        </div>
                       </div>
                     </motion.div>
                   ))}
                 </div>
 
-                {/* Stress Level Indicator */}
+                {/* Critical Alert - Center Stage */}
                 <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 1.2, type: "spring" }}
-                  className="absolute bottom-6 left-1/2 -translate-x-1/2"
+                  initial={{ scale: 0, opacity: 0, y: 50 }}
+                  animate={{ 
+                    scale: [0, 1.1, 1],
+                    opacity: 1,
+                    y: [50, -5, 0]
+                  }}
+                  transition={{ 
+                    delay: 1.5,
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 10
+                  }}
+                  className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30"
                 >
-                  <div className="bg-gradient-to-r from-red-600 to-rose-600 text-white px-8 py-4 rounded-2xl font-bold shadow-2xl flex items-center gap-3">
+                  <motion.div
+                    animate={{ 
+                      boxShadow: [
+                        '0 0 20px rgba(239, 68, 68, 0.4)',
+                        '0 0 40px rgba(239, 68, 68, 0.6)',
+                        '0 0 20px rgba(239, 68, 68, 0.4)'
+                      ]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="bg-gradient-to-r from-red-600 via-rose-600 to-red-600 text-white px-10 py-5 rounded-3xl font-bold flex items-center gap-4 backdrop-blur-xl border-2 border-red-400/50"
+                  >
                     <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
+                      animate={{ 
+                        rotate: [0, 10, -10, 10, 0],
+                        scale: [1, 1.2, 1, 1.2, 1]
+                      }}
                       transition={{ duration: 2, repeat: Infinity }}
                     >
-                      <AlertCircle className="h-6 w-6" />
+                      <AlertCircle className="h-8 w-8" />
                     </motion.div>
                     <div>
-                      <p className="text-sm opacity-90">רמת מתח:</p>
-                      <p className="text-xl font-black">קריטית 🔥</p>
+                      <motion.p 
+                        animate={{ opacity: [0.7, 1, 0.7] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="text-xs uppercase tracking-wider font-black"
+                      >
+                        רמת מתח
+                      </motion.p>
+                      <p className="text-2xl font-black tracking-tight">קריטית 🔥</p>
                     </div>
-                  </div>
+                    <motion.div
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      style={{ transform: 'skewX(-20deg)' }}
+                    />
+                  </motion.div>
                 </motion.div>
+
+                {/* Chaos Particles */}
+                {[...Array(15)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ 
+                      opacity: [0, 0.6, 0],
+                      scale: [0, 1, 0],
+                      x: Math.random() * 800 - 400,
+                      y: Math.random() * 400 - 200
+                    }}
+                    transition={{ 
+                      duration: Math.random() * 3 + 2,
+                      delay: Math.random() * 2,
+                      repeat: Infinity,
+                      repeatDelay: Math.random() * 3
+                    }}
+                    className="absolute left-1/2 top-1/2 w-2 h-2 bg-white rounded-full"
+                  />
+                ))}
               </div>
             </motion.div>
 
