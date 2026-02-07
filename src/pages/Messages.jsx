@@ -236,7 +236,7 @@ export default function Messages({ user, selectedPropertyId, orgId, properties }
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0B1220]">הודעות</h1>
-          <p className="text-gray-500">ניהול תבניות ושליחת הודעות לאורחים</p>
+          <p className="text-gray-500">שלח הודעות אוטומטיות או ידניות לאורחים ב-WhatsApp, SMS ואימייל. צור תבניות לשימוש חוזר והגדר טריגרים אוטומטיים.</p>
         </div>
       </div>
 

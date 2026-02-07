@@ -307,9 +307,13 @@ export default function IntegrationsPage() {
                 <CardDescription>קבל תשלומים בכרטיס אשראי, Apple Pay ו-Google Pay</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -323,9 +327,13 @@ export default function IntegrationsPage() {
                 <CardDescription>קבל תשלומים דרך חשבון PayPal</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -339,9 +347,13 @@ export default function IntegrationsPage() {
                 <CardDescription>קבל תשלומים דרך Bit</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -355,9 +367,13 @@ export default function IntegrationsPage() {
                 <CardDescription>עיבוד תשלומים ישראלי</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -371,9 +387,13 @@ export default function IntegrationsPage() {
                 <CardDescription>תשלומים מאובטחים</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -387,9 +407,13 @@ export default function IntegrationsPage() {
                 <CardDescription>שער תשלומים ישראלי</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -415,9 +439,13 @@ export default function IntegrationsPage() {
                 <CardDescription>שלח הודעות אוטומטיות לאורחים</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -431,9 +459,13 @@ export default function IntegrationsPage() {
                 <CardDescription>שלח אימיילים אוטומטיים</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -447,9 +479,13 @@ export default function IntegrationsPage() {
                 <CardDescription>שלח הודעות דרך Telegram Bot</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -463,9 +499,13 @@ export default function IntegrationsPage() {
                 <CardDescription>שלח הודעות SMS</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -479,9 +519,13 @@ export default function IntegrationsPage() {
                 <CardDescription>שירות דיוור מתקדם</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -495,9 +539,13 @@ export default function IntegrationsPage() {
                 <CardDescription>התראות ב-Discord</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -523,9 +571,13 @@ export default function IntegrationsPage() {
                 <CardDescription>מערכת לניהול חשבוניות וקבלות ישראלית</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -539,9 +591,13 @@ export default function IntegrationsPage() {
                 <CardDescription>מערכת חשבוניות דיגיטלית</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -555,9 +611,13 @@ export default function IntegrationsPage() {
                 <CardDescription>תוכנת חשבונאות מקיפה</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -571,9 +631,13 @@ export default function IntegrationsPage() {
                 <CardDescription>ניהול פיננסי מקוון</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -587,9 +651,13 @@ export default function IntegrationsPage() {
                 <CardDescription>חשבונאות מבוססת ענן</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -603,9 +671,13 @@ export default function IntegrationsPage() {
                 <CardDescription>תוכנת הנהלת חשבונות ישראלית</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -631,9 +703,13 @@ export default function IntegrationsPage() {
                 <CardDescription>סנכרון עם Guesty PMS</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -647,9 +723,13 @@ export default function IntegrationsPage() {
                 <CardDescription>אינטגרציה עם Hostaway</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -663,9 +743,13 @@ export default function IntegrationsPage() {
                 <CardDescription>ניהול ערוצי הפצה</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -679,9 +763,13 @@ export default function IntegrationsPage() {
                 <CardDescription>פלטפורמת ניהול מלונות</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -695,9 +783,13 @@ export default function IntegrationsPage() {
                 <CardDescription>מערכת ניהול מלונאית</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -711,9 +803,13 @@ export default function IntegrationsPage() {
                 <CardDescription>Cloud Hotel Management</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -727,9 +823,13 @@ export default function IntegrationsPage() {
                 <CardDescription>Open Hospitality Platform</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -743,9 +843,13 @@ export default function IntegrationsPage() {
                 <CardDescription>ניהול ערוצי הפצה מרוכז</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
@@ -759,9 +863,13 @@ export default function IntegrationsPage() {
                 <CardDescription>חיבור ל-5000+ אפליקציות</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full" disabled>
-                  <Link2 className="h-4 w-4 ml-2" />
-                  בקרוב
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-50 cursor-not-allowed" 
+                  disabled
+                >
+                  <Info className="h-4 w-4 ml-2" />
+                  זמין בקרוב
                 </Button>
               </CardContent>
             </Card>
