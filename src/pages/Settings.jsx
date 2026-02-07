@@ -119,6 +119,33 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
+  // Delete account mutation
+  const deleteAccountMutation = useMutation({
+    mutationFn: async () => {
+      // Call the delete user endpoint
+      const response = await fetch('/api/auth/delete-me', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete account');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      // Clear all cached data
+      queryClient.clear();
+      // Redirect to landing page
+      window.location.href = '/Landing';
+    },
+    onError: (error) => {
+      toast.error('שגיאה במחיקת החשבון. אנא נסה שוב או פנה לתמיכה.');
+      console.error('Delete account error:', error);
+    }
+  });
+
   const resetPropertyForm = () => {
     setNewProperty({
       name: '',
@@ -394,15 +421,13 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
               ביטול
             </Button>
             <Button 
-              disabled={deleteConfirmText !== 'מחק את החשבון שלי'}
+              disabled={deleteConfirmText !== 'מחק את החשבון שלי' || deleteAccountMutation.isPending}
               onClick={() => {
-                toast.error('פונקציונליות זו תתווסף בקרוב');
-                setIsDeleteDialogOpen(false);
-                setDeleteConfirmText('');
+                deleteAccountMutation.mutate();
               }}
               className="bg-red-600 hover:bg-red-700 text-white rounded-xl"
             >
-              מחק חשבון לצמיתות
+              {deleteAccountMutation.isPending ? 'מוחק...' : 'מחק חשבון לצמיתות'}
             </Button>
           </DialogFooter>
         </DialogContent>
