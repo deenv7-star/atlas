@@ -76,8 +76,8 @@ export default function Landing() {
           </div>
 
           <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold leading-[1.05] mb-6 text-[#0F172A] tracking-tight">
-            תפסיק לרוץ אחרי<br />
-            <span className="text-[#00D1C1]">הנכסים</span>
+            ניהול נכסים<br />
+            <span className="text-[#00D1C1]">חכם ואוטומטי</span>
           </h1>
 
           <p className="text-xl sm:text-2xl text-[#64748B] mb-10 leading-relaxed max-w-3xl mx-auto font-normal">
