@@ -15,6 +15,7 @@ import {
   FileText,
   ChevronDown,
   ChevronUp,
+  ChevronRight,
   ArrowLeft,
   AlertCircle,
   Inbox,
