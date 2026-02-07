@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,6 @@ import {
   FileText,
   ChevronDown,
   ChevronUp,
-  ChevronRight,
   ArrowLeft,
   AlertCircle,
   Inbox,
@@ -31,7 +31,6 @@ import { motion } from 'framer-motion';
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
-  const navigate = useNavigate();
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -45,23 +44,23 @@ export default function Landing() {
   return (
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-[#E5E7EB]">
-        <div className="max-w-7xl mx-auto px-6">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
-                className="text-[#64748B] hover:text-[#0F172A] rounded-lg px-4 h-10 text-sm font-medium"
-                onClick={() => navigate(createPageUrl('Dashboard'))}
+                className="text-[#0F172A]"
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
                 כניסה
               </Button>
               <Button 
-                className="bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A] rounded-lg px-5 h-10 text-sm font-semibold shadow-lg shadow-[#00D1C1]/20"
-                onClick={() => navigate(createPageUrl('Dashboard'))}
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
-                התחל בחינם
+                {t.startTrial}
               </Button>
             </div>
           </div>
@@ -69,722 +68,141 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-white">
-        <div className="absolute inset-0 bg-[#00D1C1]/5 blur-3xl"></div>
-        
-        <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00D1C1]/10 border border-[#00D1C1]/20 mb-8">
-            <Sparkles className="h-4 w-4 text-[#00D1C1]" />
-            <span className="text-sm text-[#0F172A] font-semibold">פלטפורמת ניהול מונעת AI</span>
-          </div>
-
-          <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold leading-[1.05] mb-6 text-[#0F172A] tracking-tight">
-            ניהול נכסים<br />
-            <span className="text-[#00D1C1]">חכם ואוטומטי</span>
-          </h1>
-
-          <p className="text-xl sm:text-2xl text-[#64748B] mb-10 leading-relaxed max-w-3xl mx-auto font-normal">
-            ATLAS מנהלת את הכל בשבילך - מלידים לתשלומים, מהזמנות לחוזים.
-            <br className="hidden sm:block" />
-            אוטומציה חכמה שחוסכת לך 20+ שעות שבועיות.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Button
-              size="lg"
-              className="bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A] rounded-xl px-8 h-14 text-base font-semibold shadow-lg shadow-[#00D1C1]/25"
-              onClick={() => navigate(createPageUrl('Dashboard'))}
-            >
-              התחל ניסיון חינמי - 30 יום
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-[#E5E7EB] hover:border-[#00D1C1] hover:text-[#00D1C1] rounded-xl px-8 h-14 text-base font-medium"
-            >
-              צפה בדמו
-            </Button>
-          </div>
-
-          {/* Hero Visual - Animated */}
-          <div className="relative max-w-5xl mx-auto">
-            <div className="absolute inset-0 bg-[#00D1C1]/20 blur-3xl"></div>
-            <div className="relative rounded-2xl overflow-hidden border border-[#E5E7EB] bg-white shadow-2xl">
-              <div className="aspect-video bg-gradient-to-br from-gray-50 to-white p-8">
-                {/* Animated Dashboard Mockup */}
-                <div className="grid grid-cols-12 gap-4 h-full">
-                  {/* Sidebar */}
-                  <motion.div 
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="col-span-2 bg-gradient-to-b from-[#0F172A] to-[#1E293B] rounded-xl p-3 flex flex-col gap-2"
-                  >
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + i * 0.1 }}
-                        className="h-8 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
-                      />
-                    ))}
-                  </motion.div>
-
-                  {/* Main Content */}
-                  <div className="col-span-10 space-y-4">
-                    {/* Header Stats */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="grid grid-cols-4 gap-3"
-                    >
-                      {[
-                        { value: '24', label: 'הזמנות', color: 'from-blue-500 to-blue-600' },
-                        { value: '₪48K', label: 'הכנסות', color: 'from-green-500 to-green-600' },
-                        { value: '12', label: 'לידים', color: 'from-purple-500 to-purple-600' },
-                        { value: '95%', label: 'תפוסה', color: 'from-[#00D1C1] to-[#00B8AA]' }
-                      ].map((stat, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.5 + i * 0.1 }}
-                          whileHover={{ scale: 1.05 }}
-                          className={`bg-gradient-to-br ${stat.color} rounded-xl p-3 text-white shadow-lg`}
-                        >
-                          <p className="text-2xl font-bold">{stat.value}</p>
-                          <p className="text-xs opacity-90">{stat.label}</p>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-
-                    {/* Calendar & Tasks */}
-                    <div className="grid grid-cols-2 gap-3 flex-1">
-                      {/* Calendar */}
-                      <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.8 }}
-                        className="bg-white rounded-xl border-2 border-gray-200 p-4"
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="h-3 w-20 bg-gray-200 rounded"></div>
-                          <Calendar className="h-4 w-4 text-[#00D1C1]" />
-                        </div>
-                        <div className="grid grid-cols-7 gap-1">
-                          {[...Array(28)].map((_, i) => (
-                            <motion.div
-                              key={i}
-                              initial={{ opacity: 0, scale: 0 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: 0.9 + i * 0.02 }}
-                              className={`aspect-square rounded ${
-                                i % 7 === 0 ? 'bg-[#00D1C1]' : 
-                                i % 5 === 0 ? 'bg-green-100' : 
-                                'bg-gray-100'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </motion.div>
-
-                      {/* Tasks */}
-                      <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 1 }}
-                        className="bg-white rounded-xl border-2 border-gray-200 p-4"
-                      >
-                        <div className="flex items-center gap-2 mb-3">
-                          <CheckCircle2 className="h-4 w-4 text-[#00D1C1]" />
-                          <div className="h-3 w-24 bg-gray-200 rounded"></div>
-                        </div>
-                        <div className="space-y-2">
-                          {[
-                            { color: 'bg-green-500', width: 'w-full' },
-                            { color: 'bg-[#00D1C1]', width: 'w-3/4' },
-                            { color: 'bg-yellow-500', width: 'w-1/2' },
-                            { color: 'bg-gray-300', width: 'w-2/3' }
-                          ].map((task, i) => (
-                            <motion.div
-                              key={i}
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 1.1 + i * 0.1 }}
-                              className="flex items-center gap-2"
-                            >
-                              <div className={`w-3 h-3 rounded-full ${task.color}`}></div>
-                              <div className={`h-2 ${task.width} bg-gray-200 rounded`}></div>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Floating Success Badge */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0, rotate: -10 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  transition={{ delay: 1.5, type: "spring" }}
-                  className="absolute top-4 right-4 bg-gradient-to-br from-green-500 to-green-600 text-white px-4 py-2 rounded-full shadow-xl flex items-center gap-2"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  <span className="text-sm font-bold">הכל מסונכרן</span>
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Problem Section - The Chaos */}
-      <section className="py-24 px-6 bg-gradient-to-b from-[#F8FAFC] to-white relative overflow-hidden">
+      <section className="pt-20 sm:pt-32 pb-12 sm:pb-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <motion.div
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <motion.div 
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-100 mb-6">
-                <AlertCircle className="h-4 w-4 text-red-500" />
-                <span className="text-sm text-red-600 font-semibold">המציאות של רוב המנהלים</span>
-              </div>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#0F172A] mb-6 tracking-tight">
-                היום זה נראה ככה
-              </h2>
-              <p className="text-xl text-[#64748B] max-w-2xl mx-auto leading-relaxed">
-                20 טאבים פתוחים, עשרות הודעות, ואתה עדיין לא בטוח<br className="hidden sm:block" />
-                מי משלם מחר ומה הסטטוס של כל נכס
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="relative max-w-5xl mx-auto">
-            {/* Professional Browser Mockup */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="bg-white rounded-2xl shadow-2xl border border-[#E5E7EB] overflow-hidden"
             >
-              {/* Browser Chrome */}
-              <div className="bg-gradient-to-b from-gray-100 to-gray-50 px-4 py-3 border-b border-gray-200">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                  </div>
-                  <div className="flex-1 bg-white rounded-lg px-4 py-2 text-xs text-gray-400 shadow-sm border border-gray-200">
-                    <div className="flex gap-2 overflow-hidden">
-                      {['WhatsApp Web', 'Excel Online', 'Gmail', 'Airbnb Calendar', 'Booking.com', 'Google Calendar'].map((tab, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: i * 0.1 }}
-                          className="text-[11px] px-3 py-1 bg-gray-50 rounded-md whitespace-nowrap font-medium border border-gray-200"
-                        >
-                          {tab}
-                        </motion.div>
-                      ))}
-                      <span className="text-gray-400">+14 more...</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Premium Chaos Visualization */}
-              <div className="relative aspect-video bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 overflow-hidden">
-                {/* Animated Background Grid */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-                    backgroundSize: '50px 50px'
-                  }}></div>
-                </div>
-
-                {/* Glowing Orbs */}
-                <motion.div
-                  animate={{ 
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.6, 0.3]
-                  }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                  className="absolute top-1/4 right-1/4 w-64 h-64 bg-red-500/30 rounded-full blur-3xl"
-                />
-                <motion.div
-                  animate={{ 
-                    scale: [1.2, 1, 1.2],
-                    opacity: [0.3, 0.5, 0.3]
-                  }}
-                  transition={{ duration: 5, repeat: Infinity }}
-                  className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-yellow-500/20 rounded-full blur-3xl"
-                />
-
-                {/* Cascading Notifications */}
-                <div className="absolute top-4 left-6 space-y-3 z-20">
-                  {[
-                    { app: 'WhatsApp', text: '8 לידים חדשים מחכים', icon: MessageSquare, color: 'from-green-500 to-emerald-600', delay: 0.3 },
-                    { app: 'Gmail', text: 'דחוף: 3 תשלומים פקעו', icon: AlertCircle, color: 'from-red-500 to-rose-600', delay: 0.6 },
-                    { app: 'Airbnb', text: 'הזמנה חדשה דורשת אישור', icon: Calendar, color: 'from-rose-500 to-pink-600', delay: 0.9 },
-                    { app: 'Booking', text: 'שינוי תאריך - צריך לעדכן', icon: Calendar, color: 'from-blue-500 to-indigo-600', delay: 1.2 }
-                  ].map((notif, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -100, rotate: -5 }}
-                      animate={{ 
-                        opacity: [0, 1, 1, 0.8],
-                        x: [-100, 0, 0, -20],
-                        rotate: [-5, 0, 0, 2]
-                      }}
-                      transition={{ 
-                        delay: notif.delay,
-                        duration: 0.6,
-                        times: [0, 0.3, 0.7, 1]
-                      }}
-                      whileHover={{ scale: 1.05, rotate: 0 }}
-                      className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-4 min-w-[300px] relative overflow-hidden group"
-                    >
-                      {/* Shine effect */}
-                      <motion.div
-                        animate={{ x: [-100, 400] }}
-                        transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                        className="absolute inset-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-                      />
-                      
-                      <div className="flex items-start gap-3 relative z-10">
-                        <motion.div 
-                          animate={{ rotate: [0, 5, 0, -5, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, delay: notif.delay }}
-                          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${notif.color} flex items-center justify-center flex-shrink-0 shadow-lg`}
-                        >
-                          <notif.icon className="h-6 w-6 text-white" />
-                        </motion.div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-gray-900 mb-1">{notif.app}</p>
-                          <p className="text-xs text-gray-600 leading-relaxed">{notif.text}</p>
-                        </div>
-                        <motion.div
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 1, repeat: Infinity, delay: notif.delay }}
-                          className="w-2 h-2 bg-red-500 rounded-full"
-                        />
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Floating Task Cards with Depth */}
-                <div className="absolute right-8 top-1/2 -translate-y-1/2 space-y-4 z-10">
-                  {[
-                    { title: 'משימות דחופות', count: 12, color: 'from-red-500/90 to-rose-600/90', items: 4, delay: 0.5 },
-                    { title: 'תשלומים ממתינים', count: 18, color: 'from-amber-500/90 to-orange-600/90', items: 3, delay: 0.7 },
-                    { title: 'בעיות לטיפול', count: 7, color: 'from-purple-500/90 to-violet-600/90', items: 3, delay: 0.9 }
-                  ].map((card, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: 100, rotateY: -20 }}
-                      animate={{ 
-                        opacity: 1, 
-                        x: 0,
-                        rotateY: 0,
-                        y: [0, -10, 0]
-                      }}
-                      transition={{ 
-                        delay: card.delay,
-                        y: { duration: 3, repeat: Infinity, delay: i * 0.5 }
-                      }}
-                      whileHover={{ scale: 1.05, rotateY: 5 }}
-                      className={`bg-gradient-to-br ${card.color} backdrop-blur-xl rounded-2xl p-5 w-64 shadow-2xl border border-white/20 relative overflow-hidden`}
-                      style={{ transformStyle: 'preserve-3d' }}
-                    >
-                      {/* Animated background pattern */}
-                      <motion.div
-                        animate={{ opacity: [0.3, 0.6, 0.3] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"
-                      />
-                      
-                      <div className="relative z-10">
-                        <div className="flex items-start justify-between mb-4">
-                          <h4 className="text-sm font-bold text-white">{card.title}</h4>
-                          <motion.span 
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                            className="bg-white/30 text-white text-sm font-black px-3 py-1 rounded-full backdrop-blur-sm"
-                          >
-                            {card.count}
-                          </motion.span>
-                        </div>
-                        <div className="space-y-2.5">
-                          {[...Array(card.items)].map((_, j) => (
-                            <motion.div
-                              key={j}
-                              initial={{ width: 0 }}
-                              animate={{ width: ['0%', '100%', '80%', '100%'] }}
-                              transition={{ 
-                                delay: card.delay + j * 0.2,
-                                duration: 2,
-                                repeat: Infinity,
-                                repeatDelay: 3
-                              }}
-                              className="h-2.5 bg-white/40 backdrop-blur-sm rounded-full"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Critical Alert - Center Stage */}
-                <motion.div
-                  initial={{ scale: 0, opacity: 0, y: 50 }}
-                  animate={{ 
-                    scale: [0, 1.1, 1],
-                    opacity: 1,
-                    y: [50, -5, 0]
-                  }}
-                  transition={{ 
-                    delay: 1.5,
-                    type: "spring",
-                    stiffness: 200,
-                    damping: 10
-                  }}
-                  className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30"
-                >
-                  <motion.div
-                    animate={{ 
-                      boxShadow: [
-                        '0 0 20px rgba(239, 68, 68, 0.4)',
-                        '0 0 40px rgba(239, 68, 68, 0.6)',
-                        '0 0 20px rgba(239, 68, 68, 0.4)'
-                      ]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="bg-gradient-to-r from-red-600 via-rose-600 to-red-600 text-white px-10 py-5 rounded-3xl font-bold flex items-center gap-4 backdrop-blur-xl border-2 border-red-400/50"
-                  >
-                    <motion.div
-                      animate={{ 
-                        rotate: [0, 10, -10, 10, 0],
-                        scale: [1, 1.2, 1, 1.2, 1]
-                      }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      <AlertCircle className="h-8 w-8" />
-                    </motion.div>
-                    <div>
-                      <motion.p 
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="text-xs uppercase tracking-wider font-black"
-                      >
-                        רמת מתח
-                      </motion.p>
-                      <p className="text-2xl font-black tracking-tight">קריטית 🔥</p>
-                    </div>
-                    <motion.div
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                      style={{ transform: 'skewX(-20deg)' }}
-                    />
-                  </motion.div>
-                </motion.div>
-
-                {/* Chaos Particles */}
-                {[...Array(15)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ 
-                      opacity: [0, 0.6, 0],
-                      scale: [0, 1, 0],
-                      x: Math.random() * 800 - 400,
-                      y: Math.random() * 400 - 200
-                    }}
-                    transition={{ 
-                      duration: Math.random() * 3 + 2,
-                      delay: Math.random() * 2,
-                      repeat: Infinity,
-                      repeatDelay: Math.random() * 3
-                    }}
-                    className="absolute left-1/2 top-1/2 w-2 h-2 bg-white rounded-full"
-                  />
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Elegant Transition Arrow */}
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="flex justify-center my-10"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#00D1C1] to-[#00B8AA] shadow-lg shadow-[#00D1C1]/30 flex items-center justify-center">
-                <ChevronRight className="h-7 w-7 text-white rotate-90" />
-              </div>
-            </motion.div>
-
-            {/* Solution Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="bg-gradient-to-br from-white to-gray-50/50 rounded-3xl shadow-2xl border border-[#E5E7EB] p-10 text-center max-w-3xl mx-auto"
-            >
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#00D1C1] to-[#00B8AA] rounded-3xl mb-6 shadow-xl shadow-[#00D1C1]/30">
-                <CheckCircle2 className="h-10 w-10 text-white" />
-              </div>
-              <h3 className="text-3xl font-bold text-[#0F172A] mb-4">עם ATLAS — הכל משתנה</h3>
-              <p className="text-lg text-[#64748B] leading-relaxed mb-6">
-                מערכת אחת. כל המידע במקום אחד. אוטומציה מלאה.<br />
-                אפס בלאגן, אפס מתח, מקסימום שליטה.
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-4 sm:mb-6">
+                {t.heroTitle}
+              </h1>
+              <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed">
+                {t.heroSubtitle}
               </p>
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00D1C1]/10 rounded-full">
-                <div className="w-2 h-2 bg-[#00D1C1] rounded-full"></div>
-                <span className="text-sm font-semibold text-[#0F172A]">חיסכון של 20+ שעות בשבוע</span>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Button 
+                  size="lg" 
+                  className="w-full sm:w-auto bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl"
+                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                >
+                  {t.startTrial}
+                  <ArrowLeft className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                </Button>
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-[#0B1220] text-[#0B1220] px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl">
+                  {t.bookDemo}
+                </Button>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative mt-8 lg:mt-0"
+            >
+              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl">
+                <div className="bg-[#F8FAFC] rounded-lg sm:rounded-xl overflow-hidden">
+                  <div className="bg-white border-b px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-2">
+                    <div className="flex gap-1 sm:gap-1.5">
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-400"></div>
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <span className="text-xs sm:text-sm text-gray-400 mr-2 sm:mr-4 truncate">dashboard.stayflow.io</span>
+                  </div>
+                  <div className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                      <div className="bg-[#00D1C1]/10 rounded-lg sm:rounded-xl p-2 sm:p-4">
+                        <p className="text-xs sm:text-sm text-gray-500">לידים חדשים</p>
+                        <p className="text-lg sm:text-2xl font-bold text-[#0B1220]">12</p>
+                      </div>
+                      <div className="bg-[#F2E9DB] rounded-lg sm:rounded-xl p-2 sm:p-4">
+                        <p className="text-xs sm:text-sm text-gray-500">הזמנות החודש</p>
+                        <p className="text-lg sm:text-2xl font-bold text-[#0B1220]">28</p>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg sm:rounded-xl border p-2 sm:p-4">
+                      <div className="flex justify-between items-center mb-2 sm:mb-3">
+                        <span className="text-sm sm:text-base font-medium">כניסות היום</span>
+                        <span className="text-[#00D1C1] text-xs sm:text-sm">3 אורחים</span>
+                      </div>
+                      <div className="space-y-1.5 sm:space-y-2">
+                        {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
+                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-1.5 sm:p-2 text-xs sm:text-sm">
+                            <span className="truncate">{item}</span>
+                            <span className="text-green-600 text-xs">מאושר</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 bg-[#00D1C1] text-[#0B1220] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-lg font-medium text-xs sm:text-sm">
+                ✓ 0 הזמנות כפולות
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-
-
-      {/* Features */}
-      <section className="py-24 px-6 bg-[#F8FAFC]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl sm:text-6xl font-bold text-[#0F172A] mb-4 tracking-tight">
-              מערכת שלמה. באפליקציה אחת.
+      {/* Problem Section */}
+      <section className="py-12 sm:py-20 px-4 bg-[#0B1220]">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 sm:mb-12">
+              {t.problemTitle}
             </h2>
-            <p className="text-xl text-[#64748B]">כל מה שצריך כדי להפוך את הנכסים שלך למכונת כסף</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, i) => (
-              <div key={i} className="group">
-                <div className="bg-white rounded-2xl p-8 border border-[#E5E7EB] hover:border-[#00D1C1] hover:shadow-lg hover:shadow-[#00D1C1]/10 transition-all">
-                  <div className="w-12 h-12 bg-[#00D1C1] rounded-xl flex items-center justify-center mb-6">
-                    <feature.icon className="h-6 w-6 text-[#0F172A]" />
-                  </div>
-                  <h3 className="text-xl font-bold text-[#0F172A] mb-3">
-                    {feature.title}
-                  </h3>
-                  <p className="text-[#64748B] leading-relaxed">{feature.desc}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+              {t.problemBullets.map((bullet, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 text-white/80 flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
+                  <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[#F59E0B] flex-shrink-0" />
+                  <span>{bullet}</span>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-12 sm:py-16 md:py-20 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
-            איך זה עובד?
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            {t.howItWorks.map((step, i) => {
-              // Illustration SVGs for each step
-              const illustrations = [
-                // Step 1: Register
-                <svg viewBox="0 0 200 200" className="w-full h-full">
-                  <defs>
-                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style={{ stopColor: '#00D1C1', stopOpacity: 0.2 }} />
-                      <stop offset="100%" style={{ stopColor: '#00D1C1', stopOpacity: 0.05 }} />
-                    </linearGradient>
-                  </defs>
-                  {/* Background circle */}
-                  <circle cx="100" cy="100" r="80" fill="url(#grad1)" />
-                  {/* User icon */}
-                  <circle cx="100" cy="85" r="25" fill="#00D1C1" />
-                  <path d="M 60 150 Q 100 130 140 150" stroke="#00D1C1" strokeWidth="20" fill="none" strokeLinecap="round" />
-                  {/* Plus icon */}
-                  <motion.g
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <circle cx="150" cy="60" r="15" fill="#0B1220" />
-                    <line x1="150" y1="52" x2="150" y2="68" stroke="white" strokeWidth="3" strokeLinecap="round" />
-                    <line x1="142" y1="60" x2="158" y2="60" stroke="white" strokeWidth="3" strokeLinecap="round" />
-                  </motion.g>
-                </svg>,
-                
-                // Step 2: Connect
-                <svg viewBox="0 0 200 200" className="w-full h-full">
-                  <defs>
-                    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style={{ stopColor: '#00D1C1', stopOpacity: 0.2 }} />
-                      <stop offset="100%" style={{ stopColor: '#00D1C1', stopOpacity: 0.05 }} />
-                    </linearGradient>
-                  </defs>
-                  <circle cx="100" cy="100" r="80" fill="url(#grad2)" />
-                  {/* Calendar grid */}
-                  <rect x="60" y="70" width="80" height="70" rx="8" fill="#00D1C1" />
-                  <rect x="65" y="75" width="70" height="60" rx="4" fill="white" />
-                  {/* Grid lines */}
-                  {[0, 1, 2, 3].map((row) => 
-                    [0, 1, 2].map((col) => (
-                      <motion.rect
-                        key={`${row}-${col}`}
-                        x={70 + col * 20}
-                        y={80 + row * 13}
-                        width="15"
-                        height="8"
-                        rx="2"
-                        fill={row === 2 && col === 1 ? "#00D1C1" : "#E5E7EB"}
-                        animate={{ opacity: [0.3, 1, 0.3] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: (row + col) * 0.2 }}
-                      />
-                    ))
-                  )}
-                  {/* Sync arrows */}
-                  <motion.path
-                    d="M 145 100 L 160 100"
-                    stroke="#0B1220"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  />
-                  <motion.path
-                    d="M 155 95 L 160 100 L 155 105"
-                    stroke="#0B1220"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    fill="none"
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  />
-                </svg>,
-                
-                // Step 3: Automate
-                <svg viewBox="0 0 200 200" className="w-full h-full">
-                  <defs>
-                    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style={{ stopColor: '#00D1C1', stopOpacity: 0.2 }} />
-                      <stop offset="100%" style={{ stopColor: '#00D1C1', stopOpacity: 0.05 }} />
-                    </linearGradient>
-                  </defs>
-                  <circle cx="100" cy="100" r="80" fill="url(#grad3)" />
-                  {/* AI Brain/Sparkle */}
-                  <motion.g
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    style={{ transformOrigin: '100px 100px' }}
-                  >
-                    <circle cx="100" cy="100" r="35" fill="#00D1C1" opacity="0.3" />
-                    <motion.circle
-                      cx="100"
-                      cy="100"
-                      r="25"
-                      fill="#00D1C1"
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                  </motion.g>
-                  {/* Sparkles */}
-                  <motion.circle
-                    cx="65"
-                    cy="70"
-                    r="4"
-                    fill="#0B1220"
-                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0 }}
-                  />
-                  <motion.circle
-                    cx="135"
-                    cy="75"
-                    r="4"
-                    fill="#0B1220"
-                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                  />
-                  <motion.circle
-                    cx="130"
-                    cy="130"
-                    r="4"
-                    fill="#0B1220"
-                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                  />
-                  <motion.circle
-                    cx="70"
-                    cy="135"
-                    r="4"
-                    fill="#0B1220"
-                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
-                  />
-                  {/* Lightning bolt */}
-                  <motion.path
-                    d="M 100 70 L 95 100 L 105 100 L 100 130"
-                    stroke="white"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    fill="none"
-                    animate={{ opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 1, repeat: Infinity }}
-                  />
-                </svg>
-              ];
-              
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.2 }}
-                  className="text-center"
-                >
-                  <div className="relative mb-6 mx-auto w-full max-w-xs">
-                    {/* Illustration container */}
-                    <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-gradient-to-br from-gray-50 to-white border border-gray-100 p-8 relative">
-                      {illustrations[i]}
-                      {/* Step number overlay */}
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        whileInView={{ scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.2 + 0.3, type: "spring" }}
-                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#00D1C1] text-[#0B1220] rounded-2xl flex items-center justify-center shadow-xl text-2xl font-bold z-10"
-                      >
-                        {step.step}
-                      </motion.div>
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold text-[#0B1220] mb-2 mt-6">{step.title}</h3>
-                  <p className="text-gray-600">{step.desc}</p>
-                </motion.div>
-              );
-            })}
-          </div>
+      {/* Solution Section */}
+      <section className="py-12 sm:py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] mb-4 sm:mb-6">
+              {t.solutionTitle}
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8">
+              {t.solutionText}
+            </p>
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+              {t.benefits.map((benefit, i) => (
+                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-medium flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#00D1C1]" />
+                  {benefit}
+                </span>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-24 px-6 bg-[#0F172A]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-4">
-            בעלי נכסים שמרוצים
-          </h2>
-          <p className="text-[#94A3B8] text-center text-lg mb-12">למה הם בחרו ב-ATLAS</p>
-          <div className="grid md:grid-cols-3 gap-6">
-            {t.testimonials.map((testimonial, i) => (
+      {/* Features Grid */}
+      <section className="py-12 sm:py-20 px-4 bg-[#F2E9DB]/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {features.map((feature, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -792,15 +210,13 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full bg-white/5 border-white/10 rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(5)].map((_, j) => (
-                        <Star key={j} className="h-5 w-5 fill-[#00D1C1] text-[#00D1C1]" />
-                      ))}
+                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-xl sm:rounded-2xl">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#00D1C1]/10 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+                      <feature.icon className="h-5 w-5 sm:h-6 sm:w-6 text-[#00D1C1]" />
                     </div>
-                    <p className="text-white/90 mb-4 leading-relaxed text-base">"{testimonial.text}"</p>
-                    <p className="text-[#00D1C1] font-semibold">{testimonial.author}</p>
+                    <h3 className="text-base sm:text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
+                    <p className="text-sm sm:text-base text-gray-600">{feature.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -809,66 +225,122 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="py-12 sm:py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-8 sm:mb-16">
+            איך זה עובד?
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+            {t.howItWorks.map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="text-center"
+              >
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#0B1220] text-white rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 text-xl sm:text-2xl font-bold">
+                  {step.step}
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                <p className="text-sm sm:text-base text-gray-600">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
+      {/* Testimonials */}
+      <section className="py-12 sm:py-20 px-4 bg-[#0B1220]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-8 sm:mb-12">
+            מה אומרים עלינו
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+            {t.testimonials.map((testimonial, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="h-full bg-white/5 border-white/10 rounded-xl sm:rounded-2xl">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex gap-1 mb-3 sm:mb-4">
+                      {[...Array(5)].map((_, j) => (
+                        <Star key={j} className="h-4 w-4 sm:h-5 sm:w-5 fill-[#00D1C1] text-[#00D1C1]" />
+                      ))}
+                    </div>
+                    <p className="text-sm sm:text-base text-white/90 mb-3 sm:mb-4 leading-relaxed">"{testimonial.text}"</p>
+                    <p className="text-sm sm:text-base text-[#00D1C1] font-medium">{testimonial.author}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Pricing */}
-      <section className="py-24 px-6 bg-white">
+      <section className="py-12 sm:py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl sm:text-6xl font-bold text-[#0F172A] mb-4 tracking-tight">
-              תמחור פשוט. ללא הפתעות.
-            </h2>
-            <p className="text-xl text-[#64748B]">בחר את התוכנית שמתאימה לגודל העסק שלך</p>
-          </div>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-3 sm:mb-4">
+            תוכניות ומחירים
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600 text-center mb-8 sm:mb-12">בחר את התוכנית המתאימה לך</p>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {Object.entries(t.pricing).map(([key, plan]) => (
-              <div 
-                key={key} 
-                className={`rounded-2xl p-8 border-2 transition-all ${
-                  key === 'pro' 
-                    ? 'bg-[#0F172A] text-white border-[#0F172A] shadow-2xl shadow-[#00D1C1]/20 scale-105' 
-                    : 'bg-white text-[#0F172A] border-[#E5E7EB] hover:border-[#00D1C1] hover:shadow-lg'
-                }`}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+            {Object.entries(t.pricing).map(([key, plan], i) => (
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
               >
-                {key === 'pro' && (
-                  <div className="inline-block px-3 py-1 bg-[#00D1C1] rounded-full text-xs font-bold text-[#0F172A] mb-4">
-                    המומלץ
-                  </div>
-                )}
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <div className="mb-8">
-                  <span className="text-5xl font-bold">₪{plan.price}</span>
-                  <span className={key === 'pro' ? 'text-white/60' : 'text-[#64748B]'}>/חודש</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-3 text-sm">
-                      <CheckCircle2 className={`h-5 w-5 flex-shrink-0 ${key === 'pro' ? 'text-[#00D1C1]' : 'text-[#00D1C1]'}`} />
-                      <span className={key === 'pro' ? 'text-white/90' : 'text-[#64748B]'}>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button 
-                  className={`w-full rounded-xl h-12 font-semibold ${
-                    key === 'pro' 
-                      ? 'bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A]' 
-                      : 'bg-[#0F172A] hover:bg-[#1E293B] text-white'
-                  }`}
-                  onClick={() => navigate(createPageUrl('Dashboard'))}
-                >
-                  התחל עכשיו
-                </Button>
-              </div>
+                <Card className={`h-full rounded-xl sm:rounded-2xl ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
+                  <CardContent className="p-4 sm:p-6">
+                    {key === 'pro' && (
+                      <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-2.5 sm:px-3 py-1 rounded-full mb-3 sm:mb-4 inline-block">
+                        הכי פופולרי
+                      </span>
+                    )}
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0B1220] mb-2">{plan.name}</h3>
+                    <div className="mb-4 sm:mb-6">
+                      <span className="text-3xl sm:text-4xl font-bold text-[#0B1220]">₪{plan.price}</span>
+                      <span className="text-sm sm:text-base text-gray-500">/חודש</span>
+                    </div>
+                    <ul className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                      {plan.features.map((feature, j) => (
+                        <li key={j} className="flex items-start gap-2 text-sm sm:text-base text-gray-600">
+                          <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#00D1C1] flex-shrink-0 mt-0.5" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button 
+                      className={`w-full rounded-xl text-sm sm:text-base py-5 sm:py-6 ${key === 'pro' 
+                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
+                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
+                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                    >
+                      {t.startTrial}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 bg-[#F2E9DB]/30">
+      <section className="py-12 sm:py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-8 sm:mb-12">
             שאלות נפוצות
           </h2>
           <div className="space-y-4">
@@ -885,16 +357,16 @@ export default function Landing() {
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
                   <CardContent className="p-0">
-                    <div className="flex items-center justify-between p-4 bg-white">
-                      <span className="font-medium text-[#0B1220]">{item.q}</span>
+                    <div className="flex items-center justify-between p-3 sm:p-4 bg-white">
+                      <span className="text-sm sm:text-base font-medium text-[#0B1220] pr-2">{item.q}</span>
                       {openFaq === i ? (
-                        <ChevronUp className="h-5 w-5 text-gray-400" />
+                        <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
                       ) : (
-                        <ChevronDown className="h-5 w-5 text-gray-400" />
+                        <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
                       )}
                     </div>
                     {openFaq === i && (
-                      <div className="p-4 pt-0 bg-white text-gray-600">
+                      <div className="p-3 sm:p-4 pt-0 bg-white text-sm sm:text-base text-gray-600">
                         {item.a}
                       </div>
                     )}
@@ -907,48 +379,44 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 px-6 bg-[#F8FAFC]">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-[#0F172A] rounded-3xl p-12 sm:p-16 text-center relative overflow-hidden">
-            <div className="absolute inset-0">
-              <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#00D1C1]/20 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#00D1C1]/10 rounded-full blur-3xl"></div>
-            </div>
-            <div className="relative z-10">
-              <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 tracking-tight">
-                תתחיל לחסוך זמן היום?
-              </h2>
-              <p className="text-xl text-[#94A3B8] mb-10 max-w-2xl mx-auto">
-                הצטרף ל-200+ בעלי נכסים שכבר משתמשים ב-ATLAS וחוסכים<br />20+ שעות בשבוע
-              </p>
-              <Button 
-                size="lg" 
-                className="bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A] rounded-xl px-8 h-14 text-base font-semibold shadow-xl shadow-[#00D1C1]/30"
-                onClick={() => navigate(createPageUrl('Dashboard'))}
-              >
-                התחל ניסיון חינמי - 30 יום
-              </Button>
-              <p className="text-sm text-[#94A3B8] mt-4 font-medium">ללא כרטיס אשראי • ביטול בכל עת • תמיכה מלאה בעברית</p>
-            </div>
-          </div>
+      <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
+              {t.finalCta}
+            </h2>
+            <p className="text-lg sm:text-xl text-white/70 mb-6 sm:mb-8">{t.tagline}</p>
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg rounded-xl"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+            >
+              {t.startTrial}
+              <ArrowLeft className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
+          </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-white border-t border-[#E5E7EB]">
+      <footer className="py-8 sm:py-12 px-4 bg-[#0B1220] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Logo variant="dark" />
-            <div className="flex gap-8 text-[#64748B] text-sm font-medium">
-              <Link to={createPageUrl('Privacy')} className="hover:text-[#0F172A] transition-colors">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
+            <Logo variant="light" size="small" />
+            <div className="flex gap-4 sm:gap-6 text-white/60 text-xs sm:text-sm">
+              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
                 {t.privacyPolicy}
               </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-[#0F172A] transition-colors">
+              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
                 {t.termsOfService}
               </Link>
             </div>
-            <p className="text-[#94A3B8] text-sm">
-              © 2026 ATLAS. כל הזכויות שמורות.
+            <p className="text-white/40 text-xs sm:text-sm text-center">
+              © 2024 STAYFLOW. {t.allRightsReserved}
             </p>
           </div>
         </div>
