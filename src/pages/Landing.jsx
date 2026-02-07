@@ -44,20 +44,20 @@ export default function Landing() {
   return (
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
             <Logo variant="dark" />
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <Button 
                 variant="ghost" 
-                className="text-[#0F172A]"
+                className="text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-full px-5 h-11 text-sm"
                 onClick={() => navigate(createPageUrl('Dashboard'))}
               >
                 כניסה
               </Button>
               <Button 
-                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
+                className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-5 h-11 text-sm font-normal"
                 onClick={() => navigate(createPageUrl('Dashboard'))}
               >
                 {t.startTrial}
@@ -67,238 +67,73 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero Section - Professional & Clean */}
-      <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 overflow-hidden bg-white">
-        {/* Subtle Grid Background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:80px_80px] opacity-40" />
+      {/* Hero Section */}
+      <section className="relative pt-32 sm:pt-40 pb-24 sm:pb-32 px-6 overflow-hidden bg-white">
 
-        {/* Subtle Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC] via-white to-white" />
+        <div className="max-w-[980px] mx-auto text-center">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold leading-[1.05] mb-6 text-[#1d1d1f] tracking-tight">
+            ניהול נכסים
+            <br />
+            שונה לחלוטין
+          </h1>
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            {/* Left Content */}
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] mb-8">
-                <div className="w-2 h-2 rounded-full bg-[#00D1C1]" />
-                <span className="text-sm text-[#64748B] font-medium">מערכת מונעת בינה מלאכותית</span>
-              </div>
+          <p className="text-xl sm:text-2xl md:text-3xl text-[#86868b] mb-12 leading-relaxed font-normal max-w-[800px] mx-auto">
+            אוטומציה מלאה. בינה מלאכותית. ממשק אינטואיטיבי.
+          </p>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-[#0B1220]">
-                ניהול נכסים
-                <br />
-                <span className="text-[#64748B]">שונה לחלוטין</span>
-              </h1>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <Button
+              size="lg"
+              className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-8 h-14 text-lg font-normal"
+              onClick={() => navigate(createPageUrl('Dashboard'))}
+            >
+              התחל בחינם
+            </Button>
+            <Button
+              size="lg"
+              variant="link"
+              className="text-[#0071e3] hover:underline px-8 h-14 text-lg font-normal"
+            >
+              למד עוד
+            </Button>
+          </div>
 
-              <p className="text-base sm:text-lg md:text-xl text-[#64748B] mb-8 sm:mb-10 leading-relaxed max-w-lg">
-                אוטומציה מלאה, בינה מלאכותית מתקדמת, וממשק אינטואיטיבי שחוסך לך שעות כל יום
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                <Button
-                  size="lg"
-                  className="bg-[#0B1220] hover:bg-[#1a2744] text-white px-6 sm:px-8 h-12 sm:h-14 rounded-lg font-medium w-full sm:w-auto transition-colors"
-                  onClick={() => navigate(createPageUrl('Dashboard'))}
-                >
-                  התחל בחינם
-                  <ArrowLeft className="mr-2 h-5 w-5" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="text-[#0B1220] hover:bg-[#F8FAFC] px-6 sm:px-8 h-12 sm:h-14 rounded-lg font-medium w-full sm:w-auto"
-                >
-                  צפה בדמו
-                </Button>
-              </div>
-
-              {/* Stats */}
-              <div className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-12">
-                <div>
-                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">200+</div>
-                  <div className="text-xs sm:text-sm text-[#64748B]">בעלי נכסים</div>
-                </div>
-                <div className="hidden sm:block w-px h-12 bg-[#E2E8F0]" />
-                <div>
-                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">50K+</div>
-                  <div className="text-xs sm:text-sm text-[#64748B]">הזמנות מנוהלות</div>
-                </div>
-                <div className="hidden sm:block w-px h-12 bg-[#E2E8F0]" />
-                <div>
-                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">99.9%</div>
-                  <div className="text-xs sm:text-sm text-[#64748B]">זמינות</div>
-                </div>
-              </div>
+          {/* Hero Visual */}
+          <div className="relative max-w-[1200px] mx-auto mt-16">
+            <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/5 border border-[#d2d2d7]">
+              <img 
+                src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&h=800&fit=crop" 
+                alt="Dashboard Preview"
+                className="w-full h-auto"
+              />
             </div>
-
-            {/* Right Visual */}
-            <div className="relative mt-12 lg:mt-0">
-              {/* Main Dashboard Card */}
-              <div className="relative bg-white rounded-3xl border border-[#E2E8F0] shadow-2xl overflow-hidden">
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[#0B1220] flex items-center justify-center">
-                      <Sparkles className="h-4 w-4 text-[#00D1C1]" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold text-[#0B1220]">לוח בקרה</div>
-                      <div className="text-xs text-[#64748B]">סקירה בזמן אמת</div>
-                    </div>
-                  </div>
-                  <div className="w-2 h-2 rounded-full bg-[#00D1C1]" />
-                </div>
-
-                {/* Content */}
-                <div className="p-6 space-y-4">
-                  {/* AI Insights */}
-                  <div className="bg-[#F8FAFC] rounded-xl p-5 border border-[#E2E8F0]">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-[#00D1C1]/10 flex items-center justify-center">
-                          <Sparkles className="h-5 w-5 text-[#00D1C1]" />
-                        </div>
-                        <div>
-                          <div className="text-[#0B1220] font-medium mb-1">המלצת AI</div>
-                          <div className="text-[#64748B] text-sm">3 לידים חדשים תואמים את הקריטריונים</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { label: 'הזמנות פעילות', value: '24', change: '+12%' },
-                      { label: 'הכנסות', value: '₪89K', change: '+8%' },
-                    ].map((stat, i) => (
-                      <div key={i} className="bg-white rounded-xl p-4 border border-[#E2E8F0]">
-                        <div className="text-2xl font-bold text-[#0B1220] mb-1">{stat.value}</div>
-                        <div className="text-xs text-[#64748B] mb-2">{stat.label}</div>
-                        <div className="flex items-center gap-1 text-xs text-green-600">
-                          <span>↗</span>
-                          <span>{stat.change}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Recent Activity */}
-                  <div className="space-y-2">
-                    {[
-                      { icon: CheckCircle2, text: 'הזמנה אושרה', time: 'לפני 2 דקות', color: 'text-green-600 bg-green-50' },
-                      { icon: MessageSquare, text: 'הודעה חדשה התקבלה', time: 'לפני 5 דקות', color: 'text-blue-600 bg-blue-50' },
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#F8FAFC] transition-colors cursor-pointer border border-[#E2E8F0]">
-                        <div className={`w-8 h-8 rounded-lg ${item.color} flex items-center justify-center`}>
-                          <item.icon className="h-4 w-4" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-sm text-[#0B1220] font-medium">{item.text}</div>
-                          <div className="text-xs text-[#64748B]">{item.time}</div>
-                        </div>
-                        <ArrowLeft className="h-4 w-4 text-[#CBD5E1]" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Elements */}
-              <div className="hidden lg:block absolute -top-4 -right-4 bg-white rounded-xl p-4 shadow-xl border border-[#E2E8F0]">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
-                  </div>
-                  <div className="text-sm font-semibold text-[#0B1220]">זמינות 100%</div>
-                </div>
-              </div>
-
-              <div className="hidden lg:block absolute -bottom-4 left-4 bg-white rounded-xl p-4 shadow-xl border border-[#E2E8F0]">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-[#00D1C1]/10 flex items-center justify-center">
-                    <Sparkles className="h-4 w-4 text-[#00D1C1]" />
-                  </div>
-                  <div className="text-sm font-semibold text-[#0B1220]">מונע AI</div>
-                </div>
-              </div>
-            </div>
+          </div>
           </div>
         </div>
       </section>
 
-      {/* Problem Section */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 sm:mb-12">
-              {t.problemTitle}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-              {t.problemBullets.map((bullet, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 text-white/80 flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
-                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                  <span>{bullet}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Solution Section */}
-      <section className="py-12 sm:py-16 md:py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
-              {t.solutionTitle}
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              {t.solutionText}
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {t.benefits.map((benefit, i) => (
-                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
-                  {benefit}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Features Grid */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 bg-[#F8FAFC]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-4">
-              כל מה שאתה צריך במקום אחד
+      <section className="py-24 sm:py-32 px-6 bg-[#fbfbfd]">
+        <div className="max-w-[980px] mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
+              כל מה שאתה צריך. במקום אחד.
             </h2>
-            <p className="text-[#64748B] text-lg">תכונות מתקדמות לניהול מושלם של העסק</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             {features.map((feature, i) => (
-              <Card key={i} className="h-full border border-[#E2E8F0] hover:border-[#00D1C1] hover:shadow-lg transition-all bg-white rounded-xl">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-lg flex items-center justify-center mb-4">
-                    <feature.icon className="h-6 w-6 text-[#00D1C1]" />
-                  </div>
-                  <h3 className="text-lg font-bold text-[#0B1220] mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-[#64748B]">{feature.desc}</p>
-                </CardContent>
-              </Card>
+              <div key={i} className="text-center">
+                <div className="w-14 h-14 bg-gradient-to-br from-[#0071e3] to-[#00a0dc] rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <feature.icon className="h-7 w-7 text-white" />
+                </div>
+                <h3 className="text-2xl font-semibold text-[#1d1d1f] mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-[#86868b] text-lg leading-relaxed">{feature.desc}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -525,53 +360,43 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="py-12 sm:py-16 md:py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-3 sm:mb-4">
-            תוכניות ומחירים
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600 text-center mb-8 sm:mb-12">בחר את התוכנית המתאימה לך</p>
+      <section className="py-24 sm:py-32 px-6 bg-white">
+        <div className="max-w-[980px] mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
+              תוכניות ומחירים
+            </h2>
+            <p className="text-xl text-[#86868b]">בחר את התוכנית המתאימה לך</p>
+          </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-            {Object.entries(t.pricing).map(([key, plan], i) => (
-              <motion.div
-                key={key}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className={`h-full rounded-2xl ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
-                  <CardContent className="p-6">
-                    {key === 'pro' && (
-                      <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">
-                        הכי פופולרי
-                      </span>
-                    )}
-                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{plan.name}</h3>
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold text-[#0B1220]">₪{plan.price}</span>
-                      <span className="text-gray-500">/חודש</span>
-                    </div>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, j) => (
-                        <li key={j} className="flex items-center gap-2 text-gray-600">
-                          <CheckCircle2 className="h-5 w-5 text-[#00D1C1] flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      className={`w-full rounded-xl ${key === 'pro' 
-                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
-                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      onClick={() => navigate(createPageUrl('Dashboard'))}
-                    >
-                      {t.startTrial}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {Object.entries(t.pricing).map(([key, plan]) => (
+              <div key={key} className={`rounded-3xl p-8 ${key === 'pro' ? 'bg-[#1d1d1f] text-white' : 'bg-[#fbfbfd] text-[#1d1d1f]'}`}>
+                {key === 'pro' && (
+                  <div className="text-[#0071e3] text-sm font-semibold mb-4">הכי פופולרי</div>
+                )}
+                <h3 className="text-2xl font-semibold mb-2">{plan.name}</h3>
+                <div className="mb-6">
+                  <span className="text-5xl font-semibold">₪{plan.price}</span>
+                  <span className={key === 'pro' ? 'text-white/60' : 'text-[#86868b]'}>/חודש</span>
+                </div>
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, j) => (
+                    <li key={j} className="flex items-start gap-3 text-sm">
+                      <CheckCircle2 className={`h-5 w-5 flex-shrink-0 ${key === 'pro' ? 'text-[#0071e3]' : 'text-[#0071e3]'}`} />
+                      <span className={key === 'pro' ? 'text-white/90' : 'text-[#1d1d1f]'}>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button 
+                  className={`w-full rounded-full h-12 font-normal ${key === 'pro' 
+                    ? 'bg-[#0071e3] hover:bg-[#0077ed] text-white' 
+                    : 'bg-[#0071e3] hover:bg-[#0077ed] text-white'}`}
+                  onClick={() => navigate(createPageUrl('Dashboard'))}
+                >
+                  {t.startTrial}
+                </Button>
+              </div>
             ))}
           </div>
         </div>
@@ -619,43 +444,36 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+      <section className="py-24 sm:py-32 px-6 bg-[#fbfbfd]">
+        <div className="max-w-[800px] mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#1d1d1f] mb-6 leading-tight tracking-tight">
+            {t.finalCta}
+          </h2>
+          <p className="text-2xl text-[#86868b] mb-10">{t.tagline}</p>
+          <Button 
+            size="lg" 
+            className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-8 h-14 text-lg font-normal"
+            onClick={() => navigate(createPageUrl('Dashboard'))}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              {t.finalCta}
-            </h2>
-            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
-            <Button 
-              size="lg" 
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => navigate(createPageUrl('Dashboard'))}
-            >
-              {t.startTrial}
-              <ArrowLeft className="mr-2 h-5 w-5" />
-            </Button>
-          </motion.div>
+            {t.startTrial}
+          </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
-        <div className="max-w-7xl mx-auto">
+      <footer className="py-12 px-6 bg-[#f5f5f7] border-t border-[#d2d2d7]">
+        <div className="max-w-[980px] mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Logo variant="light" />
-            <div className="flex gap-6 text-white/60 text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
+            <Logo variant="dark" />
+            <div className="flex gap-6 text-[#86868b] text-sm">
+              <Link to={createPageUrl('Privacy')} className="hover:text-[#1d1d1f] transition-colors">
                 {t.privacyPolicy}
               </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
+              <Link to={createPageUrl('Terms')} className="hover:text-[#1d1d1f] transition-colors">
                 {t.termsOfService}
               </Link>
             </div>
-            <p className="text-white/40 text-sm">
+            <p className="text-[#86868b] text-sm">
               © 2026 ATLAS. {t.allRightsReserved}
             </p>
           </div>
