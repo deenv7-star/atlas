@@ -10,17 +10,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from 'sonner';
 import { 
   Link2, Calendar, CreditCard, MessageSquare, Settings2,
   Check, X, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle
 } from 'lucide-react';
 
 const CALENDAR_PROVIDERS = {
-  GOOGLE: { name: 'Google Calendar', color: 'bg-blue-500', icon: '📅' },
-  OUTLOOK: { name: 'Outlook', color: 'bg-cyan-600', icon: '📆' },
-  AIRBNB: { name: 'Airbnb', color: 'bg-[#FF5A5F]', icon: '🏠' },
-  BOOKING_COM: { name: 'Booking.com', color: 'bg-blue-700', icon: '🏨' },
-  ICAL: { name: 'iCal (כללי)', color: 'bg-gray-600', icon: '📋' }
+  GOOGLE: { name: 'Google Calendar', color: 'bg-blue-500', icon: '📅', infoUrl: 'https://support.google.com/calendar' },
+  OUTLOOK: { name: 'Outlook', color: 'bg-cyan-600', icon: '📆', infoUrl: 'https://support.microsoft.com/en-us/outlook' },
+  AIRBNB: { name: 'Airbnb', color: 'bg-[#FF5A5F]', icon: '🏠', infoUrl: 'https://www.airbnb.com/help' },
+  BOOKING_COM: { name: 'Booking.com', color: 'bg-blue-700', icon: '🏨', infoUrl: 'https://www.booking.com/help' },
+  ICAL: { name: 'iCal (כללי)', color: 'bg-gray-600', icon: '📋', infoUrl: 'https://en.wikipedia.org/wiki/ICalendar' }
 };
 
 const SYNC_STATUS = {
@@ -33,6 +35,8 @@ export default function IntegrationsPage() {
   const [user, setUser] = useState(null);
   const [showAddCalendar, setShowAddCalendar] = useState(false);
   const [selectedPropertyId, setSelectedPropertyId] = useState('');
+  const [filterPropertyId, setFilterPropertyId] = useState('all');
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [newSync, setNewSync] = useState({
     provider: '',
     sync_direction: 'IMPORT',
@@ -67,17 +71,28 @@ export default function IntegrationsPage() {
       queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
       setShowAddCalendar(false);
       setNewSync({ provider: '', sync_direction: 'IMPORT', ical_url: '' });
-    }
+      toast.success('יומן נוסף בהצלחה!');
+    },
+    onError: () => toast.error('שגיאה בהוספת היומן')
   });
 
   const deleteSyncMutation = useMutation({
     mutationFn: (id) => base44.entities.CalendarSync.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
+      setDeleteConfirmId(null);
+      toast.success('סנכרון הוסר בהצלחה');
+    },
+    onError: () => toast.error('שגיאה בהסרת הסנכרון')
   });
 
   const toggleSyncMutation = useMutation({
     mutationFn: ({ id, status }) => base44.entities.CalendarSync.update(id, { sync_status: status }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] })
+    onSuccess: (_, { status }) => {
+      queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
+      toast.success(status === 'ACTIVE' ? 'סנכרון הופעל' : 'סנכרון הושהה');
+    },
+    onError: () => toast.error('שגיאה בעדכון הסנכרון')
   });
 
   if (isLoading) {
@@ -93,33 +108,50 @@ export default function IntegrationsPage() {
       </div>
 
       <Tabs defaultValue="calendars">
-        <TabsList className="bg-gray-100">
-          <TabsTrigger value="calendars" className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            יומנים
-          </TabsTrigger>
-          <TabsTrigger value="payments" className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4" />
-            תשלומים
-          </TabsTrigger>
-          <TabsTrigger value="messaging" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            הודעות
-          </TabsTrigger>
-          <TabsTrigger value="pms" className="flex items-center gap-2">
-            <Settings2 className="h-4 w-4" />
-            מערכות PMS
-          </TabsTrigger>
-          <TabsTrigger value="accounting" className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4" />
-            חשבונאות
-          </TabsTrigger>
-        </TabsList>
+        <ScrollArea className="w-full">
+          <TabsList className="bg-gray-100 w-max sm:w-full">
+            <TabsTrigger value="calendars" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              יומנים
+            </TabsTrigger>
+            <TabsTrigger value="payments" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              תשלומים
+            </TabsTrigger>
+            <TabsTrigger value="messaging" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              הודעות
+            </TabsTrigger>
+            <TabsTrigger value="pms" className="flex items-center gap-2">
+              <Settings2 className="h-4 w-4" />
+              מערכות PMS
+            </TabsTrigger>
+            <TabsTrigger value="accounting" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              חשבונאות
+            </TabsTrigger>
+          </TabsList>
+        </ScrollArea>
 
         {/* Calendars Tab */}
         <TabsContent value="calendars" className="mt-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <h2 className="text-lg font-medium">סנכרון יומנים</h2>
+            <div className="flex-1">
+              <h2 className="text-lg font-medium mb-3">סנכרון יומנים</h2>
+              {calendarSyncs.length > 0 && (
+                <Select value={filterPropertyId} onValueChange={setFilterPropertyId}>
+                  <SelectTrigger className="w-full sm:w-48">
+                    <SelectValue placeholder="סנן לפי נכס" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">כל הנכסים</SelectItem>
+                    {properties.map(p => (
+                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
             <Dialog open={showAddCalendar} onOpenChange={setShowAddCalendar}>
               <DialogTrigger asChild>
                 <Button className="bg-[#0A2540] w-full sm:w-auto">
@@ -208,7 +240,9 @@ export default function IntegrationsPage() {
             </Card>
           ) : (
             <div className="space-y-3">
-              {calendarSyncs.map((sync) => {
+              {calendarSyncs
+                .filter(sync => filterPropertyId === 'all' || sync.property_id === filterPropertyId)
+                .map((sync) => {
                 const provider = CALENDAR_PROVIDERS[sync.provider] || {};
                 const status = SYNC_STATUS[sync.sync_status] || SYNC_STATUS.ACTIVE;
                 const property = properties.find(p => p.id === sync.property_id);
@@ -239,15 +273,36 @@ export default function IntegrationsPage() {
                             <span className="text-sm text-gray-500">{status.label}</span>
                           </div>
                           <div className="flex items-center gap-2">
+                            <a href={provider.infoUrl} target="_blank" rel="noopener noreferrer">
+                              <Button variant="ghost" size="icon" title="למידע נוסף">
+                                <ExternalLink className="h-4 w-4 text-gray-400" />
+                              </Button>
+                            </a>
                             <Switch
                               checked={sync.sync_status === 'ACTIVE'}
                               onCheckedChange={(checked) => 
                                 toggleSyncMutation.mutate({ id: sync.id, status: checked ? 'ACTIVE' : 'PAUSED' })
                               }
                             />
-                            <Button variant="ghost" size="icon" onClick={() => deleteSyncMutation.mutate(sync.id)}>
-                              <Trash2 className="h-4 w-4 text-gray-400" />
-                            </Button>
+                            <Dialog open={deleteConfirmId === sync.id} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
+                              <DialogTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => setDeleteConfirmId(sync.id)}>
+                                  <Trash2 className="h-4 w-4 text-gray-400" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent dir="rtl">
+                                <DialogHeader>
+                                  <DialogTitle>מחיקת סנכרון</DialogTitle>
+                                </DialogHeader>
+                                <p className="text-gray-600">האם אתה בטוח שברצונך למחוק את הסנכרון של {provider.name}?</p>
+                                <div className="flex gap-2 justify-end mt-4">
+                                  <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>ביטול</Button>
+                                  <Button className="bg-red-600 hover:bg-red-700" onClick={() => deleteSyncMutation.mutate(sync.id)}>
+                                    מחוק
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </div>
                         </div>
                       </div>
