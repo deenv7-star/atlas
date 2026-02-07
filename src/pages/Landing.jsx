@@ -6,7 +6,6 @@ import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import DemoAnimation from '@/components/landing/DemoAnimation';
 import { 
   CheckCircle2, 
   Users, 
@@ -25,15 +24,13 @@ import {
   Brush,
   Send,
   FileSignature,
-  Star,
-  PlayCircle
+  Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
-  const [showDemo, setShowDemo] = useState(false);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -71,7 +68,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 bg-white">
+      <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -94,13 +91,7 @@ export default function Landing() {
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl hover:bg-[#0B1220] hover:text-white transition-colors"
-                  onClick={() => setShowDemo(true)}
-                >
-                  <PlayCircle className="ml-2 h-5 w-5" />
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
                   {t.bookDemo}
                 </Button>
               </div>
@@ -112,99 +103,47 @@ export default function Landing() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative"
             >
-              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-3 md:p-4 shadow-2xl">
+              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
                 <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
-                  <div className="bg-white border-b px-3 md:px-4 py-2 md:py-3 flex items-center gap-2">
+                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
                     <div className="flex gap-1.5">
-                      <motion.div 
-                        className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-red-400"
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ repeat: Infinity, duration: 2, delay: 0 }}
-                      />
-                      <motion.div 
-                        className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-yellow-400"
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ repeat: Infinity, duration: 2, delay: 0.2 }}
-                      />
-                      <motion.div 
-                        className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-green-400"
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ repeat: Infinity, duration: 2, delay: 0.4 }}
-                      />
+                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
                     </div>
-                    <span className="text-xs md:text-sm text-gray-400 mr-2 md:mr-4">dashboard.stayflow.io</span>
+                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
                   </div>
-                  <div className="p-4 md:p-6 space-y-3 md:space-y-4">
-                    <div className="grid grid-cols-2 gap-3 md:gap-4">
-                      <motion.div 
-                        className="bg-[#00D1C1]/10 rounded-xl p-3 md:p-4"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                      >
-                        <p className="text-xs md:text-sm text-gray-500">לידים חדשים</p>
-                        <motion.p 
-                          className="text-xl md:text-2xl font-bold text-[#0B1220]"
-                          initial={{ opacity: 0, scale: 0.5 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: 0.6 }}
-                        >
-                          12
-                        </motion.p>
-                      </motion.div>
-                      <motion.div 
-                        className="bg-[#F2E9DB] rounded-xl p-3 md:p-4"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.5 }}
-                      >
-                        <p className="text-xs md:text-sm text-gray-500">הזמנות החודש</p>
-                        <motion.p 
-                          className="text-xl md:text-2xl font-bold text-[#0B1220]"
-                          initial={{ opacity: 0, scale: 0.5 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: 0.7 }}
-                        >
-                          28
-                        </motion.p>
-                      </motion.div>
+                  <div className="p-6 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
+                        <p className="text-sm text-gray-500">לידים חדשים</p>
+                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
+                      </div>
+                      <div className="bg-[#F2E9DB] rounded-xl p-4">
+                        <p className="text-sm text-gray-500">הזמנות החודש</p>
+                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
+                      </div>
                     </div>
-                    <motion.div 
-                      className="bg-white rounded-xl border p-3 md:p-4"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.6 }}
-                    >
-                      <div className="flex justify-between items-center mb-2 md:mb-3">
-                        <span className="text-sm md:text-base font-medium">כניסות היום</span>
-                        <span className="text-[#00D1C1] text-xs md:text-sm">3 אורחים</span>
+                    <div className="bg-white rounded-xl border p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="font-medium">כניסות היום</span>
+                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
                       </div>
                       <div className="space-y-2">
                         {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
-                          <motion.div 
-                            key={i} 
-                            className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-xs md:text-sm"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, delay: 0.8 + (i * 0.1) }}
-                          >
-                            <span className="truncate">{item}</span>
-                            <span className="text-green-600 flex-shrink-0 mr-2">✓</span>
-                          </motion.div>
+                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
+                            <span>{item}</span>
+                            <span className="text-green-600">מאושר</span>
+                          </div>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <motion.div 
-                className="absolute -bottom-3 md:-bottom-4 -left-3 md:-left-4 bg-[#00D1C1] text-[#0B1220] px-3 py-1.5 md:px-4 md:py-2 rounded-lg shadow-lg font-medium text-xs md:text-sm"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 1 }}
-              >
+              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
                 ✓ 0 הזמנות כפולות
-              </motion.div>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -221,20 +160,12 @@ export default function Landing() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
               {t.problemTitle}
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
               {t.problemBullets.map((bullet, i) => (
-                <motion.div 
-                  key={i} 
-                  className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 text-white/80 flex flex-col md:flex-row items-center gap-2 md:gap-3 text-center md:text-right"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
-                >
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
                   <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                  <span className="text-sm md:text-base">{bullet}</span>
-                </motion.div>
+                  <span>{bullet}</span>
+                </div>
               ))}
             </div>
           </motion.div>
@@ -257,18 +188,10 @@ export default function Landing() {
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               {t.benefits.map((benefit, i) => (
-                <motion.span 
-                  key={i} 
-                  className="bg-[#00D1C1]/10 text-[#0B1220] px-4 md:px-6 py-2 md:py-3 rounded-full font-medium flex items-center gap-2 text-sm md:text-base"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ scale: 1.1, backgroundColor: 'rgba(0, 209, 193, 0.2)' }}
-                >
-                  <CheckCircle2 className="h-4 w-4 md:h-5 md:w-5 text-[#00D1C1]" />
+                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
                   {benefit}
-                </motion.span>
+                </span>
               ))}
             </div>
           </motion.div>
@@ -287,17 +210,13 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full border-0 shadow-sm hover:shadow-xl transition-all bg-white rounded-2xl overflow-hidden group">
+                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
                   <CardContent className="p-6">
-                    <motion.div 
-                      className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#00D1C1] transition-colors"
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <feature.icon className="h-6 w-6 text-[#00D1C1] group-hover:text-white transition-colors" />
-                    </motion.div>
+                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
+                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
+                    </div>
                     <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600 text-sm md:text-base">{feature.desc}</p>
+                    <p className="text-gray-600">{feature.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -322,15 +241,11 @@ export default function Landing() {
                 transition={{ delay: i * 0.2 }}
                 className="text-center"
               >
-                <motion.div 
-                  className="w-14 h-14 md:w-16 md:h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl font-bold"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
+                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
                   {step.step}
-                </motion.div>
-                <h3 className="text-lg md:text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
-                <p className="text-gray-600 text-sm md:text-base">{step.desc}</p>
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                <p className="text-gray-600">{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -501,13 +416,11 @@ export default function Landing() {
               </Link>
             </div>
             <p className="text-white/40 text-sm">
-              © 2024 STAYFLOW. {t.allRightsReserved}
+              © 2024 ATLAS. {t.allRightsReserved}
             </p>
           </div>
         </div>
       </footer>
-
-      <DemoAnimation isOpen={showDemo} onClose={() => setShowDemo(false)} />
     </div>
   );
 }
