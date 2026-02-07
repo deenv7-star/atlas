@@ -87,9 +87,9 @@ const SelectContent = React.forwardRef(({ className, children, position = "poppe
             <DrawerHeader>
               <DrawerTitle>בחר אפשרות</DrawerTitle>
             </DrawerHeader>
-            <SelectPrimitive.Viewport className="p-4 overflow-y-auto">
+            <div className="p-4 overflow-y-auto">
               {children}
-            </SelectPrimitive.Viewport>
+            </div>
           </DrawerContent>
         </Drawer>
       </SelectPrimitive.Portal>
