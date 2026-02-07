@@ -65,6 +65,8 @@ import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import Settings from './pages/Settings';
 import Terms from './pages/Terms';
+import GuestService from './pages/GuestService';
+import ServiceRequests from './pages/ServiceRequests';
 import __Layout from './Layout.jsx';
 
 
@@ -87,6 +89,8 @@ export const PAGES = {
     "Reviews": Reviews,
     "Settings": Settings,
     "Terms": Terms,
+    "GuestService": GuestService,
+    "ServiceRequests": ServiceRequests,
 }
 
 export const pagesConfig = {

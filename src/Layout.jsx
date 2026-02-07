@@ -9,7 +9,7 @@ import BottomTabs from '@/components/app/BottomTabs';
 import { cn } from '@/lib/utils';
 
 // Pages that don't need the app layout
-const publicPages = ['Landing', 'Login', 'Privacy', 'Terms'];
+const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService'];
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
