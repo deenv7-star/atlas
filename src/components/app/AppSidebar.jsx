@@ -19,7 +19,8 @@ import {
   Zap,
   Brain,
   Link2,
-  Bell
+  Bell,
+  Wallet
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -37,6 +38,7 @@ const navItems = [
   { key: 'automations', icon: Zap, page: 'Automations', label: 'אוטומציות' },
   { key: 'ai-assistant', icon: Brain, page: 'AIAssistant', label: 'עוזר AI' },
   { key: 'integrations', icon: Link2, page: 'Integrations', label: 'אינטגרציות' },
+  { key: 'billing', icon: Wallet, page: 'Billing', label: 'מנוי וחיוב' },
   { key: 'settings', icon: Settings, page: 'Settings', label: 'הגדרות' }
 ];
 
