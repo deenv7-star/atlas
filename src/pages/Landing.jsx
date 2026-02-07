@@ -71,7 +71,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-32 pb-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -94,7 +94,13 @@ export default function Landing() {
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl hover:bg-[#0B1220] hover:text-white transition-colors"
+                  onClick={() => setShowDemo(true)}
+                >
+                  <PlayCircle className="ml-2 h-5 w-5" />
                   {t.bookDemo}
                 </Button>
               </div>
@@ -104,7 +110,7 @@ export default function Landing() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
+              className="relative hidden lg:block"
             >
               <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
                 <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
@@ -163,11 +169,11 @@ export default function Landing() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
               {t.problemTitle}
             </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
               {t.problemBullets.map((bullet, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 text-white/80 flex flex-col md:flex-row items-center gap-2 md:gap-3 text-center md:text-right">
                   <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                  <span>{bullet}</span>
+                  <span className="text-sm md:text-base">{bullet}</span>
                 </div>
               ))}
             </div>
