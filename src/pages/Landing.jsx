@@ -68,23 +68,22 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-40 pb-24 sm:pb-32 px-6 overflow-hidden bg-white">
-
+      <section className="relative pt-40 sm:pt-48 pb-32 sm:pb-40 px-6 overflow-hidden bg-white">
         <div className="max-w-[980px] mx-auto text-center">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold leading-[1.05] mb-6 text-[#1d1d1f] tracking-tight">
+          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[112px] font-semibold leading-[1.05] mb-6 text-[#1d1d1f] tracking-tight">
             ניהול נכסים
             <br />
             שונה לחלוטין
           </h1>
 
-          <p className="text-xl sm:text-2xl md:text-3xl text-[#86868b] mb-12 leading-relaxed font-normal max-w-[800px] mx-auto">
+          <p className="text-2xl sm:text-3xl md:text-4xl text-[#86868b] mb-12 leading-relaxed font-normal max-w-[820px] mx-auto">
             אוטומציה מלאה. בינה מלאכותית. ממשק אינטואיטיבי.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-20">
             <Button
               size="lg"
-              className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-8 h-14 text-lg font-normal"
+              className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-10 h-16 text-xl font-normal shadow-lg"
               onClick={() => navigate(createPageUrl('Dashboard'))}
             >
               התחל בחינם
@@ -92,17 +91,17 @@ export default function Landing() {
             <Button
               size="lg"
               variant="link"
-              className="text-[#0071e3] hover:underline px-8 h-14 text-lg font-normal"
+              className="text-[#0071e3] hover:underline px-10 h-16 text-xl font-normal"
             >
               למד עוד
             </Button>
           </div>
 
           {/* Hero Visual */}
-          <div className="relative max-w-[1200px] mx-auto mt-16">
-            <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/5 border border-[#d2d2d7]">
+          <div className="relative max-w-[1400px] mx-auto mt-20">
+            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/10">
               <img 
-                src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&h=800&fit=crop" 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1400&h=900&fit=crop&q=80" 
                 alt="Dashboard Preview"
                 className="w-full h-auto"
               />
@@ -114,24 +113,24 @@ export default function Landing() {
 
 
       {/* Features Grid */}
-      <section className="py-24 sm:py-32 px-6 bg-[#fbfbfd]">
+      <section className="py-32 sm:py-40 px-6 bg-white">
         <div className="max-w-[980px] mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-              כל מה שאתה צריך. במקום אחד.
+          <div className="text-center mb-24">
+            <h2 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-[#1d1d1f] mb-6 tracking-tight leading-[1.05]">
+              כל מה שאתה צריך.<br />במקום אחד.
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-16">
             {features.map((feature, i) => (
               <div key={i} className="text-center">
-                <div className="w-14 h-14 bg-gradient-to-br from-[#0071e3] to-[#00a0dc] rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <feature.icon className="h-7 w-7 text-white" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#0071e3] to-[#00a0dc] rounded-[1.25rem] flex items-center justify-center mb-8 mx-auto">
+                  <feature.icon className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-semibold text-[#1d1d1f] mb-3">
+                <h3 className="text-2xl font-semibold text-[#1d1d1f] mb-4">
                   {feature.title}
                 </h3>
-                <p className="text-[#86868b] text-lg leading-relaxed">{feature.desc}</p>
+                <p className="text-[#86868b] text-xl leading-relaxed">{feature.desc}</p>
               </div>
             ))}
           </div>
@@ -358,37 +357,56 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* CTA Section */}
+      <section className="py-32 sm:py-40 px-6 bg-[#fbfbfd]">
+        <div className="max-w-[980px] mx-auto text-center">
+          <h2 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-[#1d1d1f] mb-8 tracking-tight leading-[1.05]">
+            התחל עכשיו.<br />בחינם.
+          </h2>
+          <p className="text-2xl sm:text-3xl text-[#86868b] mb-12 leading-relaxed font-normal">
+            30 יום ניסיון ללא התחייבות. ללא כרטיס אשראי.
+          </p>
+          <Button 
+            size="lg" 
+            className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-10 h-16 text-xl font-normal shadow-lg"
+            onClick={() => navigate(createPageUrl('Dashboard'))}
+          >
+            התחל את הניסיון החינמי
+          </Button>
+        </div>
+      </section>
+
       {/* Pricing */}
-      <section className="py-24 sm:py-32 px-6 bg-white">
+      <section className="py-32 sm:py-40 px-6 bg-white">
         <div className="max-w-[980px] mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
+          <div className="text-center mb-24">
+            <h2 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-[#1d1d1f] mb-6 tracking-tight leading-[1.05]">
               תוכניות ומחירים
             </h2>
-            <p className="text-xl text-[#86868b]">בחר את התוכנית המתאימה לך</p>
+            <p className="text-2xl text-[#86868b]">בחר את התוכנית המתאימה לך</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             {Object.entries(t.pricing).map(([key, plan]) => (
-              <div key={key} className={`rounded-3xl p-8 ${key === 'pro' ? 'bg-[#1d1d1f] text-white' : 'bg-[#fbfbfd] text-[#1d1d1f]'}`}>
+              <div key={key} className={`rounded-[2rem] p-10 ${key === 'pro' ? 'bg-[#1d1d1f] text-white scale-105' : 'bg-[#fbfbfd] text-[#1d1d1f]'}`}>
                 {key === 'pro' && (
-                  <div className="text-[#0071e3] text-sm font-semibold mb-4">הכי פופולרי</div>
+                  <div className="text-[#0071e3] text-sm font-semibold mb-6 tracking-wide">הכי פופולרי</div>
                 )}
-                <h3 className="text-2xl font-semibold mb-2">{plan.name}</h3>
-                <div className="mb-6">
-                  <span className="text-5xl font-semibold">₪{plan.price}</span>
-                  <span className={key === 'pro' ? 'text-white/60' : 'text-[#86868b]'}>/חודש</span>
+                <h3 className="text-3xl font-semibold mb-3">{plan.name}</h3>
+                <div className="mb-8">
+                  <span className="text-6xl font-semibold">₪{plan.price}</span>
+                  <span className={`text-xl ${key === 'pro' ? 'text-white/60' : 'text-[#86868b]'}`}>/חודש</span>
                 </div>
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-4 mb-10">
                   {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-3 text-sm">
-                      <CheckCircle2 className={`h-5 w-5 flex-shrink-0 ${key === 'pro' ? 'text-[#0071e3]' : 'text-[#0071e3]'}`} />
-                      <span className={key === 'pro' ? 'text-white/90' : 'text-[#1d1d1f]'}>{feature}</span>
+                    <li key={j} className="flex items-start gap-3">
+                      <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-[#0071e3]" />
+                      <span className={`text-base ${key === 'pro' ? 'text-white/90' : 'text-[#1d1d1f]'}`}>{feature}</span>
                     </li>
                   ))}
                 </ul>
                 <Button 
-                  className={`w-full rounded-full h-12 font-normal ${key === 'pro' 
+                  className={`w-full rounded-full h-14 text-base font-normal ${key === 'pro' 
                     ? 'bg-[#0071e3] hover:bg-[#0077ed] text-white' 
                     : 'bg-[#0071e3] hover:bg-[#0077ed] text-white'}`}
                   onClick={() => navigate(createPageUrl('Dashboard'))}
@@ -443,19 +461,28 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 sm:py-32 px-6 bg-[#fbfbfd]">
-        <div className="max-w-[800px] mx-auto text-center">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#1d1d1f] mb-6 leading-tight tracking-tight">
+      <section className="py-32 sm:py-40 px-6 bg-[#f5f5f7]">
+        <div className="max-w-[900px] mx-auto text-center">
+          <h2 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-[#1d1d1f] mb-8 leading-[1.05] tracking-tight">
             {t.finalCta}
           </h2>
-          <p className="text-2xl text-[#86868b] mb-10">{t.tagline}</p>
-          <Button 
-            size="lg" 
-            className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-8 h-14 text-lg font-normal"
-            onClick={() => navigate(createPageUrl('Dashboard'))}
-          >
-            {t.startTrial}
-          </Button>
+          <p className="text-2xl sm:text-3xl text-[#86868b] mb-12 leading-relaxed">{t.tagline}</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+            <Button 
+              size="lg" 
+              className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-10 h-16 text-xl font-normal shadow-lg"
+              onClick={() => navigate(createPageUrl('Dashboard'))}
+            >
+              {t.startTrial}
+            </Button>
+            <Button 
+              size="lg" 
+              variant="link"
+              className="text-[#0071e3] hover:underline px-10 h-16 text-xl font-normal"
+            >
+              דבר איתנו
+            </Button>
+          </div>
         </div>
       </section>
 
