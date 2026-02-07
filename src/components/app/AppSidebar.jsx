@@ -18,7 +18,8 @@ import {
   ChevronLeft,
   Zap,
   Brain,
-  Link2
+  Link2,
+  Bell
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -29,6 +30,7 @@ const navItems = [
   { key: 'invoices', icon: FileText, page: 'Invoices', label: 'חשבוניות' },
   { key: 'messages', icon: MessageSquare, page: 'Messages', label: 'הודעות' },
   { key: 'cleaning', icon: Sparkles, page: 'Cleaning', label: 'ניקיון' },
+  { key: 'service-requests', icon: Bell, page: 'ServiceRequests', label: 'שירות חדרים' },
   { key: 'payments', icon: CreditCard, page: 'Payments', label: 'תשלומים' },
   { key: 'contracts', icon: FileText, page: 'Contracts', label: 'חוזים' },
   { key: 'reviews', icon: Star, page: 'Reviews', label: 'ביקורות' },
