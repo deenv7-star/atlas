@@ -69,124 +69,193 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-white">
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#00D1C1]/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#00D1C1]/5 rounded-full blur-3xl"></div>
+      <section className="relative pt-24 pb-32 px-6 overflow-hidden bg-gradient-to-b from-white to-gray-50/50">
+        {/* Sophisticated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[#00D1C1]/8 to-transparent rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-1/3 w-[500px] h-[500px] bg-gradient-to-tr from-[#00D1C1]/5 to-transparent rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full">
+            <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-[#00D1C1]/20 rounded-full"></div>
+            <div className="absolute top-1/3 left-1/3 w-1 h-1 bg-[#00D1C1]/30 rounded-full"></div>
+            <div className="absolute bottom-1/4 right-1/3 w-1.5 h-1.5 bg-[#00D1C1]/20 rounded-full"></div>
+          </div>
         </div>
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          {/* Hook - The Problem */}
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Strategic Hook */}
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center mb-20"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-100 mb-6">
-              <AlertCircle className="h-4 w-4 text-red-500" />
-              <span className="text-sm text-red-600 font-semibold">עצרו הכל - אתם מבזבזים זמן</span>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm mb-8">
+              <div className="w-2 h-2 bg-[#00D1C1] rounded-full animate-pulse"></div>
+              <span className="text-sm text-[#0F172A] font-medium tracking-tight">העובדה שמנהלי נכסים לא רוצים לשמוע</span>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.1] mb-6 text-[#0F172A] tracking-tight">
-              אתם עובדים <span className="text-red-500">60 שעות</span>.<br />
-              <span className="text-[#64748B]">40 מהן על</span> <span className="text-red-500 line-through">וואטסאפ ואקסלים</span>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] mb-8 text-[#0F172A] tracking-tight">
+              60 שעות עבודה בשבוע.<br />
+              <span className="bg-gradient-to-r from-gray-600 to-gray-400 bg-clip-text text-transparent">40 מהן על</span>{' '}
+              <span className="relative inline-block">
+                <span className="relative z-10">משימות ניהוליות</span>
+                <span className="absolute inset-x-0 bottom-2 h-3 bg-red-500/20"></span>
+              </span>
             </h1>
 
-            <p className="text-xl sm:text-2xl text-[#64748B] mb-12 leading-relaxed max-w-3xl mx-auto">
-              כל יום אותו סיפור: 50 הודעות, 10 טאבים פתוחים,<br className="hidden sm:block" />
-              ואתם עדיין לא יודעים <span className="text-[#0F172A] font-semibold">איפה הכסף</span>
+            <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-4xl mx-auto font-normal">
+              תיאום לידים, מעקב תשלומים, שליחת חוזים, ניהול הזמנות —<br className="hidden sm:block" />
+              <span className="text-[#0F172A] font-medium">עבודה שיכולה להיות אוטומטית במאה אחוז</span>
             </p>
           </motion.div>
 
-          {/* Visual Comparison */}
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
-            {/* WITHOUT ATLAS */}
+          {/* Premium Comparison Grid */}
+          <div className="grid lg:grid-cols-2 gap-8 mb-20 max-w-6xl mx-auto">
+            {/* Current State */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="relative group"
             >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                <div className="bg-red-500 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg">
-                  היום 😫
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+              <div className="relative bg-white rounded-3xl border border-gray-200 p-10 h-full shadow-sm hover:shadow-xl transition-all duration-500">
+                <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-100">
+                  <div className="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center">
+                    <AlertCircle className="h-6 w-6 text-red-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#0F172A]">ניהול מסורתי</h3>
+                    <p className="text-sm text-gray-500">המציאות של רוב המנהלים</p>
+                  </div>
                 </div>
-              </div>
-              <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-3xl border-2 border-red-200 p-8 pt-10">
-                <div className="space-y-4">
+
+                <div className="space-y-6 mb-8">
                   {[
-                    { text: '3.5 שעות ביום בוואטסאפ', sub: 'לתאם כניסות ולזכור מי משלם' },
-                    { text: '10 אקסלים פתוחים', sub: 'אחד לכל נכס, אף אחד לא מעודכן' },
-                    { text: 'שכחת לחתום חוזה', sub: 'והאורחים כבר בכניסה' },
-                    { text: 'איבדת ₪5,000', sub: 'כי לא עקבת אחרי תשלום' }
+                    { 
+                      metric: '3.5 שעות ביום', 
+                      detail: 'בתיאום כניסות ומעקב תשלומים בוואטסאפ',
+                      impact: 'high'
+                    },
+                    { 
+                      metric: '10+ כלים שונים', 
+                      detail: 'אקסלים, קלנדרים, וואטסאפ — אף אחד לא מסונכרן',
+                      impact: 'high'
+                    },
+                    { 
+                      metric: 'חוזים ידניים', 
+                      detail: 'העתקה, הדבקה, שכחת לשלוח — בעיות תמיד',
+                      impact: 'medium'
+                    },
+                    { 
+                      metric: 'ממוצע ₪8,400 בשנה', 
+                      detail: 'הפסד מתשלומים שלא עוקבים אחריהם',
+                      impact: 'critical'
+                    }
                   ].map((item, i) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
-                      className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: -10 }}
+                      initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.1 }}
+                      transition={{ delay: 0.4 + i * 0.1 }}
+                      className="flex items-start gap-4 group/item"
                     >
-                      <div className="w-6 h-6 rounded-lg bg-red-200 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <AlertCircle className="h-4 w-4 text-red-600" />
-                      </div>
-                      <div>
-                        <p className="text-[#0F172A] font-semibold">{item.text}</p>
-                        <p className="text-red-700 text-sm">{item.sub}</p>
+                      <div className={`mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                        item.impact === 'critical' ? 'bg-red-600' :
+                        item.impact === 'high' ? 'bg-red-500' :
+                        'bg-red-400'
+                      }`}></div>
+                      <div className="flex-1">
+                        <p className="text-[#0F172A] font-semibold text-lg mb-1 leading-tight">{item.metric}</p>
+                        <p className="text-gray-600 text-sm leading-relaxed">{item.detail}</p>
                       </div>
                     </motion.div>
                   ))}
-                  <div className="pt-6 mt-6 border-t-2 border-red-200">
-                    <div className="text-center">
-                      <p className="text-red-600 font-bold text-3xl">₪0</p>
-                      <p className="text-red-600 text-sm font-medium">רווח נוסף מהבלאגן</p>
+                </div>
+
+                <div className="pt-6 border-t border-gray-100">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-gray-500 text-sm font-medium">תוצאה:</span>
+                    <div className="text-left">
+                      <p className="text-3xl font-bold text-red-600">₪0</p>
+                      <p className="text-sm text-gray-500 mt-1">תועלת מהמאמץ</p>
                     </div>
                   </div>
                 </div>
               </div>
             </motion.div>
 
-            {/* WITH ATLAS */}
+            {/* ATLAS Solution */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="relative group"
             >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                <div className="bg-[#00D1C1] text-[#0F172A] px-4 py-1.5 rounded-full text-sm font-bold shadow-xl shadow-[#00D1C1]/30">
-                  עם ATLAS 🚀
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#00D1C1] to-[#00B8AA] rounded-3xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              <div className="relative bg-gradient-to-br from-white to-gray-50/50 rounded-3xl border border-[#00D1C1]/30 p-10 h-full shadow-lg hover:shadow-2xl transition-all duration-500">
+                <div className="flex items-center gap-3 mb-8 pb-6 border-b border-[#00D1C1]/20">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#00D1C1] to-[#00B8AA] rounded-2xl flex items-center justify-center shadow-lg shadow-[#00D1C1]/20">
+                    <CheckCircle2 className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#0F172A]">עם ATLAS</h3>
+                    <p className="text-sm text-gray-600">ניהול בעידן החדש</p>
+                  </div>
                 </div>
-              </div>
-              <div className="bg-gradient-to-br from-[#00D1C1]/10 to-[#00D1C1]/5 rounded-3xl border-2 border-[#00D1C1] p-8 pt-10 shadow-xl shadow-[#00D1C1]/10">
-                <div className="space-y-4">
+
+                <div className="space-y-6 mb-8">
                   {[
-                    { text: '10 דקות ביום ניהול', sub: 'הכל אוטומטי - הודעות, חוזים, תזכורות' },
-                    { text: 'מערכת אחת לכל הנכסים', sub: 'כל המידע במקום אחד, תמיד מעודכן' },
-                    { text: 'חוזים נשלחים אוטומטית', sub: 'ברגע שמאשרים הזמנה' },
-                    { text: '0 תשלומים מפספסים', sub: 'תזכורות אוטומטיות + מעקב חכם' }
+                    { 
+                      metric: '10 דקות ביום', 
+                      detail: 'אוטומציה מלאה של הודעות, חוזים ותזכורות',
+                      improvement: '95% חיסכון בזמן'
+                    },
+                    { 
+                      metric: 'מערכת מרכזית אחת', 
+                      detail: 'כל המידע במקום אחד, מסונכרן בזמן אמת',
+                      improvement: 'ללא טעויות'
+                    },
+                    { 
+                      metric: 'חוזים אוטומטיים', 
+                      detail: 'נשלחים ונחתמים דיגיטלית ברגע שמאשרים הזמנה',
+                      improvement: '100% כיסוי'
+                    },
+                    { 
+                      metric: '0 תשלומים נשכחים', 
+                      detail: 'מעקב חכם ותזכורות אוטומטיות למארחים ולאורחים',
+                      improvement: '+₪8,400 בשנה'
+                    }
                   ].map((item, i) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
-                      className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: 10 }}
+                      initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 + i * 0.1 }}
+                      transition={{ delay: 0.5 + i * 0.1 }}
+                      className="flex items-start gap-4"
                     >
-                      <div className="w-6 h-6 rounded-lg bg-[#00D1C1] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <CheckCircle2 className="h-4 w-4 text-white" />
+                      <div className="mt-1 w-5 h-5 bg-[#00D1C1]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <CheckCircle2 className="h-3 w-3 text-[#00D1C1]" />
                       </div>
-                      <div>
-                        <p className="text-[#0F172A] font-semibold">{item.text}</p>
-                        <p className="text-[#64748B] text-sm">{item.sub}</p>
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between gap-4 mb-1">
+                          <p className="text-[#0F172A] font-semibold text-lg leading-tight">{item.metric}</p>
+                          <span className="text-xs font-semibold text-[#00D1C1] bg-[#00D1C1]/10 px-2 py-1 rounded-lg whitespace-nowrap">
+                            {item.improvement}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 text-sm leading-relaxed">{item.detail}</p>
                       </div>
                     </motion.div>
                   ))}
-                  <div className="pt-6 mt-6 border-t-2 border-[#00D1C1]">
-                    <div className="text-center">
-                      <p className="text-[#00D1C1] font-bold text-3xl">+20 שעות</p>
-                      <p className="text-[#0F172A] text-sm font-semibold">חזרו אליך כל שבוע</p>
+                </div>
+
+                <div className="pt-6 border-t border-[#00D1C1]/20">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-gray-600 text-sm font-medium">תוצאה:</span>
+                    <div className="text-left">
+                      <p className="text-3xl font-bold bg-gradient-to-l from-[#00D1C1] to-[#00B8AA] bg-clip-text text-transparent">+20 שעות</p>
+                      <p className="text-sm text-gray-600 mt-1">חזרו אליך כל שבוע</p>
                     </div>
                   </div>
                 </div>
@@ -194,24 +263,31 @@ export default function Landing() {
             </motion.div>
           </div>
 
-          {/* Main CTA */}
+          {/* Strategic CTA */}
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="text-center"
+            transition={{ delay: 0.9, duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#0F172A] mb-8">
-              אז מה עדיף? <span className="text-red-500">עוד לחץ</span> או <span className="text-[#00D1C1]">חיים רגועים</span>?
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-6 leading-tight">
+              הזמן שלך שווה יותר מזה
             </h2>
-            <Button
-              size="lg"
-              className="bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A] rounded-xl px-10 h-16 text-lg font-bold shadow-xl shadow-[#00D1C1]/25 transform hover:scale-105 transition-all mb-4"
-              onClick={() => navigate(createPageUrl('Dashboard'))}
-            >
-              בחרתי בחיים רגועים 🚀
-            </Button>
-            <p className="text-[#64748B] text-sm font-medium">ניסיון חינמי 30 יום • ללא כרטיס אשראי • מתחילים תוך דקה</p>
+            <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+              תפסיקו לבזבז 40 שעות בשבוע על עבודה שמערכת יכולה לעשות בשבילכם
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-[#00D1C1] to-[#00B8AA] hover:from-[#00B8AA] hover:to-[#00A89A] text-white rounded-2xl px-10 h-14 text-base font-semibold shadow-xl shadow-[#00D1C1]/25 border-0 transition-all duration-300"
+                onClick={() => navigate(createPageUrl('Dashboard'))}
+              >
+                התחילו עכשיו — ניסיון חינמי 30 יום
+              </Button>
+            </div>
+            <p className="text-sm text-gray-500 mt-6 font-medium">
+              ללא כרטיס אשראי • התקנה מהירה • תמיכה מלאה בעברית
+            </p>
           </motion.div>
         </div>
       </section>
