@@ -63,10 +63,7 @@ export default function Landing() {
                 {t.startTrial}
               </Button>
             </div>
-
-            {/* Glow effect at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00D1C1] to-transparent" />
-            </motion.div>
+          </div>
         </div>
       </nav>
 
@@ -387,7 +384,10 @@ export default function Landing() {
                     ))}
                   </motion.div>
                 </div>
-              </div>
+                
+                {/* Glow effect at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00D1C1] to-transparent" />
+              </motion.div>
 
               {/* Enhanced Floating Elements */}
               <motion.div
