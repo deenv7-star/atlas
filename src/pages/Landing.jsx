@@ -117,6 +117,151 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Problem Section - The Chaos */}
+      <section className="py-20 px-6 bg-[#F8FAFC] relative overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] mb-4 tracking-tight">
+              היום זה נראה ככה...
+            </h2>
+            <p className="text-xl text-[#64748B]">30 טאבים פתוחים, 100 הודעות, ואתה עדיין לא יודע מי משלם מחר</p>
+          </div>
+
+          <div className="relative max-w-4xl mx-auto">
+            {/* Browser Window Mockup */}
+            <div className="bg-white rounded-2xl shadow-2xl border border-[#E5E7EB] overflow-hidden">
+              {/* Browser Chrome */}
+              <div className="bg-gray-100 px-4 py-3 border-b border-gray-200 flex items-center gap-2">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                </div>
+                <div className="flex-1 bg-white rounded-md px-3 py-1 text-xs text-gray-500 flex items-center gap-2">
+                  <div className="flex gap-1 overflow-hidden">
+                    {['WhatsApp', 'Excel', 'Gmail', 'Airbnb', 'Booking', 'Google Calendar', 'Facebook'].map((tab, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="text-[10px] px-2 py-0.5 bg-gray-100 rounded whitespace-nowrap"
+                      >
+                        {tab}
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Chaotic Desktop */}
+              <div className="relative aspect-video bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+                {/* Notification Popups */}
+                {[
+                  { text: 'WhatsApp: יש לידים חדשים', delay: 0.5, color: 'bg-green-100 border-green-200' },
+                  { text: 'Gmail: תזכורת תשלום', delay: 0.8, color: 'bg-blue-100 border-blue-200' },
+                  { text: 'Airbnb: הזמנה חדשה', delay: 1.1, color: 'bg-red-100 border-red-200' },
+                  { text: 'Excel: קובץ לא נשמר', delay: 1.4, color: 'bg-yellow-100 border-yellow-200' },
+                  { text: 'WhatsApp: איפה החוזה?', delay: 1.7, color: 'bg-green-100 border-green-200' },
+                  { text: 'Google: חוזה עדכון', delay: 2.0, color: 'bg-purple-100 border-purple-200' }
+                ].map((notif, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: 300, scale: 0.8 }}
+                    animate={{ 
+                      opacity: [0, 1, 1, 0],
+                      x: [300, 0, 0, -300],
+                      scale: [0.8, 1, 1, 0.8]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      delay: notif.delay,
+                      repeat: Infinity,
+                      repeatDelay: 15
+                    }}
+                    className={`absolute top-4 left-4 ${notif.color} border rounded-lg px-4 py-2 text-sm font-medium shadow-lg`}
+                    style={{ zIndex: 10 - i }}
+                  >
+                    {notif.text}
+                  </motion.div>
+                ))}
+
+                {/* Sticky Notes - Chaos */}
+                <div className="grid grid-cols-3 gap-3 h-full">
+                  {[
+                    { title: 'דחוף!', items: ['לבדוק תשלום דוד', 'לחתום חוזה יעל', 'מתי האורחים יוצאים?'], color: 'bg-red-200', rotate: '-rotate-2' },
+                    { title: 'לעשות', items: ['ניקיון דירה 3', 'להזמין מנעולן', 'להעביר מפתחות'], color: 'bg-yellow-200', rotate: 'rotate-1' },
+                    { title: 'זוכר?', items: ['חשבונית ינואר', 'לידים מפייסבוק', 'תיקון מזגן'], color: 'bg-blue-200', rotate: '-rotate-1' },
+                    { title: 'תשלומים', items: ['150 ש"ח דוד', '2,000 ש"ח יעל', '800 ש"ח משה'], color: 'bg-green-200', rotate: 'rotate-2' },
+                    { title: 'בעיות', items: ['מזגן לא עובד', 'דליפה במקלחת', 'שכן מתלונן'], color: 'bg-pink-200', rotate: '-rotate-1' },
+                    { title: 'מחר', items: ['כניסה 14:00', 'יציאה 11:00', 'ניקיון 12:00'], color: 'bg-purple-200', rotate: 'rotate-1' }
+                  ].map((note, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, scale: 0, rotate: 0 }}
+                      animate={{ 
+                        opacity: 1, 
+                        scale: 1,
+                        rotate: [0, parseInt(note.rotate.match(/-?\d+/)[0]), parseInt(note.rotate.match(/-?\d+/)[0]) + 2, parseInt(note.rotate.match(/-?\d+/)[0])]
+                      }}
+                      transition={{ 
+                        delay: 0.3 + i * 0.1,
+                        rotate: { duration: 2, repeat: Infinity, repeatType: 'reverse' }
+                      }}
+                      className={`${note.color} ${note.rotate} p-3 rounded-lg shadow-md h-32`}
+                    >
+                      <h4 className="font-bold text-sm mb-2 text-[#0F172A]">{note.title}</h4>
+                      <ul className="space-y-0.5">
+                        {note.items.map((item, j) => (
+                          <li key={j} className="text-[10px] text-[#0F172A] leading-tight truncate">• {item}</li>
+                        ))}
+                      </ul>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Stress Indicator */}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [0, 1.2, 1], opacity: [0, 1, 1] }}
+                  transition={{ delay: 2.5, duration: 0.5 }}
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-full font-bold shadow-xl flex items-center gap-2"
+                >
+                  <AlertCircle className="h-5 w-5 animate-pulse" />
+                  בלאגן מוחלט
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Arrow Down */}
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="flex justify-center mt-8"
+            >
+              <div className="w-12 h-12 rounded-full bg-[#00D1C1] flex items-center justify-center">
+                <ChevronRight className="h-6 w-6 text-white rotate-90" />
+              </div>
+            </motion.div>
+
+            {/* Solution Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="mt-8 bg-white rounded-2xl shadow-xl border border-[#E5E7EB] p-8 text-center"
+            >
+              <div className="w-16 h-16 bg-[#00D1C1] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[#0F172A] mb-2">עם ATLAS</h3>
+              <p className="text-[#64748B] text-lg">כל המידע במקום אחד. אוטומציה מלאה. אפס בלאגן.</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
 
 
       {/* Features */}
