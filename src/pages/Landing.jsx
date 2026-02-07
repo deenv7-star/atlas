@@ -106,15 +106,136 @@ export default function Landing() {
             </Button>
           </div>
 
-          {/* Hero Visual */}
+          {/* Hero Visual - Animated */}
           <div className="relative max-w-5xl mx-auto">
             <div className="absolute inset-0 bg-[#00D1C1]/20 blur-3xl"></div>
             <div className="relative rounded-2xl overflow-hidden border border-[#E5E7EB] bg-white shadow-2xl">
-              <img 
-                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop&q=80" 
-                alt="ATLAS Dashboard"
-                className="w-full h-auto"
-              />
+              <div className="aspect-video bg-gradient-to-br from-gray-50 to-white p-8">
+                {/* Animated Dashboard Mockup */}
+                <div className="grid grid-cols-12 gap-4 h-full">
+                  {/* Sidebar */}
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="col-span-2 bg-gradient-to-b from-[#0F172A] to-[#1E293B] rounded-xl p-3 flex flex-col gap-2"
+                  >
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + i * 0.1 }}
+                        className="h-8 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                      />
+                    ))}
+                  </motion.div>
+
+                  {/* Main Content */}
+                  <div className="col-span-10 space-y-4">
+                    {/* Header Stats */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="grid grid-cols-4 gap-3"
+                    >
+                      {[
+                        { value: '24', label: 'הזמנות', color: 'from-blue-500 to-blue-600' },
+                        { value: '₪48K', label: 'הכנסות', color: 'from-green-500 to-green-600' },
+                        { value: '12', label: 'לידים', color: 'from-purple-500 to-purple-600' },
+                        { value: '95%', label: 'תפוסה', color: 'from-[#00D1C1] to-[#00B8AA]' }
+                      ].map((stat, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                          whileHover={{ scale: 1.05 }}
+                          className={`bg-gradient-to-br ${stat.color} rounded-xl p-3 text-white shadow-lg`}
+                        >
+                          <p className="text-2xl font-bold">{stat.value}</p>
+                          <p className="text-xs opacity-90">{stat.label}</p>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+
+                    {/* Calendar & Tasks */}
+                    <div className="grid grid-cols-2 gap-3 flex-1">
+                      {/* Calendar */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.8 }}
+                        className="bg-white rounded-xl border-2 border-gray-200 p-4"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="h-3 w-20 bg-gray-200 rounded"></div>
+                          <Calendar className="h-4 w-4 text-[#00D1C1]" />
+                        </div>
+                        <div className="grid grid-cols-7 gap-1">
+                          {[...Array(28)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.9 + i * 0.02 }}
+                              className={`aspect-square rounded ${
+                                i % 7 === 0 ? 'bg-[#00D1C1]' : 
+                                i % 5 === 0 ? 'bg-green-100' : 
+                                'bg-gray-100'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
+
+                      {/* Tasks */}
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1 }}
+                        className="bg-white rounded-xl border-2 border-gray-200 p-4"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <CheckCircle2 className="h-4 w-4 text-[#00D1C1]" />
+                          <div className="h-3 w-24 bg-gray-200 rounded"></div>
+                        </div>
+                        <div className="space-y-2">
+                          {[
+                            { color: 'bg-green-500', width: 'w-full' },
+                            { color: 'bg-[#00D1C1]', width: 'w-3/4' },
+                            { color: 'bg-yellow-500', width: 'w-1/2' },
+                            { color: 'bg-gray-300', width: 'w-2/3' }
+                          ].map((task, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 1.1 + i * 0.1 }}
+                              className="flex items-center gap-2"
+                            >
+                              <div className={`w-3 h-3 rounded-full ${task.color}`}></div>
+                              <div className={`h-2 ${task.width} bg-gray-200 rounded`}></div>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Success Badge */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0, rotate: -10 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ delay: 1.5, type: "spring" }}
+                  className="absolute top-4 right-4 bg-gradient-to-br from-green-500 to-green-600 text-white px-4 py-2 rounded-full shadow-xl flex items-center gap-2"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span className="text-sm font-bold">הכל מסונכרן</span>
+                </motion.div>
+              </div>
             </div>
           </div>
         </div>
