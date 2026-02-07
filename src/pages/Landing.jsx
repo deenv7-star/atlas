@@ -44,20 +44,20 @@ export default function Landing() {
   return (
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-[#e5e5e5]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
-                className="text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-full px-5 h-11 text-sm"
+                className="text-[#525252] hover:text-[#0a0a0a] hover:bg-transparent rounded-lg px-4 h-10 text-sm font-medium"
                 onClick={() => navigate(createPageUrl('Dashboard'))}
               >
                 כניסה
               </Button>
               <Button 
-                className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-5 h-11 text-sm font-normal"
+                className="bg-[#0a0a0a] hover:bg-[#1a1a1a] text-white rounded-lg px-4 h-10 text-sm font-medium"
                 onClick={() => navigate(createPageUrl('Dashboard'))}
               >
                 {t.startTrial}
@@ -68,43 +68,41 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-40 sm:pt-48 pb-32 sm:pb-40 px-6 overflow-hidden bg-white">
-        <div className="max-w-[980px] mx-auto text-center">
-          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[112px] font-semibold leading-[1.05] mb-6 text-[#1d1d1f] tracking-tight">
-            ניהול נכסים
-            <br />
-            שונה לחלוטין
-          </h1>
+      <section className="relative min-h-screen flex items-center px-6 overflow-hidden bg-[#fafafa]">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:64px_64px]"></div>
+        
+        <div className="max-w-7xl mx-auto w-full relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold leading-[0.95] mb-8 text-[#0a0a0a] tracking-tight">
+                ניהול נכסים
+                <br />
+                <span className="text-[#525252]">מהעתיד</span>
+              </h1>
 
-          <p className="text-2xl sm:text-3xl md:text-4xl text-[#86868b] mb-12 leading-relaxed font-normal max-w-[820px] mx-auto">
-            אוטומציה מלאה. בינה מלאכותית. ממשק אינטואיטיבי.
-          </p>
+              <p className="text-xl text-[#737373] mb-10 leading-relaxed max-w-[500px]">
+                פלטפורמה מונעת AI שמנהלת הכל - מלידים ועד תשלומים, באוטומציה מלאה.
+              </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-20">
-            <Button
-              size="lg"
-              className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-10 h-16 text-xl font-normal shadow-lg"
-              onClick={() => navigate(createPageUrl('Dashboard'))}
-            >
-              התחל בחינם
-            </Button>
-            <Button
-              size="lg"
-              variant="link"
-              className="text-[#0071e3] hover:underline px-10 h-16 text-xl font-normal"
-            >
-              למד עוד
-            </Button>
-          </div>
+              <Button
+                size="lg"
+                className="bg-[#0a0a0a] hover:bg-[#1a1a1a] text-white rounded-xl px-8 h-14 text-base font-medium"
+                onClick={() => navigate(createPageUrl('Dashboard'))}
+              >
+                התחל בחינם - 30 יום ניסיון
+              </Button>
+              
+              <p className="text-sm text-[#a3a3a3] mt-4">ללא כרטיס אשראי • ביטול בכל עת</p>
+            </div>
 
-          {/* Hero Visual */}
-          <div className="relative max-w-[1400px] mx-auto mt-20">
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-black/10">
-              <img 
-                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1400&h=900&fit=crop&q=80" 
-                alt="Dashboard Preview"
-                className="w-full h-auto"
-              />
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden border border-[#e5e5e5] bg-white shadow-2xl shadow-black/5">
+                <img 
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80" 
+                  alt="Dashboard"
+                  className="w-full h-auto"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -112,27 +110,38 @@ export default function Landing() {
 
 
 
-      {/* Features Grid */}
-      <section className="py-32 sm:py-40 px-6 bg-white">
-        <div className="max-w-[980px] mx-auto">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-[#1d1d1f] mb-6 tracking-tight leading-[1.05]">
-              כל מה שאתה צריך.<br />במקום אחד.
-            </h2>
-          </div>
+      {/* Features */}
+      <section className="py-32 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-24 items-start">
+            <div className="lg:sticky lg:top-24">
+              <h2 className="text-5xl sm:text-6xl font-bold text-[#0a0a0a] mb-6 tracking-tight leading-tight">
+                כל מה שצריך
+                <br />
+                לנהל עסק
+              </h2>
+              <p className="text-xl text-[#737373] leading-relaxed">
+                מערכת אחת שמחליפה עשרות כלים ומאפשרת לך להתמקד במה שחשוב באמת
+              </p>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-16">
-            {features.map((feature, i) => (
-              <div key={i} className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-[#0071e3] to-[#00a0dc] rounded-[1.25rem] flex items-center justify-center mb-8 mx-auto">
-                  <feature.icon className="h-8 w-8 text-white" />
+            <div className="space-y-8">
+              {features.map((feature, i) => (
+                <div key={i} className="group">
+                  <div className="flex items-start gap-6 p-6 rounded-2xl hover:bg-[#fafafa] transition-colors">
+                    <div className="w-12 h-12 bg-[#0a0a0a] rounded-xl flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-[#0a0a0a] mb-2">
+                        {feature.title}
+                      </h3>
+                      <p className="text-[#737373] text-lg leading-relaxed">{feature.desc}</p>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-[#1d1d1f] mb-4">
-                  {feature.title}
-                </h3>
-                <p className="text-[#86868b] text-xl leading-relaxed">{feature.desc}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -357,58 +366,47 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-32 sm:py-40 px-6 bg-[#fbfbfd]">
-        <div className="max-w-[980px] mx-auto text-center">
-          <h2 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-[#1d1d1f] mb-8 tracking-tight leading-[1.05]">
-            התחל עכשיו.<br />בחינם.
-          </h2>
-          <p className="text-2xl sm:text-3xl text-[#86868b] mb-12 leading-relaxed font-normal">
-            30 יום ניסיון ללא התחייבות. ללא כרטיס אשראי.
-          </p>
-          <Button 
-            size="lg" 
-            className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-10 h-16 text-xl font-normal shadow-lg"
-            onClick={() => navigate(createPageUrl('Dashboard'))}
-          >
-            התחל את הניסיון החינמי
-          </Button>
-        </div>
-      </section>
+
 
       {/* Pricing */}
-      <section className="py-32 sm:py-40 px-6 bg-white">
-        <div className="max-w-[980px] mx-auto">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-[#1d1d1f] mb-6 tracking-tight leading-[1.05]">
-              תוכניות ומחירים
+      <section className="py-32 px-6 bg-[#fafafa]">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl sm:text-6xl font-bold text-[#0a0a0a] mb-4 tracking-tight">
+              מחיר הוגן לכולם
             </h2>
-            <p className="text-2xl text-[#86868b]">בחר את התוכנית המתאימה לך</p>
+            <p className="text-xl text-[#737373]">התחל בחינם, שדרג כשאתה צריך</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {Object.entries(t.pricing).map(([key, plan]) => (
-              <div key={key} className={`rounded-[2rem] p-10 ${key === 'pro' ? 'bg-[#1d1d1f] text-white scale-105' : 'bg-[#fbfbfd] text-[#1d1d1f]'}`}>
-                {key === 'pro' && (
-                  <div className="text-[#0071e3] text-sm font-semibold mb-6 tracking-wide">הכי פופולרי</div>
-                )}
-                <h3 className="text-3xl font-semibold mb-3">{plan.name}</h3>
+              <div 
+                key={key} 
+                className={`rounded-2xl p-8 border-2 transition-all ${
+                  key === 'pro' 
+                    ? 'bg-[#0a0a0a] text-white border-[#0a0a0a] scale-105 shadow-xl' 
+                    : 'bg-white text-[#0a0a0a] border-[#e5e5e5] hover:border-[#0a0a0a]'
+                }`}
+              >
+                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
                 <div className="mb-8">
-                  <span className="text-6xl font-semibold">₪{plan.price}</span>
-                  <span className={`text-xl ${key === 'pro' ? 'text-white/60' : 'text-[#86868b]'}`}>/חודש</span>
+                  <span className="text-5xl font-bold">₪{plan.price}</span>
+                  <span className={key === 'pro' ? 'text-white/60' : 'text-[#737373]'}>/חודש</span>
                 </div>
-                <ul className="space-y-4 mb-10">
+                <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-3">
-                      <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-[#0071e3]" />
-                      <span className={`text-base ${key === 'pro' ? 'text-white/90' : 'text-[#1d1d1f]'}`}>{feature}</span>
+                    <li key={j} className="flex items-start gap-2 text-sm">
+                      <CheckCircle2 className={`h-5 w-5 flex-shrink-0 ${key === 'pro' ? 'text-white' : 'text-[#0a0a0a]'}`} />
+                      <span className={key === 'pro' ? 'text-white/90' : 'text-[#525252]'}>{feature}</span>
                     </li>
                   ))}
                 </ul>
                 <Button 
-                  className={`w-full rounded-full h-14 text-base font-normal ${key === 'pro' 
-                    ? 'bg-[#0071e3] hover:bg-[#0077ed] text-white' 
-                    : 'bg-[#0071e3] hover:bg-[#0077ed] text-white'}`}
+                  className={`w-full rounded-xl h-12 font-medium ${
+                    key === 'pro' 
+                      ? 'bg-white hover:bg-[#f5f5f5] text-[#0a0a0a]' 
+                      : 'bg-[#0a0a0a] hover:bg-[#1a1a1a] text-white'
+                  }`}
                   onClick={() => navigate(createPageUrl('Dashboard'))}
                 >
                   {t.startTrial}
@@ -461,46 +459,41 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-32 sm:py-40 px-6 bg-[#f5f5f7]">
-        <div className="max-w-[900px] mx-auto text-center">
-          <h2 className="text-5xl sm:text-6xl md:text-7xl font-semibold text-[#1d1d1f] mb-8 leading-[1.05] tracking-tight">
-            {t.finalCta}
-          </h2>
-          <p className="text-2xl sm:text-3xl text-[#86868b] mb-12 leading-relaxed">{t.tagline}</p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+      <section className="py-32 px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-[#0a0a0a] rounded-3xl p-12 sm:p-16 text-center">
+            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 tracking-tight">
+              מוכן להתחיל?
+            </h2>
+            <p className="text-xl text-white/70 mb-10">
+              הצטרף ל-200+ בעלי נכסים שכבר מנהלים את העסק בצורה חכמה יותר
+            </p>
             <Button 
               size="lg" 
-              className="bg-[#0071e3] hover:bg-[#0077ed] text-white rounded-full px-10 h-16 text-xl font-normal shadow-lg"
+              className="bg-white hover:bg-[#f5f5f5] text-[#0a0a0a] rounded-xl px-8 h-14 text-base font-medium"
               onClick={() => navigate(createPageUrl('Dashboard'))}
             >
-              {t.startTrial}
-            </Button>
-            <Button 
-              size="lg" 
-              variant="link"
-              className="text-[#0071e3] hover:underline px-10 h-16 text-xl font-normal"
-            >
-              דבר איתנו
+              התחל בחינם - 30 יום ניסיון
             </Button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-[#f5f5f7] border-t border-[#d2d2d7]">
-        <div className="max-w-[980px] mx-auto">
+      <footer className="py-12 px-6 bg-[#fafafa] border-t border-[#e5e5e5]">
+        <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Logo variant="dark" />
-            <div className="flex gap-6 text-[#86868b] text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-[#1d1d1f] transition-colors">
+            <div className="flex gap-8 text-[#737373] text-sm">
+              <Link to={createPageUrl('Privacy')} className="hover:text-[#0a0a0a] transition-colors">
                 {t.privacyPolicy}
               </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-[#1d1d1f] transition-colors">
+              <Link to={createPageUrl('Terms')} className="hover:text-[#0a0a0a] transition-colors">
                 {t.termsOfService}
               </Link>
             </div>
-            <p className="text-[#86868b] text-sm">
-              © 2026 ATLAS. {t.allRightsReserved}
+            <p className="text-[#a3a3a3] text-sm">
+              © 2026 ATLAS
             </p>
           </div>
         </div>
