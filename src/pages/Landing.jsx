@@ -69,52 +69,227 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-white">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00D1C1]/10 border border-[#00D1C1]/20 mb-8">
-            <Sparkles className="h-4 w-4 text-[#00D1C1]" />
-            <span className="text-sm text-[#0F172A] font-semibold">פלטפורמת ניהול מונעת AI</span>
-          </div>
+      <section className="relative pt-24 pb-12 px-6 overflow-hidden bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A]">
+        {/* Background Effects */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[#00D1C1]/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#00D1C1]/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
 
-          <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold leading-[1.05] mb-6 text-[#0F172A] tracking-tight">
-            ניהול נכסים<br />
-            <span className="text-[#00D1C1]">חכם ואוטומטי</span>
-          </h1>
-
-          <p className="text-xl sm:text-2xl text-[#64748B] mb-10 leading-relaxed max-w-3xl mx-auto font-normal">
-            ATLAS מנהלת את הכל בשבילך - מלידים לתשלומים, מהזמנות לחוזים.
-            <br className="hidden sm:block" />
-            אוטומציה חכמה שחוסכת לך 20+ שעות שבועיות.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Button
-              size="lg"
-              className="bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A] rounded-xl px-8 h-14 text-base font-semibold shadow-lg shadow-[#00D1C1]/25"
-              onClick={() => navigate(createPageUrl('Dashboard'))}
-            >
-              התחל ניסיון חינמי - 30 יום
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-[#E5E7EB] hover:border-[#00D1C1] hover:text-[#00D1C1] rounded-xl px-8 h-14 text-base font-medium"
-            >
-              צפה בדמו
-            </Button>
-          </div>
-
-          {/* Hero Visual */}
-          <div className="relative max-w-5xl mx-auto">
-            <div className="absolute inset-0 bg-[#00D1C1]/20 blur-3xl"></div>
-            <div className="relative rounded-2xl overflow-hidden border border-[#E5E7EB] bg-white shadow-2xl">
-              <img 
-                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop&q=80" 
-                alt="ATLAS Dashboard"
-                className="w-full h-auto"
-              />
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Problem Statement - Big & Bold */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/20 border border-red-500/30 mb-6">
+              <AlertCircle className="h-4 w-4 text-red-400" />
+              <span className="text-sm text-red-300 font-semibold">הבעיה שכולם מדברים עליה</span>
             </div>
+
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold leading-[1.1] mb-6 text-white tracking-tight">
+              אתה עובד <span className="text-red-400">60 שעות בשבוע</span>.<br />
+              <span className="text-[#64748B]">40 מהן על</span> <span className="text-red-400">וואטסאפ ואקסלים</span>.
+            </h1>
+
+            <p className="text-xl sm:text-2xl text-[#94A3B8] mb-8 leading-relaxed max-w-3xl mx-auto">
+              כל יום זה אותו סיפור: 50 הודעות, 10 טאבים פתוחים, ואתה עדיין לא יודע איפה הכסף
+            </p>
+          </motion.div>
+
+          {/* Split Comparison - Before/After */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-12">
+            {/* BEFORE - The Chaos */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="relative"
+            >
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
+                <div className="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                  היום 😫
+                </div>
+              </div>
+              <div className="bg-gradient-to-br from-red-950/50 to-red-900/30 rounded-2xl border-2 border-red-500/30 p-8 backdrop-blur-sm h-full">
+                <div className="space-y-4">
+                  <motion.div 
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">3.5 שעות ביום בוואטסאפ</p>
+                      <p className="text-red-300 text-sm">לתאם כניסות, לזכור מי משלם, לחפש חוזים</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">10 אקסלים פתוחים</p>
+                      <p className="text-red-300 text-sm">אחד לכל נכס, אף אחד לא מעודכן</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">שכחת לחתום חוזה</p>
+                      <p className="text-red-300 text-sm">והאורחים כבר בכניסה</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">איבדת ₪5,000</p>
+                      <p className="text-red-300 text-sm">כי לא עקבת אחרי תשלום שלא הגיע</p>
+                    </div>
+                  </motion.div>
+
+                  <div className="pt-6 border-t border-red-500/20">
+                    <div className="text-center">
+                      <p className="text-red-400 font-bold text-3xl mb-1">₪0</p>
+                      <p className="text-red-300 text-sm">רווח נוסף מהבלאגן הזה</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* AFTER - The Solution */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="relative"
+            >
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
+                <div className="bg-[#00D1C1] text-[#0F172A] px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                  עם ATLAS 🚀
+                </div>
+              </div>
+              <div className="bg-gradient-to-br from-[#00D1C1]/20 to-[#00D1C1]/10 rounded-2xl border-2 border-[#00D1C1]/50 p-8 backdrop-blur-sm h-full shadow-2xl shadow-[#00D1C1]/20">
+                <div className="space-y-4">
+                  <motion.div 
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-[#00D1C1]/30 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 className="h-4 w-4 text-[#00D1C1]" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">10 דקות ביום ניהול</p>
+                      <p className="text-[#94A3B8] text-sm">הכל אוטומטי - הודעות, חוזים, תזכורות</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-[#00D1C1]/30 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 className="h-4 w-4 text-[#00D1C1]" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">מערכת אחת לכל הנכסים</p>
+                      <p className="text-[#94A3B8] text-sm">כל המידע במקום אחד, תמיד מעודכן</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-[#00D1C1]/30 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 className="h-4 w-4 text-[#00D1C1]" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">חוזים נשלחים אוטומטית</p>
+                      <p className="text-[#94A3B8] text-sm">ברגע שמאשרים הזמנה</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-[#00D1C1]/30 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 className="h-4 w-4 text-[#00D1C1]" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">0 תשלומים מפספסים</p>
+                      <p className="text-[#94A3B8] text-sm">תזכורות אוטומטיות + מעקב חכם</p>
+                    </div>
+                  </motion.div>
+
+                  <div className="pt-6 border-t border-[#00D1C1]/20">
+                    <div className="text-center">
+                      <p className="text-[#00D1C1] font-bold text-3xl mb-1">+20 שעות</p>
+                      <p className="text-[#94A3B8] text-sm">חזרו אליך כל שבוע</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
+
+          {/* Main CTA */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="text-center"
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+              אז מה בוחרים? <span className="text-red-400">עוד לחץ</span> או <span className="text-[#00D1C1]">חיים רגועים</span>?
+            </h2>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button
+                size="lg"
+                className="bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A] rounded-xl px-8 h-16 text-lg font-bold shadow-xl shadow-[#00D1C1]/30 transform hover:scale-105 transition-all"
+                onClick={() => navigate(createPageUrl('Dashboard'))}
+              >
+                בחרתי בחיים רגועים 🚀
+              </Button>
+              <p className="text-[#94A3B8] text-sm">ניסיון חינמי 30 יום • ללא כרטיס אשראי</p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
