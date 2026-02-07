@@ -68,7 +68,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-28 pb-16 px-4">
+      <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -150,7 +150,7 @@ export default function Landing() {
       </section>
 
       {/* Problem Section */}
-      <section className="py-16 px-4 bg-[#0B1220]">
+      <section className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -173,7 +173,7 @@ export default function Landing() {
       </section>
 
       {/* Solution Section */}
-      <section className="py-16 px-4">
+      <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -199,7 +199,7 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-16 px-4 bg-[#F2E9DB]/30">
+      <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
@@ -226,12 +226,12 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#0B1220] text-center mb-10">
             איך זה עובד?
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {t.howItWorks.map((step, i) => (
               <motion.div
                 key={i}
@@ -241,11 +241,11 @@ export default function Landing() {
                 transition={{ delay: i * 0.2 }}
                 className="text-center"
               >
-                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                <div className="w-12 h-12 bg-[#0B1220] text-white rounded-xl flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                   {step.step}
                 </div>
-                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.desc}</p>
+                <h3 className="text-lg font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                <p className="text-sm text-gray-600">{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -253,7 +253,7 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 px-4 bg-[#0B1220]">
+      <section className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
             מה אומרים עלינו
@@ -285,7 +285,7 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="py-16 px-4">
+      <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
             תוכניות ומחירים
@@ -338,7 +338,7 @@ export default function Landing() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 px-4 bg-[#F2E9DB]/30">
+      <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
             שאלות נפוצות
@@ -379,7 +379,7 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
+      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
