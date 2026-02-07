@@ -76,10 +76,10 @@ export default function Landing() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6 whitespace-pre-line">
                 {t.heroTitle}
               </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed whitespace-pre-line">
                 {t.heroSubtitle}
               </p>
               <div className="flex flex-wrap gap-4">
@@ -416,7 +416,7 @@ export default function Landing() {
               </Link>
             </div>
             <p className="text-white/40 text-sm">
-              © 2024 ATLAS. {t.allRightsReserved}
+              © 2024 STAYFLOW. {t.allRightsReserved}
             </p>
           </div>
         </div>
