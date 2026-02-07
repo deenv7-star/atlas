@@ -44,20 +44,20 @@ export default function Landing() {
   return (
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-[#e5e5e5]">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
             <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
-                className="text-[#525252] hover:text-[#0a0a0a] hover:bg-transparent rounded-lg px-4 h-10 text-sm font-medium"
+                className="text-slate-600 hover:text-slate-900 rounded-lg px-4 h-10 text-sm font-medium"
                 onClick={() => navigate(createPageUrl('Dashboard'))}
               >
                 כניסה
               </Button>
               <Button 
-                className="bg-[#0a0a0a] hover:bg-[#1a1a1a] text-white rounded-lg px-4 h-10 text-sm font-medium"
+                className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white rounded-lg px-5 h-10 text-sm font-medium shadow-lg shadow-violet-500/25"
                 onClick={() => navigate(createPageUrl('Dashboard'))}
               >
                 {t.startTrial}
@@ -68,41 +68,51 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center px-6 overflow-hidden bg-[#fafafa]">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:64px_64px]"></div>
-        
-        <div className="max-w-7xl mx-auto w-full relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold leading-[0.95] mb-8 text-[#0a0a0a] tracking-tight">
-                ניהול נכסים
-                <br />
-                <span className="text-[#525252]">מהעתיד</span>
-              </h1>
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-white">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-100 mb-8">
+            <Sparkles className="h-4 w-4 text-violet-600" />
+            <span className="text-sm text-violet-900 font-medium">מונע בינה מלאכותית</span>
+          </div>
 
-              <p className="text-xl text-[#737373] mb-10 leading-relaxed max-w-[500px]">
-                פלטפורמה מונעת AI שמנהלת הכל - מלידים ועד תשלומים, באוטומציה מלאה.
-              </p>
+          <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold leading-[1.05] mb-6 text-[#0F172A] tracking-tight">
+            ניהול נכסים
+            <br />
+            <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
+              בצורה חכמה
+            </span>
+          </h1>
 
-              <Button
-                size="lg"
-                className="bg-[#0a0a0a] hover:bg-[#1a1a1a] text-white rounded-xl px-8 h-14 text-base font-medium"
-                onClick={() => navigate(createPageUrl('Dashboard'))}
-              >
-                התחל בחינם - 30 יום ניסיון
-              </Button>
-              
-              <p className="text-sm text-[#a3a3a3] mt-4">ללא כרטיס אשראי • ביטול בכל עת</p>
-            </div>
+          <p className="text-xl sm:text-2xl text-slate-600 mb-10 leading-relaxed max-w-3xl mx-auto">
+            אוטומציה מלאה, בינה מלאכותית מתקדמת, וממשק נקי שחוסך לך שעות כל יום
+          </p>
 
-            <div className="relative">
-              <div className="relative rounded-2xl overflow-hidden border border-[#e5e5e5] bg-white shadow-2xl shadow-black/5">
-                <img 
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80" 
-                  alt="Dashboard"
-                  className="w-full h-auto"
-                />
-              </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white rounded-xl px-8 h-14 text-base font-medium shadow-lg shadow-violet-500/25"
+              onClick={() => navigate(createPageUrl('Dashboard'))}
+            >
+              התחל בחינם - 30 יום
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-slate-200 hover:border-slate-300 rounded-xl px-8 h-14 text-base font-medium"
+            >
+              צפה בדמו
+            </Button>
+          </div>
+
+          {/* Hero Visual */}
+          <div className="relative max-w-5xl mx-auto">
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 to-blue-500/20 blur-3xl"></div>
+            <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl">
+              <img 
+                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop&q=80" 
+                alt="Dashboard Preview"
+                className="w-full h-auto"
+              />
             </div>
           </div>
         </div>
@@ -111,37 +121,29 @@ export default function Landing() {
 
 
       {/* Features */}
-      <section className="py-32 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-24 items-start">
-            <div className="lg:sticky lg:top-24">
-              <h2 className="text-5xl sm:text-6xl font-bold text-[#0a0a0a] mb-6 tracking-tight leading-tight">
-                כל מה שצריך
-                <br />
-                לנהל עסק
-              </h2>
-              <p className="text-xl text-[#737373] leading-relaxed">
-                מערכת אחת שמחליפה עשרות כלים ומאפשרת לך להתמקד במה שחשוב באמת
-              </p>
-            </div>
+      <section className="py-24 px-6 bg-slate-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl sm:text-6xl font-bold text-[#0F172A] mb-4 tracking-tight">
+              הכל במקום אחד
+            </h2>
+            <p className="text-xl text-slate-600">כל הכלים שאתה צריך לנהל את העסק בצורה מושלמת</p>
+          </div>
 
-            <div className="space-y-8">
-              {features.map((feature, i) => (
-                <div key={i} className="group">
-                  <div className="flex items-start gap-6 p-6 rounded-2xl hover:bg-[#fafafa] transition-colors">
-                    <div className="w-12 h-12 bg-[#0a0a0a] rounded-xl flex items-center justify-center flex-shrink-0">
-                      <feature.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-[#0a0a0a] mb-2">
-                        {feature.title}
-                      </h3>
-                      <p className="text-[#737373] text-lg leading-relaxed">{feature.desc}</p>
-                    </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {features.map((feature, i) => (
+              <div key={i} className="group">
+                <div className="bg-white rounded-2xl p-8 border border-slate-200 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-500/10 transition-all">
+                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
+                    <feature.icon className="h-6 w-6 text-white" />
                   </div>
+                  <h3 className="text-xl font-bold text-[#0F172A] mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed">{feature.desc}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -369,43 +371,48 @@ export default function Landing() {
 
 
       {/* Pricing */}
-      <section className="py-32 px-6 bg-[#fafafa]">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl sm:text-6xl font-bold text-[#0a0a0a] mb-4 tracking-tight">
-              מחיר הוגן לכולם
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl sm:text-6xl font-bold text-[#0F172A] mb-4 tracking-tight">
+              תוכניות ומחירים
             </h2>
-            <p className="text-xl text-[#737373]">התחל בחינם, שדרג כשאתה צריך</p>
+            <p className="text-xl text-slate-600">בחר את התוכנית המתאימה לך</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             {Object.entries(t.pricing).map(([key, plan]) => (
               <div 
                 key={key} 
-                className={`rounded-2xl p-8 border-2 transition-all ${
+                className={`rounded-2xl p-8 border transition-all ${
                   key === 'pro' 
-                    ? 'bg-[#0a0a0a] text-white border-[#0a0a0a] scale-105 shadow-xl' 
-                    : 'bg-white text-[#0a0a0a] border-[#e5e5e5] hover:border-[#0a0a0a]'
+                    ? 'bg-gradient-to-br from-violet-600 to-blue-600 text-white border-transparent shadow-2xl shadow-violet-500/25 scale-105' 
+                    : 'bg-white text-[#0F172A] border-slate-200 hover:border-violet-200 hover:shadow-lg'
                 }`}
               >
+                {key === 'pro' && (
+                  <div className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-semibold mb-4">
+                    הכי פופולרי
+                  </div>
+                )}
                 <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
                 <div className="mb-8">
                   <span className="text-5xl font-bold">₪{plan.price}</span>
-                  <span className={key === 'pro' ? 'text-white/60' : 'text-[#737373]'}>/חודש</span>
+                  <span className={key === 'pro' ? 'text-white/70' : 'text-slate-500'}>/חודש</span>
                 </div>
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-2 text-sm">
-                      <CheckCircle2 className={`h-5 w-5 flex-shrink-0 ${key === 'pro' ? 'text-white' : 'text-[#0a0a0a]'}`} />
-                      <span className={key === 'pro' ? 'text-white/90' : 'text-[#525252]'}>{feature}</span>
+                    <li key={j} className="flex items-start gap-3 text-sm">
+                      <CheckCircle2 className={`h-5 w-5 flex-shrink-0 ${key === 'pro' ? 'text-white' : 'text-violet-600'}`} />
+                      <span className={key === 'pro' ? 'text-white/90' : 'text-slate-600'}>{feature}</span>
                     </li>
                   ))}
                 </ul>
                 <Button 
                   className={`w-full rounded-xl h-12 font-medium ${
                     key === 'pro' 
-                      ? 'bg-white hover:bg-[#f5f5f5] text-[#0a0a0a]' 
-                      : 'bg-[#0a0a0a] hover:bg-[#1a1a1a] text-white'
+                      ? 'bg-white hover:bg-slate-50 text-violet-600' 
+                      : 'bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white'
                   }`}
                   onClick={() => navigate(createPageUrl('Dashboard'))}
                 >
@@ -459,40 +466,44 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-32 px-6 bg-white">
+      <section className="py-24 px-6 bg-slate-50">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-[#0a0a0a] rounded-3xl p-12 sm:p-16 text-center">
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 tracking-tight">
-              מוכן להתחיל?
-            </h2>
-            <p className="text-xl text-white/70 mb-10">
-              הצטרף ל-200+ בעלי נכסים שכבר מנהלים את העסק בצורה חכמה יותר
-            </p>
-            <Button 
-              size="lg" 
-              className="bg-white hover:bg-[#f5f5f5] text-[#0a0a0a] rounded-xl px-8 h-14 text-base font-medium"
-              onClick={() => navigate(createPageUrl('Dashboard'))}
-            >
-              התחל בחינם - 30 יום ניסיון
-            </Button>
+          <div className="bg-gradient-to-br from-violet-600 to-blue-600 rounded-3xl p-12 sm:p-16 text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSI1IiBjeT0iNSIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
+            <div className="relative z-10">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 tracking-tight">
+                מוכן להתחיל?
+              </h2>
+              <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+                הצטרף ל-200+ בעלי נכסים שכבר מנהלים את העסק בצורה חכמה יותר
+              </p>
+              <Button 
+                size="lg" 
+                className="bg-white hover:bg-slate-50 text-violet-600 rounded-xl px-8 h-14 text-base font-medium shadow-xl"
+                onClick={() => navigate(createPageUrl('Dashboard'))}
+              >
+                התחל בחינם - 30 יום ניסיון
+              </Button>
+              <p className="text-sm text-white/80 mt-4">ללא כרטיס אשראי • ביטול בכל עת</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-[#fafafa] border-t border-[#e5e5e5]">
+      <footer className="py-12 px-6 bg-white border-t border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Logo variant="dark" />
-            <div className="flex gap-8 text-[#737373] text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-[#0a0a0a] transition-colors">
+            <div className="flex gap-8 text-slate-600 text-sm">
+              <Link to={createPageUrl('Privacy')} className="hover:text-slate-900 transition-colors">
                 {t.privacyPolicy}
               </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-[#0a0a0a] transition-colors">
+              <Link to={createPageUrl('Terms')} className="hover:text-slate-900 transition-colors">
                 {t.termsOfService}
               </Link>
             </div>
-            <p className="text-[#a3a3a3] text-sm">
+            <p className="text-slate-400 text-sm">
               © 2026 ATLAS
             </p>
           </div>
