@@ -103,47 +103,85 @@ export default function Landing() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative"
             >
-              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
-                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
-                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
+              <div className="bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] rounded-3xl p-1 shadow-2xl">
+                <div className="bg-white rounded-2xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-[#0B1220] to-[#1a2744] px-4 py-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-[#00D1C1] rounded-lg flex items-center justify-center">
+                        <span className="text-[#0B1220] font-bold text-sm">A</span>
+                      </div>
+                      <span className="text-white font-medium">ATLAS Dashboard</span>
                     </div>
-                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+                    </div>
                   </div>
                   <div className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
-                        <p className="text-sm text-gray-500">לידים חדשים</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
-                      </div>
-                      <div className="bg-[#F2E9DB] rounded-xl p-4">
-                        <p className="text-sm text-gray-500">הזמנות החודש</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-xl border p-4">
+                    <motion.div 
+                      className="grid grid-cols-2 gap-4"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <motion.div 
+                        className="bg-gradient-to-br from-[#00D1C1]/20 to-[#00D1C1]/5 rounded-xl p-4 border-2 border-[#00D1C1]/30"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <p className="text-sm text-gray-600 mb-1">לידים פעילים</p>
+                        <p className="text-3xl font-bold text-[#0B1220]">12</p>
+                        <p className="text-xs text-[#00D1C1] mt-1">↑ 3 חדשים היום</p>
+                      </motion.div>
+                      <motion.div 
+                        className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-4 border-2 border-blue-200/50"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <p className="text-sm text-gray-600 mb-1">הזמנות החודש</p>
+                        <p className="text-3xl font-bold text-[#0B1220]">28</p>
+                        <p className="text-xs text-green-600 mt-1">₪142,000</p>
+                      </motion.div>
+                    </motion.div>
+                    <motion.div 
+                      className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 p-4 shadow-sm"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                    >
                       <div className="flex justify-between items-center mb-3">
-                        <span className="font-medium">כניסות היום</span>
-                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
+                        <span className="font-semibold text-[#0B1220]">כניסות היום</span>
+                        <span className="text-[#00D1C1] text-sm font-medium bg-[#00D1C1]/10 px-2 py-1 rounded-full">3 אורחים</span>
                       </div>
                       <div className="space-y-2">
                         {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
-                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
-                            <span>{item}</span>
-                            <span className="text-green-600">מאושר</span>
-                          </div>
+                          <motion.div 
+                            key={i} 
+                            className="flex items-center justify-between bg-green-50 rounded-lg p-3 text-sm border border-green-200"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.8 + i * 0.1 }}
+                          >
+                            <span className="font-medium text-[#0B1220]">{item}</span>
+                            <span className="text-green-700 font-semibold flex items-center gap-1">
+                              <CheckCircle2 className="h-4 w-4" />
+                              מאושר
+                            </span>
+                          </motion.div>
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               </div>
-              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
-                ✓ 0 הזמנות כפולות
-              </div>
+              <motion.div 
+                className="absolute -bottom-4 -left-4 bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] text-[#0B1220] px-6 py-3 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-2"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1, type: "spring" }}
+              >
+                <CheckCircle2 className="h-5 w-5" />
+                0 הזמנות כפולות
+              </motion.div>
             </motion.div>
           </div>
         </div>

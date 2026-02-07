@@ -172,7 +172,7 @@ export const translations = {
       'ניקיון שנופל בין הכיסאות',
       'שוכחים מקדמות/יתרות'
     ],
-    solutionTitle: 'STAYFLOW עושה סדר',
+    solutionTitle: 'ATLAS עושה סדר',
     solutionText: 'מערכת אחת שמרכזת את כל התפעול של הנכס שלך. מהליד הראשון ועד הביקורת האחרונה.',
     benefits: ['פחות פספוסים', 'פחות טעויות', 'יותר שליטה'],
     features: [
