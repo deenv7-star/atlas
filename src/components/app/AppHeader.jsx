@@ -17,6 +17,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Building2, User, Settings, LogOut, Bell, Plus, Menu, ArrowRight, ArrowRightIcon } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function AppHeader({ 
   user, 
@@ -122,7 +123,7 @@ export default function AppHeader({
               <User className="h-4 w-4" />
               פרופיל
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2">
+            <DropdownMenuItem className="gap-2" onClick={() => navigate(createPageUrl('Settings'))}>
               <Settings className="h-4 w-4" />
               הגדרות
             </DropdownMenuItem>

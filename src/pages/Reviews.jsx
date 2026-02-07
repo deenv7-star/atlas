@@ -133,7 +133,7 @@ export default function Reviews({ user, selectedPropertyId, orgId }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0B1220]">ביקורות</h1>
-          <p className="text-gray-500">מעקב בקשות ביקורת מאורחים</p>
+          <p className="text-gray-500">שלח בקשות ביקורת לאורחים אחרי השהייה ועקוב אחרי התגובות בפלטפורמות השונות (Google, Airbnb, Booking ועוד). ביקורות חיוביות מגדילות את אמון הלקוחות.</p>
         </div>
         <Button 
           onClick={() => setIsCreateOpen(true)}

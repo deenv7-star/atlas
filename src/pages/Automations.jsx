@@ -131,7 +131,7 @@ export default function AutomationsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">אוטומציות</h1>
-          <p className="text-gray-500 mt-1">הגדר חוקים אוטומטיים לניהול הנכסים</p>
+          <p className="text-gray-500 mt-1">הגדר חוקים אוטומטיים שירוצו לך בשגרה - שליחת הודעות לאורחים, תזכורות תשלום, יצירת משימות ניקיון ועוד. חסוך זמן ומנע פספוסים עם אוטומציה חכמה.</p>
         </div>
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>

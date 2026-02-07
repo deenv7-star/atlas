@@ -196,17 +196,17 @@ export const translations = {
     pricing: {
       starter: {
         name: 'Starter',
-        price: '199',
+        price: '399',
         features: ['עד 2 נכסים', 'ניהול לידים והזמנות', 'יומן בסיסי', 'תמיכה במייל']
       },
       pro: {
         name: 'Pro',
-        price: '399',
+        price: '599',
         features: ['עד 10 נכסים', 'כל תכונות Starter', 'הודעות אוטומטיות', 'ניהול ניקיון', 'חוזים דיגיטליים', 'תמיכה בצ׳אט']
       },
       scale: {
         name: 'Scale',
-        price: '799',
+        price: '999',
         features: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API גישה', 'דוחות מתקדמים', 'מנהל לקוח ייעודי']
       }
     },

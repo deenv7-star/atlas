@@ -104,7 +104,30 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
       >
         {/* Header & Stats */}
         <div>
-          <h1 className="text-3xl font-bold text-[#0F172A] mb-6">שירות חדרים</h1>
+          <h1 className="text-3xl font-bold text-[#0F172A] mb-2">שירות חדרים</h1>
+          <p className="text-gray-500 mb-6">ניהול בקשות שירות מאורחים - תחזוקה, ניקיון, תקלות ושאלות. האורחים שולחים בקשות דרך טופס ייעודי ואתה מקבל התראות בזמן אמת.</p>
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+            <h3 className="font-semibold text-[#0F172A] mb-2">📋 קישור לטופס אורחים</h3>
+            <p className="text-sm text-gray-600 mb-3">שתף את הקישור הזה עם האורחים שלך (בהודעת כניסה, בנכס וכו'):</p>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                readOnly 
+                value={`${window.location.origin}/GuestService`}
+                className="flex-1 px-3 py-2 bg-white border rounded-lg text-sm"
+                dir="ltr"
+              />
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/GuestService`);
+                  alert('הקישור הועתק!');
+                }}
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]"
+              >
+                העתק
+              </Button>
+            </div>
+          </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {[

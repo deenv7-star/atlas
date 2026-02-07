@@ -155,7 +155,7 @@ export default function InvoicesPage({ orgId }) {
       >
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#0B1220]">חשבוניות וקבלות</h1>
-          <p className="text-sm text-gray-500 mt-1">ניהול מסמכים פינסיים</p>
+          <p className="text-sm text-gray-500 mt-1">צור והנפק חשבוניות וקבלות למע"מ. ניתן להתממשק למערכות חשבונאות כמו Priority, Monday ו-QuickBooks דרך עמוד האינטגרציות.</p>
         </div>
         <Button
           onClick={() => {
