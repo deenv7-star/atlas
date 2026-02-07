@@ -102,11 +102,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
     enabled: !!orgId
   });
 
-  const { data: insights = [] } = useQuery({
-    queryKey: ['insights', orgId],
-    queryFn: () => orgId ? base44.entities.AIInsight.filter({ org_id: orgId, is_dismissed: false }, '-created_date', 5) : [],
-    enabled: !!orgId
-  });
+
 
   // Calculate metrics
   const todayCheckins = bookings.filter(b => b.checkin_date === todayStr && b.status !== 'CANCELLED');
@@ -142,7 +138,6 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
     return checkoutDate >= today && checkoutDate <= next7Days && b.status !== 'CANCELLED';
   });
 
-  const criticalInsights = insights.filter(i => i.severity === 'CRITICAL');
   const isLoading = leadsLoading || bookingsLoading || paymentsLoading || cleaningLoading;
 
   return (
@@ -174,7 +169,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
       </motion.div>
 
       {/* Alert Banner */}
-      {(criticalInsights.length > 0 || overduePayments.length > 0) && (
+      {overduePayments.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -189,12 +184,10 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
             <div className="flex-1">
               <p className="font-semibold text-[#0B1220]">דרושה תשומת לב</p>
               <p className="text-sm text-gray-600 mt-0.5">
-                {overduePayments.length > 0 && `${overduePayments.length} תשלומים באיחור`}
-                {overduePayments.length > 0 && criticalInsights.length > 0 && ' • '}
-                {criticalInsights.length > 0 && `${criticalInsights.length} התראות קריטיות`}
+                {overduePayments.length} תשלומים באיחור
               </p>
             </div>
-            <Link to={createPageUrl('Insights')}>
+            <Link to={createPageUrl('Payments')}>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-sm">
                   צפה בפרטים
@@ -294,55 +287,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
             </Card>
           </motion.div>
 
-          {/* AI Insights Preview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Card className="relative overflow-hidden border-0 shadow-lg rounded-2xl bg-gradient-to-br from-[#0B1220] via-[#1a2744] to-[#0B1220]">
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50" />
-              <CardHeader className="relative pb-3 p-6">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="font-semibold flex items-center gap-2 text-white">
-                    <div className="w-9 h-9 rounded-xl bg-[#00D1C1]/20 flex items-center justify-center">
-                      <Brain className="h-5 w-5 text-[#00D1C1]" />
-                    </div>
-                    תובנות AI
-                  </CardTitle>
-                  <Link to={createPageUrl('Insights')}>
-                    <Button variant="ghost" size="sm" className="text-[#00D1C1] hover:bg-white/10 rounded-lg">
-                      עוד <ChevronRight className="h-4 w-4 mr-1" />
-                    </Button>
-                  </Link>
-                </div>
-              </CardHeader>
-              <CardContent className="relative p-6 pt-0">
-                {insights.length > 0 ? (
-                  <div className="space-y-2.5">
-                    {insights.slice(0, 3).map((insight, i) => (
-                      <motion.div 
-                        key={insight.id || i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + i * 0.1 }}
-                        className="p-3 bg-white/10 hover:bg-white/15 backdrop-blur-sm rounded-xl transition-colors cursor-pointer"
-                      >
-                        <p className="text-sm text-white/90 leading-relaxed">{insight.title}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-6">
-                    <Sparkles className="h-10 w-10 mx-auto mb-3 text-white/20" />
-                    <p className="text-sm text-white/60">
-                      לחץ על "עדכן תובנות" בדף התובנות
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
+
         </div>
 
         {/* Middle Column - Check-ins/Check-outs */}
