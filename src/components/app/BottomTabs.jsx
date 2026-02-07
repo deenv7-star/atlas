@@ -1,13 +1,13 @@
 import React from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { LayoutDashboard, CalendarCheck, Users, MessageSquare, FileText } from 'lucide-react';
+import { LayoutDashboard, CalendarCheck, Users, MessageSquare, FileText, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const tabs = [
   { name: 'Dashboard', label: 'בקרה', icon: LayoutDashboard },
   { name: 'Bookings', label: 'הזמנות', icon: CalendarCheck },
-  { name: 'Invoices', label: 'חשבוניות', icon: FileText },
+  { name: 'AIAssistant', label: 'AI', icon: Bot },
   { name: 'Messages', label: 'הודעות', icon: MessageSquare }
 ];
 
