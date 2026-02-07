@@ -12,9 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
+import CalendarSetupWizard from '@/components/integrations/CalendarSetupWizard';
 import { 
   Link2, Calendar, CreditCard, MessageSquare, Settings2,
-  Check, X, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle
+  Check, X, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle, Clock, Zap, Info
 } from 'lucide-react';
 
 const CALENDAR_PROVIDERS = {
@@ -33,15 +34,10 @@ const SYNC_STATUS = {
 
 export default function IntegrationsPage() {
   const [user, setUser] = useState(null);
-  const [showAddCalendar, setShowAddCalendar] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const [selectedPropertyId, setSelectedPropertyId] = useState('');
   const [filterPropertyId, setFilterPropertyId] = useState('all');
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  const [newSync, setNewSync] = useState({
-    provider: '',
-    sync_direction: 'IMPORT',
-    ical_url: ''
-  });
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -69,8 +65,7 @@ export default function IntegrationsPage() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
-      setShowAddCalendar(false);
-      setNewSync({ provider: '', sync_direction: 'IMPORT', ical_url: '' });
+      setShowWizard(false);
       toast.success('יומן נוסף בהצלחה!');
     },
     onError: () => toast.error('שגיאה בהוספת היומן')
@@ -93,6 +88,15 @@ export default function IntegrationsPage() {
       toast.success(status === 'ACTIVE' ? 'סנכרון הופעל' : 'סנכרון הושהה');
     },
     onError: () => toast.error('שגיאה בעדכון הסנכרון')
+  });
+
+  const manualSyncMutation = useMutation({
+    mutationFn: (id) => base44.entities.CalendarSync.update(id, { last_sync_at: new Date().toISOString() }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
+      toast.success('סנכרון הופעל כעת...');
+    },
+    onError: () => toast.error('שגיאה בסנכרון')
   });
 
   if (isLoading) {
@@ -135,6 +139,15 @@ export default function IntegrationsPage() {
 
         {/* Calendars Tab */}
         <TabsContent value="calendars" className="mt-6 space-y-6">
+          {/* Info Banner */}
+          <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 flex gap-3">
+            <Info className="h-5 w-5 text-cyan-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-cyan-900">
+              <p className="font-medium mb-1">😌 סנכרוני יומנים אוטומטיים</p>
+              <p>כשמחברים יומן, הוא מסונכרן אוטומטית כל 30 דקות. אפשר גם לסנכרן ידנית בכל רגע.</p>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex-1">
               <h2 className="text-lg font-medium mb-3">סנכרון יומנים</h2>
@@ -152,83 +165,25 @@ export default function IntegrationsPage() {
                 </Select>
               )}
             </div>
-            <Dialog open={showAddCalendar} onOpenChange={setShowAddCalendar}>
-              <DialogTrigger asChild>
-                <Button className="bg-[#0A2540] w-full sm:w-auto">
-                  <Plus className="h-4 w-4 ml-2" />
-                  הוסף יומן
-                </Button>
-              </DialogTrigger>
-              <DialogContent dir="rtl">
-                <DialogHeader>
-                  <DialogTitle>הוספת סנכרון יומן</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 mt-4">
-                  <div>
-                    <Label>נכס</Label>
-                    <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="בחר נכס" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {properties.map(p => (
-                          <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>ספק</Label>
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      {Object.entries(CALENDAR_PROVIDERS).map(([key, { name, icon }]) => (
-                        <button
-                          key={key}
-                          onClick={() => setNewSync({ ...newSync, provider: key })}
-                          className={`p-3 border rounded-lg text-right transition-all ${
-                            newSync.provider === key ? 'border-[#00D4AA] bg-[#00D4AA]/10' : 'hover:border-gray-300'
-                          }`}
-                        >
-                          <span className="text-xl ml-2">{icon}</span>
-                          <span className="text-sm">{name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <Label>כיוון סנכרון</Label>
-                    <Select value={newSync.sync_direction} onValueChange={(v) => setNewSync({ ...newSync, sync_direction: v })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="IMPORT">ייבוא בלבד</SelectItem>
-                        <SelectItem value="EXPORT">ייצוא בלבד</SelectItem>
-                        <SelectItem value="BIDIRECTIONAL">דו-כיווני</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {(newSync.provider === 'ICAL' || newSync.provider === 'AIRBNB' || newSync.provider === 'BOOKING_COM') && (
-                    <div>
-                      <Label>כתובת iCal</Label>
-                      <Input 
-                        value={newSync.ical_url}
-                        onChange={(e) => setNewSync({ ...newSync, ical_url: e.target.value })}
-                        placeholder="https://..."
-                        dir="ltr"
-                      />
-                    </div>
-                  )}
-                  <Button 
-                    className="w-full bg-[#0A2540]"
-                    onClick={() => createSyncMutation.mutate(newSync)}
-                    disabled={!selectedPropertyId || !newSync.provider}
-                  >
-                    הוסף סנכרון
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button 
+              className="bg-[#0A2540] w-full sm:w-auto"
+              onClick={() => setShowWizard(true)}
+            >
+              <Plus className="h-4 w-4 ml-2" />
+              הוסף יומן
+            </Button>
           </div>
+
+          <CalendarSetupWizard
+            open={showWizard}
+            onOpenChange={setShowWizard}
+            onSelect={(data) => {
+              createSyncMutation.mutate(data);
+            }}
+            properties={properties}
+            selectedPropertyId={selectedPropertyId}
+            onPropertyChange={setSelectedPropertyId}
+          />
 
           {calendarSyncs.length === 0 ? (
             <Card className="border-dashed">
@@ -262,8 +217,12 @@ export default function IntegrationsPage() {
                                 {sync.sync_direction === 'IMPORT' ? 'ייבוא' : sync.sync_direction === 'EXPORT' ? 'ייצוא' : 'דו-כיווני'}
                               </Badge>
                             </div>
-                            <div className="text-sm text-gray-500 truncate">
-                              {property?.name} • עדכון אחרון: {sync.last_sync_at ? new Date(sync.last_sync_at).toLocaleDateString('he-IL') : 'לא סונכרן עדיין'}
+                            <div className="text-xs text-gray-500">
+                              {property?.name}
+                            </div>
+                            <div className="text-xs text-gray-400 flex items-center gap-1 mt-1">
+                              <Clock className="h-3 w-3" />
+                              {sync.last_sync_at ? `סונכרן לפני ${Math.floor((new Date() - new Date(sync.last_sync_at)) / 60000)} דקות` : 'לא סונכרן עדיין'}
                             </div>
                           </div>
                         </div>
@@ -272,7 +231,16 @@ export default function IntegrationsPage() {
                             <div className={`w-2 h-2 rounded-full ${status.color}`} />
                             <span className="text-sm text-gray-500">{status.label}</span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              title="סנכרן עכשיו"
+                              onClick={() => manualSyncMutation.mutate(sync.id)}
+                              disabled={manualSyncMutation.isPending}
+                            >
+                              <RefreshCw className={`h-4 w-4 text-gray-400 ${manualSyncMutation.isPending ? 'animate-spin' : ''}`} />
+                            </Button>
                             <a href={provider.infoUrl} target="_blank" rel="noopener noreferrer">
                               <Button variant="ghost" size="icon" title="למידע נוסף">
                                 <ExternalLink className="h-4 w-4 text-gray-400" />
@@ -322,6 +290,13 @@ export default function IntegrationsPage() {
 
         {/* Payments Tab */}
         <TabsContent value="payments" className="mt-6 space-y-6">
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 flex gap-3">
+            <Zap className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-purple-900">
+              <p className="font-medium mb-1">💳 קבל תשלומים בקלות</p>
+              <p>חבר שערי תשלומים כדי לקבל כסף ישירות מאורחים בכרטיס אשראי, Bit, Transfer וועוד.</p>
+            </div>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
@@ -423,6 +398,13 @@ export default function IntegrationsPage() {
 
         {/* Messaging Tab */}
         <TabsContent value="messaging" className="mt-6 space-y-6">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex gap-3">
+            <Zap className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-green-900">
+              <p className="font-medium mb-1">💬 שלח הודעות אוטומטיות</p>
+              <p>זיכרונות של צ'ק-אין, בקשות ביקורות, עדכוני מחיר - הכל בעצמאות דרך WhatsApp, Email וSMS.</p>
+            </div>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
@@ -524,6 +506,13 @@ export default function IntegrationsPage() {
 
         {/* Accounting Tab */}
         <TabsContent value="accounting" className="mt-6 space-y-6">
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex gap-3">
+            <Zap className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-orange-900">
+              <p className="font-medium mb-1">📊 ניהול פיננסי משולב</p>
+              <p>יצא דוחות חשבונאות אוטומטיים, עתכנע את הערכים ביומן החשבונאות שלך - הכל מתסנכרן בזמן אמת.</p>
+            </div>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
@@ -625,6 +614,13 @@ export default function IntegrationsPage() {
 
         {/* PMS Tab */}
         <TabsContent value="pms" className="mt-6 space-y-6">
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex gap-3">
+            <Zap className="h-5 w-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-indigo-900">
+              <p className="font-medium mb-1">🏨 סנכרון עם מערכות ניהול מלונאיות</p>
+              <p>חבר עם Guesty, Hostaway, Cloudbeds וועוד - סנכרן הזמנות, תאריכים ופרטי אורחים אוטומטית.</p>
+            </div>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
