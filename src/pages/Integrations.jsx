@@ -87,11 +87,9 @@ export default function IntegrationsPage() {
   return (
     <div className="p-6 space-y-6" dir="rtl">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">אינטגרציות</h1>
-          <p className="text-gray-500 mt-1">חבר את הכלים שלך ל-STAY+</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-900">אינטגרציות</h1>
+        <p className="text-gray-500 mt-1">חבר את הכלים שלך ל-ATLAS</p>
       </div>
 
       <Tabs defaultValue="calendars">
@@ -120,11 +118,11 @@ export default function IntegrationsPage() {
 
         {/* Calendars Tab */}
         <TabsContent value="calendars" className="mt-6 space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <h2 className="text-lg font-medium">סנכרון יומנים</h2>
             <Dialog open={showAddCalendar} onOpenChange={setShowAddCalendar}>
               <DialogTrigger asChild>
-                <Button className="bg-[#0A2540]">
+                <Button className="bg-[#0A2540] w-full sm:w-auto">
                   <Plus className="h-4 w-4 ml-2" />
                   הוסף יומן
                 </Button>
@@ -218,35 +216,39 @@ export default function IntegrationsPage() {
                 return (
                   <Card key={sync.id}>
                     <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className={`w-10 h-10 rounded-lg ${provider.color} flex items-center justify-center text-white text-lg`}>
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                          <div className={`w-10 h-10 flex-shrink-0 rounded-lg ${provider.color} flex items-center justify-center text-white text-lg`}>
                             {provider.icon}
                           </div>
-                          <div>
-                            <div className="font-medium flex items-center gap-2">
-                              {provider.name}
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium flex items-center gap-2 flex-wrap">
+                              <span className="truncate">{provider.name}</span>
                               <Badge variant="outline" className="text-xs">
                                 {sync.sync_direction === 'IMPORT' ? 'ייבוא' : sync.sync_direction === 'EXPORT' ? 'ייצוא' : 'דו-כיווני'}
                               </Badge>
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 truncate">
                               {property?.name} • עדכון אחרון: {sync.last_sync_at ? new Date(sync.last_sync_at).toLocaleDateString('he-IL') : 'לא סונכרן עדיין'}
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${status.color}`} />
-                          <span className="text-sm text-gray-500">{status.label}</span>
-                          <Switch
-                            checked={sync.sync_status === 'ACTIVE'}
-                            onCheckedChange={(checked) => 
-                              toggleSyncMutation.mutate({ id: sync.id, status: checked ? 'ACTIVE' : 'PAUSED' })
-                            }
-                          />
-                          <Button variant="ghost" size="icon" onClick={() => deleteSyncMutation.mutate(sync.id)}>
-                            <Trash2 className="h-4 w-4 text-gray-400" />
-                          </Button>
+                        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${status.color}`} />
+                            <span className="text-sm text-gray-500">{status.label}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={sync.sync_status === 'ACTIVE'}
+                              onCheckedChange={(checked) => 
+                                toggleSyncMutation.mutate({ id: sync.id, status: checked ? 'ACTIVE' : 'PAUSED' })
+                              }
+                            />
+                            <Button variant="ghost" size="icon" onClick={() => deleteSyncMutation.mutate(sync.id)}>
+                              <Trash2 className="h-4 w-4 text-gray-400" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                       {sync.error_message && (
