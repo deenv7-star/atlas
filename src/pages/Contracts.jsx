@@ -38,7 +38,8 @@ import {
   Clock,
   Edit,
   Trash2,
-  Eye
+  Eye,
+  Upload
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -416,7 +417,49 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 
         {/* Templates Tab */}
         <TabsContent value="templates" className="mt-6">
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end gap-3 mb-4">
+            <input
+              type="file"
+              id="import-contract"
+              accept=".docx,.pdf,.txt"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                try {
+                  const { file_url } = await base44.integrations.Core.UploadFile({ file });
+                  const extracted = await base44.integrations.Core.ExtractDataFromUploadedFile({
+                    file_url,
+                    json_schema: {
+                      type: "object",
+                      properties: {
+                        name: { type: "string" },
+                        content: { type: "string" }
+                      }
+                    }
+                  });
+                  
+                  if (extracted.status === 'success' && extracted.output) {
+                    setNewTemplate({
+                      name: extracted.output.name || file.name,
+                      body_html: extracted.output.content || ''
+                    });
+                    setIsTemplateDialogOpen(true);
+                  }
+                } catch (error) {
+                  alert('שגיאה בייבוא הקובץ');
+                }
+              }}
+            />
+            <Button 
+              variant="outline"
+              onClick={() => document.getElementById('import-contract').click()}
+              className="rounded-xl gap-2"
+            >
+              <Upload className="h-4 w-4" />
+              ייבא מקובץ
+            </Button>
             <Button 
               onClick={() => {
                 resetTemplateForm();

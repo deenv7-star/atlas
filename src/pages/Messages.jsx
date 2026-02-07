@@ -326,7 +326,30 @@ export default function Messages({ user, selectedPropertyId, orgId, properties }
 
         {/* History Tab */}
         <TabsContent value="history" className="mt-6">
-          <div className="flex justify-end mb-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+            <h3 className="font-semibold text-[#0B1220] mb-2">💬 שליחת הודעות</h3>
+            <p className="text-sm text-gray-600 mb-3">שלח הודעות לאורחים קיימים במערכת או צור תבניות הודעות אוטומטיות שישלחו בזמנים מוגדרים (לפני כניסה, אחרי יציאה וכו').</p>
+          </div>
+          <div className="flex justify-end gap-3 mb-4">
+            <Button 
+              variant="outline"
+              onClick={() => {
+                const contact = prompt('הזן מספר טלפון או אימייל:');
+                if (!contact) return;
+                setNewMessage({
+                  booking_id: '',
+                  template_id: '',
+                  channel: contact.includes('@') ? 'EMAIL' : 'WHATSAPP',
+                  to_contact: contact,
+                  body_text: ''
+                });
+                setIsSendDialogOpen(true);
+              }}
+              className="rounded-xl gap-2"
+            >
+              <MessageSquare className="h-4 w-4" />
+              שלח לאיש קשר
+            </Button>
             <Button 
               onClick={() => {
                 resetMessageForm();
@@ -335,7 +358,7 @@ export default function Messages({ user, selectedPropertyId, orgId, properties }
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
             >
               <Send className="h-4 w-4" />
-              שלח הודעה
+              שלח להזמנה
             </Button>
           </div>
 

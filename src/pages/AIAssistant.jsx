@@ -13,11 +13,11 @@ import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const QUICK_QUESTIONS = [
-  { icon: TrendingUp, text: 'מה הביצועים שלי החודש?', prompt: 'תן לי סיכום של הביצועים העסקיים שלי החודש - הזמנות, הכנסות, תפוסה' },
-  { icon: Calendar, text: 'מה יש לי היום?', prompt: 'מה המשימות והאירועים החשובים שיש לי היום?' },
-  { icon: DollarSign, text: 'איזה תשלומים ממתינים?', prompt: 'תן לי רשימה של כל התשלומים שממתינים או באיחור' },
-  { icon: Users, text: 'מה עם הלידים החדשים?', prompt: 'מה סטטוס הלידים החדשים שיש לי? תן לי המלצות איך לטפל בהם' },
-  { icon: Lightbulb, text: 'תן לי המלצות לשיפור', prompt: 'תן לי 3 המלצות קונקרטיות לשיפור העסק שלי על בסיס הנתונים' }
+  { icon: TrendingUp, text: 'ניתוח ביצועים החודש', prompt: 'תן לי ניתוח מפורט של הביצועים העסקיים שלי החודש - הזמנות, הכנסות, תפוסה, והשוואה לחודש הקודם. הוסף תובנות והמלצות.' },
+  { icon: Calendar, text: 'סיכום היום שלי', prompt: 'תן לי סיכום מלא של היום: כניסות, יציאות, תשלומים לגביה, משימות פתוחות ופעולות דחופות שצריך לבצע.' },
+  { icon: DollarSign, text: 'מצב כספי מלא', prompt: 'תן לי דוח כספי מלא: תשלומים ממתינים, באיחור, צפויים בשבוע הקרוב, והכנסות החודש. כלול המלצות לגבייה.' },
+  { icon: Users, text: 'ניהול לידים חכם', prompt: 'נתח את הלידים הפתוחים שלי - סדר לפי עדיפות, תן לי טקסטים מוכנים לשליחה, והמלצות לסגירת עסקאות.' },
+  { icon: Lightbulb, text: 'אסטרטגיה לצמיחה', prompt: 'על בסיס כל הנתונים, תן לי תוכנית פעולה אסטרטגית להגדלת ההכנסות והשיפור התפעולי - 5 צעדים קונקרטיים.' }
 ];
 
 export default function AIAssistantPage({ user, orgId, selectedPropertyId, properties }) {
@@ -142,22 +142,52 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId, prope
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col" dir="rtl">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <motion.div 
-          className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] flex items-center justify-center"
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        >
-          <Bot className="h-6 w-6 text-white" />
-        </motion.div>
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">עוזר AI חכם</h1>
-          <p className="text-gray-500">שאל אותי כל שאלה על העסק שלך</p>
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <motion.div 
+            className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#00D1C1] via-[#00B8A9] to-[#0B1220] flex items-center justify-center shadow-lg"
+            animate={{ 
+              boxShadow: [
+                "0 10px 30px rgba(0, 209, 193, 0.3)",
+                "0 10px 40px rgba(0, 209, 193, 0.5)",
+                "0 10px 30px rgba(0, 209, 193, 0.3)"
+              ]
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <Bot className="h-7 w-7 text-white" />
+          </motion.div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-3xl font-bold text-gray-900">עוזר AI חכם</h1>
+              <Badge className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] text-white border-0 shadow-sm">
+                <Sparkles className="h-3 w-3 ml-1" />
+                GPT-4 מופעל
+              </Badge>
+            </div>
+            <p className="text-gray-600">העוזר האישי שלך לניהול הנכסים - ניתוח נתונים, המלצות והחלטות חכמות בזמן אמת</p>
+          </div>
         </div>
-        <Badge className="bg-[#00D1C1] text-[#0B1220] mr-auto">
-          <Sparkles className="h-3 w-3 ml-1" />
-          מונע AI
-        </Badge>
+        
+        {/* Quick Stats */}
+        <div className="grid grid-cols-4 gap-3">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 border border-blue-200">
+            <div className="text-xs text-blue-600 mb-1">הזמנות החודש</div>
+            <div className="text-xl font-bold text-blue-900">{bookings.filter(b => b.checkin_date?.startsWith(new Date().toISOString().substring(0, 7))).length}</div>
+          </div>
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 border border-green-200">
+            <div className="text-xs text-green-600 mb-1">לידים פעילים</div>
+            <div className="text-xl font-bold text-green-900">{leads.filter(l => ['NEW', 'CONTACTED', 'OFFER_SENT'].includes(l.status)).length}</div>
+          </div>
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-3 border border-orange-200">
+            <div className="text-xs text-orange-600 mb-1">תשלומים ממתינים</div>
+            <div className="text-xl font-bold text-orange-900">{payments.filter(p => p.status === 'DUE').length}</div>
+          </div>
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-3 border border-purple-200">
+            <div className="text-xs text-purple-600 mb-1">משימות פתוחות</div>
+            <div className="text-xl font-bold text-purple-900">{cleaningTasks.filter(t => t.status === 'OPEN').length}</div>
+          </div>
+        </div>
       </div>
 
       {/* Chat Container */}
@@ -171,10 +201,28 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId, prope
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <Bot className="h-16 w-16 text-[#00D1C1] mb-4" />
+                  <Bot className="h-20 w-20 text-[#00D1C1] mb-4" />
                 </motion.div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">שלום! איך אוכל לעזור?</h3>
-                <p className="text-gray-500 mb-6">אני יכול לענות על שאלות על העסק שלך, לתת המלצות, ולנתח נתונים</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">היי! אני העוזר האישי שלך 👋</h3>
+                <p className="text-gray-600 mb-3 leading-relaxed">אני מנתח את כל הנתונים שלך בזמן אמת ויכול לעזור לך עם:</p>
+                <div className="grid grid-cols-2 gap-2 mb-6 text-sm text-right">
+                  <div className="flex items-start gap-2">
+                    <div className="text-[#00D1C1]">✓</div>
+                    <span className="text-gray-700">ניתוח ביצועים והמלצות</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="text-[#00D1C1]">✓</div>
+                    <span className="text-gray-700">חיזוי הכנסות ותפוסה</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="text-[#00D1C1]">✓</div>
+                    <span className="text-gray-700">אסטרטגיות תמחור</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="text-[#00D1C1]">✓</div>
+                    <span className="text-gray-700">ניהול לידים אוטומטי</span>
+                  </div>
+                </div>
                 
                 {/* Quick Questions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
@@ -185,12 +233,12 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId, prope
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
                       onClick={() => handleQuickQuestion(question)}
-                      className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-right"
+                      className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-white hover:from-[#00D1C1]/5 hover:to-[#00B8A9]/5 border border-gray-200 hover:border-[#00D1C1]/30 rounded-xl transition-all text-right group shadow-sm hover:shadow-md"
                     >
-                      <div className="w-10 h-10 rounded-lg bg-[#00D1C1]/10 flex items-center justify-center flex-shrink-0">
-                        <question.icon className="h-5 w-5 text-[#00D1C1]" />
+                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+                        <question.icon className="h-5 w-5 text-white" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700">{question.text}</span>
+                      <span className="text-sm font-semibold text-gray-800">{question.text}</span>
                     </motion.button>
                   ))}
                 </div>
