@@ -67,371 +67,162 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero Section - Enhanced & Dynamic */}
-      <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 overflow-hidden bg-gradient-to-br from-[#0B1220] via-[#1a2744] to-[#0B1220]">
-        {/* Animated Grid Background */}
-        <div className="absolute inset-0">
-          <motion.div 
-            className="absolute inset-0 bg-[linear-gradient(to_right,#00D1C120_1px,transparent_1px),linear-gradient(to_bottom,#00D1C120_1px,transparent_1px)] bg-[size:64px_64px]"
-            animate={{ opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 4, repeat: Infinity }}
-          />
-        </div>
+      {/* Hero Section - Professional & Clean */}
+      <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 overflow-hidden bg-white">
+        {/* Subtle Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:80px_80px] opacity-40" />
 
-        {/* Multiple Ambient Light Effects */}
-        <motion.div
-          className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#00D1C1]/20 rounded-full blur-[100px]"
-          animate={{
-            scale: [1, 1.3, 1],
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{ duration: 10, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-[#00B8A9]/20 rounded-full blur-[100px]"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, -30, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{ duration: 12, repeat: Infinity, delay: 1 }}
-        />
-
-        {/* Floating Particles */}
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-[#00D1C1] rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -100, 0],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
+        {/* Subtle Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC] via-white to-white" />
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* Left Content */}
             <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#00D1C1]/30 bg-[#00D1C1]/10 backdrop-blur-sm mb-8 hover:bg-[#00D1C1]/20 transition-colors cursor-pointer"
-              >
-                <motion.div 
-                  className="w-2 h-2 rounded-full bg-[#00D1C1]"
-                  animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                <span className="text-sm text-white/90 font-medium">מערכת מונעת בינה מלאכותית</span>
-              </motion.div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] mb-8">
+                <div className="w-2 h-2 rounded-full bg-[#00D1C1]" />
+                <span className="text-sm text-[#64748B] font-medium">מערכת מונעת בינה מלאכותית</span>
+              </div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6"
-              >
-                <span className="bg-gradient-to-r from-white via-[#00D1C1] to-white bg-clip-text text-transparent">
-                  ניהול נכסים
-                </span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-[#0B1220]">
+                ניהול נכסים
                 <br />
-                <motion.span 
-                  className="text-white/60"
-                  animate={{ opacity: [0.6, 1, 0.6] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  שונה לחלוטין
-                </motion.span>
-              </motion.h1>
+                <span className="text-[#64748B]">שונה לחלוטין</span>
+              </h1>
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-base sm:text-lg md:text-xl text-white/70 mb-8 sm:mb-10 leading-relaxed max-w-lg"
-              >
+              <p className="text-base sm:text-lg md:text-xl text-[#64748B] mb-8 sm:mb-10 leading-relaxed max-w-lg">
                 אוטומציה מלאה, בינה מלאכותית מתקדמת, וממשק אינטואיטיבי שחוסך לך שעות כל יום
-              </motion.p>
+              </p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
-              >
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                 <Button
                   size="lg"
-                  className="group relative bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:from-[#00B8A9] hover:to-[#00D1C1] text-[#0B1220] px-6 sm:px-8 h-12 sm:h-14 rounded-xl font-bold overflow-hidden w-full sm:w-auto shadow-lg shadow-[#00D1C1]/50 hover:shadow-xl hover:shadow-[#00D1C1]/70 transition-all"
+                  className="bg-[#0B1220] hover:bg-[#1a2744] text-white px-6 sm:px-8 h-12 sm:h-14 rounded-lg font-medium w-full sm:w-auto transition-colors"
                   onClick={() => navigate(createPageUrl('Dashboard'))}
                 >
-                  <span className="relative z-10 flex items-center">
-                    התחל בחינם
-                    <ArrowLeft className="mr-2 h-5 w-5 transition-transform group-hover:-translate-x-1" />
-                  </span>
-                  <motion.div 
-                    className="absolute inset-0 bg-white/20"
-                    animate={{ 
-                      x: ['-100%', '100%'],
-                    }}
-                    transition={{ 
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                  />
+                  התחל בחינם
+                  <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
                 <Button
                   size="lg"
-                  variant="ghost"
-                  className="text-white/80 hover:text-white hover:bg-white/10 px-6 sm:px-8 h-12 sm:h-14 rounded-xl font-medium w-full sm:w-auto border border-white/20"
+                  variant="outline"
+                  className="text-[#0B1220] hover:bg-[#F8FAFC] px-6 sm:px-8 h-12 sm:h-14 rounded-lg font-medium w-full sm:w-auto"
                 >
                   צפה בדמו
-                  <motion.div
-                    className="mr-2 w-2 h-2 rounded-full bg-red-500"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
                 </Button>
-              </motion.div>
+              </div>
 
               {/* Stats */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-12"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer"
-                >
-                  <div className="text-2xl sm:text-3xl font-bold text-[#00D1C1] mb-1">200+</div>
-                  <div className="text-xs sm:text-sm text-white/60">בעלי נכסים</div>
-                </motion.div>
-                <div className="hidden sm:block w-px h-12 bg-white/20" />
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer"
-                >
-                  <div className="text-2xl sm:text-3xl font-bold text-[#00D1C1] mb-1">50K+</div>
-                  <div className="text-xs sm:text-sm text-white/60">הזמנות מנוהלות</div>
-                </motion.div>
-                <div className="hidden sm:block w-px h-12 bg-white/20" />
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer"
-                >
-                  <div className="text-2xl sm:text-3xl font-bold text-[#00D1C1] mb-1">99.9%</div>
-                  <div className="text-xs sm:text-sm text-white/60">זמינות</div>
-                </motion.div>
-              </motion.div>
+              <div className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-12">
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">200+</div>
+                  <div className="text-xs sm:text-sm text-[#64748B]">בעלי נכסים</div>
+                </div>
+                <div className="hidden sm:block w-px h-12 bg-[#E2E8F0]" />
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">50K+</div>
+                  <div className="text-xs sm:text-sm text-[#64748B]">הזמנות מנוהלות</div>
+                </div>
+                <div className="hidden sm:block w-px h-12 bg-[#E2E8F0]" />
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#0B1220] mb-1">99.9%</div>
+                  <div className="text-xs sm:text-sm text-[#64748B]">זמינות</div>
+                </div>
+              </div>
             </div>
 
             {/* Right Visual */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative mt-12 lg:mt-0"
-            >
+            <div className="relative mt-12 lg:mt-0">
               {/* Main Dashboard Card */}
-              <motion.div 
-                className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl shadow-[#00D1C1]/20 overflow-hidden"
-                whileHover={{ y: -10, rotateY: 5 }}
-                transition={{ duration: 0.3 }}
-                style={{ transformStyle: 'preserve-3d' }}
-              >
+              <div className="relative bg-white rounded-3xl border border-[#E2E8F0] shadow-2xl overflow-hidden">
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0]">
                   <div className="flex items-center gap-3">
-                    <motion.div 
-                      className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] flex items-center justify-center"
-                      animate={{ rotate: [0, 360] }}
-                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    >
-                      <Sparkles className="h-4 w-4 text-white" />
-                    </motion.div>
+                    <div className="w-8 h-8 rounded-lg bg-[#0B1220] flex items-center justify-center">
+                      <Sparkles className="h-4 w-4 text-[#00D1C1]" />
+                    </div>
                     <div>
-                      <div className="text-sm font-semibold text-white">לוח בקרה</div>
-                      <div className="text-xs text-white/60">סקירה בזמן אמת</div>
+                      <div className="text-sm font-semibold text-[#0B1220]">לוח בקרה</div>
+                      <div className="text-xs text-[#64748B]">סקירה בזמן אמת</div>
                     </div>
                   </div>
-                  <motion.div
-                    animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-2 h-2 rounded-full bg-[#00D1C1] shadow-lg shadow-[#00D1C1]/50"
-                  />
+                  <div className="w-2 h-2 rounded-full bg-[#00D1C1]" />
                 </div>
 
                 {/* Content */}
                 <div className="p-6 space-y-4">
                   {/* AI Insights */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                    className="group relative bg-gradient-to-r from-[#0B1220] to-[#1a2744] rounded-2xl p-5 overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50" />
-                    <div className="relative flex items-start justify-between">
+                  <div className="bg-[#F8FAFC] rounded-xl p-5 border border-[#E2E8F0]">
+                    <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#00D1C1]/20 backdrop-blur-sm flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-[#00D1C1]/10 flex items-center justify-center">
                           <Sparkles className="h-5 w-5 text-[#00D1C1]" />
                         </div>
                         <div>
-                          <div className="text-white/90 font-medium mb-1">המלצת AI</div>
-                          <div className="text-white/60 text-sm">3 לידים חדשים תואמים את הקריטריונים</div>
+                          <div className="text-[#0B1220] font-medium mb-1">המלצת AI</div>
+                          <div className="text-[#64748B] text-sm">3 לידים חדשים תואמים את הקריטריונים</div>
                         </div>
                       </div>
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="w-2 h-2 rounded-full bg-[#00D1C1]"
-                      />
                     </div>
-                  </motion.div>
+                  </div>
 
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-3">
                     {[
-                      { label: 'הזמנות פעילות', value: '24', change: '+12%', trend: 'up' },
-                      { label: 'הכנסות', value: '₪89K', change: '+8%', trend: 'up' },
+                      { label: 'הזמנות פעילות', value: '24', change: '+12%' },
+                      { label: 'הכנסות', value: '₪89K', change: '+8%' },
                     ].map((stat, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7 + i * 0.1 }}
-                        whileHover={{ y: -5, scale: 1.02 }}
-                        className="group relative bg-gradient-to-br from-white/5 to-white/10 rounded-xl p-4 border border-white/20 cursor-pointer overflow-hidden backdrop-blur-sm"
-                      >
-                        <motion.div 
-                          className="absolute inset-0 bg-gradient-to-br from-[#00D1C1]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
-                          initial={false}
-                        />
-                        <div className="relative">
-                          <motion.div 
-                            className="text-2xl font-bold text-white mb-1"
-                            animate={{ scale: [1, 1.05, 1] }}
-                            transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
-                          >
-                            {stat.value}
-                          </motion.div>
-                          <div className="text-xs text-white/60 mb-2">{stat.label}</div>
-                          <div className="flex items-center gap-1 text-xs text-[#00D1C1]">
-                            <motion.span
-                              animate={{ y: [-2, 0, -2] }}
-                              transition={{ duration: 1.5, repeat: Infinity }}
-                            >
-                              ↗
-                            </motion.span>
-                            <span>{stat.change}</span>
-                          </div>
+                      <div key={i} className="bg-white rounded-xl p-4 border border-[#E2E8F0]">
+                        <div className="text-2xl font-bold text-[#0B1220] mb-1">{stat.value}</div>
+                        <div className="text-xs text-[#64748B] mb-2">{stat.label}</div>
+                        <div className="flex items-center gap-1 text-xs text-green-600">
+                          <span>↗</span>
+                          <span>{stat.change}</span>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
 
                   {/* Recent Activity */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.9 }}
-                    className="space-y-2"
-                  >
+                  <div className="space-y-2">
                     {[
                       { icon: CheckCircle2, text: 'הזמנה אושרה', time: 'לפני 2 דקות', color: 'text-green-600 bg-green-50' },
                       { icon: MessageSquare, text: 'הודעה חדשה התקבלה', time: 'לפני 5 דקות', color: 'text-blue-600 bg-blue-50' },
                     ].map((item, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 1 + i * 0.1 }}
-                        whileHover={{ x: 8, scale: 1.02 }}
-                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer group backdrop-blur-sm border border-transparent hover:border-white/10"
-                      >
-                        <motion.div 
-                          className={`w-8 h-8 rounded-lg ${item.color} flex items-center justify-center`}
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.5 }}
-                        >
+                      <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#F8FAFC] transition-colors cursor-pointer border border-[#E2E8F0]">
+                        <div className={`w-8 h-8 rounded-lg ${item.color} flex items-center justify-center`}>
                           <item.icon className="h-4 w-4" />
-                        </motion.div>
-                        <div className="flex-1">
-                          <div className="text-sm text-white font-medium">{item.text}</div>
-                          <div className="text-xs text-white/40">{item.time}</div>
                         </div>
-                        <motion.div
-                          animate={{ x: [0, 5, 0] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        >
-                          <ArrowLeft className="h-4 w-4 text-white/30 group-hover:text-[#00D1C1] transition-colors" />
-                        </motion.div>
-                      </motion.div>
+                        <div className="flex-1">
+                          <div className="text-sm text-[#0B1220] font-medium">{item.text}</div>
+                          <div className="text-xs text-[#64748B]">{item.time}</div>
+                        </div>
+                        <ArrowLeft className="h-4 w-4 text-[#CBD5E1]" />
+                      </div>
                     ))}
-                  </motion.div>
+                  </div>
                 </div>
-                
-                {/* Glow effect at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00D1C1] to-transparent" />
-              </motion.div>
+              </div>
 
-              {/* Enhanced Floating Elements */}
-              <motion.div
-                animate={{ 
-                  y: [0, -15, 0],
-                  rotateZ: [-2, 2, -2],
-                }}
-                transition={{ duration: 4, repeat: Infinity }}
-                className="hidden lg:block absolute -top-4 -right-4 bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-2xl shadow-[#00D1C1]/20 border border-white/30"
-                whileHover={{ scale: 1.1, y: -20 }}
-              >
+              {/* Floating Elements */}
+              <div className="hidden lg:block absolute -top-4 -right-4 bg-white rounded-xl p-4 shadow-xl border border-[#E2E8F0]">
                 <div className="flex items-center gap-2">
-                  <motion.div 
-                    className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center"
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                  >
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </motion.div>
-                  <div className="text-sm font-semibold text-white">זמינות 100%</div>
+                  <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  </div>
+                  <div className="text-sm font-semibold text-[#0B1220]">זמינות 100%</div>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                animate={{ 
-                  y: [0, 15, 0],
-                  rotateZ: [2, -2, 2],
-                }}
-                transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-                className="hidden lg:block absolute -bottom-4 left-4 bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-2xl shadow-[#00D1C1]/20 border border-white/30"
-                whileHover={{ scale: 1.1, y: 10 }}
-              >
+              <div className="hidden lg:block absolute -bottom-4 left-4 bg-white rounded-xl p-4 shadow-xl border border-[#E2E8F0]">
                 <div className="flex items-center gap-2">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] flex items-center justify-center"
-                  >
-                    <Sparkles className="h-4 w-4 text-white" />
-                  </motion.div>
-                  <div className="text-sm font-semibold text-white">מונע AI</div>
+                  <div className="w-8 h-8 rounded-lg bg-[#00D1C1]/10 flex items-center justify-center">
+                    <Sparkles className="h-4 w-4 text-[#00D1C1]" />
+                  </div>
+                  <div className="text-sm font-semibold text-[#0B1220]">מונע AI</div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -485,57 +276,29 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Enhanced Features Grid */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-b from-[#F8FAFC] to-white relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#00D1C108,transparent_50%)]" />
-
-        <div className="max-w-7xl mx-auto relative">
-          <motion.div 
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+      {/* Features Grid */}
+      <section className="py-12 sm:py-16 md:py-20 px-4 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-4">
               כל מה שאתה צריך במקום אחד
             </h2>
-            <p className="text-gray-600 text-lg">תכונות מתקדמות לניהול מושלם של העסק</p>
-          </motion.div>
+            <p className="text-[#64748B] text-lg">תכונות מתקדמות לניהול מושלם של העסק</p>
+          </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -10, scale: 1.02 }}
-              >
-                <Card className="h-full border-0 shadow-lg hover:shadow-2xl transition-all bg-white rounded-2xl overflow-hidden group">
-                  <CardContent className="p-6 relative">
-                    <motion.div 
-                      className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#00D1C1] to-[#00B8A9]"
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ transformOrigin: 'right' }}
-                    />
-                    <motion.div 
-                      className="w-12 h-12 bg-gradient-to-br from-[#00D1C1]/20 to-[#00B8A9]/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
-                    </motion.div>
-                    <h3 className="text-lg font-bold text-[#0B1220] mb-2 group-hover:text-[#00D1C1] transition-colors">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600">{feature.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <Card key={i} className="h-full border border-[#E2E8F0] hover:border-[#00D1C1] hover:shadow-lg transition-all bg-white rounded-xl">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-lg flex items-center justify-center mb-4">
+                    <feature.icon className="h-6 w-6 text-[#00D1C1]" />
+                  </div>
+                  <h3 className="text-lg font-bold text-[#0B1220] mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-[#64748B]">{feature.desc}</p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
