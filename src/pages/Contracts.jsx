@@ -247,7 +247,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             </Button>
           </div>
 
-          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+          {/* Desktop: Contracts Table */}
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden hidden md:block">
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50">
@@ -334,10 +335,83 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                     );
                   })
                 )}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
+                </TableBody>
+                </Table>
+                </Card>
+
+                {/* Mobile: Contracts Cards */}
+                <div className="md:hidden space-y-3">
+                {contractsLoading ? (
+                [...Array(3)].map((_, i) => (
+                  <Card key={i} className="border-0 shadow-sm rounded-2xl">
+                    <CardContent className="p-4">
+                      <Skeleton className="h-5 w-32 mb-2" />
+                      <Skeleton className="h-4 w-24 mb-3" />
+                      <Skeleton className="h-6 w-20 rounded-full" />
+                    </CardContent>
+                  </Card>
+                ))
+                ) : contracts.length === 0 ? (
+                <Card className="border-0 shadow-sm rounded-2xl">
+                  <CardContent className="p-8 text-center text-gray-500">
+                    אין חוזים עדיין
+                  </CardContent>
+                </Card>
+                ) : (
+                contracts.map(contract => {
+                  const booking = getBooking(contract.booking_id);
+                  const template = templates.find(t => t.id === contract.template_id);
+                  return (
+                    <Card key={contract.id} className="border-0 shadow-sm rounded-2xl">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-[#0B1220] mb-0.5">{booking?.guest_name || '-'}</h3>
+                            {booking?.checkin_date && (
+                              <p className="text-xs text-gray-500">
+                                {format(parseISO(booking.checkin_date), 'd/M/yy')}
+                              </p>
+                            )}
+                          </div>
+                          <Badge className={`${statusColors[contract.status]} border flex items-center gap-1`}>
+                            {contract.status === 'SIGNED' && <CheckCircle2 className="h-3 w-3" />}
+                            {contract.status === 'SENT' && <Send className="h-3 w-3" />}
+                            {contract.status === 'DRAFT' && <Clock className="h-3 w-3" />}
+                            {statusLabels[contract.status]}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-3">{template?.name || '-'}</p>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="flex-1 rounded-xl"
+                            onClick={() => {
+                              setSelectedContract(contract);
+                              setIsPreviewOpen(true);
+                            }}
+                          >
+                            <Eye className="h-3 w-3 ml-1" />
+                            צפה
+                          </Button>
+                          {contract.status === 'DRAFT' && (
+                            <Button 
+                              size="sm" 
+                              className="flex-1 bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+                              onClick={() => updateContractMutation.mutate({ id: contract.id, data: { status: 'SENT' } })}
+                            >
+                              <Send className="h-3 w-3 ml-1" />
+                              שלח
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+                )}
+                </div>
+                </TabsContent>
 
         {/* Templates Tab */}
         <TabsContent value="templates" className="mt-6">

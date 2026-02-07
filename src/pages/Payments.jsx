@@ -176,7 +176,7 @@ export default function Payments({ user, selectedPropertyId, orgId }) {
         ))}
       </div>
 
-      {/* Payments Table */}
+      {/* Filter Header */}
       <Card className="border-0 shadow-sm rounded-2xl">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
@@ -194,6 +194,10 @@ export default function Payments({ user, selectedPropertyId, orgId }) {
             </Select>
           </div>
         </CardHeader>
+      </Card>
+
+      {/* Desktop: Payments Table */}
+      <Card className="border-0 shadow-sm rounded-2xl hidden md:block">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -276,10 +280,81 @@ export default function Payments({ user, selectedPropertyId, orgId }) {
                   );
                 })
               )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
+              </TableBody>
+              </Table>
+              </CardContent>
+              </Card>
+
+              {/* Mobile: Payments Cards */}
+              <div className="md:hidden space-y-3">
+              {isLoading ? (
+              [...Array(5)].map((_, i) => (
+              <Card key={i} className="border-0 shadow-sm rounded-2xl">
+                <CardContent className="p-4">
+                  <Skeleton className="h-5 w-32 mb-2" />
+                  <Skeleton className="h-6 w-24 mb-3" />
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                </CardContent>
+              </Card>
+              ))
+              ) : filteredPayments.length === 0 ? (
+              <Card className="border-0 shadow-sm rounded-2xl">
+              <CardContent className="p-8 text-center text-gray-500">
+                אין תשלומים
+              </CardContent>
+              </Card>
+              ) : (
+              filteredPayments.map(payment => {
+              const booking = getBooking(payment.booking_id);
+              return (
+                <Card key={payment.id} className="border-0 shadow-sm rounded-2xl">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-[#0B1220] mb-0.5">{booking?.guest_name || '-'}</h3>
+                        {booking?.checkin_date && (
+                          <p className="text-xs text-gray-500">
+                            {format(parseISO(booking.checkin_date), 'd/M/yy')}
+                          </p>
+                        )}
+                      </div>
+                      <Badge className={`${statusColors[payment.status]} border flex items-center gap-1`}>
+                        {payment.status === 'PAID' && <CheckCircle2 className="h-3 w-3" />}
+                        {payment.status === 'DUE' && <Clock className="h-3 w-3" />}
+                        {payment.status === 'REFUNDED' && <RefreshCw className="h-3 w-3" />}
+                        {statusLabels[payment.status]}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-2xl font-bold text-[#0B1220]">₪{payment.amount?.toLocaleString()}</span>
+                      <span className="text-sm text-gray-600">{typeLabels[payment.type]}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-gray-600">
+                      <span>{methodLabels[payment.method]}</span>
+                      <span>
+                        {payment.status === 'PAID' && payment.paid_at
+                          ? format(parseISO(payment.paid_at), 'd/M/yy', { locale: he })
+                          : payment.due_date
+                            ? format(parseISO(payment.due_date), 'd/M/yy', { locale: he })
+                            : '-'}
+                      </span>
+                    </div>
+                    {payment.status === 'DUE' && (
+                      <Button 
+                        size="sm"
+                        className="w-full mt-3 bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+                        onClick={() => markPaidMutation.mutate(payment.id)}
+                        disabled={markPaidMutation.isPending}
+                      >
+                        סמן שולם
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+              })
+              )}
+              </div>
+              </div>
   );
 }

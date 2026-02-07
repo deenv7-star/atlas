@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Building2, User, Settings, LogOut, Bell, Plus, Menu, ArrowRight } from 'lucide-react';
+import { Building2, User, Settings, LogOut, Bell, Plus, Menu, ArrowRight, ArrowRightIcon } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function AppHeader({ 
@@ -31,23 +31,52 @@ export default function AppHeader({
   const selectedProperty = properties.find(p => p.id === selectedPropertyId);
   const initials = user?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U';
   
-  const isChildRoute = location.pathname.split('/').length > 2;
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const isDetailRoute = pathParts.length > 1;
+  
+  const pageNames = {
+    'Bookings': 'הזמנה',
+    'Leads': 'ליד',
+    'Payments': 'תשלום',
+    'Cleaning': 'משימת ניקיון',
+    'Messages': 'הודעה',
+    'Contracts': 'חוזה',
+    'Reviews': 'ביקורת'
+  };
+  
+  const currentPage = pathParts[0];
+  const pageTitle = pageNames[currentPage] || currentPage;
 
   return (
     <header className="h-14 sm:h-16 bg-white border-b flex items-center justify-between px-3 sm:px-4 md:px-6">
       <div className="flex items-center gap-2 sm:gap-4">
-        {/* Mobile Menu Button */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="lg:hidden"
-          onClick={onMenuClick}
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
-        {/* Property Selector */}
+        {/* Mobile: Back button on detail routes */}
+        {isDetailRoute ? (
+          <>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="md:hidden"
+              onClick={() => navigate(-1)}
+            >
+              <ArrowRightIcon className="h-5 w-5" />
+            </Button>
+            <h1 className="text-base font-semibold text-[#0B1220] md:hidden">{pageTitle}</h1>
+          </>
+        ) : (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="lg:hidden"
+            onClick={onMenuClick}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        )}
+        
+        {/* Property Selector - hidden on mobile detail routes */}
         <Select value={selectedPropertyId || ''} onValueChange={onPropertyChange}>
-          <SelectTrigger className={`w-[140px] sm:w-[180px] md:w-[200px] border-gray-200 rounded-lg md:rounded-xl text-xs sm:text-sm select-none ${isChildRoute ? 'hidden lg:flex' : ''}`}>
+          <SelectTrigger className={`w-[140px] sm:w-[180px] md:w-[200px] border-gray-200 rounded-lg md:rounded-xl text-xs sm:text-sm select-none ${isDetailRoute ? 'hidden md:flex' : ''}`}>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400" />
               <SelectValue placeholder="בחר נכס" />

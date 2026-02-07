@@ -273,8 +273,8 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
         </CardContent>
       </Card>
 
-      {/* Leads Table */}
-      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+      {/* Desktop: Leads Table */}
+      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden hidden md:block">
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50">
@@ -377,6 +377,67 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
           </TableBody>
         </Table>
       </Card>
+
+      {/* Mobile: Leads Cards */}
+      <div className="md:hidden space-y-3">
+        {isLoading ? (
+          [...Array(5)].map((_, i) => (
+            <Card key={i} className="border-0 shadow-sm rounded-2xl">
+              <CardContent className="p-4">
+                <Skeleton className="h-5 w-32 mb-2" />
+                <Skeleton className="h-4 w-24 mb-3" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : filteredLeads.length === 0 ? (
+          <Card className="border-0 shadow-sm rounded-2xl">
+            <CardContent className="p-8 text-center text-gray-500">
+              {searchQuery || statusFilter !== 'all' || sourceFilter !== 'all'
+                ? 'לא נמצאו לידים התואמים את החיפוש'
+                : 'אין לידים עדיין'}
+            </CardContent>
+          </Card>
+        ) : (
+          filteredLeads.map(lead => (
+            <Card 
+              key={lead.id} 
+              className="border-0 shadow-sm rounded-2xl active:scale-98 transition-transform"
+              onClick={() => setSelectedLead(lead)}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-[#0B1220] mb-1">{lead.name}</h3>
+                    <div className="flex items-center gap-2 text-sm text-gray-600" dir="ltr">
+                      <Phone className="h-3.5 w-3.5" />
+                      {lead.phone}
+                    </div>
+                  </div>
+                  <Badge className={`${statusColors[lead.status]} border`}>
+                    {statusLabels[lead.status]}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-1.5 text-gray-600">
+                    <span className="text-base">{sourceIcons[lead.source]}</span>
+                    {sourceLabels[lead.source]}
+                  </span>
+                  {lead.desired_checkin_date && lead.desired_checkout_date && (
+                    <span className="flex items-center gap-1 text-gray-600">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {format(parseISO(lead.desired_checkin_date), 'd/M')} - {format(parseISO(lead.desired_checkout_date), 'd/M')}
+                    </span>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
 
       {/* Lead Details Sheet */}
       {selectedLead && (
