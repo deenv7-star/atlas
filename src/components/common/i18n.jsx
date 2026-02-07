@@ -160,8 +160,8 @@ export const translations = {
     notifications: 'התראות',
     
     // Landing page
-    heroTitle: 'כל המתחם שלך. מערכת אחת.',
-    heroSubtitle: 'לידים, הזמנות, תשלומים, ניקיון, הודעות וחוזים — בלי אקסלים ובלי כאב ראש.',
+    heroTitle: 'ניהול נכסים\nחכם ואוטומטי',
+    heroSubtitle: 'ATLAS מנהלת את הכל בשבילך - מלידים לתשלומים, מהזמנות לחוזים.\nאוטומציה חכמה שחוסכת לך 20+ שעות שבועיות.',
     startTrial: 'התחל ניסיון',
     bookDemo: 'קבע דמו',
     problemTitle: 'היום זה נראה ככה',
