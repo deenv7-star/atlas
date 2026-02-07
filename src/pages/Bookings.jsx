@@ -184,7 +184,7 @@ export default function Bookings({ user, selectedPropertyId, orgId, properties }
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0B1220]">הזמנות</h1>
-          <p className="text-gray-500">ניהול הזמנות ויומן</p>
+          <p className="text-gray-500">נהל את כל ההזמנות בנכסים שלך - צור הזמנות חדשות, עקוב אחרי סטטוסים, הוסף תשלומים ושלח הודעות לאורחים.</p>
         </div>
         <div className="flex items-center gap-3">
           <Tabs value={view} onValueChange={setView}>

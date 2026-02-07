@@ -6,6 +6,7 @@ import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import DemoAnimation from '@/components/landing/DemoAnimation';
 import { 
   CheckCircle2, 
   Users, 
@@ -31,6 +32,7 @@ import { motion } from 'framer-motion';
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
+  const [showDemo, setShowDemo] = useState(false);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -68,7 +70,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 bg-white">
+      <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -91,12 +93,7 @@ export default function Landing() {
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl hover:bg-[#0B1220] hover:text-white transition-colors"
-                  onClick={() => window.open('https://calendly.com/stayflow-demo', '_blank')}
-                >
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
                   {t.bookDemo}
                 </Button>
               </div>
@@ -106,7 +103,7 @@ export default function Landing() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative hidden lg:block"
+              className="relative"
             >
               <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
                 <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
@@ -165,7 +162,7 @@ export default function Landing() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
               {t.problemTitle}
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
               {t.problemBullets.map((bullet, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
                   <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
@@ -383,7 +380,29 @@ export default function Landing() {
         </div>
       </section>
 
-
+      {/* Final CTA */}
+      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              {t.finalCta}
+            </h2>
+            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
+            <Button 
+              size="lg" 
+              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+            >
+              {t.startTrial}
+              <ArrowLeft className="mr-2 h-5 w-5" />
+            </Button>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
@@ -404,6 +423,8 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+
+      <DemoAnimation isOpen={showDemo} onClose={() => setShowDemo(false)} />
     </div>
   );
 }

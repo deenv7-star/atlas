@@ -234,8 +234,8 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#0B1220]">ניקיון</h1>
-          <p className="text-gray-500">ניהול משימות ניקיון</p>
+          <h1 className="text-2xl font-bold text-[#0B1220]">משימות ניקיון</h1>
+          <p className="text-gray-500">צור משימות ניקיון והקצה אותן לצוות. צוות הניקיון יכול להתחבר ולראות רק את המשימות שלו, לסמן צ'קליסטים ולעדכן סטטוס.</p>
         </div>
         <div className="flex items-center gap-3">
           <Select value={filterStatus} onValueChange={setFilterStatus}>
