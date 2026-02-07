@@ -49,6 +49,7 @@
  */
 import AIAssistant from './pages/AIAssistant';
 import Automations from './pages/Automations';
+import Billing from './pages/Billing';
 import BookingDetail from './pages/BookingDetail';
 import Bookings from './pages/Bookings';
 import Cleaning from './pages/Cleaning';
@@ -66,15 +67,15 @@ import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
-import Terms from './pages/Terms';
 import Subscription from './pages/Subscription';
-import Billing from './pages/Billing';
+import Terms from './pages/Terms';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIAssistant": AIAssistant,
     "Automations": Automations,
+    "Billing": Billing,
     "BookingDetail": BookingDetail,
     "Bookings": Bookings,
     "Cleaning": Cleaning,
@@ -92,9 +93,8 @@ export const PAGES = {
     "Reviews": Reviews,
     "ServiceRequests": ServiceRequests,
     "Settings": Settings,
-    "Terms": Terms,
     "Subscription": Subscription,
-    "Billing": Billing,
+    "Terms": Terms,
 }
 
 export const pagesConfig = {

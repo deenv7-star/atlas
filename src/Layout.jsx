@@ -21,13 +21,22 @@ export default function Layout({ children, currentPageName }) {
 
   const isPublicPage = publicPages.includes(currentPageName);
 
-  // Set favicon
+  // Set favicon and viewport
   useEffect(() => {
     const link = document.querySelector("link[rel~='icon']") || document.createElement('link');
     link.type = 'image/png';
     link.rel = 'icon';
     link.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6985b1fe56d9d0df97ea2f90/43db556ef_47A174FB-1051-43C1-BE98-3DCC56AE051E.png';
     document.head.appendChild(link);
+
+    // Set viewport for mobile
+    let viewport = document.querySelector('meta[name="viewport"]');
+    if (!viewport) {
+      viewport = document.createElement('meta');
+      viewport.name = 'viewport';
+      document.head.appendChild(viewport);
+    }
+    viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover';
   }, []);
 
   // Fetch user data
