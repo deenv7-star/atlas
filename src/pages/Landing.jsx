@@ -151,29 +151,115 @@ export default function Landing() {
 
       {/* Problem Section */}
       <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
               {t.problemTitle}
             </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {t.problemBullets.map((bullet, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                  <span>{bullet}</span>
+            
+            <div className="grid lg:grid-cols-2 gap-12 items-center mb-8">
+              {/* Chaos Illustration */}
+              <div className="relative h-[350px] order-2 lg:order-1">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <motion.div
+                    animate={{ 
+                      rotate: [8, 12, 6, 10, 8],
+                      y: [0, -5, 5, -3, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    className="absolute top-8 right-4 bg-yellow-400 p-4 rounded-lg shadow-lg transform rotate-12 w-32"
+                  >
+                    <div className="text-xs text-gray-800 font-medium">📞 טלפון לאורח</div>
+                    <div className="text-[10px] text-gray-600 mt-1">דחוף!</div>
+                  </motion.div>
+                  
+                  <motion.div
+                    animate={{ 
+                      rotate: [-6, -10, -4, -8, -6],
+                      y: [0, 5, -5, 3, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+                    className="absolute top-24 left-8 bg-pink-400 p-4 rounded-lg shadow-lg transform -rotate-6 w-32"
+                  >
+                    <div className="text-xs text-gray-800 font-medium">💰 תשלום חסר</div>
+                    <div className="text-[10px] text-gray-600 mt-1">₪2,500</div>
+                  </motion.div>
+                  
+                  <motion.div
+                    animate={{ 
+                      rotate: [12, 8, 14, 10, 12],
+                      y: [0, -3, 3, -5, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 3.8, ease: "easeInOut" }}
+                    className="absolute bottom-16 right-12 bg-green-400 p-4 rounded-lg shadow-lg transform rotate-6 w-32"
+                  >
+                    <div className="text-xs text-gray-800 font-medium">🧹 ניקיון</div>
+                    <div className="text-[10px] text-gray-600 mt-1">שכחתי!</div>
+                  </motion.div>
+                  
+                  <motion.div
+                    animate={{ 
+                      rotate: [-8, -12, -6, -10, -8],
+                      y: [0, 5, -3, 5, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 4.2, ease: "easeInOut" }}
+                    className="absolute bottom-28 left-16 bg-blue-400 p-4 rounded-lg shadow-lg transform -rotate-12 w-32"
+                  >
+                    <div className="text-xs text-gray-800 font-medium">📅 הזמנה כפולה?</div>
+                    <div className="text-[10px] text-gray-600 mt-1">לבדוק...</div>
+                  </motion.div>
+                  
+                  <motion.div
+                    animate={{ 
+                      rotate: [5, 2, 7, 4, 5],
+                      y: [0, -5, 5, -2, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 3.3, ease: "easeInOut" }}
+                    className="absolute top-40 left-32 bg-purple-400 p-4 rounded-lg shadow-lg transform rotate-3 w-32"
+                  >
+                    <div className="text-xs text-gray-800 font-medium">📨 הודעה</div>
+                    <div className="text-[10px] text-gray-600 mt-1">לא נשלח</div>
+                  </motion.div>
+                  
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="text-6xl opacity-20"
+                    >
+                      😵
+                    </motion.div>
+                  </div>
                 </div>
-              ))}
+              </div>
+
+              {/* Problem bullets */}
+              <div className="grid sm:grid-cols-2 gap-4 order-1 lg:order-2">
+                {t.problemBullets.map((bullet, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3"
+                  >
+                    <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
+                    <span>{bullet}</span>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Solution Section - Premium Apple Style */}
-      <section className="relative py-40 px-4 bg-white overflow-hidden">
+      {/* Solution Section - Mobile Optimized */}
+      <section className="relative py-20 md:py-32 lg:py-40 px-4 bg-white overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 via-white to-gray-50/50" />
         
         <div className="relative max-w-[1400px] mx-auto">
@@ -182,17 +268,17 @@ export default function Landing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-center mb-32"
+            className="text-center mb-16 md:mb-24 lg:mb-32"
           >
-            <h2 className="text-6xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-8 tracking-[-0.04em] leading-[0.95]">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-gray-900 mb-6 md:mb-8 tracking-[-0.04em] leading-[0.95] px-4">
               {t.solutionTitle}
             </h2>
-            <p className="text-2xl md:text-3xl text-gray-500 max-w-4xl mx-auto font-light leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-500 max-w-4xl mx-auto font-light leading-relaxed px-4">
               {t.solutionText}
             </p>
           </motion.div>
           
-          <div className="grid lg:grid-cols-2 gap-20 items-center mb-24">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 items-center mb-12 md:mb-16 lg:mb-24">
             {/* Before - Chaos */}
             <motion.div
               initial={{ opacity: 0, y: 60 }}
@@ -201,11 +287,11 @@ export default function Landing() {
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="relative group"
             >
-              <div className="absolute -inset-8 bg-gradient-to-br from-red-100 via-orange-50 to-yellow-100 rounded-[48px] opacity-60 blur-3xl group-hover:opacity-80 transition-opacity duration-700" />
+              <div className="absolute -inset-4 md:-inset-8 bg-gradient-to-br from-red-100 via-orange-50 to-yellow-100 rounded-[32px] md:rounded-[48px] opacity-60 blur-2xl md:blur-3xl group-hover:opacity-80 transition-opacity duration-700" />
               
-              <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-[32px] p-16 min-h-[600px] overflow-hidden shadow-2xl shadow-gray-900/5">
-                <div className="absolute top-10 right-10">
-                  <span className="text-sm font-semibold text-gray-400 tracking-widest uppercase">לפני</span>
+              <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl md:rounded-[32px] p-8 md:p-12 lg:p-16 min-h-[400px] md:min-h-[500px] lg:min-h-[600px] overflow-hidden shadow-xl md:shadow-2xl shadow-gray-900/5">
+                <div className="absolute top-6 md:top-10 right-6 md:right-10">
+                  <span className="text-xs md:text-sm font-semibold text-gray-400 tracking-widest uppercase">לפני</span>
                 </div>
                 
                 <div className="relative w-full h-full flex items-center justify-center">
@@ -227,8 +313,8 @@ export default function Landing() {
                       style={{ top: card.top, right: card.right, bottom: card.bottom, left: card.left }}
                       className="absolute"
                     >
-                      <div className={`bg-gradient-to-br ${card.bg} rounded-2xl p-6 shadow-xl shadow-black/10 backdrop-blur-sm w-44`}>
-                        <div className="text-white font-semibold text-sm leading-tight">{card.text}</div>
+                      <div className={`bg-gradient-to-br ${card.bg} rounded-xl md:rounded-2xl p-3 md:p-5 lg:p-6 shadow-lg md:shadow-xl shadow-black/10 backdrop-blur-sm w-28 md:w-36 lg:w-44`}>
+                        <div className="text-white font-semibold text-xs md:text-sm leading-tight">{card.text}</div>
                       </div>
                     </motion.div>
                   ))}
@@ -238,7 +324,7 @@ export default function Landing() {
                     transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                     className="absolute inset-0 flex items-center justify-center"
                   >
-                    <div className="w-96 h-96 rounded-full bg-red-500 blur-[100px]" />
+                    <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full bg-red-500 blur-[80px] md:blur-[100px]" />
                   </motion.div>
                 </div>
               </div>
@@ -252,16 +338,16 @@ export default function Landing() {
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
               className="relative group"
             >
-              <div className="absolute -inset-8 bg-gradient-to-br from-[#00D1C1]/20 via-blue-100/20 to-cyan-100/20 rounded-[48px] opacity-60 blur-3xl group-hover:opacity-80 transition-opacity duration-700" />
+              <div className="absolute -inset-4 md:-inset-8 bg-gradient-to-br from-[#00D1C1]/20 via-blue-100/20 to-cyan-100/20 rounded-[32px] md:rounded-[48px] opacity-60 blur-2xl md:blur-3xl group-hover:opacity-80 transition-opacity duration-700" />
               
-              <div className="relative bg-gradient-to-br from-gray-900 to-black rounded-[32px] p-16 min-h-[600px] shadow-2xl shadow-[#00D1C1]/10">
-                <div className="absolute top-10 right-10 flex items-center gap-3">
-                  <span className="text-sm font-semibold text-[#00D1C1] tracking-widest uppercase">עם ATLAS</span>
+              <div className="relative bg-gradient-to-br from-gray-900 to-black rounded-2xl md:rounded-[32px] p-8 md:p-12 lg:p-16 min-h-[400px] md:min-h-[500px] lg:min-h-[600px] shadow-xl md:shadow-2xl shadow-[#00D1C1]/10">
+                <div className="absolute top-6 md:top-10 right-6 md:right-10 flex items-center gap-2 md:gap-3">
+                  <span className="text-xs md:text-sm font-semibold text-[#00D1C1] tracking-widest uppercase">עם ATLAS</span>
                   <motion.div
                     animate={{ rotate: [0, 5, -5, 0] }}
                     transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                   >
-                    <Sparkles className="h-5 w-5 text-[#00D1C1]" />
+                    <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-[#00D1C1]" />
                   </motion.div>
                 </div>
                 
@@ -273,8 +359,8 @@ export default function Landing() {
                     transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
                     className="w-full max-w-lg"
                   >
-                    <div className="bg-white/[0.03] backdrop-blur-2xl rounded-3xl p-10 border border-white/[0.08] shadow-2xl">
-                      <div className="space-y-5">
+                    <div className="bg-white/[0.03] backdrop-blur-2xl rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 border border-white/[0.08] shadow-xl md:shadow-2xl">
+                      <div className="space-y-3 md:space-y-4 lg:space-y-5">
                         {[
                           { icon: Calendar, text: 'הזמנות מאורגנות באוטומט', delay: 0.8 },
                           { icon: CreditCard, text: 'תשלומים מעוקבים ומסונכרנים', delay: 0.9 },
@@ -288,12 +374,12 @@ export default function Landing() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: item.delay }}
                             whileHover={{ x: 4, transition: { duration: 0.2 } }}
-                            className="flex items-center gap-5 bg-[#00D1C1]/[0.06] border border-[#00D1C1]/[0.12] rounded-2xl p-5 cursor-default group/item"
+                            className="flex items-center gap-3 md:gap-4 lg:gap-5 bg-[#00D1C1]/[0.06] border border-[#00D1C1]/[0.12] rounded-xl md:rounded-2xl p-3 md:p-4 lg:p-5 cursor-default group/item"
                           >
-                            <div className="w-14 h-14 rounded-xl bg-[#00D1C1]/10 flex items-center justify-center group-hover/item:bg-[#00D1C1]/20 transition-colors duration-300">
-                              <item.icon className="h-7 w-7 text-[#00D1C1]" strokeWidth={1.5} />
+                            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-lg md:rounded-xl bg-[#00D1C1]/10 flex items-center justify-center flex-shrink-0 group-hover/item:bg-[#00D1C1]/20 transition-colors duration-300">
+                              <item.icon className="h-5 w-5 md:h-6 md:w-6 lg:h-7 lg:w-7 text-[#00D1C1]" strokeWidth={1.5} />
                             </div>
-                            <span className="text-white/90 font-medium text-lg tracking-wide leading-snug">{item.text}</span>
+                            <span className="text-white/90 font-medium text-sm md:text-base lg:text-lg tracking-wide leading-snug">{item.text}</span>
                           </motion.div>
                         ))}
                       </div>
@@ -305,7 +391,7 @@ export default function Landing() {
                     transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
                     className="absolute inset-0 flex items-center justify-center pointer-events-none"
                   >
-                    <div className="w-[500px] h-[500px] rounded-full bg-[#00D1C1] blur-[120px]" />
+                    <div className="w-80 h-80 md:w-96 md:h-96 lg:w-[500px] lg:h-[500px] rounded-full bg-[#00D1C1] blur-[100px] md:blur-[120px]" />
                   </motion.div>
                 </div>
               </div>
@@ -317,7 +403,7 @@ export default function Landing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
-            className="flex flex-wrap justify-center gap-4 mt-20"
+            className="flex flex-wrap justify-center gap-3 md:gap-4 mt-12 md:mt-16 lg:mt-20"
           >
             {t.benefits.map((benefit, i) => (
               <motion.div
@@ -327,7 +413,7 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.7 + i * 0.08 }}
                 whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-                className="bg-gray-50 border border-gray-200 text-gray-700 px-8 py-4 rounded-full font-medium text-lg hover:bg-gray-100 hover:border-gray-300 transition-all duration-300 cursor-default"
+                className="bg-gray-50 border border-gray-200 text-gray-700 px-5 py-3 md:px-7 md:py-3.5 lg:px-8 lg:py-4 rounded-full font-medium text-sm md:text-base lg:text-lg hover:bg-gray-100 hover:border-gray-300 transition-all duration-300 cursor-default"
               >
                 {benefit}
               </motion.div>
