@@ -152,43 +152,148 @@ export default function Landing() {
       {/* Problem Section */}
       <section className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
-            {t.problemTitle}
-          </h2>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {t.problemBullets.map((bullet, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                <span>{bullet}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Solution Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
-              {t.solutionTitle}
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
+              {t.problemTitle}
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              {t.solutionText}
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {t.benefits.map((benefit, i) => (
-                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
-                  {benefit}
-                </span>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {t.problemBullets.map((bullet, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
+                  <span>{bullet}</span>
+                </div>
               ))}
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-right">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
+                {t.solutionTitle}
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                {t.solutionText}
+              </p>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                {t.benefits.map((benefit, i) => (
+                  <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
+                    {benefit}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative h-[400px]">
+              {/* Before - Chaos */}
+              <motion.div
+                initial={{ opacity: 1, x: 0 }}
+                animate={{ opacity: 0, x: -100 }}
+                transition={{ delay: 2, duration: 0.8 }}
+                className="absolute inset-0"
+              >
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <div className="text-sm font-medium text-gray-400 mb-4 absolute top-0">לפני ATLAS</div>
+                  <motion.div
+                    animate={{ rotate: [0, -5, 5, -3, 3, 0] }}
+                    transition={{ repeat: Infinity, duration: 3 }}
+                    className="absolute top-12 right-8 bg-yellow-100 p-3 rounded-lg shadow-md border-2 border-yellow-300 transform rotate-12"
+                  >
+                    <div className="text-xs">📝 פתק 1</div>
+                  </motion.div>
+                  <motion.div
+                    animate={{ rotate: [0, 3, -3, 5, -5, 0] }}
+                    transition={{ repeat: Infinity, duration: 2.5 }}
+                    className="absolute top-32 left-12 bg-pink-100 p-3 rounded-lg shadow-md border-2 border-pink-300 transform -rotate-6"
+                  >
+                    <div className="text-xs">📋 רשימה</div>
+                  </motion.div>
+                  <motion.div
+                    animate={{ rotate: [0, -4, 4, -2, 2, 0] }}
+                    transition={{ repeat: Infinity, duration: 3.5 }}
+                    className="absolute bottom-24 right-16 bg-blue-100 p-3 rounded-lg shadow-md border-2 border-blue-300 transform rotate-6"
+                  >
+                    <div className="text-xs">💬 הודעה</div>
+                  </motion.div>
+                  <motion.div
+                    animate={{ rotate: [0, 5, -5, 3, -3, 0] }}
+                    transition={{ repeat: Infinity, duration: 2.8 }}
+                    className="absolute bottom-32 left-8 bg-green-100 p-3 rounded-lg shadow-md border-2 border-green-300 transform -rotate-12"
+                  >
+                    <div className="text-xs">🗓️ תאריך</div>
+                  </motion.div>
+                  <motion.div
+                    animate={{ rotate: [0, -3, 3, -4, 4, 0] }}
+                    transition={{ repeat: Infinity, duration: 3.2 }}
+                    className="absolute top-48 left-24 bg-purple-100 p-3 rounded-lg shadow-md border-2 border-purple-300 transform rotate-3"
+                  >
+                    <div className="text-xs">💰 תשלום</div>
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* After - Organized */}
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 2.8, duration: 0.8 }}
+                className="absolute inset-0"
+              >
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <div className="text-sm font-medium text-[#00D1C1] mb-4 absolute top-0">עם ATLAS ✨</div>
+                  <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 w-full max-w-sm">
+                    <div className="space-y-3">
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 3.2, duration: 0.4 }}
+                        className="flex items-center gap-3 bg-[#00D1C1]/10 rounded-xl p-3"
+                      >
+                        <Calendar className="h-5 w-5 text-[#00D1C1]" />
+                        <div className="text-sm font-medium">הזמנות מאורגנות</div>
+                      </motion.div>
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 3.4, duration: 0.4 }}
+                        className="flex items-center gap-3 bg-[#00D1C1]/10 rounded-xl p-3"
+                      >
+                        <CreditCard className="h-5 w-5 text-[#00D1C1]" />
+                        <div className="text-sm font-medium">תשלומים במעקב</div>
+                      </motion.div>
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 3.6, duration: 0.4 }}
+                        className="flex items-center gap-3 bg-[#00D1C1]/10 rounded-xl p-3"
+                      >
+                        <MessageSquare className="h-5 w-5 text-[#00D1C1]" />
+                        <div className="text-sm font-medium">תקשורת אוטומטית</div>
+                      </motion.div>
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 3.8, duration: 0.4 }}
+                        className="flex items-center gap-3 bg-[#00D1C1]/10 rounded-xl p-3"
+                      >
+                        <Sparkles className="h-5 w-5 text-[#00D1C1]" />
+                        <div className="text-sm font-medium">הכל במקום אחד</div>
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
