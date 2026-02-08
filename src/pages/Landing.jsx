@@ -151,110 +151,22 @@ export default function Landing() {
 
       {/* Problem Section */}
       <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
               {t.problemTitle}
             </h2>
-            
-            <div className="grid lg:grid-cols-2 gap-12 items-center mb-8">
-              {/* Chaos Illustration */}
-              <div className="relative h-[350px] order-2 lg:order-1">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {/* Scattered sticky notes animation */}
-                  <motion.div
-                    animate={{ 
-                      rotate: [8, 12, 6, 10, 8],
-                      y: [0, -5, 5, -3, 0]
-                    }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                    className="absolute top-8 right-4 bg-yellow-400 p-4 rounded-lg shadow-lg transform rotate-12 w-32"
-                  >
-                    <div className="text-xs text-gray-800 font-medium">📞 טלפון לאורח</div>
-                    <div className="text-[10px] text-gray-600 mt-1">דחוף!</div>
-                  </motion.div>
-                  
-                  <motion.div
-                    animate={{ 
-                      rotate: [-6, -10, -4, -8, -6],
-                      y: [0, 5, -5, 3, 0]
-                    }}
-                    transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
-                    className="absolute top-24 left-8 bg-pink-400 p-4 rounded-lg shadow-lg transform -rotate-6 w-32"
-                  >
-                    <div className="text-xs text-gray-800 font-medium">💰 תשלום חסר</div>
-                    <div className="text-[10px] text-gray-600 mt-1">₪2,500</div>
-                  </motion.div>
-                  
-                  <motion.div
-                    animate={{ 
-                      rotate: [12, 8, 14, 10, 12],
-                      y: [0, -3, 3, -5, 0]
-                    }}
-                    transition={{ repeat: Infinity, duration: 3.8, ease: "easeInOut" }}
-                    className="absolute bottom-16 right-12 bg-green-400 p-4 rounded-lg shadow-lg transform rotate-6 w-32"
-                  >
-                    <div className="text-xs text-gray-800 font-medium">🧹 ניקיון</div>
-                    <div className="text-[10px] text-gray-600 mt-1">שכחתי!</div>
-                  </motion.div>
-                  
-                  <motion.div
-                    animate={{ 
-                      rotate: [-8, -12, -6, -10, -8],
-                      y: [0, 5, -3, 5, 0]
-                    }}
-                    transition={{ repeat: Infinity, duration: 4.2, ease: "easeInOut" }}
-                    className="absolute bottom-28 left-16 bg-blue-400 p-4 rounded-lg shadow-lg transform -rotate-12 w-32"
-                  >
-                    <div className="text-xs text-gray-800 font-medium">📅 הזמנה כפולה?</div>
-                    <div className="text-[10px] text-gray-600 mt-1">לבדוק...</div>
-                  </motion.div>
-                  
-                  <motion.div
-                    animate={{ 
-                      rotate: [5, 2, 7, 4, 5],
-                      y: [0, -5, 5, -2, 0]
-                    }}
-                    transition={{ repeat: Infinity, duration: 3.3, ease: "easeInOut" }}
-                    className="absolute top-40 left-32 bg-purple-400 p-4 rounded-lg shadow-lg transform rotate-3 w-32"
-                  >
-                    <div className="text-xs text-gray-800 font-medium">📨 הודעה</div>
-                    <div className="text-[10px] text-gray-600 mt-1">לא נשלח</div>
-                  </motion.div>
-                  
-                  {/* Central chaos indicator */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                      className="text-6xl opacity-20"
-                    >
-                      😵
-                    </motion.div>
-                  </div>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {t.problemBullets.map((bullet, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
+                  <span>{bullet}</span>
                 </div>
-              </div>
-
-              {/* Problem bullets */}
-              <div className="grid sm:grid-cols-2 gap-4 order-1 lg:order-2">
-                {t.problemBullets.map((bullet, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3"
-                  >
-                    <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                    <span>{bullet}</span>
-                  </motion.div>
-                ))}
-              </div>
+              ))}
             </div>
           </motion.div>
         </div>
@@ -262,25 +174,189 @@ export default function Landing() {
 
       {/* Solution Section */}
       <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
               {t.solutionTitle}
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              {t.solutionText}
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {t.benefits.map((benefit, i) => (
-                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
-                  {benefit}
-                </span>
-              ))}
+            
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              {/* Before - Chaos */}
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl p-8 relative h-[400px] overflow-hidden">
+                <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-gray-600">
+                  לפני ATLAS 😰
+                </div>
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <motion.div
+                    animate={{ 
+                      rotate: [8, 12, 6, 10, 8],
+                      y: [0, -8, 8, -5, 0],
+                      x: [0, -3, 3, -2, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    className="absolute top-12 right-8 bg-yellow-300 p-3 rounded-lg shadow-lg transform rotate-12 w-28"
+                  >
+                    <div className="text-xs font-medium">📞 טלפון</div>
+                    <div className="text-[10px] text-gray-700">דחוף!!</div>
+                  </motion.div>
+                  
+                  <motion.div
+                    animate={{ 
+                      rotate: [-6, -10, -4, -8, -6],
+                      y: [0, 8, -8, 5, 0],
+                      x: [0, 2, -2, 3, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+                    className="absolute top-28 left-8 bg-pink-300 p-3 rounded-lg shadow-lg transform -rotate-6 w-28"
+                  >
+                    <div className="text-xs font-medium">💰 חוב</div>
+                    <div className="text-[10px] text-gray-700">₪2,500</div>
+                  </motion.div>
+                  
+                  <motion.div
+                    animate={{ 
+                      rotate: [12, 8, 14, 10, 12],
+                      y: [0, -5, 5, -8, 0],
+                      x: [0, 3, -3, 2, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 3.8, ease: "easeInOut" }}
+                    className="absolute bottom-20 right-16 bg-green-300 p-3 rounded-lg shadow-lg transform rotate-6 w-28"
+                  >
+                    <div className="text-xs font-medium">🧹 ניקיון</div>
+                    <div className="text-[10px] text-gray-700">שכחתי</div>
+                  </motion.div>
+                  
+                  <motion.div
+                    animate={{ 
+                      rotate: [-8, -12, -6, -10, -8],
+                      y: [0, 8, -5, 8, 0],
+                      x: [0, -2, 2, -3, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 4.2, ease: "easeInOut" }}
+                    className="absolute bottom-32 left-12 bg-blue-300 p-3 rounded-lg shadow-lg transform -rotate-12 w-28"
+                  >
+                    <div className="text-xs font-medium">📅 כפול?</div>
+                    <div className="text-[10px] text-gray-700">לבדוק</div>
+                  </motion.div>
+                  
+                  <motion.div
+                    animate={{ 
+                      rotate: [5, 2, 7, 4, 5],
+                      y: [0, -8, 8, -3, 0],
+                      x: [0, 2, -2, 1, 0]
+                    }}
+                    transition={{ repeat: Infinity, duration: 3.3, ease: "easeInOut" }}
+                    className="absolute top-48 left-28 bg-purple-300 p-3 rounded-lg shadow-lg transform rotate-3 w-28"
+                  >
+                    <div className="text-xs font-medium">📨 הודעה</div>
+                    <div className="text-[10px] text-gray-700">לא נשלח</div>
+                  </motion.div>
+                  
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <motion.div
+                      animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.25, 0.15] }}
+                      transition={{ repeat: Infinity, duration: 2.5 }}
+                      className="text-8xl"
+                    >
+                      😵‍💫
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+
+              {/* After - Organized */}
+              <div className="bg-gradient-to-br from-[#00D1C1]/5 to-[#00D1C1]/10 rounded-2xl p-8 relative h-[400px]">
+                <div className="absolute top-4 right-4 bg-[#00D1C1] px-4 py-2 rounded-full text-sm font-medium text-white flex items-center gap-2">
+                  עם ATLAS ✨
+                </div>
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="bg-white rounded-2xl shadow-xl border-2 border-[#00D1C1]/20 p-6 w-full max-w-sm"
+                  >
+                    <div className="space-y-3">
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        whileInView={{ x: 0, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="flex items-center gap-3 bg-[#00D1C1]/10 rounded-xl p-3"
+                      >
+                        <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
+                        <div className="text-sm font-medium">הזמנות מאורגנות</div>
+                      </motion.div>
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        whileInView={{ x: 0, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.3 }}
+                        className="flex items-center gap-3 bg-[#00D1C1]/10 rounded-xl p-3"
+                      >
+                        <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
+                        <div className="text-sm font-medium">תשלומים במעקב</div>
+                      </motion.div>
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        whileInView={{ x: 0, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.4 }}
+                        className="flex items-center gap-3 bg-[#00D1C1]/10 rounded-xl p-3"
+                      >
+                        <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
+                        <div className="text-sm font-medium">תקשורת אוטומטית</div>
+                      </motion.div>
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        whileInView={{ x: 0, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.5 }}
+                        className="flex items-center gap-3 bg-[#00D1C1]/10 rounded-xl p-3"
+                      >
+                        <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
+                        <div className="text-sm font-medium">הכל במקום אחד</div>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                  
+                  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 pointer-events-none">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="text-4xl"
+                    >
+                      😌💆‍♂️
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-xl text-gray-600 mb-6">
+                {t.solutionText}
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                {t.benefits.map((benefit, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
+                    {benefit}
+                  </motion.span>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
