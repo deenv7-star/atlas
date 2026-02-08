@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Info, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Info, ChevronRight, CheckCircle2, ExternalLink } from 'lucide-react';
 
 const CALENDAR_PROVIDERS = {
   GOOGLE: { 
@@ -23,13 +23,15 @@ const CALENDAR_PROVIDERS = {
   AIRBNB: { 
     name: 'Airbnb', 
     icon: '🏠',
-    instructions: 'עבור ל-Airbnb → ניהול רכוש שלך → ערוץ Airbnb → יומן → סיכום → כתובת iCal',
+    instructions: 'היכנס לאתר Airbnb → לחץ על "Calendar" למטה → בחר את הנכס → לחץ על "Availability Settings" → גלול ל-"Calendar Sync" → העתק את ה-URL שמתחת ל-"Export Calendar"',
+    helpUrl: 'https://www.airbnb.com/help/article/99',
     color: 'bg-[#FF5A5F]'
   },
   BOOKING_COM: { 
     name: 'Booking.com', 
     icon: '🏨',
-    instructions: 'כנס ל-Booking.com → הגדרות בעלות נכס → ערוצים שלי → סינכרון יומן → הורד כתובת iCal',
+    instructions: 'היכנס ל-Extranet של Booking.com → Properties → בחר נכס → Calendar → Calendar import/export → העתק את קישור ה-"Export" (iCal URL)',
+    helpUrl: 'https://partner.booking.com/en-gb/help/rates-availability/how-can-i-synchronise-my-booking-com-calendar-other-platforms',
     color: 'bg-blue-700'
   },
   ICAL: { 
@@ -51,6 +53,12 @@ export default function CalendarSetupWizard({ open, onOpenChange, onSelect, prop
     if (step === 3 && !icalUrl) return;
     
     if (step === 3) {
+      // Validate iCal URL format
+      if (!icalUrl.startsWith('http://') && !icalUrl.startsWith('https://')) {
+        alert('כתובת iCal חייבת להתחיל ב-https:// או http://');
+        return;
+      }
+      
       onSelect({
         provider: selectedProvider,
         sync_direction: 'IMPORT',
@@ -141,22 +149,36 @@ export default function CalendarSetupWizard({ open, onOpenChange, onSelect, prop
           {/* Step 3: Get iCal URL */}
           {step === 3 && (
             <div className="space-y-3">
-              <div className="bg-amber-50 p-3 rounded-lg flex gap-2">
-                <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-amber-800">
-                  <p className="font-medium mb-1">איך מוצאים את כתובת iCal:</p>
-                  <p>{CALENDAR_PROVIDERS[selectedProvider]?.instructions}</p>
+              <div className="bg-amber-50 p-3 rounded-lg">
+                <div className="flex items-start gap-2 mb-2">
+                  <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-amber-800 flex-1">
+                    <p className="font-medium mb-1">איך מוצאים את כתובת iCal:</p>
+                    <p>{CALENDAR_PROVIDERS[selectedProvider]?.instructions}</p>
+                  </div>
                 </div>
+                {CALENDAR_PROVIDERS[selectedProvider]?.helpUrl && (
+                  <a 
+                    href={CALENDAR_PROVIDERS[selectedProvider].helpUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-amber-700 hover:text-amber-900 font-medium"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    הוראות מפורטות מהאתר הרשמי
+                  </a>
+                )}
               </div>
               <div>
                 <Label className="text-sm font-medium mb-2 block">הדבק כתובת iCal</Label>
                 <Input
                   value={icalUrl}
                   onChange={(e) => setIcalUrl(e.target.value)}
-                  placeholder="https://..."
+                  placeholder="https://www.airbnb.com/calendar/ical/..."
                   dir="ltr"
                   className="text-xs"
                 />
+                <p className="text-xs text-gray-500 mt-1">הכתובת חייבת להתחיל ב-https://</p>
               </div>
             </div>
           )}
