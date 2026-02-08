@@ -14,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import CalendarSetupWizard from '@/components/integrations/CalendarSetupWizard';
 import MessagingSetupDialog from '@/components/integrations/MessagingSetupDialog';
+import PaymentSetupDialog from '@/components/integrations/PaymentSetupDialog';
 import { 
   Link2, Calendar, CreditCard, MessageSquare, Settings2,
   Check, X, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle, Clock, Zap, Info
@@ -41,6 +42,15 @@ const MESSAGING_PROVIDERS = {
   TELEGRAM: { name: 'Telegram Bot', color: 'bg-[#0088cc]', icon: '✈️' }
 };
 
+const PAYMENT_PROVIDERS = {
+  STRIPE: { name: 'Stripe', color: 'bg-[#635BFF]', icon: 'S' },
+  PAYPAL: { name: 'PayPal', color: 'bg-[#003087]', icon: 'P' },
+  BIT: { name: 'Bit', color: 'bg-green-600', icon: '💳' },
+  TRANZILA: { name: 'Tranzila', color: 'bg-blue-600', icon: '💰' },
+  MESHULAM: { name: 'Meshulam', color: 'bg-orange-600', icon: '🏦' },
+  CARDCOM: { name: 'Cardcom', color: 'bg-purple-600', icon: '🔐' }
+};
+
 export default function IntegrationsPage() {
   const [user, setUser] = useState(null);
   const [showWizard, setShowWizard] = useState(false);
@@ -49,6 +59,8 @@ export default function IntegrationsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [showMessagingDialog, setShowMessagingDialog] = useState(false);
   const [selectedMessagingProvider, setSelectedMessagingProvider] = useState(null);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [selectedPaymentProvider, setSelectedPaymentProvider] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -70,6 +82,12 @@ export default function IntegrationsPage() {
   const { data: messagingIntegrations = [] } = useQuery({
     queryKey: ['messaging-integrations', user?.org_id],
     queryFn: () => base44.entities.MessagingIntegration.filter({ org_id: user?.org_id }),
+    enabled: !!user?.org_id
+  });
+
+  const { data: paymentGateways = [] } = useQuery({
+    queryKey: ['payment-gateways', user?.org_id],
+    queryFn: () => base44.entities.PaymentGateway.filter({ org_id: user?.org_id }),
     enabled: !!user?.org_id
   });
 
@@ -148,6 +166,40 @@ export default function IntegrationsPage() {
   const handleConnectMessaging = (provider) => {
     setSelectedMessagingProvider(provider);
     setShowMessagingDialog(true);
+  };
+
+  const createPaymentMutation = useMutation({
+    mutationFn: (data) => base44.entities.PaymentGateway.create({
+      ...data,
+      org_id: user?.org_id
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
+      setShowPaymentDialog(false);
+      setSelectedPaymentProvider(null);
+      toast.success('שער תשלומים נוסף בהצלחה!');
+    },
+    onError: () => toast.error('שגיאה בהוספת שער התשלומים')
+  });
+
+  const deletePaymentMutation = useMutation({
+    mutationFn: (id) => base44.entities.PaymentGateway.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
+      toast.success('שער תשלומים הוסר');
+    },
+    onError: () => toast.error('שגיאה בהסרת שער התשלומים')
+  });
+
+  const handleDeletePayment = (id) => {
+    if (window.confirm('האם אתה בטוח שברצונך למחוק את שער התשלומים?')) {
+      deletePaymentMutation.mutate(id);
+    }
+  };
+
+  const handleConnectPayment = (provider) => {
+    setSelectedPaymentProvider(provider);
+    setShowPaymentDialog(true);
   };
 
   if (isLoading) {
@@ -345,126 +397,171 @@ export default function IntegrationsPage() {
             <Zap className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-purple-900">
               <p className="font-medium mb-1">💳 קבל תשלומים בקלות</p>
-              <p>חבר שערי תשלומים כדי לקבל כסף ישירות מאורחים בכרטיס אשראי, Bit, Transfer וועוד.</p>
+              <p>חבר Stripe, PayPal, Bit או כל שער תשלומים - קבל כסף ישירות מאורחים בכרטיס, Bit והעברה בנקאית.</p>
             </div>
           </div>
+
+          {/* Connected Payment Gateways */}
+          {paymentGateways.length > 0 && (
+            <div className="space-y-3 mb-6">
+              <h3 className="text-sm font-medium text-gray-700">שערי תשלומים מחוברים</h3>
+              {paymentGateways.map(gateway => {
+                const providerConfig = PAYMENT_PROVIDERS[gateway.provider] || {};
+                return (
+                  <Card key={gateway.id}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-lg ${providerConfig.color} flex items-center justify-center text-white font-bold`}>
+                            {providerConfig.icon}
+                          </div>
+                          <div>
+                            <div className="font-medium">{gateway.name}</div>
+                            <div className="text-xs text-gray-500">{providerConfig.name} • {gateway.currency}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${
+                            gateway.status === 'ACTIVE' ? 'bg-green-500' : 
+                            gateway.status === 'ERROR' ? 'bg-red-500' : 'bg-gray-400'
+                          }`} />
+                          <span className="text-sm text-gray-500">
+                            {gateway.status === 'ACTIVE' ? 'פעיל' : 
+                             gateway.status === 'ERROR' ? 'שגיאה' : 'לא פעיל'}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeletePayment(gateway.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-gray-400" />
+                          </Button>
+                        </div>
+                      </div>
+                      {gateway.error_message && (
+                        <div className="mt-2 p-2 bg-red-50 rounded text-red-600 text-xs flex items-center gap-2">
+                          <AlertCircle className="h-3 w-3" />
+                          {gateway.error_message}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#635BFF]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-[#635BFF] flex items-center justify-center text-white font-bold">S</div>
                   Stripe
                 </CardTitle>
-                <CardDescription>קבל תשלומים בכרטיס אשראי, Apple Pay ו-Google Pay</CardDescription>
+                <CardDescription>כרטיס אשראי, Apple Pay, Google Pay ועוד</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectPayment('STRIPE')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#003087]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-[#003087] flex items-center justify-center text-white font-bold">P</div>
                   PayPal
                 </CardTitle>
-                <CardDescription>קבל תשלומים דרך חשבון PayPal</CardDescription>
+                <CardDescription>תשלומים דרך חשבון PayPal</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectPayment('PAYPAL')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-green-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white">💳</div>
                   Bit
                 </CardTitle>
-                <CardDescription>קבל תשלומים דרך Bit</CardDescription>
+                <CardDescription>תשלומים מהירים בביט</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectPayment('BIT')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-blue-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white">💰</div>
                   Tranzila
                 </CardTitle>
-                <CardDescription>עיבוד תשלומים ישראלי</CardDescription>
+                <CardDescription>עיבוד תשלומים ישראלי מוביל</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectPayment('TRANZILA')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-orange-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white">🏦</div>
                   Meshulam
                 </CardTitle>
-                <CardDescription>תשלומים מאובטחים</CardDescription>
+                <CardDescription>תשלומים מאובטחים ומהירים</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectPayment('MESHULAM')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-purple-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center text-white">🔐</div>
                   Cardcom
                 </CardTitle>
-                <CardDescription>שער תשלומים ישראלי</CardDescription>
+                <CardDescription>שער תשלומים ישראלי מאובטח</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectPayment('CARDCOM')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
@@ -960,6 +1057,14 @@ export default function IntegrationsPage() {
         onOpenChange={setShowMessagingDialog}
         provider={selectedMessagingProvider}
         onSave={(data) => createMessagingMutation.mutate(data)}
+      />
+
+      {/* Payment Setup Dialog */}
+      <PaymentSetupDialog
+        open={showPaymentDialog}
+        onOpenChange={setShowPaymentDialog}
+        provider={selectedPaymentProvider}
+        onSave={(data) => createPaymentMutation.mutate(data)}
       />
     </div>
   );
