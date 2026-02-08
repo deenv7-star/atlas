@@ -172,168 +172,178 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Solution Section - Side by Side */}
-      <section className="relative py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40 px-3 sm:px-4 bg-white overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 via-white to-gray-50/50" />
+      {/* Solution Section - Apple Premium Design */}
+      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40 px-4 bg-white overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/30 via-white to-gray-50/30" />
         
-        <div className="relative max-w-[1400px] mx-auto">
-          {/* Title */}
+        <div className="relative max-w-[1600px] mx-auto">
+          {/* Headline */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-24 xl:mb-32"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center mb-12 sm:mb-16 md:mb-24 lg:mb-32"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold text-gray-900 mb-4 sm:mb-5 md:mb-6 lg:mb-8 tracking-[-0.04em] leading-[0.95] px-2 sm:px-4">
+            <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-6 md:mb-8 tracking-[-0.02em] leading-[1.05]">
               {t.solutionTitle}
             </h2>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-500 max-w-4xl mx-auto font-light leading-relaxed px-2 sm:px-4">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-500 max-w-4xl mx-auto font-light leading-relaxed">
               {t.solutionText}
             </p>
           </motion.div>
           
-          {/* Before & After - Always 2 columns */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-6 lg:gap-12 xl:gap-20 items-stretch mb-8 sm:mb-12 md:mb-16 lg:mb-24">
-            {/* Before - Chaos */}
+          {/* Before & After Comparison - Always Side by Side */}
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-10 lg:gap-16 items-stretch mb-12 sm:mb-16 md:mb-20 lg:mb-24">
+            
+            {/* BEFORE - Chaos */}
             <motion.div
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="relative group"
             >
-              <div className="absolute -inset-1 sm:-inset-2 md:-inset-4 lg:-inset-8 bg-gradient-to-br from-red-100 via-orange-50 to-yellow-100 rounded-xl sm:rounded-2xl md:rounded-[32px] lg:rounded-[48px] opacity-60 blur-lg sm:blur-xl md:blur-2xl lg:blur-3xl group-hover:opacity-80 transition-opacity duration-700" />
+              <div className="absolute -inset-2 sm:-inset-4 md:-inset-6 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 rounded-2xl sm:rounded-3xl md:rounded-[40px] opacity-80 blur-2xl md:blur-3xl group-hover:opacity-100 transition-all duration-700" />
               
-              <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-[32px] p-3 sm:p-4 md:p-8 lg:p-12 xl:p-16 min-h-[220px] sm:min-h-[280px] md:min-h-[400px] lg:min-h-[500px] xl:min-h-[600px] overflow-hidden shadow-md sm:shadow-lg md:shadow-xl lg:shadow-2xl shadow-gray-900/5">
-                <div className="absolute top-2 sm:top-3 md:top-6 lg:top-10 right-2 sm:right-3 md:right-6 lg:right-10">
-                  <span className="text-[8px] sm:text-[10px] md:text-xs lg:text-sm font-semibold text-gray-400 tracking-widest uppercase">לפני</span>
+              <div className="relative bg-gradient-to-br from-gray-50 to-gray-100/80 rounded-xl sm:rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16 aspect-square overflow-hidden shadow-xl">
+                <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8">
+                  <span className="text-xs sm:text-sm md:text-base font-semibold text-gray-400 tracking-wider">לפני</span>
                 </div>
                 
                 <div className="relative w-full h-full flex items-center justify-center">
+                  {/* Floating chaos cards */}
                   {[
-                    { top: '10%', right: '10%', bg: 'from-amber-400 to-orange-500', text: 'טלפון דחוף', rotate: 12 },
-                    { top: '35%', left: '5%', bg: 'from-rose-400 to-pink-500', text: 'חוב ₪2,500', rotate: -8 },
-                    { bottom: '25%', right: '15%', bg: 'from-emerald-400 to-teal-500', text: 'ניקיון?', rotate: 6 },
-                    { bottom: '40%', left: '10%', bg: 'from-blue-400 to-indigo-500', text: 'איפה ההזמנה', rotate: -12 },
-                    { top: '50%', left: '30%', bg: 'from-violet-400 to-purple-500', text: 'הודעה תקועה', rotate: 4 }
+                    { top: '8%', right: '8%', bg: 'from-amber-400 to-orange-500', emoji: '📞', rotate: 15 },
+                    { top: '32%', left: '6%', bg: 'from-rose-400 to-pink-500', emoji: '💰', rotate: -10 },
+                    { bottom: '22%', right: '10%', bg: 'from-emerald-400 to-teal-500', emoji: '🧹', rotate: 8 },
+                    { bottom: '35%', left: '8%', bg: 'from-blue-400 to-indigo-500', emoji: '📅', rotate: -14 },
+                    { top: '48%', left: '25%', bg: 'from-violet-400 to-purple-500', emoji: '📨', rotate: 5 }
                   ].map((card, i) => (
                     <motion.div
                       key={i}
                       animate={{ 
-                        rotate: [card.rotate - 4, card.rotate + 4, card.rotate - 4],
-                        y: [-8, 8, -8],
-                        scale: [1, 1.03, 1]
+                        rotate: [card.rotate - 3, card.rotate + 3, card.rotate - 3],
+                        y: [-6, 6, -6]
                       }}
-                      transition={{ repeat: Infinity, duration: 5 + i * 0.5, ease: "easeInOut" }}
+                      transition={{ repeat: Infinity, duration: 4 + i * 0.3, ease: "easeInOut" }}
                       style={{ top: card.top, right: card.right, bottom: card.bottom, left: card.left }}
                       className="absolute"
                     >
-                      <div className={`bg-gradient-to-br ${card.bg} rounded-md sm:rounded-lg md:rounded-xl lg:rounded-2xl p-1.5 sm:p-2 md:p-3 lg:p-5 xl:p-6 shadow-sm sm:shadow-md md:shadow-lg lg:shadow-xl shadow-black/10 backdrop-blur-sm w-12 sm:w-16 md:w-28 lg:w-36 xl:w-44`}>
-                        <div className="text-white font-semibold text-[7px] sm:text-[8px] md:text-xs lg:text-sm leading-tight">{card.text}</div>
+                      <div className={`bg-gradient-to-br ${card.bg} rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 shadow-lg w-12 sm:w-16 md:w-20 lg:w-24 aspect-square flex items-center justify-center`}>
+                        <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl">{card.emoji}</span>
                       </div>
                     </motion.div>
                   ))}
                   
+                  {/* Central chaos indicator */}
                   <motion.div
-                    animate={{ scale: [1, 1.3, 1], opacity: [0.03, 0.08, 0.03] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                    className="absolute inset-0 flex items-center justify-center"
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+                    className="absolute inset-0 flex items-center justify-center opacity-5"
                   >
-                    <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96 rounded-full bg-red-500 blur-[30px] sm:blur-[40px] md:blur-[80px] lg:blur-[100px]" />
+                    <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-64 md:h-64 rounded-full border-4 border-dashed border-red-400" />
                   </motion.div>
                 </div>
               </div>
             </motion.div>
 
-            {/* After - Organized */}
+            {/* AFTER - Organized */}
             <motion.div
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
               className="relative group"
             >
-              <div className="absolute -inset-1 sm:-inset-2 md:-inset-4 lg:-inset-8 bg-gradient-to-br from-[#00D1C1]/20 via-blue-100/20 to-cyan-100/20 rounded-xl sm:rounded-2xl md:rounded-[32px] lg:rounded-[48px] opacity-60 blur-lg sm:blur-xl md:blur-2xl lg:blur-3xl group-hover:opacity-80 transition-opacity duration-700" />
+              <div className="absolute -inset-2 sm:-inset-4 md:-inset-6 bg-gradient-to-br from-[#00D1C1]/10 via-cyan-50/50 to-blue-50/50 rounded-2xl sm:rounded-3xl md:rounded-[40px] opacity-80 blur-2xl md:blur-3xl group-hover:opacity-100 transition-all duration-700" />
               
-              <div className="relative bg-gradient-to-br from-gray-900 to-black rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-[32px] p-3 sm:p-4 md:p-8 lg:p-12 xl:p-16 min-h-[220px] sm:min-h-[280px] md:min-h-[400px] lg:min-h-[500px] xl:min-h-[600px] shadow-md sm:shadow-lg md:shadow-xl lg:shadow-2xl shadow-[#00D1C1]/10">
-                <div className="absolute top-2 sm:top-3 md:top-6 lg:top-10 right-2 sm:right-3 md:right-6 lg:right-10 flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-3">
-                  <span className="text-[8px] sm:text-[10px] md:text-xs lg:text-sm font-semibold text-[#00D1C1] tracking-widest uppercase">עם ATLAS</span>
+              <div className="relative bg-gradient-to-br from-gray-900 via-gray-900 to-black rounded-xl sm:rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16 aspect-square shadow-2xl shadow-[#00D1C1]/20">
+                <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 flex items-center gap-2">
+                  <span className="text-xs sm:text-sm md:text-base font-semibold text-[#00D1C1] tracking-wider">עם ATLAS</span>
                   <motion.div
-                    animate={{ rotate: [0, 5, -5, 0] }}
+                    animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
                     transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                   >
-                    <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-[#00D1C1]" />
+                    <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 text-[#00D1C1]" />
                   </motion.div>
                 </div>
                 
                 <div className="relative w-full h-full flex items-center justify-center">
                   <motion.div
-                    initial={{ scale: 0.92, opacity: 0 }}
+                    initial={{ scale: 0.9, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
-                    className="w-full"
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+                    className="w-full h-full flex items-center justify-center"
                   >
-                    <div className="bg-white/[0.03] backdrop-blur-2xl rounded-md sm:rounded-lg md:rounded-2xl lg:rounded-3xl p-2 sm:p-3 md:p-6 lg:p-8 xl:p-10 border border-white/[0.08] shadow-md sm:shadow-lg md:shadow-xl lg:shadow-2xl">
-                      <div className="space-y-1.5 sm:space-y-2 md:space-y-3 lg:space-y-4 xl:space-y-5">
+                    <div className="bg-white/[0.04] backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 lg:p-8 border border-white/[0.08] w-full max-w-md">
+                      <div className="space-y-2 sm:space-y-3 md:space-y-4">
                         {[
-                          { icon: Calendar, text: 'הזמנות מאורגנות באוטומט', delay: 0.8 },
-                          { icon: CreditCard, text: 'תשלומים מעוקבים ומסונכרנים', delay: 0.9 },
-                          { icon: MessageSquare, text: 'תקשורת חכמה עם אורחים', delay: 1.0 },
-                          { icon: CheckCircle2, text: 'ניהול מלא ללא טעויות', delay: 1.1 }
+                          { icon: Calendar, label: 'מאורגן', color: 'from-[#00D1C1] to-cyan-400' },
+                          { icon: CreditCard, label: 'מסונכרן', color: 'from-blue-400 to-indigo-400' },
+                          { icon: MessageSquare, label: 'חכם', color: 'from-purple-400 to-pink-400' },
+                          { icon: CheckCircle2, label: 'מושלם', color: 'from-green-400 to-emerald-400' }
                         ].map((item, i) => (
                           <motion.div
                             key={i}
-                            initial={{ x: -40, opacity: 0 }}
+                            initial={{ x: -20, opacity: 0 }}
                             whileInView={{ x: 0, opacity: 1 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: item.delay }}
-                            whileHover={{ x: 4, transition: { duration: 0.2 } }}
-                            className="flex items-center gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-5 bg-[#00D1C1]/[0.06] border border-[#00D1C1]/[0.12] rounded-md sm:rounded-lg md:rounded-xl lg:rounded-2xl p-1.5 sm:p-2 md:p-3 lg:p-4 xl:p-5 cursor-default group/item"
+                            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.6 + i * 0.1 }}
+                            className="flex items-center gap-2 sm:gap-3 md:gap-4 bg-white/[0.06] rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 group/item hover:bg-white/[0.1] transition-all"
                           >
-                            <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded sm:rounded-md md:rounded-lg lg:rounded-xl bg-[#00D1C1]/10 flex items-center justify-center flex-shrink-0 group-hover/item:bg-[#00D1C1]/20 transition-colors duration-300">
-                              <item.icon className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 xl:h-7 xl:w-7 text-[#00D1C1]" strokeWidth={1.5} />
+                            <div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+                              <item.icon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" strokeWidth={2} />
                             </div>
-                            <span className="text-white/90 font-medium text-[7px] sm:text-[9px] md:text-sm lg:text-base xl:text-lg tracking-wide leading-snug">{item.text}</span>
+                            <span className="text-white font-medium text-xs sm:text-sm md:text-base lg:text-lg">{item.label}</span>
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.8 + i * 0.1 }}
+                              className="mr-auto"
+                            >
+                              <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#00D1C1]" />
+                            </motion.div>
                           </motion.div>
                         ))}
                       </div>
                     </div>
                   </motion.div>
                   
+                  {/* Glow effect */}
                   <motion.div
-                    animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.12, 0.08] }}
-                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                     className="absolute inset-0 flex items-center justify-center pointer-events-none"
                   >
-                    <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[500px] xl:h-[500px] rounded-full bg-[#00D1C1] blur-[60px] sm:blur-[80px] md:blur-[100px] lg:blur-[120px]" />
+                    <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full bg-[#00D1C1] blur-[80px] sm:blur-[100px] md:blur-[120px]" />
                   </motion.div>
                 </div>
               </div>
             </motion.div>
           </div>
 
-          {/* Benefits */}
+          {/* Benefits Pills */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
-            className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 mt-8 sm:mt-12 md:mt-16 lg:mt-20"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+            className="flex flex-wrap justify-center gap-3 md:gap-4"
           >
             {t.benefits.map((benefit, i) => (
-              <motion.div
+              <motion.span
                 key={i}
-                initial={{ opacity: 0, scale: 0.92 }}
+                initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.7 + i * 0.08 }}
-                whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-                className="bg-gray-50 border border-gray-200 text-gray-700 px-3 py-2 sm:px-5 sm:py-3 md:px-7 md:py-3.5 lg:px-8 lg:py-4 rounded-full font-medium text-xs sm:text-sm md:text-base lg:text-lg hover:bg-gray-100 hover:border-gray-300 transition-all duration-300 cursor-default"
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.5 + i * 0.05 }}
+                className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-700 px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-full font-medium text-sm sm:text-base md:text-lg hover:bg-gray-100 hover:border-gray-300 transition-all cursor-default"
               >
+                <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#00D1C1] flex-shrink-0" />
                 {benefit}
-              </motion.div>
+              </motion.span>
             ))}
           </motion.div>
         </div>
