@@ -426,9 +426,60 @@ export default function IntegrationsPage() {
             <Zap className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-green-900">
               <p className="font-medium mb-1">💬 שלח הודעות אוטומטיות</p>
-              <p>זיכרונות של צ'ק-אין, בקשות ביקורות, עדכוני מחיר - הכל בעצמאות דרך WhatsApp, Email וSMS.</p>
+              <p>חבר WhatsApp Business, SMTP, Twilio או SendGrid - שלח הודעות אוטומטיות לאורחים בזמנים הנכונים.</p>
             </div>
           </div>
+
+          {/* Connected Integrations */}
+          {messagingIntegrations.length > 0 && (
+            <div className="space-y-3 mb-6">
+              <h3 className="text-sm font-medium text-gray-700">אינטגרציות מחוברות</h3>
+              {messagingIntegrations.map(integration => {
+                const providerConfig = MESSAGING_PROVIDERS[integration.provider] || {};
+                return (
+                  <Card key={integration.id}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-lg ${providerConfig.color} flex items-center justify-center text-white text-lg`}>
+                            {providerConfig.icon}
+                          </div>
+                          <div>
+                            <div className="font-medium">{integration.name}</div>
+                            <div className="text-xs text-gray-500">{providerConfig.name}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${
+                            integration.status === 'ACTIVE' ? 'bg-green-500' : 
+                            integration.status === 'ERROR' ? 'bg-red-500' : 'bg-gray-400'
+                          }`} />
+                          <span className="text-sm text-gray-500">
+                            {integration.status === 'ACTIVE' ? 'פעיל' : 
+                             integration.status === 'ERROR' ? 'שגיאה' : 'לא פעיל'}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteMessaging(integration.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-gray-400" />
+                          </Button>
+                        </div>
+                      </div>
+                      {integration.error_message && (
+                        <div className="mt-2 p-2 bg-red-50 rounded text-red-600 text-xs flex items-center gap-2">
+                          <AlertCircle className="h-3 w-3" />
+                          {integration.error_message}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
