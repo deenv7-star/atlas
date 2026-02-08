@@ -15,6 +15,8 @@ import { toast } from 'sonner';
 import CalendarSetupWizard from '@/components/integrations/CalendarSetupWizard';
 import MessagingSetupDialog from '@/components/integrations/MessagingSetupDialog';
 import PaymentSetupDialog from '@/components/integrations/PaymentSetupDialog';
+import AccountingSetupDialog from '@/components/integrations/AccountingSetupDialog';
+import PMSSetupDialog from '@/components/integrations/PMSSetupDialog';
 import { 
   Link2, Calendar, CreditCard, MessageSquare, Settings2,
   Check, X, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle, Clock, Zap, Info
@@ -51,6 +53,26 @@ const PAYMENT_PROVIDERS = {
   CARDCOM: { name: 'Cardcom', color: 'bg-purple-600', icon: '🔐' }
 };
 
+const ACCOUNTING_PROVIDERS = {
+  MORNING: { name: 'Morning', color: 'bg-[#00A6ED]', icon: '☀️' },
+  GREEN_INVOICE: { name: 'Green Invoice', color: 'bg-green-600', icon: '📊' },
+  QUICKBOOKS: { name: 'QuickBooks', color: 'bg-[#2CA01C]', icon: '💼' },
+  ZOHO_BOOKS: { name: 'Zoho Books', color: 'bg-orange-600', icon: '🧾' },
+  XERO: { name: 'Xero', color: 'bg-blue-700', icon: '📈' },
+  HASHAVSHEVET: { name: 'חשבשבת', color: 'bg-gray-700', icon: '🧮' }
+};
+
+const PMS_PROVIDERS = {
+  GUESTY: { name: 'Guesty', color: 'bg-[#5B21B6]', icon: 'G' },
+  HOSTAWAY: { name: 'Hostaway', color: 'bg-blue-600', icon: 'H' },
+  LODGIFY: { name: 'Lodgify', color: 'bg-orange-600', icon: 'L' },
+  CLOUDBEDS: { name: 'Cloudbeds', color: 'bg-green-600', icon: 'C' },
+  OPERA: { name: 'Opera PMS', color: 'bg-red-600', icon: 'O' },
+  MEWS: { name: 'Mews', color: 'bg-cyan-600', icon: 'M' },
+  APALEO: { name: 'Apaleo', color: 'bg-indigo-600', icon: '🏨' },
+  CHANNELMANAGER: { name: 'Channel Manager', color: 'bg-pink-600', icon: '🔗' }
+};
+
 export default function IntegrationsPage() {
   const [user, setUser] = useState(null);
   const [showWizard, setShowWizard] = useState(false);
@@ -61,6 +83,10 @@ export default function IntegrationsPage() {
   const [selectedMessagingProvider, setSelectedMessagingProvider] = useState(null);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [selectedPaymentProvider, setSelectedPaymentProvider] = useState(null);
+  const [showAccountingDialog, setShowAccountingDialog] = useState(false);
+  const [selectedAccountingProvider, setSelectedAccountingProvider] = useState(null);
+  const [showPMSDialog, setShowPMSDialog] = useState(false);
+  const [selectedPMSProvider, setSelectedPMSProvider] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -88,6 +114,18 @@ export default function IntegrationsPage() {
   const { data: paymentGateways = [] } = useQuery({
     queryKey: ['payment-gateways', user?.org_id],
     queryFn: () => base44.entities.PaymentGateway.filter({ org_id: user?.org_id }),
+    enabled: !!user?.org_id
+  });
+
+  const { data: accountingIntegrations = [] } = useQuery({
+    queryKey: ['accounting-integrations', user?.org_id],
+    queryFn: () => base44.entities.AccountingIntegration.filter({ org_id: user?.org_id }),
+    enabled: !!user?.org_id
+  });
+
+  const { data: pmsIntegrations = [] } = useQuery({
+    queryKey: ['pms-integrations', user?.org_id],
+    queryFn: () => base44.entities.PMSIntegration.filter({ org_id: user?.org_id }),
     enabled: !!user?.org_id
   });
 
@@ -200,6 +238,64 @@ export default function IntegrationsPage() {
   const handleConnectPayment = (provider) => {
     setSelectedPaymentProvider(provider);
     setShowPaymentDialog(true);
+  };
+
+  const createAccountingMutation = useMutation({
+    mutationFn: (data) => base44.entities.AccountingIntegration.create({ ...data, org_id: user?.org_id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounting-integrations'] });
+      setShowAccountingDialog(false);
+      setSelectedAccountingProvider(null);
+      toast.success('אינטגרציית חשבונאות נוספה!');
+    },
+    onError: () => toast.error('שגיאה בהוספת אינטגרציה')
+  });
+
+  const deleteAccountingMutation = useMutation({
+    mutationFn: (id) => base44.entities.AccountingIntegration.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounting-integrations'] });
+      toast.success('אינטגרציה הוסרה');
+    },
+    onError: () => toast.error('שגיאה')
+  });
+
+  const handleDeleteAccounting = (id) => {
+    if (window.confirm('האם אתה בטוח?')) deleteAccountingMutation.mutate(id);
+  };
+
+  const handleConnectAccounting = (provider) => {
+    setSelectedAccountingProvider(provider);
+    setShowAccountingDialog(true);
+  };
+
+  const createPMSMutation = useMutation({
+    mutationFn: (data) => base44.entities.PMSIntegration.create({ ...data, org_id: user?.org_id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pms-integrations'] });
+      setShowPMSDialog(false);
+      setSelectedPMSProvider(null);
+      toast.success('אינטגרציית PMS נוספה!');
+    },
+    onError: () => toast.error('שגיאה')
+  });
+
+  const deletePMSMutation = useMutation({
+    mutationFn: (id) => base44.entities.PMSIntegration.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pms-integrations'] });
+      toast.success('אינטגרציה הוסרה');
+    },
+    onError: () => toast.error('שגיאה')
+  });
+
+  const handleDeletePMS = (id) => {
+    if (window.confirm('האם אתה בטוח?')) deletePMSMutation.mutate(id);
+  };
+
+  const handleConnectPMS = (provider) => {
+    setSelectedPMSProvider(provider);
+    setShowPMSDialog(true);
   };
 
   if (isLoading) {
@@ -732,129 +828,66 @@ export default function IntegrationsPage() {
             <Zap className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-orange-900">
               <p className="font-medium mb-1">📊 ניהול פיננסי משולב</p>
-              <p>יצא דוחות חשבונאות אוטומטיים, עתכנע את הערכים ביומן החשבונאות שלך - הכל מתסנכרן בזמן אמת.</p>
+              <p>חבר Morning, Green Invoice או כל מערכת חשבונאות - סנכרן חשבוניות וקבלות אוטומטית.</p>
             </div>
           </div>
+
+          {accountingIntegrations.length > 0 && (
+            <div className="space-y-3 mb-6">
+              <h3 className="text-sm font-medium text-gray-700">מערכות חשבונאות מחוברות</h3>
+              {accountingIntegrations.map(integration => {
+                const providerConfig = ACCOUNTING_PROVIDERS[integration.provider] || {};
+                return (
+                  <Card key={integration.id}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-lg ${providerConfig.color} flex items-center justify-center text-white text-lg`}>{providerConfig.icon}</div>
+                          <div>
+                            <div className="font-medium">{integration.name}</div>
+                            <div className="text-xs text-gray-500">{providerConfig.name}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${integration.status === 'ACTIVE' ? 'bg-green-500' : integration.status === 'ERROR' ? 'bg-red-500' : 'bg-gray-400'}`} />
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteAccounting(integration.id)}><Trash2 className="h-4 w-4 text-gray-400" /></Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#00A6ED] flex items-center justify-center text-white">☀️</div>
-                  Morning (מורנינג)
-                </CardTitle>
-                <CardDescription>מערכת לניהול חשבוניות וקבלות ישראלית</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white">📊</div>
-                  Green Invoice
-                </CardTitle>
-                <CardDescription>מערכת חשבוניות דיגיטלית</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center text-white">💼</div>
-                  QuickBooks
-                </CardTitle>
-                <CardDescription>תוכנת חשבונאות מקיפה</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white">🧾</div>
-                  Zoho Books
-                </CardTitle>
-                <CardDescription>ניהול פיננסי מקוון</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-700 flex items-center justify-center text-white">📈</div>
-                  Xero
-                </CardTitle>
-                <CardDescription>חשבונאות מבוססת ענן</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center text-white">🧮</div>
-                  HashavShevet (חשבשבת)
-                </CardTitle>
-                <CardDescription>תוכנת הנהלת חשבונות ישראלית</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
+            {[
+              { provider: 'MORNING', title: 'Morning (מורנינג)', desc: 'חשבוניות וקבלות ישראליות' },
+              { provider: 'GREEN_INVOICE', title: 'Green Invoice', desc: 'מערכת חשבוניות דיגיטלית' },
+              { provider: 'QUICKBOOKS', title: 'QuickBooks', desc: 'תוכנת חשבונאות מקיפה' },
+              { provider: 'ZOHO_BOOKS', title: 'Zoho Books', desc: 'ניהול פיננסי מקוון' },
+              { provider: 'XERO', title: 'Xero', desc: 'חשבונאות מבוססת ענן' },
+              { provider: 'HASHAVSHEVET', title: 'חשבשבת', desc: 'הנהלת חשבונות ישראלית' }
+            ].map(({ provider, title, desc }) => {
+              const config = ACCOUNTING_PROVIDERS[provider];
+              return (
+                <Card key={provider} className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-gray-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center text-white text-lg`}>{config.icon}</div>
+                      {title}
+                    </CardTitle>
+                    <CardDescription>{desc}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full" onClick={() => handleConnectAccounting(provider)}>
+                      <Plus className="h-4 w-4 ml-2" />
+                      חבר עכשיו
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </TabsContent>
 
@@ -863,190 +896,69 @@ export default function IntegrationsPage() {
           <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex gap-3">
             <Zap className="h-5 w-5 text-indigo-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-indigo-900">
-              <p className="font-medium mb-1">🏨 סנכרון עם מערכות ניהול מלונאיות</p>
-              <p>חבר עם Guesty, Hostaway, Cloudbeds וועוד - סנכרן הזמנות, תאריכים ופרטי אורחים אוטומטית.</p>
+              <p className="font-medium mb-1">🏨 סנכרון עם מערכות PMS</p>
+              <p>חבר Guesty, Hostaway, Cloudbeds או כל PMS - סנכרן הזמנות ואורחים אוטומטית.</p>
             </div>
           </div>
+
+          {pmsIntegrations.length > 0 && (
+            <div className="space-y-3 mb-6">
+              <h3 className="text-sm font-medium text-gray-700">מערכות PMS מחוברות</h3>
+              {pmsIntegrations.map(integration => {
+                const providerConfig = PMS_PROVIDERS[integration.provider] || {};
+                return (
+                  <Card key={integration.id}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-lg ${providerConfig.color} flex items-center justify-center text-white font-bold`}>{providerConfig.icon}</div>
+                          <div>
+                            <div className="font-medium">{integration.name}</div>
+                            <div className="text-xs text-gray-500">{providerConfig.name}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${integration.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-400'}`} />
+                          <Button variant="ghost" size="icon" onClick={() => handleDeletePMS(integration.id)}><Trash2 className="h-4 w-4 text-gray-400" /></Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#5B21B6] flex items-center justify-center text-white font-bold">G</div>
-                  Guesty
-                </CardTitle>
-                <CardDescription>סנכרון עם Guesty PMS</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">H</div>
-                  Hostaway
-                </CardTitle>
-                <CardDescription>אינטגרציה עם Hostaway</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white font-bold">L</div>
-                  Lodgify
-                </CardTitle>
-                <CardDescription>ניהול ערוצי הפצה</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold">C</div>
-                  Cloudbeds
-                </CardTitle>
-                <CardDescription>פלטפורמת ניהול מלונות</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold">O</div>
-                  Opera PMS
-                </CardTitle>
-                <CardDescription>מערכת ניהול מלונאית</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-cyan-600 flex items-center justify-center text-white font-bold">M</div>
-                  Mews
-                </CardTitle>
-                <CardDescription>Cloud Hotel Management</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white">🏨</div>
-                  Apaleo
-                </CardTitle>
-                <CardDescription>Open Hospitality Platform</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-pink-600 flex items-center justify-center text-white">🔗</div>
-                  Channel Manager
-                </CardTitle>
-                <CardDescription>ניהול ערוצי הפצה מרוכז</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center text-white">⚡</div>
-                  Zapier
-                </CardTitle>
-                <CardDescription>חיבור ל-5000+ אפליקציות</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
+            {[
+              { provider: 'GUESTY', title: 'Guesty', desc: 'PMS מלא ומתקדם' },
+              { provider: 'HOSTAWAY', title: 'Hostaway', desc: 'ניהול מתקדם של נכסים' },
+              { provider: 'LODGIFY', title: 'Lodgify', desc: 'ניהול ערוצי הפצה' },
+              { provider: 'CLOUDBEDS', title: 'Cloudbeds', desc: 'פלטפורמת ניהול מלונות' },
+              { provider: 'OPERA', title: 'Opera PMS', desc: 'מערכת ניהול מלונאית' },
+              { provider: 'MEWS', title: 'Mews', desc: 'Cloud Hotel Management' },
+              { provider: 'APALEO', title: 'Apaleo', desc: 'Open Hospitality Platform' },
+              { provider: 'CHANNELMANAGER', title: 'Channel Manager', desc: 'ניהול ערוצי הפצה מרוכז' }
+            ].map(({ provider, title, desc }) => {
+              const config = PMS_PROVIDERS[provider];
+              return (
+                <Card key={provider} className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-gray-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center text-white font-bold`}>{config.icon}</div>
+                      {title}
+                    </CardTitle>
+                    <CardDescription>{desc}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full" onClick={() => handleConnectPMS(provider)}>
+                      <Plus className="h-4 w-4 ml-2" />
+                      חבר עכשיו
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </TabsContent>
       </Tabs>
@@ -1065,6 +977,22 @@ export default function IntegrationsPage() {
         onOpenChange={setShowPaymentDialog}
         provider={selectedPaymentProvider}
         onSave={(data) => createPaymentMutation.mutate(data)}
+      />
+
+      {/* Accounting Setup Dialog */}
+      <AccountingSetupDialog
+        open={showAccountingDialog}
+        onOpenChange={setShowAccountingDialog}
+        provider={selectedAccountingProvider}
+        onSave={(data) => createAccountingMutation.mutate(data)}
+      />
+
+      {/* PMS Setup Dialog */}
+      <PMSSetupDialog
+        open={showPMSDialog}
+        onOpenChange={setShowPMSDialog}
+        provider={selectedPMSProvider}
+        onSave={(data) => createPMSMutation.mutate(data)}
       />
     </div>
   );
