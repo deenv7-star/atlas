@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import CalendarSetupWizard from '@/components/integrations/CalendarSetupWizard';
+import MessagingSetupDialog from '@/components/integrations/MessagingSetupDialog';
 import { 
   Link2, Calendar, CreditCard, MessageSquare, Settings2,
   Check, X, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle, Clock, Zap, Info
@@ -32,12 +33,22 @@ const SYNC_STATUS = {
   ERROR: { label: 'שגיאה', color: 'bg-red-500' }
 };
 
+const MESSAGING_PROVIDERS = {
+  WHATSAPP: { name: 'WhatsApp Business', color: 'bg-[#25D366]', icon: '💬' },
+  EMAIL_SMTP: { name: 'Email (SMTP)', color: 'bg-gray-600', icon: '📧' },
+  SMS_TWILIO: { name: 'SMS (Twilio)', color: 'bg-[#F22F46]', icon: '📱' },
+  SENDGRID: { name: 'SendGrid', color: 'bg-blue-500', icon: '📬' },
+  TELEGRAM: { name: 'Telegram Bot', color: 'bg-[#0088cc]', icon: '✈️' }
+};
+
 export default function IntegrationsPage() {
   const [user, setUser] = useState(null);
   const [showWizard, setShowWizard] = useState(false);
   const [selectedPropertyId, setSelectedPropertyId] = useState('');
   const [filterPropertyId, setFilterPropertyId] = useState('all');
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [showMessagingDialog, setShowMessagingDialog] = useState(false);
+  const [selectedMessagingProvider, setSelectedMessagingProvider] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -53,6 +64,12 @@ export default function IntegrationsPage() {
   const { data: calendarSyncs = [], isLoading } = useQuery({
     queryKey: ['calendar-syncs', user?.org_id],
     queryFn: () => base44.entities.CalendarSync.filter({ org_id: user?.org_id }),
+    enabled: !!user?.org_id
+  });
+
+  const { data: messagingIntegrations = [] } = useQuery({
+    queryKey: ['messaging-integrations', user?.org_id],
+    queryFn: () => base44.entities.MessagingIntegration.filter({ org_id: user?.org_id }),
     enabled: !!user?.org_id
   });
 
@@ -98,6 +115,40 @@ export default function IntegrationsPage() {
     },
     onError: () => toast.error('שגיאה בסנכרון')
   });
+
+  const createMessagingMutation = useMutation({
+    mutationFn: (data) => base44.entities.MessagingIntegration.create({
+      ...data,
+      org_id: user?.org_id
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['messaging-integrations'] });
+      setShowMessagingDialog(false);
+      setSelectedMessagingProvider(null);
+      toast.success('אינטגרציה נוספה בהצלחה!');
+    },
+    onError: () => toast.error('שגיאה בהוספת האינטגרציה')
+  });
+
+  const deleteMessagingMutation = useMutation({
+    mutationFn: (id) => base44.entities.MessagingIntegration.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['messaging-integrations'] });
+      toast.success('אינטגרציה הוסרה');
+    },
+    onError: () => toast.error('שגיאה בהסרת האינטגרציה')
+  });
+
+  const handleDeleteMessaging = (id) => {
+    if (window.confirm('האם אתה בטוח שברצונך למחוק את האינטגרציה?')) {
+      deleteMessagingMutation.mutate(id);
+    }
+  };
+
+  const handleConnectMessaging = (provider) => {
+    setSelectedMessagingProvider(provider);
+    setShowMessagingDialog(true);
+  };
 
   if (isLoading) {
     return <div className="p-6 text-center text-gray-500">טוען...</div>;
@@ -481,122 +532,97 @@ export default function IntegrationsPage() {
           )}
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#25D366]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-[#25D366] flex items-center justify-center text-white">💬</div>
                   WhatsApp Business
                 </CardTitle>
-                <CardDescription>שלח הודעות אוטומטיות לאורחים</CardDescription>
+                <CardDescription>שלח הודעות אוטומטיות לאורחים דרך WhatsApp</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white"
+                  onClick={() => handleConnectMessaging('WHATSAPP')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-gray-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-gray-600 flex items-center justify-center text-white">📧</div>
                   Email (SMTP)
                 </CardTitle>
-                <CardDescription>שלח אימיילים אוטומטיים</CardDescription>
+                <CardDescription>שלח אימיילים אוטומטיים דרך SMTP</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectMessaging('EMAIL_SMTP')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#F22F46]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#0088cc] flex items-center justify-center text-white">✈️</div>
-                  Telegram
-                </CardTitle>
-                <CardDescription>שלח הודעות דרך Telegram Bot</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
-                >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#F89800] flex items-center justify-center text-white">📱</div>
+                  <div className="w-10 h-10 rounded-lg bg-[#F22F46] flex items-center justify-center text-white">📱</div>
                   SMS (Twilio)
                 </CardTitle>
-                <CardDescription>שלח הודעות SMS</CardDescription>
+                <CardDescription>שלח הודעות SMS דרך Twilio</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectMessaging('SMS_TWILIO')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-blue-500">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center text-white">📬</div>
                   SendGrid
                 </CardTitle>
-                <CardDescription>שירות דיוור מתקדם</CardDescription>
+                <CardDescription>שירות דיוור מתקדם עם אנליטיקס</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectMessaging('SENDGRID')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#0088cc]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#5865F2] flex items-center justify-center text-white">🎮</div>
-                  Discord
+                  <div className="w-10 h-10 rounded-lg bg-[#0088cc] flex items-center justify-center text-white">✈️</div>
+                  Telegram Bot
                 </CardTitle>
-                <CardDescription>התראות ב-Discord</CardDescription>
+                <CardDescription>שלח הודעות דרך בוט Telegram</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
-                  variant="outline" 
-                  className="w-full bg-gray-50 cursor-not-allowed" 
-                  disabled
+                  className="w-full"
+                  onClick={() => handleConnectMessaging('TELEGRAM')}
                 >
-                  <Info className="h-4 w-4 ml-2" />
-                  זמין בקרוב
+                  <Plus className="h-4 w-4 ml-2" />
+                  חבר עכשיו
                 </Button>
               </CardContent>
             </Card>
@@ -927,6 +953,14 @@ export default function IntegrationsPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Messaging Setup Dialog */}
+      <MessagingSetupDialog
+        open={showMessagingDialog}
+        onOpenChange={setShowMessagingDialog}
+        provider={selectedMessagingProvider}
+        onSave={(data) => createMessagingMutation.mutate(data)}
+      />
     </div>
   );
 }
