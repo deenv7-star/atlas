@@ -6,6 +6,7 @@ import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import LoginPopup from '@/components/landing/LoginPopup';
 import { 
   CheckCircle2, 
   Users, 
@@ -31,6 +32,7 @@ import { motion } from 'framer-motion';
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -52,13 +54,13 @@ export default function Landing() {
               <Button 
                 variant="ghost" 
                 className="text-[#0F172A]"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => setShowLoginPopup(true)}
               >
                 כניסה
               </Button>
               <Button 
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => setShowLoginPopup(true)}
               >
                 {t.startTrial}
               </Button>
@@ -86,12 +88,12 @@ export default function Landing() {
                 <Button 
                   size="lg" 
                   className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                  onClick={() => setShowLoginPopup(true)}
                 >
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl" onClick={() => setShowLoginPopup(true)}>
                   {t.bookDemo}
                 </Button>
               </div>
@@ -421,13 +423,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-
-      {/* Login Popup */}
-      <LoginPopup 
-        isOpen={showLoginPopup} 
-        onClose={() => setShowLoginPopup(false)}
-        onLogin={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-      />
     </div>
   );
 }
