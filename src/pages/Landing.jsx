@@ -6,6 +6,7 @@ import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import StepsSection from '@/components/landing/StepsSection';
 import { 
   CheckCircle2, 
   Users, 
