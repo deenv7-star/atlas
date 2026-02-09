@@ -107,11 +107,11 @@ export default function HeroSection({ onLoginClick }) {
               className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
             >
               <span className="bg-gradient-to-l from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-                נהלו טוב יותר
+                המערכת שתנהל
               </span>
               <br />
               <span className="bg-gradient-to-l from-[#00D1C1] via-[#00B8A9] to-[#00D1C1] bg-clip-text text-transparent">
-                את ההון שלכם
+                את הנכסים בשבילכם
               </span>
             </motion.h1>
 
@@ -122,8 +122,8 @@ export default function HeroSection({ onLoginClick }) {
               transition={{ delay: 0.4 }}
               className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-xl"
             >
-              פנסיה, קרנות נאמנות, תיקי השקעות ונתונים חכמים - 
-              <span className="font-semibold text-gray-900"> בפלטפורמה אחת חכמה ושקופה</span>
+              ניהול הזמנות, לידים, תשלומים וניקיון - 
+              <span className="font-semibold text-gray-900"> כל מה שצריך במקום אחד</span>
             </motion.p>
 
             {/* CTA Buttons */}
