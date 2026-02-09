@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Users, Zap, Shield } from 'lucide-react';
 
 const stats = [
-  { icon: Users, value: '5,000+', label: 'לקוחות פעילים', color: 'from-blue-400 to-cyan-500' },
-  { icon: TrendingUp, value: '₪2.5B', label: 'נכסים בניהול', color: 'from-purple-400 to-pink-500' },
-  { icon: Zap, value: '99.9%', label: 'זמינות מערכת', color: 'from-green-400 to-emerald-500' },
-  { icon: Shield, value: '100%', label: 'אבטחת מידע', color: 'from-orange-400 to-red-500' },
+  { icon: Users, value: '300+', label: 'בעלי נכסים', color: 'from-blue-400 to-cyan-500' },
+  { icon: TrendingUp, value: '1,200+', label: 'נכסים בניהול', color: 'from-purple-400 to-pink-500' },
+  { icon: Zap, value: '98%', label: 'שביעות רצון', color: 'from-green-400 to-emerald-500' },
+  { icon: Shield, value: '24/7', label: 'תמיכה ושירות', color: 'from-orange-400 to-red-500' },
 ];
 
 export default function FloatingStats() {
