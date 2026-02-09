@@ -14,22 +14,10 @@ import FeatureShowcase from '@/components/landing/FeatureShowcase';
 import PricingSection from '@/components/landing/PricingSection';
 import { 
   CheckCircle2, 
-  Users, 
-  Calendar, 
-  CreditCard, 
-  Sparkles, 
-  MessageSquare, 
-  FileText,
   ChevronDown,
   ChevronUp,
   ArrowLeft,
   AlertCircle,
-  Inbox,
-  CalendarCheck,
-  Wallet,
-  Brush,
-  Send,
-  FileSignature,
   Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -235,7 +223,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              onClick={() => setShowLoginPopup(true)}
             >
               {t.startTrial}
               <ArrowLeft className="mr-2 h-5 w-5" />
