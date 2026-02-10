@@ -44,12 +44,12 @@ const plans = [
   {
     name: 'עסקי',
     icon: Rocket,
-    price: 999,
+    price: null,
     properties: 10,
-    period: 'לחודש',
-    description: 'לעסקים גדולים',
+    period: 'מותאם אישית',
+    description: '5+ מתחמים',
     features: [
-      '5-10 מתחמים',
+      '5+ מתחמים',
       'כל תכונות מקצועי',
       'אינטגרציות מתקדמות',
       'אוטומציות מלאות',
@@ -57,25 +57,6 @@ const plans = [
       'הדרכה אישית',
     ],
     color: 'from-purple-400 to-pink-500',
-    popular: false,
-  },
-  {
-    name: 'ארגוני',
-    icon: Mail,
-    price: null,
-    properties: 999,
-    period: 'מותאם אישית',
-    description: '10+ מתחמים',
-    features: [
-      '10+ מתחמים',
-      'כל תכונות עסקי',
-      'API מלא',
-      'מנהל חשבון ייעודי',
-      'SLA מובטח',
-      'תמיכה 24/7',
-      'התאמות מיוחדות',
-    ],
-    color: 'from-indigo-400 to-blue-500',
     popular: false,
   },
 ];
@@ -130,7 +111,7 @@ export default function PricingSection({ onSelectPlan }) {
           </div>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           {plans.map((plan, index) => (
             <motion.div
               key={index}

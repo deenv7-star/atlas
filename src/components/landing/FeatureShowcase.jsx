@@ -5,13 +5,6 @@ import { Inbox, CalendarCheck, Wallet, Brush, Send, FileSignature, CheckCircle }
 
 const features = [
   {
-    icon: Inbox,
-    title: 'ניהול לידים חכם',
-    description: 'מערכת CRM מתקדמת עם AI שממיר לידים ללקוחות',
-    color: 'from-blue-400 to-cyan-500',
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop',
-  },
-  {
     icon: CalendarCheck,
     title: 'ניהול הזמנות אוטומטי',
     description: 'סנכרון אוטומטי עם כל הפלטפורמות, ללא הזמנות כפולות',
