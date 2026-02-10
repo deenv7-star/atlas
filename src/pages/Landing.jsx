@@ -5,32 +5,32 @@ import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
-import LoginPopup from '@/components/landing/LoginPopup';
-import SupportChat from '@/components/landing/SupportChat';
-import HeroSection from '@/components/landing/HeroSection';
-import PricingSection from '@/components/landing/PricingSection';
-import HowItWorksSection from '@/components/landing/HowItWorksSection';
-import TestimonialsSection from '@/components/landing/TestimonialsSection';
-import BenefitsGrid from '@/components/landing/BenefitsGrid';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   CheckCircle2, 
-  ChevronDown, 
-  ChevronUp, 
+  Users, 
+  Calendar, 
+  CreditCard, 
+  Sparkles, 
+  MessageSquare, 
+  FileText,
+  ChevronDown,
+  ChevronUp,
+  ArrowLeft,
   AlertCircle,
   Inbox,
   CalendarCheck,
   Wallet,
   Brush,
   Send,
-  FileSignature
+  FileSignature,
+  Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -40,17 +40,10 @@ export default function Landing() {
     { icon: Send, title: t.features[4].title, desc: t.features[4].desc },
     { icon: FileSignature, title: t.features[5].title, desc: t.features[5].desc }
   ];
-  
-  const handleLogin = () => {
-    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
-  };
-
-  const handleSelectPlan = () => {
-    setShowLoginPopup(true);
-  };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F8FAFC]" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif" }}>
+    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
+      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -59,13 +52,13 @@ export default function Landing() {
               <Button 
                 variant="ghost" 
                 className="text-[#0F172A]"
-                onClick={() => setShowLoginPopup(true)}
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
                 כניסה
               </Button>
               <Button 
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => setShowLoginPopup(true)}
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
                 {t.startTrial}
               </Button>
@@ -74,28 +67,85 @@ export default function Landing() {
         </div>
       </nav>
 
-      <HeroSection onLoginClick={() => setShowLoginPopup(true)} />
-
-      {/* Problem Section */}
-      <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
-              {t.problemTitle}
-            </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {t.problemBullets.map((bullet, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                  <span>{bullet}</span>
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
+                {t.heroTitle}
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                {t.heroSubtitle}
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
+                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                >
+                  {t.startTrial}
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                </Button>
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
+                  {t.bookDemo}
+                </Button>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
+                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
+                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
+                        <p className="text-sm text-gray-500">לידים חדשים</p>
+                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
+                      </div>
+                      <div className="bg-[#F2E9DB] rounded-xl p-4">
+                        <p className="text-sm text-gray-500">הזמנות החודש</p>
+                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl border p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="font-medium">כניסות היום</span>
+                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
+                      </div>
+                      <div className="space-y-2">
+                        {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
+                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
+                            <span>{item}</span>
+                            <span className="text-green-600">מאושר</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
+                ✓ 0 הזמנות כפולות
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -125,19 +175,9 @@ export default function Landing() {
         </div>
       </section>
 
-      <BenefitsGrid />
-
-      {/* Features Grid - כל מה שצריך במקום אחד */}
+      {/* Features Grid */}
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-4">
-              כל מה שצריך במקום אחד
-            </h2>
-            <p className="text-xl text-gray-600">
-              פלטפורמה all-in-one שמשלבת את כל הכלים שצריכים לנהל נכסים בהצלחה
-            </p>
-          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
               <motion.div
@@ -162,9 +202,117 @@ export default function Landing() {
         </div>
       </section>
 
-      <HowItWorksSection />
-      <TestimonialsSection />
-      <PricingSection onSelectPlan={handleSelectPlan} />
+      {/* How It Works */}
+      <section className="py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
+            איך זה עובד?
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {t.howItWorks.map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="text-center"
+              >
+                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                  {step.step}
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                <p className="text-gray-600">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 px-4 bg-[#0B1220]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
+            מה אומרים עלינו
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {t.testimonials.map((testimonial, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="h-full bg-white/5 border-white/10 rounded-2xl">
+                  <CardContent className="p-6">
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(5)].map((_, j) => (
+                        <Star key={j} className="h-5 w-5 fill-[#00D1C1] text-[#00D1C1]" />
+                      ))}
+                    </div>
+                    <p className="text-white/90 mb-4 leading-relaxed">"{testimonial.text}"</p>
+                    <p className="text-[#00D1C1] font-medium">{testimonial.author}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
+            תוכניות ומחירים
+          </h2>
+          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {Object.entries(t.pricing).map(([key, plan], i) => (
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className={`h-full rounded-2xl ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
+                  <CardContent className="p-6">
+                    {key === 'pro' && (
+                      <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">
+                        הכי פופולרי
+                      </span>
+                    )}
+                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{plan.name}</h3>
+                    <div className="mb-6">
+                      <span className="text-4xl font-bold text-[#0B1220]">₪{plan.price}</span>
+                      <span className="text-gray-500">/חודש</span>
+                    </div>
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, j) => (
+                        <li key={j} className="flex items-center gap-2 text-gray-600">
+                          <CheckCircle2 className="h-5 w-5 text-[#00D1C1] flex-shrink-0" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button 
+                      className={`w-full rounded-xl ${key === 'pro' 
+                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
+                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
+                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                    >
+                      {t.startTrial}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* FAQ */}
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
@@ -222,9 +370,10 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => setShowLoginPopup(true)}
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
             >
               {t.startTrial}
+              <ArrowLeft className="mr-2 h-5 w-5" />
             </Button>
           </motion.div>
         </div>
@@ -249,14 +398,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-
-      <LoginPopup 
-        isOpen={showLoginPopup} 
-        onClose={() => setShowLoginPopup(false)}
-        onLogin={handleLogin}
-      />
-
-      <SupportChat />
     </div>
   );
 }
