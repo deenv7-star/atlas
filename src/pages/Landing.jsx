@@ -56,13 +56,13 @@ export default function Landing() {
               <Button 
                 variant="ghost" 
                 className="text-[#0F172A]"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => setLoginOpen(true)}
               >
                 כניסה
               </Button>
               <Button 
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => setLoginOpen(true)}
               >
                 {t.startTrial}
               </Button>
@@ -71,8 +71,12 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <Suspense fallback={<div className="h-screen bg-white" />}>
+        <HeroSection onLoginClick={() => setLoginOpen(true)} />
+      </Suspense>
+
+      {/* Problem Section */}
+      <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -176,6 +180,8 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Solution & Benefits */}
+
       {/* Solution Section */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -202,32 +208,13 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
-                    </div>
-                    <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Suspense fallback={<div className="h-96 bg-white" />}>
+        <FeatureShowcase />
+      </Suspense>
+
+      <Suspense fallback={<div className="h-80 bg-white" />}>
+        <BenefitsGrid />
+      </Suspense>
 
       {/* How It Works */}
       <section className="py-20 px-4">
@@ -425,6 +412,10 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
+
+           <LoginPopup isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+         </div>
+       );
+    }
+
+    import LoginPopup from '@/components/landing/LoginPopup';
