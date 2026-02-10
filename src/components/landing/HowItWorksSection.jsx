@@ -60,15 +60,15 @@ export default function HowItWorksSection() {
               transition={{ delay: i * 0.2, duration: 0.6 }}
               className="relative"
             >
-              <Card className="group hover:shadow-2xl transition-all duration-500 border-0 rounded-3xl overflow-hidden bg-white p-8 text-center">
+              <Card className="group hover:shadow-lg transition-all duration-300 border rounded-2xl overflow-hidden bg-white p-8 text-center">
                 {/* Step number badge */}
-                <div className="w-20 h-20 bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] rounded-3xl flex items-center justify-center shadow-lg mx-auto mb-6">
-                  <span className="text-3xl font-bold text-white">{step.step}</span>
+                <div className="w-16 h-16 bg-[#0B1220] rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-6">
+                  <span className="text-2xl font-bold text-white">{step.step}</span>
                 </div>
 
                 {/* Icon */}
-                <div className="w-24 h-24 bg-[#00D1C1]/10 rounded-3xl flex items-center justify-center mb-6 mx-auto group-hover:bg-[#00D1C1] transition-colors duration-300">
-                  <step.icon className="h-12 w-12 text-[#00D1C1] group-hover:text-white transition-colors duration-300" />
+                <div className="w-20 h-20 bg-[#F8FAFC] rounded-2xl flex items-center justify-center mb-6 mx-auto border border-gray-200">
+                  <step.icon className="h-10 w-10 text-[#0B1220]" />
                 </div>
                 
                 <h3 className="text-2xl font-bold text-[#0B1220] mb-4">

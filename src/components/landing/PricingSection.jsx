@@ -19,7 +19,7 @@ const plans = [
       'תמיכה במייל',
       'דוחות בסיסיים',
     ],
-    color: 'from-gray-400 to-gray-600',
+    color: 'from-gray-500 to-gray-700',
     popular: false,
   },
   {
@@ -56,7 +56,7 @@ const plans = [
       'עדיפות בתמיכה',
       'הדרכה אישית',
     ],
-    color: 'from-purple-400 to-pink-500',
+    color: 'from-gray-700 to-gray-900',
     popular: false,
   },
   {
@@ -75,7 +75,7 @@ const plans = [
       'תמיכה 24/7',
       'התאמות מיוחדות',
     ],
-    color: 'from-indigo-400 to-blue-500',
+    color: 'from-gray-600 to-gray-800',
     popular: false,
   },
 ];
