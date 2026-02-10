@@ -1,11 +1,9 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Play } from 'lucide-react';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import PhoneMockup from './PhoneMockup';
 
 export default function HeroSection({ onLoginClick }) {
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-gray-50 to-[#00D1C1]/5">
       {/* Optimized Background */}
@@ -77,8 +75,8 @@ export default function HeroSection({ onLoginClick }) {
                 </div>
                 <div className="text-xs text-gray-500">דירוג ממוצע</div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Right - Phone Mockup */}
           <div className="relative flex justify-center lg:justify-end">
