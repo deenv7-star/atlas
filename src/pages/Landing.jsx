@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
@@ -39,14 +38,6 @@ export default function Landing() {
     { icon: Send, title: t.features[4].title, desc: t.features[4].desc },
     { icon: FileSignature, title: t.features[5].title, desc: t.features[5].desc }
   ];
-  
-  const handleLogin = () => {
-    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
-  };
-
-  const handleSelectPlan = () => {
-    setShowLoginPopup(true);
-  };
 
   return (
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC]" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif" }}>
@@ -140,7 +131,7 @@ export default function Landing() {
 
       <HowItWorksSection />
       <TestimonialsSection />
-      <PricingSection onSelectPlan={handleSelectPlan} />
+      <PricingSection onSelectPlan={() => setShowLoginPopup(true)} />
 
       {/* FAQ */}
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
@@ -229,7 +220,6 @@ export default function Landing() {
       <LoginPopup 
         isOpen={showLoginPopup} 
         onClose={() => setShowLoginPopup(false)}
-        onLogin={handleLogin}
       />
 
       <SupportChat />

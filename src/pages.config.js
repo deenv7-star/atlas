@@ -61,7 +61,6 @@ import DataSecurity from './pages/DataSecurity';
 import GuestService from './pages/GuestService';
 import Integrations from './pages/Integrations';
 import Invoices from './pages/Invoices';
-import Landing from './pages/Landing';
 import LeadDetail from './pages/LeadDetail';
 import Leads from './pages/Leads';
 import Messages from './pages/Messages';
@@ -73,6 +72,7 @@ import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
+import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
@@ -91,7 +91,6 @@ export const PAGES = {
     "GuestService": GuestService,
     "Integrations": Integrations,
     "Invoices": Invoices,
-    "Landing": Landing,
     "LeadDetail": LeadDetail,
     "Leads": Leads,
     "Messages": Messages,
@@ -103,6 +102,7 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,
+    "Landing": Landing,
 }
 
 export const pagesConfig = {
