@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -27,10 +27,14 @@ import {
   Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import HeroSection from '@/components/landing/HeroSection';
+import FeatureShowcase from '@/components/landing/FeatureShowcase';
+import BenefitsGrid from '@/components/landing/BenefitsGrid';
 
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -46,18 +50,18 @@ export default function Landing() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
+          <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
-                className="text-[#0F172A] text-sm sm:text-base h-10 sm:h-auto"
+                className="text-[#0F172A]"
                 onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
                 כניסה
               </Button>
               <Button 
-                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium text-sm sm:text-base h-10 sm:h-auto"
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
                 onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
                 {t.startTrial}
@@ -68,30 +72,30 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6">
+      <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
                 {t.heroTitle}
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 {t.heroSubtitle}
               </p>
-              <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+              <div className="flex flex-wrap gap-4">
                 <Button 
                   size="lg" 
-                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl w-full sm:w-auto min-h-12"
+                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
                 >
                   {t.startTrial}
-                  <ArrowLeft className="mr-2 h-4 sm:h-5 w-4 sm:w-5" />
+                  <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl w-full sm:w-auto min-h-12">
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
                   {t.bookDemo}
                 </Button>
               </div>
@@ -101,7 +105,7 @@ export default function Landing() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative hidden sm:block"
+              className="relative"
             >
               <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
                 <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
@@ -150,17 +154,17 @@ export default function Landing() {
       </section>
 
       {/* Problem Section */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-[#0B1220]">
+      <section className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 sm:mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
               {t.problemTitle}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
               {t.problemBullets.map((bullet, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
                   <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
@@ -173,17 +177,17 @@ export default function Landing() {
       </section>
 
       {/* Solution Section */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6">
+      <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
               {t.solutionTitle}
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               {t.solutionText}
             </p>
             <div className="flex flex-wrap justify-center gap-3">
@@ -199,9 +203,9 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-[#F2E9DB]/30">
+      <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
               <motion.div
                 key={i}
@@ -226,12 +230,12 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6">
+      <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
             איך זה עובד?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {t.howItWorks.map((step, i) => (
               <motion.div
                 key={i}
@@ -253,12 +257,12 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-[#0B1220]">
+      <section className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-8 sm:mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
             מה אומרים עלינו
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {t.testimonials.map((testimonial, i) => (
               <motion.div
                 key={i}
@@ -285,14 +289,14 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6">
+      <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
             תוכניות ומחירים
           </h2>
-          <p className="text-sm sm:text-base text-gray-600 text-center mb-8 sm:mb-12">בחר את התוכנית המתאימה לך</p>
+          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {Object.entries(t.pricing).map(([key, plan], i) => (
               <motion.div
                 key={key}
@@ -338,9 +342,9 @@ export default function Landing() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-[#F2E9DB]/30">
+      <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-8 sm:mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
             שאלות נפוצות
           </h2>
           <div className="space-y-4">
@@ -379,35 +383,35 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
+      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               {t.finalCta}
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-white/70 mb-8">{t.tagline}</p>
+            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
             <Button 
               size="lg" 
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg rounded-xl w-full sm:w-auto min-h-12"
+              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
               onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
             >
               {t.startTrial}
-              <ArrowLeft className="mr-2 h-4 sm:h-5 w-4 sm:w-5" />
+              <ArrowLeft className="mr-2 h-5 w-5" />
             </Button>
           </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 sm:py-12 px-4 sm:px-6 bg-[#0B1220] border-t border-white/10">
+      <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center justify-center text-center gap-6 sm:gap-4 md:flex-row md:justify-between md:text-left">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Logo variant="light" />
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-white/60 text-xs sm:text-sm">
+            <div className="flex gap-6 text-white/60 text-sm">
               <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
                 {t.privacyPolicy}
               </Link>
@@ -415,7 +419,7 @@ export default function Landing() {
                 {t.termsOfService}
               </Link>
             </div>
-            <p className="text-white/40 text-xs sm:text-sm">
+            <p className="text-white/40 text-sm">
               © 2024 STAYFLOW. {t.allRightsReserved}
             </p>
           </div>
