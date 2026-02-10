@@ -50,6 +50,19 @@ export default function FloatingStats() {
                   className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 relative z-10`}
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.6 }}
+                  animate={{
+                    boxShadow: [
+                      "0 0 0 0 rgba(0, 209, 193, 0)",
+                      "0 0 0 10px rgba(0, 209, 193, 0.1)",
+                      "0 0 0 0 rgba(0, 209, 193, 0)"
+                    ]
+                  }}
+                  style={{
+                    transitionProperty: "box-shadow",
+                    transitionDuration: "2s",
+                    transitionTimingFunction: "ease-in-out",
+                    transitionIterationCount: "infinite"
+                  }}
                 >
                   <stat.icon className="w-8 h-8 text-white" />
                 </motion.div>
