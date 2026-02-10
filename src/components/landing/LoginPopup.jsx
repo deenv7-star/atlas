@@ -161,7 +161,10 @@ export default function LoginPopup({ isOpen, onClose }) {
                     {/* Sign Up Link */}
                     <p className="text-center text-sm text-gray-600 mt-6">
                       אין לכם חשבון?{' '}
-                      <button className="text-[#00D1C1] font-semibold hover:underline">
+                      <button 
+                        onClick={handleSignUp}
+                        className="text-[#00D1C1] font-semibold hover:underline"
+                      >
                         הרשמו כאן
                       </button>
                     </p>
