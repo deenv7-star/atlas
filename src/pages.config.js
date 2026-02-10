@@ -70,6 +70,9 @@ import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
+import DataSecurity from './pages/DataSecurity';
+import Accessibility from './pages/Accessibility';
+import SLA from './pages/SLA';
 import __Layout from './Layout.jsx';
 
 
@@ -97,6 +100,9 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,
+    "DataSecurity": DataSecurity,
+    "Accessibility": Accessibility,
+    "SLA": SLA,
 }
 
 export const pagesConfig = {

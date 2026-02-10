@@ -5,13 +5,6 @@ import { Inbox, CalendarCheck, Wallet, Brush, Send, FileSignature, CheckCircle }
 
 const features = [
   {
-    icon: CalendarCheck,
-    title: 'ניהול הזמנות אוטומטי',
-    description: 'סנכרון אוטומטי עם כל הפלטפורמות, ללא הזמנות כפולות',
-    color: 'from-purple-400 to-pink-500',
-    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&h=400&fit=crop',
-  },
-  {
     icon: Wallet,
     title: 'תשלומים ופיננסים',
     description: 'ניהול תשלומים, חשבוניות וחשבונאות בקליק אחד',
