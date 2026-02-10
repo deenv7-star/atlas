@@ -9,7 +9,7 @@ const features = [
     title: 'ניהול לידים חכם',
     description: 'מערכת CRM מתקדמת עם AI שממיר לידים ללקוחות',
     color: 'from-blue-400 to-cyan-500',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop',
   },
   {
     icon: CalendarCheck,

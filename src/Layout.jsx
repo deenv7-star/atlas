@@ -9,7 +9,7 @@ import BottomTabs from '@/components/app/BottomTabs';
 import { cn } from '@/lib/utils';
 
 // Pages that don't need the app layout
-const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService'];
+const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService', 'About', 'UserAgreement', 'DataSecurity', 'Accessibility'];
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -101,9 +101,9 @@ export default function Layout({ children, currentPageName }) {
 
   // App layout
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 font-['Heebo',sans-serif] overscroll-y-none">
+    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 overscroll-y-none" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap');
 
         :root {
           --bg-primary: #F8FAFC;
