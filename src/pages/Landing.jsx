@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import LoginPopup from '@/components/landing/LoginPopup';
 import HeroSection from '@/components/landing/HeroSection';
@@ -20,23 +19,26 @@ import {
   Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
 
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-  const features = [
-    { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
-    { icon: CalendarCheck, title: t.features[1].title, desc: t.features[1].desc },
-    { icon: Wallet, title: t.features[2].title, desc: t.features[2].desc },
-    { icon: Brush, title: t.features[3].title, desc: t.features[3].desc },
-    { icon: Send, title: t.features[4].title, desc: t.features[4].desc },
-    { icon: FileSignature, title: t.features[5].title, desc: t.features[5].desc }
-  ];
+  const handleLogin = () => {
+    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+  };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
+    <div dir="rtl" className="min-h-screen bg-[#F8FAFC]" style={{ fontFamily: "'Heebo', sans-serif" }}>
+      {/* Login Popup */}
+      <LoginPopup 
+        isOpen={showLoginPopup} 
+        onClose={() => setShowLoginPopup(false)}
+        onLogin={handleLogin}
+      />
+
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,13 +48,13 @@ export default function Landing() {
               <Button 
                 variant="ghost" 
                 className="text-[#0F172A]"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => setShowLoginPopup(true)}
               >
                 כניסה
               </Button>
               <Button 
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => setShowLoginPopup(true)}
               >
                 {t.startTrial}
               </Button>
@@ -62,109 +64,23 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
-                {t.heroTitle}
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                {t.heroSubtitle}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button 
-                  size="lg" 
-                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-                >
-                  {t.startTrial}
-                  <ArrowLeft className="mr-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
-                  {t.bookDemo}
-                </Button>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
-                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
-                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                    </div>
-                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
-                        <p className="text-sm text-gray-500">לידים חדשים</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
-                      </div>
-                      <div className="bg-[#F2E9DB] rounded-xl p-4">
-                        <p className="text-sm text-gray-500">הזמנות החודש</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-xl border p-4">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="font-medium">כניסות היום</span>
-                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
-                      </div>
-                      <div className="space-y-2">
-                        {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
-                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
-                            <span>{item}</span>
-                            <span className="text-green-600">מאושר</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
-                ✓ 0 הזמנות כפולות
-              </div>
-            </motion.div>
-          </div>
+      <HeroSection onLoginClick={() => setShowLoginPopup(true)} />
+
+      {/* Animated Cards */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimatedCards />
         </div>
       </section>
 
-      {/* Problem Section */}
-      <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
-              {t.problemTitle}
-            </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {t.problemBullets.map((bullet, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                  <span>{bullet}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Benefits Grid */}
+      <BenefitsGrid />
+
+      {/* Floating Stats */}
+      <FloatingStats />
+
+      {/* Feature Showcase */}
+      <FeatureShowcase />
 
       {/* Solution Section */}
       <section className="py-20 px-4">
@@ -304,7 +220,7 @@ export default function Landing() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              {t.finalCta}
+              מוכנים לנהל את הנכסים שלכם בחכמה?
             </h2>
             <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
             <Button 
@@ -335,7 +251,7 @@ export default function Landing() {
               </Link>
             </div>
             <p className="text-white/40 text-sm">
-              © 2024 STAYFLOW. {t.allRightsReserved}
+              © 2025 ATLAS. כל הזכויות שמורות
             </p>
           </div>
         </div>
