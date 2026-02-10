@@ -33,7 +33,6 @@ export default function Landing() {
 
   return (
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC]" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif" }}>
-      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -73,7 +72,6 @@ export default function Landing() {
 
       <PricingSection onSelectPlan={handleSelectPlan} />
 
-      {/* FAQ */}
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
@@ -108,7 +106,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
@@ -125,7 +122,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
