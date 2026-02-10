@@ -37,17 +37,7 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
   const [activeTab, setActiveTab] = useState('properties');
   const [isPropertyDialogOpen, setIsPropertyDialogOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
-  const [propertyLimitError, setPropertyLimitError] = useState(null);
-  const [planInfo, setPlanInfo] = useState(null);
   const queryClient = useQueryClient();
-
-  // Plan property limits
-  const PLAN_LIMITS = {
-    starter: 1,
-    pro: 5,
-    business: 10,
-    enterprise: 999
-  };
 
   const [newProperty, setNewProperty] = useState({
     name: '',
@@ -85,42 +75,16 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
 
   // Create property mutation
   const createPropertyMutation = useMutation({
-    mutationFn: async (data) => {
-      // Validate property limit before creating
-      const validationResponse = await fetch('/api/functions/validatePropertyCreation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          propertyName: data.name,
-          orgId: orgId
-        })
-      });
-
-      if (!validationResponse.ok) {
-        const error = await validationResponse.json();
-        throw new Error(error.message || 'Property limit exceeded');
-      }
-
-      const validation = await validationResponse.json();
-      setPlanInfo(validation);
-
-      // Proceed with property creation
-      return base44.entities.Property.create({
-        ...data,
-        org_id: orgId,
-        timezone: 'Asia/Jerusalem'
-      });
-    },
+    mutationFn: (data) => base44.entities.Property.create({
+      ...data,
+      org_id: orgId,
+      timezone: 'Asia/Jerusalem'
+    }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
       setIsPropertyDialogOpen(false);
       resetPropertyForm();
-      setPropertyLimitError(null);
       toast.success('הנכס נוצר בהצלחה');
-    },
-    onError: (error) => {
-      setPropertyLimitError(error.message);
-      toast.error(error.message);
     }
   });
 
@@ -244,50 +208,13 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
 
         {/* Properties Tab */}
         <TabsContent value="properties" className="mt-6">
-          {/* Plan Limit Info */}
-          {properties && organization && (
-            <Card className="mb-4 border-[#00D1C1]/20 bg-[#00D1C1]/5 rounded-xl">
-              <CardContent className="p-4">
-                {(() => {
-                  const plan = organization.plan || 'starter';
-                  const limit = PLAN_LIMITS[plan] || 1;
-                  return (
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-[#0B1220]">
-                          נכסים בשימוש: {properties.length} / {limit}
-                        </p>
-                        <p className="text-xs text-gray-600 mt-1">
-                          {plan === 'enterprise' 
-                            ? 'תוכנית ארגונית - ללא הגבלה'
-                            : `תוכנית: ${plan}`}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        {properties.length >= limit && plan !== 'enterprise' && (
-                          <p className="text-xs text-red-600 font-medium">הגעת להגבלת התוכנית</p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
-              </CardContent>
-            </Card>
-          )}
-
           <div className="flex justify-end mb-4">
             <Button 
               onClick={() => {
                 resetPropertyForm();
-                setPropertyLimitError(null);
                 setIsPropertyDialogOpen(true);
               }}
-              disabled={(() => {
-                const plan = organization?.plan || 'starter';
-                const limit = PLAN_LIMITS[plan] || 1;
-                return plan !== 'enterprise' && properties.length >= limit;
-              })()}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
             >
               <Plus className="h-4 w-4" />
               נכס חדש
@@ -529,18 +456,11 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
       {/* Property Dialog */}
       <Dialog open={isPropertyDialogOpen} onOpenChange={setIsPropertyDialogOpen}>
         <DialogContent className="sm:max-w-[450px]">
-            <DialogHeader>
-              <DialogTitle>{editingProperty ? 'ערוך נכס' : 'נכס חדש'}</DialogTitle>
-            </DialogHeader>
-
-            {propertyLimitError && !editingProperty && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                <p className="text-sm font-semibold text-red-800 mb-2">לא ניתן להוסיף נכס</p>
-                <p className="text-xs text-red-600">{propertyLimitError}</p>
-              </div>
-            )}
-
-            <div className="space-y-4 py-4">
+          <DialogHeader>
+            <DialogTitle>{editingProperty ? 'ערוך נכס' : 'נכס חדש'}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
             <div>
               <Label>שם הנכס</Label>
               <Input 
