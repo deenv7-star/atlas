@@ -1,156 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Play, Zap, TrendingUp, Users } from 'lucide-react';
+import { ArrowLeft, Sparkles, Play } from 'lucide-react';
 import PhoneMockup from './PhoneMockup';
 
 export default function HeroSection({ onLoginClick }) {
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 200]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const scale = useTransform(scrollY, [0, 300], [1, 0.8]);
-
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
-      });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-gray-50 to-[#00D1C1]/5">
-      {/* Animated Background Grid */}
+      {/* Static Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem]" />
         
-        {/* Gradient Orbs */}
-        <motion.div
-          className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#00D1C1]/30 to-transparent rounded-full blur-3xl"
-          animate={{
-            x: mousePosition.x,
-            y: mousePosition.y,
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ 
-            x: { type: "spring", stiffness: 50 },
-            y: { type: "spring", stiffness: 50 },
-            scale: { duration: 8, repeat: Infinity }
-          }}
-        />
-        <motion.div
-          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-purple-400/20 to-transparent rounded-full blur-3xl"
-          animate={{
-            x: -mousePosition.x,
-            y: -mousePosition.y,
-            scale: [1, 1.3, 1],
-          }}
-          transition={{ 
-            x: { type: "spring", stiffness: 50 },
-            y: { type: "spring", stiffness: 50 },
-            scale: { duration: 10, repeat: Infinity }
-          }}
-        />
-        
-        {/* Floating Particles */}
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-[#00D1C1]/20 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.5, 0.2],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-        
-        {/* Floating Icons */}
-        <motion.div
-          className="absolute top-20 left-10 w-16 h-16 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
-          animate={{
-            y: [0, -20, 0],
-            rotate: [0, 5, 0],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
-          <Sparkles className="w-8 h-8 text-[#00D1C1]" />
-        </motion.div>
-        
-        <motion.div
-          className="absolute bottom-32 left-20 w-14 h-14 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
-          animate={{
-            y: [0, 20, 0],
-            rotate: [0, -5, 0],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-        >
-          <Zap className="w-7 h-7 text-purple-500" />
-        </motion.div>
-        
-        <motion.div
-          className="absolute top-40 right-32 w-12 h-12 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
-          animate={{
-            y: [0, -15, 0],
-            rotate: [0, 10, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }}
-        >
-          <TrendingUp className="w-6 h-6 text-orange-500" />
-        </motion.div>
-        
-        <motion.div
-          className="absolute bottom-48 right-20 w-14 h-14 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
-          animate={{
-            y: [0, 18, 0],
-            rotate: [0, -8, 0],
-          }}
-          transition={{
-            duration: 5.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1.5
-          }}
-        >
-          <Users className="w-7 h-7 text-blue-500" />
-        </motion.div>
+        {/* Gradient Orbs - Static */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#00D1C1]/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-purple-400/10 to-transparent rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <motion.div
-            style={{ y, opacity, scale }}
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
             {/* Badge */}
             <motion.div
@@ -197,27 +70,23 @@ export default function HeroSection({ onLoginClick }) {
               transition={{ delay: 0.5 }}
               className="flex flex-wrap gap-4"
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  size="lg"
-                  onClick={onLoginClick}
-                  className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:shadow-2xl hover:shadow-[#00D1C1]/40 text-white text-lg px-10 py-7 font-semibold rounded-2xl"
-                >
-                  אני רוצה להתחיל
-                  <ArrowLeft className="w-5 h-5 mr-2" />
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')}
-                  className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 hover:border-[#00D1C1] hover:bg-white text-lg px-10 py-7 font-semibold rounded-2xl"
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                  צפו בהדגמה
-                </Button>
-              </motion.div>
+              <Button
+                size="lg"
+                onClick={onLoginClick}
+                className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:shadow-xl text-white text-lg px-10 py-7 font-semibold rounded-2xl transition-shadow"
+              >
+                אני רוצה להתחיל
+                <ArrowLeft className="w-5 h-5 mr-2" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')}
+                className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 hover:border-[#00D1C1] hover:bg-white text-lg px-10 py-7 font-semibold rounded-2xl transition-all"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                צפו בהדגמה
+              </Button>
             </motion.div>
 
             {/* Trust Indicators */}
@@ -253,30 +122,15 @@ export default function HeroSection({ onLoginClick }) {
 
           {/* Right - Phone Mockup */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="relative flex justify-center lg:justify-end"
           >
             <PhoneMockup />
           </motion.div>
         </div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="w-6 h-10 border-2 border-gray-300 rounded-full p-1">
-          <motion.div
-            className="w-1.5 h-1.5 bg-[#00D1C1] rounded-full mx-auto"
-            animate={{ y: [0, 20, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </div>
-      </motion.div>
     </section>
   );
 }

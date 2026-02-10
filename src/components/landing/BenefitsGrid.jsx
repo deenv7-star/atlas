@@ -41,35 +41,20 @@ export default function BenefitsGrid() {
           {benefits.map((benefit, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: benefit.delay, duration: 0.5 }}
-              whileHover={{ y: -10, scale: 1.02 }}
+              transition={{ delay: benefit.delay, duration: 0.4 }}
               className="relative group"
             >
-              <div className="relative p-6 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all overflow-hidden">
-                {/* Animated background gradient */}
-                <motion.div
-                  className={`absolute inset-0 bg-gradient-to-br ${benefit.color} opacity-0 group-hover:opacity-10 transition-opacity`}
-                  animate={{
-                    scale: [1, 1.2, 1],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
+              <div className="relative p-6 bg-white rounded-3xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+                {/* Static background gradient on hover */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${benefit.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
                 
-                {/* Icon with rotation animation on hover */}
-                <motion.div
-                  className={`w-16 h-16 mb-4 rounded-2xl bg-gradient-to-br ${benefit.color} flex items-center justify-center relative z-10`}
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.6 }}
-                >
+                {/* Icon */}
+                <div className={`w-16 h-16 mb-4 rounded-2xl bg-gradient-to-br ${benefit.color} flex items-center justify-center relative z-10`}>
                   <benefit.icon className="w-8 h-8 text-white" />
-                </motion.div>
+                </div>
                 
                 {/* Text content */}
                 <h3 className="text-xl font-bold text-gray-900 mb-2 relative z-10">
@@ -78,21 +63,6 @@ export default function BenefitsGrid() {
                 <p className="text-gray-600 relative z-10">
                   {benefit.description}
                 </p>
-                
-                {/* Decorative pulse */}
-                <motion.div
-                  className={`absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br ${benefit.color} rounded-full blur-2xl opacity-30`}
-                  animate={{
-                    scale: [1, 1.3, 1],
-                    opacity: [0.2, 0.4, 0.2],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: benefit.delay
-                  }}
-                />
               </div>
             </motion.div>
           ))}

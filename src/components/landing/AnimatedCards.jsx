@@ -37,23 +37,15 @@ export default function AnimatedCards() {
         <motion.div
           key={index}
           className="absolute"
-          initial={{ opacity: 0, y: 100, rotate: 0 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ 
             opacity: 1, 
-            y: 0, 
+            y: 0,
             rotate: card.rotate,
             transition: { 
-              delay: index * 0.2,
-              type: "spring",
-              stiffness: 100
+              delay: index * 0.15,
+              duration: 0.5
             }
-          }}
-          whileHover={{ 
-            y: -20, 
-            rotate: 0,
-            scale: 1.05,
-            zIndex: 10,
-            transition: { type: "spring", stiffness: 300 }
           }}
           viewport={{ once: true }}
           style={{

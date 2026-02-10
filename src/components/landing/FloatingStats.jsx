@@ -34,49 +34,25 @@ export default function FloatingStats() {
           {stats.map((stat, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -10, scale: 1.05 }}
+              transition={{ delay: index * 0.1, duration: 0.4 }}
               className="group"
             >
-              <div className="relative p-8 rounded-3xl bg-white border-2 border-gray-100 shadow-lg hover:shadow-2xl transition-all overflow-hidden">
+              <div className="relative p-8 rounded-3xl bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
                 {/* Gradient Background on Hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                
+
                 {/* Icon */}
-                <motion.div
-                  className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 relative z-10`}
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.6 }}
-                  animate={{
-                    boxShadow: [
-                      "0 0 0 0 rgba(0, 209, 193, 0)",
-                      "0 0 0 10px rgba(0, 209, 193, 0.1)",
-                      "0 0 0 0 rgba(0, 209, 193, 0)"
-                    ]
-                  }}
-                  style={{
-                    transitionProperty: "box-shadow",
-                    transitionDuration: "2s",
-                    transitionTimingFunction: "ease-in-out",
-                    transitionIterationCount: "infinite"
-                  }}
-                >
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 relative z-10`}>
                   <stat.icon className="w-8 h-8 text-white" />
-                </motion.div>
+                </div>
 
                 {/* Value */}
-                <motion.div
-                  className="text-4xl font-bold text-gray-900 mb-2 relative z-10"
-                  initial={{ scale: 1 }}
-                  whileInView={{ scale: [1, 1.1, 1] }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 + 0.3, duration: 0.5 }}
-                >
+                <div className="text-4xl font-bold text-gray-900 mb-2 relative z-10">
                   {stat.value}
-                </motion.div>
+                </div>
 
                 {/* Label */}
                 <div className="text-gray-600 font-medium relative z-10">{stat.label}</div>
