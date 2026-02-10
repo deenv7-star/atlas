@@ -133,7 +133,6 @@ export default function FeatureShowcase() {
                     alt={features[activeFeature].title}
                     className="w-full h-[500px] object-cover"
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${features[activeFeature].color} opacity-20`} />
                   
                   {/* Overlay Info */}
                   <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
