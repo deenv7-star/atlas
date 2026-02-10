@@ -64,25 +64,14 @@ export default function HowItWorksSection() {
               className="relative"
             >
               <Card className="group hover:shadow-2xl transition-all duration-500 border-0 rounded-3xl overflow-hidden bg-white">
-                {/* Image */}
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={step.image} 
-                    alt={step.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220]/80 to-transparent" />
-                  
-                  {/* Step number badge */}
-                  <div className="absolute top-4 right-4 w-16 h-16 bg-[#00D1C1] rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-2xl font-bold text-[#0B1220]">{step.step}</span>
-                  </div>
-                </div>
-
                 {/* Content */}
-                <div className="p-6">
-                  <div className="w-14 h-14 bg-[#00D1C1]/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-[#00D1C1] transition-colors duration-300">
-                    <step.icon className="h-7 w-7 text-[#00D1C1] group-hover:text-[#0B1220] transition-colors duration-300" />
+                <div className="p-8 text-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] rounded-3xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <step.icon className="h-10 w-10 text-white" />
+                  </div>
+                  
+                  <div className="mb-4">
+                    <span className="text-5xl font-bold text-[#00D1C1]/20">{step.step}</span>
                   </div>
                   
                   <h3 className="text-2xl font-bold text-[#0B1220] mb-3">
