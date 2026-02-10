@@ -3,59 +3,77 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
-import { translations } from '@/components/common/i18n';
+import HeroSection from '@/components/landing/HeroSection';
+import AnimatedCards from '@/components/landing/AnimatedCards';
+import BenefitsGrid from '@/components/landing/BenefitsGrid';
+import FloatingStats from '@/components/landing/FloatingStats';
+import HowItWorksSection from '@/components/landing/HowItWorksSection';
+import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import PricingSection from '@/components/landing/PricingSection';
+import SupportChat from '@/components/landing/SupportChat';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import SupportChat from '@/components/landing/SupportChat';
-import { 
-  CheckCircle2, 
-  ArrowLeft,
-  AlertCircle,
-  Inbox,
-  CalendarCheck,
-  Wallet,
-  Brush,
-  Send,
-  FileSignature,
-  Star,
-  ChevronDown,
-  ChevronUp
-} from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Landing() {
-  const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
 
-  const features = [
-    { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
-    { icon: CalendarCheck, title: t.features[1].title, desc: t.features[1].desc },
-    { icon: Wallet, title: t.features[2].title, desc: t.features[2].desc },
-    { icon: Brush, title: t.features[3].title, desc: t.features[3].desc },
-    { icon: Send, title: t.features[4].title, desc: t.features[4].desc },
-    { icon: FileSignature, title: t.features[5].title, desc: t.features[5].desc }
+  const handleLoginClick = () => {
+    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+  };
+
+  const handleStartTrial = () => {
+    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+  };
+
+  const faqItems = [
+    {
+      q: 'האם המערכת מתאימה גם לנכס בודד?',
+      a: 'בהחלט! המערכת מתאימה לכל גודל - מנכס בודד ועד רשת גדולה של נכסים. התמחור והתכונות מותאמים לצרכים שלך.'
+    },
+    {
+      q: 'האם אפשר לנהל כמה נכסים במערכת?',
+      a: 'כן, אין הגבלה על מספר הנכסים. תוכל לנהל את כל הנכסים שלך במקום אחד, עם יכולת מעבר מהיר ביניהם.'
+    },
+    {
+      q: 'האם יש אינטגרציה עם Airbnb ו-Booking?',
+      a: 'כן, המערכת מתחברת לכל הפלטפורמות המובילות ומסנכרנת אוטומטית הזמנות, מחירים וזמינות.'
+    },
+    {
+      q: 'האם צוות הניקיון יכול לקבל משימות?',
+      a: 'בהחלט! צוות הניקיון מקבל גישה מוגבלת למשימות שלהם בלבד, עם כל הפרטים הנדרשים ואפשרות לדווח על השלמה.'
+    },
+    {
+      q: 'איך עובדות ההודעות האוטומטיות?',
+      a: 'תוכל להגדיר תבניות הודעות שנשלחות אוטומטית בנקודות זמן מסוימות - לפני צ\'ק-אין, אחרי צ\'ק-אאוט, בקשות לביקורות ועוד.'
+    },
+    {
+      q: 'האם יש תמיכה טכנית?',
+      a: 'כמובן! אנחנו זמינים בצ\'אט ובמייל לכל שאלה או בעיה. בנוסף, יש לנו מרכז עזרה מקיף עם מדריכים ווידאו.'
+    },
   ];
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
-      {/* Navigation */}
+    <div dir="rtl" className="min-h-screen bg-white" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif" }}>
+      {/* Fixed Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Logo variant="dark" />
+            <Logo variant="dark" size="default" />
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
-                className="text-[#0F172A]"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                className="text-gray-700"
+                onClick={handleLoginClick}
               >
                 כניסה
               </Button>
               <Button 
-                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:shadow-lg text-white"
+                onClick={handleStartTrial}
               >
-                {t.startTrial}
+                התחל עכשיו
               </Button>
             </div>
           </div>
@@ -63,307 +81,74 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
-                {t.heroTitle}
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                {t.heroSubtitle}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button 
-                  size="lg" 
-                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-                >
-                  {t.startTrial}
-                  <ArrowLeft className="mr-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
-                  {t.bookDemo}
-                </Button>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
-                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
-                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                    </div>
-                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
-                        <p className="text-sm text-gray-500">לידים חדשים</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
-                      </div>
-                      <div className="bg-[#F2E9DB] rounded-xl p-4">
-                        <p className="text-sm text-gray-500">הזמנות החודש</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-xl border p-4">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="font-medium">כניסות היום</span>
-                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
-                      </div>
-                      <div className="space-y-2">
-                        {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
-                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
-                            <span>{item}</span>
-                            <span className="text-green-600">מאושר</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
-                ✓ 0 הזמנות כפולות
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      <HeroSection onLoginClick={handleLoginClick} />
 
-      {/* Problem Section */}
-      <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
-              {t.problemTitle}
-            </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {t.problemBullets.map((bullet, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                  <span>{bullet}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Animated Cards */}
+      <AnimatedCards />
 
-      {/* Solution Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
-              {t.solutionTitle}
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              {t.solutionText}
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {t.benefits.map((benefit, i) => (
-                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
-                  {benefit}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Benefits Grid */}
+      <BenefitsGrid />
 
-      {/* Features Grid */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
-                    </div>
-                    <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Floating Stats */}
+      <FloatingStats />
 
       {/* How It Works */}
-      <section className="py-20 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
-            איך זה עובד?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {t.howItWorks.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="text-center"
-              >
-                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                  {step.step}
-                </div>
-                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HowItWorksSection />
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
-            מה אומרים עלינו
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {t.testimonials.map((testimonial, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full bg-white/5 border-white/10 rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(5)].map((_, j) => (
-                        <Star key={j} className="h-5 w-5 fill-[#00D1C1] text-[#00D1C1]" />
-                      ))}
-                    </div>
-                    <p className="text-white/90 mb-4 leading-relaxed">"{testimonial.text}"</p>
-                    <p className="text-[#00D1C1] font-medium">{testimonial.author}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection />
 
       {/* Pricing */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
-            תוכניות ומחירים
-          </h2>
-          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {Object.entries(t.pricing).map(([key, plan], i) => (
-              <motion.div
-                key={key}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className={`h-full rounded-2xl ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
-                  <CardContent className="p-6">
-                    {key === 'pro' && (
-                      <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">
-                        הכי פופולרי
-                      </span>
-                    )}
-                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{plan.name}</h3>
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold text-[#0B1220]">₪{plan.price}</span>
-                      <span className="text-gray-500">/חודש</span>
-                    </div>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, j) => (
-                        <li key={j} className="flex items-center gap-2 text-gray-600">
-                          <CheckCircle2 className="h-5 w-5 text-[#00D1C1] flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      className={`w-full rounded-xl ${key === 'pro' 
-                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
-                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-                    >
-                      {t.startTrial}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PricingSection onSelectPlan={handleStartTrial} />
 
-      {/* FAQ */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
+      {/* FAQ Section */}
+      <section className="py-24 px-4 bg-gray-50">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
-            שאלות נפוצות
-          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              שאלות נפוצות
+            </h2>
+            <p className="text-xl text-gray-600">
+              מצאו תשובות לשאלות הנפוצות ביותר
+            </p>
+          </motion.div>
+
           <div className="space-y-4">
-            {t.faq.map((item, i) => (
+            {faqItems.map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
               >
                 <Card 
-                  className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden"
+                  className="cursor-pointer hover:shadow-lg transition-shadow border-2 border-gray-100 rounded-2xl overflow-hidden"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
                   <CardContent className="p-0">
-                    <div className="flex items-center justify-between p-4 bg-white">
-                      <span className="font-medium text-[#0B1220]">{item.q}</span>
+                    <div className="flex items-center justify-between p-6 bg-white">
+                      <span className="font-semibold text-gray-900 text-lg">{item.q}</span>
                       {openFaq === i ? (
-                        <ChevronUp className="h-5 w-5 text-gray-400" />
+                        <ChevronUp className="h-5 w-5 text-[#00D1C1] flex-shrink-0" />
                       ) : (
-                        <ChevronDown className="h-5 w-5 text-gray-400" />
+                        <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0" />
                       )}
                     </div>
                     {openFaq === i && (
-                      <div className="p-4 pt-0 bg-white text-gray-600">
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="px-6 pb-6 bg-white text-gray-600 leading-relaxed"
+                      >
                         {item.a}
-                      </div>
+                      </motion.div>
                     )}
                   </CardContent>
                 </Card>
@@ -374,25 +159,35 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="py-24 px-4 bg-gradient-to-br from-[#0B1220] via-gray-900 to-[#0B1220] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#00D1C1] rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              {t.finalCta}
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              מוכנים להתחיל?
             </h2>
-            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
-            <Button 
-              size="lg" 
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+            <p className="text-xl text-white/80 mb-10">
+              הצטרפו לאלפי בעלי נכסים שכבר משתמשים ב-ATLAS
+            </p>
+            <Button
+              size="lg"
+              onClick={handleStartTrial}
+              className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:shadow-2xl text-white text-lg px-12 py-7 font-semibold rounded-2xl"
             >
-              {t.startTrial}
-              <ArrowLeft className="mr-2 h-5 w-5" />
+              התחל ניסיון חינם
+              <ArrowLeft className="w-5 h-5 mr-2" />
             </Button>
+            <p className="text-white/60 text-sm mt-6">
+              ללא כרטיס אשראי • ביטול בכל עת • תמיכה מלאה
+            </p>
           </motion.div>
         </div>
       </section>
@@ -400,23 +195,42 @@ export default function Landing() {
       {/* Footer */}
       <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Logo variant="light" />
-            <div className="flex gap-6 text-white/60 text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
-                {t.privacyPolicy}
-              </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
-                {t.termsOfService}
-              </Link>
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <Logo variant="light" size="default" />
+              <p className="text-white/60 mt-4">
+                המערכת המובילה לניהול נכסים חכם ואוטומטי
+              </p>
             </div>
-            <p className="text-white/40 text-sm">
-              © 2024 STAYFLOW. {t.allRightsReserved}
-            </p>
+            <div>
+              <h3 className="text-white font-semibold mb-4">קישורים מהירים</h3>
+              <div className="space-y-2">
+                <Link to={createPageUrl('Privacy')} className="block text-white/60 hover:text-white transition-colors">
+                  מדיניות פרטיות
+                </Link>
+                <Link to={createPageUrl('Terms')} className="block text-white/60 hover:text-white transition-colors">
+                  תנאי שימוש
+                </Link>
+                <Link to={createPageUrl('UserAgreement')} className="block text-white/60 hover:text-white transition-colors">
+                  הסכם משתמש
+                </Link>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-white font-semibold mb-4">צור קשר</h3>
+              <div className="space-y-2 text-white/60">
+                <p>support@stayflow.io</p>
+                <p>050-123-4567</p>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-white/10 pt-8 text-center text-white/40 text-sm">
+            © 2024 ATLAS. כל הזכויות שמורות.
           </div>
         </div>
       </footer>
 
+      {/* Support Chat */}
       <SupportChat />
     </div>
   );
