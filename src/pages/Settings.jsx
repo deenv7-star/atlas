@@ -245,26 +245,32 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
         {/* Properties Tab */}
         <TabsContent value="properties" className="mt-6">
           {/* Plan Limit Info */}
-          {properties && (
+          {properties && organization && (
             <Card className="mb-4 border-[#00D1C1]/20 bg-[#00D1C1]/5 rounded-xl">
               <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-[#0B1220]">
-                      נכסים בשימוש: {properties.length} / {organization?.plan ? PLAN_LIMITS[organization.plan as keyof typeof PLAN_LIMITS] || 1 : 1}
-                    </p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {organization?.plan === 'enterprise' 
-                        ? 'תוכנית ארגונית - ללא הגבלה'
-                        : `תוכנית: ${organization?.plan || 'בסיסי'}`}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    {properties.length >= (PLAN_LIMITS[organization?.plan as keyof typeof PLAN_LIMITS] || 1) && organization?.plan !== 'enterprise' && (
-                      <p className="text-xs text-red-600 font-medium">הגעת להגבלת התוכנית</p>
-                    )}
-                  </div>
-                </div>
+                {(() => {
+                  const plan = organization.plan || 'starter';
+                  const limit = PLAN_LIMITS[plan] || 1;
+                  return (
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-[#0B1220]">
+                          נכסים בשימוש: {properties.length} / {limit}
+                        </p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {plan === 'enterprise' 
+                            ? 'תוכנית ארגונית - ללא הגבלה'
+                            : `תוכנית: ${plan}`}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        {properties.length >= limit && plan !== 'enterprise' && (
+                          <p className="text-xs text-red-600 font-medium">הגעת להגבלת התוכנית</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           )}
@@ -276,10 +282,11 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
                 setPropertyLimitError(null);
                 setIsPropertyDialogOpen(true);
               }}
-              disabled={
-                organization?.plan !== 'enterprise' &&
-                properties.length >= (PLAN_LIMITS[organization?.plan as keyof typeof PLAN_LIMITS] || 1)
-              }
+              disabled={(() => {
+                const plan = organization?.plan || 'starter';
+                const limit = PLAN_LIMITS[plan] || 1;
+                return plan !== 'enterprise' && properties.length >= limit;
+              })()}
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="h-4 w-4" />
