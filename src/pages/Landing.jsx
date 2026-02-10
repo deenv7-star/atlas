@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import LoginPopup from '@/components/landing/LoginPopup';
 import SupportChat from '@/components/landing/SupportChat';
 import HeroSection from '@/components/landing/HeroSection';
-import FeatureShowcase from '@/components/landing/FeatureShowcase';
 import PricingSection from '@/components/landing/PricingSection';
 import HowItWorksSection from '@/components/landing/HowItWorksSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
@@ -57,7 +56,6 @@ export default function Landing() {
 
       <HeroSection onLoginClick={() => setShowLoginPopup(true)} />
       <BenefitsGrid />
-      <FeatureShowcase />
       <HowItWorksSection />
       <TestimonialsSection />
       <PricingSection onSelectPlan={handleSelectPlan} />
