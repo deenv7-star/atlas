@@ -49,6 +49,7 @@
  */
 import AIAssistant from './pages/AIAssistant';
 import About from './pages/About';
+import Accessibility from './pages/Accessibility';
 import Automations from './pages/Automations';
 import Billing from './pages/Billing';
 import BookingDetail from './pages/BookingDetail';
@@ -56,6 +57,7 @@ import Bookings from './pages/Bookings';
 import Cleaning from './pages/Cleaning';
 import Contracts from './pages/Contracts';
 import Dashboard from './pages/Dashboard';
+import DataSecurity from './pages/DataSecurity';
 import GuestService from './pages/GuestService';
 import Integrations from './pages/Integrations';
 import Invoices from './pages/Invoices';
@@ -66,19 +68,18 @@ import Messages from './pages/Messages';
 import Payments from './pages/Payments';
 import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
+import SLA from './pages/SLA';
 import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
-import DataSecurity from './pages/DataSecurity';
-import Accessibility from './pages/Accessibility';
-import SLA from './pages/SLA';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIAssistant": AIAssistant,
     "About": About,
+    "Accessibility": Accessibility,
     "Automations": Automations,
     "Billing": Billing,
     "BookingDetail": BookingDetail,
@@ -86,6 +87,7 @@ export const PAGES = {
     "Cleaning": Cleaning,
     "Contracts": Contracts,
     "Dashboard": Dashboard,
+    "DataSecurity": DataSecurity,
     "GuestService": GuestService,
     "Integrations": Integrations,
     "Invoices": Invoices,
@@ -96,13 +98,11 @@ export const PAGES = {
     "Payments": Payments,
     "Privacy": Privacy,
     "Reviews": Reviews,
+    "SLA": SLA,
     "ServiceRequests": ServiceRequests,
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,
-    "DataSecurity": DataSecurity,
-    "Accessibility": Accessibility,
-    "SLA": SLA,
 }
 
 export const pagesConfig = {
