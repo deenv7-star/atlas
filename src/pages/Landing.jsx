@@ -1,77 +1,60 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
+import LoginPopup from '@/components/landing/LoginPopup';
 import HeroSection from '@/components/landing/HeroSection';
-import AnimatedCards from '@/components/landing/AnimatedCards';
 import BenefitsGrid from '@/components/landing/BenefitsGrid';
+import AnimatedCards from '@/components/landing/AnimatedCards';
 import FloatingStats from '@/components/landing/FloatingStats';
-import HowItWorksSection from '@/components/landing/HowItWorksSection';
-import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import FeatureShowcase from '@/components/landing/FeatureShowcase';
 import PricingSection from '@/components/landing/PricingSection';
-import SupportChat from '@/components/landing/SupportChat';
+import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import HowItWorksSection from '@/components/landing/HowItWorksSection';
+import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
 
 export default function Landing() {
+  const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-  const handleLoginClick = () => {
+  const handleLogin = () => {
     base44.auth.redirectToLogin(createPageUrl('Dashboard'));
   };
-
-  const handleStartTrial = () => {
-    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
-  };
-
-  const faqItems = [
-    {
-      q: 'האם המערכת מתאימה גם לנכס בודד?',
-      a: 'בהחלט! המערכת מתאימה לכל גודל - מנכס בודד ועד רשת גדולה של נכסים. התמחור והתכונות מותאמים לצרכים שלך.'
-    },
-    {
-      q: 'האם אפשר לנהל כמה נכסים במערכת?',
-      a: 'כן, אין הגבלה על מספר הנכסים. תוכל לנהל את כל הנכסים שלך במקום אחד, עם יכולת מעבר מהיר ביניהם.'
-    },
-    {
-      q: 'האם יש אינטגרציה עם Airbnb ו-Booking?',
-      a: 'כן, המערכת מתחברת לכל הפלטפורמות המובילות ומסנכרנת אוטומטית הזמנות, מחירים וזמינות.'
-    },
-    {
-      q: 'האם צוות הניקיון יכול לקבל משימות?',
-      a: 'בהחלט! צוות הניקיון מקבל גישה מוגבלת למשימות שלהם בלבד, עם כל הפרטים הנדרשים ואפשרות לדווח על השלמה.'
-    },
-    {
-      q: 'איך עובדות ההודעות האוטומטיות?',
-      a: 'תוכל להגדיר תבניות הודעות שנשלחות אוטומטית בנקודות זמן מסוימות - לפני צ\'ק-אין, אחרי צ\'ק-אאוט, בקשות לביקורות ועוד.'
-    },
-    {
-      q: 'האם יש תמיכה טכנית?',
-      a: 'כמובן! אנחנו זמינים בצ\'אט ובמייל לכל שאלה או בעיה. בנוסף, יש לנו מרכז עזרה מקיף עם מדריכים ווידאו.'
-    },
-  ];
 
   return (
-    <div dir="rtl" className="min-h-screen bg-white" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif" }}>
-      {/* Fixed Navigation */}
+    <div dir="rtl" className="min-h-screen bg-[#F8FAFC]" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap');
+      `}</style>
+      
+      <LoginPopup 
+        isOpen={showLoginPopup} 
+        onClose={() => setShowLoginPopup(false)}
+        onLogin={handleLogin}
+      />
+
+      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Logo variant="dark" size="default" />
+            <Logo variant="dark" />
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
-                className="text-gray-700"
-                onClick={handleLoginClick}
+                className="text-[#0F172A] font-medium"
+                onClick={() => setShowLoginPopup(true)}
               >
                 כניסה
               </Button>
               <Button 
-                className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:shadow-lg text-white"
-                onClick={handleStartTrial}
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold"
+                onClick={() => setShowLoginPopup(true)}
               >
                 התחל עכשיו
               </Button>
@@ -80,75 +63,53 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <HeroSection onLoginClick={handleLoginClick} />
+      <HeroSection onLoginClick={() => setShowLoginPopup(true)} />
 
-      {/* Animated Cards */}
-      <AnimatedCards />
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimatedCards />
+        </div>
+      </section>
 
-      {/* Benefits Grid */}
       <BenefitsGrid />
-
-      {/* Floating Stats */}
       <FloatingStats />
-
-      {/* How It Works */}
+      <FeatureShowcase />
       <HowItWorksSection />
-
-      {/* Testimonials */}
       <TestimonialsSection />
+      <PricingSection onSelectPlan={() => setShowLoginPopup(true)} />
 
-      {/* Pricing */}
-      <PricingSection onSelectPlan={handleStartTrial} />
-
-      {/* FAQ Section */}
-      <section className="py-24 px-4 bg-gray-50">
+      {/* FAQ */}
+      <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              שאלות נפוצות
-            </h2>
-            <p className="text-xl text-gray-600">
-              מצאו תשובות לשאלות הנפוצות ביותר
-            </p>
-          </motion.div>
-
+          <h2 className="text-4xl md:text-5xl font-bold text-[#0B1220] text-center mb-12">
+            שאלות נפוצות
+          </h2>
           <div className="space-y-4">
-            {faqItems.map((item, i) => (
+            {t.faq.map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
               >
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-shadow border-2 border-gray-100 rounded-2xl overflow-hidden"
+                  className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
                   <CardContent className="p-0">
-                    <div className="flex items-center justify-between p-6 bg-white">
-                      <span className="font-semibold text-gray-900 text-lg">{item.q}</span>
+                    <div className="flex items-center justify-between p-4 bg-white">
+                      <span className="font-medium text-[#0B1220]">{item.q}</span>
                       {openFaq === i ? (
-                        <ChevronUp className="h-5 w-5 text-[#00D1C1] flex-shrink-0" />
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
                       ) : (
-                        <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
                     </div>
                     {openFaq === i && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="px-6 pb-6 bg-white text-gray-600 leading-relaxed"
-                      >
+                      <div className="p-4 pt-0 bg-white text-gray-600">
                         {item.a}
-                      </motion.div>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
@@ -159,35 +120,24 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 px-4 bg-gradient-to-br from-[#0B1220] via-gray-900 to-[#0B1220] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#00D1C1] rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
-        </div>
-
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
+        <div className="max-w-3xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              מוכנים להתחיל?
+              מוכנים לקחת את הניהול לשלב הבא?
             </h2>
-            <p className="text-xl text-white/80 mb-10">
-              הצטרפו לאלפי בעלי נכסים שכבר משתמשים ב-ATLAS
-            </p>
-            <Button
-              size="lg"
-              onClick={handleStartTrial}
-              className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:shadow-2xl text-white text-lg px-12 py-7 font-semibold rounded-2xl"
+            <p className="text-xl text-white/70 mb-8">הצטרפו לבעלי הנכסים שכבר חוסכים שעות בכל שבוע</p>
+            <Button 
+              size="lg" 
+              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
+              onClick={() => setShowLoginPopup(true)}
             >
-              התחל ניסיון חינם
-              <ArrowLeft className="w-5 h-5 mr-2" />
+              התחל עכשיו
             </Button>
-            <p className="text-white/60 text-sm mt-6">
-              ללא כרטיס אשראי • ביטול בכל עת • תמיכה מלאה
-            </p>
           </motion.div>
         </div>
       </section>
@@ -195,43 +145,25 @@ export default function Landing() {
       {/* Footer */}
       <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <Logo variant="light" size="default" />
-              <p className="text-white/60 mt-4">
-                המערכת המובילה לניהול נכסים חכם ואוטומטי
-              </p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <Logo variant="light" />
+            <div className="flex gap-6 text-white/60 text-sm font-medium">
+              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
+                מדיניות פרטיות
+              </Link>
+              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
+                תנאי שימוש
+              </Link>
+              <Link to={createPageUrl('About')} className="hover:text-white transition-colors">
+                אודות
+              </Link>
             </div>
-            <div>
-              <h3 className="text-white font-semibold mb-4">קישורים מהירים</h3>
-              <div className="space-y-2">
-                <Link to={createPageUrl('Privacy')} className="block text-white/60 hover:text-white transition-colors">
-                  מדיניות פרטיות
-                </Link>
-                <Link to={createPageUrl('Terms')} className="block text-white/60 hover:text-white transition-colors">
-                  תנאי שימוש
-                </Link>
-                <Link to={createPageUrl('UserAgreement')} className="block text-white/60 hover:text-white transition-colors">
-                  הסכם משתמש
-                </Link>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-4">צור קשר</h3>
-              <div className="space-y-2 text-white/60">
-                <p>support@stayflow.io</p>
-                <p>050-123-4567</p>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-white/10 pt-8 text-center text-white/40 text-sm">
-            © 2024 ATLAS. כל הזכויות שמורות.
+            <p className="text-white/40 text-sm">
+              © 2025 ATLAS. כל הזכויות שמורות
+            </p>
           </div>
         </div>
       </footer>
-
-      {/* Support Chat */}
-      <SupportChat />
     </div>
   );
 }

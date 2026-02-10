@@ -8,19 +8,22 @@ const steps = [
     step: '01',
     icon: Building2,
     title: 'הגדירו את הנכסים',
-    desc: 'הוסיפו את המתחמים שלכם עם כל הפרטים הרלוונטיים במהירות'
+    desc: 'הוסיפו את המתחמים שלכם עם כל הפרטים הרלוונטיים במהירות',
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=300&fit=crop'
   },
   {
     step: '02',
     icon: CalendarCheck,
     title: 'חברו את היומן',
-    desc: 'סנכרון אוטומטי עם Airbnb, Booking.com ופלטפורמות נוספות'
+    desc: 'סנכרון אוטומטי עם Airbnb, Booking.com ופלטפורמות נוספות',
+    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=400&h=300&fit=crop'
   },
   {
     step: '03',
     icon: Zap,
     title: 'תנו למערכת לעבוד',
-    desc: 'אוטומציות חכמות מנהלות הכל - מלידים ועד תשלומים וניקיון'
+    desc: 'אוטומציות חכמות מנהלות הכל - מלידים ועד תשלומים וניקיון',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop'
   }
 ];
 
@@ -60,23 +63,35 @@ export default function HowItWorksSection() {
               transition={{ delay: i * 0.2, duration: 0.6 }}
               className="relative"
             >
-              <Card className="group hover:shadow-lg transition-all duration-300 border rounded-2xl overflow-hidden bg-white p-8 text-center">
-                {/* Step number badge */}
-                <div className="w-16 h-16 bg-[#0B1220] rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-6">
-                  <span className="text-2xl font-bold text-white">{step.step}</span>
+              <Card className="group hover:shadow-2xl transition-all duration-500 border-0 rounded-3xl overflow-hidden bg-white">
+                {/* Image */}
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={step.image} 
+                    alt={step.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220]/80 to-transparent" />
+                  
+                  {/* Step number badge */}
+                  <div className="absolute top-4 right-4 w-16 h-16 bg-[#00D1C1] rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-2xl font-bold text-[#0B1220]">{step.step}</span>
+                  </div>
                 </div>
 
-                {/* Icon */}
-                <div className="w-20 h-20 bg-[#F8FAFC] rounded-2xl flex items-center justify-center mb-6 mx-auto border border-gray-200">
-                  <step.icon className="h-10 w-10 text-[#0B1220]" />
+                {/* Content */}
+                <div className="p-6">
+                  <div className="w-14 h-14 bg-[#00D1C1]/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-[#00D1C1] transition-colors duration-300">
+                    <step.icon className="h-7 w-7 text-[#00D1C1] group-hover:text-[#0B1220] transition-colors duration-300" />
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {step.desc}
+                  </p>
                 </div>
-                
-                <h3 className="text-2xl font-bold text-[#0B1220] mb-4">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {step.desc}
-                </p>
               </Card>
             </motion.div>
           ))}
