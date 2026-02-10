@@ -78,15 +78,6 @@ export default function HeroSection({ onLoginClick }) {
                 אני רוצה להתחיל
                 <ArrowLeft className="w-5 h-5 mr-2" />
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')}
-                className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 hover:border-[#00D1C1] hover:bg-white text-lg px-10 py-7 font-semibold rounded-2xl transition-all"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                צפו בהדגמה
-              </Button>
             </motion.div>
 
             {/* Trust Indicators */}
