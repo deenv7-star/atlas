@@ -69,6 +69,7 @@ import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
+import About from './pages/About';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +96,7 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,
+    "About": About,
 }
 
 export const pagesConfig = {
