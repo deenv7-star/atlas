@@ -3,27 +3,20 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
+import LoginPopup from '@/components/landing/LoginPopup';
+import HeroSection from '@/components/landing/HeroSection';
+import BenefitsGrid from '@/components/landing/BenefitsGrid';
+import AnimatedCards from '@/components/landing/AnimatedCards';
+import FloatingStats from '@/components/landing/FloatingStats';
+import FeatureShowcase from '@/components/landing/FeatureShowcase';
+import PricingSection from '@/components/landing/PricingSection';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   CheckCircle2, 
-  Users, 
-  Calendar, 
-  CreditCard, 
-  Sparkles, 
-  MessageSquare, 
-  FileText,
   ChevronDown,
   ChevronUp,
-  ArrowLeft,
-  AlertCircle,
-  Inbox,
-  CalendarCheck,
-  Wallet,
-  Brush,
-  Send,
-  FileSignature,
   Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -31,6 +24,7 @@ import { motion } from 'framer-motion';
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -91,12 +85,7 @@ export default function Landing() {
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl"
-                  onClick={() => window.open('https://wa.me/972XXXXXXXXX', '_blank')}
-                >
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
                   {t.bookDemo}
                 </Button>
               </div>
@@ -147,14 +136,35 @@ export default function Landing() {
                 </div>
               </div>
               <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
-                0 הזמנות כפולות
+                ✓ 0 הזמנות כפולות
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-
+      {/* Problem Section */}
+      <section className="py-20 px-4 bg-[#0B1220]">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
+              {t.problemTitle}
+            </h2>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {t.problemBullets.map((bullet, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
+                  <span>{bullet}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Solution Section */}
       <section className="py-20 px-4">
@@ -179,33 +189,6 @@ export default function Landing() {
               ))}
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
-                    </div>
-                    <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -269,57 +252,7 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
-            תוכניות ומחירים
-          </h2>
-          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {Object.entries(t.pricing).map(([key, plan], i) => (
-              <motion.div
-                key={key}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className={`h-full rounded-2xl ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
-                  <CardContent className="p-6">
-                    {key === 'pro' && (
-                      <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">
-                        הכי פופולרי
-                      </span>
-                    )}
-                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{plan.name}</h3>
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold text-[#0B1220]">₪{plan.price}</span>
-                      <span className="text-gray-500">/חודש</span>
-                    </div>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, j) => (
-                        <li key={j} className="flex items-center gap-2 text-gray-600">
-                          <CheckCircle2 className="h-5 w-5 text-[#00D1C1] flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      className={`w-full rounded-xl ${key === 'pro' 
-                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
-                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-                    >
-                      {t.startTrial}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PricingSection onSelectPlan={() => setShowLoginPopup(true)} />
 
       {/* FAQ */}
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
@@ -371,16 +304,15 @@ export default function Landing() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              מוכנים לנהל את הנכסים שלכם בחכמה?
+              {t.finalCta}
             </h2>
             <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              onClick={() => setShowLoginPopup(true)}
             >
               {t.startTrial}
-              <ArrowLeft className="mr-2 h-5 w-5" />
             </Button>
           </motion.div>
         </div>
@@ -393,14 +325,17 @@ export default function Landing() {
             <Logo variant="light" />
             <div className="flex gap-6 text-white/60 text-sm">
               <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
-                {t.privacyPolicy}
+                מדיניות פרטיות
               </Link>
               <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
-                {t.termsOfService}
+                תנאי שימוש
+              </Link>
+              <Link to={createPageUrl('About')} className="hover:text-white transition-colors">
+                אודות
               </Link>
             </div>
             <p className="text-white/40 text-sm">
-              © 2025 ATLAS. כל הזכויות שמורות
+              © 2024 STAYFLOW. {t.allRightsReserved}
             </p>
           </div>
         </div>
