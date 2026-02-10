@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Play } from 'lucide-react';
+import { ArrowLeft, Sparkles, Play, Zap, TrendingUp, Users } from 'lucide-react';
 import PhoneMockup from './PhoneMockup';
 
 export default function HeroSection({ onLoginClick }) {
@@ -77,6 +77,70 @@ export default function HeroSection({ onLoginClick }) {
             }}
           />
         ))}
+        
+        {/* Floating Icons */}
+        <motion.div
+          className="absolute top-20 left-10 w-16 h-16 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 5, 0],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        >
+          <Sparkles className="w-8 h-8 text-[#00D1C1]" />
+        </motion.div>
+        
+        <motion.div
+          className="absolute bottom-32 left-20 w-14 h-14 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
+          animate={{
+            y: [0, 20, 0],
+            rotate: [0, -5, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        >
+          <Zap className="w-7 h-7 text-purple-500" />
+        </motion.div>
+        
+        <motion.div
+          className="absolute top-40 right-32 w-12 h-12 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
+          animate={{
+            y: [0, -15, 0],
+            rotate: [0, 10, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+        >
+          <TrendingUp className="w-6 h-6 text-orange-500" />
+        </motion.div>
+        
+        <motion.div
+          className="absolute bottom-48 right-20 w-14 h-14 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
+          animate={{
+            y: [0, 18, 0],
+            rotate: [0, -8, 0],
+          }}
+          transition={{
+            duration: 5.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1.5
+          }}
+        >
+          <Users className="w-7 h-7 text-blue-500" />
+        </motion.div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 relative z-10">
