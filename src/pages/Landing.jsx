@@ -30,6 +30,7 @@ import { motion } from 'framer-motion';
 import HeroSection from '@/components/landing/HeroSection';
 import FeatureShowcase from '@/components/landing/FeatureShowcase';
 import BenefitsGrid from '@/components/landing/BenefitsGrid';
+import LoginPopup from '@/components/landing/LoginPopup';
 
 export default function Landing() {
   const t = translations.he;
@@ -414,8 +415,6 @@ export default function Landing() {
       </footer>
 
            <LoginPopup isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
-         </div>
-       );
-    }
-
-    import LoginPopup from '@/components/landing/LoginPopup';
+           </div>
+           );
+           }
