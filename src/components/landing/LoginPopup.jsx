@@ -57,7 +57,7 @@ export default function LoginPopup({ isOpen, onClose, onLogin }) {
                     transition={{ duration: 10, repeat: Infinity }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <h2 className="text-3xl font-bold text-white">ברוכים הבאים! 👋</h2>
+                    <h2 className="text-3xl font-bold text-white">ברוכים הבאים</h2>
                   </div>
                 </div>
 

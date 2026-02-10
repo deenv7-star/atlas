@@ -211,6 +211,7 @@ export default function HeroSection({ onLoginClick }) {
                 <Button
                   size="lg"
                   variant="outline"
+                  onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')}
                   className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 hover:border-[#00D1C1] hover:bg-white text-lg px-10 py-7 font-semibold rounded-2xl"
                 >
                   <Play className="w-5 h-5 mr-2" />
@@ -242,7 +243,9 @@ export default function HeroSection({ onLoginClick }) {
               </div>
               <div className="h-12 w-px bg-gray-200" />
               <div>
-                <div className="text-sm font-semibold text-gray-900">⭐ 4.9/5</div>
+                <div className="text-sm font-semibold text-gray-900 flex items-center gap-1">
+                  <span className="text-[#00D1C1]">★</span> 4.9/5
+                </div>
                 <div className="text-xs text-gray-500">דירוג ממוצע</div>
               </div>
             </motion.div>

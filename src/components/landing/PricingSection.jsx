@@ -125,7 +125,7 @@ export default function PricingSection({ onSelectPlan }) {
               {plan.popular && (
                 <div className="absolute -top-5 left-0 right-0 flex justify-center z-10">
                   <div className={`px-6 py-2 bg-gradient-to-r ${plan.color} text-white rounded-full text-sm font-bold shadow-lg`}>
-                    הכי פופולרי
+                    פופולרי ביותר
                   </div>
                 </div>
               )}

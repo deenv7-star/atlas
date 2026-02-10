@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import AIAssistant from './pages/AIAssistant';
+import About from './pages/About';
 import Automations from './pages/Automations';
 import Billing from './pages/Billing';
 import BookingDetail from './pages/BookingDetail';
@@ -69,12 +70,12 @@ import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
-import About from './pages/About';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIAssistant": AIAssistant,
+    "About": About,
     "Automations": Automations,
     "Billing": Billing,
     "BookingDetail": BookingDetail,
@@ -96,7 +97,6 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,
-    "About": About,
 }
 
 export const pagesConfig = {
