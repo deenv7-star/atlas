@@ -13,10 +13,9 @@ import PricingSection from '@/components/landing/PricingSection';
 import HowItWorksSection from '@/components/landing/HowItWorksSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import BenefitsGrid from '@/components/landing/BenefitsGrid';
-import AnimatedCards from '@/components/landing/AnimatedCards';
-import FloatingStats from '@/components/landing/FloatingStats';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Landing() {
   const t = translations.he;
@@ -57,19 +56,10 @@ export default function Landing() {
       </nav>
 
       <HeroSection onLoginClick={() => setShowLoginPopup(true)} />
-
       <BenefitsGrid />
-
       <FeatureShowcase />
-
-      <AnimatedCards />
-
       <HowItWorksSection />
-
       <TestimonialsSection />
-
-      <FloatingStats />
-
       <PricingSection onSelectPlan={handleSelectPlan} />
 
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
@@ -79,7 +69,13 @@ export default function Landing() {
           </h2>
           <div className="space-y-4">
             {t.faq.map((item, i) => (
-              <div key={i}>
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+              >
                 <Card 
                   className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -100,7 +96,7 @@ export default function Landing() {
                     )}
                   </CardContent>
                 </Card>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -108,17 +104,23 @@ export default function Landing() {
 
       <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            {t.finalCta}
-          </h2>
-          <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
-          <Button 
-            size="lg" 
-            className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-            onClick={() => setShowLoginPopup(true)}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
           >
-            {t.startTrial}
-          </Button>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              {t.finalCta}
+            </h2>
+            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
+            <Button 
+              size="lg" 
+              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
+              onClick={() => setShowLoginPopup(true)}
+            >
+              {t.startTrial}
+            </Button>
+          </motion.div>
         </div>
       </section>
 
