@@ -42,7 +42,7 @@ export default function Landing() {
   ];
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F8FAFC]" style={{ fontFamily: "'Heebo', sans-serif" }}>
+    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
