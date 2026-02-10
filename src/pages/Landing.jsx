@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LoginPopup from '@/components/landing/LoginPopup';
+import SupportChat from '@/components/landing/SupportChat';
 
 export default function Landing() {
   const t = translations.he;
@@ -58,13 +59,13 @@ export default function Landing() {
               <Button 
                 variant="ghost" 
                 className="text-[#0F172A]"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => setShowLoginPopup(true)}
               >
                 כניסה
               </Button>
               <Button 
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => setShowLoginPopup(true)}
               >
                 {t.startTrial}
               </Button>
@@ -73,7 +74,93 @@ export default function Landing() {
         </div>
       </nav>
 
-      <HeroSection onLoginClick={() => setShowLoginPopup(true)} />
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
+                {t.heroTitle}
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                {t.heroSubtitle}
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
+                  onClick={() => setShowLoginPopup(true)}
+                >
+                  {t.startTrial}
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')}
+                  className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl"
+                >
+                  {t.bookDemo}
+                </Button>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
+                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
+                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
+                        <p className="text-sm text-gray-500">לידים חדשים</p>
+                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
+                      </div>
+                      <div className="bg-[#F2E9DB] rounded-xl p-4">
+                        <p className="text-sm text-gray-500">הזמנות החודש</p>
+                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl border p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="font-medium">כניסות היום</span>
+                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
+                      </div>
+                      <div className="space-y-2">
+                        {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
+                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
+                            <span>{item}</span>
+                            <span className="text-green-600">מאושר</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm flex items-center gap-1">
+                <CheckCircle2 className="h-4 w-4" />
+                0 הזמנות כפולות
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* Problem Section */}
       <section className="py-20 px-4 bg-[#0B1220]">
@@ -251,7 +338,7 @@ export default function Landing() {
                       className={`w-full rounded-xl ${key === 'pro' 
                         ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
                         : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                      onClick={() => setShowLoginPopup(true)}
                     >
                       {t.startTrial}
                     </Button>
@@ -319,7 +406,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              onClick={() => setShowLoginPopup(true)}
             >
               {t.startTrial}
               <ArrowLeft className="mr-2 h-5 w-5" />
