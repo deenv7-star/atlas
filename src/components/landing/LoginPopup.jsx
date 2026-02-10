@@ -4,15 +4,29 @@ import { X, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '@/utils';
 
-export default function LoginPopup({ isOpen, onClose, onLogin }) {
+export default function LoginPopup({ isOpen, onClose }) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin();
+    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+  };
+
+  const handleGoogleLogin = () => {
+    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+  };
+
+  const handleFacebookLogin = () => {
+    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+  };
+
+  const handleSignUp = () => {
+    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
   };
 
   return (
