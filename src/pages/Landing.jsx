@@ -27,6 +27,10 @@ import {
   Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ChatWidget from '@/components/landing/ChatWidget';
+import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import FeatureShowcase from '@/components/landing/FeatureShowcase';
+import CustomIllustration from '@/components/landing/CustomIllustration';
 
 export default function Landing() {
   const t = translations.he;
@@ -335,27 +339,33 @@ export default function Landing() {
 
       {/* Final CTA */}
       <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              {t.finalCta}
-            </h2>
-            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
-            <Button 
-              size="lg" 
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
             >
-              {t.startTrial}
-              <ArrowLeft className="mr-2 h-5 w-5" />
-            </Button>
-          </motion.div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                מוכנים לשדרג את ניהול הנכסים שלכם?
+              </h2>
+              <p className="text-xl text-white/70 mb-8">הצטרפו לבעלי נכסים שכבר חוסכים זמן והופכים את העסק למכונה משומנת</p>
+              <Button 
+                size="lg" 
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              >
+                {t.startTrial}
+                <ArrowLeft className="mr-2 h-5 w-5" />
+              </Button>
+            </motion.div>
+            <CustomIllustration type="cta" />
+          </div>
         </div>
       </section>
+
+      {/* Chat Widget */}
+      <ChatWidget />
 
       {/* Footer */}
       <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
@@ -363,15 +373,21 @@ export default function Landing() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Logo variant="light" />
             <div className="flex gap-6 text-white/60 text-sm">
+              <Link to={createPageUrl('About')} className="hover:text-white transition-colors">
+                אודות
+              </Link>
               <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
                 {t.privacyPolicy}
               </Link>
               <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
                 {t.termsOfService}
               </Link>
+              <Link to={createPageUrl('UserAgreement')} className="hover:text-white transition-colors">
+                הסכם שימוש
+              </Link>
             </div>
             <p className="text-white/40 text-sm">
-              © 2024 STAYFLOW. {t.allRightsReserved}
+              © 2024 ATLAS. כל הזכויות שמורות
             </p>
           </div>
         </div>
