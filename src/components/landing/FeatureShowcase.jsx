@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Wallet, Brush, Send, FileSignature, CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import CustomIllustration from './CustomIllustration';
 
 const features = [
   {
@@ -52,8 +54,13 @@ export default function FeatureShowcase() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
-          {/* Left - Feature List */}
-          <div className="space-y-4">
+          {/* Left - Feature Illustration */}
+          <div className="order-2 lg:order-1">
+            <CustomIllustration type="features" />
+          </div>
+
+          {/* Right - Feature List */}
+          <div className="space-y-4 order-1 lg:order-2">
             {features.map((feature, index) => (
               <div
                 key={index}
@@ -82,27 +89,7 @@ export default function FeatureShowcase() {
                 </Card>
               </div>
             ))}
-          </div>
-
-          {/* Right - Feature Preview */}
-          <div className="relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white transition-opacity duration-300">
-              <img
-                src={features[activeFeature].image}
-                alt={features[activeFeature].title}
-                className="w-full h-[500px] object-cover"
-              />
-              
-              {/* Overlay Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
-                <div className={`inline-block px-4 py-2 rounded-full bg-gradient-to-r ${features[activeFeature].color} mb-3`}>
-                  <span className="text-sm font-semibold text-white">תכונה מתקדמת</span>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">{features[activeFeature].title}</h3>
-                <p className="text-white/90">{features[activeFeature].description}</p>
-              </div>
             </div>
-          </div>
         </div>
       </div>
     </section>
