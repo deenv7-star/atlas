@@ -5,93 +5,57 @@ export default function CustomIllustration({ type }) {
   if (type === 'solution') {
     return (
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
         className="relative w-full max-w-lg mx-auto h-[500px]"
       >
         <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          <defs>
-            <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#F8FAFC" />
-              <stop offset="100%" stopColor="#F2E9DB" />
-            </linearGradient>
-          </defs>
-          
-          {/* Dashboard cards floating */}
-          <motion.g
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <rect x="100" y="100" width="300" height="180" rx="16" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
-            <rect x="100" y="100" width="300" height="50" rx="16" fill="#0B1220"/>
-            <text x="125" y="135" fill="white" fontSize="20" fontWeight="600">לוח בקרה</text>
-            
-            {/* Stats cards inside */}
-            <rect x="120" y="170" width="120" height="80" rx="12" fill="url(#cardGrad)"/>
-            <text x="135" y="195" fill="#64748B" fontSize="14">הזמנות חדשות</text>
-            <text x="135" y="230" fill="#0B1220" fontSize="32" fontWeight="bold">24</text>
-            
-            <rect x="260" y="170" width="120" height="80" rx="12" fill="#00D1C1" fillOpacity="0.1"/>
-            <text x="275" y="195" fill="#64748B" fontSize="14">תשלומים</text>
-            <text x="275" y="230" fill="#00D1C1" fontSize="32" fontWeight="bold">₪12K</text>
-          </motion.g>
-          
-          {/* Calendar sidebar */}
-          <motion.g
-            animate={{ x: [0, 5, 0] }}
+          {/* Simple abstract shapes */}
+          <motion.circle
+            cx="250" cy="200" r="120"
+            fill="#00D1C1"
+            opacity="0.08"
+            animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <rect x="80" y="320" width="140" height="160" rx="12" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
-            <rect x="90" y="335" width="120" height="30" rx="6" fill="#F2E9DB"/>
-            <text x="110" y="355" fill="#0B1220" fontSize="14" fontWeight="600">דצמבר 2024</text>
-            
-            {/* Calendar grid */}
-            {[...Array(12)].map((_, i) => (
-              <rect 
-                key={i}
-                x={95 + (i % 4) * 30} 
-                y={380 + Math.floor(i / 4) * 30} 
-                width="25" 
-                height="25" 
-                rx="4" 
-                fill={i === 5 ? "#00D1C1" : "#F8FAFC"}
-              />
-            ))}
-          </motion.g>
+          />
           
-          {/* Notification cards */}
-          <motion.g
-            animate={{ x: [0, -5, 0] }}
+          <motion.circle
+            cx="200" cy="280" r="80"
+            fill="#0B1220"
+            opacity="0.05"
+            animate={{ scale: [1, 1.08, 1] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <rect x="280" y="320" width="160" height="70" rx="12" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
-            <circle cx="300" cy="355" r="12" fill="#00D1C1" fillOpacity="0.2"/>
-            <rect x="295" y="350" width="10" height="10" rx="2" fill="#00D1C1"/>
-            <text x="320" y="350" fill="#0B1220" fontSize="12">הזמנה חדשה</text>
-            <text x="320" y="368" fill="#64748B" fontSize="10">משפחת כהן • 3 לילות</text>
-          </motion.g>
+          />
           
-          <motion.g
-            animate={{ x: [0, -5, 0], y: [0, 5, 0] }}
+          <motion.circle
+            cx="320" cy="250" r="60"
+            fill="#F2E9DB"
+            opacity="0.4"
+            animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <rect x="280" y="410" width="160" height="70" rx="12" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
-            <circle cx="300" cy="445" r="12" fill="#F2E9DB"/>
-            <text x="297" y="451" fill="#0B1220" fontSize="16">✓</text>
-            <text x="320" y="440" fill="#0B1220" fontSize="12">תשלום התקבל</text>
-            <text x="320" y="458" fill="#64748B" fontSize="10">₪2,400 • וילה גליל</text>
-          </motion.g>
+          />
           
-          {/* Connecting lines */}
-          <motion.path
-            d="M250 200 L280 360"
-            stroke="#00D1C1"
-            strokeWidth="2"
-            strokeDasharray="4 4"
-            opacity="0.3"
-            animate={{ strokeDashoffset: [0, -8] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          {/* Clean dashboard representation */}
+          <rect x="150" y="180" width="200" height="140" rx="12" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+          
+          {/* Header */}
+          <rect x="150" y="180" width="200" height="40" rx="12" fill="#0B1220"/>
+          
+          {/* Content bars */}
+          <motion.rect 
+            x="170" y="240" width="160" height="8" rx="4" 
+            fill="#00D1C1"
+            animate={{ width: [120, 160, 120] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <rect x="170" y="260" width="100" height="8" rx="4" fill="#E2E8F0"/>
+          <motion.rect 
+            x="170" y="280" width="140" height="8" rx="4" 
+            fill="#F2E9DB"
+            animate={{ width: [100, 140, 100] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           />
         </svg>
       </motion.div>
