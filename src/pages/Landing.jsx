@@ -27,7 +27,6 @@ import {
   Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import ChatWidget from '@/components/landing/ChatWidget';
 
 export default function Landing() {
   const t = translations.he;
@@ -175,115 +174,70 @@ export default function Landing() {
 
       {/* Solution Section */}
       <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
-              {t.solutionTitle}
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              {t.solutionText}
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {t.benefits.map((benefit, i) => (
-                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
-                  {benefit}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
-                    </div>
-                    <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
+                {t.solutionTitle}
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                {t.solutionText}
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {t.benefits.map((benefit, i) => (
+                  <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
+                    {benefit}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+            <CustomIllustration type="solution" />
           </div>
         </div>
       </section>
 
+      {/* Features Grid */}
+      <FeatureShowcase />
+
       {/* How It Works */}
       <section className="py-20 px-4">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
             איך זה עובד?
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {t.howItWorks.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="text-center"
-              >
-                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                  {step.step}
-                </div>
-                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.desc}</p>
-              </motion.div>
-            ))}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <CustomIllustration type="workflow" />
+            <div className="grid gap-8">
+              {t.howItWorks.map((step, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
+                  className="flex gap-4"
+                >
+                  <div className="w-12 h-12 bg-[#0B1220] text-white rounded-xl flex items-center justify-center flex-shrink-0 text-xl font-bold">
+                    {step.step}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                    <p className="text-gray-600">{step.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
-            מה אומרים עלינו
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {t.testimonials.map((testimonial, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full bg-white/5 border-white/10 rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(5)].map((_, j) => (
-                        <Star key={j} className="h-5 w-5 fill-[#00D1C1] text-[#00D1C1]" />
-                      ))}
-                    </div>
-                    <p className="text-white/90 mb-4 leading-relaxed">"{testimonial.text}"</p>
-                    <p className="text-[#00D1C1] font-medium">{testimonial.author}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection />
 
       {/* Pricing */}
       <section className="py-20 px-4">
@@ -388,9 +342,9 @@ export default function Landing() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              מוכנים לשדרג את ניהול הנכסים שלכם?
+              {t.finalCta}
             </h2>
-            <p className="text-xl text-white/70 mb-8">הצטרפו לבעלי נכסים שכבר חוסכים זמן והופכים את העסק למכונה משומנת</p>
+            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
@@ -403,30 +357,21 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Chat Widget */}
-      <ChatWidget />
-
       {/* Footer */}
       <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Logo variant="light" />
             <div className="flex gap-6 text-white/60 text-sm">
-              <Link to={createPageUrl('About')} className="hover:text-white transition-colors">
-                אודות
-              </Link>
               <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
                 {t.privacyPolicy}
               </Link>
               <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
                 {t.termsOfService}
               </Link>
-              <Link to={createPageUrl('UserAgreement')} className="hover:text-white transition-colors">
-                הסכם שימוש
-              </Link>
             </div>
             <p className="text-white/40 text-sm">
-              © 2024 ATLAS. כל הזכויות שמורות
+              © 2024 STAYFLOW. {t.allRightsReserved}
             </p>
           </div>
         </div>
