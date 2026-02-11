@@ -61,6 +61,7 @@ import DataSecurity from './pages/DataSecurity';
 import GuestService from './pages/GuestService';
 import Integrations from './pages/Integrations';
 import Invoices from './pages/Invoices';
+import Landing from './pages/Landing';
 import LeadDetail from './pages/LeadDetail';
 import Leads from './pages/Leads';
 import Messages from './pages/Messages';
@@ -69,10 +70,9 @@ import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import SLA from './pages/SLA';
 import ServiceRequests from './pages/ServiceRequests';
+import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
-import Landing from './pages/Landing';
-import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
@@ -91,6 +91,7 @@ export const PAGES = {
     "GuestService": GuestService,
     "Integrations": Integrations,
     "Invoices": Invoices,
+    "Landing": Landing,
     "LeadDetail": LeadDetail,
     "Leads": Leads,
     "Messages": Messages,
@@ -99,10 +100,9 @@ export const PAGES = {
     "Reviews": Reviews,
     "SLA": SLA,
     "ServiceRequests": ServiceRequests,
+    "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,
-    "Landing": Landing,
-    "Settings": Settings,
 }
 
 export const pagesConfig = {
