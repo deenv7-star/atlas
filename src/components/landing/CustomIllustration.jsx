@@ -12,161 +12,87 @@ export default function CustomIllustration({ type }) {
       >
         <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           <defs>
-            <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FFD89C" />
+            <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#F8FAFC" />
               <stop offset="100%" stopColor="#F2E9DB" />
-            </linearGradient>
-            <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#E0F7F5" />
-              <stop offset="100%" stopColor="#F8FAFC" />
             </linearGradient>
           </defs>
           
-          {/* Sky background */}
-          <rect width="500" height="500" fill="url(#skyGrad)" opacity="0.3"/>
-          
-          {/* Sun */}
-          <motion.circle
-            cx="400" cy="100" r="50"
-            fill="url(#sunGrad)"
-            animate={{ scale: [1, 1.05, 1] }}
+          {/* Dashboard cards floating */}
+          <motion.g
+            animate={{ y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {[...Array(8)].map((_, i) => {
-            const angle = (i * 45) * Math.PI / 180;
-            return (
-              <motion.line
-                key={i}
-                x1={400 + 60 * Math.cos(angle)}
-                y1={100 + 60 * Math.sin(angle)}
-                x2={400 + 75 * Math.cos(angle)}
-                y2={100 + 75 * Math.sin(angle)}
-                stroke="#FFD89C"
-                strokeWidth="3"
-                strokeLinecap="round"
-                animate={{ opacity: [0.4, 0.8, 0.4] }}
-                transition={{ duration: 3, delay: i * 0.2, repeat: Infinity }}
-              />
-            );
-          })}
+          >
+            <rect x="100" y="100" width="300" height="180" rx="16" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+            <rect x="100" y="100" width="300" height="50" rx="16" fill="#0B1220"/>
+            <text x="125" y="135" fill="white" fontSize="20" fontWeight="600">לוח בקרה</text>
+            
+            {/* Stats cards inside */}
+            <rect x="120" y="170" width="120" height="80" rx="12" fill="url(#cardGrad)"/>
+            <text x="135" y="195" fill="#64748B" fontSize="14">הזמנות חדשות</text>
+            <text x="135" y="230" fill="#0B1220" fontSize="32" fontWeight="bold">24</text>
+            
+            <rect x="260" y="170" width="120" height="80" rx="12" fill="#00D1C1" fillOpacity="0.1"/>
+            <text x="275" y="195" fill="#64748B" fontSize="14">תשלומים</text>
+            <text x="275" y="230" fill="#00D1C1" fontSize="32" fontWeight="bold">₪12K</text>
+          </motion.g>
           
-          {/* Friendly house */}
-          <g>
-            {/* House body */}
-            <rect x="150" y="250" width="200" height="180" rx="8" fill="#0B1220" opacity="0.9"/>
+          {/* Calendar sidebar */}
+          <motion.g
+            animate={{ x: [0, 5, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <rect x="80" y="320" width="140" height="160" rx="12" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+            <rect x="90" y="335" width="120" height="30" rx="6" fill="#F2E9DB"/>
+            <text x="110" y="355" fill="#0B1220" fontSize="14" fontWeight="600">דצמבר 2024</text>
             
-            {/* Roof */}
-            <path d="M140 250 L250 180 L360 250 Z" fill="#00D1C1"/>
-            
-            {/* Chimney with smoke */}
-            <rect x="300" y="200" width="20" height="50" rx="4" fill="#0B1220"/>
-            {[...Array(3)].map((_, i) => (
-              <motion.ellipse
+            {/* Calendar grid */}
+            {[...Array(12)].map((_, i) => (
+              <rect 
                 key={i}
-                cx={310}
-                cy={180 - i * 15}
-                rx={8 + i * 2}
-                ry={6 + i * 2}
-                fill="#F2E9DB"
-                opacity="0.6"
-                animate={{ 
-                  cy: [180 - i * 15, 160 - i * 15],
-                  opacity: [0.6, 0]
-                }}
-                transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}
+                x={95 + (i % 4) * 30} 
+                y={380 + Math.floor(i / 4) * 30} 
+                width="25" 
+                height="25" 
+                rx="4" 
+                fill={i === 5 ? "#00D1C1" : "#F8FAFC"}
               />
             ))}
-            
-            {/* Door */}
-            <rect x="220" y="350" width="60" height="80" rx="30" fill="#F2E9DB"/>
-            <circle cx="265" cy="390" r="4" fill="#00D1C1"/>
-            
-            {/* Windows with warm light */}
-            <rect x="170" y="280" width="50" height="50" rx="8" fill="#FFD89C" opacity="0.8"/>
-            <line x1="195" y1="280" x2="195" y2="330" stroke="#0B1220" strokeWidth="2"/>
-            <line x1="170" y1="305" x2="220" y2="305" stroke="#0B1220" strokeWidth="2"/>
-            
-            <rect x="280" y="280" width="50" height="50" rx="8" fill="#FFD89C" opacity="0.8"/>
-            <line x1="305" y1="280" x2="305" y2="330" stroke="#0B1220" strokeWidth="2"/>
-            <line x1="280" y1="305" x2="330" y2="305" stroke="#0B1220" strokeWidth="2"/>
-            
-            <motion.rect 
-              x="220" y="280" width="60" height="40" rx="8" 
-              fill="#FFD89C"
-              animate={{ opacity: [0.6, 1, 0.6] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            />
-          </g>
+          </motion.g>
           
-          {/* Garden elements */}
-          <ellipse cx="100" cy="430" rx="60" ry="20" fill="#00D1C1" opacity="0.2"/>
-          <ellipse cx="380" cy="430" rx="70" ry="25" fill="#00D1C1" opacity="0.2"/>
+          {/* Notification cards */}
+          <motion.g
+            animate={{ x: [0, -5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <rect x="280" y="320" width="160" height="70" rx="12" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+            <circle cx="300" cy="355" r="12" fill="#00D1C1" fillOpacity="0.2"/>
+            <rect x="295" y="350" width="10" height="10" rx="2" fill="#00D1C1"/>
+            <text x="320" y="350" fill="#0B1220" fontSize="12">הזמנה חדשה</text>
+            <text x="320" y="368" fill="#64748B" fontSize="10">משפחת כהן • 3 לילות</text>
+          </motion.g>
           
-          {/* Trees */}
-          <g>
-            <rect x="70" y="350" width="15" height="80" rx="4" fill="#0B1220" opacity="0.7"/>
-            <motion.ellipse 
-              cx="77" cy="340" rx="40" ry="45" 
-              fill="#00D1C1"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 5, repeat: Infinity }}
-            />
-            <ellipse cx="60" cy="330" rx="25" ry="30" fill="#00D1C1" opacity="0.8"/>
-            <ellipse cx="95" cy="330" rx="25" ry="30" fill="#00D1C1" opacity="0.8"/>
-          </g>
+          <motion.g
+            animate={{ x: [0, -5, 0], y: [0, 5, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <rect x="280" y="410" width="160" height="70" rx="12" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+            <circle cx="300" cy="445" r="12" fill="#F2E9DB"/>
+            <text x="297" y="451" fill="#0B1220" fontSize="16">✓</text>
+            <text x="320" y="440" fill="#0B1220" fontSize="12">תשלום התקבל</text>
+            <text x="320" y="458" fill="#64748B" fontSize="10">₪2,400 • וילה גליל</text>
+          </motion.g>
           
-          <g>
-            <rect x="400" y="370" width="12" height="60" rx="3" fill="#0B1220" opacity="0.7"/>
-            <motion.ellipse 
-              cx="406" cy="360" rx="35" ry="40" 
-              fill="#F2E9DB"
-              animate={{ scale: [1, 1.08, 1] }}
-              transition={{ duration: 6, delay: 1, repeat: Infinity }}
-            />
-            <ellipse cx="390" cy="350" rx="20" ry="25" fill="#F2E9DB" opacity="0.8"/>
-            <ellipse cx="422" cy="350" rx="20" ry="25" fill="#F2E9DB" opacity="0.8"/>
-          </g>
-          
-          {/* Flying birds */}
-          {[0, 1, 2].map((i) => (
-            <motion.g
-              key={i}
-              animate={{ 
-                x: [-50, 550],
-                y: [100 + i * 30, 80 + i * 30]
-              }}
-              transition={{ 
-                duration: 15 + i * 2,
-                delay: i * 3,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            >
-              <path 
-                d="M0 0 Q -5 -3 -10 0 M0 0 Q 5 -3 10 0" 
-                stroke="#0B1220" 
-                strokeWidth="2" 
-                strokeLinecap="round"
-                opacity="0.3"
-              />
-            </motion.g>
-          ))}
-          
-          {/* Floating hearts */}
-          {[...Array(4)].map((_, i) => (
-            <motion.path
-              key={i}
-              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-              fill="#00D1C1"
-              opacity="0.2"
-              transform={`translate(${80 + i * 100}, ${150 + i * 50}) scale(0.8)`}
-              animate={{ 
-                y: [-10, 10, -10],
-                rotate: [0, 10, 0, -10, 0]
-              }}
-              transition={{ duration: 4, delay: i * 0.5, repeat: Infinity }}
-            />
-          ))}
+          {/* Connecting lines */}
+          <motion.path
+            d="M250 200 L280 360"
+            stroke="#00D1C1"
+            strokeWidth="2"
+            strokeDasharray="4 4"
+            opacity="0.3"
+            animate={{ strokeDashoffset: [0, -8] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          />
         </svg>
       </motion.div>
     );
@@ -181,99 +107,52 @@ export default function CustomIllustration({ type }) {
         className="relative w-full max-w-md h-80 mx-auto"
       >
         <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          {/* Calendar pages spreading out */}
-          <g>
-            {/* Center calendar */}
-            <motion.g
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              <rect x="150" y="150" width="100" height="120" rx="8" fill="#0B1220"/>
-              <rect x="150" y="150" width="100" height="25" rx="8" fill="#00D1C1"/>
-              <rect x="165" y="185" width="25" height="20" rx="4" fill="#F2E9DB"/>
-              <rect x="195" y="185" width="25" height="20" rx="4" fill="#F2E9DB"/>
-              <rect x="225" y="185" width="20" height="20" rx="4" fill="#F2E9DB"/>
-              <rect x="165" y="215" width="25" height="20" rx="4" fill="#F2E9DB"/>
-              <rect x="195" y="215" width="25" height="20" rx="4" fill="#FFD89C"/>
-              <rect x="225" y="215" width="20" height="20" rx="4" fill="#F2E9DB"/>
-            </motion.g>
+          {/* Phone mockup */}
+          <motion.g
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity }}
+          >
+            <rect x="150" y="80" width="180" height="320" rx="20" fill="#0B1220"/>
+            <rect x="160" y="95" width="160" height="290" rx="12" fill="white"/>
             
-            {/* Left page - messages */}
-            <motion.g
-              animate={{ 
-                x: [-10, 0, -10],
-                rotate: [-5, 0, -5]
-              }}
-              transition={{ duration: 4, repeat: Infinity }}
-              style={{ transformOrigin: '80px 200px' }}
-            >
-              <rect x="50" y="170" width="90" height="110" rx="8" fill="#F2E9DB"/>
-              <circle cx="70" cy="195" r="12" fill="#00D1C1"/>
-              <rect x="90" y="188" width="35" height="4" rx="2" fill="#0B1220" opacity="0.3"/>
-              <rect x="90" y="198" width="25" height="3" rx="1.5" fill="#0B1220" opacity="0.2"/>
-              
-              <ellipse cx="80" cy="235" rx="20" ry="12" fill="#00D1C1" opacity="0.3"/>
-              <rect x="65" y="225" width="30" height="20" rx="8" fill="#00D1C1"/>
-            </motion.g>
+            {/* Status bar */}
+            <rect x="160" y="95" width="160" height="30" fill="#F8FAFC"/>
+            <text x="175" y="115" fill="#0B1220" fontSize="10" fontWeight="600">9:41</text>
             
-            {/* Right page - payments */}
-            <motion.g
-              animate={{ 
-                x: [10, 0, 10],
-                rotate: [5, 0, 5]
-              }}
-              transition={{ duration: 4.5, repeat: Infinity }}
-              style={{ transformOrigin: '310px 200px' }}
-            >
-              <rect x="260" y="170" width="90" height="110" rx="8" fill="#FFD89C"/>
-              <rect x="275" y="190" width="60" height="35" rx="6" fill="#0B1220" opacity="0.8"/>
-              <rect x="283" y="205" width="15" height="10" rx="3" fill="#00D1C1"/>
-              <circle cx="318" cy="210" r="3" fill="#F2E9DB"/>
-              
-              <text x="285" y="255" fill="#0B1220" fontSize="24" fontWeight="bold">₪</text>
-            </motion.g>
-          </g>
+            {/* App content */}
+            <rect x="170" y="135" width="140" height="50" rx="8" fill="#00D1C1" fillOpacity="0.1"/>
+            <circle cx="188" cy="160" r="8" fill="#00D1C1"/>
+            <rect x="205" y="150" width="90" height="6" rx="3" fill="#E2E8F0"/>
+            <rect x="205" y="162" width="60" height="4" rx="2" fill="#E2E8F0"/>
+            
+            <rect x="170" y="195" width="140" height="50" rx="8" fill="#F2E9DB" fillOpacity="0.5"/>
+            <circle cx="188" cy="220" r="8" fill="#0B1220" fillOpacity="0.2"/>
+            <rect x="205" y="210" width="90" height="6" rx="3" fill="#E2E8F0"/>
+            <rect x="205" y="222" width="70" height="4" rx="2" fill="#E2E8F0"/>
+            
+            <rect x="170" y="255" width="140" height="50" rx="8" fill="#00D1C1" fillOpacity="0.1"/>
+            <circle cx="188" cy="280" r="8" fill="#00D1C1"/>
+            <rect x="205" y="270" width="90" height="6" rx="3" fill="#E2E8F0"/>
+            <rect x="205" y="282" width="50" height="4" rx="2" fill="#E2E8F0"/>
+          </motion.g>
           
-          {/* Connecting hearts/lines */}
-          <motion.path
-            d="M140 200 Q 100 180 80 200"
-            stroke="#00D1C1"
-            strokeWidth="2"
-            strokeDasharray="4 4"
-            fill="none"
-            animate={{ strokeDashoffset: [0, -16] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            opacity="0.4"
-          />
-          
-          <motion.path
-            d="M260 200 Q 280 180 310 200"
-            stroke="#00D1C1"
-            strokeWidth="2"
-            strokeDasharray="4 4"
-            fill="none"
-            animate={{ strokeDashoffset: [0, -16] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            opacity="0.4"
-          />
-          
-          {/* Decorative sparkles */}
-          {[...Array(6)].map((_, i) => (
-            <motion.g
-              key={i}
-              animate={{ 
-                opacity: [0.2, 0.8, 0.2],
-                scale: [1, 1.3, 1]
-              }}
-              transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}
-            >
-              <path
-                d={`M${120 + i * 40} ${100 + (i % 3) * 80} l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 l6 -2 Z`}
-                fill="#00D1C1"
-                opacity="0.5"
-              />
-            </motion.g>
-          ))}
+          {/* Desktop window */}
+          <motion.g
+            animate={{ y: [0, 5, 0], x: [0, -3, 0] }}
+            transition={{ duration: 5, repeat: Infinity }}
+          >
+            <rect x="50" y="180" width="140" height="120" rx="8" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+            <rect x="50" y="180" width="140" height="25" rx="8" fill="#F8FAFC"/>
+            <circle cx="62" cy="192" r="3" fill="#FF6B6B"/>
+            <circle cx="72" cy="192" r="3" fill="#FFD93D"/>
+            <circle cx="82" cy="192" r="3" fill="#6BCF7F"/>
+            
+            <rect x="60" y="220" width="50" height="6" rx="3" fill="#E2E8F0"/>
+            <rect x="60" y="235" width="70" height="6" rx="3" fill="#E2E8F0"/>
+            <rect x="60" y="250" width="60" height="6" rx="3" fill="#E2E8F0"/>
+            
+            <rect x="135" y="220" width="45" height="45" rx="6" fill="#00D1C1" fillOpacity="0.1"/>
+          </motion.g>
         </svg>
       </motion.div>
     );
@@ -288,101 +167,53 @@ export default function CustomIllustration({ type }) {
         className="relative w-full max-w-md h-80 mx-auto"
       >
         <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          {/* Path with dotted line */}
+          {/* Flow line */}
           <motion.path
-            d="M70 120 Q 150 80 200 120 T 330 120"
-            stroke="#00D1C1"
+            d="M80 150 L180 150 L180 150 L280 150 L280 150 L380 150"
+            stroke="#E2E8F0"
             strokeWidth="3"
-            strokeDasharray="6 6"
             fill="none"
-            animate={{ strokeDashoffset: [0, -48] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            opacity="0.4"
           />
           
-          {/* Step 1 - Lead comes in */}
+          <motion.path
+            d="M80 150 L180 150 L180 150 L280 150 L280 150 L380 150"
+            stroke="#00D1C1"
+            strokeWidth="3"
+            fill="none"
+            strokeDasharray="400"
+            animate={{ strokeDashoffset: [400, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+          />
+          
+          {/* Step 1 */}
           <motion.g
-            animate={{ y: [0, -5, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
           >
-            <circle cx="70" cy="120" r="40" fill="#F2E9DB"/>
-            <circle cx="70" cy="120" r="32" fill="#0B1220"/>
-            
-            {/* Phone icon */}
-            <rect x="60" y="110" width="20" height="26" rx="3" fill="#00D1C1"/>
-            <rect x="62" y="112" width="16" height="20" rx="1" fill="#F2E9DB"/>
-            <circle cx="70" cy="134" r="2" fill="#00D1C1"/>
-            
-            <text x="70" y="180" textAnchor="middle" fill="#0B1220" fontSize="16" fontWeight="600">1</text>
+            <circle cx="80" cy="150" r="35" fill="white" stroke="#E2E8F0" strokeWidth="3"/>
+            <circle cx="80" cy="150" r="28" fill="#0B1220"/>
+            <text x="80" y="160" textAnchor="middle" fill="white" fontSize="24" fontWeight="bold">1</text>
           </motion.g>
           
-          {/* Step 2 - Processing */}
+          {/* Step 2 */}
           <motion.g
-            animate={{ 
-              y: [0, -8, 0],
-              rotate: [0, 5, 0, -5, 0]
-            }}
-            transition={{ duration: 4, repeat: Infinity }}
-            style={{ transformOrigin: '200px 120px' }}
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2, delay: 0.3, repeat: Infinity }}
           >
-            <circle cx="200" cy="120" r="45" fill="#00D1C1"/>
-            <circle cx="200" cy="120" r="36" fill="white"/>
-            
-            {/* Checkmark forming */}
-            <motion.path
-              d="M185 120 L195 130 L215 108"
-              stroke="#0B1220"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-              animate={{ pathLength: [0, 1] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-            />
-            
-            <text x="200" y="190" textAnchor="middle" fill="#0B1220" fontSize="16" fontWeight="600">2</text>
+            <circle cx="230" cy="150" r="35" fill="white" stroke="#E2E8F0" strokeWidth="3"/>
+            <circle cx="230" cy="150" r="28" fill="#00D1C1"/>
+            <text x="230" y="160" textAnchor="middle" fill="#0B1220" fontSize="24" fontWeight="bold">2</text>
           </motion.g>
           
-          {/* Step 3 - Success */}
+          {/* Step 3 */}
           <motion.g
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 3.5, delay: 0.5, repeat: Infinity }}
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2, delay: 0.6, repeat: Infinity }}
           >
-            <circle cx="330" cy="120" r="40" fill="#FFD89C"/>
-            <circle cx="330" cy="120" r="32" fill="#0B1220"/>
-            
-            {/* Happy emoji */}
-            <circle cx="322" cy="115" r="3" fill="#00D1C1"/>
-            <circle cx="338" cy="115" r="3" fill="#00D1C1"/>
-            <path 
-              d="M320 128 Q 330 133 340 128" 
-              stroke="#00D1C1" 
-              strokeWidth="3" 
-              strokeLinecap="round"
-              fill="none"
-            />
-            
-            <text x="330" y="180" textAnchor="middle" fill="#0B1220" fontSize="16" fontWeight="600">3</text>
+            <circle cx="380" cy="150" r="35" fill="white" stroke="#E2E8F0" strokeWidth="3"/>
+            <circle cx="380" cy="150" r="28" fill="#F2E9DB"/>
+            <text x="380" y="160" textAnchor="middle" fill="#0B1220" fontSize="24" fontWeight="bold">3</text>
           </motion.g>
-          
-          {/* Celebration confetti */}
-          {[...Array(8)].map((_, i) => (
-            <motion.rect
-              key={i}
-              x={310 + (i % 3) * 15}
-              y={60 + Math.floor(i / 3) * 15}
-              width="4"
-              height="8"
-              rx="2"
-              fill={i % 2 === 0 ? "#00D1C1" : "#FFD89C"}
-              animate={{ 
-                y: [60 + Math.floor(i / 3) * 15, 90 + Math.floor(i / 3) * 15],
-                rotate: [0, 360],
-                opacity: [1, 0]
-              }}
-              transition={{ duration: 2, delay: i * 0.1, repeat: Infinity }}
-            />
-          ))}
         </svg>
       </motion.div>
     );
@@ -397,170 +228,54 @@ export default function CustomIllustration({ type }) {
         className="relative w-full max-w-md mx-auto h-[500px]"
       >
         <svg viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          <defs>
-            <linearGradient id="skyGradCta" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#E0F7F5" />
-              <stop offset="100%" stopColor="#F8FAFC" />
-            </linearGradient>
-          </defs>
-          
-          {/* Sky */}
-          <rect width="400" height="500" fill="url(#skyGradCta)" opacity="0.5"/>
-          
-          {/* Clouds */}
-          {[
-            { x: 50, y: 80, scale: 0.8 },
-            { x: 250, y: 120, scale: 1 },
-            { x: 320, y: 60, scale: 0.6 }
-          ].map((cloud, i) => (
-            <motion.g
-              key={i}
-              animate={{ x: [-20, 20, -20] }}
-              transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <ellipse 
-                cx={cloud.x} 
-                cy={cloud.y} 
-                rx={30 * cloud.scale} 
-                ry={20 * cloud.scale} 
-                fill="white" 
-                opacity="0.6"
-              />
-              <ellipse 
-                cx={cloud.x + 20 * cloud.scale} 
-                cy={cloud.y} 
-                rx={25 * cloud.scale} 
-                ry={18 * cloud.scale} 
-                fill="white" 
-                opacity="0.6"
-              />
-              <ellipse 
-                cx={cloud.x + 10 * cloud.scale} 
-                cy={cloud.y - 10 * cloud.scale} 
-                rx={20 * cloud.scale} 
-                ry={15 * cloud.scale} 
-                fill="white" 
-                opacity="0.6"
-              />
-            </motion.g>
-          ))}
-          
-          {/* Hot air balloon */}
+          {/* Success metrics cards */}
           <motion.g
-            animate={{ 
-              y: [-15, 15, -15],
-              x: [-5, 5, -5]
-            }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ y: [0, -10, 0], rotate: [-2, 2, -2] }}
+            transition={{ duration: 4, repeat: Infinity }}
+            style={{ transformOrigin: '200px 200px' }}
           >
-            {/* Balloon */}
-            <ellipse cx="200" cy="200" rx="80" ry="100" fill="#00D1C1" opacity="0.9"/>
-            <ellipse cx="180" cy="200" rx="30" ry="100" fill="#0B1220" opacity="0.2"/>
-            <ellipse cx="220" cy="200" rx="30" ry="100" fill="#FFD89C" opacity="0.3"/>
-            
-            {/* Basket */}
-            <rect x="180" y="310" width="40" height="35" rx="4" fill="#0B1220" opacity="0.8"/>
-            <line x1="180" y1="320" x2="220" y2="320" stroke="#F2E9DB" strokeWidth="1"/>
-            <line x1="180" y1="330" x2="220" y2="330" stroke="#F2E9DB" strokeWidth="1"/>
-            
-            {/* People in basket */}
-            <circle cx="190" cy="325" r="6" fill="#FFD89C"/>
-            <circle cx="210" cy="325" r="6" fill="#F2E9DB"/>
-            
-            {/* Ropes */}
-            <path d="M180 310 Q 170 280 180 200" stroke="#0B1220" strokeWidth="2" opacity="0.3"/>
-            <path d="M220 310 Q 230 280 220 200" stroke="#0B1220" strokeWidth="2" opacity="0.3"/>
-            
-            {/* Flag on top */}
-            <motion.g
-              animate={{ rotate: [0, 5, 0, -5, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              style={{ transformOrigin: '200px 100px' }}
-            >
-              <line x1="200" y1="100" x2="200" y2="130" stroke="#0B1220" strokeWidth="2"/>
-              <path d="M200 100 L230 110 L200 120 Z" fill="#00D1C1"/>
-            </motion.g>
+            <rect x="100" y="150" width="200" height="120" rx="16" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+            <rect x="120" y="180" width="160" height="60" rx="12" fill="#00D1C1" fillOpacity="0.1"/>
+            <text x="200" y="215" textAnchor="middle" fill="#00D1C1" fontSize="36" fontWeight="bold">+47%</text>
+            <text x="200" y="235" textAnchor="middle" fill="#64748B" fontSize="14">גידול בהכנסות</text>
           </motion.g>
           
-          {/* Sun */}
           <motion.g
-            animate={{ rotate: 360 }}
-            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: '350px 80px' }}
+            animate={{ y: [0, 8, 0], rotate: [2, -2, 2] }}
+            transition={{ duration: 5, repeat: Infinity }}
+            style={{ transformOrigin: '250px 320px' }}
           >
-            <circle cx="350" cy="80" r="35" fill="#FFD89C"/>
-            {[...Array(12)].map((_, i) => {
-              const angle = (i * 30) * Math.PI / 180;
-              return (
-                <line
-                  key={i}
-                  x1={350 + 45 * Math.cos(angle)}
-                  y1={80 + 45 * Math.sin(angle)}
-                  x2={350 + 55 * Math.cos(angle)}
-                  y2={80 + 55 * Math.sin(angle)}
-                  stroke="#FFD89C"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-              );
-            })}
+            <rect x="150" y="290" width="200" height="100" rx="16" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+            <circle cx="200" cy="340" r="25" fill="#00D1C1" fillOpacity="0.2"/>
+            <path d="M193 340 L198 345 L207 333" stroke="#00D1C1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            <text x="235" y="335" fill="#0B1220" fontSize="14" fontWeight="600">12 שעות</text>
+            <text x="235" y="352" fill="#64748B" fontSize="12">חיסכון שבועי</text>
           </motion.g>
           
-          {/* Birds */}
+          <motion.g
+            animate={{ y: [0, -5, 0], x: [0, 5, 0] }}
+            transition={{ duration: 6, repeat: Infinity }}
+          >
+            <rect x="50" y="90" width="140" height="80" rx="12" fill="white" stroke="#E2E8F0" strokeWidth="2"/>
+            <text x="120" y="120" textAnchor="middle" fill="#0B1220" fontSize="28" fontWeight="bold">98%</text>
+            <text x="120" y="145" textAnchor="middle" fill="#64748B" fontSize="12">שביעות רצון</text>
+            <rect x="80" y="155" width="80" height="4" rx="2" fill="#00D1C1"/>
+          </motion.g>
+          
+          {/* Floating elements */}
           {[...Array(5)].map((_, i) => (
-            <motion.path
+            <motion.circle
               key={i}
-              d="M0 0 Q -4 -2 -8 0 M0 0 Q 4 -2 8 0"
-              stroke="#0B1220"
-              strokeWidth="2"
-              strokeLinecap="round"
-              opacity="0.4"
-              animate={{ 
-                x: [-50 + i * 30, 450],
-                y: [150 + i * 20, 130 + i * 20]
-              }}
-              transition={{ 
-                duration: 12 + i,
-                delay: i * 2,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
-          ))}
-          
-          {/* Ground with grass */}
-          <ellipse cx="200" cy="480" rx="180" ry="30" fill="#00D1C1" opacity="0.2"/>
-          {[...Array(20)].map((_, i) => (
-            <motion.line
-              key={i}
-              x1={30 + i * 18}
-              y1={460}
-              x2={30 + i * 18}
-              y2={470}
-              stroke="#00D1C1"
-              strokeWidth="2"
-              strokeLinecap="round"
-              animate={{ 
-                y2: [470, 475, 470],
-                opacity: [0.3, 0.6, 0.3]
-              }}
-              transition={{ duration: 2, delay: i * 0.1, repeat: Infinity }}
-            />
-          ))}
-          
-          {/* Hearts floating up */}
-          {[...Array(3)].map((_, i) => (
-            <motion.path
-              key={i}
-              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              cx={100 + i * 60}
+              cy={50 + (i % 2) * 400}
+              r="4"
               fill="#00D1C1"
               opacity="0.3"
-              transform={`translate(${100 + i * 80}, ${350}) scale(0.6)`}
               animate={{ 
-                y: [0, -100],
-                opacity: [0.3, 0]
+                y: [-10, 10, -10],
+                opacity: [0.3, 0.6, 0.3]
               }}
-              transition={{ duration: 4, delay: i * 1.5, repeat: Infinity }}
+              transition={{ duration: 3, delay: i * 0.4, repeat: Infinity }}
             />
           ))}
         </svg>
