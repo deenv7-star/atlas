@@ -12,6 +12,7 @@ import PricingSection from '@/components/landing/PricingSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import BenefitsGrid from '@/components/landing/BenefitsGrid';
 import FeatureShowcase from '@/components/landing/FeatureShowcase';
+import CustomIllustration from '@/components/landing/CustomIllustration';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   CheckCircle2, 
@@ -60,22 +61,13 @@ export default function Landing() {
 
       <HeroSection onLoginClick={() => setShowLoginPopup(true)} />
 
-      {/* Solution Section with Illustration */}
+      {/* Solution Section with Custom Illustration */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="order-2 lg:order-1"
-            >
-              <img 
-                src="https://illustrations.popsy.co/amber/remote-work.svg" 
-                alt="Solution illustration"
-                className="w-full max-w-md mx-auto"
-              />
-            </motion.div>
+            <div className="order-2 lg:order-1">
+              <CustomIllustration type="solution" />
+            </div>
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -104,19 +96,12 @@ export default function Landing() {
       <BenefitsGrid />
       <FeatureShowcase />
 
-      {/* How It Works with Illustration */}
+      {/* How It Works with Custom Illustration */}
       <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
-            <motion.img 
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              src="https://illustrations.popsy.co/amber/working-vacation.svg" 
-              alt="How it works"
-              className="w-64 h-64 mx-auto mb-8"
-            />
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-4">
+            <CustomIllustration type="workflow" />
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-4 mt-8">
               איך זה עובד?
             </h2>
           </div>
@@ -185,7 +170,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Final CTA with Illustration */}
+      {/* Final CTA with Custom Illustration */}
       <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-5xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -207,14 +192,7 @@ export default function Landing() {
                 {t.startTrial}
               </Button>
             </motion.div>
-            <motion.img 
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              src="https://illustrations.popsy.co/amber/woman-online-shopping.svg" 
-              alt="Get started"
-              className="w-full max-w-md mx-auto"
-            />
+            <CustomIllustration type="cta" />
           </div>
         </div>
       </section>
