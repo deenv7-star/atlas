@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import AIAssistant from './pages/AIAssistant';
+import About from './pages/About';
 import Accessibility from './pages/Accessibility';
 import Automations from './pages/Automations';
 import Billing from './pages/Billing';
@@ -60,6 +61,7 @@ import DataSecurity from './pages/DataSecurity';
 import GuestService from './pages/GuestService';
 import Integrations from './pages/Integrations';
 import Invoices from './pages/Invoices';
+import Landing from './pages/Landing';
 import LeadDetail from './pages/LeadDetail';
 import Leads from './pages/Leads';
 import Messages from './pages/Messages';
@@ -71,13 +73,12 @@ import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
-import About from './pages/About';
-import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIAssistant": AIAssistant,
+    "About": About,
     "Accessibility": Accessibility,
     "Automations": Automations,
     "Billing": Billing,
@@ -90,6 +91,7 @@ export const PAGES = {
     "GuestService": GuestService,
     "Integrations": Integrations,
     "Invoices": Invoices,
+    "Landing": Landing,
     "LeadDetail": LeadDetail,
     "Leads": Leads,
     "Messages": Messages,
@@ -101,8 +103,6 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,
-    "About": About,
-    "Landing": Landing,
 }
 
 export const pagesConfig = {
