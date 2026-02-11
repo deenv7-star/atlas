@@ -1,14 +1,18 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft, Sparkles, Play } from 'lucide-react';
 import PhoneMockup from './PhoneMockup';
 
 export default function HeroSection({ onLoginClick }) {
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-gray-50 to-[#00D1C1]/5">
-      {/* Optimized Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Static Background */}
+      <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        
+        {/* Gradient Orbs - Static */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#00D1C1]/20 to-transparent rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-purple-400/10 to-transparent rounded-full blur-3xl" />
       </div>
@@ -16,15 +20,29 @@ export default function HeroSection({ onLoginClick }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00D1C1]/10 to-purple-500/10 border border-[#00D1C1]/20 rounded-full mb-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00D1C1]/10 to-purple-500/10 border border-[#00D1C1]/20 rounded-full mb-6"
+            >
               <Sparkles className="w-4 h-4 text-[#00D1C1]" />
               <span className="text-sm font-medium text-gray-700">פלטפורמת ניהול נכסים #1 בישראל</span>
-            </div>
+            </motion.div>
 
             {/* Main Heading */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
+            >
               <span className="bg-gradient-to-l from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 המערכת שתנהל
               </span>
@@ -32,16 +50,26 @@ export default function HeroSection({ onLoginClick }) {
               <span className="bg-gradient-to-l from-[#00D1C1] via-[#00B8A9] to-[#00D1C1] bg-clip-text text-transparent">
                 את הנכסים בשבילכם
               </span>
-            </h1>
+            </motion.h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-xl">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-xl"
+            >
               ניהול הזמנות, לידים, תשלומים וניקיון - 
               <span className="font-semibold text-gray-900"> כל מה שצריך במקום אחד</span>
-            </p>
+            </motion.p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-wrap gap-4"
+            >
               <Button
                 size="lg"
                 onClick={onLoginClick}
@@ -50,10 +78,24 @@ export default function HeroSection({ onLoginClick }) {
                 אני רוצה להתחיל
                 <ArrowLeft className="w-5 h-5 mr-2" />
               </Button>
-            </div>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')}
+                className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 hover:border-[#00D1C1] hover:bg-white text-lg px-10 py-7 font-semibold rounded-2xl transition-all"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                צפו בהדגמה
+              </Button>
+            </motion.div>
 
             {/* Trust Indicators */}
-            <div className="flex items-center gap-8 mt-12">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="flex items-center gap-8 mt-12"
+            >
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-2">
                   {[...Array(4)].map((_, i) => (
@@ -75,13 +117,18 @@ export default function HeroSection({ onLoginClick }) {
                 </div>
                 <div className="text-xs text-gray-500">דירוג ממוצע</div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Right - Phone Mockup */}
-          <div className="relative flex justify-center lg:justify-end">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative flex justify-center lg:justify-end"
+          >
             <PhoneMockup />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

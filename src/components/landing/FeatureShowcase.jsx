@@ -92,7 +92,15 @@ export default function FeatureShowcase() {
                 alt={features[activeFeature].title}
                 className="w-full h-[500px] object-cover"
               />
-              <div className={`absolute inset-0 bg-gradient-to-br ${features[activeFeature].color} opacity-20`} />
+              
+              {/* Overlay Info */}
+              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
+                <div className={`inline-block px-4 py-2 rounded-full bg-gradient-to-r ${features[activeFeature].color} mb-3`}>
+                  <span className="text-sm font-semibold text-white">תכונה מתקדמת</span>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">{features[activeFeature].title}</h3>
+                <p className="text-white/90">{features[activeFeature].description}</p>
+              </div>
             </div>
           </div>
         </div>
