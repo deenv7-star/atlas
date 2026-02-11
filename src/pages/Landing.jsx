@@ -216,6 +216,22 @@ export default function Landing() {
       {/* Features Grid */}
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.img 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              src="https://illustrations.popsy.co/amber/success.svg" 
+              alt="Features illustration"
+              className="w-48 h-48 mx-auto mb-8"
+            />
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-4">
+              כל מה שצריך במקום אחד
+            </h2>
+            <p className="text-xl text-gray-600">
+              פלטפורמה all-in-one שמשלבת את כל הכלים שצריכים לנהל נכסים בהצלחה
+            </p>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
               <motion.div
@@ -243,9 +259,19 @@ export default function Landing() {
       {/* How It Works */}
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
-            איך זה עובד?
-          </h2>
+          <div className="text-center mb-8">
+            <motion.img 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              src="https://illustrations.popsy.co/amber/working-vacation.svg" 
+              alt="How it works"
+              className="w-64 h-64 mx-auto mb-8"
+            />
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-4">
+              איך זה עובד?
+            </h2>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {t.howItWorks.map((step, i) => (
               <motion.div
@@ -395,25 +421,36 @@ export default function Landing() {
 
       {/* Final CTA */}
       <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              {t.finalCta}
-            </h2>
-            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
-            <Button 
-              size="lg" 
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center lg:text-right"
             >
-              {t.startTrial}
-              <ArrowLeft className="mr-2 h-5 w-5" />
-            </Button>
-          </motion.div>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                {t.finalCta}
+              </h2>
+              <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
+              <Button 
+                size="lg" 
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              >
+                {t.startTrial}
+                <ArrowLeft className="mr-2 h-5 w-5" />
+              </Button>
+            </motion.div>
+            <motion.img 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              src="https://illustrations.popsy.co/amber/woman-online-shopping.svg" 
+              alt="Get started"
+              className="w-full max-w-md mx-auto"
+            />
+          </div>
         </div>
       </section>
 
