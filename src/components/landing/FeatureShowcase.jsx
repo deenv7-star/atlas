@@ -88,8 +88,11 @@ export default function FeatureShowcase() {
           <div className="relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white transition-opacity duration-300">
               <img
-          
-              </div>
+                src={features[activeFeature].image}
+                alt={features[activeFeature].title}
+                className="w-full h-[500px] object-cover"
+              />
+              <div className={`absolute inset-0 bg-gradient-to-br ${features[activeFeature].color} opacity-20`} />
             </div>
           </div>
         </div>
