@@ -73,6 +73,7 @@ import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
+import UserAgreement from './pages/UserAgreement';
 import __Layout from './Layout.jsx';
 
 
@@ -103,6 +104,7 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,
+    "UserAgreement": UserAgreement,
 }
 
 export const pagesConfig = {

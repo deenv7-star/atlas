@@ -1,49 +1,53 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { motion } from 'framer-motion';
 import Logo from '@/components/common/Logo';
 import { Button } from '@/components/ui/button';
-import { Target, Users, Globe, Shield } from 'lucide-react';
+import { ArrowRight, Target, Users, Zap, Shield, Heart, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function About() {
   return (
-    <div dir="rtl" className="min-h-screen bg-white" style={{ fontFamily: "'Heebo', sans-serif" }}>
+    <div dir="rtl" className="min-h-screen bg-white">
       {/* Header */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
             <Logo variant="dark" />
             <Link to={createPageUrl('Landing')}>
-              <Button variant="ghost">חזרה לעמוד הראשי</Button>
+              <Button variant="ghost" className="gap-2">
+                <ArrowRight className="h-4 w-4" />
+                חזרה לדף הבית
+              </Button>
             </Link>
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
+            transition={{ duration: 0.6 }}
           >
-            מי אנחנו
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-xl text-gray-600 leading-relaxed"
-          >
-            ATLAS היא פלטפורמת ניהול נכסים מתקדמת, שפותחה מתוך חזון להנגיש כלי ניהול מקצועיים לכל בעלי נכסים להשכרה - לא רק לחברות גדולות או מתחמים ענק. הטכנולוגיה של ATLAS משלבת ניהול חכם עם אוטומציה מתקדמת, ומאפשרת קבלת החלטות מושכלות, שקופות ויעילות.
-          </motion.p>
+            <div className="inline-block px-4 py-2 bg-[#00D1C1]/10 rounded-full mb-6">
+              <span className="text-[#00D1C1] font-semibold text-sm">אודות ATLAS</span>
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold text-[#0B1220] mb-6">
+              המהפכה בניהול נכסים להשכרה
+            </h1>
+            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+              ATLAS נוצרה מתוך הבנה עמוקה של האתגרים שבעלי נכסים מתמודדים איתם יום יום. 
+              אנחנו כאן כדי להפוך את הניהול היומיומי לפשוט, יעיל ומדויק.
+            </p>
+          </motion.div>
         </div>
       </section>
 
       {/* Mission Section */}
-      <section className="py-20 px-4">
+      <section className="py-16 px-4 bg-[#F8FAFC]">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -51,24 +55,34 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Target className="w-16 h-16 text-[#00D1C1] mb-6" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">המשימה שלנו</h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                אנחנו ב-ATLAS מאמינים בניהול פשוט, יעיל ומבוסס טכנולוגיה. המשימה שלנו היא לאפשר לכל בעל נכס ליהנות ממערכת ניהול שבעבר הייתה שמורה רק לשחקנים גדולים - ולהפוך את ניהול הנכסים לפשוט, אוטומטי ושקוף.
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-[#00D1C1] rounded-xl flex items-center justify-center">
+                  <Target className="h-6 w-6 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold text-[#0B1220]">המשימה שלנו</h2>
+              </div>
+              <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                להפוך כל בעל נכס לבעל עסק מצליח ומקצועי, עם כלים שעד היום היו זמינים רק לשחקנים הגדולים בתעשייה.
               </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                המערכת שלנו מרכזת את כל תהליכי העבודה - מניהול לידים והזמנות, דרך ניהול תשלומים וניקיון, ועד לתקשורת עם האורחים - הכל במקום אחד.
+              <p className="text-lg text-gray-700 leading-relaxed">
+                אנחנו מאמינים שניהול נכסים צריך להיות פשוט, שקוף ויעיל - ללא קשר לגודל העסק או למספר הנכסים.
               </p>
             </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-br from-[#00D1C1]/10 to-purple-100 rounded-3xl p-12 flex items-center justify-center"
+              className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-8 text-white"
             >
-              <div className="text-center">
-                <div className="text-6xl font-bold text-[#00D1C1] mb-4">5,000+</div>
-                <div className="text-xl text-gray-700">נכסים מנוהלים</div>
+              <h3 className="text-2xl font-bold mb-6">החזון שלנו</h3>
+              <p className="text-lg leading-relaxed mb-6">
+                להיות הפלטפורמה המובילה לניהול נכסים בישראל, שמאפשרת לכל בעל נכס להתמקד במה שחשוב באמת - 
+                לספק חווית אירוח מעולה ולהגדיל את ההכנסות.
+              </p>
+              <div className="flex items-center gap-2 text-[#00D1C1] font-semibold">
+                <Zap className="h-5 w-5" />
+                <span>חדשנות ללא פשרות</span>
               </div>
             </motion.div>
           </div>
@@ -76,76 +90,117 @@ export default function About() {
       </section>
 
       {/* Values Section */}
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">הערכים שלנו</h2>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-[#0B1220] mb-4">הערכים שלנו</h2>
+            <p className="text-xl text-gray-600">העקרונות שמנחים אותנו בכל החלטה</p>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-2xl p-8"
-            >
-              <Users className="w-12 h-12 text-[#00D1C1] mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-3">מוקד בלקוח</h3>
-              <p className="text-gray-600">אנחנו מאמינים שכל בעל נכס ראוי לכלים מקצועיים שיעזרו לו לנהל את העסק בצורה הטובה ביותר.</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-2xl p-8"
-            >
-              <Shield className="w-12 h-12 text-[#00D1C1] mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-3">שקיפות מלאה</h3>
-              <p className="text-gray-600">כל המידע זמין ונגיש - אתם יודעים בדיוק מה קורה עם הנכסים שלכם בכל רגע נתון.</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl p-8"
-            >
-              <Globe className="w-12 h-12 text-[#00D1C1] mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-3">חדשנות מתמדת</h3>
-              <p className="text-gray-600">אנחנו משקיעים בפיתוח מתמיד כדי להבטיח שתמיד תהיה לכם הטכנולוגיה המתקדמת ביותר.</p>
-            </motion.div>
+            {[
+              {
+                icon: Users,
+                title: 'התמקדות בלקוח',
+                desc: 'הצרכים שלך בראש סדר העדיפויות. אנחנו מקשיבים, לומדים ומשתפרים כל הזמן.',
+                color: 'from-blue-400 to-blue-600'
+              },
+              {
+                icon: Shield,
+                title: 'אמינות ושקיפות',
+                desc: 'המידע שלך מאובטח, התהליכים שלנו ברורים, והתמיכה שלנו תמיד זמינה.',
+                color: 'from-green-400 to-green-600'
+              },
+              {
+                icon: TrendingUp,
+                title: 'צמיחה משותפת',
+                desc: 'ההצלחה שלך היא ההצלחה שלנו. אנחנו כאן כדי לראות אותך מצליח ומשגשג.',
+                color: 'from-[#00D1C1] to-[#00B8A9]'
+              }
+            ].map((value, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-lg transition-shadow"
+              >
+                <div className={`w-14 h-14 bg-gradient-to-br ${value.color} rounded-xl flex items-center justify-center mb-6`}>
+                  <value.icon className="h-7 w-7 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1220] mb-3">{value.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{value.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Problem & Solution */}
+      {/* Story Section */}
+      <section className="py-20 px-4 bg-[#F8FAFC]">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 bg-[#F2E9DB] rounded-xl flex items-center justify-center">
+                <Heart className="h-6 w-6 text-[#0B1220]" />
+              </div>
+              <h2 className="text-3xl font-bold text-[#0B1220]">הסיפור שלנו</h2>
+            </div>
+            
+            <div className="prose prose-lg max-w-none">
+              <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                ATLAS נוצרה מתוך צורך אמיתי. אחרי שנים של עבודה עם בעלי נכסים, ראינו את אותו דפוס חוזר על עצמו:
+                אנשים מוכשרים ומסורים שטבעים בניירת, אקסלים אינסופיים, והודעות וואטסאפ שאובדות בערבוביה.
+              </p>
+              
+              <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                הבנו שחייבת להיות דרך טובה יותר. דרך שמאפשרת לבעלי נכסים להתמקד במה שהם עושים הכי טוב -
+                ליצור חוויות אירוח מדהימות - ולהשאיר את כל השאר לטכנולוגיה.
+              </p>
+              
+              <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                היום, ATLAS משרתת מאות בעלי נכסים ברחבי הארץ, וכל יום אנחנו שמחים לראות איך המערכת שלנו 
+                משנה להם את החיים - חוסכת זמן, מונעת טעויות, ומאפשרת להם לצמוח.
+              </p>
+
+              <div className="bg-white border-r-4 border-[#00D1C1] rounded-lg p-6 mt-8">
+                <p className="text-xl font-semibold text-[#0B1220] italic">
+                  "הטכנולוגיה הטובה ביותר היא זו שעושה את החיים פשוטים יותר, לא מסובכים יותר."
+                </p>
+                <p className="text-gray-600 mt-3">- צוות ATLAS</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">הבעיה</h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                עולם ניהול הנכסים נשלט במשך שנים על ידי אקסלים מסורבלים, קבוצות וואטסאפ בלתי מסודרות וחוסר סנכרון בין מערכות שונות. רוב בעלי הנכסים לא באמת יודעים מה המצב האמיתי של הנכסים שלהם, כמה הזמנות יש, מה סטטוס התשלומים ומתי צריך ניקיון.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                התוצאה: זמן רב מבוזבז, טעויות אנוש, הזמנות כפולות, ואובדן הכנסות.
-              </p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">הפתרון</h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                ATLAS משנה את כללי המשחק: מערכת אחת מרכזית שמנהלת את כל התהליכים - מהליד הראשון ועד התשלום האחרון. אוטומציה חכמה שדואגת לכל הפרטים, יומן סנכרון שמונע הזמנות כפולות, וממשק אינטואיטיבי שמאפשר לכם לנהל הכל בלחיצת כפתור.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                התוצאה: חיסכון של 20+ שעות עבודה בשבוע, אפס טעויות, ושליטה מלאה בעסק.
-              </p>
-            </motion.div>
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              { number: '200+', label: 'לקוחות מרוצים' },
+              { number: '500+', label: 'נכסים מנוהלים' },
+              { number: '98%', label: 'שביעות רצון' },
+              { number: '24/7', label: 'תמיכה' }
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-center"
+              >
+                <div className="text-5xl font-bold text-[#00D1C1] mb-2">{stat.number}</div>
+                <div className="text-gray-600 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -153,40 +208,34 @@ export default function About() {
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            מוכנים להצטרף למהפכה?
-          </h2>
-          <p className="text-xl text-white/70 mb-8">
-            הצטרפו לאלפי בעלי נכסים שכבר מנהלים את העסק שלהם בחכמה
-          </p>
-          <Link to={createPageUrl('Landing')}>
-            <Button
-              size="lg"
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-            >
-              התחילו עכשיו
-            </Button>
-          </Link>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-white mb-6">
+              רוצים להצטרף למהפכה?
+            </h2>
+            <p className="text-xl text-white/80 mb-8">
+              בואו נראה ביחד איך ATLAS יכולה לשנות את הדרך שבה אתם מנהלים את הנכסים שלכם
+            </p>
+            <Link to={createPageUrl('Landing')}>
+              <Button 
+                size="lg" 
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
+              >
+                התחילו עכשיו
+              </Button>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Logo variant="light" />
-            <div className="flex gap-6 text-white/60 text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
-                מדיניות פרטיות
-              </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
-                תנאי שימוש
-              </Link>
-            </div>
-            <p className="text-white/40 text-sm">
-              © 2025 ATLAS. כל הזכויות שמורות
-            </p>
-          </div>
+      <footer className="py-8 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto text-center">
+          <Logo variant="dark" />
+          <p className="text-gray-500 mt-4">© 2024 ATLAS. כל הזכויות שמורות</p>
         </div>
       </footer>
     </div>
