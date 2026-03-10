@@ -176,7 +176,6 @@ export default function Layout({ children, currentPageName }) {
 
       <div className={cn(
         "transition-all duration-300",
-        "lg:mr-20 lg:mr-64",
         sidebarCollapsed ? "lg:mr-20" : "lg:mr-64"
       )}>
         <div style={{ paddingTop: 'env(safe-area-inset-top)' }}>

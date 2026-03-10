@@ -90,7 +90,11 @@ export default function IntegrationsPage() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    base44.auth.me().then(setUser);
+    let cancelled = false;
+    base44.auth.me()
+      .then(u => { if (!cancelled) setUser(u); })
+      .catch(err => console.error('Failed to fetch user in Integrations:', err));
+    return () => { cancelled = true; };
   }, []);
 
   const { data: properties = [] } = useQuery({

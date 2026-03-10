@@ -189,27 +189,31 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
   };
 
   const handleConvertToBooking = async (lead) => {
-    // Create a new booking from the lead
-    const booking = await base44.entities.Booking.create({
-      org_id: lead.org_id,
-      property_id: lead.property_id,
-      lead_id: lead.id,
-      guest_name: lead.name,
-      phone: lead.phone,
-      email: lead.email,
-      checkin_date: lead.desired_checkin_date,
-      checkout_date: lead.desired_checkout_date,
-      guests_count: lead.guests_count,
-      notes: lead.notes,
-      status: 'PENDING',
-      currency: 'ILS'
-    });
-    
-    // Update lead status to WON
-    await updateMutation.mutateAsync({ id: lead.id, data: { status: 'WON' } });
-    
-    // Navigate to booking
-    navigate(`${createPageUrl('Bookings')}?id=${booking.id}`);
+    try {
+      // Create a new booking from the lead
+      const booking = await base44.entities.Booking.create({
+        org_id: lead.org_id,
+        property_id: lead.property_id,
+        lead_id: lead.id,
+        guest_name: lead.name,
+        phone: lead.phone,
+        email: lead.email,
+        checkin_date: lead.desired_checkin_date,
+        checkout_date: lead.desired_checkout_date,
+        guests_count: lead.guests_count,
+        notes: lead.notes,
+        status: 'PENDING',
+        currency: 'ILS'
+      });
+
+      // Update lead status to WON
+      await updateMutation.mutateAsync({ id: lead.id, data: { status: 'WON' } });
+
+      // Navigate to booking
+      navigate(`${createPageUrl('Bookings')}?id=${booking.id}`);
+    } catch (error) {
+      console.error('Failed to convert lead to booking:', error);
+    }
   };
 
   const handleRefresh = async () => {
@@ -338,7 +342,7 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-sm text-gray-500">
-                    {format(parseISO(lead.created_date), 'd/M/yy', { locale: he })}
+                    {lead.created_date ? format(parseISO(lead.created_date), 'd/M/yy', { locale: he }) : '-'}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -496,7 +500,7 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
                     {sourceLabels[selectedLead.source]}
                   </span>
                 </div>
-                {selectedLead.desired_checkin_date && (
+                {selectedLead.desired_checkin_date && selectedLead.desired_checkout_date && (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">תאריכים רצויים</span>
                     <span>
@@ -512,7 +516,7 @@ export default function Leads({ user, selectedPropertyId, orgId, properties }) {
                 )}
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500">נוצר בתאריך</span>
-                  <span>{format(parseISO(selectedLead.created_date), 'd/M/yy', { locale: he })}</span>
+                  <span>{selectedLead.created_date ? format(parseISO(selectedLead.created_date), 'd/M/yy', { locale: he }) : '-'}</span>
                 </div>
               </div>
 
