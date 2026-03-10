@@ -331,18 +331,17 @@ export default function Messages({ user, selectedPropertyId, orgId, properties }
             <p className="text-sm text-gray-600 mb-3">שלח הודעות לאורחים קיימים במערכת או צור תבניות הודעות אוטומטיות שישלחו בזמנים מוגדרים (לפני כניסה, אחרי יציאה וכו').</p>
           </div>
           <div className="flex justify-end gap-3 mb-4">
-            <Button 
+            <Button
               variant="outline"
               onClick={() => {
-                const contact = prompt('הזן מספר טלפון או אימייל:');
-                if (!contact) return;
                 setNewMessage({
                   booking_id: '',
                   template_id: '',
-                  channel: contact.includes('@') ? 'EMAIL' : 'WHATSAPP',
-                  to_contact: contact,
+                  channel: 'WHATSAPP',
+                  to_contact: '',
                   body_text: ''
                 });
+                setSelectedBookingForMessage(null);
                 setIsSendDialogOpen(true);
               }}
               className="rounded-xl gap-2"
@@ -551,7 +550,7 @@ export default function Messages({ user, selectedPropertyId, orgId, properties }
                   <SelectValue placeholder="בחר תבנית" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={null}>ללא תבנית</SelectItem>
+                  <SelectItem value="">ללא תבנית</SelectItem>
                   {templates.map(template => (
                     <SelectItem key={template.id} value={template.id}>
                       {template.name}

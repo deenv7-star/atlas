@@ -75,7 +75,7 @@ export default function Bookings({ user, selectedPropertyId, orgId, properties }
         setSelectedBooking(booking);
       }
     }
-  }, []);
+  }, [bookings]);
 
   const [newBooking, setNewBooking] = useState({
     guest_name: '',
@@ -129,18 +129,19 @@ export default function Bookings({ user, selectedPropertyId, orgId, properties }
   // Check for double booking
   const checkDoubleBooking = (checkin, checkout, excludeId = null) => {
     if (!checkin || !checkout || !selectedPropertyId) return false;
-    
+
     const newCheckin = parseISO(checkin);
     const newCheckout = parseISO(checkout);
-    
+
     return bookings.some(booking => {
       if (booking.id === excludeId) return false;
       if (booking.status === 'CANCELLED') return false;
       if (booking.property_id !== selectedPropertyId) return false;
-      
+      if (!booking.checkin_date || !booking.checkout_date) return false;
+
       const existingCheckin = parseISO(booking.checkin_date);
       const existingCheckout = parseISO(booking.checkout_date);
-      
+
       // Check if ranges overlap
       return (newCheckin < existingCheckout && newCheckout > existingCheckin);
     });
@@ -171,10 +172,6 @@ export default function Bookings({ user, selectedPropertyId, orgId, properties }
 
   const handleRefresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ['bookings'] });
-  };
-
-  const handleBookingClick = (bookingId) => {
-    navigate(`${createPageUrl('Bookings')}/${bookingId}`);
   };
 
   return (

@@ -5,16 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  Users, 
-  CalendarDays, 
-  Wallet, 
+import {
+  Users,
+  CalendarDays,
+  Wallet,
   AlertCircle,
   ArrowUpLeft,
   ArrowDownRight,
   Sparkles,
   Plus,
-  Brain,
   AlertTriangle,
   TrendingUp,
   ChevronRight
@@ -255,9 +254,9 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                     <span className="text-2xl font-bold text-[#0B1220]">₪{paidThisMonth.toLocaleString()}</span>
                   </div>
                   <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                    <motion.div 
+                    <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: '65%' }}
+                      animate={{ width: `${Math.min(100, Math.round((paidThisMonth / Math.max(paidThisMonth + openBalances, 1)) * 100))}%` }}
                       transition={{ duration: 1, delay: 0.5 }}
                       className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
                     />

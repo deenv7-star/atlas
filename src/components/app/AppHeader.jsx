@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Building2, User, Settings, LogOut, Bell, Plus, Menu, ArrowRight, ArrowRightIcon } from 'lucide-react';
+import { Building2, User, Settings, LogOut, Bell, Menu, ArrowRightIcon } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
