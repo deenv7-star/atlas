@@ -144,10 +144,10 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
       {/* Command Center Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent">
             שלום, {user?.full_name?.split(' ')[0] || 'משתמש'}
           </h1>
-          <p className="text-gray-500 mt-1 font-medium">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
+          <p className="text-gray-600 mt-2 font-medium text-base">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
         </div>
         <Link to={createPageUrl('Bookings')} className="w-full sm:w-auto">
           <Button className="bg-gradient-to-l from-[#0B1220] to-[#1a2744] hover:opacity-90 text-white rounded-xl gap-2 w-full sm:w-auto h-11 shadow-lg hover:shadow-xl transition-all duration-200">
@@ -166,8 +166,8 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
               <AlertTriangle className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1">
-              <p className="font-bold text-[#0B1220]">דרושה תשומת לב</p>
-              <p className="text-sm text-gray-600 mt-0.5">
+              <p className="font-bold text-lg text-[#0B1220]">דרושה תשומת לב</p>
+              <p className="text-sm text-gray-600 mt-1 font-medium">
                 {overduePayments.length} תשלומים באיחור
               </p>
             </div>
@@ -209,8 +209,8 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                       <stat.icon className="h-5 w-5 text-white" />
                     </div>
                   </div>
-                  <p className="text-3xl md:text-4xl font-bold bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent mb-1">{stat.value}</p>
-                  <p className="text-xs font-medium text-gray-500">{stat.label}</p>
+                  <p className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent mb-2">{stat.value}</p>
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">{stat.label}</p>
                 </CardContent>
                 <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-l ${stat.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300`} />
               </Card>
@@ -225,9 +225,9 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
         <div className="space-y-6">
           <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-2xl overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white">
             <CardHeader className="pb-4 p-6 border-b border-gray-100">
-              <CardTitle className="font-bold flex items-center gap-2 text-lg">
+              <CardTitle className="font-bold flex items-center gap-2 text-xl">
                 <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-md">
-                  <TrendingUp className="h-4 w-4 text-white" />
+                  <TrendingUp className="h-5 w-5 text-white" />
                 </div>
                 ביצועים חודשיים
               </CardTitle>
@@ -243,8 +243,8 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                 <>
                   <div className="p-4 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-600">הכנסות החודש</span>
-                      <span className="text-2xl md:text-3xl font-bold bg-gradient-to-l from-green-600 to-emerald-600 bg-clip-text text-transparent">₪{paidThisMonth.toLocaleString()}</span>
+                      <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">הכנסות החודש</span>
+                      <span className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-l from-green-600 to-emerald-600 bg-clip-text text-transparent">₪{paidThisMonth.toLocaleString()}</span>
                     </div>
                     <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
                       <div
@@ -255,14 +255,14 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                   </div>
                   <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-600">יתרות פתוחות</span>
-                      <span className="text-xl md:text-2xl font-bold bg-gradient-to-l from-orange-600 to-amber-600 bg-clip-text text-transparent">₪{openBalances.toLocaleString()}</span>
+                      <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">יתרות פתוחות</span>
+                      <span className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-l from-orange-600 to-amber-600 bg-clip-text text-transparent">₪{openBalances.toLocaleString()}</span>
                     </div>
                   </div>
                   <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-100">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-600">תפוסה</span>
-                      <span className="text-2xl md:text-3xl font-bold bg-gradient-to-l from-cyan-600 to-blue-600 bg-clip-text text-transparent">{occupancyRate}%</span>
+                      <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">תפוסה</span>
+                      <span className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-l from-cyan-600 to-blue-600 bg-clip-text text-transparent">{occupancyRate}%</span>
                     </div>
                     <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
                       <div 
@@ -281,7 +281,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
         <div className="space-y-4 md:space-y-6">
           <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
             <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-white border-b border-green-100">
-              <CardTitle className="text-sm md:text-base font-bold flex items-center gap-2">
+              <CardTitle className="text-base md:text-lg font-bold flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-md">
                   <ArrowDownRight className="h-3.5 w-3.5 text-white" />
                 </div>
@@ -331,7 +331,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
 
           <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
             <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-orange-50 via-amber-50 to-white border-b border-orange-100">
-              <CardTitle className="text-sm md:text-base font-bold flex items-center gap-2">
+              <CardTitle className="text-base md:text-lg font-bold flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 shadow-md">
                   <ArrowUpLeft className="h-3.5 w-3.5 text-white" />
                 </div>
@@ -384,7 +384,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
           <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
             <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-cyan-50 via-blue-50 to-white border-b border-cyan-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm md:text-base font-bold flex items-center gap-2">
+                <CardTitle className="text-base md:text-lg font-bold flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 shadow-md">
                     <Sparkles className="h-3.5 w-3.5 text-white" />
                   </div>
@@ -442,7 +442,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
           <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
             <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-blue-50 via-indigo-50 to-white border-b border-blue-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm md:text-base font-bold flex items-center gap-2">
+                <CardTitle className="text-base md:text-lg font-bold flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-md">
                     <Users className="h-3.5 w-3.5 text-white" />
                   </div>
