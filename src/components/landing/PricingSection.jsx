@@ -44,7 +44,7 @@ export default function PricingSection({ onSelectPlan }) {
 
   return (
     <section className="py-28 relative overflow-hidden"
-             style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%)' }}>
+             style={{ background: '#ffffff' }}>
 
       {/* Background blobs */}
       <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full pointer-events-none"

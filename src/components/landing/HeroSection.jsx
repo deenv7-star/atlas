@@ -1,411 +1,447 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Play, Calendar, CreditCard, MessageSquare, TrendingUp, Star, Zap, Shield, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Play, Star, Shield, TrendingUp, Calendar, MessageSquare, CreditCard, CheckCircle2, Zap, Bell, Settings, LayoutDashboard, Users, Sparkles, FileText } from 'lucide-react';
 
-function DashboardPreview() {
+/* ─── Realistic App Screenshot Mockup ─────────────────────────── */
+function AppScreenshot() {
+  const bookings = [
+    { name: 'משפחת לוי', property: 'וילה ים', nights: '15-18 יול׳', status: 'מאושר', statusColor: '#10b981', statusBg: 'rgba(16,185,129,0.10)' },
+    { name: 'דני כהן', property: 'צימר גליל', nights: '20-23 יול׳', status: 'ממתין', statusColor: '#f59e0b', statusBg: 'rgba(245,158,11,0.10)' },
+    { name: 'שרה פרץ', property: 'וילה ים', nights: '25-28 יול׳', status: 'חדש', statusColor: '#6366f1', statusBg: 'rgba(99,102,241,0.10)' },
+    { name: 'מוטי אברהם', property: 'פנטהאוז TLV', nights: '1-4 אוג׳', status: 'מאושר', statusColor: '#10b981', statusBg: 'rgba(16,185,129,0.10)' },
+  ];
+
+  const messages = [
+    { from: 'דני כ.', text: 'האם יש חניה פרטית?', time: 'לפני 5 דק׳', color: '#6366f1', unread: true },
+    { from: 'שרה פ.', text: 'תודה רבה על האירוח!', time: 'לפני שעה', color: '#00D1C1', unread: false },
+    { from: 'מוטי א.', text: 'מה שעות הצ׳קאין?', time: 'לפני 2 שע׳', color: '#f97316', unread: false },
+  ];
+
+  const navItems = [
+    { icon: LayoutDashboard, label: 'לוח בקרה', active: true },
+    { icon: Calendar, label: 'הזמנות', active: false },
+    { icon: Users, label: 'לידים', active: false },
+    { icon: MessageSquare, label: 'הודעות', badge: 3, active: false },
+    { icon: CreditCard, label: 'תשלומים', active: false },
+    { icon: Sparkles, label: 'ניקיון', active: false },
+    { icon: FileText, label: 'חוזים', active: false },
+  ];
+
   return (
-    <div className="relative w-full h-full min-h-[480px] rounded-3xl overflow-hidden flex items-center justify-center p-5"
-         style={{
-           background: 'linear-gradient(145deg, #e8f4f8 0%, #daeef6 40%, #cce7f0 100%)',
-         }}>
-      {/* Layered glow blobs */}
-      <div className="absolute top-6 right-6 w-48 h-48 bg-[#00D1C1]/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-6 left-6 w-40 h-40 bg-indigo-400/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-32 bg-cyan-300/10 rounded-full blur-2xl pointer-events-none" />
+    <div style={{ display: 'flex', height: '100%', fontFamily: "'Assistant', 'Heebo', sans-serif", direction: 'rtl', background: '#F4F6FB', borderRadius: '16px', overflow: 'hidden' }}>
 
-      {/* Subtle grid pattern */}
-      <div className="absolute inset-0 opacity-30"
-           style={{
-             backgroundImage: 'linear-gradient(rgba(11,18,32,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(11,18,32,0.04) 1px, transparent 1px)',
-             backgroundSize: '24px 24px',
-           }} />
-
-      {/* Dashboard mockup */}
-      <div className="relative z-10 w-full space-y-3">
-        {/* Top stat row */}
-        <div className="grid grid-cols-2 gap-3">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="rounded-2xl p-4 border"
-            style={{
-              background: 'rgba(255,255,255,0.82)',
-              backdropFilter: 'blur(16px)',
-              borderColor: 'rgba(255,255,255,0.7)',
-              boxShadow: '0 4px 16px rgba(11,18,32,0.06), inset 0 1px 0 rgba(255,255,255,0.9)',
-            }}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] text-gray-500 font-medium">הכנסות החודש</span>
-              <div className="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center">
-                <TrendingUp className="h-3 w-3 text-emerald-500" />
-              </div>
-            </div>
-            <div className="text-xl font-bold text-gray-900 tracking-tight">₪24,800</div>
-            <div className="text-[11px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-1">
-              <span>↑</span> 18% מהחודש שעבר
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="rounded-2xl p-4"
-            style={{
-              background: 'linear-gradient(135deg, #0B1220 0%, #1a2744 100%)',
-              boxShadow: '0 4px 16px rgba(11,18,32,0.25), inset 0 1px 0 rgba(255,255,255,0.07)',
-            }}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] text-white/50 font-medium">הזמנות פעילות</span>
-              <div className="w-6 h-6 rounded-lg bg-[#00D1C1]/20 flex items-center justify-center">
-                <Calendar className="h-3 w-3 text-[#00D1C1]" />
-              </div>
-            </div>
-            <div className="text-xl font-bold text-white tracking-tight">14</div>
-            <div className="text-[11px] text-[#00D1C1] font-semibold mt-0.5">3 כניסות היום</div>
-          </motion.div>
+      {/* ── Sidebar ───────────────────────────────────── */}
+      <div style={{ width: '210px', flexShrink: 0, background: 'linear-gradient(180deg, #0B1220 0%, #0f1a2e 100%)', display: 'flex', flexDirection: 'column', padding: '0', borderLeft: '1px solid rgba(255,255,255,0.05)' }}>
+        {/* Logo row */}
+        <div style={{ padding: '18px 16px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'linear-gradient(135deg, #00D1C1, #00a8a0)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ color: '#0B1220', fontWeight: 900, fontSize: '12px' }}>A</span>
+          </div>
+          <span style={{ color: 'white', fontWeight: 800, fontSize: '15px', letterSpacing: '-0.01em' }}>ATLAS</span>
         </div>
 
-        {/* Booking list card */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="rounded-2xl p-4 border"
-          style={{
-            background: 'rgba(255,255,255,0.82)',
-            backdropFilter: 'blur(16px)',
-            borderColor: 'rgba(255,255,255,0.7)',
-            boxShadow: '0 4px 16px rgba(11,18,32,0.06), inset 0 1px 0 rgba(255,255,255,0.9)',
-          }}
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#00D1C1]" />
-            <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">הזמנות קרובות</span>
-          </div>
-          {[
-            { name: 'משפחת לוי', date: '15/7', status: 'מאושר', color: 'bg-emerald-50 text-emerald-700 border-emerald-100' },
-            { name: 'דני כהן', date: '16/7', status: 'ממתין', color: 'bg-amber-50 text-amber-700 border-amber-100' },
-          ].map((b, i) => (
-            <div key={i} className={`flex items-center justify-between py-2 ${i < 1 ? 'border-b border-gray-50' : ''}`}>
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-[#0B1220]"
-                     style={{ background: 'linear-gradient(135deg, rgba(0,209,193,0.25) 0%, rgba(99,102,241,0.20) 100%)' }}>
-                  {b.name[0]}
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-gray-800">{b.name}</div>
-                  <div className="text-[10px] text-gray-400">{b.date}</div>
-                </div>
-              </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${b.color}`}>{b.status}</span>
+        {/* Nav */}
+        <div style={{ padding: '12px 10px', flex: 1 }}>
+          {navItems.map((item, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', borderRadius: '10px', marginBottom: '2px',
+              background: item.active ? 'rgba(0,209,193,0.12)' : 'transparent',
+              cursor: 'default',
+            }}>
+              <item.icon size={14} style={{ color: item.active ? '#00D1C1' : 'rgba(255,255,255,0.38)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', fontWeight: 600, color: item.active ? '#00D1C1' : 'rgba(255,255,255,0.45)', flex: 1 }}>{item.label}</span>
+              {item.badge && (
+                <span style={{ background: '#00D1C1', color: '#0B1220', fontSize: '9px', fontWeight: 800, padding: '1px 5px', borderRadius: '10px' }}>{item.badge}</span>
+              )}
             </div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Bottom row */}
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { icon: MessageSquare, label: 'הודעות', val: '24', color: 'text-indigo-500', bg: 'bg-indigo-50' },
-            { icon: CreditCard, label: 'תשלומים', val: '₪8K', color: 'text-[#00D1C1]', bg: 'bg-[#00D1C1]/10' },
-            { icon: Star, label: 'ביקורות', val: '4.9', color: 'text-amber-500', bg: 'bg-amber-50' },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7 + i * 0.06 }}
-              className="rounded-xl p-3 text-center border"
-              style={{
-                background: 'rgba(255,255,255,0.82)',
-                backdropFilter: 'blur(16px)',
-                borderColor: 'rgba(255,255,255,0.7)',
-                boxShadow: '0 2px 8px rgba(11,18,32,0.05)',
-              }}
-            >
-              <div className={`w-7 h-7 rounded-lg ${item.bg} flex items-center justify-center mx-auto mb-1.5`}>
-                <item.icon className={`h-3.5 w-3.5 ${item.color}`} />
-              </div>
-              <div className="text-sm font-bold text-gray-900 tracking-tight">{item.val}</div>
-              <div className="text-[10px] text-gray-400 font-medium">{item.label}</div>
-            </motion.div>
-          ))}
+        {/* User strip */}
+        <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '26px', height: '26px', borderRadius: '8px', background: 'linear-gradient(135deg, #00D1C1, #6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ color: 'white', fontWeight: 700, fontSize: '10px' }}>י</span>
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.80)' }}>ישי כהן</div>
+            <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.30)' }}>מנהל נכסים</div>
+          </div>
+          <Settings size={12} style={{ color: 'rgba(255,255,255,0.25)' }} />
         </div>
       </div>
 
-      {/* Floating notification chip */}
-      <motion.div
-        initial={{ opacity: 0, x: 20, y: -10 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: 1.0, duration: 0.5 }}
-        className="absolute -top-3 -left-3 z-20"
-        style={{ animation: 'float 4s ease-in-out infinite' }}
-      >
-        <div className="flex items-center gap-2 px-3 py-2 rounded-2xl text-xs font-semibold text-white"
-             style={{
-               background: 'linear-gradient(135deg, #0B1220, #1a2744)',
-               boxShadow: '0 8px 24px rgba(11,18,32,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
-             }}>
-          <div className="w-4 h-4 rounded-full bg-[#00D1C1] flex items-center justify-center">
-            <CheckCircle className="w-2.5 h-2.5 text-[#0B1220]" />
-          </div>
-          הזמנה אושרה!
-        </div>
-      </motion.div>
+      {/* ── Main content ──────────────────────────────── */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#F8FAFF' }}>
 
-      {/* Floating metric badge */}
-      <motion.div
-        initial={{ opacity: 0, x: -20, y: 10 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: 1.1, duration: 0.5 }}
-        className="absolute -bottom-3 -right-3 z-20"
-        style={{ animation: 'float-slow 6s ease-in-out infinite' }}
-      >
-        <div className="flex items-center gap-2 px-3 py-2 rounded-2xl text-xs"
-             style={{
-               background: 'rgba(255,255,255,0.92)',
-               backdropFilter: 'blur(20px)',
-               border: '1px solid rgba(0,209,193,0.25)',
-               boxShadow: '0 8px 24px rgba(0,209,193,0.15)',
-             }}>
-          <div className="w-4 h-4 rounded-lg bg-[#00D1C1]/15 flex items-center justify-center">
-            <Zap className="w-2.5 h-2.5 text-[#00D1C1]" />
+        {/* Top header */}
+        <div style={{ background: 'rgba(255,255,255,0.95)', borderBottom: '1px solid rgba(226,232,240,0.8)', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backdropFilter: 'blur(12px)' }}>
+          <div>
+            <div style={{ fontSize: '14px', fontWeight: 800, color: '#0B1220', lineHeight: 1.2 }}>לוח בקרה</div>
+            <div style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 500 }}>יום שלישי, 15 יולי 2025</div>
           </div>
-          <span className="font-bold text-gray-900">+18%</span>
-          <span className="text-gray-400">הכנסות</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ position: 'relative' }}>
+              <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#F4F6FB', border: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Bell size={12} style={{ color: '#6b7280' }} />
+              </div>
+              <div style={{ position: 'absolute', top: '5px', right: '5px', width: '7px', height: '7px', borderRadius: '50%', background: '#00D1C1', border: '1.5px solid white' }} />
+            </div>
+            <div style={{ background: 'linear-gradient(135deg, #0B1220, #1a2744)', color: 'white', fontSize: '10px', fontWeight: 700, padding: '6px 12px', borderRadius: '8px', cursor: 'default' }}>
+              + הזמנה חדשה
+            </div>
+          </div>
         </div>
-      </motion.div>
+
+        {/* Content */}
+        <div style={{ flex: 1, padding: '16px 20px', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+          {/* Stats row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+            {[
+              { label: 'הכנסות החודש', value: '₪24,800', change: '↑ 18%', color: '#10b981', bg: 'rgba(16,185,129,0.08)', icon: TrendingUp },
+              { label: 'הזמנות פעילות', value: '14', change: '3 כניסות היום', color: '#6366f1', bg: 'rgba(99,102,241,0.08)', icon: Calendar },
+              { label: 'לידים חדשים', value: '28', change: '5 השבוע', color: '#f97316', bg: 'rgba(249,115,22,0.08)', icon: Users },
+              { label: 'דירוג ממוצע', value: '4.9★', change: '42 ביקורות', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', icon: Star },
+            ].map((s, i) => (
+              <div key={i} style={{ background: 'white', border: '1px solid rgba(226,232,240,0.9)', borderRadius: '12px', padding: '12px', boxShadow: '0 1px 4px rgba(11,18,32,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '9px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</span>
+                  <div style={{ width: '20px', height: '20px', borderRadius: '6px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <s.icon size={10} style={{ color: s.color }} />
+                  </div>
+                </div>
+                <div style={{ fontSize: '16px', fontWeight: 800, color: '#0B1220', lineHeight: 1, marginBottom: '4px', letterSpacing: '-0.02em' }}>{s.value}</div>
+                <div style={{ fontSize: '9px', color: s.color, fontWeight: 600 }}>{s.change}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Two-panel row */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '10px', flex: 1, overflow: 'hidden' }}>
+
+            {/* Bookings list */}
+            <div style={{ background: 'white', borderRadius: '12px', border: '1px solid rgba(226,232,240,0.9)', padding: '12px', boxShadow: '0 1px 4px rgba(11,18,32,0.04)', overflow: 'hidden' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#0B1220' }}>הזמנות קרובות</span>
+                <span style={{ fontSize: '9px', color: '#00D1C1', fontWeight: 600 }}>הצג הכל</span>
+              </div>
+              {bookings.map((b, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '7px 0', borderBottom: i < bookings.length - 1 ? '1px solid #f8fafc' : 'none' }}>
+                  <div style={{ width: '26px', height: '26px', borderRadius: '8px', background: 'linear-gradient(135deg, rgba(0,209,193,0.25), rgba(99,102,241,0.20))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: '#0B1220' }}>{b.name[0]}</span>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '11px', fontWeight: 600, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.name}</div>
+                    <div style={{ fontSize: '9px', color: '#9ca3af' }}>{b.property} · {b.nights}</div>
+                  </div>
+                  <span style={{ fontSize: '9px', padding: '2px 7px', borderRadius: '6px', fontWeight: 700, color: b.statusColor, background: b.statusBg, flexShrink: 0 }}>
+                    {b.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Messages */}
+            <div style={{ background: 'linear-gradient(145deg, #0B1220 0%, #162035 100%)', borderRadius: '12px', padding: '12px', boxShadow: '0 4px 16px rgba(11,18,32,0.15)', overflow: 'hidden', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '80px', height: '80px', background: 'radial-gradient(circle, rgba(0,209,193,0.15) 0%, transparent 70%)', borderRadius: '50%' }} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', position: 'relative', zIndex: 1 }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.85)' }}>הודעות</span>
+                <span style={{ fontSize: '9px', background: '#00D1C1', color: '#0B1220', padding: '1px 6px', borderRadius: '8px', fontWeight: 800 }}>3 חדשות</span>
+              </div>
+              {messages.map((m, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px', position: 'relative', zIndex: 1 }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '7px', background: m.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: '9px', fontWeight: 700, color: 'white' }}>{m.from[0]}</span>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.80)' }}>{m.from}</span>
+                      <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.28)' }}>{m.time}</span>
+                    </div>
+                    <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.48)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.text}</div>
+                  </div>
+                </div>
+              ))}
+              {/* Quick reply box */}
+              <div style={{ marginTop: '4px', background: 'rgba(255,255,255,0.07)', borderRadius: '8px', padding: '6px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
+                <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.28)' }}>כתבו תשובה...</span>
+                <div style={{ width: '18px', height: '18px', background: '#00D1C1', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ArrowLeft size={9} style={{ color: '#0B1220' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
+
+/* ─── Hero Section ──────────────────────────────────────────── */
 export default function HeroSection({ onLoginClick }) {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" dir="rtl"
-             style={{
-               background: 'linear-gradient(180deg, #f0f4fa 0%, #F4F6FB 60%, #eef2f9 100%)',
-             }}>
+    <section
+      dir="rtl"
+      className="relative overflow-hidden"
+      style={{ background: '#ffffff' }}
+    >
+      {/* ── Noise texture overlay ──────────────────────────── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          opacity: 0.035,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '200px 200px',
+        }}
+      />
 
-      {/* ── Layered background effects ──────────────────────── */}
+      {/* ── Gradient orbs ─────────────────────────────────── */}
+      <div className="absolute pointer-events-none" style={{ top: '-120px', right: '-80px', width: '700px', height: '700px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,209,193,0.13) 0%, transparent 65%)' }} />
+      <div className="absolute pointer-events-none" style={{ bottom: '-100px', left: '-80px', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, transparent 65%)' }} />
+      <div className="absolute pointer-events-none" style={{ top: '40%', left: '30%', width: '500px', height: '300px', background: 'radial-gradient(ellipse, rgba(0,209,193,0.05) 0%, transparent 70%)' }} />
 
-      {/* Animated grid */}
-      <div className="absolute inset-0 opacity-[0.35]"
-           style={{
-             backgroundImage: 'linear-gradient(rgba(11,18,32,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(11,18,32,0.06) 1px, transparent 1px)',
-             backgroundSize: '48px 48px',
-           }} />
+      {/* ── Dot grid ──────────────────────────────────────── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(11,18,32,0.07) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+          opacity: 1,
+          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%)',
+        }}
+      />
 
-      {/* Radial mesh gradients */}
-      <div className="absolute top-0 right-0 w-[900px] h-[700px] pointer-events-none"
-           style={{ background: 'radial-gradient(ellipse at 80% 0%, rgba(0,209,193,0.12) 0%, transparent 60%)' }} />
-      <div className="absolute bottom-0 left-0 w-[700px] h-[600px] pointer-events-none"
-           style={{ background: 'radial-gradient(ellipse at 20% 100%, rgba(99,102,241,0.09) 0%, transparent 55%)' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] pointer-events-none"
-           style={{ background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.05) 0%, transparent 70%)' }} />
+      {/* ── Content ───────────────────────────────────────── */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center" style={{ paddingTop: '130px', paddingBottom: '0' }}>
 
-      {/* Floating orb decorations */}
-      <div className="absolute top-32 right-16 w-3 h-3 rounded-full bg-[#00D1C1]/40 animate-pulse-glow" />
-      <div className="absolute top-64 right-48 w-2 h-2 rounded-full bg-indigo-400/50" />
-      <div className="absolute bottom-48 left-24 w-2.5 h-2.5 rounded-full bg-[#00D1C1]/30 animate-pulse" />
-      <div className="absolute top-48 left-36 w-1.5 h-1.5 rounded-full bg-purple-400/40" />
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 relative z-10 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-
-          {/* ── Text column ─────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-            className="order-1 lg:order-2"
-          >
-            {/* Pill badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-sm font-semibold text-gray-700 mb-7 border"
-              style={{
-                background: 'rgba(255,255,255,0.85)',
-                backdropFilter: 'blur(12px)',
-                borderColor: 'rgba(0,209,193,0.25)',
-                boxShadow: '0 2px 12px rgba(0,209,193,0.10), 0 1px 3px rgba(11,18,32,0.05)',
-              }}
-            >
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00D1C1] opacity-60"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00D1C1]"></span>
-              </span>
-              פלטפורמת ניהול נכסים #1 בישראל
-            </motion.div>
-
-            {/* Main heading */}
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="text-5xl md:text-6xl lg:text-[4.5rem] font-extrabold leading-[1.08] tracking-tight mb-6 text-[#0B1220]"
-            >
-              נהלו את הנכסים
-              <br />
-              <span style={{
-                background: 'linear-gradient(135deg, #00D1C1 0%, #0097a7 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}>
-                שלכם בחכמה
-              </span>
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-lg text-gray-500 leading-relaxed mb-9 max-w-md font-medium"
-            >
-              ניהול הזמנות, לידים, תשלומים וניקיון — כל מה שצריך כדי להפעיל נכסי נופש ברמה הגבוהה ביותר, במקום אחד.
-            </motion.p>
-
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.42 }}
-              className="flex flex-wrap gap-3 mb-12"
-            >
-              <Button
-                size="lg"
-                onClick={onLoginClick}
-                className="btn-premium text-white text-base px-8 h-12 font-bold rounded-2xl gap-2"
-                style={{
-                  background: 'linear-gradient(135deg, #0B1220 0%, #1a2744 100%)',
-                  boxShadow: '0 4px 20px rgba(11,18,32,0.3), 0 1px 3px rgba(11,18,32,0.2), inset 0 1px 0 rgba(255,255,255,0.08)',
-                }}
-              >
-                התחל עכשיו
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-gray-800 text-base px-7 h-12 font-semibold rounded-2xl transition-all gap-2.5 border hover:shadow-md"
-                style={{
-                  background: 'rgba(255,255,255,0.85)',
-                  backdropFilter: 'blur(12px)',
-                  borderColor: 'rgba(11,18,32,0.12)',
-                  boxShadow: '0 2px 8px rgba(11,18,32,0.06)',
-                }}
-              >
-                <div className="w-7 h-7 rounded-full flex items-center justify-center"
-                     style={{ background: 'linear-gradient(135deg, #0B1220, #1a2744)' }}>
-                  <Play className="w-3 h-3 text-white fill-white" style={{ marginRight: '-1px' }} />
-                </div>
-                צפו בהדגמה
-              </Button>
-            </motion.div>
-
-            {/* Trust strip */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.58 }}
-              className="flex flex-wrap items-center gap-6"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex -space-x-2.5">
-                  {[
-                    'linear-gradient(135deg, #4dd0e1, #00acc1)',
-                    'linear-gradient(135deg, #ce93d8, #ab47bc)',
-                    'linear-gradient(135deg, #ffcc80, #ffa726)',
-                    'linear-gradient(135deg, #90caf9, #42a5f5)',
-                  ].map((g, i) => (
-                    <div key={i} className="w-9 h-9 rounded-full border-2 border-white/80 shadow-sm"
-                         style={{ background: g }} />
-                  ))}
-                </div>
-                <div>
-                  <div className="text-sm font-extrabold text-[#0B1220]">+5,000</div>
-                  <div className="text-xs text-gray-400 font-medium">לקוחות מרוצים</div>
-                </div>
-              </div>
-
-              <div className="w-px h-10 bg-gray-200" />
-
-              <div>
-                <div className="flex items-center gap-0.5 mb-0.5">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-                </div>
-                <div className="text-xs text-gray-400 font-medium">דירוג 4.9/5 ממוצע</div>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-[#00D1C1]" />
-                <span className="text-xs text-gray-400 font-medium">מאובטח ומוגן</span>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* ── Visual column ────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 28, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.75, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            className="order-2 lg:order-1 relative"
-          >
-            {/* Glow behind card */}
-            <div className="absolute -inset-4 rounded-[2.5rem] pointer-events-none"
-                 style={{
-                   background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.15) 0%, transparent 70%)',
-                   filter: 'blur(24px)',
-                 }} />
-
-            {/* Main card wrapper */}
-            <div className="relative rounded-3xl p-1"
-                 style={{
-                   background: 'linear-gradient(135deg, rgba(0,209,193,0.25) 0%, rgba(255,255,255,0.4) 40%, rgba(99,102,241,0.15) 100%)',
-                   boxShadow: '0 24px 64px rgba(11,18,32,0.12), 0 8px 24px rgba(11,18,32,0.06)',
-                 }}>
-              <DashboardPreview />
-            </div>
-          </motion.div>
-        </div>
-
-        {/* ── Bottom stats strip ───────────────────────────── */}
+        {/* Pill badge */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.72 }}
-          className="mt-16 rounded-2xl p-1"
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full mb-8 cursor-default"
           style={{
-            background: 'linear-gradient(135deg, rgba(0,209,193,0.15) 0%, rgba(255,255,255,0.6) 50%, rgba(99,102,241,0.10) 100%)',
-            boxShadow: '0 4px 20px rgba(11,18,32,0.06)',
+            background: 'rgba(255,255,255,0.9)',
+            border: '1px solid rgba(0,209,193,0.30)',
+            boxShadow: '0 2px 16px rgba(0,209,193,0.12), 0 1px 3px rgba(11,18,32,0.06)',
+            backdropFilter: 'blur(12px)',
           }}
         >
-          <div className="rounded-2xl p-5"
-               style={{
-                 background: 'rgba(255,255,255,0.80)',
-                 backdropFilter: 'blur(20px)',
-               }}>
-            <div className="grid grid-cols-3 gap-4 divide-x divide-x-reverse divide-gray-100">
+          <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00D1C1] opacity-60" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00D1C1]" />
+          </span>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151', letterSpacing: '-0.01em' }}>
+            פלטפורמת ניהול נכסי נופש #1 בישראל
+          </span>
+        </motion.div>
+
+        {/* Main headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            fontSize: 'clamp(2.8rem, 7vw, 5.2rem)',
+            fontWeight: 900,
+            lineHeight: 1.02,
+            letterSpacing: '-0.04em',
+            color: '#0B1220',
+            marginBottom: '24px',
+          }}
+        >
+          ניהול נכסי נופש
+          <br />
+          <span style={{
+            background: 'linear-gradient(135deg, #00D1C1 0%, #0097a7 60%, #6366f1 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}>
+            בצורה חכמה יותר
+          </span>
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.22, duration: 0.6 }}
+          style={{ fontSize: '18px', color: '#6b7280', lineHeight: 1.65, maxWidth: '520px', margin: '0 auto 36px', fontWeight: 450 }}
+        >
+          הזמנות, לידים, תשלומים, ניקיון ותקשורת עם אורחים — הכל במקום אחד, על אוטומט.
+        </motion.p>
+
+        {/* CTA buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.32 }}
+          className="flex items-center justify-center gap-3 flex-wrap mb-12"
+        >
+          <button
+            onClick={onLoginClick}
+            className="btn-premium inline-flex items-center gap-2.5 text-white font-bold rounded-2xl"
+            style={{
+              background: 'linear-gradient(135deg, #0B1220 0%, #1e2d4a 100%)',
+              boxShadow: '0 4px 20px rgba(11,18,32,0.30), inset 0 1px 0 rgba(255,255,255,0.08)',
+              padding: '13px 28px',
+              fontSize: '15px',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            התחל בחינם
+            <ArrowLeft size={16} />
+          </button>
+          <button
+            className="inline-flex items-center gap-2.5 font-semibold rounded-2xl transition-all"
+            style={{
+              background: 'rgba(255,255,255,0.9)',
+              border: '1px solid rgba(11,18,32,0.10)',
+              boxShadow: '0 2px 10px rgba(11,18,32,0.06)',
+              padding: '13px 24px',
+              fontSize: '15px',
+              color: '#374151',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                 style={{ background: 'linear-gradient(135deg, #0B1220, #1e2d4a)' }}>
+              <Play size={10} className="text-white fill-white" style={{ marginRight: '-1px' }} />
+            </div>
+            צפו בהדגמה
+          </button>
+        </motion.div>
+
+        {/* Social proof strip */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.48 }}
+          className="flex items-center justify-center gap-8 flex-wrap mb-16"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex" style={{ gap: '-8px' }}>
               {[
-                { value: '87%', label: 'חיסכון בזמן ניהולי', sub: 'בממוצע ללקוח' },
-                { value: '25K+', label: 'הזמנות מנוהלות', sub: 'מדי חודש בפלטפורמה' },
-                { value: '56K', label: 'משתמשים הצטרפו', sub: 'ועוד מצטרפים כל יום' },
-              ].map((stat, i) => (
-                <div key={i} className="text-center px-4">
-                  <div className="text-2xl md:text-3xl font-extrabold text-[#0B1220] mb-0.5 tracking-tight">{stat.value}</div>
-                  <div className="text-sm font-semibold text-gray-700">{stat.label}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{stat.sub}</div>
-                </div>
+                'linear-gradient(135deg,#4dd0e1,#00acc1)',
+                'linear-gradient(135deg,#ce93d8,#ab47bc)',
+                'linear-gradient(135deg,#ffcc80,#ffa726)',
+                'linear-gradient(135deg,#90caf9,#42a5f5)',
+                'linear-gradient(135deg,#a5d6a7,#66bb6a)',
+              ].map((g, i) => (
+                <div key={i} className="rounded-full border-2 border-white shadow-sm"
+                     style={{ width: '32px', height: '32px', background: g, marginRight: i > 0 ? '-8px' : '0', zIndex: 5 - i }} />
               ))}
             </div>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 800, color: '#0B1220', lineHeight: 1 }}>+5,000</div>
+              <div style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 500 }}>לקוחות מרוצים</div>
+            </div>
+          </div>
+
+          <div className="h-8 w-px bg-gray-200" />
+
+          <div className="flex items-center gap-2">
+            <div className="flex gap-0.5">
+              {[...Array(5)].map((_, i) => <Star key={i} size={13} className="fill-amber-400 text-amber-400" />)}
+            </div>
+            <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 500 }}>דירוג 4.9 ממוצע</span>
+          </div>
+
+          <div className="h-8 w-px bg-gray-200" />
+
+          <div className="flex items-center gap-1.5">
+            <Shield size={14} style={{ color: '#00D1C1' }} />
+            <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 500 }}>אין צורך בכרטיס אשראי</span>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ── Full-width App Screenshot ──────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: 0.5, duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6"
+        style={{ paddingBottom: '0' }}
+      >
+        {/* Screenshot frame */}
+        <div
+          style={{
+            borderRadius: '20px 20px 0 0',
+            overflow: 'hidden',
+            boxShadow: '0 -2px 0 0 rgba(226,232,240,0.9), 0 -30px 60px rgba(11,18,32,0.10), 0 -8px 20px rgba(11,18,32,0.06)',
+            border: '1px solid rgba(226,232,240,0.9)',
+            borderBottom: 'none',
+            background: '#F4F6FB',
+          }}
+        >
+          {/* Browser chrome bar */}
+          <div style={{
+            background: 'rgba(248,250,252,0.98)',
+            borderBottom: '1px solid rgba(226,232,240,0.9)',
+            padding: '10px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {['#ff5f56', '#ffbd2e', '#27c93f'].map((c, i) => (
+                <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: c }} />
+              ))}
+            </div>
+            <div style={{ flex: 1, background: 'rgba(11,18,32,0.05)', borderRadius: '7px', padding: '4px 12px', fontSize: '11px', color: '#9ca3af', fontWeight: 500, textAlign: 'center' }}>
+              app.atlas.co.il/dashboard
+            </div>
+          </div>
+
+          {/* App UI */}
+          <div style={{ height: '420px' }}>
+            <AppScreenshot />
+          </div>
+        </div>
+
+        {/* Bottom fade-in gradient */}
+        <div style={{
+          height: '80px',
+          background: 'linear-gradient(to bottom, transparent, #ffffff)',
+          marginTop: '-1px',
+        }} />
+      </motion.div>
+
+      {/* ── Stats strip ───────────────────────────────────── */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pb-20" style={{ marginTop: '-20px' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.75 }}
+          style={{
+            background: 'rgba(255,255,255,0.95)',
+            border: '1px solid rgba(226,232,240,0.8)',
+            borderRadius: '20px',
+            padding: '20px 32px',
+            boxShadow: '0 4px 24px rgba(11,18,32,0.07), 0 1px 4px rgba(11,18,32,0.04)',
+            backdropFilter: 'blur(20px)',
+          }}
+        >
+          <div className="grid grid-cols-3 gap-4" style={{ borderRadius: 0 }}>
+            {[
+              { value: '87%', label: 'חיסכון בזמן ניהולי', sub: 'בממוצע ללקוח' },
+              { value: '25K+', label: 'הזמנות מנוהלות', sub: 'מדי חודש בפלטפורמה' },
+              { value: '4.9★', label: 'דירוג ממוצע', sub: 'מ-42 ביקורות מאומתות' },
+            ].map((stat, i) => (
+              <div key={i} className="text-center relative">
+                {i > 0 && (
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-10 bg-gray-100" />
+                )}
+                <div style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 900, color: '#0B1220', letterSpacing: '-0.03em', lineHeight: 1.1 }}>{stat.value}</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#374151', marginTop: '2px' }}>{stat.label}</div>
+                <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{stat.sub}</div>
+              </div>
+            ))}
           </div>
         </motion.div>
       </div>
