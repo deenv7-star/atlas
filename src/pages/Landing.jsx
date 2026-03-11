@@ -314,7 +314,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-3xl bg-[#0B1220] p-12 md:p-16 text-center
+            className="relative overflow-hidden rounded-3xl bg-[#0B1220] p-8 md:p-12 lg:p-16 text-center
               shadow-[0_32px_80px_rgba(11,18,32,0.22)]"
           >
             {/* Internal glow */}

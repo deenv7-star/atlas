@@ -35,7 +35,7 @@ export default function SupportChat() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 left-6 z-50 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden"
+            className="fixed bottom-24 left-4 sm:left-6 z-50 w-[min(320px,calc(100vw-2rem))] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden"
           >
             <div className="bg-gradient-to-r from-[#0B1220] to-[#1a2744] p-4">
               <h3 className="text-white font-bold text-lg">צריכים עזרה?</h3>

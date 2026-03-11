@@ -40,7 +40,7 @@ function DashboardVisual() {
         text="הזמנה חדשה!"
         sub="משפחת כהן — 3 לילות"
         iconBg="bg-gradient-to-br from-[#00D1C1] to-[#0070F3]"
-        className="-top-5 -right-3 md:right-6"
+        className="-top-5 right-0 sm:-right-3 md:right-6"
         delay={0.85}
       />
       <FloatingPill
@@ -48,7 +48,7 @@ function DashboardVisual() {
         text="תשלום התקבל"
         sub="₪1,200 אושר בהצלחה"
         iconBg="bg-gradient-to-br from-emerald-400 to-green-500"
-        className="-bottom-5 -left-3 md:left-6"
+        className="-bottom-5 left-0 sm:-left-3 md:left-6"
         delay={1.05}
       />
 
@@ -145,7 +145,7 @@ function DashboardVisual() {
           </motion.div>
 
           {/* Mini stats */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5">
             {[
               { icon: MessageSquare, label: 'הודעות', val: '24', c: 'text-violet-400', bg: 'bg-violet-500/12 border-violet-500/20' },
               { icon: CreditCard, label: 'תשלומים', val: '₪8K', c: 'text-[#00D1C1]', bg: 'bg-[#00D1C1]/12 border-[#00D1C1]/20' },
@@ -219,7 +219,7 @@ export default function HeroSection({ onLoginClick }) {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.18 }}
-              className="text-5xl md:text-6xl lg:text-[4.4rem] font-extrabold leading-[1.06] tracking-tight mb-6"
+              className="text-4xl md:text-5xl lg:text-[4.4rem] font-extrabold leading-[1.06] tracking-tight mb-6"
             >
               <span className="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent">
                 נהלו את הנכסים
@@ -265,6 +265,7 @@ export default function HeroSection({ onLoginClick }) {
               <Button
                 size="lg"
                 variant="outline"
+                onClick={onLoginClick}
                 className="group bg-white/80 backdrop-blur-sm border border-gray-200/80
                   hover:border-gray-300 hover:bg-white
                   text-gray-700 text-base px-8 h-12 font-semibold rounded-2xl gap-3
@@ -329,7 +330,7 @@ export default function HeroSection({ onLoginClick }) {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.75 }}
-          className="mt-20 grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-gray-200
+          className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-px overflow-hidden rounded-2xl border border-gray-200
             shadow-[0_2px_24px_rgba(0,0,0,0.06)]"
         >
           {[
