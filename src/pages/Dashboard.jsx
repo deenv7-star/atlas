@@ -189,7 +189,7 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
           { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, gradient: overduePayments.length > 0 ? 'from-red-500 to-rose-600' : 'from-gray-400 to-gray-500', link: 'Payments' }
         ].map((stat, i) => (
           <Link key={i} to={createPageUrl(stat.link)}>
-            <Card className="relative overflow-hidden border-0 bg-white shadow-md hover:shadow-xl transition-all duration-200 rounded-2xl cursor-pointer group">
+            <Card className="relative overflow-hidden border-0 bg-white shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 rounded-2xl cursor-pointer group">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-4">
                   <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
