@@ -5,447 +5,373 @@ import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
-import LoginPopup from '@/components/landing/LoginPopup';
-import SupportChat from '@/components/landing/SupportChat';
-import HeroSection from '@/components/landing/HeroSection';
-import PricingSection from '@/components/landing/PricingSection';
-import TestimonialsSection from '@/components/landing/TestimonialsSection';
-import BenefitsGrid from '@/components/landing/BenefitsGrid';
-import FeatureShowcase from '@/components/landing/FeatureShowcase';
-import CustomIllustration from '@/components/landing/CustomIllustration';
-import { CheckCircle2, ChevronDown, ChevronUp, ArrowLeft, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { 
+  CheckCircle2, 
+  Users, 
+  Calendar, 
+  CreditCard, 
+  Sparkles, 
+  MessageSquare, 
+  FileText,
+  ChevronDown,
+  ChevronUp,
+  ArrowLeft,
+  AlertCircle,
+  Inbox,
+  CalendarCheck,
+  Wallet,
+  Brush,
+  Send,
+  FileSignature,
+  Star
+} from 'lucide-react';
+// Removed framer-motion for performance
 
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-  const handleLogin = () => {
-    base44.auth.redirectToLogin(createPageUrl('Dashboard'));
-  };
-
-  const handleSelectPlan = () => {
-    setShowLoginPopup(true);
-  };
+  const features = [
+    { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
+    { icon: CalendarCheck, title: t.features[1].title, desc: t.features[1].desc },
+    { icon: Wallet, title: t.features[2].title, desc: t.features[2].desc },
+    { icon: Brush, title: t.features[3].title, desc: t.features[3].desc },
+    { icon: Send, title: t.features[4].title, desc: t.features[4].desc },
+    { icon: FileSignature, title: t.features[5].title, desc: t.features[5].desc }
+  ];
 
   return (
-    <div dir="rtl" className="min-h-screen" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif", background: '#F4F6FB' }}>
-
-      {/* ── NAV ──────────────────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-          <div className="flex items-center justify-between h-14 px-5 rounded-2xl"
-               style={{
-                 background: 'rgba(255,255,255,0.82)',
-                 backdropFilter: 'blur(20px)',
-                 WebkitBackdropFilter: 'blur(20px)',
-                 border: '1px solid rgba(255,255,255,0.6)',
-                 boxShadow: '0 4px 20px rgba(11,18,32,0.07), 0 1px 3px rgba(11,18,32,0.04)',
-               }}>
-
-            {/* Left: Logo */}
+    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
-
-            {/* Center: Pill nav links */}
-            <div className="hidden md:flex items-center gap-0.5 rounded-xl p-1"
-                 style={{
-                   background: 'rgba(244,246,251,0.9)',
-                   border: '1px solid rgba(226,232,240,0.8)',
-                 }}>
-              {[
-                { label: 'תכונות', href: '#features' },
-                { label: 'מחירים', href: '#pricing' },
-                { label: 'ביקורות', href: '#testimonials' },
-              ].map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-900 hover:bg-white transition-all"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-
-            {/* Right: CTAs */}
-            <div className="flex items-center gap-2">
-              <button
-                className="hidden sm:block text-gray-500 hover:text-gray-800 text-sm font-semibold px-3 py-1.5 rounded-xl transition-all hover:bg-gray-100"
-                onClick={() => setShowLoginPopup(true)}
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                className="text-[#0F172A]"
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
                 כניסה
-              </button>
-              <button
-                onClick={() => setShowLoginPopup(true)}
-                className="flex items-center gap-1.5 text-white text-sm font-bold px-4 py-2 rounded-xl transition-all"
-                style={{
-                  background: 'linear-gradient(135deg, #0B1220 0%, #1a2744 100%)',
-                  boxShadow: '0 2px 10px rgba(11,18,32,0.25)',
-                }}
+              </Button>
+              <Button 
+                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
-                התחל בחינם
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
+                {t.startTrial}
+              </Button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* ── HERO ─────────────────────────────────────────────────── */}
-      <HeroSection onLoginClick={() => setShowLoginPopup(true)} />
-
-      {/* ── BENEFITS GRID ────────────────────────────────────────── */}
-      <BenefitsGrid />
-
-      {/* ── SOLUTION SPLIT ───────────────────────────────────────── */}
-      <section id="features" className="py-24 relative overflow-hidden"
-               style={{ background: 'linear-gradient(180deg, #ffffff 0%, #fafbff 100%)' }}>
-
-        <div className="absolute top-0 left-0 w-[400px] h-[300px] pointer-events-none"
-             style={{ background: 'radial-gradient(ellipse at 0% 0%, rgba(0,209,193,0.06) 0%, transparent 60%)' }} />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-14 items-center">
-            {/* Illustration */}
-            <div className="order-2 lg:order-1">
-              <div className="relative rounded-3xl overflow-hidden p-1"
-                   style={{
-                     background: 'linear-gradient(135deg, rgba(0,209,193,0.20) 0%, rgba(255,255,255,0.4) 50%, rgba(99,102,241,0.12) 100%)',
-                     boxShadow: '0 16px 48px rgba(11,18,32,0.10), 0 4px 12px rgba(11,18,32,0.06)',
-                   }}>
-                <div className="rounded-[1.3rem] overflow-hidden">
-                  <CustomIllustration type="solution" />
-                </div>
-              </div>
-            </div>
-
-            {/* Text */}
-            <motion.div
-              initial={{ opacity: 0, x: 24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="order-1 lg:order-2"
-            >
-              <div className="section-label mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D1C1]" />
-                הפתרון שלנו
-              </div>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-[#0B1220] mb-5 leading-tight tracking-tight">
-                {t.solutionTitle}
-              </h2>
-              <p className="text-lg text-gray-500 mb-8 leading-relaxed font-medium">
-                {t.solutionText}
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="opacity-0 animate-fade-in">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
+                {t.heroTitle}
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                {t.heroSubtitle}
               </p>
-              <div className="flex flex-wrap gap-2.5">
-                {t.benefits.map((benefit, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-gray-700"
-                    style={{
-                      background: 'rgba(255,255,255,0.9)',
-                      backdropFilter: 'blur(12px)',
-                      border: '1px solid rgba(226,232,240,0.8)',
-                      boxShadow: '0 2px 8px rgba(11,18,32,0.05)',
-                    }}
-                  >
-                    <CheckCircle2 className="h-4 w-4 text-[#00D1C1] flex-shrink-0" />
-                    {benefit}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FEATURE SHOWCASE ─────────────────────────────────────── */}
-      <FeatureShowcase />
-
-      {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
-      <section className="py-28 relative overflow-hidden"
-               style={{ background: 'linear-gradient(180deg, #F4F6FB 0%, #eef2f9 100%)' }}>
-
-        <div className="absolute top-0 right-1/2 translate-x-1/2 w-[700px] h-[350px] pointer-events-none"
-             style={{ background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.08) 0%, transparent 65%)' }} />
-
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="section-label mb-5 mx-auto w-fit">
-              <Sparkles className="w-3 h-3" />
-              איך זה עובד?
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#0B1220] tracking-tight">
-              מוכנים תוך 15 דקות
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-5 relative">
-            {/* Dashed connector line */}
-            <div className="hidden md:block absolute top-10 right-[16.7%] left-[16.7%] h-px pointer-events-none"
-                 style={{ borderTop: '2px dashed rgba(0,209,193,0.25)' }} />
-
-            {t.howItWorks.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.2 } }}
-                className="relative z-10 rounded-3xl p-7 text-center cursor-default"
-                style={{
-                  background: 'rgba(255,255,255,0.88)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255,255,255,0.9)',
-                  boxShadow: '0 4px 20px rgba(11,18,32,0.06), inset 0 1px 0 rgba(255,255,255,0.9)',
-                }}
-              >
-                {/* Gradient top accent */}
-                <div className="absolute top-0 left-8 right-8 h-px rounded-b-full"
-                     style={{ background: 'linear-gradient(90deg, transparent, rgba(0,209,193,0.40), transparent)' }} />
-
-                <div className="w-14 h-14 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-xl font-extrabold"
-                     style={{
-                       background: 'linear-gradient(135deg, #0B1220 0%, #1a2744 100%)',
-                       boxShadow: '0 8px 24px rgba(11,18,32,0.22)',
-                     }}>
-                  {step.step}
-                </div>
-                <h3 className="text-lg font-extrabold text-[#0B1220] mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed font-medium">{step.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ─────────────────────────────────────────── */}
-      <div id="testimonials">
-        <TestimonialsSection />
-      </div>
-
-      {/* ── PRICING ──────────────────────────────────────────────── */}
-      <div id="pricing">
-        <PricingSection onSelectPlan={handleSelectPlan} />
-      </div>
-
-      {/* ── FAQ ──────────────────────────────────────────────────── */}
-      <section className="py-28 relative overflow-hidden"
-               style={{ background: 'linear-gradient(180deg, #f8f9ff 0%, #F4F6FB 100%)' }}>
-
-        <div className="absolute top-0 right-0 w-[400px] h-[300px] pointer-events-none"
-             style={{ background: 'radial-gradient(ellipse at 90% 0%, rgba(99,102,241,0.06) 0%, transparent 60%)' }} />
-
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-14"
-          >
-            <div className="section-label mb-5 mx-auto w-fit">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00D1C1]" />
-              שאלות נפוצות
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#0B1220] tracking-tight">
-              יש לכם שאלות?
-            </h2>
-          </motion.div>
-
-          <div className="space-y-3">
-            {t.faq.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04 }}
-              >
-                <div
-                  className="rounded-2xl overflow-hidden transition-all cursor-pointer"
-                  style={
-                    openFaq === i
-                      ? {
-                          background: 'rgba(255,255,255,0.95)',
-                          border: '1px solid rgba(0,209,193,0.25)',
-                          boxShadow: '0 8px 24px rgba(0,209,193,0.10), 0 2px 6px rgba(11,18,32,0.05)',
-                        }
-                      : {
-                          background: 'rgba(255,255,255,0.80)',
-                          backdropFilter: 'blur(12px)',
-                          border: '1px solid rgba(226,232,240,0.7)',
-                          boxShadow: '0 2px 8px rgba(11,18,32,0.04)',
-                        }
-                  }
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+              <div className="flex flex-wrap gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
+                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
                 >
-                  <div className="flex items-center justify-between p-5">
-                    <span className="font-bold text-[#0B1220] text-sm leading-relaxed">{item.q}</span>
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mr-4 transition-all"
-                         style={
-                           openFaq === i
-                             ? { background: 'rgba(0,209,193,0.15)', color: '#00D1C1' }
-                             : { background: 'rgba(226,232,240,0.8)', color: '#9ca3af' }
-                         }>
-                      {openFaq === i
-                        ? <ChevronUp className="h-3.5 w-3.5" />
-                        : <ChevronDown className="h-3.5 w-3.5" />}
+                  {t.startTrial}
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                </Button>
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
+                  {t.bookDemo}
+                </Button>
+              </div>
+            </div>
+            
+            <div className="relative opacity-0 animate-fade-in-delayed">
+              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
+                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
+                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
+                        <p className="text-sm text-gray-500">לידים חדשים</p>
+                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
+                      </div>
+                      <div className="bg-[#F2E9DB] rounded-xl p-4">
+                        <p className="text-sm text-gray-500">הזמנות החודש</p>
+                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl border p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="font-medium">כניסות היום</span>
+                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
+                      </div>
+                      <div className="space-y-2">
+                        {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
+                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
+                            <span>{item}</span>
+                            <span className="text-green-600">מאושר</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <AnimatePresence>
-                    {openFaq === i && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.22 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-5 pb-5 text-gray-500 leading-relaxed text-sm font-medium"
-                             style={{ borderTop: '1px solid rgba(226,232,240,0.7)', paddingTop: '1rem' }}>
-                          {item.a}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
-              </motion.div>
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
+              ✓ 0 הזמנות כפולות
+              </div>
+              </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem Section */}
+      <section className="py-20 px-4 bg-[#0B1220]">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="transition-opacity duration-300">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
+              {t.problemTitle}
+            </h2>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {t.problemBullets.map((bullet, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
+                  <span>{bullet}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="transition-opacity duration-300">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
+              {t.solutionTitle}
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              {t.solutionText}
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {t.benefits.map((benefit, i) => (
+                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
+                  {benefit}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-20 px-4 bg-[#F2E9DB]/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature, i) => (
+              <div key={i}>
+                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-all duration-200 bg-white rounded-2xl">
+                  <CardContent className="p-6">
+                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
+                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
+                    </div>
+                    <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
+                    <p className="text-gray-600">{feature.desc}</p>
+                  </CardContent>
+                </Card>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── FINAL CTA ────────────────────────────────────────────── */}
-      <section className="py-16 px-4"
-               style={{ background: '#F4F6FB' }}>
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative rounded-3xl p-10 md:p-16 text-center overflow-hidden"
-            style={{
-              background: 'linear-gradient(145deg, #0B1220 0%, #162035 100%)',
-              boxShadow: '0 24px 64px rgba(11,18,32,0.20), 0 8px 24px rgba(11,18,32,0.12)',
-              border: '1px solid rgba(255,255,255,0.05)',
-            }}
-          >
-            {/* Glow blobs */}
-            <div className="absolute top-0 right-1/4 w-80 h-40 pointer-events-none"
-                 style={{
-                   background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.18) 0%, transparent 65%)',
-                   filter: 'blur(32px)',
-                 }} />
-            <div className="absolute bottom-0 left-1/4 w-60 h-40 pointer-events-none"
-                 style={{
-                   background: 'radial-gradient(ellipse at center, rgba(99,102,241,0.12) 0%, transparent 65%)',
-                   filter: 'blur(32px)',
-                 }} />
-
-            {/* Dot grid overlay */}
-            <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
-                 style={{
-                   backgroundImage: 'radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px)',
-                   backgroundSize: '24px 24px',
-                 }} />
-
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold mb-6"
-                   style={{
-                     background: 'rgba(255,255,255,0.08)',
-                     border: '1px solid rgba(255,255,255,0.12)',
-                     color: 'rgba(255,255,255,0.65)',
-                   }}>
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00D1C1] opacity-60"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00D1C1]"></span>
-                </span>
-                תתחילו היום — בחינם
-              </div>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight tracking-tight">
-                {t.finalCta}
-              </h2>
-              <p className="text-lg mb-10 max-w-xl mx-auto font-medium"
-                 style={{ color: 'rgba(255,255,255,0.50)' }}>
-                {t.tagline}
-              </p>
-              <button
-                onClick={() => setShowLoginPopup(true)}
-                className="btn-premium inline-flex items-center gap-2.5 text-[#0B1220] font-bold px-10 h-13 text-base rounded-2xl"
-                style={{
-                  background: 'linear-gradient(135deg, #00D1C1 0%, #00a8a0 100%)',
-                  boxShadow: '0 8px 24px rgba(0,209,193,0.40)',
-                  paddingTop: '0.75rem',
-                  paddingBottom: '0.75rem',
-                }}
+      {/* How It Works */}
+      <section className="py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
+            איך זה עובד?
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {t.howItWorks.map((step, i) => (
+              <div
+                key={i}
+                className="text-center transition-opacity duration-300"
               >
-                {t.startTrial}
-                <ArrowLeft className="w-4 h-4" />
-              </button>
-            </div>
-          </motion.div>
+                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                  {step.step}
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                <p className="text-gray-600">{step.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────── */}
-      <footer className="py-10 px-4"
-              style={{ background: '#0B1220', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      {/* Testimonials */}
+      <section className="py-20 px-4 bg-[#0B1220]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
+            מה אומרים עלינו
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {t.testimonials.map((testimonial, i) => (
+              <div key={i}>
+                <Card className="h-full bg-white/5 border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-200">
+                  <CardContent className="p-6">
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(5)].map((_, j) => (
+                        <Star key={j} className="h-5 w-5 fill-[#00D1C1] text-[#00D1C1]" />
+                      ))}
+                    </div>
+                    <p className="text-white/90 mb-4 leading-relaxed">"{testimonial.text}"</p>
+                    <p className="text-[#00D1C1] font-medium">{testimonial.author}</p>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
+            תוכניות ומחירים
+          </h2>
+          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {Object.entries(t.pricing).map(([key, plan], i) => (
+              <div key={key}>
+                <Card className={`h-full rounded-2xl transition-all duration-200 hover:shadow-lg ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
+                  <CardContent className="p-6">
+                    {key === 'pro' && (
+                      <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">
+                        הכי פופולרי
+                      </span>
+                    )}
+                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{plan.name}</h3>
+                    <div className="mb-6">
+                      <span className="text-4xl font-bold text-[#0B1220]">₪{plan.price}</span>
+                      <span className="text-gray-500">/חודש</span>
+                    </div>
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, j) => (
+                        <li key={j} className="flex items-center gap-2 text-gray-600">
+                          <CheckCircle2 className="h-5 w-5 text-[#00D1C1] flex-shrink-0" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button 
+                      className={`w-full rounded-xl ${key === 'pro' 
+                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
+                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
+                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                    >
+                      {t.startTrial}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-20 px-4 bg-[#F2E9DB]/30">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
+            שאלות נפוצות
+          </h2>
+          <div className="space-y-4">
+            {t.faq.map((item, i) => (
+              <div key={i}>
+                <Card 
+                  className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-all duration-200 rounded-xl overflow-hidden"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                >
+                  <CardContent className="p-0">
+                    <div className="flex items-center justify-between p-4 bg-white">
+                      <span className="font-medium text-[#0B1220]">{item.q}</span>
+                      {openFaq === i ? (
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
+                      )}
+                    </div>
+                    {openFaq === i && (
+                      <div className="p-4 pt-0 bg-white text-gray-600">
+                        {item.a}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="transition-opacity duration-300">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              {t.finalCta}
+            </h2>
+            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
+            <Button 
+              size="lg" 
+              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+            >
+              {t.startTrial}
+              <ArrowLeft className="mr-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Logo variant="light" />
-
-            <div className="flex items-center gap-0.5 rounded-xl p-1"
-                 style={{
-                   background: 'rgba(255,255,255,0.04)',
-                   border: '1px solid rgba(255,255,255,0.07)',
-                 }}>
-              {[
-                { label: 'מחירים', href: '#pricing' },
-                { label: 'בלוג', href: '#' },
-                { label: 'פרטיות', to: createPageUrl('Privacy') },
-                { label: 'תנאים', to: createPageUrl('Terms') },
-              ].map((item) =>
-                item.to ? (
-                  <Link
-                    key={item.label}
-                    to={item.to}
-                    className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
-                    style={{ color: 'rgba(255,255,255,0.40)' }}
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
-                    style={{ color: 'rgba(255,255,255,0.40)' }}
-                  >
-                    {item.label}
-                  </a>
-                )
-              )}
+            <div className="flex gap-6 text-white/60 text-sm">
+              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
+                {t.privacyPolicy}
+              </Link>
+              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
+                {t.termsOfService}
+              </Link>
             </div>
-
-            <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>
-              © 2024 ATLAS. כל הזכויות שמורות.
+            <p className="text-white/40 text-sm">
+              © 2024 STAYFLOW. {t.allRightsReserved}
             </p>
           </div>
         </div>
       </footer>
-
-      <LoginPopup
-        isOpen={showLoginPopup}
-        onClose={() => setShowLoginPopup(false)}
-        onLogin={handleLogin}
-      />
-      <SupportChat />
     </div>
   );
 }
