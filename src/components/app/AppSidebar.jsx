@@ -158,14 +158,16 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout }) {
                           to={createPageUrl(item.page)}
                           title={collapsed ? item.label : undefined}
                           className={cn(
-                            "flex items-center gap-3 rounded-xl transition-all duration-150 group relative",
+                            "flex items-center gap-3 rounded-xl transition-all duration-200 group relative hover:bg-white/5",
                             collapsed ? "px-0 py-2.5 justify-center" : "px-3 py-2.5",
+                            isActive && "shadow-lg"
                           )}
                           style={
                             isActive
                               ? {
-                                  background: 'rgba(0,209,193,0.12)',
+                                  background: 'rgba(0,209,193,0.15)',
                                   color: '#00D1C1',
+                                  boxShadow: '0 0 20px rgba(0,209,193,0.2)',
                                 }
                               : {
                                   color: 'rgba(255,255,255,0.50)',
@@ -174,8 +176,11 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout }) {
                         >
                           {/* Active left bar */}
                           {isActive && !collapsed && (
-                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full"
-                                 style={{ background: '#00D1C1' }} />
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-full animate-pulse"
+                                 style={{ 
+                                   background: 'linear-gradient(180deg, #00D1C1 0%, #00B8A9 100%)',
+                                   boxShadow: '0 0 10px rgba(0,209,193,0.5)'
+                                 }} />
                           )}
 
                           {/* Icon */}
