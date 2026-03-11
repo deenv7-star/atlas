@@ -312,7 +312,19 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs md:text-sm text-gray-500 text-center py-3 md:py-4">אין כניסות ב-7 הימים הקרובים</p>
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center mx-auto mb-4">
+                    <CalendarDays className="h-8 w-8 text-green-600" />
+                  </div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">אין כניסות מתוכננות</p>
+                  <p className="text-xs text-gray-500 mb-4">ב-7 הימים הקרובים</p>
+                  <Link to={createPageUrl('Bookings')}>
+                    <Button size="sm" className="bg-gradient-to-l from-green-500 to-emerald-600 text-white rounded-lg">
+                      <Plus className="h-3.5 w-3.5 ml-1" />
+                      הוסף הזמנה
+                    </Button>
+                  </Link>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -350,7 +362,18 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs md:text-sm text-gray-500 text-center py-3 md:py-4">אין יציאות ב-7 הימים הקרובים</p>
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center mx-auto mb-4">
+                    <CalendarDays className="h-8 w-8 text-orange-600" />
+                  </div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">אין יציאות מתוכננות</p>
+                  <p className="text-xs text-gray-500 mb-4">ב-7 הימים הקרובים</p>
+                  <Link to={createPageUrl('Bookings')}>
+                    <Button size="sm" className="bg-gradient-to-l from-orange-500 to-amber-600 text-white rounded-lg">
+                      צפה בהזמנות
+                    </Button>
+                  </Link>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -400,7 +423,18 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs md:text-sm text-gray-500 text-center py-3 md:py-4">אין משימות ממתינות</p>
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center mx-auto mb-4">
+                    <Sparkles className="h-8 w-8 text-cyan-600" />
+                  </div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">כל הניקיונות בוצעו</p>
+                  <p className="text-xs text-gray-500 mb-4">אין משימות ממתינות</p>
+                  <Link to={createPageUrl('Cleaning')}>
+                    <Button size="sm" className="bg-gradient-to-l from-cyan-500 to-blue-600 text-white rounded-lg">
+                      נהל ניקיונות
+                    </Button>
+                  </Link>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -436,7 +470,19 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
                     </div>
                   ))}
                   {leads.filter(l => l.status === 'NEW').length === 0 && (
-                    <p className="text-xs md:text-sm text-gray-500 text-center py-3 md:py-4">אין לידים חדשים</p>
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center mx-auto mb-4">
+                        <Users className="h-8 w-8 text-blue-600" />
+                      </div>
+                      <p className="text-sm font-medium text-gray-700 mb-1">אין לידים חדשים</p>
+                      <p className="text-xs text-gray-500 mb-4">לידים חדשים יופיעו כאן</p>
+                      <Link to={createPageUrl('Leads')}>
+                        <Button size="sm" className="bg-gradient-to-l from-blue-500 to-indigo-600 text-white rounded-lg">
+                          <Plus className="h-3.5 w-3.5 ml-1" />
+                          הוסף ליד
+                        </Button>
+                      </Link>
+                    </div>
                   )}
                 </div>
               )}
