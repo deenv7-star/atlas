@@ -6,6 +6,7 @@ import { AnimatePresence } from 'framer-motion';
 import AppSidebar from '@/components/app/AppSidebar';
 import AppHeader from '@/components/app/AppHeader';
 import BottomTabs from '@/components/app/BottomTabs';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { cn } from '@/lib/utils';
 
 // Pages that don't need the app layout
@@ -96,7 +97,7 @@ export default function Layout({ children, currentPageName }) {
 
   // Public pages get no layout
   if (isPublicPage) {
-    return <>{children}</>;
+    return <ErrorBoundary>{children}</ErrorBoundary>;
   }
 
   // App layout
@@ -190,15 +191,17 @@ export default function Layout({ children, currentPageName }) {
         </div>
 
         <main className="p-3 sm:p-4 md:p-6 pb-20 lg:pb-6">
-          <AnimatePresence mode="wait" initial={false}>
-            {React.cloneElement(children, { 
-              key: location.pathname,
-              user, 
-              selectedPropertyId, 
-              properties,
-              orgId: user?.org_id 
-            })}
-          </AnimatePresence>
+          <ErrorBoundary>
+            <AnimatePresence mode="wait" initial={false}>
+              {React.cloneElement(children, { 
+                key: location.pathname,
+                user, 
+                selectedPropertyId, 
+                properties,
+                orgId: user?.org_id 
+              })}
+            </AnimatePresence>
+          </ErrorBoundary>
         </main>
       </div>
 

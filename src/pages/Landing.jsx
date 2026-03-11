@@ -48,6 +48,26 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
+            <div className="hidden md:flex items-center gap-6">
+              <button 
+                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
+              >
+                תכונות
+              </button>
+              <button 
+                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
+              >
+                מחירים
+              </button>
+              <button 
+                onClick={() => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
+              >
+                המלצות
+              </button>
+            </div>
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
@@ -76,10 +96,10 @@ export default function Landing() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-[#0B1220] leading-tight mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
                 {t.heroTitle}
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed font-medium">
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 {t.heroSubtitle}
               </p>
               <div className="flex flex-wrap gap-4">
@@ -157,7 +177,7 @@ export default function Landing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
               {t.problemTitle}
             </h2>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -180,10 +200,10 @@ export default function Landing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#0B1220] mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
               {t.solutionTitle}
             </h2>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 font-medium leading-relaxed">
+            <p className="text-xl text-gray-600 mb-8">
               {t.solutionText}
             </p>
             <div className="flex flex-wrap justify-center gap-3">
@@ -199,7 +219,7 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
+      <section id="features" className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
@@ -215,8 +235,8 @@ export default function Landing() {
                     <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
                       <feature.icon className="h-6 w-6 text-[#00D1C1]" />
                     </div>
-                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
+                    <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
+                    <p className="text-gray-600">{feature.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -228,7 +248,7 @@ export default function Landing() {
       {/* How It Works */}
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#0B1220] text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
             איך זה עובד?
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -244,8 +264,8 @@ export default function Landing() {
                 <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
                   {step.step}
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-[#0B1220] mb-3">{step.title}</h3>
-                <p className="text-base text-gray-600 leading-relaxed">{step.desc}</p>
+                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                <p className="text-gray-600">{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -253,9 +273,9 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-[#0B1220]">
+      <section id="testimonials" className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
             מה אומרים עלינו
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -285,12 +305,12 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="py-20 px-4">
+      <section id="pricing" className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#0B1220] text-center mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
             תוכניות ומחירים
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 text-center mb-12 font-medium">בחר את התוכנית המתאימה לך</p>
+          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
           
           <div className="grid md:grid-cols-3 gap-6">
             {Object.entries(t.pricing).map(([key, plan], i) => (
@@ -308,10 +328,10 @@ export default function Landing() {
                         הכי פופולרי
                       </span>
                     )}
-                    <h3 className="text-2xl font-bold text-[#0B1220] mb-3">{plan.name}</h3>
+                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{plan.name}</h3>
                     <div className="mb-6">
-                      <span className="text-5xl font-extrabold tracking-tight text-[#0B1220]">₪{plan.price}</span>
-                      <span className="text-gray-500 text-lg font-medium">/חודש</span>
+                      <span className="text-4xl font-bold text-[#0B1220]">₪{plan.price}</span>
+                      <span className="text-gray-500">/חודש</span>
                     </div>
                     <ul className="space-y-3 mb-6">
                       {plan.features.map((feature, j) => (
@@ -340,7 +360,7 @@ export default function Landing() {
       {/* FAQ */}
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#0B1220] text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
             שאלות נפוצות
           </h2>
           <div className="space-y-4">
@@ -358,7 +378,7 @@ export default function Landing() {
                 >
                   <CardContent className="p-0">
                     <div className="flex items-center justify-between p-4 bg-white">
-                      <span className="font-bold text-base text-[#0B1220]">{item.q}</span>
+                      <span className="font-medium text-[#0B1220]">{item.q}</span>
                       {openFaq === i ? (
                         <ChevronUp className="h-5 w-5 text-gray-400" />
                       ) : (
@@ -386,10 +406,10 @@ export default function Landing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               {t.finalCta}
             </h2>
-            <p className="text-xl md:text-2xl text-white/80 mb-8 font-medium">{t.tagline}</p>
+            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
