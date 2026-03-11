@@ -210,14 +210,15 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-2xl overflow-hidden group bg-gradient-to-br from-white via-gray-50 to-white">
                   <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-200">
+                      <feature.icon className="h-6 w-6 text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.desc}</p>
+                    <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
                   </CardContent>
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-l from-[#00D1C1] to-[#00B8A9] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
                 </Card>
               </motion.div>
             ))}
@@ -267,7 +268,7 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full bg-white/5 border-white/10 rounded-2xl">
+                <Card className="h-full bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/10 rounded-2xl hover:border-white/20 transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm">
                   <CardContent className="p-6">
                     <div className="flex gap-1 mb-4">
                       {[...Array(5)].map((_, j) => (
@@ -275,7 +276,7 @@ export default function Landing() {
                       ))}
                     </div>
                     <p className="text-white/90 mb-4 leading-relaxed">"{testimonial.text}"</p>
-                    <p className="text-[#00D1C1] font-medium">{testimonial.author}</p>
+                    <p className="text-[#00D1C1] font-bold">{testimonial.author}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -301,7 +302,11 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className={`h-full rounded-2xl ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
+                <Card className={`h-full rounded-2xl transition-all duration-200 ${
+                  key === 'pro' 
+                    ? 'border-2 border-[#00D1C1] shadow-2xl hover:shadow-[0_20px_60px_rgba(0,209,193,0.3)] bg-gradient-to-br from-white via-[#00D1C1]/5 to-white' 
+                    : 'border shadow-lg hover:shadow-xl bg-gradient-to-br from-white via-gray-50 to-white'
+                }`}>
                   <CardContent className="p-6">
                     {key === 'pro' && (
                       <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">
@@ -353,7 +358,7 @@ export default function Landing() {
                 transition={{ delay: i * 0.05 }}
               >
                 <Card 
-                  className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden"
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
                   <CardContent className="p-0">
