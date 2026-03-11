@@ -48,21 +48,41 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                className="text-[#0F172A]"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+            <div className="hidden md:flex items-center gap-8">
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('features');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
               >
-                כניסה
-              </Button>
-              <Button 
-                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                תכונות
+              </button>
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('pricing');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
               >
-                {t.startTrial}
-              </Button>
+                מחירים
+              </button>
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('testimonials');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
+              >
+                ביקורות
+              </button>
             </div>
+            <Button 
+              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+            >
+              כניסה
+            </Button>
           </div>
         </div>
       </nav>
@@ -199,7 +219,7 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
+      <section id="features" className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
@@ -253,7 +273,7 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-[#0B1220]">
+      <section id="testimonials" className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
             מה אומרים עלינו
@@ -285,7 +305,7 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="py-20 px-4">
+      <section id="pricing" className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
             תוכניות ומחירים
@@ -403,21 +423,133 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
+      <footer className="py-16 px-4 bg-[#0B1220] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Logo variant="light" />
-            <div className="flex gap-6 text-white/60 text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
-                {t.privacyPolicy}
-              </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
-                {t.termsOfService}
-              </Link>
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            {/* Company Info */}
+            <div className="space-y-4">
+              <Logo variant="light" size="md" />
+              <p className="text-white/60 text-sm leading-relaxed max-w-xs">
+                המערכת המתקדמת לניהול עסקי אירוח - הזמנות, תשלומים, תקשורת ואוטומציות במקום אחד.
+              </p>
             </div>
-            <p className="text-white/40 text-sm">
-              © 2026 ATLAS. כל הזכויות שמורות
-            </p>
+
+            {/* Quick Links */}
+            <div>
+              <h3 className="text-white font-bold mb-4">קישורים</h3>
+              <ul className="space-y-3">
+                <li>
+                  <button 
+                    onClick={() => {
+                      const el = document.getElementById('features');
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm"
+                  >
+                    תכונות
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => {
+                      const el = document.getElementById('pricing');
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm"
+                  >
+                    מחירים
+                  </button>
+                </li>
+                <li>
+                  <Link to={createPageUrl('About')} className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    אודות
+                  </Link>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => {
+                      const el = document.getElementById('testimonials');
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm"
+                  >
+                    ביצועים
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h3 className="text-white font-bold mb-4">החברה</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a href="#" className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    קריירה
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    בלוג
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    צור קשר
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h3 className="text-white font-bold mb-4">משפטי</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link to={createPageUrl('Privacy')} className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    פרטיות
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl('Terms')} className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    תנאי שימוש
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl('SLA')} className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    SLA
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl('Accessibility')} className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    נגישות
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl('DataSecurity')} className="text-white/60 hover:text-[#00D1C1] transition-colors text-sm">
+                    אבטחת מידע
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-white/10">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <p className="text-white/40 text-sm">
+                © 2026 ATLAS. כל הזכויות שמורות
+              </p>
+              <div className="flex items-center gap-4 text-white/40 text-sm">
+                <a href="mailto:support@stayflow.io" className="hover:text-[#00D1C1] transition-colors">
+                  support@stayflow.io
+                </a>
+                <span>•</span>
+                <a href="tel:+972501234567" className="hover:text-[#00D1C1] transition-colors">
+                  050-123-4567
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
