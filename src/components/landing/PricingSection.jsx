@@ -10,15 +10,15 @@ const plans = [
     price: 399,
     period: 'לחודש',
     description: 'לבעלי נכס אחד שמתחילים את הדרך',
-    features: ['מתחם אחד', 'ניהול לידים והזמנות', 'יומן בסיסי', 'תמיכה במייל', 'דוחות בסיסיים'],
+    features: [
+      'מתחם אחד',
+      'ניהול לידים והזמנות',
+      'יומן בסיסי',
+      'תמיכה במייל',
+      'דוחות בסיסיים',
+    ],
     popular: false,
-    style: {
-      card: 'bg-white border border-gray-100',
-      icon: 'bg-gray-100 text-gray-600',
-      badge: '',
-      btn: 'bg-[#0B1220] hover:bg-[#1a2744] text-white',
-      check: 'text-gray-400',
-    },
+    type: 'light',
   },
   {
     name: 'מקצועי',
@@ -26,15 +26,17 @@ const plans = [
     price: 699,
     period: 'לחודש',
     description: 'הכי פופולרי — לבעלי 2-5 מתחמים',
-    features: ['2-5 מתחמים', 'הודעות אוטומטיות', 'ניהול ניקיון', 'חוזים דיגיטליים', "תמיכה בצ'אט", 'דוחות מתקדמים', 'כל תכונות בסיסי'],
+    features: [
+      '2-5 מתחמים',
+      'הודעות אוטומטיות',
+      'ניהול ניקיון',
+      'חוזים דיגיטליים',
+      "תמיכה בצ'אט",
+      'דוחות מתקדמים',
+      'כל תכונות בסיסי',
+    ],
     popular: true,
-    style: {
-      card: 'bg-[#0B1220] border border-[#0B1220]',
-      icon: 'bg-[#00D1C1]/15 text-[#00D1C1]',
-      badge: 'bg-[#00D1C1] text-[#0B1220]',
-      btn: 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]',
-      check: 'text-[#00D1C1]',
-    },
+    type: 'dark',
   },
   {
     name: 'עסקי',
@@ -42,59 +44,71 @@ const plans = [
     price: null,
     period: 'מותאם אישית',
     description: 'לרשתות ונכסים בהיקף גדול',
-    features: ['5+ מתחמים', 'אינטגרציות מתקדמות', 'אוטומציות מלאות', 'עדיפות בתמיכה', 'הדרכה אישית', 'כל תכונות מקצועי'],
+    features: [
+      '5+ מתחמים',
+      'אינטגרציות מתקדמות',
+      'אוטומציות מלאות',
+      'עדיפות בתמיכה',
+      'הדרכה אישית',
+      'כל תכונות מקצועי',
+    ],
     popular: false,
-    style: {
-      card: 'bg-white border border-gray-100',
-      icon: 'bg-purple-100 text-purple-600',
-      badge: '',
-      btn: 'bg-[#0B1220] hover:bg-[#1a2744] text-white',
-      check: 'text-gray-400',
-    },
+    type: 'light',
   },
 ];
 
 export default function PricingSection({ onSelectPlan }) {
-  const [billingPeriod, setBillingPeriod] = useState('monthly');
+  const [billing, setBilling] = useState('monthly');
 
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
+    <section className="py-28 bg-white relative overflow-hidden">
       {/* Background orbs */}
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#00D1C1]/8 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-400/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-[#00D1C1]/7 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-violet-400/6 rounded-full blur-3xl" />
+      </div>
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-14"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#F4F6FB] border border-gray-200 rounded-full text-xs font-medium text-gray-600 mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5
+            bg-[#F7F8FD] rounded-full border border-gray-200/80
+            shadow-[0_2px_10px_rgba(0,0,0,0.05)]
+            text-xs font-semibold text-gray-600 mb-5"
+          >
             <span className="w-1.5 h-1.5 rounded-full bg-[#00D1C1]" />
             תוכניות ומחירים
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            השקעה שמחזירה את עצמה
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+            <span className="bg-gradient-to-b from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              השקעה שמחזירה את עצמה
+            </span>
           </h2>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto mb-8">
+          <p className="text-lg text-gray-400 max-w-xl mx-auto mb-10">
             בחרו את התוכנית המתאימה למספר המתחמים שלכם
           </p>
 
           {/* Billing toggle */}
-          <div className="inline-flex items-center gap-1 p-1 bg-[#F4F6FB] rounded-2xl border border-gray-200">
+          <div className="inline-flex items-center gap-1 p-1 bg-[#F7F8FD] rounded-2xl border border-gray-200/80
+            shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+          >
             {[
               { key: 'monthly', label: 'חיוב חודשי' },
               { key: 'yearly', label: 'חיוב שנתי' },
             ].map((opt) => (
               <button
                 key={opt.key}
-                onClick={() => setBillingPeriod(opt.key)}
-                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all ${
-                  billingPeriod === opt.key
-                    ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                    : 'text-gray-500 hover:text-gray-700'
+                onClick={() => setBilling(opt.key)}
+                className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  billing === opt.key
+                    ? 'bg-white text-gray-900 shadow-[0_2px_8px_rgba(0,0,0,0.09)] border border-gray-200/60'
+                    : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
                 {opt.label}
@@ -108,75 +122,122 @@ export default function PricingSection({ onSelectPlan }) {
           </div>
         </motion.div>
 
-        {/* Pricing cards */}
+        {/* Cards */}
         <div className="grid md:grid-cols-3 gap-5 items-start">
-          {plans.map((plan, index) => (
+          {plans.map((plan, i) => (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 40 }}
+              key={i}
+              initial={{ opacity: 0, y: 36 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -6, transition: { duration: 0.2 } }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -8, transition: { type: 'spring', stiffness: 280, damping: 24 } }}
               className="relative"
             >
+              {/* Popular badge */}
               {plan.popular && (
                 <div className="absolute -top-4 inset-x-0 flex justify-center z-10">
-                  <span className={`px-5 py-1.5 text-xs font-bold rounded-full shadow-lg ${plan.style.badge}`}>
-                    פופולרי ביותר
+                  <span className="px-5 py-1.5 bg-gradient-to-r from-[#00D1C1] to-[#0090a8] text-white text-xs font-bold rounded-full
+                    shadow-[0_4px_16px_rgba(0,209,193,0.4)]">
+                    פופולרי ביותר ✦
                   </span>
                 </div>
               )}
 
-              <div className={`rounded-3xl p-7 shadow-sm hover:shadow-xl transition-all ${plan.style.card} ${plan.popular ? 'mt-4' : ''}`}>
-                {/* Icon + name */}
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 ${plan.style.icon}`}>
-                  <plan.icon className="w-5 h-5" />
-                </div>
+              <div className={`relative rounded-3xl p-7 overflow-hidden transition-shadow duration-300 ${
+                plan.type === 'dark'
+                  ? `bg-[#0B1220] mt-4
+                    shadow-[0_24px_64px_rgba(11,18,32,0.22),0_0_0_1px_rgba(0,209,193,0.15)]
+                    hover:shadow-[0_32px_80px_rgba(11,18,32,0.28),0_0_0_1px_rgba(0,209,193,0.25)]`
+                  : `bg-white/80 backdrop-blur-xl border border-white/90
+                    shadow-[0_4px_24px_rgba(0,0,0,0.07)]
+                    hover:shadow-[0_20px_56px_rgba(0,0,0,0.11)]`
+              }`}>
+                {/* Dark card internal glow blobs */}
+                {plan.type === 'dark' && (
+                  <>
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-[#00D1C1]/12 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+                  </>
+                )}
 
-                <h3 className={`text-xl font-bold mb-1 ${plan.popular ? 'text-white' : 'text-gray-900'}`}>{plan.name}</h3>
-                <p className={`text-sm mb-6 ${plan.popular ? 'text-white/60' : 'text-gray-500'}`}>{plan.description}</p>
+                {/* Subtle inner top highlight for glass cards */}
+                {plan.type === 'light' && (
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent rounded-t-3xl" />
+                )}
 
-                {/* Price */}
-                <div className="mb-7">
-                  {plan.price ? (
-                    <>
-                      <div className="flex items-baseline gap-1">
-                        <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-gray-900'}`}>
-                          ₪{billingPeriod === 'yearly' ? Math.round(plan.price * 0.8) : plan.price}
+                <div className="relative z-10">
+                  {/* Icon */}
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 shadow-sm ${
+                    plan.type === 'dark'
+                      ? 'bg-[#00D1C1]/15 shadow-[0_0_20px_rgba(0,209,193,0.2)]'
+                      : 'bg-gradient-to-br from-gray-100 to-gray-200'
+                  }`}>
+                    <plan.icon className={`w-5 h-5 ${plan.type === 'dark' ? 'text-[#00D1C1]' : 'text-gray-600'}`} />
+                  </div>
+
+                  {/* Name + desc */}
+                  <h3 className={`text-xl font-bold mb-1 ${plan.type === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    {plan.name}
+                  </h3>
+                  <p className={`text-sm mb-7 ${plan.type === 'dark' ? 'text-white/50' : 'text-gray-400'}`}>
+                    {plan.description}
+                  </p>
+
+                  {/* Price */}
+                  <div className="mb-7">
+                    {plan.price ? (
+                      <>
+                        <div className="flex items-baseline gap-1.5 mb-1">
+                          <span className={`text-4xl font-black leading-none ${plan.type === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            ₪{billing === 'yearly' ? Math.round(plan.price * 0.8) : plan.price}
+                          </span>
+                          <span className={`text-sm ${plan.type === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>
+                            {plan.period}
+                          </span>
+                        </div>
+                        {billing === 'yearly' && (
+                          <p className="text-xs text-emerald-500 font-semibold">
+                            חסכו ₪{Math.round(plan.price * 0.2 * 12)} בשנה
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <p className={`text-2xl font-bold ${plan.type === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        יצירת קשר
+                      </p>
+                    )}
+                  </div>
+
+                  {/* CTA */}
+                  <Button
+                    onClick={onSelectPlan}
+                    className={`w-full h-11 rounded-2xl font-semibold mb-7 transition-all ${
+                      plan.type === 'dark'
+                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] shadow-[0_4px_20px_rgba(0,209,193,0.35)] hover:shadow-[0_8px_28px_rgba(0,209,193,0.45)]'
+                        : 'bg-[#0B1220] hover:bg-[#161f36] text-white shadow-[0_4px_16px_rgba(11,18,32,0.2)] hover:shadow-[0_8px_24px_rgba(11,18,32,0.28)]'
+                    }`}
+                  >
+                    {plan.price ? 'התחל עכשיו' : 'צרו קשר'}
+                  </Button>
+
+                  {/* Divider */}
+                  <div className={`h-px mb-6 ${plan.type === 'dark' ? 'bg-white/8' : 'bg-gray-100'}`} />
+
+                  {/* Features */}
+                  <ul className="space-y-3">
+                    {plan.features.map((feat, j) => (
+                      <li key={j} className="flex items-start gap-2.5 text-sm">
+                        <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
+                          plan.type === 'dark' ? 'text-[#00D1C1]' : 'text-gray-400'
+                        }`} />
+                        <span className={plan.type === 'dark' ? 'text-white/70' : 'text-gray-600'}>
+                          {feat}
                         </span>
-                        <span className={`text-sm ${plan.popular ? 'text-white/50' : 'text-gray-400'}`}>{plan.period}</span>
-                      </div>
-                      {billingPeriod === 'yearly' && (
-                        <p className="text-xs text-emerald-500 font-medium mt-1">
-                          חסכו ₪{Math.round(plan.price * 0.2 * 12)} בשנה
-                        </p>
-                      )}
-                    </>
-                  ) : (
-                    <div className={`text-2xl font-bold ${plan.popular ? 'text-white' : 'text-gray-900'}`}>
-                      יצירת קשר
-                    </div>
-                  )}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-
-                {/* CTA */}
-                <Button
-                  onClick={onSelectPlan}
-                  className={`w-full h-11 rounded-2xl font-semibold mb-7 shadow-sm ${plan.style.btn}`}
-                >
-                  {plan.price ? 'התחל עכשיו' : 'צרו קשר'}
-                </Button>
-
-                {/* Feature list */}
-                <ul className="space-y-3">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm">
-                      <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.style.check}`} />
-                      <span className={plan.popular ? 'text-white/75' : 'text-gray-600'}>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             </motion.div>
           ))}
