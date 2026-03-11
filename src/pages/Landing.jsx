@@ -50,19 +50,28 @@ export default function Landing() {
             <Logo variant="dark" />
             <div className="hidden md:flex items-center gap-6">
               <button 
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                  const el = document.getElementById('features');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
                 className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
               >
                 תכונות
               </button>
               <button 
-                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                  const el = document.getElementById('pricing');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
                 className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
               >
                 מחירים
               </button>
               <button 
-                onClick={() => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                  const el = document.getElementById('testimonials');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
                 className="text-[#0B1220] hover:text-[#00D1C1] transition-colors font-medium"
               >
                 המלצות
