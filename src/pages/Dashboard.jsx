@@ -182,27 +182,41 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
 
       {/* Today's Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, gradient: 'from-green-500 to-emerald-600', link: 'Bookings' },
-          { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, gradient: 'from-orange-500 to-amber-600', link: 'Bookings' },
-          { label: 'ניקיונות ממתינים', value: pendingCleaning.length, icon: Sparkles, gradient: 'from-cyan-500 to-blue-600', link: 'Cleaning' },
-          { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, gradient: overduePayments.length > 0 ? 'from-red-500 to-rose-600' : 'from-gray-400 to-gray-500', link: 'Payments' }
-        ].map((stat, i) => (
-          <Link key={i} to={createPageUrl(stat.link)}>
-            <Card className="relative overflow-hidden border-0 bg-white shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 rounded-2xl cursor-pointer group">
+        {isLoading ? (
+          [1, 2, 3, 4].map(i => (
+            <Card key={i} className="relative overflow-hidden border-0 bg-white shadow-md rounded-2xl">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
-                    <stat.icon className="h-5 w-5 text-white" />
-                  </div>
+                  <Skeleton className="w-14 h-14 rounded-xl" />
                 </div>
-                <p className="text-3xl md:text-4xl font-bold bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent mb-1">{stat.value}</p>
-                <p className="text-xs font-medium text-gray-500">{stat.label}</p>
+                <Skeleton className="h-10 w-20 mb-2" />
+                <Skeleton className="h-4 w-24" />
               </CardContent>
-              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-l ${stat.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300`} />
             </Card>
-          </Link>
-        ))}
+          ))
+        ) : (
+          [
+            { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, gradient: 'from-green-500 to-emerald-600', link: 'Bookings' },
+            { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, gradient: 'from-orange-500 to-amber-600', link: 'Bookings' },
+            { label: 'ניקיונות ממתינים', value: pendingCleaning.length, icon: Sparkles, gradient: 'from-cyan-500 to-blue-600', link: 'Cleaning' },
+            { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, gradient: overduePayments.length > 0 ? 'from-red-500 to-rose-600' : 'from-gray-400 to-gray-500', link: 'Payments' }
+          ].map((stat, i) => (
+            <Link key={i} to={createPageUrl(stat.link)}>
+              <Card className="relative overflow-hidden border-0 bg-white shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 rounded-2xl cursor-pointer group">
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
+                      <stat.icon className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-3xl md:text-4xl font-bold bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent mb-1">{stat.value}</p>
+                  <p className="text-xs font-medium text-gray-500">{stat.label}</p>
+                </CardContent>
+                <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-l ${stat.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300`} />
+              </Card>
+            </Link>
+          ))
+        )}
       </div>
 
       {/* Main Content Grid */}
@@ -219,37 +233,47 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-                <div className="p-4 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-gray-600">הכנסות החודש</span>
-                    <span className="text-2xl md:text-3xl font-bold bg-gradient-to-l from-green-600 to-emerald-600 bg-clip-text text-transparent">₪{paidThisMonth.toLocaleString()}</span>
-                  </div>
-                  <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
-                    <div
-                      style={{ width: `${Math.min(100, Math.round((paidThisMonth / Math.max(paidThisMonth + openBalances, 1)) * 100))}%` }}
-                      className="h-full bg-gradient-to-l from-green-500 to-emerald-600 rounded-full shadow-sm transition-all duration-700"
-                    />
-                  </div>
+              {isLoading ? (
+                <div className="space-y-6">
+                  <Skeleton className="h-24 w-full rounded-xl" />
+                  <Skeleton className="h-20 w-full rounded-xl" />
+                  <Skeleton className="h-24 w-full rounded-xl" />
                 </div>
-                <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-600">יתרות פתוחות</span>
-                    <span className="text-xl md:text-2xl font-bold bg-gradient-to-l from-orange-600 to-amber-600 bg-clip-text text-transparent">₪{openBalances.toLocaleString()}</span>
+              ) : (
+                <>
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-medium text-gray-600">הכנסות החודש</span>
+                      <span className="text-2xl md:text-3xl font-bold bg-gradient-to-l from-green-600 to-emerald-600 bg-clip-text text-transparent">₪{paidThisMonth.toLocaleString()}</span>
+                    </div>
+                    <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
+                      <div
+                        style={{ width: `${Math.min(100, Math.round((paidThisMonth / Math.max(paidThisMonth + openBalances, 1)) * 100))}%` }}
+                        className="h-full bg-gradient-to-l from-green-500 to-emerald-600 rounded-full shadow-sm transition-all duration-700"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-gray-600">תפוסה</span>
-                    <span className="text-2xl md:text-3xl font-bold bg-gradient-to-l from-cyan-600 to-blue-600 bg-clip-text text-transparent">{occupancyRate}%</span>
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-600">יתרות פתוחות</span>
+                      <span className="text-xl md:text-2xl font-bold bg-gradient-to-l from-orange-600 to-amber-600 bg-clip-text text-transparent">₪{openBalances.toLocaleString()}</span>
+                    </div>
                   </div>
-                  <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
-                    <div 
-                      style={{ width: `${occupancyRate}%` }}
-                      className="h-full bg-gradient-to-l from-[#00D1C1] to-[#00B8A9] rounded-full shadow-sm transition-all duration-700"
-                    />
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-100">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-medium text-gray-600">תפוסה</span>
+                      <span className="text-2xl md:text-3xl font-bold bg-gradient-to-l from-cyan-600 to-blue-600 bg-clip-text text-transparent">{occupancyRate}%</span>
+                    </div>
+                    <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
+                      <div 
+                        style={{ width: `${occupancyRate}%` }}
+                        className="h-full bg-gradient-to-l from-[#00D1C1] to-[#00B8A9] rounded-full shadow-sm transition-all duration-700"
+                      />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
+                </>
+              )}
+            </CardContent>
             </Card>
         </div>
 
