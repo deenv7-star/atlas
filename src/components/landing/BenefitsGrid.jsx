@@ -40,13 +40,14 @@ const cards = [
 export default function BenefitsGrid() {
   return (
     <section className="py-28 relative overflow-hidden"
-             style={{
-               background: 'linear-gradient(180deg, #F4F6FB 0%, #eef2f9 100%)',
-             }}>
+             style={{ background: '#ffffff' }}>
 
-      {/* Subtle background decoration */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none opacity-40"
-           style={{ background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.10) 0%, transparent 65%)' }} />
+      {/* Noise texture */}
+      <div className="absolute inset-0 pointer-events-none"
+           style={{ opacity: 0.025, backgroundImage: 'radial-gradient(circle, rgba(11,18,32,0.8) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
+           style={{ background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.08) 0%, transparent 65%)' }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section header */}

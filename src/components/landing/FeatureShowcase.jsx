@@ -59,7 +59,7 @@ export default function FeatureShowcase() {
 
   return (
     <section className="py-28 relative overflow-hidden"
-             style={{ background: 'linear-gradient(180deg, #ffffff 0%, #fafbff 100%)' }}>
+             style={{ background: '#f9fafb' }}>
 
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-[600px] h-[400px] pointer-events-none"
