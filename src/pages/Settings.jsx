@@ -32,12 +32,24 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import UpgradeModal from '@/components/common/UpgradeModal';
+
+const PLAN_LIMITS = {
+  starter: 2,
+  pro: 10,
+  scale: Infinity
+};
 
 export default function Settings({ user, selectedPropertyId, orgId, properties }) {
   const [activeTab, setActiveTab] = useState('properties');
   const [isPropertyDialogOpen, setIsPropertyDialogOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const queryClient = useQueryClient();
+
+  const currentPlan = user?.subscription_plan || 'starter';
+  const propertyLimit = PLAN_LIMITS[currentPlan] || 2;
+  const canAddProperty = properties.length < propertyLimit;
 
   const [newProperty, setNewProperty] = useState({
     name: '',
@@ -208,9 +220,16 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
 
         {/* Properties Tab */}
         <TabsContent value="properties" className="mt-6">
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-between items-center mb-4">
+            <div className="text-sm text-gray-600">
+              {properties.length} / {propertyLimit === Infinity ? '∞' : propertyLimit} נכסים
+            </div>
             <Button 
               onClick={() => {
+                if (!canAddProperty) {
+                  setShowUpgradeModal(true);
+                  return;
+                }
                 resetPropertyForm();
                 setIsPropertyDialogOpen(true);
               }}
@@ -524,6 +543,15 @@ export default function Settings({ user, selectedPropertyId, orgId, properties }
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal 
+        open={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        currentPlan={currentPlan}
+        currentCount={properties.length}
+        entity="property"
+      />
     </div>
   );
 }
