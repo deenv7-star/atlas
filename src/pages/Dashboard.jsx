@@ -22,7 +22,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { motion } from 'framer-motion';
+// Removed framer-motion for performance
 
 const statusColors = {
   NEW: 'bg-blue-100 text-blue-700',
@@ -140,94 +140,68 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
   const isLoading = leadsLoading || bookingsLoading || paymentsLoading || cleaningLoading;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-6 pb-6"
-    >
+    <div className="space-y-6 pb-6">
       {/* Command Center Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-      >
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#0B1220]">שלום, {user?.full_name?.split(' ')[0] || 'משתמש'}</h1>
-          <p className="text-gray-500 mt-1">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent">
+            שלום, {user?.full_name?.split(' ')[0] || 'משתמש'}
+          </h1>
+          <p className="text-gray-500 mt-1 font-medium">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
         </div>
         <Link to={createPageUrl('Bookings')} className="w-full sm:w-auto">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button className="bg-[#0B1220] hover:bg-[#0B1220]/90 text-white rounded-xl gap-2 w-full sm:w-auto h-11 shadow-sm">
-              <Plus className="h-4 w-4" />
-              הזמנה חדשה
-            </Button>
-          </motion.div>
+          <Button className="bg-gradient-to-l from-[#0B1220] to-[#1a2744] hover:opacity-90 text-white rounded-xl gap-2 w-full sm:w-auto h-11 shadow-lg hover:shadow-xl transition-all duration-200">
+            <Plus className="h-4 w-4" />
+            הזמנה חדשה
+          </Button>
         </Link>
-      </motion.div>
+      </div>
 
       {/* Alert Banner */}
       {overduePayments.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="relative overflow-hidden bg-white border border-red-100 rounded-2xl p-4 shadow-sm"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-red-50 to-transparent opacity-50" />
+        <div className="relative overflow-hidden bg-white border border-red-100 rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-200">
+          <div className="absolute inset-0 bg-gradient-to-l from-red-50 via-red-25 to-transparent opacity-60" />
           <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+              <AlertTriangle className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-[#0B1220]">דרושה תשומת לב</p>
+              <p className="font-bold text-[#0B1220]">דרושה תשומת לב</p>
               <p className="text-sm text-gray-600 mt-0.5">
                 {overduePayments.length} תשלומים באיחור
               </p>
             </div>
             <Link to={createPageUrl('Payments')}>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-sm">
-                  צפה בפרטים
-                </Button>
-              </motion.div>
+              <Button size="sm" className="bg-gradient-to-l from-red-600 to-rose-700 hover:opacity-90 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
+                צפה בפרטים
+              </Button>
             </Link>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Today's Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, gradient: 'from-green-500 to-emerald-500', link: 'Bookings' },
-          { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, gradient: 'from-orange-500 to-amber-500', link: 'Bookings' },
-          { label: 'ניקיונות ממתינים', value: pendingCleaning.length, icon: Sparkles, gradient: 'from-cyan-500 to-blue-500', link: 'Cleaning' },
-          { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, gradient: overduePayments.length > 0 ? 'from-red-500 to-rose-500' : 'from-gray-400 to-gray-500', link: 'Payments' }
+          { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, gradient: 'from-green-500 to-emerald-600', link: 'Bookings' },
+          { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, gradient: 'from-orange-500 to-amber-600', link: 'Bookings' },
+          { label: 'ניקיונות ממתינים', value: pendingCleaning.length, icon: Sparkles, gradient: 'from-cyan-500 to-blue-600', link: 'Cleaning' },
+          { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, gradient: overduePayments.length > 0 ? 'from-red-500 to-rose-600' : 'from-gray-400 to-gray-500', link: 'Payments' }
         ].map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 + i * 0.05, type: "spring" }}
-          >
-            <Link to={createPageUrl(stat.link)}>
-              <motion.div whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
-                <Card className="relative overflow-hidden border-0 bg-white shadow-sm hover:shadow-lg transition-all rounded-2xl cursor-pointer group">
-                  <CardContent className="p-5">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className={`p-2.5 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg`}>
-                        <stat.icon className="h-5 w-5 text-white" />
-                      </div>
-                    </div>
-                    <p className="text-3xl font-bold text-[#0B1220] mb-1">{stat.value}</p>
-                    <p className="text-xs text-gray-500">{stat.label}</p>
-                  </CardContent>
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-right" />
-                </Card>
-              </motion.div>
-            </Link>
-          </motion.div>
+          <Link key={i} to={createPageUrl(stat.link)}>
+            <Card className="relative overflow-hidden border-0 bg-white shadow-md hover:shadow-xl transition-all duration-200 rounded-2xl cursor-pointer group">
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
+                    <stat.icon className="h-5 w-5 text-white" />
+                  </div>
+                </div>
+                <p className="text-3xl md:text-4xl font-bold bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent mb-1">{stat.value}</p>
+                <p className="text-xs font-medium text-gray-500">{stat.label}</p>
+              </CardContent>
+              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-l ${stat.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300`} />
+            </Card>
+          </Link>
         ))}
       </div>
 
@@ -235,66 +209,58 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
       <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
         {/* Left Column - Revenue & Occupancy */}
         <div className="space-y-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
-              <CardHeader className="pb-4 p-6 bg-gradient-to-br from-gray-50 to-white">
-                <CardTitle className="font-semibold flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                  ביצועים חודשיים
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 pt-0 space-y-5">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-500">הכנסות החודש</span>
-                    <span className="text-2xl font-bold text-[#0B1220]">₪{paidThisMonth.toLocaleString()}</span>
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-2xl overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white">
+            <CardHeader className="pb-4 p-6 border-b border-gray-100">
+              <CardTitle className="font-bold flex items-center gap-2 text-lg">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-md">
+                  <TrendingUp className="h-4 w-4 text-white" />
+                </div>
+                ביצועים חודשיים
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-600">הכנסות החודש</span>
+                    <span className="text-2xl md:text-3xl font-bold bg-gradient-to-l from-green-600 to-emerald-600 bg-clip-text text-transparent">₪{paidThisMonth.toLocaleString()}</span>
                   </div>
-                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.min(100, Math.round((paidThisMonth / Math.max(paidThisMonth + openBalances, 1)) * 100))}%` }}
-                      transition={{ duration: 1, delay: 0.5 }}
-                      className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+                  <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
+                    <div
+                      style={{ width: `${Math.min(100, Math.round((paidThisMonth / Math.max(paidThisMonth + openBalances, 1)) * 100))}%` }}
+                      className="h-full bg-gradient-to-l from-green-500 to-emerald-600 rounded-full shadow-sm transition-all duration-700"
                     />
                   </div>
                 </div>
-                <div className="pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-500">יתרות פתוחות</span>
-                    <span className="text-xl font-bold text-orange-600">₪{openBalances.toLocaleString()}</span>
+                <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">יתרות פתוחות</span>
+                    <span className="text-xl md:text-2xl font-bold bg-gradient-to-l from-orange-600 to-amber-600 bg-clip-text text-transparent">₪{openBalances.toLocaleString()}</span>
                   </div>
                 </div>
-                <div className="pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-500">תפוסה</span>
-                    <span className="text-2xl font-bold text-[#0B1220]">{occupancyRate}%</span>
+                <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-100">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-600">תפוסה</span>
+                    <span className="text-2xl md:text-3xl font-bold bg-gradient-to-l from-cyan-600 to-blue-600 bg-clip-text text-transparent">{occupancyRate}%</span>
                   </div>
-                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${occupancyRate}%` }}
-                      transition={{ duration: 1, delay: 0.6 }}
-                      className="h-full bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] rounded-full"
+                  <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
+                    <div 
+                      style={{ width: `${occupancyRate}%` }}
+                      className="h-full bg-gradient-to-l from-[#00D1C1] to-[#00B8A9] rounded-full shadow-sm transition-all duration-700"
                     />
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
-
-
         </div>
 
         {/* Middle Column - Check-ins/Check-outs */}
         <div className="space-y-4 md:space-y-6">
-          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
-            <CardHeader className="pb-3 p-4 md:p-6">
-              <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
-                <ArrowDownRight className="h-3.5 w-3.5 md:h-4 md:w-4 text-green-500" />
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
+            <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-white border-b border-green-100">
+              <CardTitle className="text-sm md:text-base font-bold flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-md">
+                  <ArrowDownRight className="h-3.5 w-3.5 text-white" />
+                </div>
                 כניסות קרובות
               </CardTitle>
             </CardHeader>
@@ -327,10 +293,12 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
-            <CardHeader className="pb-3 p-4 md:p-6">
-              <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
-                <ArrowUpLeft className="h-3.5 w-3.5 md:h-4 md:w-4 text-orange-500" />
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
+            <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-orange-50 via-amber-50 to-white border-b border-orange-100">
+              <CardTitle className="text-sm md:text-base font-bold flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 shadow-md">
+                  <ArrowUpLeft className="h-3.5 w-3.5 text-white" />
+                </div>
                 יציאות קרובות
               </CardTitle>
             </CardHeader>
@@ -366,11 +334,13 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
 
         {/* Right Column - Tasks & Leads */}
         <div className="space-y-4 md:space-y-6">
-          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
-            <CardHeader className="pb-3 p-4 md:p-6">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
+            <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-cyan-50 via-blue-50 to-white border-b border-cyan-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
-                  <Sparkles className="h-3.5 w-3.5 md:h-4 md:w-4 text-[#00D1C1]" />
+                <CardTitle className="text-sm md:text-base font-bold flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 shadow-md">
+                    <Sparkles className="h-3.5 w-3.5 text-white" />
+                  </div>
                   משימות ניקיון
                 </CardTitle>
                 <Link to={createPageUrl('Cleaning')}>
@@ -411,11 +381,13 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm rounded-xl md:rounded-2xl">
-            <CardHeader className="pb-3 p-4 md:p-6">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
+            <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-blue-50 via-indigo-50 to-white border-b border-blue-100">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm md:text-base font-semibold flex items-center gap-2">
-                  <Users className="h-3.5 w-3.5 md:h-4 md:w-4 text-blue-500" />
+                <CardTitle className="text-sm md:text-base font-bold flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-md">
+                    <Users className="h-3.5 w-3.5 text-white" />
+                  </div>
                   לידים חדשים
                 </CardTitle>
                 <Link to={createPageUrl('Leads')}>
@@ -448,6 +420,6 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
           </Card>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
