@@ -30,7 +30,7 @@ export default function Landing() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif", background: '#F4F6FB' }}>
+    <div dir="rtl" className="min-h-screen" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif", background: '#ffffff' }}>
 
       {/* ── NAV ──────────────────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 right-0 z-50">
@@ -100,10 +100,12 @@ export default function Landing() {
 
       {/* ── SOLUTION SPLIT ───────────────────────────────────────── */}
       <section id="features" className="py-24 relative overflow-hidden"
-               style={{ background: 'linear-gradient(180deg, #ffffff 0%, #fafbff 100%)' }}>
+               style={{ background: '#f9fafb' }}>
 
+        <div className="absolute inset-0 pointer-events-none opacity-[0.025]"
+             style={{ backgroundImage: 'radial-gradient(circle, rgba(11,18,32,0.8) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
         <div className="absolute top-0 left-0 w-[400px] h-[300px] pointer-events-none"
-             style={{ background: 'radial-gradient(ellipse at 0% 0%, rgba(0,209,193,0.06) 0%, transparent 60%)' }} />
+             style={{ background: 'radial-gradient(ellipse at 0% 0%, rgba(0,209,193,0.08) 0%, transparent 60%)' }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-14 items-center">
@@ -164,10 +166,10 @@ export default function Landing() {
 
       {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
       <section className="py-28 relative overflow-hidden"
-               style={{ background: 'linear-gradient(180deg, #F4F6FB 0%, #eef2f9 100%)' }}>
+               style={{ background: '#ffffff' }}>
 
         <div className="absolute top-0 right-1/2 translate-x-1/2 w-[700px] h-[350px] pointer-events-none"
-             style={{ background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.08) 0%, transparent 65%)' }} />
+             style={{ background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.07) 0%, transparent 65%)' }} />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
           <motion.div
@@ -237,8 +239,10 @@ export default function Landing() {
 
       {/* ── FAQ ──────────────────────────────────────────────────── */}
       <section className="py-28 relative overflow-hidden"
-               style={{ background: 'linear-gradient(180deg, #f8f9ff 0%, #F4F6FB 100%)' }}>
+               style={{ background: '#f9fafb' }}>
 
+        <div className="absolute inset-0 pointer-events-none opacity-[0.025]"
+             style={{ backgroundImage: 'radial-gradient(circle, rgba(11,18,32,0.8) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
         <div className="absolute top-0 right-0 w-[400px] h-[300px] pointer-events-none"
              style={{ background: 'radial-gradient(ellipse at 90% 0%, rgba(99,102,241,0.06) 0%, transparent 60%)' }} />
 
@@ -323,7 +327,7 @@ export default function Landing() {
 
       {/* ── FINAL CTA ────────────────────────────────────────────── */}
       <section className="py-16 px-4"
-               style={{ background: '#F4F6FB' }}>
+               style={{ background: '#ffffff' }}>
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 24 }}

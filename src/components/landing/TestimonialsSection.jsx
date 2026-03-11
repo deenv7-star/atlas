@@ -41,16 +41,13 @@ const testimonials = [
 export default function TestimonialsSection() {
   return (
     <section className="py-28 relative overflow-hidden"
-             style={{ background: 'linear-gradient(180deg, #f8f9ff 0%, #F4F6FB 100%)' }}>
+             style={{ background: '#f9fafb' }}>
 
-      {/* Background decoration */}
+      {/* Noise + orb */}
+      <div className="absolute inset-0 pointer-events-none"
+           style={{ opacity: 0.025, backgroundImage: 'radial-gradient(circle, rgba(11,18,32,0.8) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       <div className="absolute top-0 right-1/3 w-[600px] h-[400px] pointer-events-none"
-           style={{ background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.06) 0%, transparent 65%)' }} />
-      <div className="absolute inset-0 opacity-[0.2] pointer-events-none"
-           style={{
-             backgroundImage: 'linear-gradient(rgba(11,18,32,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(11,18,32,0.04) 1px, transparent 1px)',
-             backgroundSize: '48px 48px',
-           }} />
+           style={{ background: 'radial-gradient(ellipse at center, rgba(0,209,193,0.07) 0%, transparent 65%)' }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
