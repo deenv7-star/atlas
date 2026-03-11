@@ -487,17 +487,27 @@ export default function Landing() {
               <ul className="space-y-3">
                 <li>
                   <Link to={createPageUrl('Privacy')} className="text-white/60 hover:text-white transition-colors text-sm">
-                    {t.privacyPolicy}
+                    פרטיות
                   </Link>
                 </li>
                 <li>
                   <Link to={createPageUrl('Terms')} className="text-white/60 hover:text-white transition-colors text-sm">
-                    {t.termsOfService}
+                    תנאי שימוש
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl('SLA')} className="text-white/60 hover:text-white transition-colors text-sm">
+                    SLA
                   </Link>
                 </li>
                 <li>
                   <Link to={createPageUrl('Accessibility')} className="text-white/60 hover:text-white transition-colors text-sm">
-                    הצהרת נגישות
+                    נגישות
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl('DataSecurity')} className="text-white/60 hover:text-white transition-colors text-sm">
+                    אבטחת מידע
                   </Link>
                 </li>
               </ul>
