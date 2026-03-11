@@ -103,8 +103,8 @@ export default function Landing() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative"
             >
-              <div className="bg-gradient-to-br from-[#0B1220] via-[#1a2744] to-[#0B1220] rounded-2xl p-4 shadow-2xl">
-                <div className="bg-gradient-to-br from-[#F8FAFC] to-white rounded-xl overflow-hidden shadow-inner">
+              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
+                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
                   <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
                     <div className="flex gap-1.5">
                       <div className="w-3 h-3 rounded-full bg-red-400"></div>
@@ -210,7 +210,7 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-2xl overflow-hidden group bg-gradient-to-br from-white via-gray-50 to-white">
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 bg-gradient-to-br from-white via-gray-50 to-white rounded-2xl overflow-hidden group">
                   <CardContent className="p-6">
                     <div className="w-14 h-14 bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-200">
                       <feature.icon className="h-6 w-6 text-white" />
@@ -268,7 +268,7 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/10 rounded-2xl hover:border-white/20 transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm">
+                <Card className="h-full bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/10 rounded-2xl hover:border-white/20 hover:-translate-y-0.5 transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm">
                   <CardContent className="p-6">
                     <div className="flex gap-1 mb-4">
                       {[...Array(5)].map((_, j) => (
@@ -302,7 +302,7 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className={`h-full rounded-2xl transition-all duration-200 ${
+                <Card className={`h-full rounded-2xl hover:-translate-y-0.5 transition-all duration-200 ${
                   key === 'pro' 
                     ? 'border-2 border-[#00D1C1] shadow-2xl hover:shadow-[0_20px_60px_rgba(0,209,193,0.3)] bg-gradient-to-br from-white via-[#00D1C1]/5 to-white' 
                     : 'border shadow-lg hover:shadow-xl bg-gradient-to-br from-white via-gray-50 to-white'
@@ -358,7 +358,7 @@ export default function Landing() {
                 transition={{ delay: i * 0.05 }}
               >
                 <Card 
-                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white"
+                  className="cursor-pointer border-0 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 rounded-xl overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
                   <CardContent className="p-0">
