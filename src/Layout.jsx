@@ -7,12 +7,13 @@ import AppSidebar from '@/components/app/AppSidebar';
 import AppHeader from '@/components/app/AppHeader';
 import BottomTabs from '@/components/app/BottomTabs';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary';
 import { cn } from '@/lib/utils';
 
 // Pages that don't need the app layout
 const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService', 'About', 'UserAgreement', 'DataSecurity', 'Accessibility'];
 
-export default function Layout({ children, currentPageName }) {
+function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -207,5 +208,13 @@ export default function Layout({ children, currentPageName }) {
 
       <BottomTabs />
     </div>
+  );
+}
+
+export default function Layout(props) {
+  return (
+    <GlobalErrorBoundary>
+      <LayoutContent {...props} />
+    </GlobalErrorBoundary>
   );
 }
