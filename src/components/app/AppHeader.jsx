@@ -19,10 +19,10 @@ import { Building2, User, Settings, LogOut, Bell, Menu, ArrowRightIcon } from 'l
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
-export default function AppHeader({ 
-  user, 
-  properties, 
-  selectedPropertyId, 
+export default function AppHeader({
+  user,
+  properties,
+  selectedPropertyId,
   onPropertyChange,
   onLogout,
   onMenuClick
@@ -31,10 +31,10 @@ export default function AppHeader({
   const navigate = useNavigate();
   const selectedProperty = properties.find(p => p.id === selectedPropertyId);
   const initials = user?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U';
-  
+
   const pathParts = location.pathname.split('/').filter(Boolean);
   const isDetailRoute = pathParts.length > 1;
-  
+
   const pageNames = {
     'Bookings': 'הזמנה',
     'Leads': 'ליד',
@@ -44,42 +44,61 @@ export default function AppHeader({
     'Contracts': 'חוזה',
     'Reviews': 'ביקורת'
   };
-  
+
   const currentPage = pathParts[0];
   const pageTitle = pageNames[currentPage] || currentPage;
 
   return (
-    <header className="h-14 sm:h-16 bg-white border-b flex items-center justify-between px-3 sm:px-4 md:px-6">
+    <header
+      className="h-14 sm:h-16 flex items-center justify-between px-3 sm:px-4 md:px-6"
+      style={{
+        background: 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(226,232,240,0.7)',
+        boxShadow: '0 1px 8px rgba(11,18,32,0.05)',
+      }}
+    >
       <div className="flex items-center gap-2 sm:gap-4">
         {/* Mobile: Back button on detail routes */}
         {isDetailRoute ? (
           <>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden h-8 w-8 rounded-xl"
+              style={{ color: '#0B1220' }}
               onClick={() => navigate(-1)}
             >
-              <ArrowRightIcon className="h-5 w-5" />
+              <ArrowRightIcon className="h-4.5 w-4.5" />
             </Button>
-            <h1 className="text-base font-semibold text-[#0B1220] md:hidden">{pageTitle}</h1>
+            <h1 className="text-base font-bold text-[#0B1220] md:hidden">{pageTitle}</h1>
           </>
         ) : (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="lg:hidden"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden h-8 w-8 rounded-xl"
+            style={{ color: '#6b7280' }}
             onClick={onMenuClick}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-4.5 w-4.5" />
           </Button>
         )}
-        
-        {/* Property Selector - hidden on mobile detail routes */}
+
+        {/* Property Selector */}
         <Select value={selectedPropertyId || ''} onValueChange={onPropertyChange}>
-          <SelectTrigger className={`w-[140px] sm:w-[180px] md:w-[200px] border-gray-200 rounded-lg md:rounded-xl text-xs sm:text-sm select-none ${isDetailRoute ? 'hidden md:flex' : ''}`}>
+          <SelectTrigger
+            className={`w-[140px] sm:w-[180px] md:w-[200px] rounded-xl text-xs sm:text-sm font-semibold select-none ${isDetailRoute ? 'hidden md:flex' : ''}`}
+            style={{
+              background: 'rgba(244,246,251,0.9)',
+              border: '1px solid rgba(226,232,240,0.8)',
+              boxShadow: '0 1px 4px rgba(11,18,32,0.05)',
+              color: '#374151',
+            }}
+          >
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400" />
+              <Building2 className="h-3.5 w-3.5 text-[#00D1C1]" />
               <SelectValue placeholder="בחר נכס" />
             </div>
           </SelectTrigger>
@@ -98,37 +117,57 @@ export default function AppHeader({
         </Select>
       </div>
 
-      <div className="flex items-center gap-1.5 sm:gap-3">
-        {/* Notifications */}
-        <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 sm:h-9 sm:w-9">
-          <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
-        </Button>
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Notification bell */}
+        <button
+          className="relative flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-xl transition-all"
+          style={{ background: 'rgba(244,246,251,0.9)', border: '1px solid rgba(226,232,240,0.8)' }}
+        >
+          <Bell className="h-4 w-4 text-gray-500" />
+          {/* Unread dot */}
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#00D1C1]"
+                style={{ boxShadow: '0 0 0 2px rgba(255,255,255,0.9)' }} />
+        </button>
 
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-3 h-8 sm:h-9">
-              <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
-                <AvatarFallback className="bg-[#00D1C1] text-[#0B1220] font-medium text-xs sm:text-sm">
+            <button
+              className="flex items-center gap-2 rounded-xl px-2 sm:px-2.5 h-8 sm:h-9 transition-all"
+              style={{
+                background: 'rgba(244,246,251,0.9)',
+                border: '1px solid rgba(226,232,240,0.8)',
+                boxShadow: '0 1px 4px rgba(11,18,32,0.05)',
+              }}
+            >
+              <Avatar className="h-6 w-6 sm:h-7 sm:w-7">
+                <AvatarFallback
+                  className="font-bold text-xs sm:text-sm"
+                  style={{
+                    background: 'linear-gradient(135deg, #00D1C1 0%, #00a8a0 100%)',
+                    color: '#0B1220',
+                  }}
+                >
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-xs sm:text-sm font-medium text-gray-700 hidden md:block">
+              <span className="text-xs sm:text-sm font-semibold text-gray-700 hidden md:block">
                 {user?.full_name || 'משתמש'}
               </span>
-            </Button>
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-48">
-            <DropdownMenuItem className="gap-2">
-              <User className="h-4 w-4" />
+          <DropdownMenuContent align="start" className="w-48 rounded-xl shadow-lg"
+                               style={{ border: '1px solid rgba(226,232,240,0.8)' }}>
+            <DropdownMenuItem className="gap-2 rounded-lg font-medium text-sm">
+              <User className="h-4 w-4 text-gray-400" />
               פרופיל
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2" onClick={() => navigate(createPageUrl('Settings'))}>
-              <Settings className="h-4 w-4" />
+            <DropdownMenuItem className="gap-2 rounded-lg font-medium text-sm" onClick={() => navigate(createPageUrl('Settings'))}>
+              <Settings className="h-4 w-4 text-gray-400" />
               הגדרות
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 text-red-600" onClick={onLogout}>
+            <DropdownMenuItem className="gap-2 rounded-lg font-medium text-sm text-red-500 focus:text-red-600" onClick={onLogout}>
               <LogOut className="h-4 w-4" />
               יציאה
             </DropdownMenuItem>
