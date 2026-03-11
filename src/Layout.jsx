@@ -101,7 +101,7 @@ export default function Layout({ children, currentPageName }) {
 
   // App layout
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] dark:bg-gray-950 overscroll-y-none" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif" }}>
+    <div dir="rtl" className="min-h-screen overscroll-y-none" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif", background: '#F4F6FB' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap');
 
