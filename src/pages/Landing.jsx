@@ -6,7 +6,6 @@ import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import ScrollReveal from '@/components/landing/ScrollReveal';
 import { 
   CheckCircle2, 
   Users, 
@@ -27,6 +26,7 @@ import {
   FileSignature,
   Star
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Landing() {
   const t = translations.he;
@@ -43,18 +43,6 @@ export default function Landing() {
 
   return (
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
-      <style>{`
-        .scroll-reveal {
-          opacity: 0;
-          transform: translateY(30px);
-          transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .scroll-revealed {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      `}</style>
-      
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -115,8 +103,8 @@ export default function Landing() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative"
             >
-              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
-                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
+              <div className="bg-gradient-to-br from-[#0B1220] via-[#1a2744] to-[#0B1220] rounded-2xl p-4 shadow-2xl">
+                <div className="bg-gradient-to-br from-[#F8FAFC] to-white rounded-xl overflow-hidden shadow-inner">
                   <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
                     <div className="flex gap-1.5">
                       <div className="w-3 h-3 rounded-full bg-red-400"></div>
@@ -164,7 +152,11 @@ export default function Landing() {
       {/* Problem Section */}
       <section className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-4xl mx-auto text-center">
-          <ScrollReveal>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
               {t.problemTitle}
             </h2>
@@ -176,14 +168,18 @@ export default function Landing() {
                 </div>
               ))}
             </div>
-          </ScrollReveal>
+          </motion.div>
         </div>
       </section>
 
       {/* Solution Section */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <ScrollReveal>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
               {t.solutionTitle}
             </h2>
@@ -198,7 +194,7 @@ export default function Landing() {
                 </span>
               ))}
             </div>
-          </ScrollReveal>
+          </motion.div>
         </div>
       </section>
 
@@ -207,8 +203,14 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
-              <ScrollReveal key={i} delay={i * 100}>
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-all duration-200 bg-white rounded-2xl">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
                   <CardContent className="p-6">
                     <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
                       <feature.icon className="h-6 w-6 text-[#00D1C1]" />
@@ -217,7 +219,7 @@ export default function Landing() {
                     <p className="text-gray-600">{feature.desc}</p>
                   </CardContent>
                 </Card>
-              </ScrollReveal>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -226,22 +228,25 @@ export default function Landing() {
       {/* How It Works */}
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
-          <ScrollReveal>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
-              איך זה עובד?
-            </h2>
-          </ScrollReveal>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
+            איך זה עובד?
+          </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {t.howItWorks.map((step, i) => (
-              <ScrollReveal key={i} delay={i * 150}>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                    {step.step}
-                  </div>
-                  <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
-                  <p className="text-gray-600">{step.desc}</p>
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="text-center"
+              >
+                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                  {step.step}
                 </div>
-              </ScrollReveal>
+                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
+                <p className="text-gray-600">{step.desc}</p>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -250,15 +255,19 @@ export default function Landing() {
       {/* Testimonials */}
       <section className="py-20 px-4 bg-[#0B1220]">
         <div className="max-w-6xl mx-auto">
-          <ScrollReveal>
-            <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
-              מה אומרים עלינו
-            </h2>
-          </ScrollReveal>
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
+            מה אומרים עלינו
+          </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {t.testimonials.map((testimonial, i) => (
-              <ScrollReveal key={i} delay={i * 100}>
-                <Card className="h-full bg-white/5 border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-200">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="h-full bg-white/5 border-white/10 rounded-2xl">
                   <CardContent className="p-6">
                     <div className="flex gap-1 mb-4">
                       {[...Array(5)].map((_, j) => (
@@ -269,7 +278,7 @@ export default function Landing() {
                     <p className="text-[#00D1C1] font-medium">{testimonial.author}</p>
                   </CardContent>
                 </Card>
-              </ScrollReveal>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -278,17 +287,21 @@ export default function Landing() {
       {/* Pricing */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <ScrollReveal>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
-              תוכניות ומחירים
-            </h2>
-            <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
-          </ScrollReveal>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
+            תוכניות ומחירים
+          </h2>
+          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
           
           <div className="grid md:grid-cols-3 gap-6">
             {Object.entries(t.pricing).map(([key, plan], i) => (
-              <ScrollReveal key={key} delay={i * 100}>
-                <Card className={`h-full rounded-2xl transition-all duration-200 hover:shadow-lg ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className={`h-full rounded-2xl ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
                   <CardContent className="p-6">
                     {key === 'pro' && (
                       <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">
@@ -318,7 +331,7 @@ export default function Landing() {
                     </Button>
                   </CardContent>
                 </Card>
-              </ScrollReveal>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -327,16 +340,20 @@ export default function Landing() {
       {/* FAQ */}
       <section className="py-20 px-4 bg-[#F2E9DB]/30">
         <div className="max-w-3xl mx-auto">
-          <ScrollReveal>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
-              שאלות נפוצות
-            </h2>
-          </ScrollReveal>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
+            שאלות נפוצות
+          </h2>
           <div className="space-y-4">
             {t.faq.map((item, i) => (
-              <ScrollReveal key={i} delay={i * 50}>
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+              >
                 <Card 
-                  className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-all duration-200 rounded-xl overflow-hidden"
+                  className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
                   <CardContent className="p-0">
@@ -355,7 +372,7 @@ export default function Landing() {
                     )}
                   </CardContent>
                 </Card>
-              </ScrollReveal>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -364,7 +381,11 @@ export default function Landing() {
       {/* Final CTA */}
       <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-3xl mx-auto text-center">
-          <ScrollReveal>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               {t.finalCta}
             </h2>
@@ -377,7 +398,7 @@ export default function Landing() {
               {t.startTrial}
               <ArrowLeft className="mr-2 h-5 w-5" />
             </Button>
-          </ScrollReveal>
+          </motion.div>
         </div>
       </section>
 
