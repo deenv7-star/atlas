@@ -13,6 +13,7 @@ const PLANS = {
     name: 'Starter',
     price: 399,
     icon: Zap,
+    propertyLimit: 2,
     features: ['עד 2 נכסים', 'ניהול לידים והזמנות', 'יומן בסיסי', 'תמיכה במייל', 'דוחות בסיסיים']
   },
   pro: {
@@ -20,12 +21,14 @@ const PLANS = {
     price: 599,
     icon: Crown,
     popular: true,
+    propertyLimit: 10,
     features: ['עד 10 נכסים', 'כל תכונות Starter', 'הודעות אוטומטיות', 'ניהול ניקיון', 'חוזים דיגיטליים', 'תמיכה בצ\'אט', 'אינטגרציות מתקדמות']
   },
   scale: {
     name: 'Scale',
     price: 999,
     icon: Rocket,
+    propertyLimit: Infinity,
     features: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API גישה', 'דוחות מתקדמים', 'מנהל לקוח ייעודי', 'אוטומציות מתקדמות', 'תמיכה עדיפות']
   }
 };

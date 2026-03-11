@@ -14,6 +14,7 @@ const PLANS = [
     name: 'Starter',
     price: 399,
     icon: Zap,
+    propertyLimit: 2,
     features: [
       'עד 2 נכסים',
       'ניהול לידים והזמנות',
@@ -28,6 +29,7 @@ const PLANS = [
     price: 599,
     icon: Crown,
     popular: true,
+    propertyLimit: 10,
     features: [
       'עד 10 נכסים',
       'כל תכונות Starter',
@@ -43,6 +45,7 @@ const PLANS = [
     name: 'Scale',
     price: 999,
     icon: Rocket,
+    propertyLimit: Infinity,
     features: [
       'נכסים ללא הגבלה',
       'כל תכונות Pro',
