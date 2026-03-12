@@ -1,360 +1,319 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { 
-  Wallet,
-  TrendingUp,
-  AlertCircle,
-  CheckCircle2,
-  Clock,
-  RefreshCw
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
+import { useToast } from '@/components/ui/use-toast';
+import {
+  Wallet, Plus, Search, Filter, Check, Edit, Trash2,
+  TrendingUp, TrendingDown, Clock, CheckCircle2, AlertCircle,
 } from 'lucide-react';
-import { format, parseISO, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { format, parseISO } from 'date-fns';
+import { cn } from '@/lib/utils';
 
-const statusColors = {
-  DUE: 'bg-orange-100 text-orange-700 border-orange-200',
-  PAID: 'bg-green-100 text-green-700 border-green-200',
-  REFUNDED: 'bg-gray-100 text-gray-700 border-gray-200'
+const PAYMENT_STATUSES = [
+  { value: 'PENDING', label: 'ממתין', color: 'bg-amber-100 text-amber-700' },
+  { value: 'PAID', label: 'שולם', color: 'bg-green-100 text-green-700' },
+  { value: 'PARTIAL', label: 'חלקי', color: 'bg-blue-100 text-blue-700' },
+  { value: 'FAILED', label: 'נכשל', color: 'bg-red-100 text-red-700' },
+  { value: 'REFUNDED', label: 'הוחזר', color: 'bg-gray-100 text-gray-500' },
+  { value: 'OVERDUE', label: 'באיחור', color: 'bg-orange-100 text-orange-700' },
+];
+
+const PAYMENT_METHODS = [
+  { value: 'credit_card', label: 'כרטיס אשראי' },
+  { value: 'bank_transfer', label: 'העברה בנקאית' },
+  { value: 'cash', label: 'מזומן' },
+  { value: 'paypal', label: 'PayPal' },
+  { value: 'bit', label: 'Bit' },
+  { value: 'other', label: 'אחר' },
+];
+
+const STATUS_MAP = Object.fromEntries(PAYMENT_STATUSES.map(s => [s.value, s]));
+
+const emptyPayment = {
+  booking_id: '',
+  amount: '',
+  currency: 'ILS',
+  status: 'PENDING',
+  method: 'credit_card',
+  description: '',
+  due_date: '',
+  paid_date: '',
 };
 
-const statusLabels = {
-  DUE: 'לתשלום',
-  PAID: 'שולם',
-  REFUNDED: 'הוחזר'
-};
-
-const typeLabels = {
-  DEPOSIT: 'מקדמה',
-  BALANCE: 'יתרה',
-  FULL: 'תשלום מלא',
-  OTHER: 'אחר'
-};
-
-const methodLabels = {
-  CASH: 'מזומן',
-  TRANSFER: 'העברה',
-  CARD: 'כרטיס',
-  OTHER: 'אחר'
-};
-
-export default function Payments({ user, selectedPropertyId, orgId }) {
-  const [statusFilter, setStatusFilter] = useState('all');
+export default function PaymentsPage({ user, selectedPropertyId }) {
+  const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [showDialog, setShowDialog] = useState(false);
+  const [editingPayment, setEditingPayment] = useState(null);
+  const [form, setForm] = useState(emptyPayment);
 
-  const today = new Date();
-  const monthStart = startOfMonth(today);
-  const monthEnd = endOfMonth(today);
-
-  // Fetch payments
   const { data: payments = [], isLoading } = useQuery({
-    queryKey: ['payments', orgId],
-    queryFn: () => orgId ? base44.entities.Payment.filter({ org_id: orgId }, '-created_date') : [],
-    enabled: !!orgId
+    queryKey: ['payments'],
+    queryFn: () => base44.entities.Payment.list(),
+    staleTime: 2 * 60 * 1000,
   });
 
-  // Fetch bookings for reference
-  const { data: bookings = [] } = useQuery({
-    queryKey: ['bookings', orgId],
-    queryFn: () => orgId ? base44.entities.Booking.filter({ org_id: orgId }) : [],
-    enabled: !!orgId
-  });
-
-  // Mark as paid mutation
-  const markPaidMutation = useMutation({
-    mutationFn: (paymentId) => base44.entities.Payment.update(paymentId, { 
-      status: 'PAID',
-      paid_at: new Date().toISOString()
-    }),
+  const createMutation = useMutation({
+    mutationFn: (data) => base44.entities.Payment.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
-    }
+      queryClient.invalidateQueries(['payments']);
+      toast({ title: 'תשלום נוצר' });
+      setShowDialog(false);
+      setForm(emptyPayment);
+    },
+    onError: () => toast({ title: 'שגיאה ביצירה', variant: 'destructive' }),
   });
 
-  // Calculate statistics
-  const totalDue = payments
-    .filter(p => p.status === 'DUE')
-    .reduce((sum, p) => sum + (p.amount || 0), 0);
-
-  const paidThisMonth = payments
-    .filter(p => p.status === 'PAID' && p.paid_at)
-    .filter(p => {
-      const paidDate = parseISO(p.paid_at);
-      return isWithinInterval(paidDate, { start: monthStart, end: monthEnd });
-    })
-    .reduce((sum, p) => sum + (p.amount || 0), 0);
-
-  const totalPaid = payments
-    .filter(p => p.status === 'PAID')
-    .reduce((sum, p) => sum + (p.amount || 0), 0);
-
-  // Filter payments
-  const filteredPayments = payments.filter(p => {
-    if (statusFilter === 'all') return true;
-    return p.status === statusFilter;
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Payment.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['payments']);
+      toast({ title: 'תשלום עודכן' });
+      setShowDialog(false);
+    },
+    onError: () => toast({ title: 'שגיאה בעדכון', variant: 'destructive' }),
   });
 
-  // Get booking for a payment
-  const getBooking = (bookingId) => bookings.find(b => b.id === bookingId);
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Payment.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['payments']);
+      toast({ title: 'תשלום נמחק' });
+    },
+    onError: () => toast({ title: 'שגיאה במחיקה', variant: 'destructive' }),
+  });
 
-  const stats = [
-    { 
-      title: 'נגבה החודש', 
-      value: `₪${paidThisMonth.toLocaleString()}`, 
-      icon: TrendingUp, 
-      color: 'bg-green-500',
-      bgColor: 'bg-green-50'
-    },
-    { 
-      title: 'יתרות פתוחות', 
-      value: `₪${totalDue.toLocaleString()}`, 
-      icon: AlertCircle, 
-      color: 'bg-orange-500',
-      bgColor: 'bg-orange-50'
-    },
-    { 
-      title: 'סה"כ נגבה', 
-      value: `₪${totalPaid.toLocaleString()}`, 
-      icon: Wallet, 
-      color: 'bg-blue-500',
-      bgColor: 'bg-blue-50'
+  const stats = useMemo(() => {
+    const total = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+    const paid = payments.filter(p => p.status === 'PAID').reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+    const pending = payments.filter(p => p.status === 'PENDING').reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+    const overdue = payments.filter(p => p.status === 'OVERDUE').length;
+    return { total, paid, pending, overdue };
+  }, [payments]);
+
+  const filtered = useMemo(() => {
+    return payments.filter(p => {
+      const matchSearch = !searchTerm ||
+        (p.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.booking_id || '').includes(searchTerm);
+      const matchStatus = statusFilter === 'all' || p.status === statusFilter;
+      return matchSearch && matchStatus;
+    });
+  }, [payments, searchTerm, statusFilter]);
+
+  const openEdit = (payment) => {
+    setEditingPayment(payment);
+    setForm({
+      booking_id: payment.booking_id || '',
+      amount: payment.amount || '',
+      currency: payment.currency || 'ILS',
+      status: payment.status || 'PENDING',
+      method: payment.method || 'credit_card',
+      description: payment.description || '',
+      due_date: payment.due_date || '',
+      paid_date: payment.paid_date || '',
+    });
+    setShowDialog(true);
+  };
+
+  const handleSave = () => {
+    if (!form.amount) {
+      toast({ title: 'נא להזין סכום', variant: 'destructive' });
+      return;
     }
-  ];
+    if (editingPayment) {
+      updateMutation.mutate({ id: editingPayment.id, data: form });
+    } else {
+      createMutation.mutate(form);
+    }
+  };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 md:p-6 space-y-5 max-w-5xl mx-auto animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-[#0B1220]">תשלומים</h1>
-          <p className="text-gray-500">מעקב תשלומים ויתרות</p>
+          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <Wallet className="w-5 h-5 text-[#00D1C1]" />
+            תשלומים
+          </h1>
+          <p className="text-sm text-gray-500 mt-0.5">{payments.length} תשלומים</p>
         </div>
+        <Button
+          onClick={() => { setEditingPayment(null); setForm(emptyPayment); setShowDialog(true); }}
+          className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm self-start sm:self-auto"
+        >
+          <Plus className="w-4 h-4" />
+          תשלום חדש
+        </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {stats.map((stat, i) => (
-          <Card key={i} className="border-0 shadow-sm rounded-2xl">
-            <CardContent className="p-5">
-              {isLoading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-8 w-32" />
-                </div>
-              ) : (
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500 mb-1">{stat.title}</p>
-                    <p className="text-2xl font-bold text-[#0B1220]">{stat.value}</p>
-                  </div>
-                  <div className={`p-2.5 rounded-xl ${stat.bgColor}`}>
-                    <stat.icon className={`h-5 w-5 ${stat.color.replace('bg-', 'text-')}`} />
-                  </div>
-                </div>
-              )}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: 'סה"כ הכנסות', value: `₪${stats.total.toLocaleString()}`, color: 'text-gray-700' },
+          { label: 'שולם', value: `₪${stats.paid.toLocaleString()}`, color: 'text-green-600' },
+          { label: 'ממתין לתשלום', value: `₪${stats.pending.toLocaleString()}`, color: 'text-amber-600' },
+          { label: 'באיחור', value: stats.overdue, color: 'text-red-600' },
+        ].map(stat => (
+          <Card key={stat.label} className="border-0 shadow-sm">
+            <CardContent className="p-3 text-center">
+              <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{stat.label}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Filter Header */}
-      <Card className="border-0 shadow-sm rounded-2xl">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">היסטוריית תשלומים</CardTitle>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px] rounded-xl">
-                <SelectValue placeholder="סטטוס" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">כל הסטטוסים</SelectItem>
-                {Object.entries(statusLabels).map(([key, label]) => (
-                  <SelectItem key={key} value={key}>{label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-      </Card>
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Input
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="חפש תשלום..."
+            className="h-9 pr-9 text-sm"
+          />
+        </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="h-9 text-sm w-full sm:w-40">
+            <SelectValue placeholder="כל הסטטוסים" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">כל הסטטוסים</SelectItem>
+            {PAYMENT_STATUSES.map(s => (
+              <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-      {/* Desktop: Payments Table */}
-      <Card className="border-0 shadow-sm rounded-2xl hidden md:block">
+      {/* List */}
+      <Card className="border-0 shadow-sm">
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50">
-                <TableHead className="text-right">הזמנה</TableHead>
-                <TableHead className="text-right">סוג</TableHead>
-                <TableHead className="text-right">סכום</TableHead>
-                <TableHead className="text-right">אמצעי</TableHead>
-                <TableHead className="text-right">סטטוס</TableHead>
-                <TableHead className="text-right">תאריך</TableHead>
-                <TableHead className="w-24"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                [...Array(5)].map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-8 w-20" /></TableCell>
-                  </TableRow>
-                ))
-              ) : filteredPayments.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12 text-gray-500">
-                    אין תשלומים
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredPayments.map(payment => {
-                  const booking = getBooking(payment.booking_id);
+          {isLoading ? (
+            <div className="p-4 space-y-3">
+              {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-14 rounded-lg" />)}
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-12">
+              <Wallet className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+              <p className="text-sm text-gray-400">אין תשלומים</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {filtered
+                .sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0))
+                .map(payment => {
+                  const statusInfo = STATUS_MAP[payment.status] || STATUS_MAP.PENDING;
                   return (
-                    <TableRow key={payment.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{booking?.guest_name || '-'}</p>
-                          {booking?.checkin_date && (
-                            <p className="text-xs text-gray-500">
-                              {format(parseISO(booking.checkin_date), 'd/M/yy')}
-                            </p>
+                    <div key={payment.id} className="flex items-center gap-3 p-3 hover:bg-gray-50/80 transition-colors group">
+                      <div className="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                        <Wallet className="w-4 h-4 text-green-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-800 truncate">
+                          {payment.description || `תשלום ${payment.booking_id ? '#' + payment.booking_id.slice(-4) : ''}`}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <Badge className={`${statusInfo.color} text-[10px] py-0 px-1.5 border-0`}>{statusInfo.label}</Badge>
+                          {payment.paid_date && (
+                            <span className="text-xs text-gray-400">
+                              {format(parseISO(payment.paid_date), 'dd/MM/yy')}
+                            </span>
                           )}
                         </div>
-                      </TableCell>
-                      <TableCell>{typeLabels[payment.type]}</TableCell>
-                      <TableCell className="font-semibold">₪{payment.amount?.toLocaleString()}</TableCell>
-                      <TableCell>{methodLabels[payment.method]}</TableCell>
-                      <TableCell>
-                        <Badge className={`${statusColors[payment.status]} border flex items-center gap-1 w-fit`}>
-                          {payment.status === 'PAID' && <CheckCircle2 className="h-3 w-3" />}
-                          {payment.status === 'DUE' && <Clock className="h-3 w-3" />}
-                          {payment.status === 'REFUNDED' && <RefreshCw className="h-3 w-3" />}
-                          {statusLabels[payment.status]}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-500">
-                        {payment.status === 'PAID' && payment.paid_at
-                          ? format(parseISO(payment.paid_at), 'd/M/yy', { locale: he })
-                          : payment.due_date
-                            ? format(parseISO(payment.due_date), 'd/M/yy', { locale: he })
-                            : '-'}
-                      </TableCell>
-                      <TableCell>
-                        {payment.status === 'DUE' && (
-                          <Button 
-                            size="sm"
-                            variant="outline"
-                            className="rounded-lg text-xs"
-                            onClick={() => markPaidMutation.mutate(payment.id)}
-                            disabled={markPaidMutation.isPending}
-                          >
-                            סמן שולם
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-              </TableBody>
-              </Table>
-              </CardContent>
-              </Card>
-
-              {/* Mobile: Payments Cards */}
-              <div className="md:hidden space-y-3">
-              {isLoading ? (
-              [...Array(5)].map((_, i) => (
-              <Card key={i} className="border-0 shadow-sm rounded-2xl">
-                <CardContent className="p-4">
-                  <Skeleton className="h-5 w-32 mb-2" />
-                  <Skeleton className="h-6 w-24 mb-3" />
-                  <Skeleton className="h-6 w-20 rounded-full" />
-                </CardContent>
-              </Card>
-              ))
-              ) : filteredPayments.length === 0 ? (
-              <Card className="border-0 shadow-sm rounded-2xl">
-              <CardContent className="p-8 text-center text-gray-500">
-                אין תשלומים
-              </CardContent>
-              </Card>
-              ) : (
-              filteredPayments.map(payment => {
-              const booking = getBooking(payment.booking_id);
-              return (
-                <Card key={payment.id} className="border-0 shadow-sm rounded-2xl">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-[#0B1220] mb-0.5">{booking?.guest_name || '-'}</h3>
-                        {booking?.checkin_date && (
-                          <p className="text-xs text-gray-500">
-                            {format(parseISO(booking.checkin_date), 'd/M/yy')}
-                          </p>
-                        )}
                       </div>
-                      <Badge className={`${statusColors[payment.status]} border flex items-center gap-1`}>
-                        {payment.status === 'PAID' && <CheckCircle2 className="h-3 w-3" />}
-                        {payment.status === 'DUE' && <Clock className="h-3 w-3" />}
-                        {payment.status === 'REFUNDED' && <RefreshCw className="h-3 w-3" />}
-                        {statusLabels[payment.status]}
-                      </Badge>
+                      <p className="text-sm font-bold text-gray-800 flex-shrink-0">
+                        ₪{parseFloat(payment.amount || 0).toLocaleString()}
+                      </p>
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400" onClick={() => openEdit(payment)}>
+                          <Edit className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500"
+                          onClick={() => { if (confirm('למחוק?')) deleteMutation.mutate(payment.id); }}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-2xl font-bold text-[#0B1220]">₪{payment.amount?.toLocaleString()}</span>
-                      <span className="text-sm text-gray-600">{typeLabels[payment.type]}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm text-gray-600">
-                      <span>{methodLabels[payment.method]}</span>
-                      <span>
-                        {payment.status === 'PAID' && payment.paid_at
-                          ? format(parseISO(payment.paid_at), 'd/M/yy', { locale: he })
-                          : payment.due_date
-                            ? format(parseISO(payment.due_date), 'd/M/yy', { locale: he })
-                            : '-'}
-                      </span>
-                    </div>
-                    {payment.status === 'DUE' && (
-                      <Button 
-                        size="sm"
-                        className="w-full mt-3 bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
-                        onClick={() => markPaidMutation.mutate(payment.id)}
-                        disabled={markPaidMutation.isPending}
-                      >
-                        סמן שולם
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-              })
-              )}
-              </div>
-              </div>
+                  );
+                })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Dialog */}
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base">{editingPayment ? 'עריכת תשלום' : 'תשלום חדש'}</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-3 py-2">
+            <div className="col-span-2 space-y-1">
+              <Label className="text-xs">תיאור</Label>
+              <Input value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="תיאור התשלום" className="h-9 text-sm" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">סכום (₪) *</Label>
+              <Input type="number" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} placeholder="0" className="h-9 text-sm" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">אמצעי תשלום</Label>
+              <Select value={form.method} onValueChange={val => setForm(p => ({ ...p, method: val }))}>
+                <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {PAYMENT_METHODS.map(m => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">סטטוס</Label>
+              <Select value={form.status} onValueChange={val => setForm(p => ({ ...p, status: val }))}>
+                <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {PAYMENT_STATUSES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">תאריך תשלום</Label>
+              <Input type="date" value={form.paid_date} onChange={e => setForm(p => ({ ...p, paid_date: e.target.value }))} className="h-9 text-sm" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setShowDialog(false)} className="h-9">ביטול</Button>
+            <Button
+              size="sm" onClick={handleSave}
+              disabled={createMutation.isPending || updateMutation.isPending}
+              className="h-9 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold"
+            >
+              {(createMutation.isPending || updateMutation.isPending) ? (
+                <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
+              ) : <Check className="w-4 h-4" />}
+              שמור
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
