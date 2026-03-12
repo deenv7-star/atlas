@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
 import BookingDetails from '@/components/bookings/BookingDetails';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -45,7 +46,7 @@ export default function BookingDetail({ orgId }) {
     >
       <BookingDetails 
         booking={booking} 
-        onClose={() => navigate('/bookings')}
+        onClose={() => navigate(createPageUrl('Bookings'))}
         orgId={orgId}
       />
     </motion.div>

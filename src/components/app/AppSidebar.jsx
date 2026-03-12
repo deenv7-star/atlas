@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Users, CalendarDays, MessageSquare,
   CreditCard, FileText, Star, Settings, LogOut,
   ChevronLeft, ChevronRight, Zap, Brain, Link2, Bell,
-  Wallet, Home, ClipboardList, Wrench, BarChart3,
+  Wallet, ClipboardList, Wrench, Receipt,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -19,7 +18,6 @@ const navGroups = [
   {
     label: 'ניהול',
     items: [
-      { icon: Home, label: 'נכסים', page: 'Properties' },
       { icon: Users, label: 'לידים', page: 'Leads' },
       { icon: CalendarDays, label: 'הזמנות', page: 'Bookings' },
       { icon: ClipboardList, label: 'חוזים', page: 'Contracts' },
@@ -47,20 +45,15 @@ const navGroups = [
     label: 'חשבון',
     items: [
       { icon: Wallet, label: 'תשלומים', page: 'Payments' },
+      { icon: Receipt, label: 'חיוב', page: 'Billing' },
       { icon: CreditCard, label: 'מנוי', page: 'Subscription' },
-      { icon: BarChart3, label: 'אנליטיקה', page: 'Analytics' },
     ],
   },
 ];
 
-export default function AppSidebar({ collapsed, onCollapse, onLogout }) {
+export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
   const location = useLocation();
-  const [user, setUser] = useState(null);
   const [hoveredItem, setHoveredItem] = useState(null);
-
-  useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
-  }, []);
 
   const isActive = (page) => {
     const pageUrl = createPageUrl(page);
@@ -89,7 +82,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout }) {
           onClick={onCollapse}
           className={cn("p-1 rounded-md text-white/30 hover:text-white/70 hover:bg-white/5 transition-all duration-200", collapsed ? "mr-0" : "mr-auto")}
         >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          {collapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </button>
       </div>
 

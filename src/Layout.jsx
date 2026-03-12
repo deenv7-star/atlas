@@ -86,6 +86,7 @@ function LayoutContent({ children, currentPageName }) {
           collapsed={sidebarCollapsed}
           onCollapse={() => setSidebarCollapsed(prev => !prev)}
           onLogout={handleLogout}
+          user={user}
         />
       </div>
 
@@ -98,6 +99,7 @@ function LayoutContent({ children, currentPageName }) {
           collapsed={false}
           onCollapse={() => setSidebarOpen(false)}
           onLogout={handleLogout}
+          user={user}
         />
       </div>
 

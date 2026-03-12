@@ -36,8 +36,8 @@ const statusLabels = {
   NEW: 'חדש',
   CONTACTED: 'נוצר קשר',
   OFFER_SENT: 'הצעה נשלחה',
-  WON: 'נצח',
-  LOST: 'הפסיד'
+  WON: 'נסגר',
+  LOST: 'לא רלוונטי',
 };
 
 const sourceLabels = {

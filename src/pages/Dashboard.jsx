@@ -6,13 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Users, CalendarDays, Wallet, AlertCircle,
-  ArrowUpLeft, ArrowDownRight, Sparkles, Plus,
-  TrendingUp, ChevronRight, Star, Home,
+  Users, CalendarDays, Wallet,
+  ArrowUpLeft, ArrowDownRight, MessageSquare, Plus,
+  Star, ChevronRight, Settings,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { format, addDays, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 const statusColors = {
@@ -73,10 +74,6 @@ function StatCard({ title, value, icon: Icon, trend, color, loading, subtitle })
       </CardContent>
     </Card>
   );
-}
-
-function cn(...classes) {
-  return classes.filter(Boolean).join(' ');
 }
 
 export default function Dashboard({ user, selectedPropertyId, orgId }) {
@@ -353,8 +350,8 @@ export default function Dashboard({ user, selectedPropertyId, orgId }) {
             {[
               { label: 'ליד חדש', icon: Users, page: 'Leads', color: 'text-purple-600 bg-purple-50' },
               { label: 'הזמנה חדשה', icon: CalendarDays, page: 'Bookings', color: 'text-blue-600 bg-blue-50' },
-              { label: 'הודעות', icon: Sparkles, page: 'Messages', color: 'text-teal-600 bg-teal-50' },
-              { label: 'אנליטיקה', icon: TrendingUp, page: 'Analytics', color: 'text-emerald-600 bg-emerald-50' },
+              { label: 'הודעות', icon: MessageSquare, page: 'Messages', color: 'text-teal-600 bg-teal-50' },
+              { label: 'הגדרות', icon: Settings, page: 'Settings', color: 'text-emerald-600 bg-emerald-50' },
             ].map(({ label, icon: Icon, page, color }) => (
               <Link key={page} to={createPageUrl(page)}>
                 <button className="w-full flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 hover:border-[#00D1C1]/30 hover:bg-[#00D1C1]/3 transition-all duration-200 group">

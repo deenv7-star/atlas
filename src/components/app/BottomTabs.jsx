@@ -16,24 +16,28 @@ export default function BottomTabs() {
   const navigate = useNavigate();
   const currentPath = location.pathname;
 
+  const isTabActive = (tabName) => {
+    const tabPath = createPageUrl(tabName).toLowerCase();
+    const path = currentPath.toLowerCase();
+    return path === tabPath || path.startsWith(tabPath + '/');
+  };
+
   const handleTabClick = (e, tab) => {
     const tabPath = createPageUrl(tab.name);
-    const isActive = currentPath.includes(tab.name.toLowerCase());
-    
-    if (isActive && currentPath !== tabPath) {
+    if (isTabActive(tab.name) && currentPath !== tabPath) {
       e.preventDefault();
       navigate(tabPath);
     }
   };
 
   return (
-    <div 
+    <div
       className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t dark:border-gray-800 lg:hidden z-30 select-none"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <nav className="flex items-center justify-around h-16">
         {tabs.map((tab) => {
-          const isActive = currentPath.includes(tab.name.toLowerCase());
+          const isActive = isTabActive(tab.name);
           return (
             <Link
               key={tab.name}
