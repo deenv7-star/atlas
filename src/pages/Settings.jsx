@@ -370,7 +370,7 @@ export default function SettingsPage({ user }) {
                         } catch (e) {
                           // proceed to logout even if deleteAccount is unavailable
                         }
-                        await base44.auth.logout().catch(() => {});
+                        base44.auth.logout();
                         window.location.href = '/';
                       }
                     }}
