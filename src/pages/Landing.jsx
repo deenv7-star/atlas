@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
+import ProductDemoModal from '@/components/landing/ProductDemoModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { toast } from 'sonner';
 import { 
   CheckCircle2, 
   Users, 
@@ -30,7 +32,9 @@ import { motion } from 'framer-motion';
 
 export default function Landing() {
   const t = translations.he;
+  const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState(null);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -91,7 +95,12 @@ export default function Landing() {
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl"
+                  onClick={() => setDemoModalOpen(true)}
+                >
                   {t.bookDemo}
                 </Button>
               </div>
@@ -401,6 +410,9 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
+
+      {/* Demo Modal */}
+      <ProductDemoModal open={demoModalOpen} onOpenChange={setDemoModalOpen} />
 
       {/* Footer */}
       <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
