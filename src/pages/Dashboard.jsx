@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,490 +6,368 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Users,
-  CalendarDays,
-  Wallet,
-  AlertCircle,
-  ArrowUpLeft,
-  ArrowDownRight,
-  Sparkles,
-  Plus,
-  AlertTriangle,
-  TrendingUp,
-  ChevronRight
+  Users, CalendarDays, Wallet, AlertCircle,
+  ArrowUpLeft, ArrowDownRight, Sparkles, Plus,
+  TrendingUp, ChevronRight, Star, Home,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
+import { format, addDays, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
-// Removed framer-motion for performance
 
 const statusColors = {
   NEW: 'bg-blue-100 text-blue-700',
   CONTACTED: 'bg-yellow-100 text-yellow-700',
   OFFER_SENT: 'bg-purple-100 text-purple-700',
-  WON: 'bg-green-100 text-green-700',
-  LOST: 'bg-gray-100 text-gray-700',
-  PENDING: 'bg-yellow-100 text-yellow-700',
   CONFIRMED: 'bg-green-100 text-green-700',
-  CHECKED_IN: 'bg-cyan-100 text-cyan-700',
-  OPEN: 'bg-blue-100 text-blue-700',
-  IN_PROGRESS: 'bg-yellow-100 text-yellow-700',
-  DONE: 'bg-green-100 text-green-700'
+  REJECTED: 'bg-red-100 text-red-700',
+  LOST: 'bg-gray-100 text-gray-600',
+  APPROVED: 'bg-green-100 text-green-700',
+  PENDING: 'bg-amber-100 text-amber-700',
+  WAITLIST: 'bg-purple-100 text-purple-700',
+  CANCELLED: 'bg-red-100 text-red-700',
 };
 
 const statusLabels = {
   NEW: 'חדש',
   CONTACTED: 'נוצר קשר',
   OFFER_SENT: 'הצעה נשלחה',
-  WON: 'נצח',
-  LOST: 'הפסיד',
-  PENDING: 'ממתין',
   CONFIRMED: 'מאושר',
-  CHECKED_IN: 'בנכס',
-  OPEN: 'פתוח',
-  IN_PROGRESS: 'בתהליך',
-  DONE: 'הושלם'
+  REJECTED: 'נדחה',
+  LOST: 'אבוד',
+  APPROVED: 'מאושר',
+  PENDING: 'ממתין',
+  WAITLIST: 'רשימת המתנה',
+  CANCELLED: 'בוטל',
 };
 
-export default function Dashboard({ user, selectedPropertyId, orgId }) {
-  const today = new Date();
-  const todayStr = format(today, 'yyyy-MM-dd');
-  const weekStart = startOfWeek(today, { weekStartsOn: 0 });
-  const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
-  const monthStart = startOfMonth(today);
-  const monthEnd = endOfMonth(today);
-  const next7Days = addDays(today, 7);
+function StatCard({ title, value, icon: Icon, trend, color, loading, subtitle }) {
+  if (loading) {
+    return (
+      <Card className="border-0 shadow-sm">
+        <CardContent className="p-5">
+          <Skeleton className="h-4 w-24 mb-3" />
+          <Skeleton className="h-8 w-16 mb-2" />
+          <Skeleton className="h-3 w-32" />
+        </CardContent>
+      </Card>
+    );
+  }
+  return (
+    <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group cursor-default">
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between mb-3">
+          <p className="text-sm text-gray-500 font-medium">{title}</p>
+          <div className={color + " w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"}>
+            <Icon className="w-4 h-4" />
+          </div>
+        </div>
+        <p className="text-2xl font-bold text-gray-800 mb-1">{value}</p>
+        {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
+        {trend !== undefined && (
+          <div className={cn("flex items-center gap-1 text-xs font-medium mt-1", trend >= 0 ? "text-emerald-600" : "text-red-500")}>
+            {trend >= 0 ? <ArrowUpLeft className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+            <span>{Math.abs(trend)}% מהחודש הקודם</span>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
-  // Fetch all data
-  const { data: leads = [], isLoading: leadsLoading } = useQuery({
-    queryKey: ['leads', orgId, selectedPropertyId],
-    queryFn: () => orgId ? base44.entities.Lead.filter(
-      selectedPropertyId 
-        ? { org_id: orgId, property_id: selectedPropertyId }
-        : { org_id: orgId },
-      '-created_date'
-    ) : [],
-    enabled: !!orgId
-  });
+function cn(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
+
+export default function Dashboard({ user, selectedPropertyId, orgId }) {
+  const now = new Date();
+  const weekStart = startOfWeek(now, { weekStartsOn: 0 });
+  const weekEnd = endOfWeek(now, { weekStartsOn: 0 });
+
+  const queryOptions = { staleTime: 2 * 60 * 1000, retry: 1 };
 
   const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
-    queryKey: ['bookings', orgId, selectedPropertyId],
-    queryFn: () => orgId ? base44.entities.Booking.filter(
-      selectedPropertyId 
-        ? { org_id: orgId, property_id: selectedPropertyId }
-        : { org_id: orgId },
-      '-created_date'
-    ) : [],
-    enabled: !!orgId
+    queryKey: ['dashboard-bookings', selectedPropertyId],
+    queryFn: () => base44.entities.Booking.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    ...queryOptions,
+  });
+
+  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+    queryKey: ['dashboard-leads', selectedPropertyId],
+    queryFn: () => base44.entities.Lead.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    ...queryOptions,
   });
 
   const { data: payments = [], isLoading: paymentsLoading } = useQuery({
-    queryKey: ['payments', orgId],
-    queryFn: () => orgId ? base44.entities.Payment.filter({ org_id: orgId }) : [],
-    enabled: !!orgId
+    queryKey: ['dashboard-payments'],
+    queryFn: () => base44.entities.Payment.list(),
+    ...queryOptions,
   });
 
-  const { data: cleaningTasks = [], isLoading: cleaningLoading } = useQuery({
-    queryKey: ['cleaningTasks', orgId, selectedPropertyId],
-    queryFn: () => orgId ? base44.entities.CleaningTask.filter(
-      selectedPropertyId 
-        ? { org_id: orgId, property_id: selectedPropertyId }
-        : { org_id: orgId },
-      'scheduled_for'
-    ) : [],
-    enabled: !!orgId
+  const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
+    queryKey: ['dashboard-reviews', selectedPropertyId],
+    queryFn: () => base44.entities.ReviewRequest.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    ...queryOptions,
   });
 
+  const stats = useMemo(() => {
+    const thisWeekBookings = bookings.filter(b => {
+      try {
+        const checkIn = parseISO(b.check_in_date);
+        return isWithinInterval(checkIn, { start: weekStart, end: weekEnd });
+      } catch { return false; }
+    });
 
+    const confirmedBookings = bookings.filter(b => b.status === 'CONFIRMED');
+    const newLeads = leads.filter(l => l.status === 'NEW');
+    const totalRevenue = payments
+      .filter(p => p.status === 'PAID')
+      .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
 
-  // Calculate metrics
-  const todayCheckins = bookings.filter(b => b.checkin_date === todayStr && b.status !== 'CANCELLED');
-  const todayCheckouts = bookings.filter(b => b.checkout_date === todayStr && b.status !== 'CANCELLED');
-  const overduePayments = payments.filter(p => p.status === 'DUE' && p.due_date && p.due_date < todayStr);
-  const pendingCleaning = cleaningTasks.filter(t => t.status !== 'DONE' && t.scheduled_for?.split('T')[0] <= todayStr);
+    const avgRating = reviews.length > 0
+      ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
+      : null;
 
-  const paidThisMonth = payments
-    .filter(p => p.status === 'PAID' && p.paid_at)
-    .filter(p => {
-      const paidDate = parseISO(p.paid_at);
-      return isWithinInterval(paidDate, { start: monthStart, end: monthEnd });
+    return { thisWeekBookings, confirmedBookings, newLeads, totalRevenue, avgRating };
+  }, [bookings, leads, payments, reviews, weekStart, weekEnd]);
+
+  const isLoading = bookingsLoading || leadsLoading || paymentsLoading;
+
+  const upcomingBookings = bookings
+    .filter(b => {
+      try { return parseISO(b.check_in_date) >= now; } catch { return false; }
     })
-    .reduce((sum, p) => sum + (p.amount || 0), 0);
+    .sort((a, b) => {
+      try { return parseISO(a.check_in_date) - parseISO(b.check_in_date); } catch { return 0; }
+    })
+    .slice(0, 5);
 
-  const openBalances = payments
-    .filter(p => p.status === 'DUE')
-    .reduce((sum, p) => sum + (p.amount || 0), 0);
+  const recentLeads = leads
+    .sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0))
+    .slice(0, 5);
 
-  const occupancyRate = bookings.length > 0 
-    ? Math.round((bookings.filter(b => b.status === 'CHECKED_IN' || b.status === 'CONFIRMED').length / bookings.length) * 100)
-    : 0;
-
-  const upcomingCheckins = bookings.filter(b => {
-    if (!b.checkin_date) return false;
-    const checkinDate = parseISO(b.checkin_date);
-    return checkinDate >= today && checkinDate <= next7Days && b.status !== 'CANCELLED';
-  });
-
-  const upcomingCheckouts = bookings.filter(b => {
-    if (!b.checkout_date) return false;
-    const checkoutDate = parseISO(b.checkout_date);
-    return checkoutDate >= today && checkoutDate <= next7Days && b.status !== 'CANCELLED';
-  });
-
-  const isLoading = leadsLoading || bookingsLoading || paymentsLoading || cleaningLoading;
+  const userName = user?.full_name?.split(' ')[0] || 'שלום';
+  const greeting = (() => {
+    const h = now.getHours();
+    if (h < 12) return 'בוקר טוב';
+    if (h < 17) return 'צהריים טובים';
+    if (h < 21) return 'ערב טוב';
+    return 'לילה טוב';
+  })();
 
   return (
-    <div className="space-y-6 pb-6">
-      {/* Command Center Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto animate-fade-in">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent">
-            שלום, {user?.full_name?.split(' ')[0] || 'משתמש'}
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            {greeting}, {userName} 👋
           </h1>
-          <p className="text-gray-600 mt-2 font-medium text-base">{format(today, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
+          <p className="text-sm text-gray-500 mt-0.5">
+            {format(now, "EEEE, d MMMM yyyy", { locale: he })}
+          </p>
         </div>
-        <Link to={createPageUrl('Bookings')} className="w-full sm:w-auto">
-          <Button className="bg-gradient-to-l from-[#0B1220] to-[#1a2744] hover:opacity-90 text-white rounded-xl gap-2 w-full sm:w-auto h-11 shadow-lg hover:shadow-xl transition-all duration-200">
-            <Plus className="h-4 w-4" />
-            הזמנה חדשה
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link to={createPageUrl('Leads')}>
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8">
+              <Plus className="w-3.5 h-3.5" />
+              ליד חדש
+            </Button>
+          </Link>
+          <Link to={createPageUrl('Bookings')}>
+            <Button size="sm" className="gap-1.5 text-xs h-8 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold">
+              <Plus className="w-3.5 h-3.5" />
+              הזמנה חדשה
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      {/* Alert Banner */}
-      {overduePayments.length > 0 && (
-        <div className="relative overflow-hidden bg-white border border-red-100 rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-200">
-          <div className="absolute inset-0 bg-gradient-to-l from-red-50 via-red-25 to-transparent opacity-60" />
-          <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center flex-shrink-0 shadow-lg">
-              <AlertTriangle className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="font-bold text-lg text-[#0B1220]">דרושה תשומת לב</p>
-              <p className="text-sm text-gray-600 mt-1 font-medium">
-                {overduePayments.length} תשלומים באיחור
-              </p>
-            </div>
-            <Link to={createPageUrl('Payments')}>
-              <Button size="sm" className="bg-gradient-to-l from-red-600 to-rose-700 hover:opacity-90 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
-                צפה בפרטים
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <StatCard
+          title="הזמנות השבוע"
+          value={isLoading ? '-' : stats.thisWeekBookings.length}
+          icon={CalendarDays}
+          color="bg-blue-50 text-blue-600"
+          loading={bookingsLoading}
+          subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`}
+        />
+        <StatCard
+          title="לידים חדשים"
+          value={isLoading ? '-' : stats.newLeads.length}
+          icon={Users}
+          color="bg-purple-50 text-purple-600"
+          loading={leadsLoading}
+          subtitle={`${leads.length} לידים סה"כ`}
+        />
+        <StatCard
+          title='הכנסות'
+          value={isLoading ? '-' : `₪${stats.totalRevenue.toLocaleString()}`}
+          icon={Wallet}
+          color="bg-emerald-50 text-emerald-600"
+          loading={paymentsLoading}
+          subtitle="סה״כ תשלומים שהתקבלו"
+        />
+        <StatCard
+          title="דירוג ממוצע"
+          value={isLoading ? '-' : (stats.avgRating ? `⭐ ${stats.avgRating}` : 'אין עדיין')}
+          icon={Star}
+          color="bg-amber-50 text-amber-600"
+          loading={reviewsLoading}
+          subtitle={`${reviews.length} ביקורות`}
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="grid md:grid-cols-2 gap-4 md:gap-5">
+        {/* Upcoming Bookings */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-3 flex flex-row items-center justify-between">
+            <CardTitle className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-[#00D1C1]" />
+              הזמנות קרובות
+            </CardTitle>
+            <Link to={createPageUrl('Bookings')}>
+              <Button variant="ghost" size="sm" className="text-xs h-7 gap-1 text-[#00D1C1] hover:text-[#00b8aa]">
+                הכל
+                <ChevronRight className="w-3 h-3" />
               </Button>
             </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Today's Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {isLoading ? (
-          [1, 2, 3, 4].map(i => (
-            <Card key={i} className="relative overflow-hidden border-0 bg-white shadow-md rounded-2xl">
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between mb-4">
-                  <Skeleton className="w-14 h-14 rounded-xl" />
-                </div>
-                <Skeleton className="h-10 w-20 mb-2" />
-                <Skeleton className="h-4 w-24" />
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          [
-            { label: 'כניסות היום', value: todayCheckins.length, icon: ArrowDownRight, gradient: 'from-green-500 to-emerald-600', link: 'Bookings' },
-            { label: 'יציאות היום', value: todayCheckouts.length, icon: ArrowUpLeft, gradient: 'from-orange-500 to-amber-600', link: 'Bookings' },
-            { label: 'ניקיונות ממתינים', value: pendingCleaning.length, icon: Sparkles, gradient: 'from-cyan-500 to-blue-600', link: 'Cleaning' },
-            { label: 'תשלומים באיחור', value: overduePayments.length, icon: AlertCircle, gradient: overduePayments.length > 0 ? 'from-red-500 to-rose-600' : 'from-gray-400 to-gray-500', link: 'Payments' }
-          ].map((stat, i) => (
-            <Link key={i} to={createPageUrl(stat.link)}>
-              <Card className="relative overflow-hidden border-0 bg-white shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 rounded-2xl cursor-pointer group">
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
-                      <stat.icon className="h-5 w-5 text-white" />
+          </CardHeader>
+          <CardContent className="pt-0">
+            {bookingsLoading ? (
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-14 rounded-lg" />)}
+              </div>
+            ) : upcomingBookings.length === 0 ? (
+              <div className="text-center py-8">
+                <CalendarDays className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+                <p className="text-sm text-gray-400">אין הזמנות קרובות</p>
+                <Link to={createPageUrl('Bookings')}>
+                  <Button size="sm" variant="outline" className="mt-3 text-xs h-7">
+                    <Plus className="w-3 h-3 ml-1" /> הוסף הזמנה
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {upcomingBookings.map((booking) => (
+                  <Link
+                    key={booking.id}
+                    to={createPageUrl('Bookings')}
+                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-blue-50 flex flex-col items-center justify-center flex-shrink-0">
+                      <span className="text-[10px] font-semibold text-blue-600 leading-none">
+                        {booking.check_in_date ? format(parseISO(booking.check_in_date), 'MMM', { locale: he }) : ''}
+                      </span>
+                      <span className="text-sm font-bold text-blue-700 leading-none">
+                        {booking.check_in_date ? format(parseISO(booking.check_in_date), 'd') : ''}
+                      </span>
                     </div>
-                  </div>
-                  <p className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-l from-[#0B1220] to-[#1a2744] bg-clip-text text-transparent mb-2">{stat.value}</p>
-                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">{stat.label}</p>
-                </CardContent>
-                <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-l ${stat.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300`} />
-              </Card>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-800 truncate">
+                        {booking.guest_name || 'אורח'}
+                      </p>
+                      <p className="text-xs text-gray-400 truncate">
+                        {booking.nights ? `${booking.nights} לילות` : ''}
+                        {booking.property_name ? ` · ${booking.property_name}` : ''}
+                      </p>
+                    </div>
+                    <Badge className={`${statusColors[booking.status] || 'bg-gray-100 text-gray-600'} text-[10px] py-0 px-1.5 border-0`}>
+                      {statusLabels[booking.status] || booking.status}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Leads */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-3 flex flex-row items-center justify-between">
+            <CardTitle className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#00D1C1]" />
+              לידים אחרונים
+            </CardTitle>
+            <Link to={createPageUrl('Leads')}>
+              <Button variant="ghost" size="sm" className="text-xs h-7 gap-1 text-[#00D1C1] hover:text-[#00b8aa]">
+                הכל
+                <ChevronRight className="w-3 h-3" />
+              </Button>
             </Link>
-          ))
-        )}
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
-        {/* Left Column - Revenue & Occupancy */}
-        <div className="space-y-6">
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-2xl overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white">
-            <CardHeader className="pb-4 p-6 border-b border-gray-100">
-              <CardTitle className="font-bold flex items-center gap-2 text-xl">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-md">
-                  <TrendingUp className="h-5 w-5 text-white" />
-                </div>
-                ביצועים חודשיים
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              {isLoading ? (
-                <div className="space-y-6">
-                  <Skeleton className="h-24 w-full rounded-xl" />
-                  <Skeleton className="h-20 w-full rounded-xl" />
-                  <Skeleton className="h-24 w-full rounded-xl" />
-                </div>
-              ) : (
-                <>
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">הכנסות החודש</span>
-                      <span className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-l from-green-600 to-emerald-600 bg-clip-text text-transparent">₪{paidThisMonth.toLocaleString()}</span>
-                    </div>
-                    <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
-                      <div
-                        style={{ width: `${Math.min(100, Math.round((paidThisMonth / Math.max(paidThisMonth + openBalances, 1)) * 100))}%` }}
-                        className="h-full bg-gradient-to-l from-green-500 to-emerald-600 rounded-full shadow-sm transition-all duration-700"
-                      />
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">יתרות פתוחות</span>
-                      <span className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-l from-orange-600 to-amber-600 bg-clip-text text-transparent">₪{openBalances.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-100">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">תפוסה</span>
-                      <span className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-l from-cyan-600 to-blue-600 bg-clip-text text-transparent">{occupancyRate}%</span>
-                    </div>
-                    <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
-                      <div 
-                        style={{ width: `${occupancyRate}%` }}
-                        className="h-full bg-gradient-to-l from-[#00D1C1] to-[#00B8A9] rounded-full shadow-sm transition-all duration-700"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-            </CardContent>
-            </Card>
-        </div>
-
-        {/* Middle Column - Check-ins/Check-outs */}
-        <div className="space-y-4 md:space-y-6">
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
-            <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-white border-b border-green-100">
-              <CardTitle className="text-base md:text-lg font-bold flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-md">
-                  <ArrowDownRight className="h-3.5 w-3.5 text-white" />
-                </div>
-                כניסות קרובות
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 p-4 md:p-6">
-              {isLoading ? (
-                <div className="space-y-2">
-                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-10 md:h-12 w-full rounded-lg md:rounded-xl" />)}
-                </div>
-              ) : upcomingCheckins.length > 0 ? (
-                <div className="space-y-2">
-                  {upcomingCheckins.slice(0, 5).map(booking => (
-                    <Link key={booking.id} to={`${createPageUrl('Bookings')}?id=${booking.id}`}>
-                      <div className="flex items-center justify-between p-2.5 md:p-3 bg-gray-50 hover:bg-gray-100 rounded-lg md:rounded-xl transition-colors">
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium text-xs md:text-sm truncate">{booking.guest_name}</p>
-                          <p className="text-[10px] md:text-xs text-gray-500">
-                            {format(parseISO(booking.checkin_date), 'EEEE, d/M', { locale: he })}
-                          </p>
-                        </div>
-                        <Badge className={`${statusColors[booking.status]} text-[10px] md:text-xs whitespace-nowrap ml-2`}>
-                          {statusLabels[booking.status]}
-                        </Badge>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center mx-auto mb-4">
-                    <CalendarDays className="h-8 w-8 text-green-600" />
-                  </div>
-                  <p className="text-sm font-medium text-gray-700 mb-1">אין כניסות מתוכננות</p>
-                  <p className="text-xs text-gray-500 mb-4">ב-7 הימים הקרובים</p>
-                  <Link to={createPageUrl('Bookings')}>
-                    <Button size="sm" className="bg-gradient-to-l from-green-500 to-emerald-600 text-white rounded-lg">
-                      <Plus className="h-3.5 w-3.5 ml-1" />
-                      הוסף הזמנה
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
-            <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-orange-50 via-amber-50 to-white border-b border-orange-100">
-              <CardTitle className="text-base md:text-lg font-bold flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 shadow-md">
-                  <ArrowUpLeft className="h-3.5 w-3.5 text-white" />
-                </div>
-                יציאות קרובות
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 p-4 md:p-6">
-              {isLoading ? (
-                <div className="space-y-2">
-                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-10 md:h-12 w-full rounded-lg md:rounded-xl" />)}
-                </div>
-              ) : upcomingCheckouts.length > 0 ? (
-                <div className="space-y-2">
-                  {upcomingCheckouts.slice(0, 5).map(booking => (
-                    <Link key={booking.id} to={`${createPageUrl('Bookings')}?id=${booking.id}`}>
-                      <div className="flex items-center justify-between p-2.5 md:p-3 bg-gray-50 hover:bg-gray-100 rounded-lg md:rounded-xl transition-colors">
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium text-xs md:text-sm truncate">{booking.guest_name}</p>
-                          <p className="text-[10px] md:text-xs text-gray-500">
-                            {format(parseISO(booking.checkout_date), 'EEEE, d/M', { locale: he })}
-                          </p>
-                        </div>
-                        <Badge className={`${statusColors[booking.status]} text-[10px] md:text-xs whitespace-nowrap ml-2`}>
-                          {statusLabels[booking.status]}
-                        </Badge>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center mx-auto mb-4">
-                    <CalendarDays className="h-8 w-8 text-orange-600" />
-                  </div>
-                  <p className="text-sm font-medium text-gray-700 mb-1">אין יציאות מתוכננות</p>
-                  <p className="text-xs text-gray-500 mb-4">ב-7 הימים הקרובים</p>
-                  <Link to={createPageUrl('Bookings')}>
-                    <Button size="sm" className="bg-gradient-to-l from-orange-500 to-amber-600 text-white rounded-lg">
-                      צפה בהזמנות
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column - Tasks & Leads */}
-        <div className="space-y-4 md:space-y-6">
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
-            <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-cyan-50 via-blue-50 to-white border-b border-cyan-100">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base md:text-lg font-bold flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 shadow-md">
-                    <Sparkles className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  משימות ניקיון
-                </CardTitle>
-                <Link to={createPageUrl('Cleaning')}>
-                  <Button variant="ghost" size="sm" className="text-[#00D1C1] text-xs md:text-sm">צפה בכל</Button>
-                </Link>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {leadsLoading ? (
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-14 rounded-lg" />)}
               </div>
-            </CardHeader>
-            <CardContent className="pt-0 p-4 md:p-6">
-              {isLoading ? (
-                <div className="space-y-2">
-                  {[1, 2].map(i => <Skeleton key={i} className="h-12 md:h-14 w-full rounded-lg md:rounded-xl" />)}
-                </div>
-              ) : pendingCleaning.length > 0 ? (
-                <div className="space-y-2">
-                  {pendingCleaning.slice(0, 4).map(task => (
-                    <div key={task.id} className="flex items-center justify-between p-2.5 md:p-3 bg-gray-50 rounded-lg md:rounded-xl">
-                      <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
-                        <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full flex-shrink-0 ${
-                          task.status === 'DONE' ? 'bg-green-500' :
-                          task.status === 'IN_PROGRESS' ? 'bg-yellow-500' : 'bg-blue-500'
-                        }`} />
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium text-xs md:text-sm truncate">{task.assigned_to_name || 'לא הוקצה'}</p>
-                          <p className="text-[10px] md:text-xs text-gray-500">
-                            {task.scheduled_for && format(parseISO(task.scheduled_for), 'HH:mm')}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge className={`${statusColors[task.status]} text-[10px] md:text-xs whitespace-nowrap ml-2`}>
-                        {statusLabels[task.status]}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="h-8 w-8 text-cyan-600" />
-                  </div>
-                  <p className="text-sm font-medium text-gray-700 mb-1">כל הניקיונות בוצעו</p>
-                  <p className="text-xs text-gray-500 mb-4">אין משימות ממתינות</p>
-                  <Link to={createPageUrl('Cleaning')}>
-                    <Button size="sm" className="bg-gradient-to-l from-cyan-500 to-blue-600 text-white rounded-lg">
-                      נהל ניקיונות
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl md:rounded-2xl overflow-hidden">
-            <CardHeader className="pb-3 p-4 md:p-6 bg-gradient-to-br from-blue-50 via-indigo-50 to-white border-b border-blue-100">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base md:text-lg font-bold flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-md">
-                    <Users className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  לידים חדשים
-                </CardTitle>
+            ) : recentLeads.length === 0 ? (
+              <div className="text-center py-8">
+                <Users className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+                <p className="text-sm text-gray-400">אין לידים עדיין</p>
                 <Link to={createPageUrl('Leads')}>
-                  <Button variant="ghost" size="sm" className="text-[#00D1C1] text-xs md:text-sm">צפה בכל</Button>
+                  <Button size="sm" variant="outline" className="mt-3 text-xs h-7">
+                    <Plus className="w-3 h-3 ml-1" /> הוסף ליד
+                  </Button>
                 </Link>
               </div>
-            </CardHeader>
-            <CardContent className="pt-0 p-4 md:p-6">
-              {isLoading ? (
-                <div className="space-y-2">
-                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-9 md:h-10 w-full rounded-lg md:rounded-xl" />)}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {leads.filter(l => l.status === 'NEW').slice(0, 4).map(lead => (
-                    <div key={lead.id} className="flex items-center justify-between p-2.5 md:p-3 bg-gray-50 rounded-lg md:rounded-xl">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-xs md:text-sm truncate">{lead.name}</p>
-                        <p className="text-[10px] md:text-xs text-gray-500 truncate">{lead.phone}</p>
-                      </div>
-                      <Badge className={`${statusColors.NEW} text-[10px] md:text-xs whitespace-nowrap ml-2`}>חדש</Badge>
+            ) : (
+              <div className="space-y-2">
+                {recentLeads.map((lead) => (
+                  <Link
+                    key={lead.id}
+                    to={createPageUrl('Leads')}
+                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00D1C1]/20 to-blue-100 flex items-center justify-center flex-shrink-0 text-xs font-semibold text-[#00D1C1]">
+                      {(lead.full_name || lead.name || 'א')[0]}
                     </div>
-                  ))}
-                  {leads.filter(l => l.status === 'NEW').length === 0 && (
-                    <div className="text-center py-8">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center mx-auto mb-4">
-                        <Users className="h-8 w-8 text-blue-600" />
-                      </div>
-                      <p className="text-sm font-medium text-gray-700 mb-1">אין לידים חדשים</p>
-                      <p className="text-xs text-gray-500 mb-4">לידים חדשים יופיעו כאן</p>
-                      <Link to={createPageUrl('Leads')}>
-                        <Button size="sm" className="bg-gradient-to-l from-blue-500 to-indigo-600 text-white rounded-lg">
-                          <Plus className="h-3.5 w-3.5 ml-1" />
-                          הוסף ליד
-                        </Button>
-                      </Link>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-800 truncate">
+                        {lead.full_name || lead.name || 'ליד חדש'}
+                      </p>
+                      <p className="text-xs text-gray-400 truncate">
+                        {lead.check_in_date ? `כניסה: ${format(parseISO(lead.check_in_date), 'dd/MM/yy')}` : ''}
+                        {lead.nights ? ` · ${lead.nights} לילות` : ''}
+                      </p>
                     </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                    <Badge className={`${statusColors[lead.status] || 'bg-gray-100 text-gray-600'} text-[10px] py-0 px-1.5 border-0`}>
+                      {statusLabels[lead.status] || lead.status}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Quick Actions */}
+      <Card className="border-0 shadow-sm">
+        <CardContent className="p-4">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">פעולות מהירות</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { label: 'ליד חדש', icon: Users, page: 'Leads', color: 'text-purple-600 bg-purple-50' },
+              { label: 'הזמנה חדשה', icon: CalendarDays, page: 'Bookings', color: 'text-blue-600 bg-blue-50' },
+              { label: 'הודעות', icon: Sparkles, page: 'Messages', color: 'text-teal-600 bg-teal-50' },
+              { label: 'אנליטיקה', icon: TrendingUp, page: 'Analytics', color: 'text-emerald-600 bg-emerald-50' },
+            ].map(({ label, icon: Icon, page, color }) => (
+              <Link key={page} to={createPageUrl(page)}>
+                <button className="w-full flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 hover:border-[#00D1C1]/30 hover:bg-[#00D1C1]/3 transition-all duration-200 group">
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${color} group-hover:scale-110 transition-transform duration-200`}>
+                    <Icon className="w-4.5 h-4.5" />
+                  </div>
+                  <span className="text-xs font-medium text-gray-600 group-hover:text-gray-800">{label}</span>
+                </button>
+              </Link>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
