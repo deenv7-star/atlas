@@ -1,24 +1,23 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [user, setUser]                         = useState(null);
+  const [isAuthenticated, setIsAuthenticated]   = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth]       = useState(true);
+  const [authError, setAuthError]               = useState(null);
+
   // Kept for API-compatibility with existing consumers
   const [isLoadingPublicSettings] = useState(false);
-  const [authError, setAuthError] = useState(null);
-  const [appPublicSettings] = useState({ id: 'standalone', public_settings: {} });
+  const [appPublicSettings]       = useState({ id: 'standalone', public_settings: {} });
 
-  useEffect(() => {
-    checkAppState();
-  }, []);
+  // ── helpers ────────────────────────────────────────────────────────────────
 
-  const checkAppState = async () => {
+  const hydrateUser = async () => {
     try {
-      setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
@@ -27,10 +26,45 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
       setAuthError({ type: 'auth_required', message: 'Authentication required' });
-    } finally {
-      setIsLoadingAuth(false);
     }
   };
+
+  // ── initialise ─────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    let unsubscribe = () => {};
+
+    const init = async () => {
+      setIsLoadingAuth(true);
+
+      if (isSupabaseConfigured && supabase) {
+        // Restore session from storage (if the user was previously logged in)
+        await hydrateUser();
+        setIsLoadingAuth(false);
+
+        // Keep in sync with Supabase auth state changes (sign-in, sign-out,
+        // token refresh, etc.)
+        unsubscribe = base44.auth.onAuthStateChange(async (event) => {
+          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            await hydrateUser();
+          } else if (event === 'SIGNED_OUT') {
+            setUser(null);
+            setIsAuthenticated(false);
+            setAuthError({ type: 'auth_required', message: 'Authentication required' });
+          }
+        });
+      } else {
+        // localStorage mode — read once on mount
+        await hydrateUser();
+        setIsLoadingAuth(false);
+      }
+    };
+
+    init();
+    return () => unsubscribe();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── actions ────────────────────────────────────────────────────────────────
 
   const logout = async (shouldRedirect = true) => {
     await base44.auth.logout();
@@ -43,13 +77,27 @@ export const AuthProvider = ({ children }) => {
     base44.auth.redirectToLogin(window.location.href);
   };
 
-  // Called by the Login page after a successful sign-in
-  const loginUser = (userObj) => {
-    base44.auth.setUser(userObj);
-    setUser(userObj);
-    setIsAuthenticated(true);
-    setAuthError(null);
+  /**
+   * Called by the Login page after a successful sign-in / sign-up.
+   * In Supabase mode the auth state listener will fire automatically, so this
+   * is mostly a compatibility shim that also handles the localStorage case.
+   */
+  const loginUser = async (userObjOrNull) => {
+    if (userObjOrNull) {
+      // localStorage mode — caller passes a plain user object
+      base44.auth.setUser?.(userObjOrNull);
+      setUser(userObjOrNull);
+      setIsAuthenticated(true);
+      setAuthError(null);
+    } else {
+      // Supabase mode — re-fetch from the server after signIn
+      await hydrateUser();
+    }
   };
+
+  const checkAppState = hydrateUser;
+
+  // ── render ─────────────────────────────────────────────────────────────────
 
   return (
     <AuthContext.Provider value={{
