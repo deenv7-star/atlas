@@ -9,6 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import {
@@ -38,6 +39,7 @@ const pageNames = {
 };
 
 export default function AppHeader({ user, currentPageName, onMenuClick, selectedPropertyId, onPropertyChange }) {
+  const { logout } = useAuth();
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties-header'],
@@ -145,7 +147,7 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-600 focus:text-red-600 focus:bg-red-50 flex items-center gap-2 cursor-pointer"
-                onClick={() => base44.auth.logout().then(() => window.location.href = '/')}
+                onClick={() => logout()}
               >
                 <LogOut className="w-4 h-4" />
                 יציאה
