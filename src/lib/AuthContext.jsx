@@ -113,14 +113,11 @@ export const AuthProvider = ({ children }) => {
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
-
-    if (shouldRedirect) {
-      // Redirect to Landing after logout, not back to the current page
-      base44.auth.logout('/Landing');
-    } else {
-      // Just remove the token without redirect
-      base44.auth.logout();
-    }
+    base44.auth.logout().then(() => {
+      if (shouldRedirect) window.location.href = '/';
+    }).catch(() => {
+      if (shouldRedirect) window.location.href = '/';
+    });
   };
 
   const navigateToLogin = () => {

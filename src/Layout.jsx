@@ -68,7 +68,7 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50" dir="rtl">
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: 'var(--page-bg)' }} dir="rtl">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -86,6 +86,7 @@ function LayoutContent({ children, currentPageName }) {
           collapsed={sidebarCollapsed}
           onCollapse={() => setSidebarCollapsed(prev => !prev)}
           onLogout={handleLogout}
+          user={user}
         />
       </div>
 
@@ -98,6 +99,7 @@ function LayoutContent({ children, currentPageName }) {
           collapsed={false}
           onCollapse={() => setSidebarOpen(false)}
           onLogout={handleLogout}
+          user={user}
         />
       </div>
 

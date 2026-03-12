@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
@@ -8,16 +7,14 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Menu, Bell, Settings, LogOut, User, ChevronDown,
-  Building2, Plus, Search,
+  Building2,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 const pageNames = {
   Dashboard: 'דשבורד',
@@ -33,16 +30,14 @@ const pageNames = {
   Subscription: 'מנוי',
   Billing: 'חיוב',
   Integrations: 'אינטגרציות',
+  BookingDetail: 'פרטי הזמנה',
+  LeadDetail: 'פרטי ליד',
   Automations: 'אוטומציות',
   AIAssistant: 'AI עוזר',
-  Properties: 'נכסים',
-  Analytics: 'אנליטיקה',
   ServiceRequests: 'בקשות שירות',
 };
 
 export default function AppHeader({ user, currentPageName, onMenuClick, selectedPropertyId, onPropertyChange }) {
-  const navigate = useNavigate();
-  const [notifOpen, setNotifOpen] = useState(false);
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties-header'],
@@ -56,7 +51,6 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U';
   };
 
-  const currentProperty = properties.find(p => p.id === selectedPropertyId);
   const pageTitle = pageNames[currentPageName] || currentPageName;
 
   return (
@@ -100,12 +94,22 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
       {/* Action buttons */}
       <div className="flex items-center gap-1.5">
         {/* Notifications */}
-        <button
-          onClick={() => setNotifOpen(prev => !prev)}
-          className="relative p-1.5 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-        >
-          <Bell className="w-4.5 h-4.5" />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="relative p-1.5 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+              <Bell className="w-4 h-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64">
+            <div className="px-3 py-2 border-b border-gray-100">
+              <p className="text-sm font-semibold text-gray-800">התראות</p>
+            </div>
+            <div className="py-6 text-center">
+              <Bell className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+              <p className="text-sm text-gray-400">אין התראות חדשות</p>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* User menu */}
         {user && (
