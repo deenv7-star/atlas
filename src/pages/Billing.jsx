@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -33,14 +33,9 @@ const PLANS = {
   }
 };
 
-export default function BillingPage() {
-  const [user, setUser] = useState(null);
+export default function BillingPage({ user }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    base44.auth.me().then(setUser);
-  }, []);
 
   const currentPlan = user?.subscription_plan || 'starter';
   const nextBillingDate = user?.next_billing_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -59,7 +54,7 @@ export default function BillingPage() {
   };
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6" dir="rtl">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-[#0B1220]">מנוי וחיוב</h1>

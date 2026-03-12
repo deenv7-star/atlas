@@ -72,8 +72,7 @@ const TEMPLATE_AUTOMATIONS = [
   }
 ];
 
-export default function AutomationsPage() {
-  const [user, setUser] = useState(null);
+export default function AutomationsPage({ user, orgId }) {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newRule, setNewRule] = useState({
     name: '',
@@ -84,18 +83,14 @@ export default function AutomationsPage() {
   });
   const queryClient = useQueryClient();
 
-  React.useEffect(() => {
-    base44.auth.me().then(setUser);
-  }, []);
-
   const { data: automations = [], isLoading } = useQuery({
-    queryKey: ['automations', user?.org_id],
-    queryFn: () => base44.entities.AutomationRule.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id
+    queryKey: ['automations', orgId],
+    queryFn: () => base44.entities.AutomationRule.filter({ org_id: orgId }),
+    enabled: !!orgId
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.AutomationRule.create({ ...data, org_id: user?.org_id }),
+    mutationFn: (data) => base44.entities.AutomationRule.create({ ...data, org_id: orgId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['automations'] });
       setShowCreateDialog(false);

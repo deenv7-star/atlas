@@ -47,6 +47,23 @@ const AuthenticatedApp = () => {
           <MainPage />
         </LayoutWrapper>
       } />
+      {/* Detail pages require :id param — must be declared before the generic map */}
+      <Route
+        path="/BookingDetail/:id"
+        element={
+          <LayoutWrapper currentPageName="BookingDetail">
+            <Pages.BookingDetail />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/LeadDetail/:id"
+        element={
+          <LayoutWrapper currentPageName="LeadDetail">
+            <Pages.LeadDetail />
+          </LayoutWrapper>
+        }
+      />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}

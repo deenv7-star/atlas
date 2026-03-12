@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+// Note: user prop is injected by Layout via React.cloneElement
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -58,17 +59,15 @@ const PLANS = [
   }
 ];
 
-export default function SubscriptionPage() {
-  const [user, setUser] = useState(null);
+export default function SubscriptionPage({ user }) {
   const [currentPlan, setCurrentPlan] = useState('starter');
   const navigate = useNavigate();
 
   useEffect(() => {
-    base44.auth.me().then(userData => {
-      setUser(userData);
-      setCurrentPlan(userData.subscription_plan || 'starter');
-    });
-  }, []);
+    if (user) {
+      setCurrentPlan(user.subscription_plan || 'starter');
+    }
+  }, [user]);
 
   const handleSelectPlan = async (planId) => {
     // Note: Stripe integration will handle actual payment
