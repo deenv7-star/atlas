@@ -21,8 +21,8 @@
     --accent-foreground: 222 47% 11%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 90%;
-    --input: 220 13% 90%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
     --ring: 178 100% 41%;
     --radius: 0.75rem;
 
@@ -35,9 +35,13 @@
 
     /* Brand colors */
     --brand-teal: #00D1C1;
+    --brand-teal-light: #00eedd;
     --brand-dark: #0B1220;
     --brand-cream: #F2E9DB;
     --brand-teal-rgb: 0, 209, 193;
+
+    /* Page background */
+    --page-bg: #F4F6FB;
   }
 
   .dark {
@@ -68,7 +72,8 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: var(--page-bg);
     font-family: 'Inter', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -80,87 +85,161 @@
   }
 }
 
-/* Custom Scrollbar */
+/* ─── Custom Scrollbar ─────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 209, 193, 0.2);
+  background: rgba(0, 209, 193, 0.18);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 209, 193, 0.4);
+  background: rgba(0, 209, 193, 0.38);
 }
 
-/* Smooth scrolling */
+/* ─── Smooth scrolling ─────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
 
-/* Page transitions */
-.page-enter {
-  opacity: 0;
-  transform: translateY(8px);
-}
-.page-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 200ms ease, transform 200ms ease;
-}
-.page-exit {
-  opacity: 1;
-}
-.page-exit-active {
-  opacity: 0;
-  transition: opacity 150ms ease;
+/* ─── Page & card backgrounds ──────────────────────── */
+.page-content {
+  background-color: var(--page-bg);
 }
 
-/* Card hover effects */
+/* Premium card base */
+.card-premium {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  border: 1px solid rgba(226,232,240,0.7);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-premium:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+  transform: translateY(-1px);
+}
+
+/* Stat card gradient backgrounds */
+.stat-blue   { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); }
+.stat-purple { background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%); }
+.stat-teal   { background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 100%); }
+.stat-amber  { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); }
+.stat-rose   { background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%); }
+.stat-green  { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); }
+
+/* Icon container gradients */
+.icon-blue   { background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; }
+.icon-purple { background: linear-gradient(135deg, #8B5CF6, #7C3AED); color: white; }
+.icon-teal   { background: linear-gradient(135deg, #00D1C1, #0891b2); color: white; }
+.icon-amber  { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; }
+.icon-rose   { background: linear-gradient(135deg, #F43F5E, #E11D48); color: white; }
+.icon-green  { background: linear-gradient(135deg, #10B981, #059669); color: white; }
+
+/* ─── Premium button styles ────────────────────────── */
+.btn-teal {
+  background: linear-gradient(135deg, #00D1C1 0%, #00b8aa 100%);
+  color: #0B1220;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 209, 193, 0.25);
+}
+.btn-teal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 209, 193, 0.4);
+}
+.btn-teal:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 209, 193, 0.2);
+}
+
+/* ─── Card hover effects ───────────────────────────── */
 .card-hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.09);
 }
 
-/* Premium button styles */
-.btn-teal {
-  background: linear-gradient(135deg, #00D1C1 0%, #00a89a 100%);
-  color: #0B1220;
-  font-weight: 600;
-  transition: all 0.2s ease;
+/* ─── Glassmorphism ────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
 }
-.btn-teal:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 209, 193, 0.35);
-}
-.btn-teal:active {
-  transform: translateY(0);
-}
-
-/* Skeleton loading animation */
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-}
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+.glass-dark {
+  background: rgba(11, 18, 32, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Fade in animation */
+/* ─── Gradient text ────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #00D1C1, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Teal glow ────────────────────────────────────── */
+.glow-teal {
+  box-shadow: 0 0 24px rgba(0, 209, 193, 0.28);
+}
+
+/* ─── Animations ───────────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in {
-  animation: fadeIn 0.3s ease forwards;
+  animation: fadeIn 0.35s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+/* Staggered children */
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 209, 193, 0); }
+  50%       { box-shadow: 0 0 20px 4px rgba(0, 209, 193, 0.3); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
 }
 
 /* Scroll reveal */
@@ -174,70 +253,12 @@ html {
   transform: translateY(0);
 }
 
-/* Focus ring brand */
+/* ─── Focus ring brand ─────────────────────────────── */
 .focus-teal:focus-visible {
   outline: 2px solid #00D1C1;
   outline-offset: 2px;
 }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-/* Teal glow effect */
-.glow-teal {
-  box-shadow: 0 0 20px rgba(0, 209, 193, 0.3);
-}
-
-/* Status badge colors */
-.status-active { @apply bg-emerald-100 text-emerald-700; }
-.status-pending { @apply bg-amber-100 text-amber-700; }
-.status-inactive { @apply bg-gray-100 text-gray-600; }
-.status-cancelled { @apply bg-red-100 text-red-700; }
-
-/* RTL utilities */
-.rtl-flip {
-  transform: scaleX(-1);
-}
-[dir="rtl"] .ltr-only {
-  display: none;
-}
-
-/* Float animation for landing */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-/* Pulse glow */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 209, 193, 0); }
-  50% { box-shadow: 0 0 20px 4px rgba(0, 209, 193, 0.3); }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 2.5s ease-in-out infinite;
-}
-
-/* Loading states */
-.loading-dots::after {
-  content: '';
-  animation: loading-dots 1.5s infinite;
-}
-@keyframes loading-dots {
-  0% { content: ''; }
-  33% { content: '.'; }
-  66% { content: '..'; }
-  100% { content: '...'; }
-}
-
-/* Improved focus states */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
@@ -248,7 +269,39 @@ textarea:focus-visible {
   border-radius: 4px;
 }
 
-/* Mobile responsive utilities */
+/* ─── Status badge colors ──────────────────────────── */
+.status-active    { @apply bg-emerald-100 text-emerald-700 border-emerald-200; }
+.status-pending   { @apply bg-amber-100 text-amber-700 border-amber-200; }
+.status-inactive  { @apply bg-gray-100 text-gray-600 border-gray-200; }
+.status-cancelled { @apply bg-red-100 text-red-700 border-red-200; }
+
+/* ─── RTL utilities ────────────────────────────────── */
+.rtl-flip {
+  transform: scaleX(-1);
+}
+[dir="rtl"] .ltr-only {
+  display: none;
+}
+
+/* ─── Page transitions ─────────────────────────────── */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+.page-exit {
+  opacity: 1;
+}
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+/* ─── Mobile responsive utilities ─────────────────── */
 @media (max-width: 768px) {
   .hide-mobile {
     display: none !important;
@@ -258,7 +311,7 @@ textarea:focus-visible {
   }
 }
 
-/* Print styles */
+/* ─── Print styles ─────────────────────────────────── */
 @media print {
   .no-print {
     display: none !important;

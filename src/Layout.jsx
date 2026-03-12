@@ -68,7 +68,7 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50" dir="rtl">
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: 'var(--page-bg)' }} dir="rtl">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
