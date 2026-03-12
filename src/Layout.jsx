@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
 import AppSidebar from '@/components/app/AppSidebar';
 import AppHeader from '@/components/app/AppHeader';
 import BottomTabs from '@/components/app/BottomTabs';
-import ErrorBoundary from '@/components/common/ErrorBoundary';
-import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary';
 import { cn } from '@/lib/utils';
 
-// Pages that don't need the app layout
-const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService', 'About', 'UserAgreement', 'DataSecurity', 'Accessibility'];
+const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService', 'About', 'UserAgreement', 'DataSecurity', 'Accessibility', 'SLA'];
+
+function PageLoader() {
+  return (
+    <div className="flex-1 flex items-center justify-center bg-gray-50/50">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-[#00D1C1] border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-gray-400">טוען...</p>
+      </div>
+    </div>
+  );
+}
 
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
@@ -23,198 +30,108 @@ function LayoutContent({ children, currentPageName }) {
 
   const isPublicPage = publicPages.includes(currentPageName);
 
-  // Set favicon and viewport
   useEffect(() => {
     const link = document.querySelector("link[rel~='icon']") || document.createElement('link');
     link.type = 'image/png';
     link.rel = 'icon';
-    link.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6985b1fe56d9d0df97ea2f90/ea15d56e9_Atlaslogo2.png';
+    link.href = '/icon.png';
     document.head.appendChild(link);
-
-    // Set viewport for mobile
-    let viewport = document.querySelector('meta[name="viewport"]');
-    if (!viewport) {
-      viewport = document.createElement('meta');
-      viewport.name = 'viewport';
-      document.head.appendChild(viewport);
-    }
-    viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover';
+    document.title = 'ATLAS';
   }, []);
 
-  // Fetch user data
   useEffect(() => {
     if (!isPublicPage) {
-      const fetchUser = async () => {
-        try {
-          const userData = await base44.auth.me();
-          setUser(userData);
-          
-          // If user doesn't have an org_id, create one or assign demo org
-          if (!userData.org_id) {
-            // For demo purposes, assign the demo organization
-            const orgs = await base44.entities.Organization.list('-created_date', 1);
-            if (orgs.length > 0) {
-              await base44.auth.updateMe({ org_id: orgs[0].id, app_role: 'OWNER' });
-              setUser({ ...userData, org_id: orgs[0].id, app_role: 'OWNER' });
-            }
-          }
-          
-          if (userData.selected_property_id) {
-            setSelectedPropertyId(userData.selected_property_id);
-          }
-        } catch (e) {
-          // User not authenticated, redirect to login
-          base44.auth.redirectToLogin();
-        }
-      };
-      fetchUser();
+      base44.auth.me()
+        .then(setUser)
+        .catch(() => setUser(null));
     }
   }, [isPublicPage]);
 
-  // Fetch properties
-  const { data: properties = [] } = useQuery({
-    queryKey: ['properties', user?.org_id],
-    queryFn: () => base44.entities.Property.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id && !isPublicPage,
-  });
-
-  // Set first property as default if none selected
+  // Mobile: close sidebar on route change
   useEffect(() => {
-    if (properties.length > 0 && !selectedPropertyId) {
-      setSelectedPropertyId(properties[0].id);
-    }
-  }, [properties, selectedPropertyId]);
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
-  const handlePropertyChange = async (propertyId) => {
-    setSelectedPropertyId(propertyId);
-    if (user) {
-      await base44.auth.updateMe({ selected_property_id: propertyId });
+  const handleLogout = async () => {
+    try {
+      await base44.auth.logout();
+      queryClient.clear();
+      setUser(null);
+      window.location.href = '/';
+    } catch (e) {
+      window.location.href = '/';
     }
   };
 
-  const handleLogout = () => {
-    base44.auth.logout('/Landing');
-  };
-
-  // Public pages get no layout
   if (isPublicPage) {
-    return <ErrorBoundary>{children}</ErrorBoundary>;
+    return <>{children}</>;
   }
 
-  // App layout
   return (
-    <div dir="rtl" className="min-h-screen overscroll-y-none" style={{ fontFamily: "'Assistant', 'Heebo', sans-serif", background: '#f9fafb' }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap');
-
-        :root {
-          --bg-primary: #F8FAFC;
-          --bg-secondary: #FFFFFF;
-          --text-primary: #0B1220;
-          --text-secondary: #64748B;
-          --border-color: #E2E8F0;
-          --accent: #00D1C1;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          :root {
-            --bg-primary: #030712;
-            --bg-secondary: #111827;
-            --text-primary: #F9FAFB;
-            --text-secondary: #9CA3AF;
-            --border-color: #374151;
-            --accent: #00D1C1;
-          }
-        }
-
-        body {
-          overscroll-behavior-y: none;
-        }
-
-        /* Prevent text selection on interactive elements */
-        button,
-        [role="button"],
-        a,
-        nav,
-        nav *,
-        header,
-        h1, h2, h3, h4, h5, h6,
-        svg,
-        .select-none {
-          user-select: none;
-          -webkit-user-select: none;
-          -webkit-touch-callout: none;
-        }
-      `}</style>
-      
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
-        <AppSidebar 
-          collapsed={sidebarCollapsed} 
-          onCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-          onLogout={handleLogout}
-        />
-      </div>
-
-      {/* Mobile Sidebar Overlay */}
+    <div className="flex h-screen overflow-hidden bg-gray-50" dir="rtl">
+      {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Mobile Sidebar */}
+      {/* Sidebar - desktop */}
       <div className={cn(
-        "fixed top-0 right-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 lg:hidden",
+        "hidden md:flex flex-shrink-0 transition-all duration-300",
+        sidebarCollapsed ? "w-[64px]" : "w-[240px]"
+      )}>
+        <AppSidebar
+          collapsed={sidebarCollapsed}
+          onCollapse={() => setSidebarCollapsed(prev => !prev)}
+          onLogout={handleLogout}
+        />
+      </div>
+
+      {/* Sidebar - mobile drawer */}
+      <div className={cn(
+        "fixed inset-y-0 right-0 z-40 w-[240px] md:hidden transition-transform duration-300",
         sidebarOpen ? "translate-x-0" : "translate-x-full"
       )}>
-        <AppSidebar 
-          collapsed={false} 
+        <AppSidebar
+          collapsed={false}
           onCollapse={() => setSidebarOpen(false)}
           onLogout={handleLogout}
         />
       </div>
 
-      <div className={cn(
-        "transition-all duration-300",
-        sidebarCollapsed ? "lg:mr-20" : "lg:mr-64"
-      )}>
-        <div style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-          <AppHeader 
-            user={user}
-            properties={properties}
-            selectedPropertyId={selectedPropertyId}
-            onPropertyChange={handlePropertyChange}
-            onLogout={handleLogout}
-            onMenuClick={() => setSidebarOpen(true)}
-          />
-        </div>
-
-        <main className="p-3 sm:p-4 md:p-6 pb-20 lg:pb-6">
-          <ErrorBoundary>
-            <AnimatePresence mode="wait" initial={false}>
-              {React.cloneElement(children, { 
-                key: location.pathname,
-                user, 
-                selectedPropertyId, 
-                properties,
-                orgId: user?.org_id 
-              })}
-            </AnimatePresence>
-          </ErrorBoundary>
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <AppHeader
+          user={user}
+          currentPageName={currentPageName}
+          onMenuClick={() => setSidebarOpen(prev => !prev)}
+          selectedPropertyId={selectedPropertyId}
+          onPropertyChange={setSelectedPropertyId}
+        />
+        <main className="flex-1 overflow-y-auto">
+          <Suspense fallback={<PageLoader />}>
+            {React.cloneElement(children, {
+              user,
+              selectedPropertyId,
+              orgId: user?.organization_id,
+            })}
+          </Suspense>
         </main>
+        {/* Mobile bottom tabs */}
+        <div className="md:hidden">
+          <BottomTabs />
+        </div>
       </div>
-
-      <BottomTabs />
     </div>
   );
 }
 
-export default function Layout(props) {
+export default function Layout({ children, currentPageName }) {
   return (
-    <GlobalErrorBoundary>
-      <LayoutContent {...props} />
-    </GlobalErrorBoundary>
+    <LayoutContent currentPageName={currentPageName}>
+      {children}
+    </LayoutContent>
   );
 }
