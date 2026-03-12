@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
@@ -30,7 +30,6 @@ import { motion } from 'framer-motion';
 
 export default function Landing() {
   const t = translations.he;
-  const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState(null);
 
   const features = [
@@ -59,7 +58,7 @@ export default function Landing() {
               </Button>
               <Button 
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                onClick={() => navigate('/Login')}
               >
                 {t.startTrial}
               </Button>
@@ -87,17 +86,12 @@ export default function Landing() {
                 <Button 
                   size="lg" 
                   className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                  onClick={() => navigate('/Login')}
                 >
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl"
-                  onClick={() => window.open('https://wa.me/972508880999?text=היי, אני מעוניין לקבוע הדגמה למערכת ATLAS', '_blank')}
-                >
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
                   {t.bookDemo}
                 </Button>
               </div>
@@ -331,7 +325,7 @@ export default function Landing() {
                       className={`w-full rounded-xl ${key === 'pro' 
                         ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
                         : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                      onClick={() => navigate('/Login')}
                     >
                       {t.startTrial}
                     </Button>
@@ -399,7 +393,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+              onClick={() => navigate('/Login')}
             >
               {t.startTrial}
               <ArrowLeft className="mr-2 h-5 w-5" />
