@@ -4,6 +4,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import Logo from '@/components/common/Logo';
 import { translations } from '@/components/common/i18n';
+import ProductDemoModal from '@/components/landing/ProductDemoModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
@@ -58,7 +59,7 @@ export default function Landing() {
               </Button>
               <Button 
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => navigate('/Login')}
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
               >
                 {t.startTrial}
               </Button>
@@ -86,7 +87,7 @@ export default function Landing() {
                 <Button 
                   size="lg" 
                   className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
-                  onClick={() => navigate('/Login')}
+                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
                 >
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
@@ -325,7 +326,7 @@ export default function Landing() {
                       className={`w-full rounded-xl ${key === 'pro' 
                         ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
                         : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      onClick={() => navigate('/Login')}
+                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
                     >
                       {t.startTrial}
                     </Button>
@@ -393,7 +394,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => navigate('/Login')}
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
             >
               {t.startTrial}
               <ArrowLeft className="mr-2 h-5 w-5" />
@@ -401,6 +402,9 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
+
+      {/* Demo Modal */}
+      <ProductDemoModal open={demoModalOpen} onOpenChange={setDemoModalOpen} />
 
       {/* Footer */}
       <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
