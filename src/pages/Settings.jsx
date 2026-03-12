@@ -5,553 +5,379 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/components/ui/use-toast';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { 
-  Building2,
-  User,
-  Plus,
-  Settings as SettingsIcon,
-  Trash2,
-  Edit,
-  Save,
-  Globe,
-  AlertCircle
+  User, Building2, Bell, Shield, CreditCard,
+  Save, Check, AlertCircle, Settings,
 } from 'lucide-react';
-import { toast } from 'sonner';
-import UpgradeModal from '@/components/common/UpgradeModal';
+import { cn } from '@/lib/utils';
 
-const PLAN_LIMITS = {
-  starter: 2,
-  pro: 10,
-  scale: Infinity
-};
+const tabs = [
+  { id: 'profile', label: 'פרופיל', icon: User },
+  { id: 'organization', label: 'ארגון', icon: Building2 },
+  { id: 'notifications', label: 'התראות', icon: Bell },
+  { id: 'security', label: 'אבטחה', icon: Shield },
+];
 
-export default function Settings({ user, selectedPropertyId, orgId, properties }) {
-  const [activeTab, setActiveTab] = useState('properties');
-  const [isPropertyDialogOpen, setIsPropertyDialogOpen] = useState(false);
-  const [editingProperty, setEditingProperty] = useState(null);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+export default function SettingsPage({ user }) {
+  const [activeTab, setActiveTab] = useState('profile');
+  const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const currentPlan = user?.subscription_plan || 'starter';
-  const propertyLimit = PLAN_LIMITS[currentPlan] || 2;
-  const canAddProperty = properties.length < propertyLimit;
-
-  const [newProperty, setNewProperty] = useState({
-    name: '',
-    city: '',
-    address: '',
-    checkin_time: '15:00',
-    checkout_time: '11:00'
+  const { data: org } = useQuery({
+    queryKey: ['organization'],
+    queryFn: () => base44.entities.Organization.list().then(orgs => orgs[0] || null),
+    enabled: !!user,
   });
 
-  const [userSettings, setUserSettings] = useState({
-    language: 'he',
-    phone: ''
+  // Profile form state
+  const [profileForm, setProfileForm] = useState({
+    full_name: '',
+    email: '',
+    phone: '',
   });
 
-  // Load user settings
   useEffect(() => {
     if (user) {
-      setUserSettings({
-        language: user.language || 'he',
-        phone: user.phone || ''
+      setProfileForm({
+        full_name: user.full_name || '',
+        email: user.email || '',
+        phone: user.phone || '',
       });
     }
   }, [user]);
 
-  // Fetch organization
-  const { data: organization } = useQuery({
-    queryKey: ['organization', orgId],
-    queryFn: async () => {
-      if (!orgId) return null;
-      const orgs = await base44.entities.Organization.filter({ id: orgId });
-      return orgs[0] || null;
-    },
-    enabled: !!orgId
+  // Org form state
+  const [orgForm, setOrgForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    website: '',
   });
 
-  // Create property mutation
-  const createPropertyMutation = useMutation({
-    mutationFn: (data) => base44.entities.Property.create({
-      ...data,
-      org_id: orgId,
-      timezone: 'Asia/Jerusalem'
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['properties'] });
-      setIsPropertyDialogOpen(false);
-      resetPropertyForm();
-      toast.success('הנכס נוצר בהצלחה');
-    }
-  });
-
-  // Update property mutation
-  const updatePropertyMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Property.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['properties'] });
-      setIsPropertyDialogOpen(false);
-      resetPropertyForm();
-      toast.success('הנכס עודכן בהצלחה');
-    }
-  });
-
-  // Delete property mutation
-  const deletePropertyMutation = useMutation({
-    mutationFn: (id) => base44.entities.Property.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['properties'] });
-      toast.success('הנכס נמחק בהצלחה');
-    }
-  });
-
-  // Update user settings mutation
-  const updateUserMutation = useMutation({
-    mutationFn: (data) => base44.auth.updateMe(data),
-    onSuccess: () => {
-      toast.success('ההגדרות נשמרו בהצלחה');
-    }
-  });
-
-  // Delete account states
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deleteConfirmText, setDeleteConfirmText] = useState('');
-
-  // Delete account mutation
-  const deleteAccountMutation = useMutation({
-    mutationFn: async () => {
-      // Call the delete user endpoint
-      const response = await fetch('/api/auth/delete-me', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+  useEffect(() => {
+    if (org) {
+      setOrgForm({
+        name: org.name || '',
+        email: org.email || '',
+        phone: org.phone || '',
+        address: org.address || '',
+        website: org.website || '',
       });
-      if (!response.ok) {
-        throw new Error('Failed to delete account');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      // Clear all cached data
-      queryClient.clear();
-      // Redirect to landing page
-      window.location.href = '/Landing';
-    },
-    onError: (error) => {
-      toast.error('שגיאה במחיקת החשבון. אנא נסה שוב או פנה לתמיכה.');
-      console.error('Delete account error:', error);
     }
+  }, [org]);
+
+  const [notifSettings, setNotifSettings] = useState({
+    new_booking: true,
+    new_lead: true,
+    payment_received: true,
+    new_review: false,
+    system_updates: true,
   });
 
-  const resetPropertyForm = () => {
-    setNewProperty({
-      name: '',
-      city: '',
-      address: '',
-      checkin_time: '15:00',
-      checkout_time: '11:00'
-    });
-    setEditingProperty(null);
-  };
+  const saveProfileMutation = useMutation({
+    mutationFn: async () => {
+      return base44.auth.updateProfile(profileForm);
+    },
+    onSuccess: () => {
+      toast({ title: 'הפרופיל עודכן בהצלחה', description: 'השינויים נשמרו.' });
+      queryClient.invalidateQueries(['user']);
+    },
+    onError: () => {
+      toast({ title: 'שגיאה בשמירה', variant: 'destructive' });
+    },
+  });
 
-  const handleEditProperty = (property) => {
-    setEditingProperty(property);
-    setNewProperty({
-      name: property.name,
-      city: property.city || '',
-      address: property.address || '',
-      checkin_time: property.checkin_time || '15:00',
-      checkout_time: property.checkout_time || '11:00'
-    });
-    setIsPropertyDialogOpen(true);
-  };
+  const saveOrgMutation = useMutation({
+    mutationFn: async () => {
+      if (org?.id) {
+        return base44.entities.Organization.update(org.id, orgForm);
+      } else {
+        return base44.entities.Organization.create(orgForm);
+      }
+    },
+    onSuccess: () => {
+      toast({ title: 'פרטי הארגון עודכנו', description: 'השינויים נשמרו.' });
+      queryClient.invalidateQueries(['organization']);
+    },
+    onError: () => {
+      toast({ title: 'שגיאה בשמירה', variant: 'destructive' });
+    },
+  });
 
-  const handleSaveProperty = () => {
-    if (editingProperty) {
-      updatePropertyMutation.mutate({ id: editingProperty.id, data: newProperty });
-    } else {
-      createPropertyMutation.mutate(newProperty);
-    }
-  };
-
-  const handleSaveUserSettings = () => {
-    updateUserMutation.mutate(userSettings);
+  const getUserInitials = () => {
+    const name = user?.full_name || user?.email || '';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U';
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-[#0B1220]">הגדרות</h1>
-        <p className="text-gray-500">ניהול נכסים, משתמשים והעדפות</p>
+    <div className="p-4 md:p-6 max-w-4xl mx-auto animate-fade-in">
+      <div className="mb-6">
+        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <Settings className="w-5 h-5 text-[#00D1C1]" />
+          הגדרות
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">נהל את הגדרות החשבון שלך</p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="rounded-xl">
-          <TabsTrigger value="properties" className="rounded-lg gap-2">
-            <Building2 className="h-4 w-4" />
-            נכסים
-          </TabsTrigger>
-          <TabsTrigger value="account" className="rounded-lg gap-2">
-            <User className="h-4 w-4" />
-            חשבון
-          </TabsTrigger>
-          <TabsTrigger value="preferences" className="rounded-lg gap-2">
-            <SettingsIcon className="h-4 w-4" />
-            העדפות
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Properties Tab */}
-        <TabsContent value="properties" className="mt-6">
-          <div className="flex justify-between items-center mb-4">
-            <div className="text-sm text-gray-600">
-              {properties.length} / {propertyLimit === Infinity ? '∞' : propertyLimit} נכסים
-            </div>
-            <Button 
-              onClick={() => {
-                if (!canAddProperty) {
-                  setShowUpgradeModal(true);
-                  return;
-                }
-                resetPropertyForm();
-                setIsPropertyDialogOpen(true);
-              }}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              נכס חדש
-            </Button>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {properties.length === 0 ? (
-              <div className="col-span-full text-center py-12 text-gray-500">
-                אין נכסים עדיין. הוסף את הנכס הראשון שלך!
-              </div>
-            ) : (
-              properties.map(property => (
-                <Card key={property.id} className="border-0 shadow-sm rounded-2xl hover:shadow-md transition-shadow">
-                  <CardContent className="p-5">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center">
-                          <Building2 className="h-5 w-5 text-[#00D1C1]" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-[#0B1220]">{property.name}</h3>
-                          <p className="text-sm text-gray-500">{property.city || '-'}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-sm text-gray-600 space-y-1 mb-4">
-                      <p>צ׳ק-אין: {property.checkin_time || '15:00'}</p>
-                      <p>צ׳ק-אאוט: {property.checkout_time || '11:00'}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="rounded-lg flex-1"
-                        onClick={() => handleEditProperty(property)}
-                      >
-                        <Edit className="h-3 w-3 ml-1" />
-                        ערוך
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="rounded-lg text-red-600 hover:bg-red-50"
-                        onClick={() => {
-                          if (window.confirm('האם אתה בטוח שברצונך למחוק את הנכס?')) {
-                            deletePropertyMutation.mutate(property.id);
-                          }
-                        }}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
-        </TabsContent>
-
-        {/* Account Tab */}
-        <TabsContent value="account" className="mt-6">
-          <Card className="border-0 shadow-sm rounded-2xl max-w-lg">
-            <CardHeader>
-              <CardTitle>פרטי חשבון</CardTitle>
-              <CardDescription>פרטים אישיים ומידע על החשבון</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>שם מלא</Label>
-                <Input 
-                  value={user?.full_name || ''}
-                  disabled
-                  className="mt-1 rounded-xl bg-gray-50"
-                />
-              </div>
-              <div>
-                <Label>אימייל</Label>
-                <Input 
-                  value={user?.email || ''}
-                  disabled
-                  className="mt-1 rounded-xl bg-gray-50"
-                  dir="ltr"
-                />
-              </div>
-              <div>
-                <Label>טלפון</Label>
-                <Input 
-                  value={userSettings.phone}
-                  onChange={(e) => setUserSettings({ ...userSettings, phone: e.target.value })}
-                  className="mt-1 rounded-xl"
-                  placeholder="050-000-0000"
-                  dir="ltr"
-                />
-              </div>
-              <div>
-                <Label>תפקיד</Label>
-                <Input 
-                  value={user?.app_role === 'OWNER' ? 'בעלים' : user?.app_role === 'MANAGER' ? 'מנהל' : 'צוות ניקיון'}
-                  disabled
-                  className="mt-1 rounded-xl bg-gray-50"
-                />
-              </div>
-              <Button 
-                onClick={handleSaveUserSettings}
-                disabled={updateUserMutation.isPending}
-                className="w-full bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Tab list */}
+        <div className="flex md:flex-col gap-1 flex-shrink-0 md:w-44">
+          {tabs.map(tab => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-right",
+                  activeTab === tab.id
+                    ? "bg-[#00D1C1]/10 text-[#00D1C1]"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                )}
               >
-                <Save className="h-4 w-4" />
-                {updateUserMutation.isPending ? 'שומר...' : 'שמור שינויים'}
-              </Button>
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
 
-              <div className="pt-6 mt-6 border-t border-gray-200">
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-red-600">אזור מסוכן</h4>
-                  
-                  <div className="space-y-2">
-                    <p className="text-xs text-gray-500 mb-2">ביטול מנוי והפסקת חיוב חודשי</p>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        if (window.confirm('האם אתה בטוח שברצונך לבטל את המנוי? תוכל להמשיך להשתמש במערכת עד סוף תקופת החיוב הנוכחית.')) {
-                          toast.success('המנוי בוטל בהצלחה. תוכל להמשיך להשתמש עד סוף תקופת החיוב.');
-                        }
-                      }}
-                      className="w-full border-orange-200 text-orange-600 hover:bg-orange-50 rounded-xl gap-2"
-                    >
-                      <AlertCircle className="h-4 w-4" />
-                      בטל מנוי
-                    </Button>
-                  </div>
-                  
-                  <div className="space-y-2 pt-3">
-                    <p className="text-xs text-gray-500 mb-2">פעולה זו תמחק את החשבון שלך לצמיתות</p>
-                    <Button 
-                      variant="outline"
-                      onClick={() => setIsDeleteDialogOpen(true)}
-                      className="w-full border-red-200 text-red-600 hover:bg-red-50 rounded-xl gap-2"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      מחק חשבון
-                    </Button>
+        {/* Tab content */}
+        <div className="flex-1 min-w-0">
+          {/* Profile Tab */}
+          {activeTab === 'profile' && (
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-base">פרטים אישיים</CardTitle>
+                <CardDescription>עדכן את פרטי הפרופיל שלך</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                {/* Avatar */}
+                <div className="flex items-center gap-4">
+                  <Avatar className="w-16 h-16 ring-2 ring-[#00D1C1]/20">
+                    <AvatarImage src={user?.profile_image} />
+                    <AvatarFallback className="bg-[#00D1C1]/15 text-[#00D1C1] text-lg font-semibold">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">{user?.full_name || 'משתמש'}</p>
+                    <p className="text-xs text-gray-500">{user?.email}</p>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                <Separator />
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="full_name" className="text-xs font-medium">שם מלא</Label>
+                    <Input
+                      id="full_name"
+                      value={profileForm.full_name}
+                      onChange={e => setProfileForm(prev => ({ ...prev, full_name: e.target.value }))}
+                      placeholder="שם מלא"
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="phone" className="text-xs font-medium">טלפון</Label>
+                    <Input
+                      id="phone"
+                      value={profileForm.phone}
+                      onChange={e => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="050-0000000"
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label htmlFor="email" className="text-xs font-medium">אימייל</Label>
+                    <Input
+                      id="email"
+                      value={profileForm.email}
+                      disabled
+                      className="h-9 text-sm bg-gray-50"
+                    />
+                    <p className="text-[11px] text-gray-400">לא ניתן לשנות כתובת אימייל</p>
+                  </div>
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button
+                    onClick={() => saveProfileMutation.mutate()}
+                    disabled={saveProfileMutation.isPending}
+                    className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm"
+                  >
+                    {saveProfileMutation.isPending ? (
+                      <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
+                    שמור שינויים
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-        {/* Preferences Tab */}
-        <TabsContent value="preferences" className="mt-6">
-          <Card className="border-0 shadow-sm rounded-2xl max-w-lg">
-            <CardHeader>
-              <CardTitle>העדפות</CardTitle>
-              <CardDescription>התאמה אישית של המערכת</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  שפה
-                </Label>
-                <Select 
-                  value={userSettings.language} 
-                  onValueChange={(value) => setUserSettings({ ...userSettings, language: value })}
-                >
-                  <SelectTrigger className="mt-1 rounded-xl">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="he">עברית</SelectItem>
-                    <SelectItem value="en">English</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button 
-                onClick={handleSaveUserSettings}
-                disabled={updateUserMutation.isPending}
-                className="w-full bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
-              >
-                <Save className="h-4 w-4" />
-                {updateUserMutation.isPending ? 'שומר...' : 'שמור שינויים'}
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+          {/* Organization Tab */}
+          {activeTab === 'organization' && (
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-base">פרטי הארגון</CardTitle>
+                <CardDescription>מידע על העסק שלך</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">שם הארגון</Label>
+                    <Input
+                      value={orgForm.name}
+                      onChange={e => setOrgForm(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="שם החברה / העסק"
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">אימייל עסקי</Label>
+                    <Input
+                      value={orgForm.email}
+                      onChange={e => setOrgForm(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="info@company.com"
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">טלפון</Label>
+                    <Input
+                      value={orgForm.phone}
+                      onChange={e => setOrgForm(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="03-0000000"
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">אתר אינטרנט</Label>
+                    <Input
+                      value={orgForm.website}
+                      onChange={e => setOrgForm(prev => ({ ...prev, website: e.target.value }))}
+                      placeholder="https://www.example.com"
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label className="text-xs font-medium">כתובת</Label>
+                    <Input
+                      value={orgForm.address}
+                      onChange={e => setOrgForm(prev => ({ ...prev, address: e.target.value }))}
+                      placeholder="רחוב, עיר, מיקוד"
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button
+                    onClick={() => saveOrgMutation.mutate()}
+                    disabled={saveOrgMutation.isPending}
+                    className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm"
+                  >
+                    {saveOrgMutation.isPending ? (
+                      <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
+                    שמור שינויים
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-      {/* Delete Account Dialog */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[450px]">
-          <DialogHeader>
-            <DialogTitle className="text-red-600">מחיקת חשבון</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-              <p className="text-sm text-red-800 font-medium mb-2">אזהרה: פעולה בלתי הפיכה</p>
-              <p className="text-xs text-red-600">
-                מחיקת החשבון תמחק את כל הנתונים שלך לצמיתות, כולל נכסים, הזמנות, לידים ותשלומים.
-              </p>
-            </div>
+          {/* Notifications Tab */}
+          {activeTab === 'notifications' && (
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-base">הגדרות התראות</CardTitle>
+                <CardDescription>בחר אילו התראות תרצה לקבל</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-1">
+                {[
+                  { key: 'new_booking', label: 'הזמנה חדשה', desc: 'קבל התראה כשמתווספת הזמנה חדשה' },
+                  { key: 'new_lead', label: 'ליד חדש', desc: 'קבל התראה על לידים חדשים' },
+                  { key: 'payment_received', label: 'תשלום התקבל', desc: 'קבל התראה על תשלומים שהתקבלו' },
+                  { key: 'new_review', label: 'ביקורת חדשה', desc: 'קבל התראה על ביקורות חדשות' },
+                  { key: 'system_updates', label: 'עדכוני מערכת', desc: 'קבל עדכונים על שיפורים ותכונות' },
+                ].map(item => (
+                  <div key={item.key} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{item.label}</p>
+                      <p className="text-xs text-gray-400">{item.desc}</p>
+                    </div>
+                    <Switch
+                      checked={notifSettings[item.key]}
+                      onCheckedChange={val => setNotifSettings(prev => ({ ...prev, [item.key]: val }))}
+                      className="data-[state=checked]:bg-[#00D1C1]"
+                    />
+                  </div>
+                ))}
+                <div className="pt-3 flex justify-end">
+                  <Button
+                    onClick={() => toast({ title: 'הגדרות ההתראות נשמרו' })}
+                    className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm"
+                  >
+                    <Save className="w-4 h-4" />
+                    שמור
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-            <div>
-              <Label>הקלד "מחק את החשבון שלי" לאישור</Label>
-              <Input 
-                value={deleteConfirmText}
-                onChange={(e) => setDeleteConfirmText(e.target.value)}
-                className="mt-1 rounded-xl"
-                placeholder="מחק את החשבון שלי"
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setIsDeleteDialogOpen(false);
-                setDeleteConfirmText('');
-              }} 
-              className="rounded-xl"
-            >
-              ביטול
-            </Button>
-            <Button 
-              disabled={deleteConfirmText !== 'מחק את החשבון שלי' || deleteAccountMutation.isPending}
-              onClick={() => {
-                deleteAccountMutation.mutate();
-              }}
-              className="bg-red-600 hover:bg-red-700 text-white rounded-xl"
-            >
-              {deleteAccountMutation.isPending ? 'מוחק...' : 'מחק חשבון לצמיתות'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Property Dialog */}
-      <Dialog open={isPropertyDialogOpen} onOpenChange={setIsPropertyDialogOpen}>
-        <DialogContent className="sm:max-w-[450px]">
-          <DialogHeader>
-            <DialogTitle>{editingProperty ? 'ערוך נכס' : 'נכס חדש'}</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div>
-              <Label>שם הנכס</Label>
-              <Input 
-                value={newProperty.name}
-                onChange={(e) => setNewProperty({ ...newProperty, name: e.target.value })}
-                className="mt-1 rounded-xl"
-                placeholder="לדוגמה: וילה בכפר ורדים"
-              />
-            </div>
-            <div>
-              <Label>עיר</Label>
-              <Input 
-                value={newProperty.city}
-                onChange={(e) => setNewProperty({ ...newProperty, city: e.target.value })}
-                className="mt-1 rounded-xl"
-                placeholder="לדוגמה: כפר ורדים"
-              />
-            </div>
-            <div>
-              <Label>כתובת</Label>
-              <Input 
-                value={newProperty.address}
-                onChange={(e) => setNewProperty({ ...newProperty, address: e.target.value })}
-                className="mt-1 rounded-xl"
-                placeholder="כתובת מלאה"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>שעת צ׳ק-אין</Label>
-                <Input 
-                  type="time"
-                  value={newProperty.checkin_time}
-                  onChange={(e) => setNewProperty({ ...newProperty, checkin_time: e.target.value })}
-                  className="mt-1 rounded-xl"
-                />
-              </div>
-              <div>
-                <Label>שעת צ׳ק-אאוט</Label>
-                <Input 
-                  type="time"
-                  value={newProperty.checkout_time}
-                  onChange={(e) => setNewProperty({ ...newProperty, checkout_time: e.target.value })}
-                  className="mt-1 rounded-xl"
-                />
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPropertyDialogOpen(false)} className="rounded-xl">
-              ביטול
-            </Button>
-            <Button 
-              onClick={handleSaveProperty}
-              disabled={!newProperty.name || createPropertyMutation.isPending || updatePropertyMutation.isPending}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
-            >
-              {(createPropertyMutation.isPending || updatePropertyMutation.isPending) ? 'שומר...' : 'שמור'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Upgrade Modal */}
-      <UpgradeModal 
-        open={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        currentPlan={currentPlan}
-        currentCount={properties.length}
-        entity="property"
-      />
+          {/* Security Tab */}
+          {activeTab === 'security' && (
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-base">אבטחה</CardTitle>
+                <CardDescription>נהל את אבטחת החשבון שלך</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-4 bg-emerald-50 rounded-xl flex items-start gap-3">
+                  <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Shield className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-emerald-800">החשבון שלך מאובטח</p>
+                    <p className="text-xs text-emerald-600 mt-0.5">הגישה מנוהלת דרך ספק הזהות שלך</p>
+                  </div>
+                </div>
+                <Separator />
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-gray-700">פעולות אבטחה</p>
+                  <Button variant="outline" className="w-full justify-start text-sm h-9 gap-2">
+                    <Shield className="w-4 h-4 text-gray-400" />
+                    אפשר אימות דו-שלבי
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-sm h-9 gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                    onClick={() => {
+                      if (confirm('האם אתה בטוח שברצונך למחוק את החשבון?')) {
+                        // Handle account deletion
+                      }
+                    }}
+                  >
+                    <AlertCircle className="w-4 h-4" />
+                    מחק חשבון
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
