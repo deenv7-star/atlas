@@ -96,7 +96,7 @@ export default function LeadDetail({ orgId }) {
     });
     
     await updateMutation.mutateAsync({ id: lead.id, data: { status: 'WON' } });
-    navigate(`${createPageUrl('Bookings')}/${booking.id}`);
+    navigate(`${createPageUrl('BookingDetail')}/${booking.id}`);
   };
 
   if (isLoading) {

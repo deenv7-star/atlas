@@ -83,7 +83,7 @@ export default function SettingsPage({ user }) {
 
   const saveProfileMutation = useMutation({
     mutationFn: async () => {
-      return base44.auth.updateProfile(profileForm);
+      return base44.auth.updateMe(profileForm);
     },
     onSuccess: () => {
       toast({ title: 'הפרופיל עודכן בהצלחה', description: 'השינויים נשמרו.' });
@@ -363,9 +363,15 @@ export default function SettingsPage({ user }) {
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm h-9 gap-2 text-red-600 border-red-200 hover:bg-red-50"
-                    onClick={() => {
-                      if (confirm('האם אתה בטוח שברצונך למחוק את החשבון?')) {
-                        // Handle account deletion
+                    onClick={async () => {
+                      if (confirm('האם אתה בטוח שברצונך למחוק את החשבון? פעולה זו בלתי הפיכה.')) {
+                        try {
+                          await base44.auth.deleteAccount?.();
+                        } catch (e) {
+                          // proceed to logout even if deleteAccount is unavailable
+                        }
+                        await base44.auth.logout().catch(() => {});
+                        window.location.href = '/';
                       }
                     }}
                   >

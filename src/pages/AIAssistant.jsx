@@ -20,7 +20,7 @@ const QUICK_QUESTIONS = [
   { icon: Lightbulb, text: 'אסטרטגיה לצמיחה', prompt: 'על בסיס כל הנתונים, תן לי תוכנית פעולה אסטרטגית להגדלת ההכנסות והשיפור התפעולי - 5 צעדים קונקרטיים.' }
 ];
 
-export default function AIAssistantPage({ user, orgId, selectedPropertyId, properties }) {
+export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +51,13 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId, prope
     enabled: !!orgId
   });
 
-  const selectedProperty = properties?.find(p => p.id === selectedPropertyId);
+  const { data: properties = [] } = useQuery({
+    queryKey: ['properties-ai'],
+    queryFn: () => base44.entities.Property.list(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const selectedProperty = properties.find(p => p.id === selectedPropertyId);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
