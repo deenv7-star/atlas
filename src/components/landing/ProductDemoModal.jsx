@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, X, LayoutDashboard, Calendar, Users, Wallet, Zap, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, LayoutDashboard, Calendar, Users, Wallet, Zap, CheckCircle2, Play, Pause } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -208,6 +208,7 @@ const demoSlides = [
 
 export default function ProductDemoModal({ open, onOpenChange }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoPlay, setIsAutoPlay] = useState(true);
   const slide = demoSlides[currentSlide];
   const Icon = slide.icon;
 
@@ -218,6 +219,25 @@ export default function ProductDemoModal({ open, onOpenChange }) {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + demoSlides.length) % demoSlides.length);
   };
+
+  // Auto-play functionality
+  useEffect(() => {
+    if (!open || !isAutoPlay) return;
+    
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % demoSlides.length);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, [open, isAutoPlay]);
+
+  // Reset to first slide when modal opens
+  useEffect(() => {
+    if (open) {
+      setCurrentSlide(0);
+      setIsAutoPlay(true);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -285,35 +305,59 @@ export default function ProductDemoModal({ open, onOpenChange }) {
 
           {/* Navigation */}
           <div className="p-6 border-t bg-gray-50 flex items-center justify-between">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={prevSlide}
-              disabled={currentSlide === 0}
-              className="gap-2"
-            >
-              <ChevronRight className="w-4 h-4" />
-              הקודם
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={prevSlide}
+                className="gap-2"
+              >
+                <ChevronRight className="w-4 h-4" />
+                הקודם
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsAutoPlay(!isAutoPlay)}
+                className="gap-2"
+              >
+                {isAutoPlay ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              </Button>
+            </div>
 
-            {/* Dots */}
+            {/* Dots with progress */}
             <div className="flex gap-2">
               {demoSlides.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => setCurrentSlide(i)}
+                  onClick={() => {
+                    setCurrentSlide(i);
+                    setIsAutoPlay(false);
+                  }}
                   className={cn(
-                    "w-2 h-2 rounded-full transition-all",
-                    i === currentSlide ? "bg-[#00D1C1] w-6" : "bg-gray-300"
+                    "h-2 rounded-full transition-all relative overflow-hidden",
+                    i === currentSlide ? "w-8 bg-gray-200" : "w-2 bg-gray-300"
                   )}
-                />
+                >
+                  {i === currentSlide && isAutoPlay && (
+                    <motion.div
+                      className="absolute inset-0 bg-[#00D1C1]"
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 4, ease: "linear" }}
+                      key={currentSlide}
+                    />
+                  )}
+                  {i === currentSlide && !isAutoPlay && (
+                    <div className="absolute inset-0 bg-[#00D1C1]" />
+                  )}
+                </button>
               ))}
             </div>
 
             <Button
               size="sm"
               onClick={nextSlide}
-              disabled={currentSlide === demoSlides.length - 1}
               className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220]"
             >
               הבא
