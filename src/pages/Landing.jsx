@@ -210,14 +210,32 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
+                <Card className={`h-full border-0 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-2xl group hover:-translate-y-2 overflow-hidden relative ${feature.bg}`}>
+                  {/* Animated gradient background */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-all duration-500`} />
+                  
+                  {/* Decorative corner element */}
+                  <div className="absolute top-0 right-0 w-20 h-20 opacity-5">
+                    <div className={`w-full h-full bg-gradient-to-br ${feature.gradient} rounded-bl-full`} />
+                  </div>
+                  
+                  <CardContent className="p-8 relative z-10">
+                    {/* Icon with gradient background */}
+                    <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+                      <feature.icon className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.desc}</p>
+                    
+                    <h3 className="text-xl font-bold text-[#0B1220] mb-3 group-hover:scale-105 transition-transform duration-300">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
                   </CardContent>
+                  
+                  {/* Animated bottom accent bar */}
+                  <div className={`absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r ${feature.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 shadow-lg`} />
+                  
+                  {/* Glow effect on hover */}
+                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 blur-xl transition-all duration-500 -z-10`} />
                 </Card>
               </motion.div>
             ))}
