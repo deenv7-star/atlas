@@ -32,6 +32,7 @@ import { motion } from 'framer-motion';
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -92,7 +93,12 @@ export default function Landing() {
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl"
+                  onClick={() => setDemoModalOpen(true)}
+                >
                   {t.bookDemo}
                 </Button>
               </div>
