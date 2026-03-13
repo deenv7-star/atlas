@@ -1,14 +1,7 @@
-import { createClient } from '@base44/sdk';
-import { appParams } from '@/lib/app-params';
+// Re-export the standalone client so that all existing imports continue to work.
+// This file previously bootstrapped the @base44/sdk — it now delegates to
+// the self-contained local client that stores data in localStorage.
 
-const { appId, token, functionsVersion, appBaseUrl } = appParams;
+import { createClient } from './client';
 
-//Create a client with authentication required
-export const base44 = createClient({
-  appId,
-  token,
-  functionsVersion,
-  serverUrl: '',
-  requiresAuth: false,
-  appBaseUrl
-});
+export const base44 = createClient();

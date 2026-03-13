@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
 import UpgradeModal from '@/components/common/UpgradeModal';
 
 const PLAN_LIMITS = {
@@ -11,10 +12,10 @@ const PLAN_LIMITS = {
 
 /**
  * SubscriptionGuard - HOC/Hook to check subscription limits
- * 
+ *
  * Usage:
  * const { checkLimit, UpgradeModalComponent } = useSubscriptionGuard();
- * 
+ *
  * const handleAddProperty = () => {
  *   if (!checkLimit('property')) return; // Shows upgrade modal if limit reached
  *   // Proceed with adding property
@@ -24,15 +25,12 @@ export function useSubscriptionGuard() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [limitContext, setLimitContext] = useState({ currentCount: 0, entity: 'property' });
 
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me()
-  });
+  const { user } = useAuth();
 
   const { data: properties = [] } = useQuery({
-    queryKey: ['properties', user?.org_id],
-    queryFn: () => base44.entities.Property.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id
+    queryKey: ['properties', user?.organization_id],
+    queryFn: () => base44.entities.Property.filter({ org_id: user?.organization_id }),
+    enabled: !!user?.organization_id
   });
 
   const currentPlan = user?.subscription_plan || 'starter';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import AppSidebar from '@/components/app/AppSidebar';
 import AppHeader from '@/components/app/AppHeader';
@@ -24,7 +24,7 @@ function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const queryClient = useQueryClient();
 
@@ -39,28 +39,15 @@ function LayoutContent({ children, currentPageName }) {
     document.title = 'ATLAS';
   }, []);
 
-  useEffect(() => {
-    if (!isPublicPage) {
-      base44.auth.me()
-        .then(setUser)
-        .catch(() => setUser(null));
-    }
-  }, [isPublicPage]);
-
   // Mobile: close sidebar on route change
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
   const handleLogout = async () => {
-    try {
-      await base44.auth.logout();
-      queryClient.clear();
-      setUser(null);
-      window.location.href = '/';
-    } catch (e) {
-      window.location.href = '/';
-    }
+    queryClient.clear();
+    await logout(false);
+    window.location.href = '/Login';
   };
 
   if (isPublicPage) {
