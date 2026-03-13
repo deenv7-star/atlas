@@ -14,14 +14,6 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl  = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey  = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.warn(
-    '[Supabase] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is not set.\n' +
-    'Copy .env.example to .env and fill in your Supabase project credentials.\n' +
-    'The app will fall back to the localStorage client until these are configured.'
-  );
-}
-
 export const supabase = (supabaseUrl && supabaseKey)
   ? createClient(supabaseUrl, supabaseKey, {
       auth: {
@@ -33,3 +25,12 @@ export const supabase = (supabaseUrl && supabaseKey)
   : null;
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey);
+
+// ── Local REST API (Express server) ──────────────────────────────────────────
+export const LOCAL_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+export const isLocalApiConfigured = Boolean(import.meta.env.VITE_API_URL || (
+  // Auto-detect: if not in prod and no Supabase creds, try local server
+  typeof window !== 'undefined' &&
+  !isSupabaseConfigured &&
+  !import.meta.env.PROD
+));

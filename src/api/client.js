@@ -1,26 +1,164 @@
 /**
- * ATLAS API Client — Supabase-backed (with localStorage fallback)
+ * ATLAS API Client — three-tier backend with automatic selection
  *
- * When VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY are set this module uses
- * Supabase for all data operations and auth.  Otherwise it falls back to the
- * original localStorage behaviour so development works without a database.
+ * Priority order:
+ *   1. Supabase cloud  (when VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY are set)
+ *   2. Local REST API  (when VITE_API_URL is set OR the local Express server
+ *                       responds at http://localhost:3001 in dev mode)
+ *   3. localStorage    (zero-config fallback for pure frontend demos)
  *
- * The public interface is identical to the old client:
+ * The public interface is identical in all three modes:
  *   client.entities.Booking.list()
- *   client.entities.Booking.filter({ org_id })
+ *   client.entities.Booking.filter({ property_id })
  *   client.entities.Booking.get(id)
  *   client.entities.Booking.create(data)
  *   client.entities.Booking.update(id, data)
  *   client.entities.Booking.delete(id)
  *   client.auth.me()
- *   client.auth.logout()
  *   client.auth.signUp({ email, password, full_name, organization_name })
  *   client.auth.signIn({ email, password })
+ *   client.auth.logout()
  *   client.auth.updateMe(data)
- *   client.integrations.Core.InvokeLLM(...)
  */
 
-import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { supabase, isSupabaseConfigured, LOCAL_API_URL } from './supabaseClient';
+
+// =============================================================================
+// Local REST API client (talks to server/index.js)
+// =============================================================================
+
+const TOKEN_KEY = 'atlas_jwt_token';
+
+function getStoredToken() { return localStorage.getItem(TOKEN_KEY) || null; }
+function setStoredToken(t) { if (t) localStorage.setItem(TOKEN_KEY, t); else localStorage.removeItem(TOKEN_KEY); }
+
+async function apiFetch(path, options = {}) {
+  const token = getStoredToken();
+  const res = await fetch(`${LOCAL_API_URL}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options.headers || {}),
+    },
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(body.error || `HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+  return body;
+}
+
+class RestEntityCollection {
+  constructor(name) { this._name = name; }
+
+  _qs(filters = {}) {
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(filters)) {
+      if (v !== undefined && v !== null && v !== '') p.set(k, v);
+    }
+    return p.toString() ? '?' + p.toString() : '';
+  }
+
+  async list(filters = {}) {
+    return apiFetch(`/api/entities/${this._name}${this._qs(filters)}`);
+  }
+
+  async filter(filters = {}, sort = '-created_at', limit = null) {
+    const qs = new URLSearchParams();
+    for (const [k, v] of Object.entries(filters)) {
+      if (v !== undefined && v !== null && v !== '') qs.set(k, v);
+    }
+    if (sort)  qs.set('_sort',  sort);
+    if (limit) qs.set('_limit', limit);
+    return apiFetch(`/api/entities/${this._name}?${qs.toString()}`);
+  }
+
+  async get(id) {
+    return apiFetch(`/api/entities/${this._name}/${id}`);
+  }
+
+  async create(data) {
+    return apiFetch(`/api/entities/${this._name}`, { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  async update(id, data) {
+    return apiFetch(`/api/entities/${this._name}/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  }
+
+  async delete(id) {
+    return apiFetch(`/api/entities/${this._name}/${id}`, { method: 'DELETE' });
+  }
+}
+
+const restEntitiesProxy = new Proxy({}, {
+  get(_, name) { return new RestEntityCollection(String(name)); },
+});
+
+const restAuth = {
+  async me() {
+    if (!getStoredToken()) { const e = new Error('Not authenticated'); e.status = 401; throw e; }
+    return apiFetch('/api/auth/me');
+  },
+
+  async signUp({ email, password, full_name = '', organization_name = '' }) {
+    const data = await apiFetch('/api/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, full_name, organization_name }),
+    });
+    setStoredToken(data.token);
+    return data;
+  },
+
+  async signIn({ email, password }) {
+    const data = await apiFetch('/api/auth/signin', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    setStoredToken(data.token);
+    return data;
+  },
+
+  async logout() {
+    try { await apiFetch('/api/auth/signout', { method: 'POST' }); } catch {}
+    setStoredToken(null);
+    return { success: true };
+  },
+
+  async updateMe(profileData) {
+    return apiFetch('/api/auth/me', { method: 'PUT', body: JSON.stringify(profileData) });
+  },
+
+  async deleteAccount() {
+    setStoredToken(null);
+    return { success: true };
+  },
+
+  redirectToLogin(returnUrl) {
+    window.location.href = returnUrl
+      ? `/Login?return=${encodeURIComponent(returnUrl)}`
+      : '/Login';
+  },
+
+  setUser() {},
+  hasUser() { return Boolean(getStoredToken()); },
+  onAuthStateChange() { return () => {}; },
+};
+
+// ─── Probe local server on startup ───────────────────────────────────────────
+let _localApiAvailable = null;
+async function checkLocalApi() {
+  if (_localApiAvailable !== null) return _localApiAvailable;
+  try {
+    const res = await fetch(`${LOCAL_API_URL}/api/health`, { signal: AbortSignal.timeout(2000) });
+    _localApiAvailable = res.ok;
+  } catch {
+    _localApiAvailable = false;
+  }
+  return _localApiAvailable;
+}
 
 // =============================================================================
 // Entity → table name mapping
@@ -493,10 +631,16 @@ const appLogs = {
 };
 
 // =============================================================================
-// createClient — picks the right backend
+// createClient — picks the right backend (Supabase → Local REST → localStorage)
 // =============================================================================
 
+// We probe the local server once and cache the result.  The first call to
+// createClient() starts the probe in the background; subsequent calls use the
+// cached result.  If the server isn't running we fall through to localStorage.
+let _restClientCache = null;
+
 export function createClient(_options = {}) {
+  // 1. Supabase cloud (highest priority)
   if (isSupabaseConfigured) {
     return {
       entities:     supabaseEntitiesProxy,
@@ -506,7 +650,51 @@ export function createClient(_options = {}) {
     };
   }
 
-  // Fallback to localStorage when Supabase is not configured
+  // 2. Local REST API — return a client that dynamically delegates based on
+  //    server availability.  The first entity/auth call will probe the server.
+  if (!import.meta.env.PROD || import.meta.env.VITE_API_URL) {
+    if (_restClientCache) return _restClientCache;
+
+    // Build a transparent proxy that routes to REST when available, else localStorage
+    const makeRestOrLocal = (restColl, localColl) => {
+      return new Proxy({}, {
+        get(_, method) {
+          return async (...args) => {
+            const useRest = await checkLocalApi();
+            return useRest
+              ? restColl[method](...args)
+              : localColl[method](...args);
+          };
+        },
+      });
+    };
+
+    const hybridAuth = {
+      async me()                       { return (await checkLocalApi()) ? restAuth.me()                       : localAuth.me(); },
+      async signUp(p)                  { return (await checkLocalApi()) ? restAuth.signUp(p)                  : localAuth.signUp(p); },
+      async signIn(p)                  { return (await checkLocalApi()) ? restAuth.signIn(p)                  : localAuth.signIn(p); },
+      async logout()                   { return (await checkLocalApi()) ? restAuth.logout()                   : localAuth.logout(); },
+      async updateMe(d)                { return (await checkLocalApi()) ? restAuth.updateMe(d)                : localAuth.updateMe(d); },
+      async deleteAccount()            { return (await checkLocalApi()) ? restAuth.deleteAccount()            : localAuth.deleteAccount(); },
+      redirectToLogin(u)               { return restAuth.redirectToLogin(u); },
+      setUser(u)                       { localAuth.setUser(u); },
+      hasUser()                        { return restAuth.hasUser() || localAuth.hasUser(); },
+      onAuthStateChange(cb)            { return localAuth.onAuthStateChange(cb); },
+    };
+
+    const hybridEntities = new Proxy({}, {
+      get(_, name) {
+        const restColl  = restEntitiesProxy[name];
+        const localColl = localEntitiesProxy[name];
+        return makeRestOrLocal(restColl, localColl);
+      },
+    });
+
+    _restClientCache = { entities: hybridEntities, auth: hybridAuth, integrations, appLogs };
+    return _restClientCache;
+  }
+
+  // 3. Pure localStorage fallback
   return {
     entities:     localEntitiesProxy,
     auth:         localAuth,
