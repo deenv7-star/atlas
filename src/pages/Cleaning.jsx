@@ -91,7 +91,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
   // Fetch bookings for reference
   const { data: bookings = [] } = useQuery({
     queryKey: ['bookings', orgId],
-    queryFn: () => orgId ? base44.entities.Booking.filter({ org_id: orgId }, '-checkout_date', 50) : [],
+    queryFn: () => orgId ? base44.entities.Booking.filter({ org_id: orgId }, '-check_out_date', 50) : [],
     enabled: !!orgId
   });
 

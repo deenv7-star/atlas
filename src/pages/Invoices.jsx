@@ -100,9 +100,9 @@ export default function InvoicesPage({ orgId }) {
   const sendEmailMutation = useMutation({
     mutationFn: async (invoice) => {
       await base44.integrations.Core.SendEmail({
-        to: invoice.customer_email,
-        subject: `חשבונית ${invoice.invoice_number} - ${invoice.customer_name}`,
-        body: `שלום ${invoice.customer_name},\n\nמצורפת חשבונית מספר ${invoice.invoice_number} על סך ${invoice.total_amount} ${invoice.currency}.\n\nתודה רבה!`
+        to: invoice.guest_email,
+        subject: `חשבונית ${invoice.invoice_number} - ${invoice.guest_name}`,
+        body: `שלום ${invoice.guest_name},\n\nמצורפת חשבונית מספר ${invoice.invoice_number} על סך ${invoice.total_amount} ${invoice.currency}.\n\nתודה רבה!`
       });
       return base44.entities.Invoice.update(invoice.id, { status: 'SENT' });
     },
@@ -131,7 +131,7 @@ export default function InvoicesPage({ orgId }) {
   };
 
   const handleSendEmail = (invoice) => {
-    if (!invoice.customer_email) {
+    if (!invoice.guest_email) {
       toast.error('אין כתובת אימייל ללקוח');
       return;
     }
@@ -139,7 +139,7 @@ export default function InvoicesPage({ orgId }) {
   };
 
   const filteredInvoices = invoices.filter(inv => {
-    const matchesSearch = inv.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = inv.guest_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          inv.invoice_number?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'ALL' || inv.status === statusFilter;
     const matchesType = typeFilter === 'ALL' || inv.type === typeFilter;
@@ -239,7 +239,7 @@ export default function InvoicesPage({ orgId }) {
                     <TableRow key={invoice.id}>
                       <TableCell className="font-mono text-sm">{invoice.invoice_number}</TableCell>
                       <TableCell>{typeConfig[invoice.type]}</TableCell>
-                      <TableCell>{invoice.customer_name}</TableCell>
+                      <TableCell>{invoice.guest_name}</TableCell>
                       <TableCell>{format(new Date(invoice.issue_date), 'dd/MM/yyyy')}</TableCell>
                       <TableCell className="font-semibold">₪{invoice.total_amount?.toLocaleString()}</TableCell>
                       <TableCell>
@@ -268,7 +268,7 @@ export default function InvoicesPage({ orgId }) {
                             size="sm"
                             variant="ghost"
                             onClick={() => handleSendEmail(invoice)}
-                            disabled={!invoice.customer_email}
+                            disabled={!invoice.guest_email}
                           >
                             <Send className="w-4 h-4" />
                           </Button>

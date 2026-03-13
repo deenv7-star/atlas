@@ -80,7 +80,6 @@ export default function MessagesPage({ user, selectedPropertyId }) {
       if (log.created_date > (grouped[key].last_date || '')) {
         grouped[key].last_date = log.created_date;
       }
-      if (!log.is_read) grouped[key].unread++;
     });
     return Object.values(grouped)
       .sort((a, b) => new Date(b.last_date || 0) - new Date(a.last_date || 0));
@@ -103,7 +102,7 @@ export default function MessagesPage({ user, selectedPropertyId }) {
     sendMutation.mutate({
       guest_name: currentThread.guest_name,
       booking_id: currentThread.key,
-      message: replyText.trim(),
+      body: replyText.trim(),
       channel: currentThread.channel,
       direction: 'outbound',
       status: 'sent',
@@ -133,7 +132,7 @@ export default function MessagesPage({ user, selectedPropertyId }) {
               הודעות
             </h1>
             <Badge className="bg-[#00D1C1]/10 text-[#00D1C1] text-xs border-0">
-              {logs.filter(l => !l.is_read).length} חדשות
+              {logs.length} הודעות
             </Badge>
           </div>
           <div className="relative">
@@ -188,7 +187,7 @@ export default function MessagesPage({ user, selectedPropertyId }) {
                   <div className="flex items-center gap-1">
                     <span className="text-xs">{CHANNEL_ICONS[thread.channel] || '💬'}</span>
                     <p className="text-xs text-gray-400 truncate">
-                      {thread.messages[thread.messages.length - 1]?.message || thread.messages[thread.messages.length - 1]?.content || 'הודעה'}
+                      {thread.messages[thread.messages.length - 1]?.body || 'הודעה'}
                     </p>
                   </div>
                 </div>
@@ -235,7 +234,7 @@ export default function MessagesPage({ user, selectedPropertyId }) {
                         ? "bg-white text-gray-800 shadow-sm rounded-tr-sm"
                         : "bg-[#00D1C1] text-[#0B1220] rounded-tl-sm"
                     )}>
-                      <p className="leading-relaxed">{msg.message || msg.content}</p>
+                      <p className="leading-relaxed">{msg.body}</p>
                       <p className={cn("text-[10px] mt-0.5", isOutbound ? "text-gray-400" : "text-[#0B1220]/50")}>
                         {msg.created_date ? format(parseISO(msg.created_date), 'HH:mm') : ''}
                       </p>

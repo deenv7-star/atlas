@@ -68,7 +68,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 
   const [newTemplate, setNewTemplate] = useState({
     name: '',
-    body_html: ''
+    content: ''
   });
 
   const [newContract, setNewContract] = useState({
@@ -136,14 +136,14 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
       const booking = bookings.find(b => b.id === data.booking_id);
       
       // Replace placeholders in template
-      let body = template?.body_html || '';
+      let body = template?.content || '';
       if (booking) {
         body = body
           .replace(/\{guest_name\}/g, booking.guest_name || '')
-          .replace(/\{checkin_date\}/g, booking.checkin_date ? format(parseISO(booking.checkin_date), 'd/M/yyyy') : '')
-          .replace(/\{checkout_date\}/g, booking.checkout_date ? format(parseISO(booking.checkout_date), 'd/M/yyyy') : '')
-          .replace(/\{total_amount\}/g, booking.total_amount?.toLocaleString() || '')
-          .replace(/\{guests_count\}/g, booking.guests_count?.toString() || '');
+          .replace(/\{checkin_date\}/g, booking.check_in_date ? format(parseISO(booking.check_in_date), 'd/M/yyyy') : '')
+          .replace(/\{checkout_date\}/g, booking.check_out_date ? format(parseISO(booking.check_out_date), 'd/M/yyyy') : '')
+          .replace(/\{total_amount\}/g, booking.total_price?.toLocaleString() || '')
+          .replace(/\{guests_count\}/g, booking.adults?.toString() || '');
       }
       
       return base44.entities.ContractInstance.create({
@@ -151,7 +151,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
         booking_id: data.booking_id,
         template_id: data.template_id,
         status: 'DRAFT',
-        body_html: body
+        content: body
       });
     },
     onSuccess: () => {
@@ -170,7 +170,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
   });
 
   const resetTemplateForm = () => {
-    setNewTemplate({ name: '', body_html: '' });
+    setNewTemplate({ name: '', content: '' });
     setEditingTemplate(null);
   };
 
@@ -178,7 +178,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
     setEditingTemplate(template);
     setNewTemplate({
       name: template.name,
-      body_html: template.body_html
+      content: template.content
     });
     setIsTemplateDialogOpen(true);
   };
@@ -289,7 +289,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                             <p className="font-medium">{booking?.guest_name || '-'}</p>
                             {booking?.checkin_date && (
                               <p className="text-xs text-gray-500">
-                                {format(parseISO(booking.checkin_date), 'd/M/yy')}
+                                {format(parseISO(booking.check_in_date), 'd/M/yy')}
                               </p>
                             )}
                           </div>
@@ -371,7 +371,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                             <h3 className="font-semibold text-[#0B1220] mb-0.5">{booking?.guest_name || '-'}</h3>
                             {booking?.checkin_date && (
                               <p className="text-xs text-gray-500">
-                                {format(parseISO(booking.checkin_date), 'd/M/yy')}
+                                {format(parseISO(booking.check_in_date), 'd/M/yy')}
                               </p>
                             )}
                           </div>
@@ -443,7 +443,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                   if (extracted.status === 'success' && extracted.output) {
                     setNewTemplate({
                       name: extracted.output.name || file.name,
-                      body_html: extracted.output.content || ''
+                      content: extracted.output.content || ''
                     });
                     setIsTemplateDialogOpen(true);
                   }
@@ -463,7 +463,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             <Button 
               onClick={() => {
                 resetTemplateForm();
-                setNewTemplate({ ...newTemplate, body_html: defaultContractContent });
+                setNewTemplate({ ...newTemplate, content: defaultContractContent });
                 setIsTemplateDialogOpen(true);
               }}
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
@@ -547,8 +547,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 משתנים: {'{guest_name}'}, {'{checkin_date}'}, {'{checkout_date}'}, {'{total_amount}'}, {'{guests_count}'}
               </p>
               <ReactQuill 
-                value={newTemplate.body_html}
-                onChange={(value) => setNewTemplate({ ...newTemplate, body_html: value })}
+                value={newTemplate.content}
+                onChange={(value) => setNewTemplate({ ...newTemplate, content: value })}
                 className="mt-1 rounded-xl"
                 style={{ direction: 'rtl' }}
               />
@@ -561,7 +561,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             </Button>
             <Button 
               onClick={handleSaveTemplate}
-              disabled={!newTemplate.name || !newTemplate.body_html || createTemplateMutation.isPending || updateTemplateMutation.isPending}
+              disabled={!newTemplate.name || !newTemplate.content || createTemplateMutation.isPending || updateTemplateMutation.isPending}
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
             >
               {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? 'שומר...' : 'שמור'}
@@ -590,7 +590,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 <SelectContent>
                   {bookings.map(booking => (
                     <SelectItem key={booking.id} value={booking.id}>
-                      {booking.guest_name} - {booking.checkin_date && format(parseISO(booking.checkin_date), 'd/M')}
+                      {booking.guest_name} - {booking.check_in_date && format(parseISO(booking.check_in_date), 'd/M')}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -642,7 +642,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             <div 
               className="prose prose-sm max-w-none p-4 bg-white border rounded-xl" 
               dir="rtl"
-              dangerouslySetInnerHTML={{ __html: selectedContract.body_html }}
+              dangerouslySetInnerHTML={{ __html: selectedContract.content }}
             />
           )}
 
