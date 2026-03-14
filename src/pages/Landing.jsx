@@ -507,7 +507,7 @@ export default function Landing() {
                   <h3 className="text-2xl font-bold text-[#0B1220] mb-3">אוטומציות חכמות</h3>
                   <p className="text-gray-500 mb-6 text-lg">שלח הודעות ווטסאפ אוטומטיות, הגדר משימות ניקיון ועדכן אורחים – בלי מגע יד.</p>
                   <div className="space-y-2 text-right">
-                    {['הודעת ברוכים הבאים 2 שעות לפני צ'ק-אין','תזכורת צ'ק-אאוט יום לפני','משימת ניקיון אוטומטית לאחר יציאה','בקשת ביקורת 24 שעות אחרי הצ'ק-אאוט'].map((a,i) => (
+                    {['הודעת ברוכים הבאים 2 שעות לפני צ\'ק-אין','תזכורת צ\'ק-אאוט יום לפני','משימת ניקיון אוטומטית לאחר יציאה','בקשת ביקורת 24 שעות אחרי הצ\'ק-אאוט'].map((a,i) => (
                       <div key={i} className="flex items-center gap-3 bg-teal-50 rounded-lg px-4 py-2">
                         <div className="w-2 h-2 rounded-full bg-[#00D1C1] flex-shrink-0"></div>
                         <span className="text-gray-700 text-sm">{a}</span>
