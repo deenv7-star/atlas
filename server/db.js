@@ -2,16 +2,18 @@
  * PostgreSQL connection pool
  */
 import pg from 'pg';
-import dotenv from 'dotenv';
-dotenv.config();
+import { env } from './config/env.js';
+import { logger } from './utils/logger.js';
 
 const { Pool } = pg;
 
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL ||
-    'postgresql://atlas_user:atlas_local_pw_2024@127.0.0.1:5432/atlas_db',
+  connectionString: env.DATABASE_URL,
+  max: 20,
+  idleTimeoutMillis: 30_000,
+  connectionTimeoutMillis: 5_000
 });
 
-pool.on('error', (err) => {
-  console.error('[DB] Unexpected pool error:', err.message);
+pool.on('error', (error) => {
+  logger.error('db.pool.error', { error });
 });
