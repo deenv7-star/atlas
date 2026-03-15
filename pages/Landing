@@ -15,7 +15,7 @@ import {
   MessageSquare, 
   FileText,
   ChevronDown,
-  ChevronUp,
+  ChevronUp,s
   ArrowLeft,
   AlertCircle,
   Inbox,
@@ -31,6 +31,8 @@ import { motion } from 'framer-motion';
 export default function Landing() {
   const t = translations.he;
   const [openFaq, setOpenFaq] = useState(null);
+  const [showDemoModal, setShowDemoModal] = useState(false);
+  const [demoSlide, setDemoSlide] = useState(0);
 
   const features = [
     { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
@@ -91,7 +93,7 @@ export default function Landing() {
                   {t.startTrial}
                   <ArrowLeft className="mr-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl">
+                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl" onClick={() => { setDemoSlide(0); setShowDemoModal(true); }}>
                   {t.bookDemo}
                 </Button>
               </div>
@@ -414,7 +416,117 @@ export default function Landing() {
               <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
                 {t.termsOfService}
               </Link>
+            </d
+      {/* Product Demo Modal */}
+      {showDemoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{background: 'rgba(11,18,32,0.85)', backdropFilter: 'blur(6px)'}}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden relative">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#0B1220] to-[#1a2744] px-8 py-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-white text-xl font-bold">ATLAS – סיור במערכת</h2>
+                <p className="text-[#00D1C1] text-sm mt-1">{demoSlide + 1} / 5</p>
+              </div>
+              <button onClick={() => setShowDemoModal(false)} className="text-gray-400 hover:text-white transition-colors text-2xl leading-none">&times;</button>
             </div>
+            {/* Slide content */}
+            <div className="p-8">
+              {demoSlide === 0 && (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">לוח בקרה חכם</h3>
+                  <p className="text-gray-500 mb-6 text-lg">כל נתוני הנכס שלך במקום אחד – הכנסות, הזמנות, לידים ומשימות בזמן אמת.</p>
+                  <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-xl p-4 text-right">
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-white/10 rounded-lg p-3"><p className="text-[#00D1C1] text-xs">הכנסות החודש</p><p className="text-white text-xl font-bold">₪24,800</p></div>
+                      <div className="bg-white/10 rounded-lg p-3"><p className="text-[#00D1C1] text-xs">הזמנות פעילות</p><p className="text-white text-xl font-bold">14</p></div>
+                      <div className="bg-white/10 rounded-lg p-3"><p className="text-[#00D1C1] text-xs">לידים חדשים</p><p className="text-white text-xl font-bold">28</p></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {demoSlide === 1 && (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">ניהול הזמנות</h3>
+                  <p className="text-gray-500 mb-6 text-lg">ניהול הזמנות מ-Airbnb, Booking ואתר ישיר – הכל מסונכרן אוטומטית.</p>
+                  <div className="space-y-2">
+                    {[{name:'משפחת כהן', dates:'12-15 מרץ', status:'מאושר', color:'#00D1C1'},{name:'דני לוי', dates:'18-21 מרץ', status:'ממתין', color:'#F59E0B'},{name:'שרה פרץ', dates:'25-28 מרץ', status:'מאושר', color:'#00D1C1'}].map((b,i) => (
+                      <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3 text-right">
+                        <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{background: b.color + '20', color: b.color}}>{b.status}</span>
+                        <div><p className="font-semibold text-[#0B1220]">{b.name}</p><p className="text-gray-400 text-xs">{b.dates}</p></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {demoSlide === 2 && (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">ניהול אורחים ולידים</h3>
+                  <p className="text-gray-500 mb-6 text-lg">מעקב מלא אחרי כל ליד מהרגע שפנה ועד לאחרי השהייה, עם תקשורת אוטומטית.</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-4 text-right"><p className="text-[#00D1C1] font-bold text-2xl">87%</p><p className="text-gray-600 text-sm">אחוז המרה מליד להזמנה</p></div>
+                    <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-4 text-right"><p className="text-[#00D1C1] font-bold text-2xl">4.9★</p><p className="text-gray-600 text-sm">דירוג ממוצע מאורחים</p></div>
+                  </div>
+                </div>
+              )}
+              {demoSlide === 3 && (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">תשלומים וחשבוניות</h3>
+                  <p className="text-gray-500 mb-6 text-lg">קבלת תשלומים בקליק, הפקת חשבוניות אוטומטית ומעקב הכנסות בזמן אמת.</p>
+                  <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-xl p-5 text-right">
+                    <p className="text-gray-400 text-sm mb-1">הכנסות השנה</p>
+                    <p className="text-white text-3xl font-bold mb-3">₪298,400</p>
+                    <div className="w-full bg-white/10 rounded-full h-2"><div className="bg-[#00D1C1] h-2 rounded-full" style={{width: '78%'}}></div></div>
+                    <p className="text-[#00D1C1] text-xs mt-2">78% מהיעד השנתי</p>
+                  </div>
+                </div>
+              )}
+              {demoSlide === 4 && (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">אוטומציות חכמות</h3>
+                  <p className="text-gray-500 mb-6 text-lg">שלח הודעות ווטסאפ אוטומטיות, הגדר משימות ניקיון ועדכן אורחים – בלי מגע יד.</p>
+                  <div className="space-y-2 text-right">
+                    {['הודעת ברוכים הבאים 2 שעות לפני צ'ק-אין','תזכורת צ'ק-אאוט יום לפני','משימת ניקיון אוטומטית לאחר יציאה','בקשת ביקורת 24 שעות אחרי הצ'ק-אאוט'].map((a,i) => (
+                      <div key={i} className="flex items-center gap-3 bg-teal-50 rounded-lg px-4 py-2">
+                        <div className="w-2 h-2 rounded-full bg-[#00D1C1] flex-shrink-0"></div>
+                        <span className="text-gray-700 text-sm">{a}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* Navigation */}
+            <div className="px-8 pb-6 flex items-center justify-between">
+              <button onClick={() => setDemoSlide(s => Math.max(0, s-1))} disabled={demoSlide === 0} className="px-5 py-2 rounded-xl border border-gray-200 text-gray-600 disabled:opacity-30 hover:border-[#00D1C1] hover:text-[#00D1C1] transition-colors font-medium">→ הקודם</button>
+              <div className="flex gap-2">
+                {[0,1,2,3,4].map(i => (
+                  <button key={i} onClick={() => setDemoSlide(i)} className="w-2 h-2 rounded-full transition-all" style={{background: demoSlide === i ? '#00D1C1' : '#e5e7eb', transform: demoSlide === i ? 'scale(1.4)' : 'scale(1)'}}></button>
+                ))}
+              </div>
+              {demoSlide < 4 ? (
+                <button onClick={() => setDemoSlide(s => s+1)} className="px-5 py-2 rounded-xl bg-[#00D1C1] text-[#0B1220] font-semibold hover:bg-[#00B8A9] transition-colors">הבא ←</button>
+              ) : (
+                <button onClick={() => { setShowDemoModal(false); base44.auth.redirectToLogin(createPageUrl('Dashboard')); }} className="px-5 py-2 rounded-xl bg-[#00D1C1] text-[#0B1220] font-semibold hover:bg-[#00B8A9] transition-colors">התחל בחינם ←</button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}iv>
             <p className="text-white/40 text-sm">
               © 2024 STAYFLOW. {t.allRightsReserved}
             </p>

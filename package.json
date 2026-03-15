@@ -4,14 +4,21 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "server": "node server/index.js",
-    "dev:full": "concurrently -n \"api,ui\" -c \"cyan,green\" \"npm run server\" \"npm run dev\"",
+    "dev": "node server/index.js",
+    "dev:ui": "vite",
+    "dev:full": "concurrently -n \"api,ui\" -c \"cyan,green\" \"npm run dev\" \"npm run dev:ui\"",
     "build": "vite build",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:backend": "node --check server/index.js && node --check server/app.js && node --check server/auth.js && node --check server/routes/auth.js && node --check server/routes/entities.js && node --check server/routes/domain.js && node --check server/middleware/rate-limit.js",
+    "ops:backup": "bash ops/backup.sh",
+    "ops:restore": "bash ops/restore.sh",
+    "test:backend": "node --test server/tests/*.test.js",
+    "lint:backend": "eslint server --quiet",
+    "ops:verify-backup": "bash ops/verify-backup.sh",
+    "typecheck:backend": "npm run check:backend"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^17.0.0",
@@ -83,7 +90,9 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.171.0",
     "vaul": "^1.1.2",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "@base44/vite-plugin": "^1.0.0",
+    "@base44/sdk": "^0.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
