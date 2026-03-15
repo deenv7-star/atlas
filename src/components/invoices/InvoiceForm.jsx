@@ -19,8 +19,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
     booking_id: '',
     invoice_number: '',
     type: 'INVOICE',
-    customer_name: '',
-    customer_email: '',
+    guest_name: '',
+    guest_email: '',
     customer_phone: '',
     customer_address: '',
     customer_tax_id: '',
@@ -61,14 +61,14 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
       setFormData(prev => ({
         ...prev,
         booking_id: bookingId,
-        customer_name: booking.guest_name,
-        customer_email: booking.email,
-        customer_phone: booking.phone,
+        guest_name: booking.guest_name,
+        guest_email: booking.guest_email,
+        customer_phone: booking.guest_phone,
         items: [{
-          description: `שהייה בנכס - ${format(new Date(booking.checkin_date), 'dd/MM/yyyy')} עד ${format(new Date(booking.checkout_date), 'dd/MM/yyyy')}`,
+          description: `שהייה בנכס - ${format(new Date(booking.check_in_date), 'dd/MM/yyyy')} עד ${format(new Date(booking.check_out_date), 'dd/MM/yyyy')}`,
           quantity: 1,
-          unit_price: booking.total_amount || 0,
-          total: booking.total_amount || 0,
+          unit_price: booking.total_price || 0,
+          total: booking.total_price || 0,
         }],
       }));
     }
@@ -126,7 +126,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
               <SelectItem value={null}>ללא הזמנה</SelectItem>
               {bookings.map(booking => (
                 <SelectItem key={booking.id} value={booking.id}>
-                  {booking.guest_name} - {format(new Date(booking.checkin_date), 'dd/MM/yyyy')}
+                  {booking.guest_name} - {format(new Date(booking.check_in_date), 'dd/MM/yyyy')}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -181,8 +181,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
             <Label>שם לקוח *</Label>
             <Input
               required
-              value={formData.customer_name}
-              onChange={(e) => setFormData(prev => ({ ...prev, customer_name: e.target.value }))}
+              value={formData.guest_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, guest_name: e.target.value }))}
             />
           </div>
 
@@ -190,8 +190,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
             <Label>אימייל</Label>
             <Input
               type="email"
-              value={formData.customer_email}
-              onChange={(e) => setFormData(prev => ({ ...prev, customer_email: e.target.value }))}
+              value={formData.guest_email}
+              onChange={(e) => setFormData(prev => ({ ...prev, guest_email: e.target.value }))}
             />
           </div>
 

@@ -84,15 +84,14 @@ export default function LeadDetail({ orgId }) {
       org_id: lead.org_id,
       property_id: lead.property_id,
       lead_id: lead.id,
-      guest_name: lead.name,
-      phone: lead.phone,
-      email: lead.email,
-      checkin_date: lead.desired_checkin_date,
-      checkout_date: lead.desired_checkout_date,
-      guests_count: lead.guests_count,
+      guest_name: lead.full_name,
+      guest_phone: lead.phone,
+      guest_email: lead.email,
+      check_in_date: lead.check_in_date,
+      check_out_date: lead.check_out_date,
+      adults: lead.adults,
       notes: lead.notes,
       status: 'PENDING',
-      currency: 'ILS'
     });
     
     await updateMutation.mutateAsync({ id: lead.id, data: { status: 'WON' } });
@@ -131,11 +130,11 @@ export default function LeadDetail({ orgId }) {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center">
                 <span className="text-lg font-bold text-[#00D1C1] select-none">
-                  {lead.name?.charAt(0)}
+                  {lead.full_name?.charAt(0)}
                 </span>
               </div>
               <div>
-                <p className="font-medium">{lead.name}</p>
+                <p className="font-medium">{lead.full_name}</p>
                 <p className="text-sm text-gray-500">{sourceLabels[lead.source]}</p>
               </div>
             </div>
@@ -153,29 +152,29 @@ export default function LeadDetail({ orgId }) {
         </Card>
       </div>
 
-      {(lead.desired_checkin_date || lead.desired_checkout_date) && (
+      {(lead.check_in_date || lead.check_out_date) && (
         <div className="space-y-4">
           <h3 className="font-semibold text-[#0B1220] select-none">תאריכים מבוקשים</h3>
           <Card className="border-0 shadow-sm rounded-2xl">
             <CardContent className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-gray-400" />
-                <span className="text-sm">כניסה: {lead.desired_checkin_date && format(parseISO(lead.desired_checkin_date), 'd/M/yyyy')}</span>
+                <span className="text-sm">כניסה: {lead.check_in_date && format(parseISO(lead.check_in_date), 'd/M/yyyy')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-gray-400" />
-                <span className="text-sm">יציאה: {lead.desired_checkout_date && format(parseISO(lead.desired_checkout_date), 'd/M/yyyy')}</span>
+                <span className="text-sm">יציאה: {lead.check_out_date && format(parseISO(lead.check_out_date), 'd/M/yyyy')}</span>
               </div>
             </CardContent>
           </Card>
         </div>
       )}
 
-      {lead.guests_count && (
+      {lead.adults && (
         <Card className="border-0 shadow-sm rounded-2xl">
           <CardContent className="p-4 flex items-center gap-2 text-sm">
             <Users className="h-4 w-4 text-gray-400" />
-            <span>{lead.guests_count} אורחים</span>
+            <span>{lead.adults} אורחים</span>
           </CardContent>
         </Card>
       )}

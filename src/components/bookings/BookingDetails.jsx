@@ -163,18 +163,18 @@ export default function BookingDetails({ booking, onClose, orgId }) {
 
   // Mark payment as paid
   const markPaidMutation = useMutation({
-    mutationFn: (paymentId) => base44.entities.Payment.update(paymentId, { 
+    mutationFn: (paymentId) => base44.entities.Payment.update(paymentId, {
       status: 'PAID',
-      paid_at: new Date().toISOString()
+      paid_date: new Date().toISOString().split('T')[0]
     }),
     onMutate: async (paymentId) => {
       await queryClient.cancelQueries({ queryKey: ['payments', booking.id] });
-      
+
       const previousPayments = queryClient.getQueryData(['payments', booking.id]);
-      
+
       // Optimistically update payment status
       queryClient.setQueryData(['payments', booking.id], (old) =>
-        old?.map(p => p.id === paymentId ? { ...p, status: 'PAID', paid_at: new Date().toISOString() } : p)
+        old?.map(p => p.id === paymentId ? { ...p, status: 'PAID', paid_date: new Date().toISOString().split('T')[0] } : p)
       );
       
       return { previousPayments };
@@ -187,8 +187,8 @@ export default function BookingDetails({ booking, onClose, orgId }) {
     }
   });
 
-  const nights = booking.checkin_date && booking.checkout_date 
-    ? differenceInDays(parseISO(booking.checkout_date), parseISO(booking.checkin_date))
+  const nights = booking.check_in_date && booking.check_out_date
+    ? differenceInDays(parseISO(booking.check_out_date), parseISO(booking.check_in_date))
     : 0;
 
   const totalPaid = payments.filter(p => p.status === 'PAID').reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -251,18 +251,18 @@ export default function BookingDetails({ booking, onClose, orgId }) {
                 </div>
                 <div>
                   <p className="font-semibold text-lg">{booking.guest_name}</p>
-                  <p className="text-sm text-gray-500">{booking.guests_count} אורחים</p>
+                  <p className="text-sm text-gray-500">{booking.adults} אורחים</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-gray-400" />
-                  <span dir="ltr">{booking.phone}</span>
+                  <span dir="ltr">{booking.guest_phone}</span>
                 </div>
-                {booking.email && (
+                {booking.guest_email && (
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-gray-400" />
-                    <span>{booking.email}</span>
+                    <span>{booking.guest_email}</span>
                   </div>
                 )}
               </div>
@@ -273,13 +273,13 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-500 mb-1">תאריכים</p>
                 <p className="font-medium">
-                  {booking.checkin_date && format(parseISO(booking.checkin_date), 'd/M/yyyy')} - {booking.checkout_date && format(parseISO(booking.checkout_date), 'd/M/yyyy')}
+                  {booking.check_in_date && format(parseISO(booking.check_in_date), 'd/M/yyyy')} - {booking.check_out_date && format(parseISO(booking.check_out_date), 'd/M/yyyy')}
                 </p>
                 <p className="text-sm text-gray-500">{nights} לילות</p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-500 mb-1">סכום כולל</p>
-                <p className="font-semibold text-xl">₪{booking.total_amount?.toLocaleString() || 0}</p>
+                <p className="font-semibold text-xl">₪{booking.total_price?.toLocaleString() || 0}</p>
               </div>
             </div>
 

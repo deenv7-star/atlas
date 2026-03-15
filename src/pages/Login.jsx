@@ -6,8 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LogIn, UserPlus, Building2, Eye, EyeOff } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { isSupabaseConfigured } from '@/api/supabaseClient';
+import { isSupabaseConfigured, isLocalApiConfigured } from '@/api/supabaseClient';
 import { cn } from '@/lib/utils';
+
+// Show real-auth UI when either Supabase or the local REST API is available
+const isRealAuthConfigured = isSupabaseConfigured || isLocalApiConfigured;
 
 export default function Login() {
   const { loginUser } = useAuth();
@@ -37,8 +40,8 @@ export default function Login() {
       return;
     }
 
-    if (isSupabaseConfigured) {
-      // ── Real Supabase auth ──────────────────────────────────────────────────
+    if (isRealAuthConfigured) {
+      // ── Real auth (Supabase or local REST API) ─────────────────────────────
       if (!form.password) {
         setError('נא להזין סיסמה');
         return;
@@ -94,7 +97,7 @@ export default function Login() {
         setIsLoading(false);
       }
     } else {
-      // ── localStorage fallback (no Supabase configured) ─────────────────────
+      // ── localStorage fallback (no backend configured) ──────────────────────
       if (!form.full_name.trim()) {
         setError('נא למלא שם מלא וכתובת אימייל');
         return;
@@ -140,8 +143,8 @@ export default function Login() {
         {/* Card */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
 
-          {/* Mode tabs — only show when Supabase is configured */}
-          {isSupabaseConfigured && (
+          {/* Mode tabs — show when any real auth is configured */}
+          {isRealAuthConfigured && (
             <div className="flex rounded-xl bg-white/5 p-1 mb-6 gap-1">
               {[
                 { value: 'login',  label: 'כניסה',    icon: LogIn },
@@ -165,14 +168,14 @@ export default function Login() {
           )}
 
           <h2 className="text-xl font-semibold text-white mb-6 text-center">
-            {isSupabaseConfigured
+            {isRealAuthConfigured
               ? (mode === 'login' ? 'כניסה לחשבון' : 'יצירת חשבון חדש')
               : 'כניסה למערכת'}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Full name — shown on signup or when Supabase not configured */}
-            {(!isSupabaseConfigured || mode === 'signup') && (
+            {/* Full name — shown on signup or when no real auth configured */}
+            {(!isRealAuthConfigured || mode === 'signup') && (
               <div className="space-y-1.5">
                 <Label htmlFor="full_name" className="text-white/70 text-sm">שם מלא</Label>
                 <Input
@@ -202,8 +205,8 @@ export default function Login() {
               />
             </div>
 
-            {/* Password — shown only when Supabase is configured */}
-            {isSupabaseConfigured && (
+            {/* Password — shown when any real auth is configured */}
+            {isRealAuthConfigured && (
               <div className="space-y-1.5">
                 <Label htmlFor="password" className="text-white/70 text-sm">סיסמה</Label>
                 <div className="relative">
@@ -230,8 +233,8 @@ export default function Login() {
               </div>
             )}
 
-            {/* Organization name — signup only */}
-            {mode === 'signup' && (
+            {/* Organization name — signup only (real auth) */}
+            {isRealAuthConfigured && mode === 'signup' && (
               <div className="space-y-1.5">
                 <Label htmlFor="org" className="text-white/70 text-sm">שם הארגון (אופציונלי)</Label>
                 <Input
@@ -246,7 +249,7 @@ export default function Login() {
             )}
 
             {/* Org name for localStorage mode */}
-            {!isSupabaseConfigured && (
+            {!isRealAuthConfigured && (
               <div className="space-y-1.5">
                 <Label htmlFor="org" className="text-white/70 text-sm">שם הארגון (אופציונלי)</Label>
                 <Input
@@ -284,7 +287,7 @@ export default function Login() {
 
           {/* Footer note */}
           <p className="text-white/30 text-xs text-center mt-6 leading-relaxed">
-            {isSupabaseConfigured
+            {isRealAuthConfigured
               ? 'המידע שלך מאובטח ומוגן בענן.'
               : 'המידע נשמר באופן מקומי בדפדפן שלך.\nאין צורך בחשבון חיצוני.'}
           </p>
