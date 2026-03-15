@@ -1,0 +1,404 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MANAGER
+  STAFF
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  OFFER_SENT
+  WON
+  LOST
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+}
+
+enum PaymentType {
+  DEPOSIT
+  BALANCE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum CleaningStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+}
+
+enum Channel {
+  EMAIL
+  SMS
+  WHATSAPP
+}
+
+enum MessageStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+enum ContractSignatureStatus {
+  PENDING
+  SENT
+  SIGNED
+  DECLINED
+}
+
+enum IntegrationStatus {
+  ACTIVE
+  DISCONNECTED
+  ERROR
+}
+
+enum IntegrationProvider {
+  WHATSAPP
+  EMAIL
+  SMS
+  STRIPE
+  TRANZILA
+  MORNING
+  GREEN_INVOICE
+  GUESTY
+  HOSTAWAY
+  GOOGLE_CALENDAR
+  AIRBNB
+  BOOKING
+}
+
+model Organization {
+  id             String   @id @default(uuid())
+  name           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  users          User[]
+  properties     Property[]
+  leads          Lead[]
+  bookings       Booking[]
+  templates      MessageTemplate[]
+  contracts      ContractTemplate[]
+  automations    AutomationRule[]
+  auditLogs      AuditLog[]
+  integrations   IntegrationConfig[]
+  refreshTokens  RefreshToken[]
+}
+
+model User {
+  id                String   @id @default(uuid())
+  organizationId    String
+  email             String   @unique
+  passwordHash      String
+  fullName          String
+  role              Role     @default(STAFF)
+  emailVerifiedAt   DateTime?
+  verificationToken String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  auditLogs     AuditLog[]
+  cleaningTasks CleaningTask[] @relation("assignedCleaner")
+}
+
+model RefreshToken {
+  id             String   @id @default(uuid())
+  organizationId String
+  userId         String
+  tokenHash      String   @unique
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Property {
+  id                   String   @id @default(uuid())
+  organizationId       String
+  name                 String
+  location             String
+  description          String?
+  images               Json?
+  calendarAvailability Json?
+  pricingRules         Json?
+  cleaningSettings     Json?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  leads        Lead[]
+  bookings     Booking[]
+  calendarSync CalendarSync[]
+}
+
+model Lead {
+  id             String     @id @default(uuid())
+  organizationId String
+  propertyId     String?
+  fullName       String
+  email          String?
+  phone          String?
+  status         LeadStatus @default(NEW)
+  notes          String?
+  checkInDate    DateTime?
+  checkOutDate   DateTime?
+  quotedPrice    Decimal?   @db.Decimal(10, 2)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  property     Property?    @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+}
+
+model Booking {
+  id             String        @id @default(uuid())
+  organizationId String
+  propertyId     String
+  leadId         String?
+  status         BookingStatus @default(PENDING)
+  guestDetails   Json
+  checkInDate    DateTime
+  checkOutDate   DateTime
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  deposit        Decimal       @db.Decimal(10, 2)
+  balance        Decimal       @db.Decimal(10, 2)
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  property        Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  lead            Lead?             @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  payments        Payment[]
+  cleaningTasks   CleaningTask[]
+  contracts       ContractInstance[]
+  reviewRequests  ReviewRequest[]
+  invoices        Invoice[]
+  guestRequests   GuestRequest[]
+}
+
+model Payment {
+  id         String        @id @default(uuid())
+  bookingId  String
+  amount     Decimal       @db.Decimal(10, 2)
+  type       PaymentType
+  status     PaymentStatus @default(PENDING)
+  paidAt     DateTime?
+  method     String
+  createdAt  DateTime      @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model CleaningTask {
+  id            String         @id @default(uuid())
+  bookingId     String
+  assignedToId  String?
+  scheduledTime DateTime
+  checklist     Json?
+  status        CleaningStatus @default(OPEN)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  booking    Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  assignedTo User?   @relation("assignedCleaner", fields: [assignedToId], references: [id], onDelete: SetNull)
+}
+
+model MessageTemplate {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  trigger        String
+  channel        Channel
+  content        String
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  logs         MessageLog[]
+}
+
+model MessageLog {
+  id             String        @id @default(uuid())
+  templateId     String?
+  bookingId      String?
+  recipient      String
+  channel        Channel
+  status         MessageStatus @default(QUEUED)
+  timestamp      DateTime      @default(now())
+  providerMeta   Json?
+
+  template MessageTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+}
+
+model ContractTemplate {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  body           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  instances    ContractInstance[]
+}
+
+model ContractInstance {
+  id                String                  @id @default(uuid())
+  bookingId         String
+  templateId        String
+  renderedBody      String
+  signatureStatus   ContractSignatureStatus @default(PENDING)
+  signedAt          DateTime?
+  createdAt         DateTime                @default(now())
+
+  booking  Booking          @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  template ContractTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+}
+
+model ReviewRequest {
+  id         String   @id @default(uuid())
+  bookingId  String
+  platform   String
+  sentAt     DateTime?
+  received   Boolean  @default(false)
+  rating     Int?
+  createdAt  DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model AutomationRule {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  trigger        String
+  condition      Json?
+  action         Json
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id             String   @id @default(uuid())
+  organizationId String
+  userId         String?
+  action         String
+  entity         String
+  entityId       String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model CalendarSync {
+  id             String            @id @default(uuid())
+  organizationId String
+  propertyId     String
+  provider       IntegrationProvider
+  iCalUrl        String?
+  lastSyncedAt   DateTime?
+  status         IntegrationStatus @default(DISCONNECTED)
+  createdAt      DateTime          @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  property     Property     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  bookingId      String
+  number         String   @unique
+  lineItems      Json
+  taxRate        Decimal  @default(17.0) @db.Decimal(5, 2)
+  subtotal       Decimal  @db.Decimal(10, 2)
+  total          Decimal  @db.Decimal(10, 2)
+  pdfUrl         String?
+  issuedAt       DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model GuestRequest {
+  id             String   @id @default(uuid())
+  bookingId      String
+  title          String
+  description    String
+  status         String   @default("OPEN")
+  createdAt      DateTime @default(now())
+  resolvedAt     DateTime?
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model IntegrationConfig {
+  id             String              @id @default(uuid())
+  organizationId String
+  type           String
+  provider       IntegrationProvider
+  status         IntegrationStatus   @default(DISCONNECTED)
+  config         Json
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model MessagingIntegration {
+  id                  String @id @default(uuid())
+  integrationConfigId String @unique
+
+  integration IntegrationConfig @relation(fields: [integrationConfigId], references: [id], onDelete: Cascade)
+}
+
+model PaymentGateway {
+  id                  String @id @default(uuid())
+  integrationConfigId String @unique
+
+  integration IntegrationConfig @relation(fields: [integrationConfigId], references: [id], onDelete: Cascade)
+}
+
+model AccountingIntegration {
+  id                  String @id @default(uuid())
+  integrationConfigId String @unique
+
+  integration IntegrationConfig @relation(fields: [integrationConfigId], references: [id], onDelete: Cascade)
+}
+
+model PMSIntegration {
+  id                  String @id @default(uuid())
+  integrationConfigId String @unique
+
+  integration IntegrationConfig @relation(fields: [integrationConfigId], references: [id], onDelete: Cascade)
+}
