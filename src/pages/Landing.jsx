@@ -8,12 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   CheckCircle2, 
-  Users, 
-  Calendar, 
-  CreditCard, 
-  Sparkles, 
-  MessageSquare, 
-  FileText,
   ChevronDown,
   ChevronUp,
   ArrowLeft,
@@ -45,8 +39,11 @@ export default function Landing() {
 
   return (
     <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:right-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">
+        דלג לתוכן הראשי
+      </a>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+      <nav aria-label="ניווט ראשי" className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Logo variant="dark" />
@@ -69,6 +66,7 @@ export default function Landing() {
         </div>
       </nav>
 
+      <main id="main-content">
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
@@ -354,21 +352,24 @@ export default function Landing() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
               >
-                <Card 
-                  className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden"
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                >
+                <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
                   <CardContent className="p-0">
-                    <div className="flex items-center justify-between p-4 bg-white">
+                    <button
+                      type="button"
+                      className="w-full text-right flex items-center justify-between p-4 bg-white"
+                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                      aria-expanded={openFaq === i}
+                      aria-controls={`faq-panel-${i}`}
+                    >
                       <span className="font-medium text-[#0B1220]">{item.q}</span>
                       {openFaq === i ? (
                         <ChevronUp className="h-5 w-5 text-gray-400" />
                       ) : (
                         <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
-                    </div>
+                    </button>
                     {openFaq === i && (
-                      <div className="p-4 pt-0 bg-white text-gray-600">
+                      <div id={`faq-panel-${i}`} className="p-4 pt-0 bg-white text-gray-600">
                         {item.a}
                       </div>
                     )}
@@ -423,6 +424,7 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+      </main>
 
       {/* Product Demo Modal */}
       {showDemoModal && (
