@@ -11,6 +11,7 @@ import Login from '@/pages/Login';
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+const DashboardPage = Pages.Dashboard;
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
@@ -37,8 +38,8 @@ const AuthenticatedApp = () => {
       {/* Root — redirect to Login if not authenticated */}
       <Route path="/" element={
         isAuthenticated
-          ? <LayoutWrapper currentPageName={mainPageKey}><MainPage /></LayoutWrapper>
-          : <Login />
+          ? <LayoutWrapper currentPageName="Dashboard"><DashboardPage /></LayoutWrapper>
+          : <MainPage />
       } />
 
       {/* Detail pages require :id param — must be declared before the generic map */}
