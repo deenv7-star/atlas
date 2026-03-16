@@ -122,12 +122,17 @@ export default function AutomationsPage({ user, orgId }) {
 
   return (
     <div className="p-6 space-y-6" dir="rtl">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">אוטומציות</h1>
-          <p className="text-gray-500 mt-1">הגדר חוקים אוטומטיים שירוצו לך בשגרה - שליחת הודעות לאורחים, תזכורות תשלום, יצירת משימות ניקיון ועוד. חסוך זמן ומנע פספוסים עם אוטומציה חכמה.</p>
+      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+            <Zap className="w-5 h-5 text-indigo-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">אוטומציות</h1>
         </div>
+        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">הגדר תהליכים אוטומטיים שיחסכו לך זמן — שליחת הודעות, תזכורות, עדכוני סטטוס ועוד.</p>
+        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: התחל עם אוטומציית הודעת ברוכים הבאים לאורחים חדשים</p>
+      </div>
+      <div className="flex justify-end">
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
             <Button className="bg-[#0A2540] hover:bg-[#0A2540]/90">

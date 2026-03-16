@@ -230,7 +230,18 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
+      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-indigo-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">ניהול ניקיון</h1>
+        </div>
+        <p className="text-gray-600 text-sm leading-relaxed mr-12">נהל משימות ניקיון לכל הנכסים. הקצה משימות לצוות, עקוב אחר סטטוס ותזמן ניקיונות.</p>
+        <p className="text-indigo-500 text-xs mt-1 mr-12">טיפ: משימות חדשות נוצרות אוטומטית לפי הזמנות צ'ק-אאוט</p>
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

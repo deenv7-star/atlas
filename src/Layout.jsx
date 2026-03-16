@@ -5,9 +5,10 @@ import { useLocation } from 'react-router-dom';
 import AppSidebar from '@/components/app/AppSidebar';
 import AppHeader from '@/components/app/AppHeader';
 import BottomTabs from '@/components/app/BottomTabs';
+import AIChatBubble from '@/components/app/AIChatBubble';
 import { cn } from '@/lib/utils';
 
-const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService', 'About', 'UserAgreement', 'DataSecurity', 'Accessibility', 'SLA'];
+const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService', 'About', 'UserAgreement', 'DataSecurity', 'Accessibility', 'SLA', 'Contact'];
 
 function PageLoader() {
   return (
@@ -113,6 +114,7 @@ function LayoutContent({ children, currentPageName }) {
           <BottomTabs />
         </div>
       </div>
+      {!isPublicPage && <AIChatBubble />}
     </div>
   );
 }

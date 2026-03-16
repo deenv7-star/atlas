@@ -308,12 +308,36 @@ export default function IntegrationsPage() {
 
   return (
     <div className="p-6 space-y-6" dir="rtl">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900">אינטגרציות</h1>
-        <p className="text-gray-500 mt-1">חבר את הכלים שלך ל-ATLAS - יומנים, תשלומים, הודעות, חשבונאות ומערכות PMS. האינטגרציות הזמינות יתווספו בהמשך (יומנים זמינים עכשיו).</p>
+      {/* Welcome Header */}
+      <div className="bg-gradient-to-br from-indigo-50/80 to-violet-50/40 rounded-2xl border border-indigo-100/60 p-6 mb-2">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
+            <Link2 className="w-6 h-6 text-indigo-600" />
+          </div>
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">מרכז אינטגרציות</h1>
+            <p className="text-gray-600 text-sm leading-relaxed mb-3">
+              כאן מחברים את כל הכלים שלך ל-ATLAS — יומנים, תשלומים, הודעות, חשבונאות ומערכות ניהול.
+              <br />ברגע שתחבר כלי, ATLAS ידע לסנכרן הזמנות, לשלוח הודעות ולנהל תשלומים אוטומטית.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white rounded-full px-3 py-1.5 border border-gray-200 text-gray-600">
+                <Calendar className="w-3.5 h-3.5 text-blue-500" /> יומנים
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white rounded-full px-3 py-1.5 border border-gray-200 text-gray-600">
+                <CreditCard className="w-3.5 h-3.5 text-green-500" /> תשלומים
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white rounded-full px-3 py-1.5 border border-gray-200 text-gray-600">
+                <MessageSquare className="w-3.5 h-3.5 text-purple-500" /> הודעות
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white rounded-full px-3 py-1.5 border border-gray-200 text-gray-600">
+                <Settings2 className="w-3.5 h-3.5 text-orange-500" /> חשבונאות
+              </span>
+            </div>
+            <p className="text-indigo-500 text-xs mt-3">💡 טיפ: התחל מחיבור יומן — זה יאפשר סנכרון אוטומטי של הזמנות מ-Airbnb ו-Booking.com</p>
+          </div>
+        </div>
       </div>
-
       <Tabs defaultValue="calendars">
         <div className="overflow-x-auto -mx-6 px-6 snap-x snap-mandatory">
           <TabsList className="bg-gray-100 w-max sm:w-full inline-flex snap-center">

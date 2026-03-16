@@ -147,16 +147,23 @@ export default function InvoicesPage({ orgId }) {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
+      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+            <FileText className="w-5 h-5 text-indigo-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">חשבוניות</h1>
+        </div>
+        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">צור, נהל ושלח חשבוניות ללקוחות. כל החשבוניות מרוכזות כאן עם סטטוס תשלום.</p>
+        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: חשבוניות נוצרות אוטומטית כשהזמנה מאושרת</p>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
       >
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#0B1220]">חשבוניות וקבלות</h1>
-          <p className="text-sm text-gray-500 mt-1">צור והנפק חשבוניות וקבלות למע"מ. ניתן להתממשק למערכות חשבונאות כמו Priority, Monday ו-QuickBooks דרך עמוד האינטגרציות.</p>
-        </div>
+        <div className="flex-1" />
         <Button
           onClick={() => {
             setEditingInvoice(null);

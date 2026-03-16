@@ -15,7 +15,8 @@ import {
   User,
   Filter,
   ArrowUpCircle,
-  Bell
+  Bell,
+  Wrench
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PullToRefresh from '@/components/common/PullToRefresh';
@@ -103,9 +104,17 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
         className="space-y-6"
       >
         {/* Header & Stats */}
-        <div>
-          <h1 className="text-3xl font-bold text-[#0F172A] mb-2">שירות חדרים</h1>
-          <p className="text-gray-500 mb-6">ניהול בקשות שירות מאורחים - תחזוקה, ניקיון, תקלות ושאלות. האורחים שולחים בקשות דרך טופס ייעודי ואתה מקבל התראות בזמן אמת.</p>
+        <div className="mb-6">
+          <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6" dir="rtl">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+                <Wrench className="w-5 h-5 text-indigo-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900">בקשות שירות</h1>
+            </div>
+            <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל בקשות תחזוקה ושירות מאורחים ומנהלי נכסים. עקוב אחר סטטוס הטיפול.</p>
+            <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: בקשות דחופות מסומנות באדום — טפל בהן קודם</p>
+          </div>
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
             <h3 className="font-semibold text-[#0F172A] mb-2">📋 קישור לטופס אורחים</h3>
             <p className="text-sm text-gray-600 mb-3">שתף את הקישור הזה עם האורחים שלך (בהודעת כניסה, בנכס וכו'):</p>

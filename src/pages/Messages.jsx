@@ -117,7 +117,18 @@ export default function MessagesPage({ user, selectedPropertyId }) {
   };
 
   return (
-    <div className="h-full flex flex-col md:flex-row overflow-hidden animate-fade-in" dir="rtl">
+    <div className="h-full flex flex-col overflow-hidden animate-fade-in" dir="rtl">
+      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-4 mx-4 mt-4 flex-shrink-0">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+            <MessageSquare className="w-5 h-5 text-indigo-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">הודעות</h1>
+        </div>
+        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">כל ההודעות לאורחים וללידים במקום אחד. שלח הודעות WhatsApp, מייל או SMS ישירות מכאן.</p>
+        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: תוכל לשלוח הודעות מוכנות מראש כדי לחסוך זמן</p>
+      </div>
+      <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
       {/* Threads list */}
       <div className={cn(
         "flex flex-col border-l border-gray-100 bg-white transition-all",
@@ -278,6 +289,7 @@ export default function MessagesPage({ user, selectedPropertyId }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

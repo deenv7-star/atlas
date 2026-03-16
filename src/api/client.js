@@ -108,7 +108,7 @@ const restAuth = {
       method: 'POST',
       body: JSON.stringify({ email, password, full_name, organization_name }),
     });
-    setStoredToken(data.token);
+    setStoredToken(data.access_token);
     return data;
   },
 
@@ -117,7 +117,7 @@ const restAuth = {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    setStoredToken(data.token);
+    setStoredToken(data.access_token);
     return data;
   },
 

@@ -8,7 +8,9 @@ import {
   Users, CalendarDays, Wallet, Star,
   ArrowUpLeft, ArrowDownRight, MessageSquare, Plus,
   ChevronLeft, TrendingUp, Zap, Settings,
-  Clock, CheckCircle2,
+  Clock, CheckCircle2, Link2, Building2, CreditCard,
+  Sparkles, Lock, Crown, ArrowUpRight, Activity,
+  Home, Bell, BarChart2, Target, Gift,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -230,6 +232,12 @@ export default function Dashboard({ user, selectedPropertyId }) {
     ...qOpts,
   });
 
+  const { data: properties = [] } = useQuery({
+    queryKey: ['dashboard-properties'],
+    queryFn: () => base44.entities.Property.list(),
+    ...qOpts,
+  });
+
   const stats = useMemo(() => {
     const thisWeekBookings = bookings.filter(b => {
       try { return isWithinInterval(parseISO(b.check_in_date), { start: weekStart, end: weekEnd }); }
@@ -269,20 +277,19 @@ export default function Dashboard({ user, selectedPropertyId }) {
     <div className="min-h-full p-4 md:p-6 space-y-5 max-w-7xl mx-auto animate-fade-in">
 
       {/* ── Hero Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B1220] via-[#0f1d35] to-[#0B1220] px-6 py-5 shadow-md">
-        {/* decorative circles */}
-        <div className="absolute -top-8 -left-8 w-40 h-40 rounded-full bg-[#00D1C1]/8 blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-12 left-1/2 w-56 h-56 rounded-full bg-blue-500/5 blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 px-6 py-5 shadow-md">
+        <div className="absolute -top-8 -left-8 w-40 h-40 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-12 left-1/2 w-56 h-56 rounded-full bg-violet-400/10 blur-3xl pointer-events-none" />
 
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p className="text-[#00D1C1] text-sm font-medium mb-1 opacity-90">
+            <p className="text-indigo-200 text-sm font-medium mb-1">
               {format(now, "EEEE, d MMMM yyyy", { locale: he })}
             </p>
             <h1 className="text-xl md:text-2xl font-bold text-white">
               {greeting}, {userName} 👋
             </h1>
-            <p className="text-white/40 text-sm mt-1">הנה סיכום פעילות העסק שלך</p>
+            <p className="text-white/50 text-sm mt-1">הנה סיכום פעילות העסק שלך</p>
           </div>
           <div className="flex gap-2 flex-shrink-0">
             <Link to={createPageUrl('Leads')}>
@@ -298,7 +305,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
             <Link to={createPageUrl('Bookings')}>
               <Button
                 size="sm"
-                className="h-8 text-xs bg-[#00D1C1] hover:bg-[#00c4b5] text-[#0B1220] font-semibold gap-1.5 shadow-md shadow-[#00D1C1]/25"
+                className="h-8 text-xs bg-white hover:bg-gray-50 text-indigo-700 font-semibold gap-1.5 shadow-md"
               >
                 <Plus className="w-3.5 h-3.5" />
                 הזמנה חדשה
@@ -390,6 +397,217 @@ export default function Dashboard({ user, selectedPropertyId }) {
           <QuickAction label="הזמנה חדשה"  icon={CalendarDays}  page="Bookings"  iconClass="icon-blue" />
           <QuickAction label="הודעות"       icon={MessageSquare} page="Messages"  iconClass="icon-teal" />
           <QuickAction label="הגדרות"       icon={Settings}      page="Settings"  iconClass="icon-green" />
+        </div>
+      </div>
+
+      {/* ── Getting Started Progress ── */}
+      {(() => {
+        const steps = [
+          { key: 'property', label: 'הוסף נכס ראשון', desc: 'הכנס את פרטי המתחם, כתובת ותמונות', icon: Home, link: 'Settings', done: properties.length > 0 },
+          { key: 'integration', label: 'חבר יומן או ערוץ הזמנות', desc: 'סנכרן Airbnb, Booking.com או Google Calendar', icon: Link2, link: 'Integrations', done: false },
+          { key: 'payment', label: 'הגדר שער תשלומים', desc: 'חבר Stripe, PayPal או שער מקומי', icon: CreditCard, link: 'Integrations', done: false },
+          { key: 'booking', label: 'צור הזמנה ראשונה', desc: 'הוסף הזמנה ידנית או חכה לסנכרון', icon: CalendarDays, link: 'Bookings', done: bookings.length > 0 },
+        ];
+        const doneCount = steps.filter(s => s.done).length;
+        const pct = Math.round((doneCount / steps.length) * 100);
+        if (pct === 100) return null;
+        return (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-50">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
+                    <Target className="w-3.5 h-3.5 text-indigo-600" />
+                  </div>
+                  <h2 className="text-sm font-semibold text-gray-800">התחלה מהירה</h2>
+                </div>
+                <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">{doneCount}/{steps.length} הושלמו</span>
+              </div>
+              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+              </div>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {steps.map((step) => (
+                <Link key={step.key} to={createPageUrl(step.link)} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 transition-colors">
+                  <div className={cn(
+                    "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
+                    step.done ? "bg-emerald-100" : "bg-gray-100"
+                  )}>
+                    {step.done
+                      ? <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600" style={{ width: 18, height: 18 }} />
+                      : <step.icon className="w-4 h-4 text-gray-400" />
+                    }
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={cn("text-sm font-semibold", step.done ? "text-gray-400 line-through" : "text-gray-800")}>{step.label}</p>
+                    <p className="text-xs text-gray-400">{step.desc}</p>
+                  </div>
+                  {!step.done && <ArrowUpRight className="w-4 h-4 text-indigo-400 flex-shrink-0" />}
+                </Link>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── Insights & Activity Row ── */}
+      <div className="grid md:grid-cols-3 gap-4">
+        {/* Occupancy Gauge */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+              <BarChart2 className="w-3.5 h-3.5 text-emerald-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-gray-800">שיעור תפוסה</h3>
+          </div>
+          {(() => {
+            const occupancy = properties.length > 0 && bookings.length > 0
+              ? Math.min(100, Math.round((bookings.filter(b => b.status === 'APPROVED' || b.status === 'CONFIRMED').length / Math.max(properties.length * 4, 1)) * 100))
+              : 0;
+            return (
+              <div className="flex flex-col items-center">
+                <div className="relative w-28 h-28">
+                  <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="#F3F4F6" strokeWidth="8" />
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="url(#gauge-grad)" strokeWidth="8" strokeLinecap="round"
+                      strokeDasharray={`${occupancy * 2.64} 264`}
+                      style={{ transition: 'stroke-dasharray 1s ease' }}
+                    />
+                    <defs><linearGradient id="gauge-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#10B981" /><stop offset="100%" stopColor="#059669" /></linearGradient></defs>
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-2xl font-bold text-gray-900">{occupancy}%</span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 mt-2">מתוך {properties.length} נכסים</p>
+              </div>
+            );
+          })()}
+        </div>
+
+        {/* Revenue Summary */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
+              <TrendingUp className="w-3.5 h-3.5 text-violet-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-gray-800">מגמת הכנסות</h3>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <p className="text-2xl font-bold text-gray-900">₪{stats.totalRevenue.toLocaleString('he-IL')}</p>
+              <p className="text-xs text-gray-400 mt-0.5">סה״כ הכנסות</p>
+            </div>
+            <div className="flex items-end gap-1.5 h-16">
+              {[25, 40, 35, 55, 65, 50, 80, 70, 90, 85, 95, 100].map((h, i) => (
+                <div key={i} className="flex-1 rounded-t" style={{
+                  height: `${h}%`,
+                  background: `linear-gradient(180deg, ${i >= 10 ? '#8B5CF6' : '#C4B5FD'} 0%, ${i >= 10 ? '#7C3AED' : '#A78BFA'} 100%)`,
+                  opacity: 0.4 + (i * 0.05),
+                  transition: 'height 0.8s ease',
+                }} />
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 text-center">12 חודשים אחרונים</p>
+          </div>
+        </div>
+
+        {/* Activity Timeline */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+              <Activity className="w-3.5 h-3.5 text-blue-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-gray-800">פעילות אחרונה</h3>
+          </div>
+          {bookings.length === 0 && leads.length === 0 ? (
+            <div className="text-center py-6">
+              <Activity className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+              <p className="text-sm text-gray-400">אין פעילות עדיין</p>
+              <p className="text-xs text-gray-300">התחל להוסיף הזמנות ולידים</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {[...bookings.slice(0, 2).map(b => ({
+                type: 'booking',
+                icon: CalendarDays,
+                color: 'text-blue-600 bg-blue-50',
+                text: `הזמנה ${b.status === 'APPROVED' ? 'אושרה' : 'נוספה'} — ${b.guest_name || 'אורח'}`,
+                time: b.created_date || b.check_in_date,
+              })), ...leads.slice(0, 2).map(l => ({
+                type: 'lead',
+                icon: Users,
+                color: 'text-violet-600 bg-violet-50',
+                text: `ליד חדש — ${l.full_name || l.name || 'ללא שם'}`,
+                time: l.created_date,
+              }))].sort((a, b) => (b.time || '').localeCompare(a.time || '')).slice(0, 4).map((item, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5", item.color)}>
+                    <item.icon className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm text-gray-700 truncate">{item.text}</p>
+                    <p className="text-xs text-gray-400">{item.time ? format(parseISO(item.time), 'd MMM, HH:mm', { locale: he }) : ''}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Premium Features Teaser ── */}
+      <div className="bg-gradient-to-br from-indigo-50/80 via-white to-violet-50/60 rounded-2xl border border-indigo-100/60 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-sm">
+            <Crown className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-gray-900">שדרג את החוויה שלך</h2>
+            <p className="text-xs text-gray-500">גלה את כל מה ש-ATLAS יכול לעשות עבורך</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[
+            { icon: Sparkles, label: 'ניקיון אוטומטי', desc: 'משימות ניקיון נוצרות לבד', link: 'Cleaning', color: 'from-emerald-400 to-teal-500' },
+            { icon: Link2, label: 'אינטגרציות', desc: 'חבר Airbnb, Booking ועוד', link: 'Integrations', color: 'from-blue-400 to-indigo-500' },
+            { icon: MessageSquare, label: 'הודעות אוטומטיות', desc: 'WhatsApp, SMS, מייל', link: 'Automations', color: 'from-violet-400 to-purple-500' },
+            { icon: BarChart2, label: 'דוחות מתקדמים', desc: 'הכנסות, תפוסה, מגמות', link: 'Invoices', color: 'from-amber-400 to-orange-500' },
+          ].map((feat, i) => (
+            <Link key={i} to={createPageUrl(feat.link)} className="group">
+              <div className="bg-white rounded-xl border border-gray-100 p-4 hover:border-indigo-200 hover:shadow-md transition-all duration-200 h-full">
+                <div className={cn("w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform", feat.color)}>
+                  <feat.icon className="w-4 h-4 text-white" />
+                </div>
+                <p className="text-sm font-semibold text-gray-800 mb-0.5">{feat.label}</p>
+                <p className="text-xs text-gray-400 leading-relaxed">{feat.desc}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Pro Upgrade Banner ── */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-gray-900 via-indigo-900 to-violet-900 p-6">
+        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-violet-500/20 blur-3xl pointer-events-none" />
+        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg flex-shrink-0">
+              <Gift className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">14 ימי ניסיון חינם</h3>
+              <p className="text-sm text-white/60">כל התכונות פתוחות — ללא כרטיס אשראי. נסה עכשיו וראה את ההבדל.</p>
+            </div>
+          </div>
+          <Link to={createPageUrl('Subscription')}>
+            <Button className="bg-white hover:bg-gray-50 text-indigo-700 font-semibold shadow-lg px-6 h-10 flex-shrink-0">
+              שדרג עכשיו
+              <ArrowUpRight className="w-4 h-4 mr-1.5" />
+            </Button>
+          </Link>
         </div>
       </div>
 

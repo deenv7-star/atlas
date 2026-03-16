@@ -55,12 +55,20 @@ import Billing from './pages/Billing';
 import BookingDetail from './pages/BookingDetail';
 import Bookings from './pages/Bookings';
 import Cleaning from './pages/Cleaning';
+import Contact from './pages/Contact';
 import Contracts from './pages/Contracts';
 import Dashboard from './pages/Dashboard';
 import DataSecurity from './pages/DataSecurity';
+import DynamicPricing from './pages/DynamicPricing';
+import GuestJourney from './pages/GuestJourney';
+import GuestPortal from './pages/GuestPortal';
 import GuestService from './pages/GuestService';
+import MultiCalendar from './pages/MultiCalendar';
+import OwnerReports from './pages/OwnerReports';
+import RevenueIntelligence from './pages/RevenueIntelligence';
 import Integrations from './pages/Integrations';
 import Invoices from './pages/Invoices';
+import ExpenseTracker from './pages/ExpenseTracker';
 import Landing from './pages/Landing';
 import LeadDetail from './pages/LeadDetail';
 import Leads from './pages/Leads';
@@ -69,7 +77,6 @@ import Payments from './pages/Payments';
 import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import SLA from './pages/SLA';
-import ServiceRequests from './pages/ServiceRequests';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
@@ -85,21 +92,28 @@ export const PAGES = {
     "BookingDetail": BookingDetail,
     "Bookings": Bookings,
     "Cleaning": Cleaning,
+    "Contact": Contact,
     "Contracts": Contracts,
     "Dashboard": Dashboard,
     "DataSecurity": DataSecurity,
+    "DynamicPricing": DynamicPricing,
+    "GuestJourney": GuestJourney,
+    "GuestPortal": GuestPortal,
     "GuestService": GuestService,
     "Integrations": Integrations,
     "Invoices": Invoices,
+    "ExpenseTracker": ExpenseTracker,
     "Landing": Landing,
     "LeadDetail": LeadDetail,
     "Leads": Leads,
     "Messages": Messages,
+    "MultiCalendar": MultiCalendar,
+    "OwnerReports": OwnerReports,
     "Payments": Payments,
     "Privacy": Privacy,
+    "RevenueIntelligence": RevenueIntelligence,
     "Reviews": Reviews,
     "SLA": SLA,
-    "ServiceRequests": ServiceRequests,
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,

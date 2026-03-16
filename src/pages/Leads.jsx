@@ -162,6 +162,17 @@ export default function LeadsPage({ user, selectedPropertyId }) {
   return (
     <div className="p-4 md:p-6 space-y-5 max-w-5xl mx-auto animate-fade-in" dir="rtl">
 
+      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+            <Users className="w-5 h-5 text-indigo-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">ניהול לידים</h1>
+        </div>
+        <p className="text-gray-600 text-sm leading-relaxed mr-12">כאן מנהלים את כל הפניות והלידים שלך. הוסף ליד חדש, עקוב אחר סטטוס, ותהפוך פניות להזמנות.</p>
+        <p className="text-indigo-500 text-xs mt-1 mr-12">טיפ: לחץ על ליד כדי לראות פרטים מלאים ולשנות סטטוס</p>
+      </div>
+
       {/* ── Page header ── */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">

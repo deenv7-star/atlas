@@ -51,11 +51,7 @@ const AuthenticatedApp = () => {
       {/* Public landing page — always accessible at / */}
       <Route
         path="/"
-        element={
-          isAuthenticated
-            ? <Navigate to="/Dashboard" replace />
-            : <LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>
-        }
+        element={<LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>}
       />
 
       {/* Login — redirect to Dashboard if already authenticated */}

@@ -5,8 +5,9 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, Users, CalendarDays, MessageSquare,
   CreditCard, FileText, Star, Settings, LogOut,
-  ChevronLeft, ChevronRight, Zap, Brain, Link2, Bell,
-  Wallet, ClipboardList, Wrench, Receipt,
+  ChevronLeft, ChevronRight, Zap, Brain, Link2,
+  Wallet, ClipboardList, Wrench, Receipt, TrendingDown,
+  TrendingUp, Globe, BarChart3, CalendarRange, FileBarChart, Workflow,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -30,7 +31,17 @@ const navGroups = [
       { icon: Wrench, label: 'ניקיון', page: 'Cleaning' },
       { icon: MessageSquare, label: 'הודעות', page: 'Messages' },
       { icon: Star, label: 'ביקורות', page: 'Reviews' },
-      { icon: Bell, label: 'בקשות שירות', page: 'ServiceRequests' },
+    ],
+  },
+  {
+    label: 'PRO',
+    items: [
+      { icon: BarChart3, label: 'מודיעין הכנסות', page: 'RevenueIntelligence' },
+      { icon: CalendarRange, label: 'לוח שנה מרכזי', page: 'MultiCalendar' },
+      { icon: FileBarChart, label: 'דוחות בעלים', page: 'OwnerReports' },
+      { icon: Workflow, label: 'מסע אורח', page: 'GuestJourney' },
+      { icon: TrendingUp, label: 'תמחור דינאמי', page: 'DynamicPricing' },
+      { icon: Globe, label: 'פורטל אורחים', page: 'GuestPortal' },
     ],
   },
   {
@@ -45,6 +56,7 @@ const navGroups = [
     label: 'חשבון',
     items: [
       { icon: Wallet, label: 'תשלומים', page: 'Payments' },
+      { icon: TrendingDown, label: 'מעקב הוצאות', page: 'ExpenseTracker' },
       { icon: Receipt, label: 'חיוב', page: 'Billing' },
       { icon: CreditCard, label: 'מנוי', page: 'Subscription' },
     ],
@@ -68,19 +80,16 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
 
   return (
     <aside className={cn(
-      "h-full flex flex-col transition-all duration-300 ease-in-out relative bg-[#0B1220] border-l border-white/5",
+      "h-full flex flex-col transition-all duration-300 ease-in-out relative bg-white border-l border-gray-200/80",
       collapsed ? "w-[64px]" : "w-[240px]"
-    )}>
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#00D1C1]/50 to-transparent" />
-
-      <div className={cn("flex items-center h-16 px-3 border-b border-white/5 flex-shrink-0", collapsed ? "justify-center" : "gap-3")}>
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00D1C1] to-[#00a89a] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#00D1C1]/20">
-          <span className="text-[#0B1220] font-bold text-sm">A</span>
-        </div>
-        {!collapsed && <span className="text-white font-bold text-lg tracking-tight">ATLAS</span>}
+    )} style={{ fontFamily: "'Heebo', sans-serif" }}>
+      <div className={cn("flex items-center h-16 px-3 border-b border-gray-100 flex-shrink-0", collapsed ? "justify-center" : "gap-3")}>
+        <Link to="/" title="חזרה לדף הבית">
+          <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: collapsed ? 28 : 38, width: 'auto', objectFit: 'contain', cursor: 'pointer' }} />
+        </Link>
         <button
           onClick={onCollapse}
-          className={cn("p-1 rounded-md text-white/30 hover:text-white/70 hover:bg-white/5 transition-all duration-200", collapsed ? "mr-0" : "mr-auto")}
+          className={cn("p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-200", collapsed ? "mr-0" : "mr-auto")}
         >
           {collapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </button>
@@ -90,9 +99,14 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
         {navGroups.map((group, groupIdx) => (
           <div key={groupIdx} className={groupIdx > 0 ? "mt-3" : ""}>
             {group.label && !collapsed && (
-              <p className="px-2 mb-1 text-[10px] font-semibold uppercase tracking-widest text-white/25 select-none">{group.label}</p>
+              <p className={cn(
+                "px-2 mb-1 text-[10px] font-semibold uppercase tracking-widest select-none",
+                group.label === 'PRO' ? "text-amber-500" : "text-gray-400"
+              )}>
+                {group.label === 'PRO' ? '★ PRO' : group.label}
+              </p>
             )}
-            {group.label && collapsed && <div className="border-t border-white/5 my-2 mx-1" />}
+            {group.label && collapsed && <div className="border-t border-gray-100 my-2 mx-1" />}
             {group.items.map((item) => {
               const active = isActive(item.page);
               const Icon = item.icon;
@@ -103,18 +117,20 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
                   onMouseEnter={() => setHoveredItem(item.page)}
                   onMouseLeave={() => setHoveredItem(null)}
                   className={cn(
-                    "flex items-center rounded-lg transition-all duration-200 group relative py-2 px-2 gap-3 mb-0.5",
+                    "flex items-center rounded-xl transition-all duration-200 group relative py-2 px-2.5 gap-3 mb-0.5",
                     collapsed ? "justify-center" : "",
-                    active ? "bg-[#00D1C1]/12 text-[#00D1C1]" : "text-white/45 hover:text-white/85 hover:bg-white/5"
+                    active
+                      ? "bg-indigo-50 text-[#4F46E5] font-semibold"
+                      : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
                   )}
                 >
-                  {active && <span className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-[#00D1C1] rounded-l-full" />}
-                  <div className={cn("flex items-center justify-center w-6 h-6 rounded-md flex-shrink-0 transition-transform duration-200", active ? "text-[#00D1C1]" : "group-hover:scale-110")}>
+                  {active && <span className="absolute right-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#4F46E5] rounded-l-full" />}
+                  <div className={cn("flex items-center justify-center w-6 h-6 rounded-lg flex-shrink-0 transition-transform duration-200", active ? "text-[#4F46E5]" : "group-hover:scale-110")}>
                     <Icon className="w-4 h-4" />
                   </div>
-                  {!collapsed && <span className="text-sm font-medium truncate">{item.label}</span>}
+                  {!collapsed && <span className="text-sm truncate">{item.label}</span>}
                   {collapsed && hoveredItem === item.page && (
-                    <div className="absolute right-full mr-2 px-2.5 py-1 bg-[#1a2540] text-white text-xs rounded-md whitespace-nowrap shadow-xl z-50 border border-white/10">
+                    <div className="absolute right-full mr-2 px-2.5 py-1.5 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap shadow-xl z-50">
                       {item.label}
                     </div>
                   )}
@@ -125,13 +141,13 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
         ))}
       </nav>
 
-      <div className="flex-shrink-0 border-t border-white/5 px-2 py-3 space-y-0.5">
+      <div className="flex-shrink-0 border-t border-gray-100 px-2 py-3 space-y-0.5">
         <Link
           to={createPageUrl('Settings')}
           className={cn(
-            "flex items-center rounded-lg transition-all duration-200 py-2 px-2 gap-3",
+            "flex items-center rounded-xl transition-all duration-200 py-2 px-2.5 gap-3",
             collapsed ? "justify-center" : "",
-            isActive('Settings') ? "bg-[#00D1C1]/12 text-[#00D1C1]" : "text-white/45 hover:text-white/85 hover:bg-white/5"
+            isActive('Settings') ? "bg-indigo-50 text-[#4F46E5]" : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
           )}
         >
           <Settings className="w-4 h-4 flex-shrink-0" />
@@ -139,21 +155,21 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
         </Link>
         <button
           onClick={onLogout}
-          className={cn("w-full flex items-center rounded-lg transition-all duration-200 py-2 px-2 gap-3", collapsed ? "justify-center" : "", "text-white/35 hover:text-red-400 hover:bg-red-500/8")}
+          className={cn("w-full flex items-center rounded-xl transition-all duration-200 py-2 px-2.5 gap-3", collapsed ? "justify-center" : "", "text-gray-400 hover:text-red-500 hover:bg-red-50")}
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           {!collapsed && <span className="text-sm font-medium">יציאה</span>}
         </button>
         {user && (
-          <div className={cn("mt-2 pt-2 border-t border-white/5 flex items-center gap-2.5", collapsed ? "justify-center" : "px-1")}>
-            <Avatar className="w-7 h-7 flex-shrink-0 ring-1 ring-[#00D1C1]/30">
+          <div className={cn("mt-2 pt-2 border-t border-gray-100 flex items-center gap-2.5", collapsed ? "justify-center" : "px-1")}>
+            <Avatar className="w-7 h-7 flex-shrink-0 ring-1 ring-indigo-100">
               <AvatarImage src={user.profile_image} />
-              <AvatarFallback className="bg-[#00D1C1]/20 text-[#00D1C1] text-xs font-bold">{getUserInitials()}</AvatarFallback>
+              <AvatarFallback className="bg-indigo-50 text-[#4F46E5] text-xs font-bold">{getUserInitials()}</AvatarFallback>
             </Avatar>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-white/65 truncate">{user.full_name || user.email}</p>
-                <p className="text-[10px] text-white/30 truncate">{user.email}</p>
+                <p className="text-xs font-medium text-gray-700 truncate">{user.full_name || user.email}</p>
+                <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
               </div>
             )}
           </div>

@@ -216,13 +216,16 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 `;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-[#0B1220]">חוזים</h1>
-          <p className="text-gray-500">צור תבניות חוזה מותאמות אישית, ייבא חוזים קיימים, ושלח לאורחים לחתימה דיגיטלית. אפשר להוסיף משתנים דינמיים שמתמלאים אוטומטית.</p>
+    <div className="space-y-6" dir="rtl">
+      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+            <FileText className="w-5 h-5 text-indigo-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">חוזים</h1>
         </div>
+        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל חוזי שכירות והסכמים עם אורחים. צור חוזים חדשים ועקוב אחר חתימות.</p>
+        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: שלח חוזה לחתימה דיגיטלית ישירות מהמערכת</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>

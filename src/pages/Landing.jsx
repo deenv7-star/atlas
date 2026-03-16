@@ -1,541 +1,2154 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
-import Logo from '@/components/common/Logo';
-import { translations } from '@/components/common/i18n';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { 
-  CheckCircle2, 
-  ChevronDown,
-  ChevronUp,
-  ArrowLeft,
-  AlertCircle,
-  Inbox,
-  CalendarCheck,
-  Wallet,
-  Brush,
-  Send,
-  FileSignature,
-  Star
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Calendar, CreditCard, Users, CheckSquare, MessageSquare, FileText,
+  Star, Zap, BarChart2, Link as LinkIcon, Receipt, Shield,
+  ChevronDown, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
+// ─── Count-up hook ────────────────────────────────────────────────────────────
+function useCountUp(target, duration = 1800) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          let startTime = null;
+          const step = (ts) => {
+            if (!startTime) startTime = ts;
+            const progress = Math.min((ts - startTime) / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.round(ease * target));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [target, duration]);
+
+  return [count, ref];
+}
+
+// ─── Scroll-reveal hook ───────────────────────────────────────────────────────
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.atlas-reveal');
+    if (!els.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('atlas-reveal--visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  });
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 export default function Landing() {
-  const t = translations.he;
-  const [openFaq, setOpenFaq] = useState(null);
-  const [showDemoModal, setShowDemoModal] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [demoOpen, setDemoOpen] = useState(false);
   const [demoSlide, setDemoSlide] = useState(0);
+  const [billingYearly, setBillingYearly] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
+  const [psView, setPsView] = useState('before');
+  const navigate = useNavigate();
 
-  const features = [
-    { icon: Inbox, title: t.features[0].title, desc: t.features[0].desc },
-    { icon: CalendarCheck, title: t.features[1].title, desc: t.features[1].desc },
-    { icon: Wallet, title: t.features[2].title, desc: t.features[2].desc },
-    { icon: Brush, title: t.features[3].title, desc: t.features[3].desc },
-    { icon: Send, title: t.features[4].title, desc: t.features[4].desc },
-    { icon: FileSignature, title: t.features[5].title, desc: t.features[5].desc }
+  const [count1, ref1] = useCountUp(500);
+  const [count2, ref2] = useCountUp(98);
+  const [count3, ref3] = useCountUp(3);
+
+  useScrollReveal();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleEsc = (e) => { if (e.key === 'Escape') setDemoOpen(false); };
+    if (demoOpen) {
+      document.addEventListener('keydown', handleEsc);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.removeEventListener('keydown', handleEsc); document.body.style.overflow = ''; };
+  }, [demoOpen]);
+
+  const goToLogin = () => navigate('/Login');
+  const scrollToFeatures = () => {
+    document.getElementById('atlas-features')?.scrollIntoView({ behavior: 'smooth' });
+  };
+  const nextSlide = () => setDemoSlide((s) => Math.min(s + 1, 4));
+  const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
+  const toggleFaq = (i) => setOpenFaq(openFaq === i ? null : i);
+
+  const AVATARS = [
+    { bg: 'linear-gradient(135deg,#4F46E5,#818CF8)', letter: 'א' },
+    { bg: 'linear-gradient(135deg,#10B981,#34D399)', letter: 'ב' },
+    { bg: 'linear-gradient(135deg,#F59E0B,#FCD34D)', letter: 'ג' },
+    { bg: 'linear-gradient(135deg,#F43F5E,#FB7185)', letter: 'ד' },
+    { bg: 'linear-gradient(135deg,#8B5CF6,#C4B5FD)', letter: 'ה' },
   ];
 
-  return (
-    <div dir="rtl" className="min-h-screen bg-[#F8FAFC] font-['Heebo',sans-serif]">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:right-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">
-        דלג לתוכן הראשי
-      </a>
-      {/* Navigation */}
-      <nav aria-label="ניווט ראשי" className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo variant="dark" />
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                className="text-[#0F172A]"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-              >
-                כניסה
-              </Button>
-              <Button 
-                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-medium"
-                onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-              >
-                {t.startTrial}
-              </Button>
+  const MARQUEE_TEXT = 'מתחם הגליל ✦ צימר בגולן ✦ וילות כרמל ✦ ריזורט ים המלח ✦ צימרים בצפון ✦ מתחם הנגב ✦ נאות מדבר ✦ בקתות גולן ✦\u00A0\u00A0\u00A0';
+
+  const PAIN_POINTS = [
+    'הזמנות מפוזרות ב-WhatsApp, אימייל ו-Booking.com',
+    'תשלומים שנשכחים ולקוחות שלא משלמים בזמן',
+    'חדרים שלא נוקו כי לא היה תיאום עם הצוות',
+    'אין נראות על ההכנסות — רק ניחושים',
+    'שעות על שעות על ניהול במקום על האורחים',
+  ];
+
+  const SOLUTIONS = [
+    'כל ההזמנות במקום אחד — מסודרות ומאורגנות',
+    'גביית תשלומים אוטומטית עם תזכורות חכמות',
+    'ניהול צוות ניקיון עם משימות ועדכונים בזמן אמת',
+    'דוחות הכנסה מפורטים בלחיצה אחת',
+    'חוסך עד 3 שעות עבודה ביום לכל מנהל',
+  ];
+
+  const FEATURES_GRID = [
+    { Icon: Calendar, title: 'ניהול הזמנות', text: 'קבל הזמנות מכל הערוצים במקום אחד. תצוגת לוח שנה חכמה.' },
+    { Icon: CreditCard, title: 'תשלומים חכמים', text: 'גביה אוטומטית, חשבוניות דיגיטליות, מעקב יתרות.' },
+    { Icon: Users, title: 'ניהול לידים', text: 'פייפליין מכירות מלא — מליד ראשוני עד הזמנה מאושרת.' },
+    { Icon: CheckSquare, title: 'ניהול ניקיון', text: 'הקצאת משימות לצוות, צ\'קליסטים, ועדכוני סטטוס.' },
+    { Icon: MessageSquare, title: 'תקשורת אוטומטית', text: 'הודעות אוטומטיות לפני צ\'ק-אין, ביום עזיבה ובקשת ביקורת.' },
+    { Icon: FileText, title: 'חוזים דיגיטליים', text: 'שלח חוזים לחתימה דיגיטלית. עקוב אחר סטטוס.' },
+    { Icon: Star, title: 'ניהול ביקורות', text: 'עקוב אחר ביקורות בכל הפלטפורמות. שלח בקשות אוטומטיות.' },
+    { Icon: Zap, title: 'אוטומציות חכמות', text: 'הגדר חוקים אוטומטיים — חסוך שעות עבודה כל שבוע.' },
+    { Icon: BarChart2, title: 'דוחות ואנליטיקס', text: 'דוחות הכנסה, תפוסה ושביעות רצון בזמן אמת.' },
+    { Icon: LinkIcon, title: 'אינטגרציות', text: 'מתחבר ל-Airbnb, Booking.com, WhatsApp, Stripe ועוד.' },
+    { Icon: Receipt, title: 'חשבוניות ומע"מ', text: 'הפקת חשבוניות עם מע"מ 17%, ייצוא PDF, חיבור לחשבנאות.' },
+    { Icon: Shield, title: 'אבטחה ופרטיות', text: 'הצפנה מלאה, גיבויים אוטומטיים, עמידה בתקני GDPR.' },
+  ];
+
+  const HOW_STEPS = [
+    { num: '1', title: 'נרשמים חינם', text: 'יוצרים חשבון בלי כרטיס אשראי. לוקח פחות מדקה.' },
+    { num: '2', title: 'מוסיפים את המתחם', text: 'מזינים את פרטי הנכסים שלך. תמיכה מלאה בעברית.' },
+    { num: '3', title: 'מחברים את הכלים', text: 'מחברים Airbnb, WhatsApp ועוד בלחיצה אחת.' },
+    { num: '4', title: 'מתחילים לנהל', text: 'מקבלים הזמנות, מנהלים צוות ועוקבים אחר הכנסות.' },
+  ];
+
+  const INTEGRATION_ROWS = [
+    { label: 'ערוצי הזמנות', items: ['Airbnb', 'Booking.com', 'Expedia', 'VRBO', 'HomeAway'] },
+    { label: 'תשלומים', items: ['Stripe', 'PayPal', 'Tranzila', 'Cardcom', 'iCredit'] },
+    { label: 'תקשורת', items: ['WhatsApp Business', 'Gmail', 'SMS', 'Telegram'] },
+    { label: 'חשבנאות', items: ['חשבשבת', 'ירוקה', 'Monday', 'Zapier', 'Google Calendar'] },
+  ];
+
+  const PRICING_PLANS = [
+    {
+      name: 'STARTER', monthlyPrice: 399, yearlyPrice: 319,
+      desc: 'למתחמים קטנים עד 3 נכסים',
+      included: ['עד 3 נכסים', 'ניהול הזמנות', 'ניהול לידים', 'תשלומים בסיסיים', 'תמיכה במייל'],
+      excluded: ['אוטומציות', 'חוזים דיגיטליים', 'אינטגרציות מתקדמות'],
+      cta: 'התחל חינם', featured: false,
+    },
+    {
+      name: 'PRO', monthlyPrice: 699, yearlyPrice: 559,
+      desc: 'לעסקים צומחים עד 10 נכסים',
+      included: ['עד 10 נכסים', 'כל תכונות Starter', 'אוטומציות חכמות', 'חוזים דיגיטליים', 'כל האינטגרציות', 'דוחות מתקדמים', 'תמיכה בוואטסאפ'],
+      excluded: ['API מותאם אישית'],
+      cta: 'התחל חינם 14 יום', featured: true,
+    },
+    {
+      name: 'BUSINESS', monthlyPrice: 999, yearlyPrice: 799,
+      desc: 'לרשתות ומתחמים גדולים — ללא הגבלה',
+      included: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API מותאם אישית', 'מנהל חשבון אישי', 'הדרכה והטמעה', 'SLA מובטח', 'תמיכה 24/7'],
+      excluded: [],
+      cta: 'דברו איתנו', featured: false,
+    },
+  ];
+
+  const NEW_TESTIMONIALS = [
+    { text: 'ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות.', author: 'רחל מ.', role: 'מנהלת 5 צימרים, הגליל' },
+    { text: 'תוך שבוע הבנתי שזה הכלי שחיכיתי לו. הכל בעברית, הכל פשוט, הכל עובד.', author: 'יוסי כ.', role: 'בעל ריזורט, ים המלח' },
+    { text: 'ההכנסות שלי עלו ב-35% כי סוף סוף אני יכול לעקוב אחרי כל ליד ולא לפספס הזמנות.', author: 'מירי ש.', role: 'בעלת 8 בקתות, גולן' },
+    { text: 'הצוות שלי מקבל משימות ניקיון אוטומטית. אין יותר טלפונים מיותרים.', author: 'דני א.', role: 'מנהל מתחם, כרמל' },
+    { text: 'שלחתי חוזים לחתימה דיגיטלית לראשונה והלקוחות התרשמו. נראה מקצועי ברמה אחרת.', author: 'נועה ר.', role: 'בעלת וילות, שרון' },
+    { text: 'התמיכה בעברית היא המשחק-שינוי. סוף סוף מערכת שמבינה אותי.', author: 'אורי פ.', role: 'מנהל קומפלקס, אילת' },
+  ];
+
+  const FAQ_DATA = [
+    { q: 'כמה זמן לוקח להתחיל?', a: 'פחות מ-5 דקות. נרשמים, מוסיפים נכס ומתחילים. אין הגדרות מסובכות.' },
+    { q: 'האם צריך כרטיס אשראי להתחיל?', a: 'לא. ניסיון של 14 יום חינם לחלוטין, ללא כרטיס אשראי.' },
+    { q: 'האם המערכת בעברית?', a: 'כן, המערכת כולה בעברית מלאה כולל תמיכה, חשבוניות ותקשורת עם לקוחות.' },
+    { q: 'כמה נכסים אפשר לנהל?', a: 'תלוי בחבילה — מ-3 נכסים בחבילת Starter ועד ללא הגבלה בחבילת Business.' },
+    { q: 'האם יש אינטגרציה עם Airbnb ו-Booking.com?', a: 'כן, מתחברים לכל ערוצי ההזמנות המרכזיים בלחיצה אחת.' },
+    { q: 'מה קורה אחרי תקופת הניסיון?', a: 'תקבל תזכורת 3 ימים לפני הסיום. אם לא תשדרג, החשבון יעבור למצב קריאה בלבד.' },
+    { q: 'האם אפשר לבטל בכל עת?', a: 'כן, ביטול בלחיצה אחת ללא קנסות. הנתונים שלך יישמרו 30 יום.' },
+    { q: 'האם יש תמיכה בעברית?', a: 'כן, תמיכה בעברית דרך וואטסאפ, מייל וטלפון בשעות עסקים.' },
+  ];
+
+  const DEMO_SLIDES = [
+    { title: 'לוח בקרה — מבט כולל על העסק' },
+    { title: 'לוח הזמנות — כל ההזמנות במקום אחד' },
+    { title: 'ניהול לידים — מליד להזמנה' },
+    { title: 'תשלומים — גביה חכמה ואוטומטית' },
+    { title: 'אוטומציות — העסק עובד בשבילך' },
+  ];
+
+  const renderDemoSlide = (idx) => {
+    const mockStyle = { background: '#F8F8FC', borderRadius: 12, padding: 20, minHeight: 320 };
+    const cardS = { background: 'white', borderRadius: 10, padding: '12px 16px', border: '1px solid #E5E7EB' };
+    const badgeS = (bg, color) => ({ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 999, background: bg, color, display: 'inline-block' });
+
+    if (idx === 0) return (
+      <div style={mockStyle}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 16 }}>
+          {[
+            { label: 'הכנסה חודשית', value: '₪48,200', color: '#4F46E5' },
+            { label: 'הזמנות', value: '24', color: '#10B981' },
+            { label: 'תפוסה', value: '92%', color: '#F59E0B' },
+            { label: 'דירוג', value: '4.9★', color: '#F43F5E' },
+          ].map((k) => (
+            <div key={k.label} style={cardS}>
+              <div style={{ fontSize: 10, color: '#9CA3AF', marginBottom: 4 }}>{k.label}</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: k.color }}>{k.value}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ ...cardS, marginBottom: 12, padding: '12px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 60 }}>
+            {[40, 65, 50, 80, 70, 55, 90].map((h, i) => (
+              <div key={i} style={{ flex: 1, height: `${h}%`, background: i === 6 ? '#4F46E5' : '#C7D2FE', borderRadius: '3px 3px 0 0' }} />
+            ))}
+          </div>
+          <div style={{ fontSize: 10, color: '#9CA3AF', textAlign: 'center', marginTop: 6 }}>הכנסות שבועיות</div>
+        </div>
+        {[
+          { name: 'משפחת לוי', room: 'חדר 12', s: 'מאושר', sb: '#D1FAE5', sc: '#065F46' },
+          { name: 'דני כהן', room: 'וילה 3', s: 'ממתין', sb: '#FEF3C7', sc: '#92400E' },
+          { name: 'שרה א.', room: 'סוויטה 1', s: 'מאושר', sb: '#D1FAE5', sc: '#065F46' },
+        ].map((b) => (
+          <div key={b.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'white', borderRadius: 8, marginBottom: 6, border: '1px solid #F3F4F6' }}>
+            <span style={badgeS(b.sb, b.sc)}>{b.s}</span>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>{b.name}</div>
+              <div style={{ fontSize: 11, color: '#9CA3AF' }}>{b.room}</div>
             </div>
           </div>
-        </div>
-      </nav>
+        ))}
+      </div>
+    );
 
-      <main id="main-content">
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0B1220] leading-tight mb-6">
-                {t.heroTitle}
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                {t.heroSubtitle}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button 
-                  size="lg" 
-                  className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-8 py-6 text-lg rounded-xl"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-                >
-                  {t.startTrial}
-                  <ArrowLeft className="mr-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline" className="border-[#0B1220] text-[#0B1220] px-8 py-6 text-lg rounded-xl" onClick={() => { setDemoSlide(0); setShowDemoModal(true); }}>
-                  {t.bookDemo}
-                </Button>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-2xl p-4 shadow-2xl">
-                <div className="bg-[#F8FAFC] rounded-xl overflow-hidden">
-                  <div className="bg-white border-b px-4 py-3 flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                    </div>
-                    <span className="text-sm text-gray-400 mr-4">dashboard.stayflow.io</span>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-[#00D1C1]/10 rounded-xl p-4">
-                        <p className="text-sm text-gray-500">לידים חדשים</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">12</p>
-                      </div>
-                      <div className="bg-[#F2E9DB] rounded-xl p-4">
-                        <p className="text-sm text-gray-500">הזמנות החודש</p>
-                        <p className="text-2xl font-bold text-[#0B1220]">28</p>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-xl border p-4">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="font-medium">כניסות היום</span>
-                        <span className="text-[#00D1C1] text-sm">3 אורחים</span>
-                      </div>
-                      <div className="space-y-2">
-                        {['משפחת כהן - וילה צפון', 'דני לוי - סוויטה'].map((item, i) => (
-                          <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-sm">
-                            <span>{item}</span>
-                            <span className="text-green-600">מאושר</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+    if (idx === 1) {
+      const days = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+      const bookings = { 3: '#818CF8', 4: '#818CF8', 5: '#818CF8', 10: '#34D399', 11: '#34D399', 12: '#34D399', 13: '#34D399', 18: '#FCD34D', 19: '#FCD34D', 24: '#FB7185', 25: '#FB7185', 26: '#FB7185' };
+      return (
+        <div style={mockStyle}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <ChevronRight size={18} color="#6B7280" />
+            <span style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>מרץ 2025</span>
+            <ChevronLeft size={18} color="#6B7280" />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, textAlign: 'center' }}>
+            {days.map((d) => <div key={d} style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', padding: 6 }}>{d}</div>)}
+            {[...Array(2)].map((_, i) => <div key={`e${i}`} />)}
+            {[...Array(31)].map((_, i) => {
+              const day = i + 1;
+              const bg = bookings[day];
+              return (
+                <div key={day} style={{ padding: '8px 4px', borderRadius: 6, fontSize: 12, fontWeight: bg ? 700 : 400, background: bg || 'transparent', color: bg ? 'white' : '#374151' }}>
+                  {day}
                 </div>
-              </div>
-              <div className="absolute -bottom-4 -left-4 bg-[#00D1C1] text-[#0B1220] px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
-                ✓ 0 הזמנות כפולות
-              </div>
-            </motion.div>
+              );
+            })}
           </div>
         </div>
-      </section>
+      );
+    }
 
-      {/* Problem Section */}
-      <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12">
-              {t.problemTitle}
-            </h2>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {t.problemBullets.map((bullet, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-white/80 flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
-                  <span>{bullet}</span>
+    if (idx === 2) {
+      const cols = [
+        { title: 'ליד חדש', count: 4, color: '#6B7280', cards: ['אבי כהן', 'רונית לוי', 'משפ׳ דוד', 'יעל מ.'] },
+        { title: 'פנייה', count: 3, color: '#3B82F6', cards: ['אורן ש.', 'דנה ר.', 'מיכאל א.'] },
+        { title: 'הצעה נשלחה', count: 2, color: '#F59E0B', cards: ['נועם כ.', 'שירה ב.'] },
+        { title: 'סגור ✓', count: 5, color: '#10B981', cards: ['רחל מ.', 'יוסי כ.', 'דני א.'] },
+      ];
+      return (
+        <div style={mockStyle}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+            {cols.map((col) => (
+              <div key={col.title}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: col.color, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {col.title} <span style={{ fontSize: 10, background: '#F3F4F6', borderRadius: 999, padding: '1px 6px', color: '#6B7280' }}>{col.count}</span>
                 </div>
+                {col.cards.map((c) => (
+                  <div key={c} style={{ background: 'white', borderRadius: 8, padding: '10px 12px', marginBottom: 6, border: '1px solid #F3F4F6', borderRight: `3px solid ${col.color}` }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#111827' }}>{c}</div>
+                    <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 2 }}>₪{(Math.random() * 4000 + 1000).toFixed(0)}</div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (idx === 3) return (
+      <div style={mockStyle}>
+        <div style={{ ...cardS, marginBottom: 16, background: 'linear-gradient(135deg, rgba(79,70,229,0.08), rgba(124,58,237,0.06))', border: '1px solid rgba(79,70,229,0.15)' }}>
+          <div style={{ fontSize: 12, color: '#6B7280', marginBottom: 4 }}>סה״כ הכנסות החודש</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: '#4F46E5' }}>₪127,450</div>
+          <span style={badgeS('#D1FAE5', '#065F46')}>↑ 23% מהחודש הקודם</span>
+        </div>
+        {[
+          { name: 'משפ׳ לוי', amount: '₪3,200', s: 'שולם', sb: '#D1FAE5', sc: '#065F46' },
+          { name: 'דני כהן', amount: '₪1,800', s: 'ממתין', sb: '#FEF3C7', sc: '#92400E' },
+          { name: 'שרה א.', amount: '₪4,500', s: 'שולם', sb: '#D1FAE5', sc: '#065F46' },
+          { name: 'יוסי מ.', amount: '₪2,100', s: 'באיחור', sb: '#FEE2E2', sc: '#991B1B' },
+          { name: 'רונית ל.', amount: '₪2,900', s: 'שולם', sb: '#D1FAE5', sc: '#065F46' },
+        ].map((p) => (
+          <div key={p.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'white', borderRadius: 8, marginBottom: 6, border: '1px solid #F3F4F6' }}>
+            <span style={badgeS(p.sb, p.sc)}>{p.s}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{p.amount}</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>{p.name}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+
+    if (idx === 4) return (
+      <div style={mockStyle}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#6B7280', marginBottom: 12 }}>אוטומציות פעילות (5)</div>
+        {[
+          { rule: 'הודעת ברוכים הבאים לאורח', desc: 'נשלחת 24 שעות לפני צ׳ק-אין', on: true },
+          { rule: 'תזכורת תשלום אוטומטית', desc: 'נשלחת 3 ימים לפני מועד התשלום', on: true },
+          { rule: 'הקצאת ניקיון לפי צ׳ק-אאוט', desc: 'משימה נוצרת אוטומטית לצוות', on: true },
+          { rule: 'בקשת ביקורת יום אחרי עזיבה', desc: 'נשלחת הודעה עם קישור לביקורת', on: true },
+          { rule: 'עדכון זמינות ב-Airbnb', desc: 'סנכרון אוטומטי של לוח הזמנים', on: false },
+        ].map((a) => (
+          <div key={a.rule} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: 'white', borderRadius: 10, marginBottom: 8, border: '1px solid #F3F4F6' }}>
+            <div
+              style={{
+                width: 40, height: 22, borderRadius: 11, cursor: 'pointer', position: 'relative',
+                background: a.on ? '#4F46E5' : '#D1D5DB', transition: 'background 0.2s', flexShrink: 0,
+              }}
+            >
+              <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'white', position: 'absolute', top: 2, transition: 'right 0.2s, left 0.2s', ...(a.on ? { left: 2 } : { left: 20 }), boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+            </div>
+            <div style={{ textAlign: 'right', flex: 1, marginLeft: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>{a.rule}</div>
+              <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{a.desc}</div>
+            </div>
+            <Zap size={16} color={a.on ? '#4F46E5' : '#D1D5DB'} style={{ flexShrink: 0 }} />
+          </div>
+        ))}
+      </div>
+    );
+
+    return null;
+  };
+
+  return (
+    <>
+      <style>{`
+        /* ─ Font ─ */
+        .atlas-lp, .atlas-lp * {
+          font-family: 'Heebo', sans-serif;
+          box-sizing: border-box;
+        }
+
+        /* ─ Blobs ─ */
+        .atlas-blob {
+          position: absolute;
+          border-radius: 50%;
+          pointer-events: none;
+          will-change: transform;
+        }
+        .atlas-blob-1 {
+          width: 800px; height: 800px;
+          background: #A78BFA;
+          opacity: 0.20;
+          filter: blur(130px);
+          top: -180px; right: -160px;
+          animation: atlasBlob1 20s ease-in-out infinite;
+        }
+        .atlas-blob-2 {
+          width: 700px; height: 700px;
+          background: #93C5FD;
+          opacity: 0.18;
+          filter: blur(120px);
+          top: 20%; left: -200px;
+          animation: atlasBlob2 24s ease-in-out 4s infinite;
+        }
+        .atlas-blob-3 {
+          width: 600px; height: 600px;
+          background: #FDE68A;
+          opacity: 0.13;
+          filter: blur(110px);
+          bottom: -100px; left: 50%;
+          animation: atlasBlob3 22s ease-in-out 8s infinite;
+        }
+        @keyframes atlasBlob1 {
+          0%,100% { transform: translate(0,0); }
+          50%      { transform: translate(20px,-15px); }
+        }
+        @keyframes atlasBlob2 {
+          0%,100% { transform: translate(0,0); }
+          50%      { transform: translate(-20px,15px); }
+        }
+        @keyframes atlasBlob3 {
+          0%,100% { transform: translateX(-50%) translate(0,0); }
+          50%      { transform: translateX(-50%) translate(20px,-15px); }
+        }
+
+        /* ─ Reveal ─ */
+        .atlas-reveal {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1),
+                      transform 0.5s cubic-bezier(0.16,1,0.3,1);
+        }
+        .atlas-reveal--visible { opacity: 1; transform: translateY(0); }
+        .atlas-delay-1 { transition-delay: 0.10s; }
+        .atlas-delay-2 { transition-delay: 0.20s; }
+        .atlas-delay-3 { transition-delay: 0.30s; }
+        .atlas-delay-4 { transition-delay: 0.40s; }
+        .atlas-delay-5 { transition-delay: 0.50s; }
+
+        /* ─ Dashboard floats ─ */
+        @keyframes atlasMainFloat {
+          0%,100% { transform: perspective(1200px) rotateY(-6deg) rotateX(3deg) translateY(0px); }
+          50%      { transform: perspective(1200px) rotateY(-6deg) rotateX(3deg) translateY(-14px); }
+        }
+        .atlas-main-float {
+          animation: atlasMainFloat 5s ease-in-out infinite;
+          will-change: transform;
+          transform-style: preserve-3d;
+        }
+        @keyframes atlasFC1 {
+          0%,100% { transform: translateY(0); }
+          50%      { transform: translateY(-8px); }
+        }
+        .atlas-fc1 { animation: atlasFC1 4s ease-in-out 0.8s infinite; will-change: transform; }
+        @keyframes atlasFC2 {
+          0%,100% { transform: translateY(0); }
+          50%      { transform: translateY(-8px); }
+        }
+        .atlas-fc2 { animation: atlasFC2 4s ease-in-out 1.6s infinite; will-change: transform; }
+        @keyframes atlasFC3 {
+          0%,100% { transform: translateY(0); }
+          50%      { transform: translateY(-8px); }
+        }
+
+        /* ─ Pulsing dot ─ */
+        @keyframes atlasDot {
+          0%,100% { opacity: 1; transform: scale(1); }
+          50%      { opacity: 0.6; transform: scale(1.35); }
+        }
+        .atlas-dot { animation: atlasDot 2s ease-in-out infinite; }
+
+        /* ─ Marquee ─ */
+        @keyframes atlasMarquee {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+        .atlas-marquee { animation: atlasMarquee 22s linear infinite; }
+
+        /* ─ Feature card hover ─ */
+        .atlas-feat-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          cursor: default;
+        }
+        .atlas-feat-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06) !important;
+        }
+
+        /* ─ Navbar link ─ */
+        .atlas-nav-link {
+          color: #374151;
+          font-weight: 500;
+          font-size: 15px;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .atlas-nav-link:hover { color: #111827; }
+
+        /* ─ CTA button primary ─ */
+        .atlas-btn-primary {
+          background: #111827;
+          color: white;
+          border: none;
+          border-radius: 10px;
+          padding: 14px 28px;
+          font-weight: 700;
+          font-size: 16px;
+          font-family: 'Heebo', sans-serif;
+          cursor: pointer;
+          transition: all 0.25s ease;
+        }
+        .atlas-btn-primary:hover {
+          background: #000;
+          transform: translateY(-1px);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        }
+
+        /* ─ FAQ answer transition ─ */
+        .atlas-faq-answer {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.35s ease, padding 0.35s ease;
+          padding: 0 24px;
+        }
+        .atlas-faq-answer--open {
+          max-height: 200px;
+          padding: 0 24px 20px;
+        }
+
+        /* ─ Pricing card hover ─ */
+        .atlas-pricing-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .atlas-pricing-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06) !important;
+        }
+
+        /* ─ Integration badge hover ─ */
+        .atlas-int-badge {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .atlas-int-badge:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        /* ─ Demo modal ─ */
+        @keyframes atlasFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes atlasSlideUp {
+          from { opacity: 0; transform: translateY(30px) scale(0.97); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .atlas-demo-overlay {
+          animation: atlasFadeIn 0.25s ease;
+        }
+        .atlas-demo-modal {
+          animation: atlasSlideUp 0.35s ease;
+        }
+
+        /* ─ Integration marquee ─ */
+        @keyframes atlasIntScroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(50%); }
+        }
+        .atlas-int-track {
+          display: flex;
+          width: max-content;
+          animation: atlasIntScroll 120s linear infinite;
+        }
+        .atlas-int-track:hover { animation-play-state: paused; }
+
+        /* ─ Responsive ─ */
+        @media (max-width: 768px) {
+          .atlas-nav-links  { display: none !important; }
+          .atlas-nav-cta    { display: none !important; }
+          .atlas-hamburger  { display: flex !important; }
+
+          .atlas-hero-grid  { grid-template-columns: 1fr !important; text-align: center !important; }
+          .atlas-hero-right { order: 1; }
+          .atlas-hero-left  { display: none !important; }
+          .atlas-hero-h1 { font-size: 36px !important; }
+          .atlas-hero-sub { font-size: 16px !important; }
+          .atlas-hero-btns { flex-direction: column !important; align-items: stretch !important; }
+          .atlas-hero-btns > button,
+          .atlas-hero-btns > a { width: 100% !important; text-align: center !important; }
+
+          .atlas-ps-grid { grid-template-columns: 1fr !important; }
+          .atlas-ps-section { padding: 60px 16px !important; }
+
+          .atlas-feat-grid  { grid-template-columns: 1fr !important; }
+          .atlas-feat-grid-new { grid-template-columns: 1fr !important; }
+          .atlas-bento-grid { grid-template-columns: 1fr !important; }
+          .atlas-bento-large { grid-column: span 1 !important; min-height: auto !important; }
+          .atlas-section-title { font-size: 28px !important; }
+          .atlas-section-sub { font-size: 15px !important; }
+
+          .atlas-how-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+
+          .atlas-pricing-grid { grid-template-columns: 1fr !important; }
+          .atlas-pricing-card { transform: none !important; }
+
+          .atlas-testi-grid { grid-template-columns: 1fr !important; }
+          .atlas-testi-grid-new { grid-template-columns: 1fr !important; }
+
+          .atlas-stats-grid { grid-template-columns: 1fr 1fr !important; }
+          .atlas-stat-divider { border-right: none !important; border-bottom: 1px solid #F3F4F6; }
+
+          .atlas-faq-section { padding: 60px 16px !important; }
+
+          .atlas-cta-section { padding: 60px 16px !important; }
+          .atlas-cta-h2 { font-size: 28px !important; }
+
+          .atlas-footer-grid { grid-template-columns: 1fr 1fr !important; }
+          .atlas-footer-grid-new { grid-template-columns: 1fr !important; gap: 32px !important; }
+          .atlas-why-grid { grid-template-columns: 1fr !important; }
+
+          .atlas-demo-slide-mockup { min-height: 200px !important; }
+          .atlas-demo-slide-mockup > div > div { grid-template-columns: repeat(2, 1fr) !important; }
+          .atlas-demo-modal { border-radius: 12px !important; }
+        }
+
+        @media (max-width: 480px) {
+          .atlas-hero-h1 { font-size: 26px !important; }
+          .atlas-stats-grid { grid-template-columns: 1fr !important; }
+          .atlas-footer-grid { grid-template-columns: 1fr !important; }
+          .atlas-how-grid { grid-template-columns: 1fr !important; }
+          .atlas-bento-grid { gap: 12px !important; }
+          .atlas-section-title { font-size: 22px !important; }
+          .atlas-section-sub { font-size: 13px !important; }
+          .atlas-ps-grid > div { padding: 20px 16px !important; }
+          .atlas-ps-grid > div h3 { font-size: 16px !important; }
+          .atlas-nav { padding: 10px 12px !important; }
+          .atlas-lp section { padding-top: 40px !important; padding-bottom: 40px !important; }
+          .atlas-pricing-card { padding: 20px !important; }
+          .atlas-footer-inner { padding: 32px 12px !important; }
+        }
+
+        /* Mobile section padding */
+        @media (max-width: 768px) {
+          .atlas-lp section { padding-left: 16px !important; padding-right: 16px !important; }
+          .atlas-lp section[style*="padding: 100px"] { padding-top: 56px !important; padding-bottom: 56px !important; }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .atlas-feat-grid  { grid-template-columns: 1fr 1fr !important; }
+          .atlas-testi-grid { grid-template-columns: 1fr 1fr !important; }
+          .atlas-feat-grid-new { grid-template-columns: 1fr 1fr !important; }
+          .atlas-bento-grid { grid-template-columns: 1fr 1fr !important; }
+          .atlas-bento-large { grid-column: span 2 !important; }
+          .atlas-testi-grid-new { grid-template-columns: 1fr 1fr !important; }
+          .atlas-pricing-grid { grid-template-columns: 1fr !important; }
+          .atlas-how-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+
+        @media (min-width: 769px) {
+          .atlas-hamburger    { display: none !important; }
+          .atlas-mobile-drawer { display: none !important; }
+        }
+      `}</style>
+
+      <div
+        className="atlas-lp"
+        dir="rtl"
+        style={{ background: '#FFFFFF', minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}
+      >
+
+        {/* ════════════════════════════════════════
+            NAVBAR
+        ════════════════════════════════════════ */}
+        <nav
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0,
+            zIndex: 100,
+            background: scrolled ? '#FFFFFF' : 'transparent',
+            boxShadow: scrolled ? '0 1px 12px rgba(0,0,0,0.06)' : 'none',
+            transition: 'background 0.3s ease, box-shadow 0.3s ease',
+          }}
+        >
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 80 }}>
+            <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+              <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 42, width: 'auto', objectFit: 'contain' }} />
+            </div>
+
+            <div className="atlas-nav-links" style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
+              {[
+                { label: 'תכונות', action: () => document.getElementById('atlas-features')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'מחירים', action: () => document.getElementById('מחירים')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'לקוחות', action: () => document.getElementById('לקוחות')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'דמו', action: () => { setDemoOpen(true); setDemoSlide(0); } },
+              ].map((l) => (
+                <a key={l.label} href="#" onClick={(e) => { e.preventDefault(); l.action(); }} className="atlas-nav-link">{l.label}</a>
               ))}
             </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Solution Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] mb-6">
-              {t.solutionTitle}
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              {t.solutionText}
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {t.benefits.map((benefit, i) => (
-                <span key={i} className="bg-[#00D1C1]/10 text-[#0B1220] px-6 py-3 rounded-full font-medium flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-[#00D1C1]" />
-                  {benefit}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <button
+                className="atlas-nav-cta"
+                onClick={goToLogin}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#374151',
+                  padding: '9px 16px',
+                  fontWeight: 600,
+                  fontSize: 14,
+                  fontFamily: 'Heebo, sans-serif',
+                  cursor: 'pointer',
+                  transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = '#111827'}
+                onMouseLeave={e => e.currentTarget.style.color = '#374151'}
+              >
+                כניסה
+              </button>
+              <button
+                className="atlas-nav-cta"
+                onClick={goToLogin}
+                style={{
+                  background: '#4F46E5',
+                  border: 'none',
+                  color: 'white',
+                  borderRadius: 8,
+                  padding: '9px 22px',
+                  fontWeight: 600,
+                  fontSize: 14,
+                  fontFamily: 'Heebo, sans-serif',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                  boxShadow: '0 2px 8px rgba(79,70,229,0.25)',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#4338CA'}
+                onMouseLeave={e => e.currentTarget.style.background = '#4F46E5'}
+              >
+                הרשמה חינם
+              </button>
+
+              <button
+                className="atlas-hamburger"
+                onClick={() => setMenuOpen((v) => !v)}
+                style={{ display: 'none', flexDirection: 'column', gap: 5, padding: 8, background: 'none', border: 'none', cursor: 'pointer' }}
+                aria-label="תפריט"
+              >
+                {[0, 1, 2].map((i) => (
+                  <span key={i} style={{ display: 'block', width: 24, height: 2, background: '#374151', borderRadius: 2 }} />
+                ))}
+              </button>
+            </div>
+          </div>
+
+          {menuOpen && (
+            <div
+              className="atlas-mobile-drawer"
+              style={{ background: 'white', borderTop: '1px solid #F3F4F6', padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}
+            >
+              {[
+                { label: 'תכונות', action: () => document.getElementById('atlas-features')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'מחירים', action: () => document.getElementById('מחירים')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'לקוחות', action: () => document.getElementById('לקוחות')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'דמו', action: () => { setDemoOpen(true); setDemoSlide(0); } },
+              ].map((l) => (
+                <a key={l.label} href="#" onClick={(e) => { e.preventDefault(); setMenuOpen(false); l.action(); }} className="atlas-nav-link" style={{ fontSize: 16 }}>{l.label}</a>
+              ))}
+              <button
+                onClick={() => { setMenuOpen(false); goToLogin(); }}
+                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '12px 22px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
+              >
+                כניסה
+              </button>
+              <button
+                onClick={() => { setMenuOpen(false); goToLogin(); }}
+                style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 8, padding: '12px 22px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
+              >
+                הרשמה חינם
+              </button>
+            </div>
+          )}
+        </nav>
+
+        {/* ════════════════════════════════════════
+            HERO
+        ════════════════════════════════════════ */}
+        <section
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            paddingTop: 108,
+            paddingBottom: 80,
+            paddingLeft: 24,
+            paddingRight: 24,
+            position: 'relative',
+            zIndex: 1,
+            overflow: 'hidden',
+          }}
+        >
+          <div className="atlas-blob atlas-blob-1" />
+          <div className="atlas-blob atlas-blob-2" />
+          <div className="atlas-blob atlas-blob-3" />
+
+          <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
+            <div
+              className="atlas-hero-grid"
+              style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 60, alignItems: 'center' }}
+            >
+              <div className="atlas-hero-right">
+                <h1
+                  style={{
+                    fontSize: 'clamp(56px, 6.5vw, 84px)',
+                    fontWeight: 900,
+                    color: '#0A0A0A',
+                    lineHeight: 1.0,
+                    letterSpacing: '-0.03em',
+                    margin: 0,
+                  }}
+                >
+                  <span style={{ display: 'block' }}>הפסק לנהל.</span>
+                  <span style={{ display: 'block' }}>תתחיל להרוויח.</span>
+                </h1>
+
+                <p style={{ fontSize: 17, color: '#6B7280', maxWidth: 420, marginTop: 24, lineHeight: 1.65 }}>
+                  הפלטפורמה המובילה לניהול מתחמי נופש בישראל.<br />
+                  הזמנות, תשלומים, ניהול צוות ותקשורת לקוחות — הכל במקום אחד.
+                </p>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 28 }}>
+                  <div style={{ display: 'flex' }}>
+                    {AVATARS.map((av, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          width: 40, height: 40,
+                          borderRadius: '50%',
+                          background: av.bg,
+                          border: '2.5px solid white',
+                          marginLeft: i > 0 ? -10 : 0,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: 'white', fontWeight: 700, fontSize: 14,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {av.letter}
+                      </div>
+                    ))}
+                  </div>
+                  <span style={{ fontSize: 14, color: '#6B7280' }}>+500 מנהלי מתחמים</span>
+                </div>
+
+                <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 36, flexWrap: 'wrap' }}>
+                  <button className="atlas-btn-primary" onClick={goToLogin}>התחל חינם</button>
+                  <button
+                    onClick={scrollToFeatures}
+                    style={{
+                      background: 'transparent', border: 'none',
+                      color: '#374151', fontWeight: 600, fontSize: 16,
+                      fontFamily: 'Heebo, sans-serif', cursor: 'pointer',
+                      transition: 'color 0.2s', padding: '14px 4px',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#111827'; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = '#374151'; }}
+                  >
+                    איך זה עובד ←
+                  </button>
+                </div>
+              </div>
+
+              <div
+                className="atlas-hero-left"
+                style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: 40, paddingBottom: 40 }}
+              >
+                <div
+                  className="atlas-main-float"
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: 20,
+                    border: '1px solid #E8E8F0',
+                    boxShadow: '0 24px 60px rgba(99,102,241,0.15), 0 8px 24px rgba(0,0,0,0.08)',
+                    width: 320,
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div style={{ height: 8, background: 'linear-gradient(90deg, #4F46E5, #7C3AED, #A78BFA)', width: '100%' }} />
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', background: '#FAFAFA', borderBottom: '1px solid #F0F0F0' }}>
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FF5F56', flexShrink: 0 }} />
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FFBD2E', flexShrink: 0 }} />
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#27C93F', flexShrink: 0 }} />
+                    <div style={{ flex: 1, background: '#EBEBEB', borderRadius: 4, height: 18, marginRight: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: 9, color: '#9CA3AF' }}>atlas.app/dashboard</span>
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '16px 18px 18px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div className="atlas-dot" style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981' }} />
+                        <span style={{ fontSize: 11, color: '#10B981', fontWeight: 600 }}>פעיל</span>
+                      </div>
+                      <span style={{ fontSize: 11, color: '#9CA3AF' }}>לוח בקרה ✦ ATLAS</span>
+                    </div>
+
+                    <div style={{ background: 'linear-gradient(135deg, rgba(79,70,229,0.08), rgba(124,58,237,0.06))', borderRadius: 10, padding: '10px 14px', marginBottom: 14, border: '1px solid rgba(79,70,229,0.12)' }}>
+                      <div style={{ fontSize: 11, color: '#6B7280', marginBottom: 4 }}>הכנסה החודש</div>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: '#4F46E5', letterSpacing: '-0.02em' }}>₪48,200</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                        <span style={{ fontSize: 10, color: '#10B981', fontWeight: 600, background: '#D1FAE5', padding: '1px 6px', borderRadius: 999 }}>↑ 18%</span>
+                        <span style={{ fontSize: 10, color: '#9CA3AF' }}>לעומת החודש שעבר</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
+                      {[
+                        { label: 'הזמנות היום', value: '24', color: '#4F46E5', bg: 'rgba(79,70,229,0.07)' },
+                        { label: 'אורחים פעילים', value: '183', color: '#F59E0B', bg: 'rgba(245,158,11,0.07)' },
+                      ].map((s) => (
+                        <div key={s.label} style={{ background: s.bg, borderRadius: 8, padding: '8px 10px' }}>
+                          <div style={{ fontSize: 10, color: '#6B7280', marginBottom: 2 }}>{s.label}</div>
+                          <div style={{ fontSize: 18, fontWeight: 700, color: s.color }}>{s.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ background: '#F8F8FC', borderRadius: 8, padding: '10px 10px 6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, height: 48, marginBottom: 4 }}>
+                        {[60, 80, 45, 90, 70, 55, 85].map((h, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              flex: 1,
+                              height: `${h}%`,
+                              background: i === 3 ? 'linear-gradient(180deg, #4F46E5, #7C3AED)' : 'linear-gradient(180deg, #A5B4FC, #C4B5FD)',
+                              borderRadius: '3px 3px 0 0',
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <p style={{ textAlign: 'center', fontSize: 10, color: '#9CA3AF', margin: 0 }}>תפוסה שבועית</p>
+                    </div>
+
+                    <div style={{ marginTop: 12 }}>
+                      {[
+                        { name: 'משפחת לוי', room: 'חדר 12', status: 'מאושר', sbg: '#D1FAE5', sc: '#065F46' },
+                        { name: 'דני כהן',    room: 'וילה 3', status: 'ממתין',  sbg: '#FEF3C7', sc: '#92400E' },
+                      ].map((b) => (
+                        <div
+                          key={b.name}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', borderRadius: 7, background: '#F9FAFB', marginBottom: 5 }}
+                        >
+                          <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 999, background: b.sbg, color: b.sc }}>{b.status}</span>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: '#111827' }}>{b.name}</div>
+                            <div style={{ fontSize: 10, color: '#9CA3AF' }}>{b.room}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className="atlas-fc1"
+                  style={{
+                    position: 'absolute',
+                    top: 10, left: -44,
+                    background: 'white',
+                    borderRadius: 14,
+                    padding: '12px 16px',
+                    boxShadow: '0 12px 36px rgba(0,0,0,0.12)',
+                    border: '1px solid rgba(255,255,255,0.9)',
+                    zIndex: 3,
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    minWidth: 150,
+                  }}
+                >
+                  <div style={{ width: 34, height: 34, borderRadius: 9, background: 'rgba(79,70,229,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: 16 }}>📈</span>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: '#4F46E5', lineHeight: 1 }}>+62%</div>
+                    <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2 }}>המרות</div>
+                  </div>
+                </div>
+
+                <div
+                  className="atlas-fc2"
+                  style={{
+                    position: 'absolute',
+                    bottom: 60, left: -50,
+                    background: 'white',
+                    borderRadius: 14,
+                    padding: '12px 16px',
+                    boxShadow: '0 12px 36px rgba(0,0,0,0.12)',
+                    border: '1px solid rgba(255,255,255,0.9)',
+                    zIndex: 3,
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    minWidth: 170,
+                  }}
+                >
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#D1FAE5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: 14, color: '#059669', fontWeight: 700 }}>✓</span>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#111827', lineHeight: 1 }}>מסירה תוך 14 יום</div>
+                    <div style={{ fontSize: 10, color: '#6B7280', marginTop: 2 }}>מובטח</div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 20, right: -44,
+                    background: 'white',
+                    borderRadius: 14,
+                    padding: '12px 16px',
+                    boxShadow: '0 12px 36px rgba(0,0,0,0.12)',
+                    border: '1px solid rgba(255,255,255,0.9)',
+                    zIndex: 3,
+                    minWidth: 140,
+                    animation: 'atlasFC3 4s ease-in-out 2.4s infinite',
+                  }}
+                >
+                  <div style={{ display: 'flex', gap: 2, marginBottom: 4 }}>
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} style={{ color: '#F59E0B', fontSize: 13 }}>★</span>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: '#111827', lineHeight: 1 }}>5.0</div>
+                  <div style={{ fontSize: 10, color: '#6B7280', marginTop: 2 }}>דירוג לקוחות</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SOCIAL PROOF STRIP
+        ════════════════════════════════════════ */}
+        <div
+          style={{
+            background: '#F9FAFB',
+            borderTop: '1px solid #F3F4F6',
+            borderBottom: '1px solid #F3F4F6',
+            padding: '18px 0',
+            overflow: 'hidden',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 10px' }}>
+            <span style={{ fontSize: 14, color: '#9CA3AF', fontWeight: 500 }}>
+              מצטרפים ל-500+ מנהלים שכבר עובדים חכם יותר:
+            </span>
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <div className="atlas-marquee" style={{ display: 'flex', whiteSpace: 'nowrap' }}>
+              {[MARQUEE_TEXT, MARQUEE_TEXT].map((t, i) => (
+                <span key={i} style={{ color: '#374151', fontWeight: 600, fontSize: 15, paddingRight: 24, flexShrink: 0 }}>
+                  {t}
+                </span>
+              ))}
+              {[MARQUEE_TEXT, MARQUEE_TEXT].map((t, i) => (
+                <span key={`b${i}`} aria-hidden style={{ color: '#374151', fontWeight: 600, fontSize: 15, paddingRight: 24, flexShrink: 0 }}>
+                  {t}
                 </span>
               ))}
             </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full border-0 shadow-sm hover:shadow-lg transition-shadow bg-white rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="h-6 w-6 text-[#00D1C1]" />
-                    </div>
-                    <h3 className="text-lg font-bold text-[#0B1220] mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
           </div>
         </div>
-      </section>
 
-      {/* How It Works */}
-      <section className="py-20 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-16">
-            איך זה עובד?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {t.howItWorks.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="text-center"
-              >
-                <div className="w-16 h-16 bg-[#0B1220] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                  {step.step}
-                </div>
-                <h3 className="text-xl font-bold text-[#0B1220] mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 px-4 bg-[#0B1220]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
-            מה אומרים עלינו
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {t.testimonials.map((testimonial, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="h-full bg-white/5 border-white/10 rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(5)].map((_, j) => (
-                        <Star key={j} className="h-5 w-5 fill-[#00D1C1] text-[#00D1C1]" />
-                      ))}
-                    </div>
-                    <p className="text-white/90 mb-4 leading-relaxed">"{testimonial.text}"</p>
-                    <p className="text-[#00D1C1] font-medium">{testimonial.author}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-4">
-            תוכניות ומחירים
-          </h2>
-          <p className="text-gray-600 text-center mb-12">בחר את התוכנית המתאימה לך</p>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {Object.entries(t.pricing).map(([key, plan], i) => (
-              <motion.div
-                key={key}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className={`h-full rounded-2xl ${key === 'pro' ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
-                  <CardContent className="p-6">
-                    {key === 'pro' && (
-                      <span className="bg-[#00D1C1] text-[#0B1220] text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">
-                        הכי פופולרי
-                      </span>
-                    )}
-                    <h3 className="text-xl font-bold text-[#0B1220] mb-2">{plan.name}</h3>
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold text-[#0B1220]">₪{plan.price}</span>
-                      <span className="text-gray-500">/חודש</span>
-                    </div>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, j) => (
-                        <li key={j} className="flex items-center gap-2 text-gray-600">
-                          <CheckCircle2 className="h-5 w-5 text-[#00D1C1] flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      className={`w-full rounded-xl ${key === 'pro' 
-                        ? 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]' 
-                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'}`}
-                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-                    >
-                      {t.startTrial}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-20 px-4 bg-[#F2E9DB]/30">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1220] text-center mb-12">
-            שאלות נפוצות
-          </h2>
-          <div className="space-y-4">
-            {t.faq.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <Card className="border-0 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
-                  <CardContent className="p-0">
-                    <button
-                      type="button"
-                      className="w-full text-right flex items-center justify-between p-4 bg-white"
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      aria-expanded={openFaq === i}
-                      aria-controls={`faq-panel-${i}`}
-                    >
-                      <span className="font-medium text-[#0B1220]">{item.q}</span>
-                      {openFaq === i ? (
-                        <ChevronUp className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <ChevronDown className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                    {openFaq === i && (
-                      <div id={`faq-panel-${i}`} className="p-4 pt-0 bg-white text-gray-600">
-                        {item.a}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              {t.finalCta}
-            </h2>
-            <p className="text-xl text-white/70 mb-8">{t.tagline}</p>
-            <Button 
-              size="lg" 
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-            >
-              {t.startTrial}
-              <ArrowLeft className="mr-2 h-5 w-5" />
-            </Button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Logo variant="light" />
-            <div className="flex gap-6 text-white/60 text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
-                {t.privacyPolicy}
-              </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
-                {t.termsOfService}
-              </Link>
+        {/* ════════════════════════════════════════
+            SECTION 1 — THE TRANSFORMATION
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '100px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מכירים את הכאוס הזה?</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 18, color: '#6B7280', margin: 0, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>ככה נראה היום שלך בלי מערכת — וככה הוא נראה עם ATLAS</p>
             </div>
-            <p className="text-white/40 text-sm">
-              © 2024 STAYFLOW. {t.allRightsReserved}
+
+            {/* Single dramatic visual comparison */}
+            <div className="atlas-reveal" style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.08)', border: '1px solid #E5E7EB' }}>
+              <div className="atlas-ps-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+
+                {/* RIGHT (RTL) — WITH ATLAS: Clean dashboard mockup */}
+                <div style={{ background: '#F8FBF9', padding: '36px 32px 32px', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, #10B981, #34D399)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 8, background: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    </div>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: '#065F46' }}>עם ATLAS</span>
+                  </div>
+
+                  {/* Mini dashboard mockup */}
+                  <div style={{ background: 'white', borderRadius: 14, border: '1px solid #E5E7EB', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                    {/* Top bar */}
+                    <div style={{ padding: '10px 14px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', gap: 4 }}>{[6,6,6].map((_,i)=><div key={i} style={{width:6,height:6,borderRadius:'50%',background:i===0?'#EF4444':i===1?'#F59E0B':'#10B981'}}/>)}</div>
+                      <div style={{ fontSize: 9, color: '#9CA3AF', fontWeight: 600 }}>ATLAS Dashboard</div>
+                    </div>
+                    {/* KPI row */}
+                    <div style={{ padding: '12px 14px 8px', display: 'flex', gap: 8 }}>
+                      {[{l:'הכנסות',v:'₪48,200',c:'#10B981',bg:'#F0FDF4'},{l:'תפוסה',v:'92%',c:'#4F46E5',bg:'#EEF2FF'},{l:'הזמנות',v:'23',c:'#F59E0B',bg:'#FFFBEB'}].map(k=>(
+                        <div key={k.l} style={{flex:1,background:k.bg,borderRadius:8,padding:'8px 10px',textAlign:'center'}}>
+                          <div style={{fontSize:14,fontWeight:800,color:k.c}}>{k.v}</div>
+                          <div style={{fontSize:8,color:'#6B7280',marginTop:1}}>{k.l}</div>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Chart area */}
+                    <div style={{ padding: '4px 14px 8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 40 }}>
+                        {[30,45,40,55,65,50,70,60,80,85,75,95].map((h,i)=>(
+                          <div key={i} style={{flex:1,height:`${h}%`,borderRadius:'2px 2px 0 0',background:`rgba(16,185,129,${0.25+i*0.06})`,transition:'height 0.8s ease'}}/>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Booking rows */}
+                    <div style={{ padding: '6px 14px 14px' }}>
+                      {[{name:'דירת הגליל',status:'מאושר',sc:'#10B981',sb:'#F0FDF4'},{name:'סוויטת הכרמל',status:'צ׳ק-אין היום',sc:'#4F46E5',sb:'#EEF2FF'}].map((b,i)=>(
+                        <div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'7px 0',borderTop:i>0?'1px solid #F3F4F6':'none'}}>
+                          <div style={{display:'flex',alignItems:'center',gap:8}}>
+                            <div style={{width:22,height:22,borderRadius:6,background:'#F3F4F6',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                            </div>
+                            <span style={{fontSize:10,fontWeight:600,color:'#374151'}}>{b.name}</span>
+                          </div>
+                          <span style={{fontSize:8,fontWeight:600,color:b.sc,background:b.sb,padding:'2px 8px',borderRadius:999}}>{b.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Notification toast */}
+                  <div className="atlas-reveal atlas-delay-2" style={{ marginTop: 12, background: 'white', borderRadius: 10, padding: '10px 14px', border: '1px solid #D1FAE5', display: 'flex', alignItems: 'center', gap: 10, boxShadow: '0 4px 16px rgba(16,185,129,0.1)' }}>
+                    <div style={{width:24,height:24,borderRadius:'50%',background:'#D1FAE5',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    </div>
+                    <div>
+                      <div style={{fontSize:10,fontWeight:700,color:'#065F46'}}>הזמנה חדשה התקבלה!</div>
+                      <div style={{fontSize:9,color:'#6B7280'}}>₪1,200 — אורח: דוד כ. — 3 לילות</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* LEFT (RTL) — WITHOUT ATLAS: Chaotic desktop */}
+                <div style={{ background: '#FDF8F7', padding: '36px 32px 32px', position: 'relative', borderRight: '1px solid #E5E7EB' }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, #EF4444, #F87171)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 8, background: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </div>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: '#991B1B' }}>בלי ATLAS</span>
+                  </div>
+
+                  {/* Scattered chaotic windows */}
+                  <div style={{ position: 'relative', height: 260 }}>
+                    {/* Excel window */}
+                    <div style={{ position: 'absolute', top: 0, right: 0, width: '70%', background: 'white', borderRadius: 10, border: '1px solid #FECACA', overflow: 'hidden', boxShadow: '0 2px 10px rgba(239,68,68,0.08)', transform: 'rotate(-2deg)', zIndex: 2 }}>
+                      <div style={{padding:'6px 10px',background:'#FEE2E2',borderBottom:'1px solid #FECACA',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                        <span style={{fontSize:8,fontWeight:700,color:'#991B1B'}}>Excel — הזמנות.xlsx</span>
+                        <div style={{display:'flex',gap:3}}>{[1,2,3].map(n=><div key={n} style={{width:5,height:5,borderRadius:'50%',background:'#FCA5A5'}}/>)}</div>
+                      </div>
+                      <div style={{padding:8}}>
+                        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:2}}>
+                          {['שם','תאריך','סכום','סטטוס','???','12/03','???','??','דוד','13/03','₪800','שולם?','','','',''].map((c,i)=>(
+                            <div key={i} style={{fontSize:7,padding:'3px 4px',background:i<4?'#FEF2F2':'white',color:i<4?'#991B1B':'#6B7280',borderBottom:'1px solid #FEE2E2',fontWeight:i<4?700:400}}>{c}</div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* WhatsApp window */}
+                    <div style={{ position: 'absolute', top: 60, left: 0, width: '55%', background: 'white', borderRadius: 10, border: '1px solid #FECACA', overflow: 'hidden', boxShadow: '0 2px 10px rgba(239,68,68,0.08)', transform: 'rotate(1.5deg)', zIndex: 3 }}>
+                      <div style={{padding:'6px 10px',background:'#FEE2E2',borderBottom:'1px solid #FECACA',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                        <span style={{fontSize:8,fontWeight:700,color:'#991B1B'}}>WhatsApp — 27 הודעות</span>
+                        <div style={{width:14,height:14,borderRadius:'50%',background:'#EF4444',display:'flex',alignItems:'center',justifyContent:'center'}}><span style={{fontSize:7,color:'white',fontWeight:700}}>27</span></div>
+                      </div>
+                      <div style={{padding:8}}>
+                        {['היי, מתי הצ׳ק-אין?','שלחתי העברה, ראית?','החדר נקי?? אנחנו בדרך'].map((m,i)=>(
+                          <div key={i} style={{fontSize:8,color:'#374151',background:'#FEF2F2',borderRadius:6,padding:'4px 8px',marginBottom:4}}>{m}</div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Calendar overlap */}
+                    <div style={{ position: 'absolute', bottom: 0, right: '10%', width: '50%', background: 'white', borderRadius: 10, border: '1px solid #FECACA', overflow: 'hidden', boxShadow: '0 2px 10px rgba(239,68,68,0.08)', transform: 'rotate(1deg)', zIndex: 1 }}>
+                      <div style={{padding:'6px 10px',background:'#FEE2E2',borderBottom:'1px solid #FECACA'}}>
+                        <span style={{fontSize:8,fontWeight:700,color:'#991B1B'}}>יומן — הזמנות כפולות!</span>
+                      </div>
+                      <div style={{padding:6}}>
+                        <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:2}}>
+                          {[...Array(10)].map((_,i)=>{
+                            const clash = [2,3,7,8].includes(i);
+                            return <div key={i} style={{height:14,borderRadius:3,background:clash?'#FCA5A5':i%3===0?'#FDE68A':'#F3F4F6',border:clash?'1.5px solid #EF4444':'none'}}/>;
+                          })}
+                        </div>
+                        <div style={{fontSize:7,color:'#EF4444',fontWeight:700,marginTop:4,textAlign:'center'}}>⚠ הזמנה כפולה!</div>
+                      </div>
+                    </div>
+
+                    {/* Floating red alerts */}
+                    <div style={{ position: 'absolute', top: 10, left: '45%', background: '#EF4444', color: 'white', borderRadius: 8, padding: '4px 10px', fontSize: 8, fontWeight: 700, boxShadow: '0 4px 12px rgba(239,68,68,0.3)', zIndex: 10, animation: 'atlasDot 2s ease-in-out infinite' }}>
+                      3 שיחות שלא נענו
+                    </div>
+                    <div style={{ position: 'absolute', bottom: 50, left: 0, background: '#F59E0B', color: 'white', borderRadius: 8, padding: '4px 10px', fontSize: 8, fontWeight: 700, boxShadow: '0 4px 12px rgba(245,158,11,0.3)', zIndex: 10 }}>
+                      תשלום באיחור!
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom CTA */}
+            <div className="atlas-reveal atlas-delay-2" style={{ textAlign: 'center', marginTop: 40 }}>
+              <p style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>תפסיקו לנהל בכאוס. תתחילו לנהל עם ATLAS.</p>
+              <button
+                onClick={() => { setDemoOpen(true); setDemoSlide(0); }}
+                style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 12, padding: '14px 36px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', boxShadow: '0 4px 20px rgba(79,70,229,0.3)', transition: 'all 0.2s ease' }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+              >
+                צפה בדמו חינם
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION 2 — BENTO FEATURES GRID
+        ════════════════════════════════════════ */}
+        <section id="atlas-features" style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>כל מה שצריך לנהל מתחם נופש</h2>
+              <p style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>פלטפורמה אחת שמחליפה 6 כלים שונים</p>
+            </div>
+
+            {/* Bento grid — varied sizes */}
+            <div className="atlas-bento-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridTemplateRows: 'auto', gap: 16 }}>
+              {/* LARGE — Bookings (spans 2 cols) */}
+              <div className="atlas-feat-card atlas-reveal atlas-bento-large" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', border: '1px solid #C7D2FE', borderRadius: 20, padding: 28, position: 'relative', overflow: 'hidden', minHeight: 220 }}>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ width: 48, height: 48, background: '#4F46E5', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 16px rgba(79,70,229,0.25)' }}>
+                    <Calendar size={24} color="white" />
+                  </div>
+                  <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px' }}>ניהול הזמנות חכם</h3>
+                  <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.6, margin: 0, maxWidth: 320 }}>קבל הזמנות מכל הערוצים במקום אחד. תצוגת לוח שנה חכמה עם סינכרון אוטומטי.</p>
+                </div>
+                {/* Mini calendar mockup floating */}
+                <div style={{ position: 'absolute', bottom: 16, left: 16, background: 'white', borderRadius: 12, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', border: '1px solid #E5E7EB', width: 180 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 4 }}>
+                    {['א','ב','ג','ד','ה','ו','ש'].map(d => <div key={d} style={{ fontSize: 8, color: '#9CA3AF', textAlign: 'center' }}>{d}</div>)}
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
+                    {[...Array(28)].map((_, i) => {
+                      const booked = [2,3,4,8,9,10,15,16,17,18,22,23].includes(i);
+                      return <div key={i} style={{ height: 14, borderRadius: 3, background: booked ? '#818CF8' : '#F3F4F6', fontSize: 7, color: booked ? 'white' : '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i+1}</div>;
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Payments */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-1" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(16,185,129,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <CreditCard size={22} color="#10B981" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>תשלומים חכמים</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: '0 0 12px' }}>גביה אוטומטית, חשבוניות דיגיטליות, מעקב יתרות.</p>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  {['₪', '₪₪', '₪₪₪'].map((c, i) => <div key={i} style={{ flex: 1, height: [16, 24, 32][i], background: `rgba(16,185,129,${0.2 + i * 0.15})`, borderRadius: 4 }} />)}
+                </div>
+              </div>
+
+              {/* Leads */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-2" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(139,92,246,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <Users size={22} color="#8B5CF6" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>ניהול לידים</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>פייפליין מכירות מלא — מליד ראשוני עד הזמנה מאושרת.</p>
+              </div>
+
+              {/* Cleaning */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-3" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(245,158,11,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <CheckSquare size={22} color="#F59E0B" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>ניהול ניקיון</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: '0 0 10px' }}>הקצאת משימות לצוות, צ'קליסטים, ועדכוני סטטוס.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {['חדר 12 — נוקה ✓', 'וילה 3 — בתהליך'].map((t, i) => (
+                    <div key={i} style={{ fontSize: 10, padding: '4px 8px', borderRadius: 6, background: i === 0 ? '#D1FAE5' : '#FEF3C7', color: i === 0 ? '#065F46' : '#92400E', fontWeight: 600 }}>{t}</div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Messages */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-4" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(59,130,246,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <MessageSquare size={22} color="#3B82F6" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>תקשורת אוטומטית</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>הודעות אוטומטיות לפני צ'ק-אין, ביום עזיבה ובקשת ביקורת.</p>
+              </div>
+
+              {/* LARGE — Automations (spans 2 cols) */}
+              <div className="atlas-feat-card atlas-reveal atlas-bento-large" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #FDF4FF, #FAE8FF)', border: '1px solid #E9D5FF', borderRadius: 20, padding: 28, overflow: 'hidden', position: 'relative', minHeight: 180 }}>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ width: 48, height: 48, background: '#7C3AED', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 16px rgba(124,58,237,0.25)' }}>
+                    <Zap size={24} color="white" />
+                  </div>
+                  <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px' }}>אוטומציות חכמות</h3>
+                  <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.6, margin: 0, maxWidth: 340 }}>הגדר חוקים אוטומטיים — חסוך שעות עבודה כל שבוע. הודעות, משימות, תזכורות — הכל אוטומטי.</p>
+                </div>
+                <div style={{ position: 'absolute', bottom: 16, left: 16, display: 'flex', flexDirection: 'column', gap: 6, width: 200 }}>
+                  {['הודעת ברוכים הבאים', 'תזכורת תשלום', 'בקשת ביקורת'].map((r, i) => (
+                    <div key={i} style={{ background: 'white', borderRadius: 8, padding: '6px 10px', fontSize: 10, fontWeight: 600, color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #E9D5FF' }}>
+                      {r}
+                      <div style={{ width: 24, height: 12, borderRadius: 6, background: '#7C3AED' }}>
+                        <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'white', margin: '1px 1px 1px auto', boxShadow: '0 1px 2px rgba(0,0,0,0.2)' }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Accent cards row */}
+              <div className="atlas-feat-card atlas-reveal" style={{ background: 'linear-gradient(135deg, #111827, #1F2937)', borderRadius: 20, padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ fontSize: 36, fontWeight: 900, color: '#4F46E5', marginBottom: 4, lineHeight: 1 }}>+3</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: 'white' }}>שעות חסכון ביום</div>
+                <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>לכל מנהל מתחם</div>
+              </div>
+
+              {/* Contracts */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-1" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(79,70,229,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <FileText size={22} color="#4F46E5" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>חוזים דיגיטליים</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>שלח חוזים לחתימה דיגיטלית. עקוב אחר סטטוס.</p>
+              </div>
+
+              {/* Reports */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-2" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(236,72,153,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <BarChart2 size={22} color="#EC4899" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>דוחות ואנליטיקס</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>דוחות הכנסה, תפוסה ושביעות רצון בזמן אמת.</p>
+              </div>
+
+              {/* 24/7 accent */}
+              <div className="atlas-feat-card atlas-reveal" style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', borderRadius: 20, padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981', marginBottom: 8, animation: 'atlasDot 2s ease-in-out infinite', boxShadow: '0 0 12px rgba(16,185,129,0.5)' }} />
+                <div style={{ fontSize: 28, fontWeight: 900, color: 'white', marginBottom: 2 }}>24/7</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>פועל כל הזמן</div>
+              </div>
+
+              {/* Integrations */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-3" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(79,70,229,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <LinkIcon size={22} color="#4F46E5" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>אינטגרציות</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>מתחבר ל-Airbnb, Booking.com, WhatsApp, Stripe ועוד.</p>
+              </div>
+
+              {/* Invoices */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-4" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(234,179,8,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <Receipt size={22} color="#EAB308" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>חשבוניות ומע"מ</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>הפקת חשבוניות עם מע"מ 17%, ייצוא PDF, חיבור לחשבנאות.</p>
+              </div>
+
+              {/* Reviews */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-1" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(245,158,11,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <Star size={22} color="#F59E0B" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>ניהול ביקורות</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>עקוב אחר ביקורות בכל הפלטפורמות. שלח בקשות אוטומטיות.</p>
+              </div>
+
+              {/* Security */}
+              <div className="atlas-feat-card atlas-reveal atlas-delay-2" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div style={{ width: 44, height: 44, background: 'rgba(16,185,129,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <Shield size={22} color="#10B981" />
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>אבטחה ופרטיות</h3>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>הצפנה מלאה, גיבויים אוטומטיים, עמידה בתקני GDPR.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION 3 — DEMO CTA + MODAL
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1, textAlign: 'center' }}>
+          <div style={{ maxWidth: 600, margin: '0 auto' }} className="atlas-reveal">
+            <h2 style={{ fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 12px' }}>רוצה לראות את ATLAS בפעולה?</h2>
+            <p style={{ fontSize: 17, color: '#6B7280', margin: '0 0 32px' }}>צפה בדמו אינטראקטיבי של המוצר</p>
+            <button
+              onClick={() => { setDemoOpen(true); setDemoSlide(0); }}
+              style={{
+                background: '#4F46E5',
+                color: 'white',
+                border: 'none',
+                borderRadius: 12,
+                padding: '16px 36px',
+                fontWeight: 700,
+                fontSize: 17,
+                fontFamily: 'Heebo, sans-serif',
+                cursor: 'pointer',
+                transition: 'all 0.25s ease',
+                boxShadow: '0 8px 28px rgba(79,70,229,0.3)',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#4338CA'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#4F46E5'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              צפה בדמו המוצר ←
+            </button>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION 4 — HOW IT WORKS
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מתחילים תוך 5 דקות</h2>
+              <p style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>ללא הגדרות מסובכות, ללא צורך בטכנאי</p>
+            </div>
+
+            <div className="atlas-how-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+              {HOW_STEPS.map((step, i) => {
+                const illustrations = [
+                  <svg key="s1" viewBox="0 0 120 100" fill="none" style={{ width: '100%', height: 100 }}>
+                    <rect x="20" y="10" width="80" height="80" rx="12" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="1.5"/>
+                    <rect x="32" y="30" width="56" height="10" rx="5" fill="#E0E7FF"/>
+                    <rect x="32" y="46" width="56" height="10" rx="5" fill="#4F46E5" opacity="0.7"/>
+                    <rect x="38" y="64" width="44" height="12" rx="6" fill="#4F46E5"/>
+                    <text x="60" y="73" textAnchor="middle" fill="white" fontSize="7" fontWeight="700">הרשמה</text>
+                    <circle cx="90" cy="20" r="8" fill="#10B981" opacity="0.2"/><path d="M87 20l2 2 4-4" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>,
+                  <svg key="s2" viewBox="0 0 120 100" fill="none" style={{ width: '100%', height: 100 }}>
+                    <rect x="15" y="15" width="90" height="70" rx="12" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="1.5"/>
+                    <rect x="25" y="25" width="35" height="25" rx="6" fill="#C7D2FE"/>
+                    <rect x="65" y="25" width="30" height="25" rx="6" fill="#A5B4FC"/>
+                    <rect x="25" y="55" width="70" height="6" rx="3" fill="#E0E7FF"/>
+                    <rect x="25" y="64" width="50" height="6" rx="3" fill="#E0E7FF"/>
+                    <circle cx="95" cy="25" r="6" fill="#4F46E5"/><text x="95" y="28" textAnchor="middle" fill="white" fontSize="8" fontWeight="700">+</text>
+                  </svg>,
+                  <svg key="s3" viewBox="0 0 120 100" fill="none" style={{ width: '100%', height: 100 }}>
+                    <circle cx="60" cy="50" r="18" fill="#EEF2FF" stroke="#4F46E5" strokeWidth="1.5"/>
+                    <text x="60" y="54" textAnchor="middle" fill="#4F46E5" fontSize="10" fontWeight="800">A</text>
+                    {[[20,30],[100,30],[20,70],[100,70]].map(([cx,cy], j) => (
+                      <g key={j}><circle cx={cx} cy={cy} r="12" fill={['#FF5A5F','#003580','#25D366','#635BFF'][j]} opacity="0.15"/>
+                      <circle cx={cx} cy={cy} r="8" fill={['#FF5A5F','#003580','#25D366','#635BFF'][j]}/>
+                      <line x1={cx > 60 ? cx-12 : cx+12} y1={cy} x2={cx > 60 ? 78 : 42} y2="50" stroke="#C7D2FE" strokeWidth="1" strokeDasharray="3 2"/></g>
+                    ))}
+                  </svg>,
+                  <svg key="s4" viewBox="0 0 120 100" fill="none" style={{ width: '100%', height: 100 }}>
+                    <rect x="15" y="15" width="90" height="70" rx="12" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="1.5"/>
+                    <rect x="25" y="25" width="20" height="20" rx="6" fill="#D1FAE5"/><text x="35" y="38" textAnchor="middle" fill="#065F46" fontSize="7" fontWeight="700">₪</text>
+                    <rect x="50" y="25" width="20" height="20" rx="6" fill="#DBEAFE"/><text x="60" y="38" textAnchor="middle" fill="#1D4ED8" fontSize="7" fontWeight="700">24</text>
+                    <rect x="75" y="25" width="20" height="20" rx="6" fill="#FEF3C7"/><text x="85" y="38" textAnchor="middle" fill="#92400E" fontSize="7" fontWeight="700">★</text>
+                    {[35,50,65,80,55,70].map((h, j) => (
+                      <rect key={j} x={25 + j * 12} y={85 - h * 0.4} width="8" height={h * 0.4} rx="2" fill={`rgba(79,70,229,${0.3 + j * 0.12})`}/>
+                    ))}
+                  </svg>,
+                ];
+                return (
+                  <div key={i} className={`atlas-reveal atlas-delay-${i + 1}`} style={{ textAlign: 'center', position: 'relative' }}>
+                    <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
+                      <div style={{ width: 140, height: 100 }}>{illustrations[i]}</div>
+                    </div>
+                    <div style={{
+                      width: 40, height: 40, borderRadius: '50%', background: '#4F46E5', color: 'white',
+                      fontSize: 18, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      margin: '0 auto 14px', boxShadow: '0 6px 20px rgba(79,70,229,0.25)',
+                    }}>{step.num}</div>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: '0 0 8px' }}>{step.title}</h3>
+                    <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{step.text}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION 5 — INTEGRATIONS (Infinite Marquee)
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '64px 0', background: '#FFFFFF', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 36 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 10px' }}>מתחברים לכלים שאתם כבר משתמשים בהם</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#9CA3AF', margin: 0 }}>Airbnb, Booking.com, WhatsApp, Stripe ועוד — הכל מסונכרן</p>
+            </div>
+          </div>
+
+          {(() => {
+            const allItems = INTEGRATION_ROWS.flatMap(r => r.items);
+            const brandColors = {
+              'Airbnb': '#FF5A5F', 'Booking.com': '#003580', 'Expedia': '#FFC72C', 'VRBO': '#175AEC', 'HomeAway': '#003b95',
+              'Stripe': '#635BFF', 'PayPal': '#003087', 'Tranzila': '#1a73e8', 'Cardcom': '#f7941d', 'iCredit': '#00a651',
+              'WhatsApp Business': '#25D366', 'Gmail': '#EA4335', 'SMS': '#6B7280', 'Telegram': '#2AABEE',
+              'חשבשבת': '#2563eb', 'ירוקה': '#16a34a', 'Monday': '#FF3D57', 'Zapier': '#FF4A00', 'Google Calendar': '#4285F4',
+            };
+            const brandLetters = {
+              'Airbnb': 'A', 'Booking.com': 'B', 'Expedia': 'E', 'VRBO': 'V', 'HomeAway': 'H',
+              'Stripe': 'S', 'PayPal': 'PP', 'Tranzila': 'T', 'Cardcom': 'C', 'iCredit': 'iC',
+              'WhatsApp Business': 'W', 'Gmail': 'M', 'SMS': 'S', 'Telegram': 'T',
+              'חשבשבת': 'ח', 'ירוקה': 'י', 'Monday': 'M', 'Zapier': 'Z', 'Google Calendar': 'G',
+            };
+            const renderBadge = (item, idx) => {
+              const bg = brandColors[item] || '#6B7280';
+              const letter = brandLetters[item] || item[0];
+              return (
+                <div key={`${item}-${idx}`} style={{ background: 'white', border: '1px solid #E5E7EB', borderRadius: 999, padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, cursor: 'default', transition: 'box-shadow 0.2s, transform 0.2s' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: `0 2px 8px ${bg}40` }}>
+                    <span style={{ color: item === 'Expedia' ? '#1a1a2e' : 'white', fontSize: letter.length > 1 ? 9 : 12, fontWeight: 800, lineHeight: 1 }}>{letter}</span>
+                  </div>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{item}</span>
+                </div>
+              );
+            };
+            return (
+              <div style={{ position: 'relative', marginTop: 8 }}>
+                <div style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: 100, background: 'linear-gradient(to left, white, transparent)', zIndex: 2, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 100, background: 'linear-gradient(to right, white, transparent)', zIndex: 2, pointerEvents: 'none' }} />
+                <div style={{ overflow: 'hidden', padding: '12px 0' }}>
+                  <div className="atlas-int-track" style={{ gap: 14 }}>
+                    {[...allItems, ...allItems].map((item, i) => renderBadge(item, i))}
+                    {[...allItems, ...allItems].map((item, i) => renderBadge(item, i + allItems.length * 2))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION 6 — PRICING
+        ════════════════════════════════════════ */}
+        <section id="מחירים" style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>תמחור פשוט ושקוף</h2>
+              <p style={{ fontSize: 18, color: '#6B7280', margin: '0 0 32px' }}>ללא עמלות מוסתרות. ללא הפתעות.</p>
+
+              {/* Billing toggle */}
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, background: 'white', borderRadius: 999, padding: '6px 8px', border: '1px solid #E5E7EB' }}>
+                <button
+                  onClick={() => setBillingYearly(false)}
+                  style={{
+                    background: !billingYearly ? '#111827' : 'transparent',
+                    color: !billingYearly ? 'white' : '#6B7280',
+                    border: 'none', borderRadius: 999,
+                    padding: '8px 20px', fontWeight: 600, fontSize: 14,
+                    fontFamily: 'Heebo, sans-serif', cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  חודשי
+                </button>
+                <button
+                  onClick={() => setBillingYearly(true)}
+                  style={{
+                    background: billingYearly ? '#111827' : 'transparent',
+                    color: billingYearly ? 'white' : '#6B7280',
+                    border: 'none', borderRadius: 999,
+                    padding: '8px 20px', fontWeight: 600, fontSize: 14,
+                    fontFamily: 'Heebo, sans-serif', cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  שנתי (חסוך 20%)
+                </button>
+              </div>
+            </div>
+
+            <div className="atlas-pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'start' }}>
+              {PRICING_PLANS.map((plan, i) => (
+                <div
+                  key={i}
+                  className={`atlas-pricing-card atlas-reveal atlas-delay-${i + 1}`}
+                  style={{
+                    background: '#FFFFFF',
+                    border: plan.featured ? '2px solid #4F46E5' : '1px solid #F3F4F6',
+                    borderRadius: 20,
+                    boxShadow: plan.featured
+                      ? '0 12px 48px rgba(79,70,229,0.15), 0 4px 12px rgba(0,0,0,0.06)'
+                      : '0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04)',
+                    padding: 32,
+                    position: 'relative',
+                    ...(plan.featured ? { transform: 'scale(1.03)' } : {}),
+                  }}
+                >
+                  {plan.featured && (
+                    <div style={{
+                      position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)',
+                      background: '#4F46E5', color: 'white', fontSize: 12, fontWeight: 700,
+                      padding: '4px 16px', borderRadius: 999,
+                    }}>
+                      הכי פופולרי
+                    </div>
+                  )}
+                  <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>{plan.name}</h3>
+                  <p style={{ fontSize: 14, color: '#6B7280', margin: '0 0 20px' }}>{plan.desc}</p>
+                  <div style={{ marginBottom: 24 }}>
+                    <span style={{ fontSize: 42, fontWeight: 900, color: '#111827' }}>₪{billingYearly ? plan.yearlyPrice : plan.monthlyPrice}</span>
+                    <span style={{ fontSize: 16, color: '#6B7280' }}>/חודש</span>
+                  </div>
+
+                  <button
+                    onClick={goToLogin}
+                    style={{
+                      width: '100%',
+                      background: plan.featured ? '#4F46E5' : '#111827',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: 10,
+                      padding: '14px 0',
+                      fontWeight: 700,
+                      fontSize: 16,
+                      fontFamily: 'Heebo, sans-serif',
+                      cursor: 'pointer',
+                      transition: 'all 0.25s ease',
+                      marginBottom: 24,
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    {plan.cta}
+                  </button>
+
+                  <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: 20 }}>
+                    {plan.included.map((item, j) => (
+                      <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                        <span style={{ color: '#10B981', fontSize: 16, fontWeight: 700, flexShrink: 0 }}>✓</span>
+                        <span style={{ fontSize: 14, color: '#374151' }}>{item}</span>
+                      </div>
+                    ))}
+                    {plan.excluded.map((item, j) => (
+                      <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                        <span style={{ color: '#D1D5DB', fontSize: 16, fontWeight: 700, flexShrink: 0 }}>✗</span>
+                        <span style={{ fontSize: 14, color: '#9CA3AF' }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p className="atlas-reveal" style={{ textAlign: 'center', fontSize: 14, color: '#6B7280', marginTop: 40 }}>
+              כל החבילות כוללות: ניסיון חינם 14 יום • ללא כרטיס אשראי • ביטול בכל עת • תמיכה בעברית
             </p>
           </div>
-        </div>
-      </footer>
-      </main>
+        </section>
 
-      {/* Product Demo Modal */}
-      {showDemoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{background: 'rgba(11,18,32,0.85)', backdropFilter: 'blur(6px)'}}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden relative">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-[#0B1220] to-[#1a2744] px-8 py-5 flex items-center justify-between">
-              <div>
-                <h2 className="text-white text-xl font-bold">ATLAS – סיור במערכת</h2>
-                <p className="text-[#00D1C1] text-sm mt-1">{demoSlide + 1} / 5</p>
+        {/* ════════════════════════════════════════
+            SECTION 7 — TESTIMONIALS (Premium Cards)
+        ════════════════════════════════════════ */}
+        <section id="לקוחות" style={{ padding: '100px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FEF3C7', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
+                <span style={{ color: '#F59E0B', fontSize: 14 }}>★★★★★</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#92400E' }}>5.0 — דירוג ממוצע</span>
               </div>
-              <button onClick={() => setShowDemoModal(false)} className="text-gray-400 hover:text-white transition-colors text-2xl leading-none">&times;</button>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מנהלי מתחמים מספרים</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>הסיפורים האמיתיים של מי שכבר עובד עם ATLAS</p>
             </div>
-            {/* Slide content */}
-            <div className="p-8">
-              {demoSlide === 0 && (
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">לוח בקרה חכם</h3>
-                  <p className="text-gray-500 mb-6 text-lg">כל נתוני הנכס שלך במקום אחד – הכנסות, הזמנות, לידים ומשימות בזמן אמת.</p>
-                  <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-xl p-4 text-right">
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-white/10 rounded-lg p-3"><p className="text-[#00D1C1] text-xs">הכנסות החודש</p><p className="text-white text-xl font-bold">₪24,800</p></div>
-                      <div className="bg-white/10 rounded-lg p-3"><p className="text-[#00D1C1] text-xs">הזמנות פעילות</p><p className="text-white text-xl font-bold">14</p></div>
-                      <div className="bg-white/10 rounded-lg p-3"><p className="text-[#00D1C1] text-xs">לידים חדשים</p><p className="text-white text-xl font-bold">28</p></div>
+
+            {/* Featured testimonial */}
+            <div className="atlas-reveal" style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', borderRadius: 24, padding: '40px 44px', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: -30, left: -30, width: 140, height: 140, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', bottom: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style={{ marginBottom: 20, opacity: 0.4 }}><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" fill="white"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" fill="white"/></svg>
+              <p style={{ fontSize: 22, color: 'white', lineHeight: 1.7, margin: '0 0 24px', fontWeight: 500, maxWidth: 700 }}>
+                "ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות. לא מאמין שניהלתי את הכל עם Excel עד עכשיו."
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700, color: 'white' }}>ר</div>
+                <div>
+                  <div style={{ fontWeight: 700, color: 'white', fontSize: 16 }}>רחל מ.</div>
+                  <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>מנהלת 5 צימרים, הגליל</div>
+                </div>
+                <div style={{ marginRight: 'auto', display: 'flex', gap: 2 }}>
+                  {[...Array(5)].map((_, j) => <span key={j} style={{ color: '#FCD34D', fontSize: 16 }}>★</span>)}
+                </div>
+              </div>
+            </div>
+
+            {/* Grid of remaining testimonials */}
+            <div className="atlas-testi-grid-new" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              {NEW_TESTIMONIALS.slice(1).map((t, i) => {
+                const initials = t.author.charAt(0);
+                const gradients = ['from-blue-400 to-indigo-500', 'from-emerald-400 to-teal-500', 'from-amber-400 to-orange-500', 'from-rose-400 to-pink-500', 'from-violet-400 to-purple-500'];
+                return (
+                  <div
+                    key={i}
+                    className={`atlas-reveal atlas-delay-${(i % 3) + 1}`}
+                    style={{
+                      background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, padding: 28,
+                      transition: 'all 0.25s ease', cursor: 'default',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(79,70,229,0.1)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: `linear-gradient(135deg, ${['#818CF8,#6366F1','#34D399,#10B981','#FBBF24,#F59E0B','#FB7185,#F43F5E','#A78BFA,#8B5CF6'][i % 5]})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: 'white' }}>{initials}</div>
+                        <div>
+                          <div style={{ fontWeight: 700, color: '#111827', fontSize: 14 }}>{t.author}</div>
+                          <div style={{ fontSize: 12, color: '#9CA3AF' }}>{t.role}</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: 1 }}>
+                        {[...Array(5)].map((_, j) => <span key={j} style={{ color: '#F59E0B', fontSize: 13 }}>★</span>)}
+                      </div>
                     </div>
+                    <p style={{ fontSize: 15, color: '#374151', lineHeight: 1.7, margin: 0 }}>"{t.text}"</p>
                   </div>
-                </div>
-              )}
-              {demoSlide === 1 && (
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">ניהול הזמנות</h3>
-                  <p className="text-gray-500 mb-6 text-lg">ניהול הזמנות מ-Airbnb, Booking ואתר ישיר – הכל מסונכרן אוטומטית.</p>
-                  <div className="space-y-2">
-                    {[{name:'משפחת כהן', dates:'12-15 מרץ', status:'מאושר', color:'#00D1C1'},{name:'דני לוי', dates:'18-21 מרץ', status:'ממתין', color:'#F59E0B'},{name:'שרה פרץ', dates:'25-28 מרץ', status:'מאושר', color:'#00D1C1'}].map((b,i) => (
-                      <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3 text-right">
-                        <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{background: b.color + '20', color: b.color}}>{b.status}</span>
-                        <div><p className="font-semibold text-[#0B1220]">{b.name}</p><p className="text-gray-400 text-xs">{b.dates}</p></div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {demoSlide === 2 && (
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">ניהול אורחים ולידים</h3>
-                  <p className="text-gray-500 mb-6 text-lg">מעקב מלא אחרי כל ליד מהרגע שפנה ועד לאחרי השהייה, עם תקשורת אוטומטית.</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-4 text-right"><p className="text-[#00D1C1] font-bold text-2xl">87%</p><p className="text-gray-600 text-sm">אחוז המרה מליד להזמנה</p></div>
-                    <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-4 text-right"><p className="text-[#00D1C1] font-bold text-2xl">4.9★</p><p className="text-gray-600 text-sm">דירוג ממוצע מאורחים</p></div>
-                  </div>
-                </div>
-              )}
-              {demoSlide === 3 && (
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">תשלומים וחשבוניות</h3>
-                  <p className="text-gray-500 mb-6 text-lg">קבלת תשלומים בקליק, הפקת חשבוניות אוטומטית ומעקב הכנסות בזמן אמת.</p>
-                  <div className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] rounded-xl p-5 text-right">
-                    <p className="text-gray-400 text-sm mb-1">הכנסות השנה</p>
-                    <p className="text-white text-3xl font-bold mb-3">₪298,400</p>
-                    <div className="w-full bg-white/10 rounded-full h-2"><div className="bg-[#00D1C1] h-2 rounded-full" style={{width: '78%'}}></div></div>
-                    <p className="text-[#00D1C1] text-xs mt-2">78% מהיעד השנתי</p>
-                  </div>
-                </div>
-              )}
-              {demoSlide === 4 && (
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-[#00D1C1]/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-[#00D1C1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-[#0B1220] mb-3">אוטומציות חכמות</h3>
-                  <p className="text-gray-500 mb-6 text-lg">שלח הודעות ווטסאפ אוטומטיות, הגדר משימות ניקיון ועדכן אורחים – בלי מגע יד.</p>
-                  <div className="space-y-2 text-right">
-                    {['הודעת ברוכים הבאים 2 שעות לפני צ\'ק-אין','תזכורת צ\'ק-אאוט יום לפני','משימת ניקיון אוטומטית לאחר יציאה','בקשת ביקורת 24 שעות אחרי הצ\'ק-אאוט'].map((a,i) => (
-                      <div key={i} className="flex items-center gap-3 bg-teal-50 rounded-lg px-4 py-2">
-                        <div className="w-2 h-2 rounded-full bg-[#00D1C1] flex-shrink-0"></div>
-                        <span className="text-gray-700 text-sm">{a}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            {/* Navigation */}
-            <div className="px-8 pb-6 flex items-center justify-between">
-              <button onClick={() => setDemoSlide(s => Math.max(0, s-1))} disabled={demoSlide === 0} className="px-5 py-2 rounded-xl border border-gray-200 text-gray-600 disabled:opacity-30 hover:border-[#00D1C1] hover:text-[#00D1C1] transition-colors font-medium">→ הקודם</button>
-              <div className="flex gap-2">
-                {[0,1,2,3,4].map(i => (
-                  <button key={i} onClick={() => setDemoSlide(i)} className="w-2 h-2 rounded-full transition-all" style={{background: demoSlide === i ? '#00D1C1' : '#e5e7eb', transform: demoSlide === i ? 'scale(1.4)' : 'scale(1)'}}></button>
-                ))}
-              </div>
-              {demoSlide < 4 ? (
-                <button onClick={() => setDemoSlide(s => s+1)} className="px-5 py-2 rounded-xl bg-[#00D1C1] text-[#0B1220] font-semibold hover:bg-[#00B8A9] transition-colors">הבא ←</button>
-              ) : (
-                <button onClick={() => { setShowDemoModal(false); base44.auth.redirectToLogin(createPageUrl('Dashboard')); }} className="px-5 py-2 rounded-xl bg-[#00D1C1] text-[#0B1220] font-semibold hover:bg-[#00B8A9] transition-colors">התחל בחינם ←</button>
-              )}
+                );
+              })}
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION 8 — FAQ
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 760, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: 0 }}>שאלות נפוצות</h2>
+            </div>
+
+            <div>
+              {FAQ_DATA.map((faq, i) => (
+                <div
+                  key={i}
+                  className={`atlas-reveal atlas-delay-${Math.min(i + 1, 5)}`}
+                  style={{
+                    background: '#FFFFFF',
+                    border: '1px solid #F3F4F6',
+                    borderRadius: 12,
+                    marginBottom: 12,
+                    overflow: 'hidden',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                  }}
+                >
+                  <button
+                    onClick={() => toggleFaq(i)}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '18px 24px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: 'Heebo, sans-serif',
+                      textAlign: 'right',
+                    }}
+                  >
+                    <ChevronDown
+                      size={20}
+                      color="#6B7280"
+                      style={{
+                        transition: 'transform 0.3s ease',
+                        transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)',
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: 16, fontWeight: 600, color: '#111827', flex: 1 }}>{faq.q}</span>
+                  </button>
+                  <div className={`atlas-faq-answer ${openFaq === i ? 'atlas-faq-answer--open' : ''}`}>
+                    <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.7, margin: 0 }}>{faq.a}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION A — מספרים שמדברים (Social Proof Numbers)
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '80px 24px', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1), transparent 50%)', pointerEvents: 'none' }} />
+          <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2 style={{ fontSize: 36, fontWeight: 800, color: 'white', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>מספרים שמדברים</h2>
+              <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', margin: 0, fontFamily: 'Heebo, sans-serif' }}>מנהלי נכסים בכל הארץ כבר סומכים על ATLAS</p>
+            </div>
+            <div className="atlas-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+              {[
+                { num: '500+', label: 'נכסים מנוהלים', sub: 'בכל רחבי הארץ' },
+                { num: '₪12M+', label: 'הכנסות שעברו דרכנו', sub: 'בשנה האחרונה' },
+                { num: '3,200+', label: 'הזמנות בחודש', sub: 'מסונכרנות אוטומטית' },
+                { num: '98%', label: 'שביעות רצון', sub: 'של המשתמשים שלנו' },
+              ].map((s, i) => (
+                <div key={i} className="atlas-reveal" style={{ textAlign: 'center', padding: 24, background: 'rgba(255,255,255,0.1)', borderRadius: 16, backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                  <div style={{ fontSize: 42, fontWeight: 900, color: 'white', lineHeight: 1.1, fontFamily: 'Heebo, sans-serif' }}>{s.num}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.95)', marginTop: 6, fontFamily: 'Heebo, sans-serif' }}>{s.label}</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION B — למה דווקא ATLAS? (Extra Trust)
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '80px 24px', background: '#FAFAFA', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 900, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 36, fontWeight: 800, color: '#111827', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>למה דווקא ATLAS?</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 16, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>כי אנחנו יודעים מה מנהלי נכסים באמת צריכים</p>
+            </div>
+            <div className="atlas-why-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              {[
+                { title: 'בנוי לשוק הישראלי', desc: 'עברית מלאה, RTL, חשבוניות ישראליות, שערי תשלום מקומיים — הכל מותאם לישראל.', color: '#4F46E5', iconPath: 'M3 21V5a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M12 10v4 M10 12h4' },
+                { title: 'הקמה תוך 5 דקות', desc: 'אין צורך בידע טכני. נרשמים, מוסיפים נכס, ומתחילים לעבוד.', color: '#10B981', iconPath: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' },
+                { title: 'מחובר לכל הכלים', desc: 'Airbnb, Booking.com, WhatsApp, Stripe — כל האינטגרציות במקום אחד.', color: '#8B5CF6', iconPath: 'M15 7h2a5 5 0 0 1 0 10h-2 M9 17H7A5 5 0 0 1 7 7h2 M8 12h8' },
+                { title: 'אוטומציות חכמות', desc: 'הודעות אוטומטיות, עדכוני סטטוס, תזכורות — המערכת עובדת בשבילך 24/7.', color: '#F59E0B', iconPath: 'M12 6V2 M16.24 7.76l2.83-2.83 M18 12h4 M16.24 16.24l2.83 2.83 M12 18v4 M7.76 16.24l-2.83 2.83 M6 12H2 M7.76 7.76L4.93 4.93' },
+                { title: 'דוחות בזמן אמת', desc: 'הכנסות, תפוסה, ביצועים — כל המספרים שאתה צריך, בלחיצה אחת.', color: '#EC4899', iconPath: 'M18 20V10 M12 20V4 M6 20v-6' },
+                { title: 'אבטחה ופרטיות', desc: 'הנתונים שלך מוגנים בהצפנה מתקדמת. תואם GDPR ותקנות ישראליות.', color: '#06B6D4', iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
+              ].map((item, i) => (
+                <div key={i} className="atlas-reveal" style={{ background: 'white', borderRadius: 16, padding: '28px 28px', border: '1px solid #F3F4F6', transition: 'all 0.2s ease', cursor: 'default' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
+                >
+                  <div style={{ width: 48, height: 48, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.iconPath} /></svg>
+                  </div>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif' }}>{item.title}</h3>
+                  <p style={{ fontSize: 14, color: '#6B7280', margin: 0, lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION 9 — FINAL CTA
+        ════════════════════════════════════════ */}
+        <section
+          style={{
+            background: '#4F46E5',
+            padding: '100px 24px',
+            textAlign: 'center',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          <div style={{ maxWidth: 700, margin: '0 auto' }} className="atlas-reveal">
+            <h2
+              style={{
+                fontSize: 'clamp(36px, 5vw, 52px)',
+                fontWeight: 900,
+                color: 'white',
+                margin: '0 0 12px',
+              }}
+            >
+              מוכן לנהל חכם יותר?
+            </h2>
+            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.80)', margin: '12px 0 40px' }}>
+              הצטרף ל-500+ מנהלים שכבר עובדים עם ATLAS
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+              <button
+                onClick={goToLogin}
+                style={{
+                  background: 'white',
+                  color: '#4F46E5',
+                  border: 'none',
+                  borderRadius: 10,
+                  padding: '15px 32px',
+                  fontWeight: 700,
+                  fontSize: 17,
+                  fontFamily: 'Heebo, sans-serif',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  boxShadow: '0 8px 28px rgba(0,0,0,0.15)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#F5F3FF'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.transform = 'translateY(0)'; }}
+              >
+                התחל 14 יום חינם ←
+              </button>
+              <button
+                onClick={goToLogin}
+                style={{
+                  background: 'transparent',
+                  color: 'white',
+                  border: '2px solid rgba(255,255,255,0.4)',
+                  borderRadius: 10,
+                  padding: '13px 28px',
+                  fontWeight: 600,
+                  fontSize: 16,
+                  fontFamily: 'Heebo, sans-serif',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'white'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'; e.currentTarget.style.background = 'transparent'; }}
+              >
+                קבע דמו אישי
+              </button>
+            </div>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.60)', marginTop: 16 }}>
+              ללא כרטיס אשראי • ביטול בכל עת • תמיכה בעברית
+            </p>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
+            SECTION 10 — FOOTER
+        ════════════════════════════════════════ */}
+        <footer
+          style={{
+            background: '#111827',
+            padding: '64px 24px 0',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            <div
+              className="atlas-footer-grid-new"
+              style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 48, marginBottom: 48 }}
+            >
+              {/* Brand */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
+                  <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+                </div>
+                <p style={{ fontSize: 15, color: '#9CA3AF', margin: '0 0 20px' }}>ניהול מתחמי נופש — פשוט יותר.</p>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  {['f', 'in', 'tw', 'ig'].map((s) => (
+                    <div
+                      key={s}
+                      style={{
+                        width: 36, height: 36,
+                        borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.08)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#9CA3AF', fontSize: 13, fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'background 0.2s',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+                    >
+                      {s}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* מוצר */}
+              <div>
+                <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>מוצר</h4>
+                {[
+                  { label: 'תכונות', href: '#atlas-features' },
+                  { label: 'מחירים', href: '#מחירים' },
+                  { label: 'אינטגרציות', href: '#atlas-features' },
+                  { label: 'עדכונים', href: '#' },
+                  { label: 'דמו', href: '#', onClick: () => { setDemoOpen(true); setDemoSlide(0); } },
+                ].map((l) => (
+                  <div key={l.label} style={{ marginBottom: 12 }}>
+                    <a href={l.href} onClick={l.onClick ? (e) => { e.preventDefault(); l.onClick(); } : undefined} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                    >{l.label}</a>
+                  </div>
+                ))}
+              </div>
+
+              {/* חברה */}
+              <div>
+                <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>חברה</h4>
+                {[
+                  { label: 'אודות', href: '/About' },
+                  { label: 'בלוג', href: '#' },
+                  { label: 'קריירה', href: '#' },
+                  { label: 'צור קשר', href: '/Contact' },
+                  { label: 'שותפים', href: '#' },
+                ].map((l) => (
+                  <div key={l.label} style={{ marginBottom: 12 }}>
+                    <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                    >{l.label}</a>
+                  </div>
+                ))}
+              </div>
+
+              {/* תמיכה */}
+              <div>
+                <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>תמיכה</h4>
+                {[
+                  { label: 'מרכז עזרה', href: '#' },
+                  { label: 'תיעוד API', href: '#' },
+                  { label: 'סטטוס מערכת', href: '#' },
+                  { label: 'פרטיות', href: '/Privacy' },
+                  { label: 'תנאי שימוש', href: '/Terms' },
+                ].map((l) => (
+                  <div key={l.label} style={{ marginBottom: 12 }}>
+                    <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                    >{l.label}</a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', padding: '24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+              <p style={{ fontSize: 14, color: '#6B7280', margin: 0 }}>© 2025 ATLAS. כל הזכויות שמורות.</p>
+              <p style={{ fontSize: 14, color: '#6B7280', margin: 0 }}>פותח בישראל 🇮🇱</p>
+            </div>
+          </div>
+        </footer>
+
+        {/* ════════════════════════════════════════
+            DEMO MODAL
+        ════════════════════════════════════════ */}
+        {demoOpen && (
+          <div
+            className="atlas-demo-overlay"
+            style={{
+              position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+              background: 'rgba(0,0,0,0.80)',
+              zIndex: 200,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: 24,
+            }}
+            onClick={(e) => { if (e.target === e.currentTarget) setDemoOpen(false); }}
+          >
+            <div
+              className="atlas-demo-modal"
+              style={{
+                background: 'white',
+                borderRadius: 20,
+                maxWidth: 800,
+                width: '100%',
+                maxHeight: '90vh',
+                overflow: 'auto',
+                position: 'relative',
+              }}
+              dir="rtl"
+            >
+              {/* Modal header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #F3F4F6' }}>
+                <button
+                  onClick={() => setDemoOpen(false)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex' }}
+                >
+                  <X size={22} color="#6B7280" />
+                </button>
+
+                {/* Progress dots */}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {[0, 1, 2, 3, 4].map((d) => (
+                    <div
+                      key={d}
+                      onClick={() => setDemoSlide(d)}
+                      style={{
+                        width: demoSlide === d ? 24 : 8, height: 8,
+                        borderRadius: 4,
+                        background: demoSlide === d ? '#4F46E5' : '#E5E7EB',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <span style={{ fontSize: 13, color: '#9CA3AF', fontWeight: 500, minWidth: 40, textAlign: 'center' }}>
+                  {demoSlide + 1} / 5
+                </span>
+              </div>
+
+              {/* Slide content */}
+              <div style={{ padding: '24px 24px 16px' }}>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: '0 0 20px', textAlign: 'center' }}>
+                  {DEMO_SLIDES[demoSlide].title}
+                </h3>
+                <div className="atlas-demo-slide-mockup">
+                  {renderDemoSlide(demoSlide)}
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px 24px' }}>
+                <button
+                  onClick={prevSlide}
+                  disabled={demoSlide === 0}
+                  style={{
+                    background: demoSlide === 0 ? '#F3F4F6' : '#111827',
+                    color: demoSlide === 0 ? '#9CA3AF' : 'white',
+                    border: 'none', borderRadius: 10,
+                    padding: '10px 20px',
+                    fontWeight: 600, fontSize: 14,
+                    fontFamily: 'Heebo, sans-serif',
+                    cursor: demoSlide === 0 ? 'default' : 'pointer',
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  הקודם <ChevronRight size={16} />
+                </button>
+                <button
+                  onClick={demoSlide === 4 ? () => setDemoOpen(false) : nextSlide}
+                  style={{
+                    background: '#4F46E5',
+                    color: 'white',
+                    border: 'none', borderRadius: 10,
+                    padding: '10px 20px',
+                    fontWeight: 600, fontSize: 14,
+                    fontFamily: 'Heebo, sans-serif',
+                    cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <ChevronLeft size={16} /> {demoSlide === 4 ? 'סיום' : 'הבא'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </>
   );
 }

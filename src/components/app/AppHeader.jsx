@@ -14,7 +14,7 @@ import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import {
   Menu, Bell, Settings, LogOut, User, ChevronDown,
-  Building2,
+  Building2, Home,
 } from 'lucide-react';
 
 const pageNames = {
@@ -35,7 +35,13 @@ const pageNames = {
   LeadDetail: 'פרטי ליד',
   Automations: 'אוטומציות',
   AIAssistant: 'AI עוזר',
-  ServiceRequests: 'בקשות שירות',
+  ExpenseTracker: 'מעקב הוצאות',
+  DynamicPricing: 'תמחור דינאמי',
+  GuestPortal: 'פורטל אורחים',
+  RevenueIntelligence: 'מודיעין הכנסות',
+  MultiCalendar: 'לוח שנה מרכזי',
+  OwnerReports: 'דוחות בעלים',
+  GuestJourney: 'מסע אורח',
 };
 
 export default function AppHeader({ user, currentPageName, onMenuClick, selectedPropertyId, onPropertyChange }) {
@@ -132,6 +138,12 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
                 <p className="text-sm font-medium text-gray-800 truncate">{user.full_name || 'משתמש'}</p>
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
+              <DropdownMenuItem asChild>
+                <Link to="/" className="flex items-center gap-2 cursor-pointer">
+                  <Home className="w-4 h-4 text-gray-400" />
+                  דף הבית
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to={createPageUrl('Settings')} className="flex items-center gap-2 cursor-pointer">
                   <Settings className="w-4 h-4 text-gray-400" />
