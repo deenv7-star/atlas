@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/lib/supabase';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -210,31 +210,57 @@ export default function Dashboard({ user, selectedPropertyId }) {
 
   const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
     queryKey: ['dashboard-bookings', selectedPropertyId],
-    queryFn: () => base44.entities.Booking.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    queryFn: async () => {
+      let q = supabase.from('bookings').select('*');
+      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
+      const { data, error } = await q.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     ...qOpts,
   });
 
   const { data: leads = [], isLoading: leadsLoading } = useQuery({
     queryKey: ['dashboard-leads', selectedPropertyId],
-    queryFn: () => base44.entities.Lead.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    queryFn: async () => {
+      let q = supabase.from('leads').select('*');
+      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
+      const { data, error } = await q.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     ...qOpts,
   });
 
   const { data: payments = [], isLoading: paymentsLoading } = useQuery({
     queryKey: ['dashboard-payments'],
-    queryFn: () => base44.entities.Payment.list(),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('payments').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     ...qOpts,
   });
 
   const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
     queryKey: ['dashboard-reviews', selectedPropertyId],
-    queryFn: () => base44.entities.ReviewRequest.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    queryFn: async () => {
+      let q = supabase.from('review_requests').select('*');
+      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
+      const { data, error } = await q.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     ...qOpts,
   });
 
   const { data: properties = [] } = useQuery({
     queryKey: ['dashboard-properties'],
-    queryFn: () => base44.entities.Property.list(),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('properties').select('*');
+      if (error) throw error;
+      return data ?? [];
+    },
     ...qOpts,
   });
 
@@ -261,7 +287,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
     .slice(0, 5);
 
   const recentLeads = leads
-    .sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0))
+    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
     .slice(0, 5);
 
   const userName = user?.full_name?.split(' ')[0] || 'שלום';
@@ -534,13 +560,13 @@ export default function Dashboard({ user, selectedPropertyId }) {
                 icon: CalendarDays,
                 color: 'text-blue-600 bg-blue-50',
                 text: `הזמנה ${b.status === 'APPROVED' ? 'אושרה' : 'נוספה'} — ${b.guest_name || 'אורח'}`,
-                time: b.created_date || b.check_in_date,
+                time: b.created_at || b.check_in_date,
               })), ...leads.slice(0, 2).map(l => ({
                 type: 'lead',
                 icon: Users,
                 color: 'text-violet-600 bg-violet-50',
                 text: `ליד חדש — ${l.full_name || l.name || 'ללא שם'}`,
-                time: l.created_date,
+                time: l.created_at,
               }))].sort((a, b) => (b.time || '').localeCompare(a.time || '')).slice(0, 4).map((item, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5", item.color)}>

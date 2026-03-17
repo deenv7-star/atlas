@@ -81,6 +81,8 @@ import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
 import Onboarding from './pages/Onboarding';
+import Register from './pages/Register';
+import VerifyEmail from './pages/VerifyEmail';
 import __Layout from './Layout.jsx';
 
 
@@ -109,6 +111,8 @@ export const PAGES = {
     "Leads": Leads,
     "Messages": Messages,
     "Onboarding": Onboarding,
+    "Register": Register,
+    "VerifyEmail": VerifyEmail,
     "MultiCalendar": MultiCalendar,
     "OwnerReports": OwnerReports,
     "Payments": Payments,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -76,51 +76,55 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
     checklist: defaultChecklist
   });
 
-  // Fetch cleaning tasks
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['cleaningTasks', orgId, selectedPropertyId],
-    queryFn: () => orgId ? base44.entities.CleaningTask.filter(
-      selectedPropertyId 
-        ? { org_id: orgId, property_id: selectedPropertyId }
-        : { org_id: orgId },
-      'scheduled_for'
-    ) : [],
-    enabled: !!orgId
+    queryFn: async () => {
+      let q = supabase.from('cleaning_tasks').select('*');
+      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
+      const { data, error } = await q.order('scheduled_for', { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!orgId,
   });
 
-  // Fetch bookings for reference
   const { data: bookings = [] } = useQuery({
     queryKey: ['bookings', orgId],
-    queryFn: () => orgId ? base44.entities.Booking.filter({ org_id: orgId }, '-check_out_date', 50) : [],
-    enabled: !!orgId
+    queryFn: async () => {
+      const { data, error } = await supabase.from('bookings').select('*').order('check_out_date', { ascending: false }).limit(50);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!orgId,
   });
 
-  // Create task mutation
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CleaningTask.create({
-      ...data,
-      org_id: orgId,
-      property_id: selectedPropertyId,
-      status: 'OPEN'
-    }),
+    mutationFn: async (payload) => {
+      const { data, error } = await supabase.from('cleaning_tasks').insert({
+        ...payload,
+        org_id: orgId,
+        property_id: selectedPropertyId,
+        status: 'OPEN',
+      }).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cleaningTasks'] });
       setIsCreateOpen(false);
-      setNewTask({
-        scheduled_for: '',
-        assigned_to_name: '',
-        notes: '',
-        checklist: defaultChecklist
-      });
-    }
+      setNewTask({ scheduled_for: '', assigned_to_name: '', notes: '', checklist: defaultChecklist });
+    },
   });
 
-  // Update task mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.CleaningTask.update(id, data),
+    mutationFn: async ({ id, data: payload }) => {
+      const { data, error } = await supabase.from('cleaning_tasks').update(payload).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cleaningTasks'] });
-    }
+    },
   });
 
   const handleStatusChange = (taskId, newStatus) => {

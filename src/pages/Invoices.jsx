@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
@@ -59,57 +59,78 @@ export default function InvoicesPage({ orgId }) {
 
   const { data: invoices = [], isLoading } = useQuery({
     queryKey: ['invoices', orgId],
-    queryFn: () => base44.entities.Invoice.filter({ org_id: orgId }, '-created_date'),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     enabled: !!orgId,
   });
 
   const { data: bookings = [] } = useQuery({
     queryKey: ['bookings', orgId],
-    queryFn: () => base44.entities.Booking.filter({ org_id: orgId }),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     enabled: !!orgId,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Invoice.create(data),
+    mutationFn: async (payload) => {
+      const { data, error } = await supabase.from('invoices').insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['invoices']);
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
       toast.success('החשבונית נשמרה בהצלחה');
     },
+    onError: () => toast.error('שגיאה בשמירת החשבונית'),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Invoice.update(id, data),
+    mutationFn: async ({ id, data: payload }) => {
+      const { data, error } = await supabase.from('invoices').update(payload).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['invoices']);
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
       toast.success('החשבונית עודכנה בהצלחה');
     },
+    onError: () => toast.error('שגיאה בעדכון החשבונית'),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Invoice.delete(id),
+    mutationFn: async (id) => {
+      const { error } = await supabase.from('invoices').delete().eq('id', id);
+      if (error) throw error;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['invoices']);
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success('החשבונית נמחקה');
     },
+    onError: () => toast.error('שגיאה במחיקת החשבונית'),
   });
 
   const sendEmailMutation = useMutation({
     mutationFn: async (invoice) => {
-      await base44.integrations.Core.SendEmail({
-        to: invoice.guest_email,
-        subject: `חשבונית ${invoice.invoice_number} - ${invoice.guest_name}`,
-        body: `שלום ${invoice.guest_name},\n\nמצורפת חשבונית מספר ${invoice.invoice_number} על סך ${invoice.total_amount} ${invoice.currency}.\n\nתודה רבה!`
-      });
-      return base44.entities.Invoice.update(invoice.id, { status: 'SENT' });
+      console.info('[SendEmail]', { to: invoice.guest_email, subject: `חשבונית ${invoice.invoice_number}` });
+      const { data, error } = await supabase.from('invoices').update({ status: 'SENT' }).eq('id', invoice.id).select().single();
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['invoices']);
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success('החשבונית נשלחה בהצלחה');
     },
+    onError: () => toast.error('שגיאה בשליחת החשבונית'),
   });
 
   const handleSave = (data) => {

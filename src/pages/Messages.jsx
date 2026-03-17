@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -41,7 +41,13 @@ export default function MessagesPage({ user, selectedPropertyId }) {
 
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ['message-logs', selectedPropertyId],
-    queryFn: () => base44.entities.MessageLog.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    queryFn: async () => {
+      let q = supabase.from('message_logs').select('*');
+      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
+      const { data, error } = await q.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     staleTime: 60 * 1000,
     refetchInterval: 30 * 1000,
   });
@@ -51,13 +57,17 @@ export default function MessagesPage({ user, selectedPropertyId }) {
   }, [selectedThread, logs]);
 
   const sendMutation = useMutation({
-    mutationFn: (data) => base44.entities.MessageLog.create(data),
+    mutationFn: async (payload) => {
+      const { data, error } = await supabase.from('message_logs').insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['message-logs']);
+      queryClient.invalidateQueries({ queryKey: ['message-logs'] });
       setReplyText('');
       toast({ title: 'הודעה נשלחה' });
     },
-    onError: () => toast({ title: 'שגיאה בשליחה', variant: 'destructive' }),
+    onError: () => toast({ title: 'שגיאה בשליחת ההודעה', variant: 'destructive' }),
   });
 
   // Group messages by conversation (guest/booking)
@@ -72,13 +82,13 @@ export default function MessagesPage({ user, selectedPropertyId }) {
           property_name: log.property_name || '',
           channel: log.channel || 'whatsapp',
           messages: [],
-          last_date: log.created_date,
+          last_date: log.created_at,
           unread: 0,
         };
       }
       grouped[key].messages.push(log);
-      if (log.created_date > (grouped[key].last_date || '')) {
-        grouped[key].last_date = log.created_date;
+      if (log.created_at > (grouped[key].last_date || '')) {
+        grouped[key].last_date = log.created_at;
       }
     });
     return Object.values(grouped)
@@ -234,7 +244,7 @@ export default function MessagesPage({ user, selectedPropertyId }) {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {currentThread?.messages
-              .sort((a, b) => new Date(a.created_date || 0) - new Date(b.created_date || 0))
+              .sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0))
               .map((msg, i) => {
                 const isOutbound = msg.direction === 'outbound';
                 return (
@@ -247,7 +257,7 @@ export default function MessagesPage({ user, selectedPropertyId }) {
                     )}>
                       <p className="leading-relaxed">{msg.body}</p>
                       <p className={cn("text-[10px] mt-0.5", isOutbound ? "text-gray-400" : "text-[#0B1220]/50")}>
-                        {msg.created_date ? format(parseISO(msg.created_date), 'HH:mm') : ''}
+                        {msg.created_at ? format(parseISO(msg.created_at), 'HH:mm') : ''}
                       </p>
                     </div>
                   </div>

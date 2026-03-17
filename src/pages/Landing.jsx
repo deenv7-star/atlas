@@ -6,6 +6,46 @@ import {
   ChevronDown, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
 
+// ─── Animated price roller ───────────────────────────────────────────────────
+function AnimatedPrice({ value, duration = 500 }) {
+  const [display, setDisplay] = useState(value);
+  const [rolling, setRolling] = useState(false);
+  const prevValue = useRef(value);
+
+  useEffect(() => {
+    if (prevValue.current === value) return;
+    const from = prevValue.current;
+    const to = value;
+    prevValue.current = value;
+    setRolling(true);
+    let startTime = null;
+    const step = (ts) => {
+      if (!startTime) startTime = ts;
+      const progress = Math.min((ts - startTime) / duration, 1);
+      const ease = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      setDisplay(Math.round(from + (to - from) * ease));
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        setRolling(false);
+      }
+    };
+    requestAnimationFrame(step);
+  }, [value, duration]);
+
+  return (
+    <span style={{
+      display: 'inline-block',
+      transition: 'transform 0.15s ease-out',
+      transform: rolling ? 'scale(1.05)' : 'scale(1)',
+    }}>
+      ₪{display}
+    </span>
+  );
+}
+
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 function useCountUp(target, duration = 1800) {
   const [count, setCount] = useState(0);
@@ -375,48 +415,30 @@ export default function Landing() {
           box-sizing: border-box;
         }
 
-        /* ─ Blobs ─ */
+        /* ─ Blobs (static — animating blur() elements is extremely GPU-heavy) ─ */
         .atlas-blob {
           position: absolute;
           border-radius: 50%;
           pointer-events: none;
-          will-change: transform;
         }
         .atlas-blob-1 {
           width: 800px; height: 800px;
-          background: #A78BFA;
-          opacity: 0.20;
-          filter: blur(130px);
+          background: radial-gradient(circle, #A78BFA 0%, transparent 70%);
+          opacity: 0.22;
           top: -180px; right: -160px;
-          animation: atlasBlob1 20s ease-in-out infinite;
         }
         .atlas-blob-2 {
           width: 700px; height: 700px;
-          background: #93C5FD;
-          opacity: 0.18;
-          filter: blur(120px);
+          background: radial-gradient(circle, #93C5FD 0%, transparent 70%);
+          opacity: 0.20;
           top: 20%; left: -200px;
-          animation: atlasBlob2 24s ease-in-out 4s infinite;
         }
         .atlas-blob-3 {
           width: 600px; height: 600px;
-          background: #FDE68A;
-          opacity: 0.13;
-          filter: blur(110px);
+          background: radial-gradient(circle, #FDE68A 0%, transparent 70%);
+          opacity: 0.15;
           bottom: -100px; left: 50%;
-          animation: atlasBlob3 22s ease-in-out 8s infinite;
-        }
-        @keyframes atlasBlob1 {
-          0%,100% { transform: translate(0,0); }
-          50%      { transform: translate(20px,-15px); }
-        }
-        @keyframes atlasBlob2 {
-          0%,100% { transform: translate(0,0); }
-          50%      { transform: translate(-20px,15px); }
-        }
-        @keyframes atlasBlob3 {
-          0%,100% { transform: translateX(-50%) translate(0,0); }
-          50%      { transform: translateX(-50%) translate(20px,-15px); }
+          transform: translateX(-50%);
         }
 
         /* ─ Reveal ─ */
@@ -435,13 +457,12 @@ export default function Landing() {
 
         /* ─ Dashboard floats ─ */
         @keyframes atlasMainFloat {
-          0%,100% { transform: perspective(1200px) rotateY(-6deg) rotateX(3deg) translateY(0px); }
-          50%      { transform: perspective(1200px) rotateY(-6deg) rotateX(3deg) translateY(-14px); }
+          0%,100% { transform: translateY(0); }
+          50%      { transform: translateY(-10px); }
         }
         .atlas-main-float {
           animation: atlasMainFloat 5s ease-in-out infinite;
           will-change: transform;
-          transform-style: preserve-3d;
         }
         @keyframes atlasFC1 {
           0%,100% { transform: translateY(0); }
@@ -515,12 +536,28 @@ export default function Landing() {
         .atlas-faq-answer {
           max-height: 0;
           overflow: hidden;
-          transition: max-height 0.35s ease, padding 0.35s ease;
-          padding: 0 24px;
+          transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+          padding: 0 24px 0 48px;
+          opacity: 0;
         }
         .atlas-faq-answer--open {
           max-height: 200px;
-          padding: 0 24px 20px;
+          padding: 0 24px 20px 48px;
+          opacity: 1;
+        }
+        .atlas-faq-item {
+          transition: all 0.25s ease;
+          border: 1.5px solid transparent;
+        }
+        .atlas-faq-item:hover {
+          border-color: #E0E7FF;
+          box-shadow: 0 4px 20px rgba(79,70,229,0.06);
+          transform: translateY(-1px);
+        }
+        .atlas-faq-item--active {
+          border-color: #C7D2FE !important;
+          background: linear-gradient(135deg, #FFFFFF 0%, #F5F3FF 100%) !important;
+          box-shadow: 0 4px 24px rgba(79,70,229,0.08) !important;
         }
 
         /* ─ Pricing card hover ─ */
@@ -1508,33 +1545,38 @@ export default function Landing() {
 
           {(() => {
             const allItems = INTEGRATION_ROWS.flatMap(r => r.items);
-            const brandColors = {
-              'Airbnb': '#FF5A5F', 'Booking.com': '#003580', 'Expedia': '#FFC72C', 'VRBO': '#175AEC', 'HomeAway': '#003b95',
-              'Stripe': '#635BFF', 'PayPal': '#003087', 'Tranzila': '#1a73e8', 'Cardcom': '#f7941d', 'iCredit': '#00a651',
-              'WhatsApp Business': '#25D366', 'Gmail': '#EA4335', 'SMS': '#6B7280', 'Telegram': '#2AABEE',
-              'חשבשבת': '#2563eb', 'ירוקה': '#16a34a', 'Monday': '#FF3D57', 'Zapier': '#FF4A00', 'Google Calendar': '#4285F4',
+            const brandLogos = {
+              'Airbnb': <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#FF5A5F" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 17.1c-.3.5-.7.8-1.2.8-.3 0-.5-.1-.8-.2-1.5-.8-2.7-2.2-3.5-3.5-.8 1.3-2 2.7-3.5 3.5-.3.2-.5.2-.8.2-.5 0-.9-.3-1.2-.8-.2-.4-.3-.8-.2-1.3.3-1.8 1.8-4.1 3.2-5.8C8.1 8.4 7 6.8 6.8 5.3c0-.5.1-.9.2-1.3.3-.5.7-.8 1.2-.8.3 0 .5.1.8.2C10.5 4.2 11.5 5.5 12 6.5c.5-1 1.5-2.3 3-3.1.3-.2.5-.2.8-.2.5 0 .9.3 1.2.8.2.4.3.8.2 1.3-.2 1.5-1.3 3.1-2.7 4.7 1.4 1.7 2.9 4 3.2 5.8.1.5 0 .9-.2 1.3z"/></svg>,
+              'Booking.com': <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#003580" d="M2 2v20h20V2H2zm10.4 16H8.7v-1.2c-.8.9-1.8 1.4-3 1.4-1.1 0-2-.4-2.6-1.1-.6-.7-.9-1.6-.9-2.6 0-1.1.4-2 1.1-2.6.7-.6 1.7-.9 2.8-.9 1.1 0 2 .4 2.7 1.1V8.4h3.6V18zm7.3-3.8c0 1.2-.4 2.2-1.2 2.9-.8.7-1.9 1.1-3.2 1.1-1.3 0-2.3-.4-3.1-1.1-.8-.7-1.2-1.7-1.2-2.9 0-1.2.4-2.2 1.2-2.9.8-.7 1.9-1.1 3.1-1.1 1.3 0 2.4.4 3.2 1.1.8.7 1.2 1.7 1.2 2.9z"/></svg>,
+              'Expedia': <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="12" fill="#FFC72C"/><path fill="#1a1a2e" d="M6 8h12v2H6V8zm2 4h8v2H8v-2zm3 4h2v2h-2v-2z"/></svg>,
+              'VRBO': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#175AEC"/><path fill="white" d="M4 14l4-8h2l-4 8H4zm4 0l4-8h2l-4 8H8zm8-8h2l-4 8h-2l4-8z"/></svg>,
+              'HomeAway': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#003b95"/><path fill="white" d="M12 5l-8 7h3v6h4v-4h2v4h4v-6h3L12 5z"/></svg>,
+              'Stripe': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#635BFF"/><path fill="white" d="M13 8.5c0-.83-.68-1.5-1.5-1.5H7v3h4c.55 0 1-.45 1-1v-.5zM7 12v4h2v-4H7zm4 0c.55 0 1-.45 1-1h-1v1zm0 0v4h2v-2.5c0-.83-.67-1.5-1.5-1.5H11zm4-4h2v8h-2V8z"/></svg>,
+              'PayPal': <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#003087" d="M7.4 21.2l.5-3H6.2c-.2 0-.4-.2-.3-.4L8.7 3.6c0-.2.2-.3.4-.3h5.4c1.8 0 3.1.4 3.8 1.1.7.7.9 1.7.7 3-.3 1.7-1.1 3-2.4 3.7-1.2.7-2.8 1-4.7 1h-1.2c-.3 0-.6.3-.7.6l-.7 4.5-.2 1.3c0 .2-.2.4-.4.4H7.4z"/><path fill="#0070e0" d="M19.5 7.5c-.1.4-.2.9-.4 1.4-1 3.2-3.6 4.3-7.1 4.3h-1.8c-.4 0-.8.3-.9.7l-.9 5.9c0 .2.1.4.3.4h2.8c.4 0 .7-.3.8-.6l.6-4c.1-.4.4-.6.8-.6h.5c3.2 0 5.7-1.3 6.4-5 .3-1.6.1-2.8-.7-3.6-.1.3-.3.7-.4 1.1z"/></svg>,
+              'Tranzila': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#1a73e8"/><path fill="white" d="M7 7h10v2H13v8h-2V9H7V7z"/></svg>,
+              'Cardcom': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#f7941d"/><rect x="4" y="7" width="16" height="10" rx="2" fill="white"/><rect x="4" y="9" width="16" height="2.5" fill="#f7941d"/><rect x="6" y="13" width="5" height="1.5" rx=".5" fill="#f7941d" opacity=".5"/></svg>,
+              'iCredit': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#00a651"/><rect x="4" y="7" width="16" height="10" rx="2" fill="white"/><circle cx="16" cy="12" r="2" fill="#00a651"/><circle cx="14" cy="12" r="2" fill="#00a651" opacity=".6"/></svg>,
+              'WhatsApp Business': <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#25D366" d="M12 0C5.4 0 0 5.4 0 12c0 2.1.6 4.1 1.5 5.9L0 24l6.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S18.6 0 12 0zm0 22c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-3.7 1 1-3.6-.2-.4C2.5 15.8 2 13.9 2 12 2 6.5 6.5 2 12 2s10 4.5 10 10-4.5 10-10 10zm5.4-7.5c-.3-.1-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2.1-.3 0-.5s-.7-1.7-1-2.3c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.2.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3z"/></svg>,
+              'Gmail': <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#EA4335" d="M1 6.5L12 13l11-6.5V4.2c0-1.2-1-2.2-2.2-2.2H3.2C2 2 1 3 1 4.2v2.3z"/><path fill="#4285F4" d="M1 8v11.8C1 21 2 22 3.2 22h2.3V11.5L1 8z"/><path fill="#34A853" d="M18.5 22h2.3c1.2 0 2.2-1 2.2-2.2V8l-4.5 3.5V22z"/><path fill="#FBBC05" d="M5.5 11.5V22h13V11.5L12 15 5.5 11.5z"/></svg>,
+              'SMS': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#6B7280"/><path fill="white" d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1h-4l-4 3v-3H4a1 1 0 01-1-1V6a1 1 0 011-1zm3 4h10v1.5H7V9zm0 3h6v1.5H7V12z"/></svg>,
+              'Telegram': <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="12" fill="#2AABEE"/><path fill="white" d="M5.4 11.6l11.8-4.6c.5-.2 1 .1.8.8l-2 9.4c-.1.6-.5.7-1 .4l-2.8-2-1.3 1.3c-.1.2-.3.3-.5.3l.2-2.8 5-4.5c.2-.2 0-.3-.3-.1l-6.2 3.9-2.7-.8c-.6-.2-.6-.6.1-.8z"/></svg>,
+              'חשבשבת': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#2563eb"/><rect x="5" y="4" width="14" height="16" rx="1.5" fill="white"/><rect x="7" y="7" width="4" height="2" rx=".5" fill="#2563eb" opacity=".3"/><rect x="13" y="7" width="4" height="2" rx=".5" fill="#2563eb" opacity=".3"/><rect x="7" y="10.5" width="4" height="2" rx=".5" fill="#2563eb" opacity=".3"/><rect x="13" y="10.5" width="4" height="2" rx=".5" fill="#2563eb" opacity=".3"/><rect x="7" y="14" width="4" height="2" rx=".5" fill="#2563eb" opacity=".3"/><rect x="13" y="14" width="4" height="2" rx=".5" fill="#2563eb"/></svg>,
+              'ירוקה': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#16a34a"/><path fill="white" d="M12 4c-3.3 0-6 2.2-6 5 0 1.7 1 3.2 2.5 4.2L8 19l4-2 4 2-.5-5.8C17 12.2 18 10.7 18 9c0-2.8-2.7-5-6-5zm0 2c.8 0 1.5.3 2 .8l-2 2-2-2c.5-.5 1.2-.8 2-.8z"/></svg>,
+              'Monday': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="white"/><circle cx="7" cy="15" r="2.5" fill="#FF3D57"/><circle cx="12" cy="11" r="2.5" fill="#FFB900"/><circle cx="17" cy="7" r="2.5" fill="#00CA72"/><path d="M7 8v5M12 6v3M17 12v-3" stroke="#FF3D57" strokeWidth="0" fill="none"/><rect x="5.5" y="7" width="3" height="6" rx="1.5" fill="#FF3D57"/><rect x="10.5" y="5" width="3" height="8" rx="1.5" fill="#FFB900"/><rect x="15.5" y="9" width="3" height="4" rx="1.5" fill="#00CA72"/></svg>,
+              'Zapier': <svg viewBox="0 0 24 24" width="20" height="20"><rect width="24" height="24" rx="4" fill="#FF4A00"/><path fill="white" d="M17 8.5h-4.4L17 12.6v1.9h-4.5V13h4.2l-4.2-4.1V7H17v1.5zM7 7h5v1.5H9.5l3.5 4v2H7v-1.5h3l-3-4V7z"/></svg>,
+              'Google Calendar': <svg viewBox="0 0 24 24" width="20" height="20"><rect x="2" y="2" width="20" height="20" rx="2.5" fill="white" stroke="#4285F4" strokeWidth="1.5"/><rect x="2" y="2" width="20" height="5.5" rx="2.5" fill="#4285F4"/><line x1="7" y1="1" x2="7" y2="4" stroke="#4285F4" strokeWidth="1.5" strokeLinecap="round"/><line x1="17" y1="1" x2="17" y2="4" stroke="#4285F4" strokeWidth="1.5" strokeLinecap="round"/><rect x="5.5" y="10" width="3" height="2.5" rx=".5" fill="#EA4335"/><rect x="10.5" y="10" width="3" height="2.5" rx=".5" fill="#34A853"/><rect x="15.5" y="10" width="3" height="2.5" rx=".5" fill="#FBBC05"/><rect x="5.5" y="14.5" width="3" height="2.5" rx=".5" fill="#4285F4"/><rect x="10.5" y="14.5" width="3" height="2.5" rx=".5" fill="#EA4335"/><rect x="15.5" y="14.5" width="3" height="2.5" rx=".5" fill="#34A853"/></svg>,
             };
-            const brandLetters = {
-              'Airbnb': 'A', 'Booking.com': 'B', 'Expedia': 'E', 'VRBO': 'V', 'HomeAway': 'H',
-              'Stripe': 'S', 'PayPal': 'PP', 'Tranzila': 'T', 'Cardcom': 'C', 'iCredit': 'iC',
-              'WhatsApp Business': 'W', 'Gmail': 'M', 'SMS': 'S', 'Telegram': 'T',
-              'חשבשבת': 'ח', 'ירוקה': 'י', 'Monday': 'M', 'Zapier': 'Z', 'Google Calendar': 'G',
-            };
-            const renderBadge = (item, idx) => {
-              const bg = brandColors[item] || '#6B7280';
-              const letter = brandLetters[item] || item[0];
-              return (
-                <div key={`${item}-${idx}`} style={{ background: 'white', border: '1px solid #E5E7EB', borderRadius: 999, padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, cursor: 'default', transition: 'box-shadow 0.2s, transform 0.2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
-                >
-                  <div style={{ width: 28, height: 28, borderRadius: 8, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: `0 2px 8px ${bg}40` }}>
-                    <span style={{ color: item === 'Expedia' ? '#1a1a2e' : 'white', fontSize: letter.length > 1 ? 9 : 12, fontWeight: 800, lineHeight: 1 }}>{letter}</span>
-                  </div>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{item}</span>
+            const renderBadge = (item, idx) => (
+              <div key={`${item}-${idx}`} style={{ background: 'white', border: '1px solid #E5E7EB', borderRadius: 999, padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, cursor: 'default', transition: 'box-shadow 0.2s, transform 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
+              >
+                <div style={{ width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                  {brandLogos[item] || <span style={{ fontSize: 12, fontWeight: 800 }}>{item[0]}</span>}
                 </div>
-              );
-            };
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{item}</span>
+              </div>
+            );
             return (
               <div style={{ position: 'relative', marginTop: 8 }}>
                 <div style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: 100, background: 'linear-gradient(to left, white, transparent)', zIndex: 2, pointerEvents: 'none' }} />
@@ -1619,7 +1661,7 @@ export default function Landing() {
                   <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>{plan.name}</h3>
                   <p style={{ fontSize: 14, color: '#6B7280', margin: '0 0 20px' }}>{plan.desc}</p>
                   <div style={{ marginBottom: 24 }}>
-                    <span style={{ fontSize: 42, fontWeight: 900, color: '#111827' }}>₪{billingYearly ? plan.yearlyPrice : plan.monthlyPrice}</span>
+                    <span style={{ fontSize: 42, fontWeight: 900, color: '#111827' }}><AnimatedPrice value={billingYearly ? plan.yearlyPrice : plan.monthlyPrice} /></span>
                     <span style={{ fontSize: 16, color: '#6B7280' }}>/חודש</span>
                   </div>
 
@@ -1742,57 +1784,111 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 8 — FAQ
         ════════════════════════════════════════ */}
-        <section style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
-          <div style={{ maxWidth: 760, margin: '0 auto' }}>
+        <section style={{ padding: '100px 24px', background: 'linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+          {/* Decorative background elements */}
+          <div style={{ position: 'absolute', top: 60, right: -120, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,70,229,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', bottom: 40, left: -80, width: 250, height: 250, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,209,193,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+          <div style={{ maxWidth: 800, margin: '0 auto', position: 'relative' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
-              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: 0 }}>שאלות נפוצות</h2>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', padding: '6px 16px', borderRadius: 999, marginBottom: 16 }}>
+                <span style={{ fontSize: 14 }}>💬</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#4338CA' }}>יש שאלות? יש תשובות</span>
+              </div>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 10px' }}>שאלות נפוצות</h2>
+              <p style={{ fontSize: 17, color: '#9CA3AF', margin: 0 }}>כל מה שצריך לדעת לפני שמתחילים</p>
             </div>
 
-            <div>
-              {FAQ_DATA.map((faq, i) => (
-                <div
-                  key={i}
-                  className={`atlas-reveal atlas-delay-${Math.min(i + 1, 5)}`}
-                  style={{
-                    background: '#FFFFFF',
-                    border: '1px solid #F3F4F6',
-                    borderRadius: 12,
-                    marginBottom: 12,
-                    overflow: 'hidden',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
-                  }}
-                >
-                  <button
-                    onClick={() => toggleFaq(i)}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {FAQ_DATA.map((faq, i) => {
+                const isOpen = openFaq === i;
+                return (
+                  <div
+                    key={i}
+                    className={`atlas-faq-item atlas-reveal atlas-delay-${Math.min(i + 1, 5)} ${isOpen ? 'atlas-faq-item--active' : ''}`}
                     style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '18px 24px',
-                      background: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontFamily: 'Heebo, sans-serif',
-                      textAlign: 'right',
+                      background: '#FFFFFF',
+                      borderRadius: 16,
+                      overflow: 'hidden',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                     }}
                   >
-                    <ChevronDown
-                      size={20}
-                      color="#6B7280"
+                    <button
+                      onClick={() => toggleFaq(i)}
                       style={{
-                        transition: 'transform 0.3s ease',
-                        transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)',
-                        flexShrink: 0,
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 14,
+                        padding: '20px 24px',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontFamily: 'Heebo, sans-serif',
+                        textAlign: 'right',
                       }}
-                    />
-                    <span style={{ fontSize: 16, fontWeight: 600, color: '#111827', flex: 1 }}>{faq.q}</span>
-                  </button>
-                  <div className={`atlas-faq-answer ${openFaq === i ? 'atlas-faq-answer--open' : ''}`}>
-                    <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.7, margin: 0 }}>{faq.a}</p>
+                    >
+                      <div style={{
+                        width: 32, height: 32, borderRadius: 10, flexShrink: 0,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: isOpen ? 'linear-gradient(135deg, #4F46E5, #7C3AED)' : '#F3F4F6',
+                        transition: 'all 0.3s ease',
+                        boxShadow: isOpen ? '0 2px 8px rgba(79,70,229,0.3)' : 'none',
+                      }}>
+                        <span style={{
+                          fontSize: 13, fontWeight: 800,
+                          color: isOpen ? 'white' : '#9CA3AF',
+                          transition: 'color 0.3s ease',
+                          lineHeight: 1,
+                        }}>
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                      </div>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: '#111827', flex: 1, lineHeight: 1.5 }}>{faq.q}</span>
+                      <div style={{
+                        width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: isOpen ? '#EEF2FF' : '#F9FAFB',
+                        transition: 'all 0.3s ease',
+                      }}>
+                        <ChevronDown
+                          size={16}
+                          color={isOpen ? '#4F46E5' : '#9CA3AF'}
+                          style={{
+                            transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1), color 0.3s ease',
+                            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                          }}
+                        />
+                      </div>
+                    </button>
+                    <div className={`atlas-faq-answer ${isOpen ? 'atlas-faq-answer--open' : ''}`}>
+                      <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.8, margin: 0, borderTop: '1px solid #F3F4F6', paddingTop: 16 }}>{faq.a}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
+            </div>
+
+            {/* CTA below FAQ */}
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginTop: 48 }}>
+              <p style={{ fontSize: 15, color: '#9CA3AF', marginBottom: 12 }}>לא מצאת תשובה?</p>
+              <a
+                href="#atlas-contact"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
+                  color: 'white', fontSize: 14, fontWeight: 700,
+                  padding: '12px 28px', borderRadius: 12,
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(79,70,229,0.25)',
+                  transition: 'all 0.25s ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(79,70,229,0.35)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(79,70,229,0.25)'; }}
+              >
+                דברו איתנו
+                <ChevronLeft size={16} />
+              </a>
             </div>
           </div>
         </section>

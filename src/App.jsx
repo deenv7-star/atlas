@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/toaster"
+import { Toaster as SonnerToaster } from 'sonner';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
@@ -7,6 +8,10 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import VerifyEmail from '@/pages/VerifyEmail';
+import ResetPassword from '@/pages/ResetPassword';
+import UpdatePassword from '@/pages/UpdatePassword';
 import Onboarding from '@/pages/Onboarding';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -18,9 +23,10 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
 
-// Redirects to /Login if not authenticated; preserves return URL
-const ProtectedRoute = ({ children }) => {
-  const { isLoadingAuth, isAuthenticated } = useAuth();
+// Redirects to /Login if not authenticated; preserves return URL.
+// If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
+const ProtectedRoute = ({ children, requireOnboarding = true }) => {
+  const { isLoadingAuth, isAuthenticated, user } = useAuth();
   if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -32,11 +38,14 @@ const ProtectedRoute = ({ children }) => {
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
     return <Navigate to={`/Login?return=${returnUrl}`} replace />;
   }
+  if (requireOnboarding && !user?.onboarding_completed) {
+    return <Navigate to="/onboarding" replace />;
+  }
   return children;
 };
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isAuthenticated } = useAuth();
+  const { isLoadingAuth, isAuthenticated, user } = useAuth();
 
   // Show loading spinner while checking auth on root/login routes
   if (isLoadingAuth) {
@@ -49,31 +58,52 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
-      {/* Public landing page — always accessible at / */}
+      {/* Public landing page — redirect to onboarding if verified but not completed */}
       <Route
         path="/"
-        element={<LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>}
+        element={
+          isAuthenticated && !user?.onboarding_completed
+            ? <Navigate to="/onboarding" replace />
+            : <LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>
+        }
       />
 
-      {/* Login — redirect to Dashboard if already authenticated */}
+      {/* Auth pages — redirect based on onboarding_completed */}
       <Route
         path="/Login"
         element={
           isAuthenticated
-            ? <Navigate to="/Dashboard" replace />
+            ? <Navigate to={(user?.onboarding_completed ? '/Dashboard' : '/onboarding')} replace />
             : <Login />
         }
       />
-
-      {/* Onboarding — protected, no layout */}
       <Route
-        path="/Onboarding"
+        path="/register"
         element={
-          <ProtectedRoute>
+          isAuthenticated
+            ? <Navigate to={(user?.onboarding_completed ? '/Dashboard' : '/onboarding')} replace />
+            : <Register />
+        }
+      />
+      <Route
+        path="/verify-email"
+        element={<VerifyEmail />}
+      />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/update-password" element={<UpdatePassword />} />
+      <Route path="/login" element={<Navigate to="/Login" replace />} />
+
+      {/* Onboarding — requires auth but NOT onboarding_completed (user lands here after verification) */}
+      <Route
+        path="/onboarding"
+        element={
+          <ProtectedRoute requireOnboarding={false}>
             <Onboarding />
           </ProtectedRoute>
         }
       />
+      {/* Legacy route */}
+      <Route path="/Onboarding" element={<Navigate to="/onboarding" replace />} />
 
       {/* Protected detail pages with :id param */}
       <Route
@@ -99,7 +129,7 @@ const AuthenticatedApp = () => {
 
       {/* All other pages — protected */}
       {Object.entries(Pages)
-        .filter(([path]) => path !== 'Landing' && path !== 'Login' && path !== 'Onboarding')
+        .filter(([path]) => !['Landing', 'Login', 'Onboarding', 'Register', 'VerifyEmail'].includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}
@@ -130,6 +160,7 @@ function App() {
           <AuthenticatedApp />
         </Router>
         <Toaster />
+        <SonnerToaster position="top-center" dir="rtl" richColors closeButton duration={4000} />
       </QueryClientProvider>
     </AuthProvider>
   )

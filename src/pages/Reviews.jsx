@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,17 +46,27 @@ export default function ReviewsPage({ user, selectedPropertyId }) {
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ['reviews', selectedPropertyId],
-    queryFn: () => base44.entities.ReviewRequest.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    queryFn: async () => {
+      let q = supabase.from('review_requests').select('*');
+      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
+      const { data, error } = await q.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     staleTime: 5 * 60 * 1000,
   });
 
   const sendReminderMutation = useMutation({
-    mutationFn: (id) => base44.entities.ReviewRequest.update(id, { status: 'SENT', sent_at: new Date().toISOString() }),
+    mutationFn: async (id) => {
+      const { data, error } = await supabase.from('review_requests').update({ status: 'SENT', sent_at: new Date().toISOString() }).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['reviews']);
+      queryClient.invalidateQueries({ queryKey: ['reviews'] });
       toast({ title: 'תזכורת נשלחה בהצלחה' });
     },
-    onError: () => toast({ title: 'שגיאה בשליחה', variant: 'destructive' }),
+    onError: () => toast({ title: 'שגיאה בשליחת התזכורת', variant: 'destructive' }),
   });
 
   const filtered = useMemo(() => {

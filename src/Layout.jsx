@@ -6,6 +6,7 @@ import AppSidebar from '@/components/app/AppSidebar';
 import AppHeader from '@/components/app/AppHeader';
 import BottomTabs from '@/components/app/BottomTabs';
 import AIChatBubble from '@/components/app/AIChatBubble';
+import TrialBanner from '@/components/TrialBanner';
 import { cn } from '@/lib/utils';
 
 const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService', 'About', 'UserAgreement', 'DataSecurity', 'Accessibility', 'SLA', 'Contact'];
@@ -56,7 +57,9 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: 'var(--page-bg)' }} dir="rtl">
+    <div className="flex flex-col h-screen overflow-hidden" style={{ backgroundColor: 'var(--page-bg)' }} dir="rtl">
+      <TrialBanner />
+      <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -115,6 +118,7 @@ function LayoutContent({ children, currentPageName }) {
         </div>
       </div>
       {!isPublicPage && <AIChatBubble />}
+      </div>
     </div>
   );
 }

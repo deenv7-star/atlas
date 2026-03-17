@@ -341,14 +341,19 @@ const supabaseAuth = {
       .single();
 
     return {
-      id:                user.id,
-      email:             user.email,
-      full_name:         profile?.full_name || user.user_metadata?.full_name || '',
-      phone:             profile?.phone || '',
-      profile_image:     profile?.profile_image || '',
-      organization_id:   profile?.organization_id || null,
-      organization_name: profile?.organizations?.name || '',
-      subscription_plan: profile?.organizations?.subscription_plan || 'starter',
+      id:                   user.id,
+      email:                user.email,
+      full_name:            profile?.full_name || user.user_metadata?.full_name || '',
+      phone:                profile?.phone || '',
+      profile_image:        profile?.profile_image || '',
+      organization_id:      profile?.organization_id || null,
+      organization_name:    profile?.organizations?.name || '',
+      subscription_plan:    profile?.organizations?.subscription_plan || 'starter',
+      onboarding_completed: Boolean(profile?.onboarding_completed),
+      onboarding_step:      Math.max(1, parseInt(profile?.onboarding_step, 10) || 1),
+      selected_plan:        profile?.selected_plan || 'trial',
+      trial_ends_at:        profile?.trial_ends_at || null,
+      subscription_status:  profile?.subscription_status || 'trialing',
     };
   },
 

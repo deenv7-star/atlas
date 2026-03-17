@@ -22,10 +22,12 @@ export const AuthProvider = ({ children }) => {
       setUser(currentUser);
       setIsAuthenticated(true);
       setAuthError(null);
+      return currentUser;
     } catch {
       setUser(null);
       setIsAuthenticated(false);
       setAuthError({ type: 'auth_required', message: 'Authentication required' });
+      return null;
     }
   };
 
@@ -81,6 +83,7 @@ export const AuthProvider = ({ children }) => {
    * Called by the Login page after a successful sign-in / sign-up.
    * In Supabase mode the auth state listener will fire automatically, so this
    * is mostly a compatibility shim that also handles the localStorage case.
+   * Returns the hydrated user object (for redirect logic).
    */
   const loginUser = async (userObjOrNull) => {
     if (userObjOrNull) {
@@ -89,9 +92,10 @@ export const AuthProvider = ({ children }) => {
       setUser(userObjOrNull);
       setIsAuthenticated(true);
       setAuthError(null);
+      return userObjOrNull;
     } else {
       // Supabase mode — re-fetch from the server after signIn
-      await hydrateUser();
+      return await hydrateUser();
     }
   };
 

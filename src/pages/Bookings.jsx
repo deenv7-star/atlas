@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -48,34 +48,65 @@ export default function BookingsPage({ user, selectedPropertyId }) {
   const [editingBooking, setEditingBooking] = useState(null);
   const [form, setForm] = useState(emptyBooking);
 
-  const { data: bookings = [], isLoading } = useQuery({
+  const { data: bookings = [], isLoading, isError } = useQuery({
     queryKey: ['bookings', selectedPropertyId],
-    queryFn: () => base44.entities.Booking.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    queryFn: async () => {
+      let q = supabase.from('bookings').select('*');
+      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
+      const { data, error } = await q.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     staleTime: 2 * 60 * 1000,
   });
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties-list'],
-    queryFn: () => base44.entities.Property.list(),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('properties').select('*');
+      if (error) throw error;
+      return data ?? [];
+    },
     staleTime: 10 * 60 * 1000,
   });
 
+  useEffect(() => {
+    const channel = supabase
+      .channel('bookings-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
+
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Booking.create(data),
-    onSuccess: () => { queryClient.invalidateQueries(['bookings']); toast({ title: 'הזמנה נוצרה בהצלחה ✓' }); setShowDialog(false); setForm(emptyBooking); },
+    mutationFn: async (payload) => {
+      const { data, error } = await supabase.from('bookings').insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['bookings'] }); toast({ title: 'הזמנה נוצרה בהצלחה' }); setShowDialog(false); setForm(emptyBooking); },
     onError: () => toast({ title: 'שגיאה ביצירת ההזמנה', variant: 'destructive' }),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
-    onSuccess: () => { queryClient.invalidateQueries(['bookings']); toast({ title: 'ההזמנה עודכנה ✓' }); setShowDialog(false); },
-    onError: () => toast({ title: 'שגיאה בעדכון', variant: 'destructive' }),
+    mutationFn: async ({ id, data: payload }) => {
+      const { data, error } = await supabase.from('bookings').update(payload).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['bookings'] }); toast({ title: 'ההזמנה עודכנה' }); setShowDialog(false); },
+    onError: () => toast({ title: 'שגיאה בעדכון ההזמנה', variant: 'destructive' }),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Booking.delete(id),
-    onSuccess: () => { queryClient.invalidateQueries(['bookings']); toast({ title: 'ההזמנה נמחקה' }); },
-    onError: () => toast({ title: 'שגיאה במחיקה', variant: 'destructive' }),
+    mutationFn: async (id) => {
+      const { error } = await supabase.from('bookings').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['bookings'] }); toast({ title: 'ההזמנה נמחקה' }); },
+    onError: () => toast({ title: 'שגיאה במחיקת ההזמנה', variant: 'destructive' }),
   });
 
   const filtered = useMemo(() => bookings.filter(b => {

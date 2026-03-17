@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -69,38 +69,53 @@ export default function PaymentsPage({ user, selectedPropertyId }) {
 
   const { data: payments = [], isLoading } = useQuery({
     queryKey: ['payments'],
-    queryFn: () => base44.entities.Payment.list(),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('payments').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     staleTime: 2 * 60 * 1000,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Payment.create(data),
+    mutationFn: async (payload) => {
+      const { data, error } = await supabase.from('payments').insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['payments']);
-      toast({ title: 'תשלום נוצר' });
+      queryClient.invalidateQueries({ queryKey: ['payments'] });
+      toast({ title: 'תשלום נוצר בהצלחה' });
       setShowDialog(false);
       setForm(emptyPayment);
     },
-    onError: () => toast({ title: 'שגיאה ביצירה', variant: 'destructive' }),
+    onError: () => toast({ title: 'שגיאה ביצירת התשלום', variant: 'destructive' }),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Payment.update(id, data),
+    mutationFn: async ({ id, data: payload }) => {
+      const { data, error } = await supabase.from('payments').update(payload).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['payments']);
-      toast({ title: 'תשלום עודכן' });
+      queryClient.invalidateQueries({ queryKey: ['payments'] });
+      toast({ title: 'התשלום עודכן' });
       setShowDialog(false);
     },
-    onError: () => toast({ title: 'שגיאה בעדכון', variant: 'destructive' }),
+    onError: () => toast({ title: 'שגיאה בעדכון התשלום', variant: 'destructive' }),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Payment.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['payments']);
-      toast({ title: 'תשלום נמחק' });
+    mutationFn: async (id) => {
+      const { error } = await supabase.from('payments').delete().eq('id', id);
+      if (error) throw error;
     },
-    onError: () => toast({ title: 'שגיאה במחיקה', variant: 'destructive' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payments'] });
+      toast({ title: 'התשלום נמחק' });
+    },
+    onError: () => toast({ title: 'שגיאה במחיקת התשלום', variant: 'destructive' }),
   });
 
   const stats = useMemo(() => {
@@ -120,7 +135,7 @@ export default function PaymentsPage({ user, selectedPropertyId }) {
         const matchStatus = statusFilter === 'all' || p.status === statusFilter;
         return matchSearch && matchStatus;
       })
-      .sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0));
+      .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
   }, [payments, searchTerm, statusFilter]);
 
   const openNew = () => {

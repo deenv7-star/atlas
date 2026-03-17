@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -62,22 +62,46 @@ export default function LeadsPage({ user, selectedPropertyId }) {
   const [editingLead, setEditingLead] = useState(null);
   const [form, setForm] = useState(emptyLead);
 
-  const { data: leads = [], isLoading } = useQuery({
+  const { data: leads = [], isLoading, isError } = useQuery({
     queryKey: ['leads', selectedPropertyId],
-    queryFn: () => base44.entities.Lead.list(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    queryFn: async () => {
+      let q = supabase.from('leads').select('*');
+      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
+      const { data, error } = await q.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     staleTime: 2 * 60 * 1000,
   });
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties-list'],
-    queryFn: () => base44.entities.Property.list(),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('properties').select('*');
+      if (error) throw error;
+      return data ?? [];
+    },
     staleTime: 10 * 60 * 1000,
   });
 
+  useEffect(() => {
+    const channel = supabase
+      .channel('leads-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['leads'] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
+
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Lead.create(data),
+    mutationFn: async (payload) => {
+      const { data, error } = await supabase.from('leads').insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['leads']);
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
       toast({ title: 'ליד נוצר בהצלחה' });
       setShowDialog(false);
       setForm(emptyLead);
@@ -86,22 +110,29 @@ export default function LeadsPage({ user, selectedPropertyId }) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
+    mutationFn: async ({ id, data: payload }) => {
+      const { data, error } = await supabase.from('leads').update(payload).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries(['leads']);
-      toast({ title: 'ליד עודכן' });
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      toast({ title: 'הליד עודכן' });
       setShowDialog(false);
     },
-    onError: () => toast({ title: 'שגיאה בעדכון', variant: 'destructive' }),
+    onError: () => toast({ title: 'שגיאה בעדכון הליד', variant: 'destructive' }),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Lead.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['leads']);
-      toast({ title: 'ליד נמחק' });
+    mutationFn: async (id) => {
+      const { error } = await supabase.from('leads').delete().eq('id', id);
+      if (error) throw error;
     },
-    onError: () => toast({ title: 'שגיאה במחיקה', variant: 'destructive' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      toast({ title: 'הליד נמחק' });
+    },
+    onError: () => toast({ title: 'שגיאה במחיקת הליד', variant: 'destructive' }),
   });
 
   const filtered = useMemo(() => {
