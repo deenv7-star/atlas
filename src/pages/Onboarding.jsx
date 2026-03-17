@@ -435,7 +435,10 @@ export default function Onboarding() {
 
             <button
               type="button"
-              onClick={async () => {
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (saving) return;
                 setSaving(true);
                 try {
                   const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -446,20 +449,24 @@ export default function Onboarding() {
                     }).eq('id', authUser.id);
                     if (error) {
                       toast.error('שגיאה. נסה שוב.');
+                      setSaving(false);
                       return;
                     }
+                  } else {
+                    // Not logged in — redirect to Login with return to Dashboard
+                    window.location.href = `/Login?return=${encodeURIComponent('/Dashboard')}`;
+                    return;
                   }
                   try { localStorage.setItem('onboarding_just_completed', String(Date.now())); } catch {}
                   await checkAppState();
-                  navigate(createPageUrl('Dashboard'), { replace: true });
+                  window.location.replace(createPageUrl('Dashboard') || '/Dashboard');
                 } catch (err) {
                   toast.error('שגיאה. נסה שוב.');
-                } finally {
                   setSaving(false);
                 }
               }}
               disabled={saving}
-              className="w-full mt-3 text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors py-2 cursor-pointer"
+              className="w-full mt-3 text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors py-2 cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500/30 rounded"
             >
               יש לי חשבון קיים — מעבר לדאשבורד
             </button>

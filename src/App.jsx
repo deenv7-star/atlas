@@ -67,14 +67,10 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
-      {/* Public landing page — redirect to onboarding if verified but not completed */}
+      {/* Public landing page — always show at root, no auto-redirect to onboarding */}
       <Route
         path="/"
-        element={
-          isAuthenticated && !user?.onboarding_completed && !hasOnboardingBypass()
-            ? <Navigate to="/onboarding" replace />
-            : <LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>
-        }
+        element={<LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>}
       />
 
       {/* Auth pages — redirect based on onboarding_completed */}
