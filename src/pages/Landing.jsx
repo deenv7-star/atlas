@@ -115,7 +115,8 @@ export default function Landing() {
   const [demoSlide, setDemoSlide] = useState(0);
   const [billingYearly, setBillingYearly] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
-  const [psPhase, setPsPhase] = useState('chaos'); // chaos → unify → atlas → loop
+  const [psPhase, setPsPhase] = useState('chaos'); // chaos → unify → atlas (scroll-driven)
+  const psSectionRef = useRef(null);
   const navigate = useNavigate();
 
   const [count1, ref1] = useCountUp(500);
@@ -148,21 +149,22 @@ export default function Landing() {
   const nextSlide = () => setDemoSlide((s) => Math.min(s + 1, 4));
   const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
 
-  // Transformation section: auto-playing chaos → unify (converge) → atlas animation
+  // Transformation section: scroll-driven animation (chaos → unify → atlas while scrolling)
   useEffect(() => {
-    const ids = [];
-    const schedule = () => {
-      setPsPhase('chaos');
-      ids.push(setTimeout(() => {
-        setPsPhase('unify'); // cards fly to center
-        ids.push(setTimeout(() => {
-          setPsPhase('atlas'); // dashboard emerges
-          ids.push(setTimeout(schedule, 5000));
-        }, 2000)); // unify 2s for convergence
-      }, 4500)); // chaos 4.5s
+    const el = psSectionRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const threshold1 = vh * 0.55; // chaos while section is lower
+      const threshold2 = vh * 0.25; // unify when section rises
+      if (rect.top > threshold1) setPsPhase('chaos');
+      else if (rect.top > threshold2) setPsPhase('unify');
+      else setPsPhase('atlas');
     };
-    schedule();
-    return () => ids.forEach((id) => clearTimeout(id));
+    onScroll(); // initial
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // Demo modal keyboard navigation (arrows, ESC)
@@ -1134,7 +1136,7 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 1 — THE TRANSFORMATION (ATLAS brand)
         ════════════════════════════════════════ */}
-        <section style={{ padding: '120px 24px 140px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 50%, #EEF2FF 100%)', position: 'relative', zIndex: 1 }}>
+        <section ref={psSectionRef} style={{ padding: '120px 24px 140px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 50%, #EEF2FF 100%)', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 980, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 72 }}>
               <h2 style={{ fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 700, color: '#111827', margin: '0 0 14px', letterSpacing: '-0.02em', lineHeight: 1.15, fontFamily: 'Heebo, sans-serif' }}>
