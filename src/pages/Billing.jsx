@@ -27,7 +27,8 @@ export default function BillingPage({ user }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const currentPlan = user?.subscription_plan || 'starter';
+  const planKey = user?.subscription_plan;
+  const currentPlan = (planKey && PLANS[planKey]) ? planKey : 'starter';
   const nextBillingDate = user?.next_billing_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
   const handleUpgrade = async (planId) => {

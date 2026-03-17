@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { CalendarRange, ChevronRight, ChevronLeft, RefreshCw, Filter, Home, Eye, AlertCircle, Plus, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createPageUrl } from '@/utils';
+import DemoDataBanner from '@/components/common/DemoDataBanner';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#FF5A5F', bg: 'bg-[#FF5A5F]', text: 'text-[#FF5A5F]', light: 'bg-red-50' },
@@ -195,6 +197,12 @@ export default function MultiCalendar() {
           תצוגה מאוחדת של כל הנכסים וכל ערוצי ההזמנות — Airbnb, Booking.com, ישיר ועוד. זהה חורים ביומן ומקסם תפוסה.
         </p>
       </div>
+
+      <DemoDataBanner
+        message="נתוני דוגמה — הוסף הזמנות ונכסים כדי לראות את התפוסה האמיתית שלך."
+        actionLabel="הזמנות"
+        actionLink={createPageUrl('Bookings')}
+      />
 
       {/* Toolbar */}
       <div className="bg-white rounded-xl border border-gray-200 p-3 mb-4 flex flex-wrap items-center gap-3">

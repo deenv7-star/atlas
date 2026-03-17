@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import DemoDataBanner from '@/components/common/DemoDataBanner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -91,6 +92,8 @@ export default function DynamicPricing() {
           <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">מקסם את ההכנסות שלך עם תמחור חכם. המערכת ממליצה על מחירים אופטימליים לפי עונה, ביקוש ותחרות.</p>
           <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: הפעל תמחור אוטומטי כדי למקסם הכנסות בלי מאמץ</p>
         </div>
+
+        <DemoDataBanner message="נתוני דוגמה — המחירים וההמלצות המוצגים הם לצורך המחשה. חבר את הנכסים שלך כדי לראות המלצות אמיתיות." />
 
         {/* Revenue Impact Card */}
         <div className="mb-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-6 text-white shadow-lg">

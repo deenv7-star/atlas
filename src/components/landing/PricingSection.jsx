@@ -7,6 +7,7 @@ const plans = PRICING_PLANS.map((p, i) => ({
   name: p.nameHe,
   icon: i === 0 ? Zap : i === 1 ? Crown : Rocket,
   price: p.price,
+  priceYearly: p.priceYearly ?? Math.round(p.price * 0.8),
   period: 'לחודש',
   description: p.desc,
   features: p.features,
@@ -179,7 +180,7 @@ export default function PricingSection({ onSelectPlan }) {
                         <div className="flex items-baseline gap-1">
                           <span className="text-4xl font-extrabold tracking-tight"
                                 style={{ color: plan.popular ? '#ffffff' : '#0B1220' }}>
-                            ₪{billingPeriod === 'yearly' ? Math.round(plan.price * 0.8) : plan.price}
+                            ₪{billingPeriod === 'yearly' ? plan.priceYearly : plan.price}
                           </span>
                           <span className="text-sm font-medium"
                                 style={{ color: plan.popular ? 'rgba(255,255,255,0.45)' : '#9ca3af' }}>
@@ -189,7 +190,7 @@ export default function PricingSection({ onSelectPlan }) {
                         {billingPeriod === 'yearly' && (
                           <p className="text-xs font-semibold mt-1 flex items-center gap-1"
                              style={{ color: plan.popular ? '#00D1C1' : '#10b981' }}>
-                            ✦ חסכו ₪{Math.round(plan.price * 0.2 * 12)} בשנה
+                            ✦ חסכו ₪{plan.price * 12 - plan.priceYearly * 12} בשנה
                           </p>
                         )}
                       </>

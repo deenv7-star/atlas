@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '@/utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -122,13 +123,13 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
               <input 
                 type="text" 
                 readOnly 
-                value={`${window.location.origin}/GuestService`}
+                value={`${window.location.origin}${createPageUrl('GuestService')}`}
                 className="flex-1 px-3 py-2 bg-white border rounded-lg text-sm"
                 dir="ltr"
               />
               <Button
                 onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/GuestService`);
+                  navigator.clipboard.writeText(`${window.location.origin}${createPageUrl('GuestService')}`);
                   alert('הקישור הועתק!');
                 }}
                 className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]"

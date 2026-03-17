@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import DemoDataBanner from '@/components/common/DemoDataBanner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -96,6 +97,8 @@ export default function ExpenseTracker() {
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">עקוב אחר כל ההוצאות לפי נכס — ניקיון, תחזוקה, ארנונה, ציוד ועוד. ראה את הרווח הנקי האמיתי שלך.</p>
         <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: הוסף הוצאות באופן שוטף כדי לדעת בדיוק כמה אתה מרוויח מכל נכס</p>
       </div>
+
+      <DemoDataBanner message="נתוני דוגמה — ההוצאות המוצגות הן לצורך המחשה. הוסף הוצאות אמיתיות כדי לעקוב אחר הרווח הנקי שלך." />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { LogIn, Eye, EyeOff, Shield } from 'lucide-react';
 import { validateEmail } from '@/lib/validation';
 import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
+import { getSafeReturnUrl } from '@/config/routes';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -62,8 +63,9 @@ export default function Login() {
       await base44.auth.signIn({ email: form.email.trim(), password: form.password });
       clearAttempts(form.email);
       const currentUser = await loginUser(null);
-      const returnUrl = searchParams.get('return');
-      const dest = currentUser?.onboarding_completed ? (returnUrl || '/dashboard') : '/onboarding';
+      const rawReturn = searchParams.get('return');
+      const safeReturn = getSafeReturnUrl(rawReturn);
+      const dest = currentUser?.onboarding_completed ? (safeReturn || '/dashboard') : '/onboarding';
       navigate(dest, { replace: true });
     } catch (err) {
       recordAttempt(form.email);

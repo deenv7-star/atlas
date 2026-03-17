@@ -7,6 +7,10 @@ const pagePathMap: Record<string, string> = {
     Contact: '/contact',
     Changelog: '/changelog',
     Status: '/status',
+    GuestService: '/guest-service',
+    DataSecurity: '/data-security',
+    Accessibility: '/accessibility',
+    SLA: '/sla',
 };
 
 export function createPageUrl(pageName: string) {

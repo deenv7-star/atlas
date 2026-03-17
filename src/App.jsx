@@ -7,6 +7,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import VerifyEmail from '@/pages/VerifyEmail';
@@ -104,6 +105,10 @@ const AuthenticatedApp = () => {
       <Route path="/privacy" element={<LayoutWrapper currentPageName="Privacy"><Pages.Privacy /></LayoutWrapper>} />
       <Route path="/terms" element={<LayoutWrapper currentPageName="Terms"><Pages.Terms /></LayoutWrapper>} />
       <Route path="/contact" element={<LayoutWrapper currentPageName="Contact"><Pages.Contact /></LayoutWrapper>} />
+      <Route path="/guest-service" element={<LayoutWrapper currentPageName="GuestService"><Pages.GuestService /></LayoutWrapper>} />
+      <Route path="/data-security" element={<LayoutWrapper currentPageName="DataSecurity"><Pages.DataSecurity /></LayoutWrapper>} />
+      <Route path="/accessibility" element={<LayoutWrapper currentPageName="Accessibility"><Pages.Accessibility /></LayoutWrapper>} />
+      <Route path="/sla" element={<LayoutWrapper currentPageName="SLA"><Pages.SLA /></LayoutWrapper>} />
 
       {/* Onboarding — requires auth but NOT onboarding_completed (user lands here after verification) */}
       <Route
@@ -114,9 +119,10 @@ const AuthenticatedApp = () => {
           </ProtectedRoute>
         }
       />
-      {/* Legacy routes */}
-      <Route path="/Onboarding" element={<Navigate to="/onboarding" replace />} />
-      <Route path="/Dashboard" element={<Navigate to="/dashboard" replace />} />
+      {/* Legacy routes — redirect to canonical lowercase paths */}
+      {LEGACY_REDIRECTS.map(({ from, to }) => (
+        <Route key={from} path={from} element={<Navigate to={to} replace />} />
+      ))}
 
       {/* Protected detail pages with :id param */}
       <Route
@@ -142,7 +148,7 @@ const AuthenticatedApp = () => {
 
       {/* All other pages — protected */}
       {Object.entries(Pages)
-        .filter(([path]) => !['Landing', 'Login', 'Onboarding', 'Register', 'VerifyEmail', 'About', 'Privacy', 'Terms', 'Contact', 'Changelog', 'Status'].includes(path))
+        .filter(([path]) => !PUBLIC_PAGE_KEYS.includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}

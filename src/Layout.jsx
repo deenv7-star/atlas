@@ -9,7 +9,7 @@ import AIChatBubble from '@/components/app/AIChatBubble';
 import TrialBanner from '@/components/TrialBanner';
 import { cn } from '@/lib/utils';
 
-const publicPages = ['Landing', 'Login', 'Privacy', 'Terms', 'GuestService', 'About', 'UserAgreement', 'DataSecurity', 'Accessibility', 'SLA', 'Contact'];
+const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status'];
 
 function PageLoader() {
   return (
