@@ -401,7 +401,7 @@ export default function Onboarding() {
         return (
           <div className="text-center py-4">
             <div className="flex items-center justify-center gap-2 mb-5">
-              <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 48, width: 'auto', objectFit: 'contain' }} />
+              <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 56, width: 'auto', objectFit: 'contain' }} />
             </div>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#111827', marginBottom: 8 }}>ברוך הבא ל-ATLAS!</h2>
             <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginBottom: 24 }}>בואו נגדיר את המתחם שלך תוך 2 דקות</p>
@@ -1064,12 +1064,12 @@ export default function Onboarding() {
       <div className="atlas-onb-blob atlas-onb-blob-3" />
 
       <div className="w-full max-w-[520px] relative z-10">
-        {/* Logo — navbar style: 48px */}
+        {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-6">
           <img
             src="/atlas-logo-final.png"
             alt="ATLAS"
-            style={{ height: 48, width: 'auto', objectFit: 'contain' }}
+            style={{ height: 56, width: 'auto', objectFit: 'contain' }}
           />
         </div>
 

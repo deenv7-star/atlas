@@ -60,7 +60,7 @@ export default function VerifyEmail() {
           src="/atlas-logo-final.png"
           alt="ATLAS"
           className="mx-auto mb-10"
-          style={{ height: 44, width: 'auto', objectFit: 'contain' }}
+          style={{ height: 56, width: 'auto', objectFit: 'contain' }}
         />
 
         {/* Card */}

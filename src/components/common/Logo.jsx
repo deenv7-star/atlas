@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function Logo({ variant = 'dark', size = 'default' }) {
-  const heights = { small: 36, default: 48, large: 56 };
+  const heights = { small: 44, default: 56, large: 64 };
   const h = heights[size];
 
   return (

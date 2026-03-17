@@ -54,7 +54,7 @@ export default function ResetPassword() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#FFFFFF' }}>
         <div className="w-full max-w-[440px] text-center">
-          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-8" style={{ height: 48, width: 'auto' }} />
+          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-8" style={{ height: 56, width: 'auto' }} />
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
             <p className="text-emerald-800 font-bold text-lg">שלחנו לך מייל עם קישור לאיפוס הסיסמה</p>
             <p className="text-emerald-700 text-sm mt-2">בדוק את תיבת הדואר (וגם בתיקיית הספאם)</p>
@@ -69,7 +69,7 @@ export default function ResetPassword() {
     <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#FFFFFF' }}>
       <div className="w-full max-w-[440px]">
         <div className="text-center mb-10">
-          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-6" style={{ height: 48, width: 'auto' }} />
+          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-6" style={{ height: 56, width: 'auto' }} />
           <h1 className="text-2xl font-extrabold text-gray-900">איפוס סיסמה</h1>
           <p className="text-gray-500 text-sm mt-2">הזן את כתובת האימייל ונשלח לך קישור לאיפוס</p>
         </div>

@@ -714,7 +714,7 @@ export default function Landing() {
         >
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 80 }}>
             <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-              <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" style={{ height: 42, width: 'auto', objectFit: 'contain' }} />
+              <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" style={{ height: 52, width: 'auto', objectFit: 'contain' }} />
             </div>
 
             <div className="atlas-nav-links" style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
@@ -2122,7 +2122,7 @@ export default function Landing() {
               {/* Brand */}
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
-                  <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" loading="lazy" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+                  <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" loading="lazy" style={{ height: 44, width: 'auto', objectFit: 'contain' }} />
                 </div>
                 <p style={{ fontSize: 15, color: '#9CA3AF', margin: '0 0 20px' }}>ניהול מתחמי נופש — פשוט יותר.</p>
                 <div style={{ display: 'flex', gap: 10 }}>

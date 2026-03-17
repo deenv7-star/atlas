@@ -112,7 +112,7 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>
       <div className="w-full max-w-[440px]">
         <div className="text-center mb-10">
-          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-6" style={{ height: 48, width: 'auto', objectFit: 'contain' }} />
+          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-6" style={{ height: 56, width: 'auto', objectFit: 'contain' }} />
           <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">התחל לנהל חכם יותר</h1>
           <p className="text-gray-500 text-sm mt-2">צור חשבון חינמי ותתחיל לנהל את המתחם שלך</p>
         </div>

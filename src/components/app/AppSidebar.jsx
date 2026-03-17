@@ -85,7 +85,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
     )} style={{ fontFamily: "'Heebo', sans-serif" }}>
       <div className={cn("flex items-center h-16 px-3 border-b border-gray-100 flex-shrink-0", collapsed ? "justify-center" : "gap-3")}>
         <Link to="/" title="חזרה לדף הבית">
-          <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: collapsed ? 28 : 38, width: 'auto', objectFit: 'contain', cursor: 'pointer' }} />
+          <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: collapsed ? 34 : 44, width: 'auto', objectFit: 'contain', cursor: 'pointer' }} />
         </Link>
         <button
           onClick={onCollapse}
