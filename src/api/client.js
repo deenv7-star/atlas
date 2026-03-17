@@ -186,6 +186,8 @@ const TABLE_MAP = {
   PMSIntegration:         'pms_integrations',
   PaymentGateway:         'payment_gateways',
   Organization:           'organizations',
+  Message:                'messages',
+  User:                   'users',
 };
 
 function resolveTable(entityName) {

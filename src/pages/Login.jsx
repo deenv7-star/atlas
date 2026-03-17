@@ -76,7 +76,11 @@ export default function Login() {
 
         await loginUser(null);
         const returnUrl = searchParams.get('return');
-        navigate(returnUrl || '/Dashboard', { replace: true });
+        if (mode === 'signup') {
+          navigate('/Onboarding', { replace: true });
+        } else {
+          navigate(returnUrl || '/Dashboard', { replace: true });
+        }
       } catch (err) {
         const msg = err.message || '';
         if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials')) {

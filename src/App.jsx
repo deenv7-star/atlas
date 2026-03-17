@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import Login from '@/pages/Login';
+import Onboarding from '@/pages/Onboarding';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -64,6 +65,16 @@ const AuthenticatedApp = () => {
         }
       />
 
+      {/* Onboarding — protected, no layout */}
+      <Route
+        path="/Onboarding"
+        element={
+          <ProtectedRoute>
+            <Onboarding />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Protected detail pages with :id param */}
       <Route
         path="/BookingDetail/:id"
@@ -88,7 +99,7 @@ const AuthenticatedApp = () => {
 
       {/* All other pages — protected */}
       {Object.entries(Pages)
-        .filter(([path]) => path !== 'Landing' && path !== 'Login')
+        .filter(([path]) => path !== 'Landing' && path !== 'Login' && path !== 'Onboarding')
         .map(([path, Page]) => (
           <Route
             key={path}
