@@ -49,7 +49,7 @@ function LayoutContent({ children, currentPageName }) {
   const handleLogout = async () => {
     queryClient.clear();
     await logout(false);
-    window.location.href = '/Login';
+    window.location.href = '/login';
   };
 
   if (isPublicPage) {

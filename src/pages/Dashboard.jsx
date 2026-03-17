@@ -363,8 +363,8 @@ export default function Dashboard({ user, selectedPropertyId }) {
         />
         <StatCard
           title="הכנסות"
-          value={paymentsLoading ? '—' : `₪${stats.totalRevenue.toLocaleString('he-IL')}`}
-          subtitle="סה״כ תשלומים שהתקבלו"
+          value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')}
+          subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'}
           icon={Wallet}
           gradient="bg-gradient-to-br from-teal-50 to-emerald-100/60"
           iconClass="icon-teal"
@@ -522,8 +522,12 @@ export default function Dashboard({ user, selectedPropertyId }) {
           </div>
           <div className="space-y-3">
             <div>
-              <p className="text-2xl font-bold text-gray-900">₪{stats.totalRevenue.toLocaleString('he-IL')}</p>
-              <p className="text-xs text-gray-400 mt-0.5">סה״כ הכנסות</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'אין עדיין'}
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {stats.totalRevenue > 0 ? 'סה״כ הכנסות' : 'הוסף הזמנות ותשלומים'}
+              </p>
             </div>
             <div className="flex items-end gap-1.5 h-16">
               {[25, 40, 35, 55, 65, 50, 80, 70, 90, 85, 95, 100].map((h, i) => (

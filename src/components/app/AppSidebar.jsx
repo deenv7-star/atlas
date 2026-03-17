@@ -14,47 +14,29 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 const navGroups = [
   {
     label: null,
-    items: [{ icon: LayoutDashboard, label: 'דשבורד', page: 'Dashboard' }],
-  },
-  {
-    label: 'ניהול',
     items: [
-      { icon: Users, label: 'לידים', page: 'Leads' },
+      { icon: LayoutDashboard, label: 'דשבורד', page: 'Dashboard' },
+      { icon: CalendarRange, label: 'לוח שנה', page: 'MultiCalendar' },
       { icon: CalendarDays, label: 'הזמנות', page: 'Bookings' },
-      { icon: ClipboardList, label: 'חוזים', page: 'Contracts' },
-      { icon: FileText, label: 'חשבוניות', page: 'Invoices' },
-    ],
-  },
-  {
-    label: 'תפעול',
-    items: [
-      { icon: Wrench, label: 'ניקיון', page: 'Cleaning' },
+      { icon: Users, label: 'אורחים', page: 'Leads' },
       { icon: MessageSquare, label: 'הודעות', page: 'Messages' },
-      { icon: Star, label: 'ביקורות', page: 'Reviews' },
     ],
   },
   {
     label: 'PRO',
     items: [
       { icon: BarChart3, label: 'מודיעין הכנסות', page: 'RevenueIntelligence' },
-      { icon: CalendarRange, label: 'לוח שנה מרכזי', page: 'MultiCalendar' },
       { icon: FileBarChart, label: 'דוחות בעלים', page: 'OwnerReports' },
       { icon: Workflow, label: 'מסע אורח', page: 'GuestJourney' },
       { icon: TrendingUp, label: 'תמחור דינאמי', page: 'DynamicPricing' },
       { icon: Globe, label: 'פורטל אורחים', page: 'GuestPortal' },
-    ],
-  },
-  {
-    label: 'אוטומציה',
-    items: [
+      { icon: Wrench, label: 'ניקיון', page: 'Cleaning' },
+      { icon: ClipboardList, label: 'חוזים', page: 'Contracts' },
+      { icon: FileText, label: 'חשבוניות', page: 'Invoices' },
+      { icon: Star, label: 'ביקורות', page: 'Reviews' },
       { icon: Brain, label: 'AI עוזר', page: 'AIAssistant' },
       { icon: Zap, label: 'אוטומציות', page: 'Automations' },
       { icon: Link2, label: 'אינטגרציות', page: 'Integrations' },
-    ],
-  },
-  {
-    label: 'חשבון',
-    items: [
       { icon: Wallet, label: 'תשלומים', page: 'Payments' },
       { icon: TrendingDown, label: 'מעקב הוצאות', page: 'ExpenseTracker' },
       { icon: Receipt, label: 'חיוב', page: 'Billing' },

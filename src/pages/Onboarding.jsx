@@ -23,8 +23,9 @@ import {
 } from '@/lib/validation';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import { PRICING_PLANS } from '@/config/pricing';
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 4;
 
 function handleOnboardingError(err, context) {
   console.error(`[Onboarding] ${context}:`, err);
@@ -47,23 +48,14 @@ const PROPERTY_TYPES = [
   { value: 'other', label: 'אחר' },
 ];
 
-const PLANS = [
-  {
-    key: 'starter', name: 'Starter', price: 399,
-    desc: 'למתחמים קטנים עד 3 נכסים',
-    features: ['עד 3 נכסים', 'ניהול הזמנות', 'ניהול לידים', 'תשלומים בסיסיים'],
-  },
-  {
-    key: 'pro', name: 'Pro', price: 699, recommended: true,
-    desc: 'לעסקים צומחים עד 10 נכסים',
-    features: ['עד 10 נכסים', 'כל תכונות Starter', 'אוטומציות חכמות', 'חוזים דיגיטליים', 'כל האינטגרציות'],
-  },
-  {
-    key: 'business', name: 'Business', price: 999,
-    desc: 'לרשתות ומתחמים גדולים',
-    features: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API מותאם', 'מנהל חשבון אישי', 'תמיכה 24/7'],
-  },
-];
+const PLANS = PRICING_PLANS.map((p) => ({
+  key: p.key,
+  name: p.name,
+  price: p.price,
+  desc: p.desc,
+  features: p.features,
+  recommended: p.popular,
+}));
 
 const FEATURES = [
   { icon: CalendarDays, title: 'הזמנות מתקבלות אוטומטית', desc: 'כל ההזמנות מכל הערוצים נכנסות למערכת לבד' },
@@ -104,7 +96,7 @@ export default function Onboarding() {
 
   useEffect(() => {
     if (user?.onboarding_completed) {
-      window.location.replace('/Dashboard');
+      window.location.replace('/dashboard');
       return;
     }
     if (user?.onboarding_step && !loaded) {
@@ -117,9 +109,9 @@ export default function Onboarding() {
   }, [user?.onboarding_completed, user?.onboarding_step, loaded]);
 
   useEffect(() => {
-    if (step === 4) {
+    if (step === 2) {
       setVisibleFeatures(0);
-      const timers = FEATURES.map((_, i) =>
+      const timers = FEATURES.slice(0, 2).map((_, i) =>
         setTimeout(() => setVisibleFeatures(v => Math.max(v, i + 1)), 300 + i * 300)
       );
       return () => timers.forEach(clearTimeout);
@@ -269,40 +261,38 @@ export default function Onboarding() {
     }
   };
 
-  const handleSelectPlan = (planKey) => {
+  const handleSelectPlan = async (planKey) => {
     setSelectedPlanKey(planKey);
-    try {
-      if (user?.organization_id) {
-        supabase.from('organizations').update({ subscription_plan: planKey }).eq('id', user.organization_id);
-      }
-    } catch {}
-    goNext();
-  };
-
-  const handleSkipPlan = async () => {
     setSaving(true);
     try {
+      if (user?.organization_id) {
+        await supabase.from('organizations').update({ subscription_plan: planKey }).eq('id', user.organization_id);
+      }
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
         const trialEnd = new Date();
         trialEnd.setDate(trialEnd.getDate() + 14);
-        const { error } = await supabase.from('profiles').update({
-          selected_plan: selectedPlanKey,
-          onboarding_step: 8,
+        await supabase.from('profiles').update({
+          selected_plan: planKey,
+          onboarding_step: TOTAL_STEPS,
           trial_ends_at: trialEnd.toISOString(),
           subscription_status: 'trialing',
         }).eq('id', authUser.id);
-        if (error) console.warn('[Onboarding] handleSkipPlan profiles update failed:', error);
       }
+      setDirection(1);
+      setAnimKey(k => k + 1);
+      setStep(3);
+      persistStep(3);
     } catch (err) {
-      console.warn('[Onboarding] handleSkipPlan:', err);
+      console.warn('[Onboarding] handleSelectPlan:', err);
+      goNext();
     } finally {
       setSaving(false);
     }
-    setDirection(1);
-    setAnimKey(k => k + 1);
-    setStep(7);
-    persistStep(7);
+  };
+
+  const handleSkipPlan = async () => {
+    await handleSelectPlan(selectedPlanKey);
   };
 
   const isPaymentValid = () => {
@@ -380,7 +370,7 @@ export default function Onboarding() {
     try {
       localStorage.setItem('onboarding_just_completed', String(Date.now()));
     } catch {}
-    window.location.replace('/Dashboard');
+    window.location.replace('/dashboard');
   };
 
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
@@ -388,11 +378,48 @@ export default function Onboarding() {
   const handleKeyDown = (e) => {
     if (e.key !== 'Enter') return;
     if (step === 0) { e.preventDefault(); goNext(); return; }
-    if (step === 1 && isPersonalValid()) { e.preventDefault(); handleSavePersonal(); return; }
-    if (step === 2 && isOrgValid()) { e.preventDefault(); handleSaveOrg(); return; }
-    if (step === 3 && isPropertyValid()) { e.preventDefault(); handleSaveProperty(); return; }
-    if (step === 4) { e.preventDefault(); goNext(); return; }
-    if (step === 6 && isPaymentValid()) { e.preventDefault(); handlePaymentSubmit(e); return; }
+    if (step === 1 && isOrgValid() && isPropertyValid()) { e.preventDefault(); handleSaveOrgAndProperty(); return; }
+    if (step === 2) { e.preventDefault(); return; }
+  };
+
+  const handleSaveOrgAndProperty = async () => {
+    setTouched(t => ({ ...t, orgName: true, orgAddress: true, orgType: true, propName: true, propRooms: true, propPrice: true }));
+    const n = validateOrgName(orgForm.name);
+    const a = validateAddress(orgForm.address);
+    const t = validateOrgType(orgForm.type);
+    const pn = validatePropertyName(propertyForm.name);
+    const pr = validateRooms(propertyForm.bedrooms);
+    const pp = validatePricePerNight(propertyForm.base_price);
+    if (!n.valid || !a.valid || !t.valid || !pn.valid || !pr.valid || !pp.valid) {
+      setErrors({ orgName: n.error, orgAddress: a.error, orgType: t.error, propName: pn.error, propRooms: pr.error, propPrice: pp.error });
+      return;
+    }
+    setSaving(true);
+    try {
+      if (user?.organization_id) {
+        await supabase.from('organizations').update({
+          name: orgForm.name.trim().slice(0, 50),
+          address: orgForm.address.trim().slice(0, 255),
+        }).eq('id', user.organization_id);
+      }
+      await supabase.from('properties').insert({
+        name: propertyForm.name.trim().slice(0, 100),
+        org_id: user?.organization_id,
+        bedrooms: parseInt(propertyForm.bedrooms, 10) || 1,
+        base_price: parseFloat(String(propertyForm.base_price).replace(/[^\d.]/g, '')) || null,
+      });
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        await supabase.from('profiles').update({ onboarding_step: 2 }).eq('id', authUser.id);
+      }
+      setCreatedOrgName(orgForm.name.trim());
+      setCreatedPropertyName(propertyForm.name.trim());
+      goNext();
+    } catch (err) {
+      handleOnboardingError(err, 'handleSaveOrgAndProperty');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const renderStep = () => {
@@ -454,12 +481,12 @@ export default function Onboarding() {
                     }
                   } else {
                     // Not logged in — redirect to Login with return to Dashboard
-                    window.location.href = `/Login?return=${encodeURIComponent('/Dashboard')}`;
+                    window.location.href = `/login?return=${encodeURIComponent('/dashboard')}`;
                     return;
                   }
                   try { localStorage.setItem('onboarding_just_completed', String(Date.now())); } catch {}
                   await checkAppState();
-                  window.location.replace(createPageUrl('Dashboard') || '/Dashboard');
+                  window.location.replace(createPageUrl('Dashboard') || '/dashboard');
                 } catch (err) {
                   toast.error('שגיאה. נסה שוב.');
                   setSaving(false);
@@ -473,126 +500,29 @@ export default function Onboarding() {
           </div>
         );
 
-      /* ─── Step 1: Personal Details ─── */
+      /* ─── Step 1: Organization + Property (combined) ─── */
       case 1: {
-        const fnVal = validateFirstName(personalForm.first_name);
-        const lnVal = validateLastName(personalForm.last_name);
-        const phVal = validatePhone(personalForm.phone);
-        const personalValid = fnVal.valid && lnVal.valid && phVal.valid;
-        const showFnErr = touched.first_name && errors.first_name;
-        const showLnErr = touched.last_name && errors.last_name;
-        const showPhErr = touched.phone && errors.phone;
-        return (
-          <div className="space-y-5">
-            <div className="text-center mb-4">
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>איך קוראים לך?</h2>
-              <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginTop: 4 }}>נשתמש בזה לתקשורת אישית</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-sm font-semibold text-gray-700">שם פרטי *</Label>
-                <div className="relative">
-                  <Input
-                    value={personalForm.first_name}
-                    onChange={e => { setPersonalForm(p => ({ ...p, first_name: e.target.value.slice(0, 50) })); setErrors(er => ({ ...er, first_name: '' })); }}
-                    onBlur={() => {
-                    setTouched(t => ({ ...t, first_name: true }));
-                    const r = validateFirstName(personalForm.first_name);
-                    if (!r.valid) setErrors(e => ({ ...e, first_name: r.error }));
-                  }}
-                    placeholder="ישראל"
-                    maxLength={50}
-                    className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base pr-10', showFnErr && 'border-red-500 focus-visible:ring-red-500', fnVal.valid && touched.first_name && 'border-green-500')}
-                    autoFocus
-                  />
-                  {fnVal.valid && touched.first_name && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                  {showFnErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
-                </div>
-                {showFnErr && <p className="text-xs text-red-500">{errors.first_name}</p>}
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm font-semibold text-gray-700">שם משפחה *</Label>
-                <div className="relative">
-                  <Input
-                    value={personalForm.last_name}
-                    onChange={e => { setPersonalForm(p => ({ ...p, last_name: e.target.value.slice(0, 50) })); setErrors(er => ({ ...er, last_name: '' })); }}
-                    onBlur={() => {
-                    setTouched(t => ({ ...t, last_name: true }));
-                    const r = validateLastName(personalForm.last_name);
-                    if (!r.valid) setErrors(e => ({ ...e, last_name: r.error }));
-                  }}
-                    placeholder="ישראלי"
-                    maxLength={50}
-                    className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base pr-10', showLnErr && 'border-red-500 focus-visible:ring-red-500', lnVal.valid && touched.last_name && 'border-green-500')}
-                  />
-                  {lnVal.valid && touched.last_name && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                  {showLnErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
-                </div>
-                {showLnErr && <p className="text-xs text-red-500">{errors.last_name}</p>}
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-sm font-semibold text-gray-700">טלפון *</Label>
-              <div className="relative">
-                <Input
-                  value={personalForm.phone}
-                  onChange={e => {
-                    const formatted = formatPhone(e.target.value);
-                    setPersonalForm(p => ({ ...p, phone: formatted }));
-                    setErrors(er => ({ ...er, phone: '' }));
-                  }}
-                  onBlur={(e) => {
-                    const val = e.target.value;
-                    setTouched(t => ({ ...t, phone: true }));
-                    const r = validatePhone(val);
-                    setErrors(er => ({ ...er, phone: r.valid ? '' : r.error }));
-                  }}
-                  placeholder="050-1234567"
-                  maxLength={14}
-                  className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base pr-10', showPhErr && 'border-red-500 focus-visible:ring-red-500', phVal.valid && touched.phone && 'border-green-500')}
-                  dir="ltr"
-                />
-                {phVal.valid && touched.phone && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                {showPhErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
-              </div>
-              {showPhErr && <p className="text-xs text-red-500">{errors.phone}</p>}
-            </div>
-            <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold">
-                <ArrowRight className="w-4 h-4" />
-                חזור
-              </Button>
-              <Button
-                onClick={handleSavePersonal}
-                disabled={!personalValid || saving}
-                className="flex-1 h-12 text-base font-bold rounded-xl gap-2 hover:opacity-90 transition-opacity"
-                style={{ background: '#111827', color: 'white' }}
-              >
-                {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
-                {saving ? 'שומר...' : 'הבא'}
-              </Button>
-            </div>
-          </div>
-        );
-      }
-
-      /* ─── Step 2: Organization ─── */
-      case 2: {
         const orgN = validateOrgName(orgForm.name);
         const orgA = validateAddress(orgForm.address);
         const orgT = validateOrgType(orgForm.type);
-        const orgValid = orgN.valid && orgA.valid && orgT.valid;
+        const propN = validatePropertyName(propertyForm.name);
+        const propR = validateRooms(propertyForm.bedrooms);
+        const propP = validatePricePerNight(propertyForm.base_price);
+        const combinedValid = orgN.valid && orgA.valid && orgT.valid && propN.valid && propR.valid && propP.valid;
         const showOrgNErr = touched.orgName && errors.orgName;
         const showOrgAErr = touched.orgAddress && errors.orgAddress;
         const showOrgTErr = touched.orgType && errors.orgType;
+        const showPropNErr = touched.propName && errors.propName;
+        const showPropRErr = touched.propRooms && errors.propRooms;
+        const showPropPErr = touched.propPrice && errors.propPrice;
         return (
           <div className="space-y-5">
             <div className="text-center mb-4">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
                 <Building2 className="w-6 h-6" style={{ color: '#4F46E5' }} />
               </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>מה שם המתחם שלך?</h2>
-              <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginTop: 4 }}>יופיע בחשבוניות ובתקשורת עם אורחים</p>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>הגדרת המתחם והנכס הראשון</h2>
+              <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginTop: 4 }}>פרטי הארגון והנכס הראשון</p>
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm font-semibold text-gray-700">שם הארגון *</Label>
@@ -647,46 +577,13 @@ export default function Onboarding() {
               </div>
               {showOrgTErr && <p className="text-xs text-red-500">{errors.orgType}</p>}
             </div>
-            <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold">
-                <ArrowRight className="w-4 h-4" />
-                חזור
-              </Button>
-              <Button
-                onClick={handleSaveOrg}
-                disabled={!orgValid || saving}
-                className="flex-1 h-12 text-base font-bold rounded-xl gap-2"
-                style={{ background: '#111827', color: 'white' }}
-              >
-                {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
-                {saving ? 'שומר...' : 'הבא'}
-              </Button>
-            </div>
-          </div>
-        );
-      }
-
-      /* ─── Step 3: First Property ─── */
-      case 3: {
-        const propN = validatePropertyName(propertyForm.name);
-        const propR = validateRooms(propertyForm.bedrooms);
-        const propP = validatePricePerNight(propertyForm.base_price);
-        const propValid = propN.valid && propR.valid && propP.valid;
-        const showPropNErr = touched.propName && errors.propName;
-        const showPropRErr = touched.propRooms && errors.propRooms;
-        const showPropPErr = touched.propPrice && errors.propPrice;
-        return (
-          <div className="space-y-5">
-            <div className="text-center mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-                <Home className="w-6 h-6" style={{ color: '#4F46E5' }} />
+            <div className="border-t border-gray-100 pt-4 mt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Home className="w-5 h-5 text-indigo-500" />
+                <h3 className="text-sm font-semibold text-gray-800">נכס ראשון</h3>
               </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>הוסף את הנכס הראשון שלך</h2>
-              <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginTop: 4 }}>תוכל להוסיף עוד נכסים מאוחר יותר</p>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-sm font-semibold text-gray-700">שם הנכס *</Label>
-              <div className="relative">
+              <div className="space-y-1.5">
+                <Label className="text-sm font-semibold text-gray-700">שם הנכס *</Label>
                 <Input
                   value={propertyForm.name}
                   onChange={e => { setPropertyForm(p => ({ ...p, name: e.target.value.slice(0, 100) })); setErrors(er => ({ ...er, propName: '' })); }}
@@ -694,17 +591,12 @@ export default function Onboarding() {
                   placeholder="למשל: וילה בכנרת"
                   maxLength={100}
                   className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base pr-10', showPropNErr && 'border-red-500', propN.valid && touched.propName && 'border-green-500')}
-                  autoFocus
                 />
-                {propN.valid && touched.propName && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                {showPropNErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
+                {showPropNErr && <p className="text-xs text-red-500">{errors.propName}</p>}
               </div>
-              {showPropNErr && <p className="text-xs text-red-500">{errors.propName}</p>}
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-sm font-semibold text-gray-700">מספר חדרים *</Label>
-                <div className="relative">
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <div className="space-y-1.5">
+                  <Label className="text-sm font-semibold text-gray-700">מספר חדרים *</Label>
                   <Input
                     type="number"
                     value={propertyForm.bedrooms}
@@ -715,28 +607,24 @@ export default function Onboarding() {
                     max={100}
                     className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base pr-10', showPropRErr && 'border-red-500', propR.valid && touched.propRooms && 'border-green-500')}
                   />
-                  {propR.valid && touched.propRooms && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                  {showPropRErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
+                  {showPropRErr && <p className="text-xs text-red-500">{errors.propRooms}</p>}
                 </div>
-                {showPropRErr && <p className="text-xs text-red-500">{errors.propRooms}</p>}
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm font-semibold text-gray-700">מחיר ללילה (₪) *</Label>
-                <div className="relative">
-                  <span className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-500 text-base z-10">₪</span>
-                  <Input
-                    value={propertyForm.base_price}
-                    onChange={e => { setPropertyForm(p => ({ ...p, base_price: e.target.value.replace(/[^\d.]/g, '') })); setErrors(er => ({ ...er, propPrice: '' })); }}
-                    onBlur={() => { setTouched(t => ({ ...t, propPrice: true })); const r = validatePricePerNight(propertyForm.base_price); if (!r.valid) setErrors(e => ({ ...e, propPrice: r.error })); }}
-                    placeholder="800"
-                    maxLength={10}
-                    className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base pr-12 pl-8', showPropPErr && 'border-red-500', propP.valid && touched.propPrice && 'border-green-500')}
-                    dir="ltr"
-                  />
-                  {propP.valid && touched.propPrice && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                  {showPropPErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
+                <div className="space-y-1.5">
+                  <Label className="text-sm font-semibold text-gray-700">מחיר ללילה (₪) *</Label>
+                  <div className="relative">
+                    <span className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-500 text-base z-10">₪</span>
+                    <Input
+                      value={propertyForm.base_price}
+                      onChange={e => { setPropertyForm(p => ({ ...p, base_price: e.target.value.replace(/[^\d.]/g, '') })); setErrors(er => ({ ...er, propPrice: '' })); }}
+                      onBlur={() => { setTouched(t => ({ ...t, propPrice: true })); const r = validatePricePerNight(propertyForm.base_price); if (!r.valid) setErrors(e => ({ ...e, propPrice: r.error })); }}
+                      placeholder="800"
+                      maxLength={10}
+                      className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base pr-12 pl-8', showPropPErr && 'border-red-500', propP.valid && touched.propPrice && 'border-green-500')}
+                      dir="ltr"
+                    />
+                    {showPropPErr && <p className="text-xs text-red-500">{errors.propPrice}</p>}
+                  </div>
                 </div>
-                {showPropPErr && <p className="text-xs text-red-500">{errors.propPrice}</p>}
               </div>
             </div>
             <div className="flex gap-3 pt-2">
@@ -745,8 +633,8 @@ export default function Onboarding() {
                 חזור
               </Button>
               <Button
-                onClick={handleSaveProperty}
-                disabled={!propValid || saving}
+                onClick={handleSaveOrgAndProperty}
+                disabled={!combinedValid || saving}
                 className="flex-1 h-12 text-base font-bold rounded-xl gap-2"
                 style={{ background: '#111827', color: 'white' }}
               >
@@ -754,66 +642,12 @@ export default function Onboarding() {
                 {saving ? 'שומר...' : 'הבא'}
               </Button>
             </div>
-            <button onClick={goNext} className="w-full text-center text-sm text-gray-400 hover:text-gray-600 transition-colors pt-1">
-              אוסיף מאוחר יותר →
-            </button>
           </div>
         );
       }
 
-      /* ─── Step 4: Tips & Features ─── */
-      case 4:
-        return (
-          <div className="space-y-5">
-            <div className="text-center mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-                <Sparkles className="w-6 h-6" style={{ color: '#4F46E5' }} />
-              </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>ATLAS עובדת בשבילך 24/7</h2>
-              <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginTop: 4 }}>הנה מה שמחכה לך</p>
-            </div>
-            <div className="space-y-3">
-              {FEATURES.map((feat, i) => {
-                const Icon = feat.icon;
-                return (
-                  <div
-                    key={feat.title}
-                    className={cn(
-                      "flex items-start gap-3 p-4 rounded-xl border transition-all duration-500",
-                      i < visibleFeatures ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                    )}
-                    style={{ borderColor: '#F3F4F6', background: '#FFFFFF' }}
-                  >
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-                      <Icon className="w-5 h-5" style={{ color: '#4F46E5' }} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold" style={{ color: '#111827' }}>{feat.title}</p>
-                      <p className="text-xs mt-0.5" style={{ color: '#6B7280', fontWeight: 400 }}>{feat.desc}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold">
-                <ArrowRight className="w-4 h-4" />
-                חזור
-              </Button>
-              <Button
-                onClick={goNext}
-                className="flex-1 h-12 text-base font-bold rounded-xl gap-2"
-                style={{ background: '#111827', color: 'white' }}
-              >
-                מגניב, הבא!
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        );
-
-      /* ─── Step 5: Plan Selection ─── */
-      case 5:
+      /* ─── Step 2: Plan Selection ─── */
+      case 2:
         return (
           <div className="space-y-5">
             <div className="text-center mb-4">
@@ -869,130 +703,8 @@ export default function Onboarding() {
           </div>
         );
 
-      /* ─── Step 6: Payment Form ─── */
-      case 6: {
-        const cardVal = validateCardNumber(paymentForm.cardNumber);
-        const expVal = validateExpiry(paymentForm.expiry);
-        const cvvVal = validateCvv(paymentForm.cvv);
-        const nameVal = validateNameOnCard(paymentForm.nameOnCard);
-        const paymentValid = cardVal.valid && expVal.valid && cvvVal.valid && nameVal.valid;
-        const cardType = getCardType(paymentForm.cardNumber);
-        const showCardErr = touched.cardNumber && errors.cardNumber;
-        const showExpErr = touched.expiry && errors.expiry;
-        const showCvvErr = touched.cvv && errors.cvv;
-        const showNameErr = touched.nameOnCard && errors.nameOnCard;
-        return (
-          <div className="space-y-5">
-            <div className="text-center mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-                <CreditCard className="w-6 h-6" style={{ color: '#4F46E5' }} />
-              </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>פרטי תשלום</h2>
-              <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginTop: 4 }}>התוכנית שנבחרה: {PLANS.find(p => p.key === selectedPlanKey)?.name || selectedPlanKey}</p>
-            </div>
-
-            <div className="rounded-xl p-4 mb-4" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-              <p className="font-bold text-center text-sm" style={{ color: '#4F46E5' }}>ניסיון חינמי ל-14 יום — לא יחויב עכשיו</p>
-              <p className="text-xs text-center mt-1" style={{ color: '#4F46E5', opacity: 0.9 }}>נשמור את פרטי הכרטיס ונזכיר לך 3 ימים לפני סיום הניסיון</p>
-            </div>
-
-            <form onSubmit={handlePaymentSubmit} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label className="text-sm font-semibold text-gray-700">מספר כרטיס *</Label>
-                <div className="relative flex items-center">
-                  <Input
-                    value={paymentForm.cardNumber}
-                    onChange={e => { setPaymentForm(p => ({ ...p, cardNumber: formatCardNumber(e.target.value) })); setErrors(er => ({ ...er, cardNumber: '' })); }}
-                    onBlur={() => { setTouched(t => ({ ...t, cardNumber: true })); const r = validateCardNumber(paymentForm.cardNumber); if (!r.valid) setErrors(e => ({ ...e, cardNumber: r.error })); }}
-                    placeholder="4242 4242 4242 4242"
-                    className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base font-mono tracking-wider pr-16', showCardErr && 'border-red-500', cardVal.valid && touched.cardNumber && 'border-green-500')}
-                    dir="ltr"
-                    maxLength={19}
-                  />
-                  {cardType && (
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500">
-                      {cardType === 'visa' ? 'VISA' : cardType === 'mastercard' ? 'MC' : ''}
-                    </span>
-                  )}
-                  {cardVal.valid && touched.cardNumber && <Check className="absolute right-12 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                  {showCardErr && <X className="absolute right-12 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
-                </div>
-                {showCardErr && <p className="text-xs text-red-500">{errors.cardNumber}</p>}
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-sm font-semibold text-gray-700">תוקף (MM/YY) *</Label>
-                  <div className="relative">
-                    <Input
-                      value={paymentForm.expiry}
-                      onChange={e => { setPaymentForm(p => ({ ...p, expiry: formatExpiry(e.target.value) })); setErrors(er => ({ ...er, expiry: '' })); }}
-                      onBlur={() => { setTouched(t => ({ ...t, expiry: true })); const r = validateExpiry(paymentForm.expiry); if (!r.valid) setErrors(e => ({ ...e, expiry: r.error })); }}
-                      placeholder="12/28"
-                      className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base font-mono pr-10', showExpErr && 'border-red-500', expVal.valid && touched.expiry && 'border-green-500')}
-                      dir="ltr"
-                      maxLength={5}
-                    />
-                    {expVal.valid && touched.expiry && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                    {showExpErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
-                  </div>
-                  {showExpErr && <p className="text-xs text-red-500">{errors.expiry}</p>}
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-sm font-semibold text-gray-700">CVV *</Label>
-                  <div className="relative">
-                    <Input
-                      value={paymentForm.cvv}
-                      onChange={e => { setPaymentForm(p => ({ ...p, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })); setErrors(er => ({ ...er, cvv: '' })); }}
-                      onBlur={() => { setTouched(t => ({ ...t, cvv: true })); const r = validateCvv(paymentForm.cvv); if (!r.valid) setErrors(e => ({ ...e, cvv: r.error })); }}
-                      placeholder="123"
-                      className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base font-mono pr-10', showCvvErr && 'border-red-500', cvvVal.valid && touched.cvv && 'border-green-500')}
-                      dir="ltr"
-                      type="password"
-                      maxLength={4}
-                    />
-                    {cvvVal.valid && touched.cvv && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                    {showCvvErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
-                  </div>
-                  {showCvvErr && <p className="text-xs text-red-500">{errors.cvv}</p>}
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm font-semibold text-gray-700">שם על הכרטיס *</Label>
-                <div className="relative">
-                  <Input
-                    value={paymentForm.nameOnCard}
-                    onChange={e => { setPaymentForm(p => ({ ...p, nameOnCard: e.target.value.slice(0, 50) })); setErrors(er => ({ ...er, nameOnCard: '' })); }}
-                    onBlur={() => { setTouched(t => ({ ...t, nameOnCard: true })); const r = validateNameOnCard(paymentForm.nameOnCard); if (!r.valid) setErrors(e => ({ ...e, nameOnCard: r.error })); }}
-                    placeholder="ישראל ישראלי"
-                    maxLength={50}
-                    className={cn('h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-base pr-10', showNameErr && 'border-red-500', nameVal.valid && touched.nameOnCard && 'border-green-500')}
-                  />
-                  {nameVal.valid && touched.nameOnCard && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />}
-                  {showNameErr && <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />}
-                </div>
-                {showNameErr && <p className="text-xs text-red-500">{errors.nameOnCard}</p>}
-              </div>
-              <p className="text-xs text-center text-gray-500 flex items-center justify-center gap-1" dir="rtl">
-                <span>הפרטים נשמרים בצורה מאובטחת</span>
-                <span>🔒</span>
-              </p>
-              <div className="flex gap-3 pt-2">
-                <Button type="button" variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold">
-                  <ArrowRight className="w-4 h-4" />
-                  חזור
-                </Button>
-                <Button type="submit" disabled={!paymentValid || saving} className="flex-1 h-12 text-base font-bold rounded-xl gap-2" style={{ background: '#111827', color: 'white' }}>
-                  {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
-                  {saving ? 'שומר...' : 'המשך'}
-                </Button>
-              </div>
-            </form>
-          </div>
-        );
-      }
-
-      /* ─── Step 7: All Done ─── */
-      case 7:
+      /* ─── Step 3: Done ─── */
+      case 3:
         return (
           <div className="text-center py-4">
             <div className="mb-6 flex justify-center" style={{ minHeight: 120 }}>

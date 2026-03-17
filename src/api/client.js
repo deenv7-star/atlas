@@ -138,8 +138,8 @@ const restAuth = {
 
   redirectToLogin(returnUrl) {
     window.location.href = returnUrl
-      ? `/Login?return=${encodeURIComponent(returnUrl)}`
-      : '/Login';
+      ? `/login?return=${encodeURIComponent(returnUrl)}`
+      : '/login';
   },
 
   setUser() {},
@@ -404,7 +404,7 @@ const supabaseAuth = {
   },
 
   redirectToLogin(returnUrl) {
-    const path = returnUrl ? `/Login?return=${encodeURIComponent(returnUrl)}` : '/Login';
+    const path = returnUrl ? `/login?return=${encodeURIComponent(returnUrl)}` : '/login';
     window.location.href = path;
   },
 
@@ -562,7 +562,7 @@ const localAuth = {
   },
   async deleteAccount() { localStorage.removeItem(USER_KEY); },
   redirectToLogin(returnUrl) {
-    window.location.href = returnUrl ? `/Login?return=${encodeURIComponent(returnUrl)}` : '/Login';
+    window.location.href = returnUrl ? `/login?return=${encodeURIComponent(returnUrl)}` : '/login';
   },
   setUser(u) { localStorage.setItem(USER_KEY, JSON.stringify(u)); },
   hasUser() { return Boolean(localStorage.getItem(USER_KEY)); },

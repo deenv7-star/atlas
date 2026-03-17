@@ -1,43 +1,19 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { CheckCircle2, Zap, Crown, Rocket, Sparkles, ArrowLeft } from 'lucide-react';
+import { PRICING_PLANS } from '@/config/pricing';
 
-const plans = [
-  {
-    name: 'בסיסי',
-    icon: Zap,
-    price: 399,
-    period: 'לחודש',
-    description: 'לבעלי נכס אחד שמתחילים את הדרך',
-    features: ['מתחם אחד', 'ניהול לידים והזמנות', 'יומן בסיסי', 'תמיכה במייל', 'דוחות בסיסיים'],
-    popular: false,
-    accentColor: '#6366f1',
-    iconBg: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-  },
-  {
-    name: 'מקצועי',
-    icon: Crown,
-    price: 699,
-    period: 'לחודש',
-    description: 'הכי פופולרי — לבעלי 2-5 מתחמים',
-    features: ['2-5 מתחמים', 'הודעות אוטומטיות', 'ניהול ניקיון', 'חוזים דיגיטליים', "תמיכה בצ'אט", 'דוחות מתקדמים', 'כל תכונות בסיסי'],
-    popular: true,
-    accentColor: '#00D1C1',
-    iconBg: 'linear-gradient(135deg, #00D1C1 0%, #00a8a0 100%)',
-  },
-  {
-    name: 'עסקי',
-    icon: Rocket,
-    price: null,
-    period: 'מותאם אישית',
-    description: 'לרשתות ונכסים בהיקף גדול',
-    features: ['5+ מתחמים', 'אינטגרציות מתקדמות', 'אוטומציות מלאות', 'עדיפות בתמיכה', 'הדרכה אישית', 'כל תכונות מקצועי'],
-    popular: false,
-    accentColor: '#f59e0b',
-    iconBg: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
-  },
-];
+const plans = PRICING_PLANS.map((p, i) => ({
+  name: p.nameHe,
+  icon: i === 0 ? Zap : i === 1 ? Crown : Rocket,
+  price: p.price,
+  period: 'לחודש',
+  description: p.desc,
+  features: p.features,
+  popular: p.popular,
+  accentColor: i === 0 ? '#6366f1' : i === 1 ? '#00D1C1' : '#f59e0b',
+  iconBg: i === 0 ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : i === 1 ? 'linear-gradient(135deg, #00D1C1 0%, #00a8a0 100%)' : 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+}));
 
 export default function PricingSection({ onSelectPlan }) {
   const [billingPeriod, setBillingPeriod] = useState('monthly');

@@ -8,56 +8,17 @@ import { Check, Zap, Crown, Rocket, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { PRICING_PLANS } from '@/config/pricing';
 
-const PLANS = [
-  {
-    id: 'starter',
-    name: 'Starter',
-    price: 399,
-    icon: Zap,
-    propertyLimit: 2,
-    features: [
-      'עד 2 נכסים',
-      'ניהול לידים והזמנות',
-      'יומן בסיסי',
-      'תמיכה במייל',
-      'דוחות בסיסיים'
-    ]
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: 599,
-    icon: Crown,
-    popular: true,
-    propertyLimit: 10,
-    features: [
-      'עד 10 נכסים',
-      'כל תכונות Starter',
-      'הודעות אוטומטיות',
-      'ניהול ניקיון',
-      'חוזים דיגיטליים',
-      'תמיכה בצ\'אט',
-      'אינטגרציות מתקדמות'
-    ]
-  },
-  {
-    id: 'scale',
-    name: 'Scale',
-    price: 999,
-    icon: Rocket,
-    propertyLimit: Infinity,
-    features: [
-      'נכסים ללא הגבלה',
-      'כל תכונות Pro',
-      'API גישה',
-      'דוחות מתקדמים',
-      'מנהל לקוח ייעודי',
-      'אוטומציות מתקדמות',
-      'תמיכה עדיפות'
-    ]
-  }
-];
+const PLANS = PRICING_PLANS.map((p) => ({
+  id: p.key,
+  name: p.name,
+  price: p.price,
+  icon: p.key === 'starter' ? Zap : p.key === 'pro' ? Crown : Rocket,
+  propertyLimit: p.properties ?? Infinity,
+  popular: p.popular,
+  features: p.features,
+}));
 
 export default function SubscriptionPage({ user }) {
   const [currentPlan, setCurrentPlan] = useState('starter');
@@ -74,7 +35,7 @@ export default function SubscriptionPage({ user }) {
     // For now, we'll just update the user's plan selection
     await base44.auth.updateMe({ subscription_plan: planId });
     setCurrentPlan(planId);
-    navigate(createPageUrl('Dashboard'));
+    navigate(createPageUrl('Dashboard') || '/dashboard');
   };
 
   return (

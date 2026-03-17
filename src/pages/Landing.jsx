@@ -5,6 +5,7 @@ import {
   Star, Zap, BarChart2, Link as LinkIcon, Receipt, Shield,
   ChevronDown, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
+import SupportChat from '@/components/landing/SupportChat';
 
 // ─── Animated price roller ───────────────────────────────────────────────────
 function AnimatedPrice({ value, duration = 500 }) {
@@ -239,27 +240,9 @@ export default function Landing() {
   ];
 
   const PRICING_PLANS = [
-    {
-      name: 'מתחיל', monthlyPrice: 399, yearlyPrice: 319,
-      desc: 'למתחמים קטנים עד 3 נכסים',
-      included: ['עד 3 נכסים', 'ניהול הזמנות', 'ניהול לידים', 'תשלומים בסיסיים', 'תמיכה במייל'],
-      excluded: ['אוטומציות', 'חוזים דיגיטליים', 'אינטגרציות מתקדמות'],
-      cta: 'התחל חינם', featured: false,
-    },
-    {
-      name: 'מקצועי', monthlyPrice: 699, yearlyPrice: 559,
-      desc: 'לעסקים צומחים עד 10 נכסים',
-      included: ['עד 10 נכסים', 'כל תכונות Starter', 'אוטומציות חכמות', 'חוזים דיגיטליים', 'כל האינטגרציות', 'דוחות מתקדמים', 'תמיכה בוואטסאפ'],
-      excluded: ['API מותאם אישית'],
-      cta: 'התחל חינם 14 יום', featured: true,
-    },
-    {
-      name: 'עסקי', monthlyPrice: 999, yearlyPrice: 799,
-      desc: 'לרשתות ומתחמים גדולים — ללא הגבלה',
-      included: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API מותאם אישית', 'מנהל חשבון אישי', 'הדרכה והטמעה', 'SLA מובטח', 'תמיכה 24/7'],
-      excluded: [],
-      cta: 'דברו איתנו', featured: false, isBusiness: true,
-    },
+    { name: 'מתחיל', monthlyPrice: 399, yearlyPrice: 319, desc: 'למתחמים קטנים עד 3 נכסים', included: ['עד 3 נכסים', 'ניהול הזמנות', 'ניהול לידים', 'תשלומים בסיסיים', 'תמיכה במייל'], excluded: ['אוטומציות', 'חוזים דיגיטליים', 'אינטגרציות מתקדמות'], cta: 'התחל חינם', featured: false },
+    { name: 'מקצועי', monthlyPrice: 699, yearlyPrice: 559, desc: 'לעסקים צומחים עד 10 נכסים', included: ['עד 10 נכסים', 'כל תכונות Starter', 'אוטומציות חכמות', 'חוזים דיגיטליים', 'כל האינטגרציות', 'דוחות מתקדמים', 'תמיכה בוואטסאפ'], excluded: ['API מותאם אישית'], cta: 'התחל חינם 14 יום', featured: true },
+    { name: 'עסקי', monthlyPrice: 999, yearlyPrice: 799, desc: 'לרשתות ומתחמים גדולים — ללא הגבלה', included: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API מותאם אישית', 'מנהל חשבון אישי', 'הדרכה והטמעה', 'SLA מובטח', 'תמיכה 24/7'], excluded: [], cta: 'דברו איתנו', featured: false, isBusiness: true },
   ];
 
   const NEW_TESTIMONIALS = [
@@ -2433,6 +2416,7 @@ export default function Landing() {
           </div>
         )}
 
+      <SupportChat autoOpenAfterMs={30000} />
       </div>
     </>
   );

@@ -31,12 +31,12 @@ import {
 import { 
   Plus, 
   Sparkles,
+  ClipboardList,
   Clock,
   CheckCircle2,
   PlayCircle,
   Calendar,
   User,
-  ClipboardList
 } from 'lucide-react';
 import { format, parseISO, isToday, isTomorrow, isPast, addDays } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -288,8 +288,24 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
         </div>
       ) : filteredTasks.length === 0 ? (
         <Card className="border-0 shadow-sm rounded-2xl">
-          <CardContent className="p-12 text-center text-gray-500">
-            אין משימות ניקיון
+          <CardContent className="p-12">
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                <ClipboardList className="w-8 h-8 text-gray-300" />
+              </div>
+              <p className="text-base font-semibold text-gray-700 mb-2">אין משימות ניקיון</p>
+              <p className="text-sm text-gray-500 mb-6 max-w-sm mx-auto">
+                צור את משימת הניקיון הראשונה שלך. משימות נוצרות אוטומטית מהזמנות צ'ק-אאוט, או שתוכל ליצור ידנית.
+              </p>
+              <Button
+                onClick={() => setIsCreateOpen(true)}
+                size="lg"
+                className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl"
+              >
+                <Plus className="w-4 h-4" />
+                משימת ניקיון חדשה
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ) : (

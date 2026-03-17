@@ -12,9 +12,9 @@ const CHANNELS = {
 const PROPERTIES = [
   { id: 1, name: 'דירת הים, תל אביב', dot: '#3B82F6', type: 'דירה', beds: 2 },
   { id: 2, name: 'פנטהאוז מרינה, הרצליה', dot: '#8B5CF6', type: 'פנטהאוז', beds: 4 },
-  { id: 3, name: 'סטודיו נווה צדק', dot: '#F59E0B', type: 'סטודיו', beds: 1 },
+  { id: 3, name: 'סטודיו נווה צדק, תל אביב', dot: '#F59E0B', type: 'סטודיו', beds: 1 },
   { id: 4, name: 'וילה כרמל, חיפה', dot: '#EC4899', type: 'וילה', beds: 5 },
-  { id: 5, name: 'לופט פלורנטין', dot: '#10B981', type: 'לופט', beds: 2 },
+  { id: 5, name: 'צימר משפחת לוי, צפת', dot: '#10B981', type: 'צימר', beds: 2 },
 ];
 
 function buildDemoBookings(startDate) {
@@ -22,20 +22,20 @@ function buildDemoBookings(startDate) {
   const base = new Date(s.getFullYear(), s.getMonth(), s.getDate());
 
   return [
-    { id: 1, propertyId: 1, guest: 'דניאל כהן', channel: 'airbnb', startOffset: -1, nights: 4, amount: 2400, status: 'מאושר' },
-    { id: 2, propertyId: 1, guest: 'Sarah Miller', channel: 'booking', startOffset: 5, nights: 3, amount: 1900, status: 'מאושר' },
+    { id: 1, propertyId: 1, guest: 'דוד כהן', channel: 'airbnb', startOffset: -1, nights: 4, amount: 3200, status: 'מאושר' },
+    { id: 2, propertyId: 1, guest: 'שרה מזרחי', channel: 'booking', startOffset: 5, nights: 3, amount: 2400, status: 'מאושר' },
     { id: 3, propertyId: 1, guest: '', channel: 'blocked', startOffset: 10, nights: 2, amount: 0, status: 'חסום' },
-    { id: 4, propertyId: 2, guest: 'מיכל לוי', channel: 'direct', startOffset: 0, nights: 5, amount: 4500, status: 'מאושר' },
-    { id: 5, propertyId: 2, guest: 'James Brown', channel: 'airbnb', startOffset: 7, nights: 4, amount: 3800, status: 'ממתין' },
-    { id: 6, propertyId: 3, guest: 'Anna Schmidt', channel: 'booking', startOffset: 1, nights: 3, amount: 1200, status: 'מאושר' },
-    { id: 7, propertyId: 3, guest: 'רון אברהם', channel: 'airbnb', startOffset: 6, nights: 2, amount: 900, status: 'מאושר' },
-    { id: 8, propertyId: 3, guest: 'Emily Chen', channel: 'direct', startOffset: 10, nights: 3, amount: 1100, status: 'מאושר' },
-    { id: 9, propertyId: 4, guest: 'משפחת גולדברג', channel: 'direct', startOffset: -2, nights: 7, amount: 8200, status: 'מאושר' },
-    { id: 10, propertyId: 4, guest: 'Pierre Dupont', channel: 'booking', startOffset: 8, nights: 5, amount: 6500, status: 'מאושר' },
-    { id: 11, propertyId: 5, guest: 'יעל שמש', channel: 'airbnb', startOffset: 0, nights: 3, amount: 1800, status: 'מאושר' },
+    { id: 4, propertyId: 2, guest: 'משפחת לוי', channel: 'direct', startOffset: 0, nights: 5, amount: 5500, status: 'מאושר' },
+    { id: 5, propertyId: 2, guest: 'אורן אברהמי', channel: 'airbnb', startOffset: 7, nights: 4, amount: 4200, status: 'ממתין' },
+    { id: 6, propertyId: 3, guest: 'מיכל גולן', channel: 'booking', startOffset: 1, nights: 3, amount: 1500, status: 'מאושר' },
+    { id: 7, propertyId: 3, guest: 'רון אברהם', channel: 'airbnb', startOffset: 6, nights: 2, amount: 1100, status: 'מאושר' },
+    { id: 8, propertyId: 3, guest: 'יעל שמש', channel: 'direct', startOffset: 10, nights: 3, amount: 1350, status: 'מאושר' },
+    { id: 9, propertyId: 4, guest: 'משפחת גולדברג', channel: 'direct', startOffset: -2, nights: 7, amount: 9800, status: 'מאושר' },
+    { id: 10, propertyId: 4, guest: 'דניאל ברק', channel: 'booking', startOffset: 8, nights: 5, amount: 7200, status: 'מאושר' },
+    { id: 11, propertyId: 5, guest: 'נועה דוד', channel: 'airbnb', startOffset: 0, nights: 3, amount: 2100, status: 'מאושר' },
     { id: 12, propertyId: 5, guest: '', channel: 'blocked', startOffset: 3, nights: 1, amount: 0, status: 'חסום' },
-    { id: 13, propertyId: 5, guest: 'Tom Wilson', channel: 'booking', startOffset: 6, nights: 4, amount: 2600, status: 'מאושר' },
-    { id: 14, propertyId: 5, guest: 'נועה דוד', channel: 'direct', startOffset: 12, nights: 2, amount: 1300, status: 'ממתין' },
+    { id: 13, propertyId: 5, guest: 'עמית רוזן', channel: 'booking', startOffset: 6, nights: 4, amount: 2800, status: 'מאושר' },
+    { id: 14, propertyId: 5, guest: 'ליאור כץ', channel: 'direct', startOffset: 12, nights: 2, amount: 1500, status: 'ממתין' },
   ].map(b => {
     const start = new Date(base);
     start.setDate(start.getDate() + b.startOffset);

@@ -31,7 +31,7 @@ function hasOnboardingBypass() {
   } catch { return false; }
 }
 
-// Redirects to /Login if not authenticated; preserves return URL.
+// Redirects to /login if not authenticated; preserves return URL.
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
 
 const ProtectedRoute = ({ children, requireOnboarding = true }) => {
@@ -45,7 +45,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   }
   if (!isAuthenticated) {
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-    return <Navigate to={`/Login?return=${returnUrl}`} replace />;
+    return <Navigate to={`/login?return=${returnUrl}`} replace />;
   }
   if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass()) {
     return <Navigate to="/onboarding" replace />;
@@ -75,10 +75,10 @@ const AuthenticatedApp = () => {
 
       {/* Auth pages — redirect based on onboarding_completed */}
       <Route
-        path="/Login"
+        path="/login"
         element={
           isAuthenticated
-            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/Dashboard' : '/onboarding')} replace />
+            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/dashboard' : '/onboarding')} replace />
             : <Login />
         }
       />
@@ -86,7 +86,7 @@ const AuthenticatedApp = () => {
         path="/register"
         element={
           isAuthenticated
-            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/Dashboard' : '/onboarding')} replace />
+            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/dashboard' : '/onboarding')} replace />
             : <Register />
         }
       />
@@ -96,10 +96,11 @@ const AuthenticatedApp = () => {
       />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/update-password" element={<UpdatePassword />} />
-      <Route path="/login" element={<Navigate to="/Login" replace />} />
 
       {/* Public static pages — no auth required */}
       <Route path="/about" element={<LayoutWrapper currentPageName="About"><Pages.About /></LayoutWrapper>} />
+      <Route path="/changelog" element={<LayoutWrapper currentPageName="Changelog"><Pages.Changelog /></LayoutWrapper>} />
+      <Route path="/status" element={<LayoutWrapper currentPageName="Status"><Pages.Status /></LayoutWrapper>} />
       <Route path="/privacy" element={<LayoutWrapper currentPageName="Privacy"><Pages.Privacy /></LayoutWrapper>} />
       <Route path="/terms" element={<LayoutWrapper currentPageName="Terms"><Pages.Terms /></LayoutWrapper>} />
       <Route path="/contact" element={<LayoutWrapper currentPageName="Contact"><Pages.Contact /></LayoutWrapper>} />
@@ -113,8 +114,9 @@ const AuthenticatedApp = () => {
           </ProtectedRoute>
         }
       />
-      {/* Legacy route */}
+      {/* Legacy routes */}
       <Route path="/Onboarding" element={<Navigate to="/onboarding" replace />} />
+      <Route path="/Dashboard" element={<Navigate to="/dashboard" replace />} />
 
       {/* Protected detail pages with :id param */}
       <Route
@@ -140,11 +142,11 @@ const AuthenticatedApp = () => {
 
       {/* All other pages — protected */}
       {Object.entries(Pages)
-        .filter(([path]) => !['Landing', 'Login', 'Onboarding', 'Register', 'VerifyEmail', 'About', 'Privacy', 'Terms', 'Contact'].includes(path))
+        .filter(([path]) => !['Landing', 'Login', 'Onboarding', 'Register', 'VerifyEmail', 'About', 'Privacy', 'Terms', 'Contact', 'Changelog', 'Status'].includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}
-            path={`/${path}`}
+            path={path === 'Dashboard' ? '/dashboard' : `/${path}`}
             element={
               <ProtectedRoute>
                 <LayoutWrapper currentPageName={path}>

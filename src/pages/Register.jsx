@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '@/lib/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { loginUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,6 +90,7 @@ export default function Register() {
         toast.success('נשלח מייל לאימות');
         navigate('/verify-email', { state: { email: form.email.trim() }, replace: true });
       } else if (data?.session) {
+        await loginUser(null);
         navigate('/onboarding', { replace: true });
       }
     } catch (err) {
@@ -123,7 +126,7 @@ export default function Register() {
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
                 <p className="text-amber-800 font-semibold">כתובת המייל הזו כבר רשומה במערכת</p>
               </div>
-              <Link to={`/Login?email=${encodeURIComponent(form.email)}`}>
+              <Link to={`/login?email=${encodeURIComponent(form.email)}`}>
                 <Button className="w-full h-12 bg-[#111827] hover:bg-black text-white font-bold rounded-xl gap-2">
                   התחבר עם מייל זה
                   <ArrowLeft className="w-5 h-5" />
@@ -231,7 +234,7 @@ export default function Register() {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           יש לך חשבון?{' '}
-          <Link to="/Login" className="text-indigo-600 hover:text-indigo-700 font-semibold">התחבר</Link>
+          <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">התחבר</Link>
         </p>
       </div>
     </div>

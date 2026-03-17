@@ -62,14 +62,14 @@ export default function TestimonialsSection() {
             ביקורות לקוחות
           </div>
           <h2 className="text-4xl md:text-5xl font-extrabold text-[#0B1220] mb-4 tracking-tight">
-            בעלי נכסים ממליצים
+            מה אומרים משתמשי הבטא
           </h2>
           <p className="text-lg text-gray-500 max-w-xl mx-auto font-medium">
-            גלו מה אומרים לקוחות שעברו ל-ATLAS
+            הצטרפו לגרסת הבטא ועזרו לנו לשפר את ATLAS
           </p>
         </motion.div>
 
-        {/* Testimonial cards */}
+        {/* Beta signup CTA - no fake testimonials */}
         <div className="grid md:grid-cols-3 gap-5 mb-10">
           {testimonials.map((t, i) => (
             <motion.div
@@ -169,9 +169,9 @@ export default function TestimonialsSection() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 relative z-10"
                  style={{ borderRadius: 0 }}>
               {[
-                { value: '4.9', label: 'דירוג ממוצע', sub: 'מבוסס על מאות ביקורות' },
-                { value: '200+', label: 'לקוחות מרוצים', sub: 'ועוד מצטרפים כל שבוע' },
-                { value: '98%', label: 'שביעות רצון', sub: 'לקוחות שממשיכים לעשות שימוש' },
+                { value: 'Beta', label: 'גרסת בטא', sub: 'מצטרפים מוקדמים מקבלים עדיפות' },
+                { value: 'חינם', label: '14 יום ניסיון', sub: 'ללא כרטיס אשראי' },
+                { value: '🇮🇱', label: 'מיועד לישראל', sub: 'מחירים בשקלים, תמיכה בעברית' },
               ].map((stat, i) => (
                 <div key={i} className="text-center md:px-10 relative">
                   {i > 0 && (

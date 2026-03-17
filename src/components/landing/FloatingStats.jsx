@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Users, Zap, Shield } from 'lucide-react';
 
 const stats = [
-  { icon: Users, value: '300+', label: 'בעלי נכסים', color: 'from-blue-400 to-cyan-500' },
-  { icon: TrendingUp, value: '1,200+', label: 'נכסים בניהול', color: 'from-purple-400 to-pink-500' },
-  { icon: Zap, value: '98%', label: 'שביעות רצון', color: 'from-green-400 to-emerald-500' },
+  { icon: Users, value: 'Beta', label: 'משתמשי בטא', color: 'from-blue-400 to-cyan-500' },
+  { icon: TrendingUp, value: '₪', label: 'מחירים בשקלים', color: 'from-purple-400 to-pink-500' },
+  { icon: Zap, value: '14', label: 'ימי ניסיון חינם', color: 'from-green-400 to-emerald-500' },
   { icon: Shield, value: '24/7', label: 'תמיכה ושירות', color: 'from-orange-400 to-red-500' },
 ];
 
@@ -26,7 +26,7 @@ export default function FloatingStats() {
             <span className="text-sm font-semibold text-[#00D1C1]">המספרים מדברים בעד עצמם</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            מובילים את השוק
+            פלטפורמה לניהול מתחמי אירוח
           </h2>
         </motion.div>
 

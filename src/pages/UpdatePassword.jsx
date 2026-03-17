@@ -54,7 +54,7 @@ export default function UpdatePassword() {
       const { error } = await supabase.auth.updateUser({ password: form.password });
       if (error) throw error;
       toast.success('הסיסמה עודכנה בהצלחה');
-      navigate('/Login?success=' + encodeURIComponent('הסיסמה עודכנה. התחבר עם הסיסמה החדשה.'), { replace: true });
+      navigate('/login?success=' + encodeURIComponent('הסיסמה עודכנה. התחבר עם הסיסמה החדשה.'), { replace: true });
     } catch (err) {
       toast.error(err.message || 'אירעה שגיאה. נסה שוב.');
     } finally {
@@ -132,7 +132,7 @@ export default function UpdatePassword() {
           </form>
         </div>
         <p className="text-center text-sm text-gray-500 mt-6">
-          <Link to="/Login" className="text-indigo-600 hover:text-indigo-700 font-semibold">חזרה להתחברות</Link>
+          <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">חזרה להתחברות</Link>
         </p>
       </div>
     </div>

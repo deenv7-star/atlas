@@ -68,7 +68,7 @@ export default function Login() {
       clearAttempts(form.email);
       const currentUser = await loginUser(null);
       const returnUrl = searchParams.get('return');
-      const dest = currentUser?.onboarding_completed ? (returnUrl || '/Dashboard') : '/onboarding';
+      const dest = currentUser?.onboarding_completed ? (returnUrl || '/dashboard') : '/onboarding';
       navigate(dest, { replace: true });
     } catch (err) {
       recordAttempt(form.email);

@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
     await base44.auth.logout();
     setUser(null);
     setIsAuthenticated(false);
-    if (shouldRedirect) window.location.href = '/Login';
+    if (shouldRedirect) window.location.href = '/login';
   };
 
   const navigateToLogin = () => {

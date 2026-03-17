@@ -24,7 +24,7 @@ export default function VerifyEmail() {
   // Redirect if already authenticated (e.g. just verified via email link)
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(user?.onboarding_completed ? '/Dashboard' : '/onboarding', { replace: true });
+      navigate(user?.onboarding_completed ? '/dashboard' : '/onboarding', { replace: true });
     }
   }, [isAuthenticated, user?.onboarding_completed, navigate]);
 
@@ -114,7 +114,7 @@ export default function VerifyEmail() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          <Link to="/Login" className="text-indigo-500 hover:text-indigo-700 font-medium transition-colors">
+          <Link to="/login" className="text-indigo-500 hover:text-indigo-700 font-medium transition-colors">
             חזרה להתחברות
           </Link>
         </p>

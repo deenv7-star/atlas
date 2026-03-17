@@ -1,10 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function SupportChat() {
+export default function SupportChat({ autoOpenAfterMs = null }) {
   const [isOpen, setIsOpen] = useState(false);
+  const triggeredRef = useRef(false);
+
+  useEffect(() => {
+    if (!autoOpenAfterMs || triggeredRef.current) return;
+    const pricingEl = document.getElementById('pricing');
+    if (!pricingEl) return;
+    let timeoutId = null;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (triggeredRef.current) return;
+        if (entry.isIntersecting) {
+          timeoutId = setTimeout(() => {
+            triggeredRef.current = true;
+            setIsOpen(true);
+          }, autoOpenAfterMs);
+        } else if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(pricingEl);
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      observer.disconnect();
+    };
+  }, [autoOpenAfterMs]);
 
   const handleWhatsAppClick = () => {
     window.open('https://wa.me/972545380085?text=היי, אשמח לקבל עזרה עם ATLAS', '_blank');

@@ -7,31 +7,21 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, Crown, Zap, Rocket, CreditCard, Calendar, Receipt } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { PRICING_PLANS } from '@/config/pricing';
 
-const PLANS = {
-  starter: {
-    name: 'Starter',
-    price: 399,
-    icon: Zap,
-    propertyLimit: 2,
-    features: ['עד 2 נכסים', 'ניהול לידים והזמנות', 'יומן בסיסי', 'תמיכה במייל', 'דוחות בסיסיים']
-  },
-  pro: {
-    name: 'Pro',
-    price: 599,
-    icon: Crown,
-    popular: true,
-    propertyLimit: 10,
-    features: ['עד 10 נכסים', 'כל תכונות Starter', 'הודעות אוטומטיות', 'ניהול ניקיון', 'חוזים דיגיטליים', 'תמיכה בצ\'אט', 'אינטגרציות מתקדמות']
-  },
-  scale: {
-    name: 'Scale',
-    price: 999,
-    icon: Rocket,
-    propertyLimit: Infinity,
-    features: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API גישה', 'דוחות מתקדמים', 'מנהל לקוח ייעודי', 'אוטומציות מתקדמות', 'תמיכה עדיפות']
-  }
-};
+const PLANS = Object.fromEntries(
+  PRICING_PLANS.map((p) => [
+    p.key,
+    {
+      name: p.name,
+      price: p.price,
+      icon: p.key === 'starter' ? Zap : p.key === 'pro' ? Crown : Rocket,
+      propertyLimit: p.properties ?? Infinity,
+      popular: p.popular,
+      features: p.features,
+    },
+  ])
+);
 
 export default function BillingPage({ user }) {
   const [loading, setLoading] = useState(false);
@@ -45,7 +35,6 @@ export default function BillingPage({ user }) {
     try {
       await base44.auth.updateMe({ subscription_plan: planId });
       alert('התוכנית עודכנה בהצלחה! התשלום יחויב בתאריך החיוב הבא.');
-      setUser({ ...user, subscription_plan: planId });
     } catch (error) {
       alert('שגיאה בעדכון התוכנית');
     } finally {
@@ -115,14 +104,14 @@ export default function BillingPage({ user }) {
       </Card>
 
       {/* Upgrade Options */}
-      {currentPlan !== 'scale' && (
+      {currentPlan !== 'business' && (
         <div>
           <h2 className="text-xl font-bold text-[#0B1220] mb-4">שדרג את התוכנית שלך</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {Object.entries(PLANS)
               .filter(([key]) => {
-                if (currentPlan === 'starter') return key === 'pro' || key === 'scale';
-                if (currentPlan === 'pro') return key === 'scale';
+                if (currentPlan === 'starter') return key === 'pro' || key === 'business';
+                if (currentPlan === 'pro') return key === 'business';
                 return false;
               })
               .map(([key, plan]) => {

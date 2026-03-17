@@ -55,6 +55,7 @@ import Billing from './pages/Billing';
 import BookingDetail from './pages/BookingDetail';
 import Bookings from './pages/Bookings';
 import Cleaning from './pages/Cleaning';
+import Changelog from './pages/Changelog';
 import Contact from './pages/Contact';
 import Contracts from './pages/Contracts';
 import Dashboard from './pages/Dashboard';
@@ -77,6 +78,7 @@ import Payments from './pages/Payments';
 import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import SLA from './pages/SLA';
+import Status from './pages/Status';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
@@ -95,6 +97,7 @@ export const PAGES = {
     "BookingDetail": BookingDetail,
     "Bookings": Bookings,
     "Cleaning": Cleaning,
+    "Changelog": Changelog,
     "Contact": Contact,
     "Contracts": Contracts,
     "Dashboard": Dashboard,
@@ -120,6 +123,7 @@ export const PAGES = {
     "RevenueIntelligence": RevenueIntelligence,
     "Reviews": Reviews,
     "SLA": SLA,
+    "Status": Status,
     "Settings": Settings,
     "Subscription": Subscription,
     "Terms": Terms,

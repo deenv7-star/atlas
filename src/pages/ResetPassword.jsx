@@ -59,7 +59,7 @@ export default function ResetPassword() {
             <p className="text-emerald-800 font-bold text-lg">שלחנו לך מייל עם קישור לאיפוס הסיסמה</p>
             <p className="text-emerald-700 text-sm mt-2">בדוק את תיבת הדואר (וגם בתיקיית הספאם)</p>
           </div>
-          <Link to="/Login" className="inline-block mt-6 text-indigo-600 hover:text-indigo-700 font-semibold">חזרה להתחברות</Link>
+          <Link to="/login" className="inline-block mt-6 text-indigo-600 hover:text-indigo-700 font-semibold">חזרה להתחברות</Link>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export default function ResetPassword() {
           </form>
         </div>
         <p className="text-center text-sm text-gray-500 mt-6">
-          <Link to="/Login" className="text-indigo-600 hover:text-indigo-700 font-semibold">חזרה להתחברות</Link>
+          <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">חזרה להתחברות</Link>
         </p>
       </div>
     </div>
