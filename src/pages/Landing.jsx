@@ -148,6 +148,12 @@ export default function Landing() {
   const nextSlide = () => setDemoSlide((s) => Math.min(s + 1, 4));
   const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
 
+  // Transformation section: auto-cycle before/after every 4s
+  useEffect(() => {
+    const t = setInterval(() => setPsView((v) => (v === 'before' ? 'after' : 'before')), 4000);
+    return () => clearInterval(t);
+  }, []);
+
   // Demo modal keyboard navigation (arrows, ESC)
   useEffect(() => {
     if (!demoOpen) return;
@@ -1112,12 +1118,42 @@ export default function Landing() {
               <p className="atlas-section-sub" style={{ fontSize: 18, color: '#6B7280', margin: 0, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>ככה נראה היום שלך בלי מערכת — וככה הוא נראה עם ATLAS</p>
             </div>
 
-            {/* Single dramatic visual comparison */}
-            <div className="atlas-reveal" style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.08)', border: '1px solid #E5E7EB' }}>
-              <div className="atlas-ps-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+            {/* Toggle + animated comparison */}
+            <div className="atlas-reveal" style={{ marginBottom: 16, display: 'flex', justifyContent: 'center', gap: 8 }}>
+              <button
+                onClick={() => setPsView('before')}
+                style={{
+                  padding: '8px 20px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14,
+                  background: psView === 'before' ? '#EF4444' : '#F3F4F6', color: psView === 'before' ? 'white' : '#6B7280',
+                  fontFamily: 'Heebo, sans-serif', transition: 'all 0.2s',
+                }}
+              >
+                בלי ATLAS
+              </button>
+              <button
+                onClick={() => setPsView('after')}
+                style={{
+                  padding: '8px 20px', borderRadius: 999, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14,
+                  background: psView === 'after' ? '#10B981' : '#F3F4F6', color: psView === 'after' ? 'white' : '#6B7280',
+                  fontFamily: 'Heebo, sans-serif', transition: 'all 0.2s',
+                }}
+              >
+                עם ATLAS
+              </button>
+            </div>
 
-                {/* RIGHT (RTL) — WITH ATLAS: Clean dashboard mockup */}
-                <div style={{ background: '#F8FBF9', padding: '36px 32px 32px', position: 'relative' }}>
+            {/* Animated single view — transitions between before/after */}
+            <div className="atlas-reveal" style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.08)', border: '1px solid #E5E7EB', minHeight: 340 }}>
+              {/* WITH ATLAS: Clean dashboard */}
+              <div
+                style={{
+                  position: 'absolute', inset: 0, background: '#F8FBF9', padding: '36px 32px 32px',
+                  opacity: psView === 'after' ? 1 : 0,
+                  transform: psView === 'after' ? 'translateX(0)' : 'translateX(-20px)',
+                  pointerEvents: psView === 'after' ? 'auto' : 'none',
+                  transition: 'opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)',
+                }}
+              >
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, #10B981, #34D399)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1178,8 +1214,16 @@ export default function Landing() {
                   </div>
                 </div>
 
-                {/* LEFT (RTL) — WITHOUT ATLAS: Chaotic desktop */}
-                <div style={{ background: '#FDF8F7', padding: '36px 32px 32px', position: 'relative', borderRight: '1px solid #E5E7EB' }}>
+              {/* WITHOUT ATLAS: Chaotic desktop */}
+              <div
+                style={{
+                  position: 'absolute', inset: 0, background: '#FDF8F7', padding: '36px 32px 32px',
+                  opacity: psView === 'before' ? 1 : 0,
+                  transform: psView === 'before' ? 'translateX(0)' : 'translateX(20px)',
+                  pointerEvents: psView === 'before' ? 'auto' : 'none',
+                  transition: 'opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)',
+                }}
+              >
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, #EF4444, #F87171)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1244,7 +1288,6 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-            </div>
 
             {/* Bottom CTA */}
             <div className="atlas-reveal atlas-delay-2" style={{ textAlign: 'center', marginTop: 40 }}>
