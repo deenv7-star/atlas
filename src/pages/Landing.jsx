@@ -148,18 +148,18 @@ export default function Landing() {
   const nextSlide = () => setDemoSlide((s) => Math.min(s + 1, 4));
   const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
 
-  // Transformation section: auto-playing chaos → unify → atlas animation
+  // Transformation section: auto-playing chaos → unify (converge) → atlas animation
   useEffect(() => {
     const ids = [];
     const schedule = () => {
       setPsPhase('chaos');
       ids.push(setTimeout(() => {
-        setPsPhase('unify');
+        setPsPhase('unify'); // cards fly to center
         ids.push(setTimeout(() => {
-          setPsPhase('atlas');
-          ids.push(setTimeout(schedule, 4500));
-        }, 1500));
-      }, 4500));
+          setPsPhase('atlas'); // dashboard emerges
+          ids.push(setTimeout(schedule, 5000));
+        }, 2000)); // unify 2s for convergence
+      }, 4500)); // chaos 4.5s
     };
     schedule();
     return () => ids.forEach((id) => clearTimeout(id));
@@ -507,17 +507,16 @@ export default function Landing() {
         }
         .atlas-dot { animation: atlasDot 2s ease-in-out infinite; }
 
-        /* ─ Transformation: chaos → atlas ─ */
-        @keyframes atlasChaosOut {
-          to { opacity: 0; transform: scale(0.9); }
+        /* ─ Transformation: chaos cards converge to center ─ */
+        .atlas-chaos-card {
+          transition: left 1s cubic-bezier(0.25,0.1,0.25,1), top 1s cubic-bezier(0.25,0.1,0.25,1),
+            transform 1s cubic-bezier(0.25,0.1,0.25,1), opacity 0.6s ease;
         }
-        @keyframes atlasUnifyPulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50%      { opacity: 0.8; transform: scale(1.02); }
-        }
-        @keyframes atlasDashboardIn {
-          from { opacity: 0; transform: scale(0.95); }
-          to   { opacity: 1; transform: scale(1); }
+        .atlas-chaos-card.atlas-converge {
+          left: 50% !important;
+          top: 50% !important;
+          transform: translate(-50%, -50%) scale(0.12) rotate(0deg) !important;
+          opacity: 0.3;
         }
 
         /* ─ Marquee ─ */
@@ -1146,82 +1145,117 @@ export default function Landing() {
               </p>
             </div>
 
-            {/* Auto-playing animation: chaos → unify → atlas */}
+            {/* Auto-playing animation: chaos → converge → atlas */}
             <div
               className="atlas-reveal"
               style={{
-                position: 'relative', borderRadius: 20, overflow: 'hidden', minHeight: 480,
+                position: 'relative', borderRadius: 20, overflow: 'hidden', minHeight: 520,
                 boxShadow: '0 8px 32px rgba(79,70,229,0.08), 0 24px 80px rgba(0,0,0,0.06)',
                 border: '1px solid rgba(79,70,229,0.15)',
               }}
             >
-              {/* Chaos — scattered tools */}
+              {/* Chaos — realistic app windows that converge to center */}
               <div
                 style={{
-                  position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #FEF3C7 0%, #FEF9E7 40%, #FEF2F2 100%)', padding: '48px 56px', zIndex: 1,
-                  opacity: psPhase === 'chaos' ? 1 : 0,
-                  transform: psPhase === 'unify' ? 'scale(0.95)' : psPhase === 'atlas' ? 'scale(0.9)' : 'scale(1)',
-                  transition: 'opacity 0.8s cubic-bezier(0.25,0.1,0.25,1), transform 0.8s cubic-bezier(0.25,0.1,0.25,1)',
-                  pointerEvents: psPhase === 'chaos' ? 'auto' : 'none',
+                  position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #F1F5F9 0%, #E2E8F0 50%, #F8FAFC 100%)', zIndex: 1,
+                  opacity: psPhase === 'chaos' || psPhase === 'unify' ? 1 : 0,
+                  transition: 'opacity 0.6s ease',
+                  pointerEvents: psPhase === 'chaos' || psPhase === 'unify' ? 'auto' : 'none',
                 }}
               >
-                <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                  <p style={{ fontSize: 15, color: '#6B7280', fontWeight: 600, fontFamily: 'Heebo, sans-serif', margin: 0 }}>
-                    כלים מפוזרים • אין סינכרון • אין תמונה אחת
-                  </p>
+                <div style={{ position: 'absolute', top: 16, left: '50%', transform: 'translateX(-50%)', fontSize: 14, color: '#64748B', fontWeight: 600, fontFamily: 'Heebo, sans-serif' }}>
+                  כלים מפוזרים • אין סינכרון
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 18, justifyContent: 'center', alignItems: 'flex-start', paddingTop: 8 }}>
-                  {[
-                    { w: 140, h: 100, r: -1.5, label: 'Excel', sub: 'נתונים לא מעודכנים', border: 'rgba(245,158,11,0.35)' },
-                    { w: 130, h: 92, r: 1.2, label: 'WhatsApp', sub: '27 הודעות שלא נענו', border: 'rgba(245,158,11,0.35)' },
-                    { w: 130, h: 92, r: 0.8, label: 'יומן', sub: 'הזמנות כפולות!', border: 'rgba(239,68,68,0.3)' },
-                    { w: 118, h: 88, r: -2, label: 'אימייל', sub: 'הזמנות אבודות', border: 'rgba(245,158,11,0.35)' },
-                    { w: 120, h: 88, r: 0.5, label: 'תשלומים', sub: 'תשלומים באיחור', border: 'rgba(239,68,68,0.3)' },
-                  ].map((card, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        width: card.w, height: card.h, background: 'rgba(255,255,255,0.95)', borderRadius: 14,
-                        boxShadow: '0 4px 16px rgba(0,0,0,0.06)', transform: `rotate(${card.r}deg)`,
-                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6,
-                        border: `1px solid ${card.border}`,
-                        padding: '0 12px',
-                      }}
-                    >
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#6B7280', fontFamily: 'Heebo, sans-serif' }}>{card.label}</span>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: '#374151', fontFamily: 'Heebo, sans-serif', textAlign: 'center', lineHeight: 1.3 }}>{card.sub}</span>
+                {/* Excel — spreadsheet window */}
+                <div className={`atlas-chaos-card ${psPhase === 'unify' ? 'atlas-converge' : ''}`} style={{ position: 'absolute', left: '8%', top: '14%', width: 165, height: 115, transform: 'rotate(-2deg)', zIndex: 3 }}>
+                  <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)' }}>
+                    <div style={{ padding: '6px 10px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 4 }}>{['#EF4444','#F59E0B','#22C55E'].map(c=><div key={c} style={{width:10,height:10,borderRadius:'50%',background:c}}/>)}</div>
+                      <span style={{ fontSize: 10, color: '#64748B', fontWeight: 600 }}>הזמנות.xlsx</span>
                     </div>
-                  ))}
+                    <div style={{ padding: 6, fontSize: 9, fontFamily: 'monospace' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '40px 50px 45px 50px', gap: 1 }}>
+                        {['שם','תאריך','סכום','?'].map((h,i)=><div key={h} style={{background:'#F1F5F9',padding:'2px 4px',fontWeight:700,color:'#475569'}}>{h}</div>)}
+                        {['???','12/03','???',''].map((c,i)=><div key={i} style={{padding:'2px 4px',color:'#94A3B8'}}>{c}</div>)}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
-                  <div style={{ fontSize: 14, color: '#374151', fontWeight: 700, fontFamily: 'Heebo, sans-serif' }}>בלי ATLAS</div>
-                  <div style={{ fontSize: 12, color: '#6B7280', fontWeight: 500, fontFamily: 'Heebo, sans-serif', marginTop: 2 }}>אין מקום אחד. אין נראות.</div>
+                {/* WhatsApp — chat window */}
+                <div className={`atlas-chaos-card ${psPhase === 'unify' ? 'atlas-converge' : ''}`} style={{ position: 'absolute', left: '52%', top: '12%', width: 150, height: 110, transform: 'rotate(1.5deg)', zIndex: 4 }}>
+                  <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)' }}>
+                    <div style={{ padding: '6px 10px', background: '#25D366', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: 10, fontWeight: 600 }}>WhatsApp</span>
+                      <span style={{ fontSize: 9, background: 'rgba(0,0,0,0.2)', padding: '1px 6px', borderRadius: 10 }}>27</span>
+                    </div>
+                    <div style={{ padding: 6 }}>
+                      <div style={{ fontSize: 9, color: '#334155', background: '#F1F5F9', borderRadius: 6, padding: '4px 8px', marginBottom: 4 }}>מתי הצ׳ק-אין?</div>
+                      <div style={{ fontSize: 9, color: '#334155', background: '#F1F5F9', borderRadius: 6, padding: '4px 8px' }}>שלחתי העברה...</div>
+                    </div>
+                  </div>
+                </div>
+                {/* Calendar — overlaps */}
+                <div className={`atlas-chaos-card ${psPhase === 'unify' ? 'atlas-converge' : ''}`} style={{ position: 'absolute', left: '28%', top: '38%', width: 155, height: 105, transform: 'rotate(0.5deg)', zIndex: 2 }}>
+                  <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)' }}>
+                    <div style={{ padding: '6px 10px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 4 }}>{['#EF4444','#F59E0B','#22C55E'].map(c=><div key={c} style={{width:10,height:10,borderRadius:'50%',background:c}}/>)}</div>
+                      <span style={{ fontSize: 10, color: '#64748B', fontWeight: 600 }}>יומן</span>
+                    </div>
+                    <div style={{ padding: 6, display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 3 }}>
+                      {[...Array(10)].map((_,i)=><div key={i} style={{ height: 12, borderRadius: 3, background: [2,3,7].includes(i)?'#FECACA':'#E2E8F0' }}/>)}
+                      <div style={{ gridColumn: '1/-1', fontSize: 8, color: '#DC2626', fontWeight: 700, textAlign: 'center' }}>הזמנות כפולות!</div>
+                    </div>
+                  </div>
+                </div>
+                {/* Email */}
+                <div className={`atlas-chaos-card ${psPhase === 'unify' ? 'atlas-converge' : ''}`} style={{ position: 'absolute', left: '58%', top: '42%', width: 135, height: 90, transform: 'rotate(-1deg)', zIndex: 5 }}>
+                  <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)' }}>
+                    <div style={{ padding: '6px 10px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 4 }}>{['#EF4444','#F59E0B','#22C55E'].map(c=><div key={c} style={{width:10,height:10,borderRadius:'50%',background:c}}/>)}</div>
+                      <span style={{ fontSize: 10, color: '#64748B', fontWeight: 600 }}>אימייל</span>
+                    </div>
+                    <div style={{ padding: 8, fontSize: 9, color: '#94A3B8' }}>הזמנות אבודות בתיבה...</div>
+                  </div>
+                </div>
+                {/* Payments */}
+                <div className={`atlas-chaos-card ${psPhase === 'unify' ? 'atlas-converge' : ''}`} style={{ position: 'absolute', left: '12%', top: '48%', width: 140, height: 85, transform: 'rotate(1deg)', zIndex: 1 }}>
+                  <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)' }}>
+                    <div style={{ padding: '6px 10px', background: '#FEF2F2', borderBottom: '1px solid #FECACA', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 4 }}>{['#EF4444','#F59E0B','#22C55E'].map(c=><div key={c} style={{width:10,height:10,borderRadius:'50%',background:c}}/>)}</div>
+                      <span style={{ fontSize: 10, color: '#B91C1C', fontWeight: 600 }}>תשלומים</span>
+                    </div>
+                    <div style={{ padding: 8, fontSize: 9, color: '#DC2626', fontWeight: 600 }}>תשלומים באיחור</div>
+                  </div>
+                </div>
+                <div style={{ position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+                  <div style={{ fontSize: 14, color: '#334155', fontWeight: 700, fontFamily: 'Heebo, sans-serif' }}>בלי ATLAS</div>
+                  <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500, fontFamily: 'Heebo, sans-serif', marginTop: 2 }}>אין מקום אחד. אין נראות.</div>
                 </div>
               </div>
 
-              {/* Unify — brief transition moment */}
+              {/* Unify — "נכנס ל..." overlay during converge */}
               <div
                 style={{
-                  position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)', zIndex: 2,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'absolute', inset: 0, zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
                   opacity: psPhase === 'unify' ? 1 : 0,
                   pointerEvents: 'none',
-                  transition: 'opacity 0.4s ease',
+                  transition: 'opacity 0.5s ease',
                 }}
               >
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 28, fontWeight: 800, color: '#4F46E5', fontFamily: 'Heebo, sans-serif', marginBottom: 8 }}>הכל מתאחד</div>
-                  <div style={{ fontSize: 18, fontWeight: 600, color: '#7C3AED', fontFamily: 'Heebo, sans-serif' }}>ATLAS</div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: '#4F46E5', fontFamily: 'Heebo, sans-serif', marginBottom: 6 }}>הכל נכנס ל</div>
+                  <div style={{ fontSize: 32, fontWeight: 800, color: '#7C3AED', fontFamily: 'Heebo, sans-serif', letterSpacing: '-0.02em' }}>ATLAS</div>
                 </div>
               </div>
 
-              {/* Atlas — unified dashboard */}
+              {/* Atlas — unified dashboard (emerges from center) */}
               <div
                 style={{
                   position: 'absolute', inset: 0, zIndex: 3,
                   opacity: psPhase === 'atlas' ? 1 : 0,
-                  transform: psPhase === 'atlas' ? 'scale(1)' : 'scale(0.95)',
-                  transition: 'opacity 0.8s cubic-bezier(0.25,0.1,0.25,1), transform 0.8s cubic-bezier(0.25,0.1,0.25,1)',
+                  transform: psPhase === 'atlas' ? 'scale(1)' : 'scale(0.6)',
+                  transformOrigin: 'center center',
+                  transition: 'opacity 0.9s cubic-bezier(0.25,0.1,0.25,1), transform 0.9s cubic-bezier(0.34,1.56,0.64,1)',
                   pointerEvents: psPhase === 'atlas' ? 'auto' : 'none',
                 }}
               >
