@@ -13,6 +13,7 @@ import {
   CalendarDays, CreditCard, Users, BarChart2, Crown, X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createPageUrl } from '@/utils';
 import {
   validateFirstName, validateLastName, validatePhone, formatPhone,
   validateOrgName, validateAddress, validateOrgType,
@@ -450,7 +451,7 @@ export default function Onboarding() {
                   }
                   try { localStorage.setItem('onboarding_just_completed', String(Date.now())); } catch {}
                   await checkAppState();
-                  window.location.replace('/Dashboard');
+                  navigate(createPageUrl('Dashboard'), { replace: true });
                 } catch (err) {
                   toast.error('שגיאה. נסה שוב.');
                 } finally {
@@ -458,7 +459,7 @@ export default function Onboarding() {
                 }
               }}
               disabled={saving}
-              className="w-full mt-3 text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors py-2"
+              className="w-full mt-3 text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors py-2 cursor-pointer"
             >
               יש לי חשבון קיים — מעבר לדאשבורד
             </button>
