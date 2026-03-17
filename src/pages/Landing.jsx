@@ -1156,32 +1156,39 @@ export default function Landing() {
               onTouchStart={(e) => { setPsDragging(true); handlePsMove(e.touches[0].clientX); }}
               onClick={(e) => { if (!psDragging) handlePsMove(e.clientX); }}
             >
-              {/* Chaos — scattered tools, brand-tinted */}
+              {/* Chaos — scattered tools + clear pain points */}
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #FEF3C7 0%, #FEF9E7 40%, #FEF2F2 100%)', padding: '48px 56px', zIndex: 1 }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 18, justifyContent: 'center', alignItems: 'flex-start', height: '100%', paddingTop: 20 }}>
+                <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                  <p style={{ fontSize: 15, color: '#6B7280', fontWeight: 600, fontFamily: 'Heebo, sans-serif', margin: 0 }}>
+                    כלים מפוזרים • אין סינכרון • אין תמונה אחת
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 18, justifyContent: 'center', alignItems: 'flex-start', paddingTop: 8 }}>
                   {[
-                    { w: 138, h: 98, r: -1.5, label: 'Excel', sub: '???', border: 'rgba(245,158,11,0.3)' },
-                    { w: 118, h: 88, r: 1.2, label: 'WhatsApp', sub: '27', border: 'rgba(245,158,11,0.3)' },
-                    { w: 128, h: 92, r: 0.8, label: 'יומן', sub: 'כפולות', border: 'rgba(239,68,68,0.25)' },
-                    { w: 98, h: 68, r: -2, label: 'אימייל', sub: '...', border: 'rgba(245,158,11,0.3)' },
-                    { w: 108, h: 72, r: 0.5, label: 'תשלומים', sub: '???', border: 'rgba(239,68,68,0.25)' },
+                    { w: 140, h: 100, r: -1.5, label: 'Excel', sub: 'נתונים לא מעודכנים', border: 'rgba(245,158,11,0.35)' },
+                    { w: 130, h: 92, r: 1.2, label: 'WhatsApp', sub: '27 הודעות שלא נענו', border: 'rgba(245,158,11,0.35)' },
+                    { w: 130, h: 92, r: 0.8, label: 'יומן', sub: 'הזמנות כפולות!', border: 'rgba(239,68,68,0.3)' },
+                    { w: 118, h: 88, r: -2, label: 'אימייל', sub: 'הזמנות אבודות', border: 'rgba(245,158,11,0.35)' },
+                    { w: 120, h: 88, r: 0.5, label: 'תשלומים', sub: 'תשלומים באיחור', border: 'rgba(239,68,68,0.3)' },
                   ].map((card, i) => (
                     <div
                       key={i}
                       style={{
-                        width: card.w, height: card.h, background: 'rgba(255,255,255,0.9)', borderRadius: 14,
+                        width: card.w, height: card.h, background: 'rgba(255,255,255,0.95)', borderRadius: 14,
                         boxShadow: '0 4px 16px rgba(0,0,0,0.06)', transform: `rotate(${card.r}deg)`,
                         display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6,
                         border: `1px solid ${card.border}`,
+                        padding: '0 12px',
                       }}
                     >
                       <span style={{ fontSize: 11, fontWeight: 600, color: '#6B7280', fontFamily: 'Heebo, sans-serif' }}>{card.label}</span>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: '#374151', fontFamily: 'Heebo, sans-serif' }}>{card.sub}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: '#374151', fontFamily: 'Heebo, sans-serif', textAlign: 'center', lineHeight: 1.3 }}>{card.sub}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#6B7280', fontWeight: 600, fontFamily: 'Heebo, sans-serif' }}>
-                  בלי ATLAS
+                <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+                  <div style={{ fontSize: 14, color: '#374151', fontWeight: 700, fontFamily: 'Heebo, sans-serif' }}>בלי ATLAS</div>
+                  <div style={{ fontSize: 12, color: '#6B7280', fontWeight: 500, fontFamily: 'Heebo, sans-serif', marginTop: 2 }}>אין מקום אחד. אין נראות.</div>
                 </div>
               </div>
 
