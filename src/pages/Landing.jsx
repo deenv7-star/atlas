@@ -159,7 +159,7 @@ export default function Landing() {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [demoOpen, demoSlide]);
-  const toggleFaq = (i) => setOpenFaq(openFaq === i ? null : i);
+  const toggleFaq = (i) => setOpenFaq((prev) => (prev === i ? null : i));
 
   const AVATARS = [
     { bg: 'linear-gradient(135deg,#4F46E5,#818CF8)', letter: 'א' },
@@ -545,7 +545,7 @@ export default function Landing() {
           opacity: 0;
         }
         .atlas-faq-answer--open {
-          max-height: 200px;
+          max-height: 400px;
           padding: 0 24px 20px 48px;
           opacity: 1;
         }
@@ -1878,7 +1878,7 @@ export default function Landing() {
                 return (
                   <div
                     key={i}
-                    className={`atlas-faq-item atlas-reveal atlas-delay-${Math.min(i + 1, 5)} ${isOpen ? 'atlas-faq-item--active' : ''}`}
+                    className={`atlas-faq-item ${isOpen ? 'atlas-faq-item--active' : ''}`}
                     style={{
                       background: '#FFFFFF',
                       borderRadius: 16,
@@ -2154,17 +2154,29 @@ export default function Landing() {
               <div>
                 <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>מוצר</h4>
                 {[
-                  { label: 'תכונות', href: '#features' },
-                  { label: 'מחירים', href: '#pricing' },
-                  { label: 'אינטגרציות', href: '#features' },
-                  { label: 'עדכונים', href: '#' },
+                  { label: 'תכונות', href: '#features', scroll: true },
+                  { label: 'מחירים', href: '#pricing', scroll: true },
+                  { label: 'אינטגרציות', href: '#features', scroll: true },
+                  { label: 'עדכונים', href: '#', scroll: false },
                   { label: 'דמו', href: '#', onClick: () => { setDemoOpen(true); setDemoSlide(0); } },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
-                    <a href={l.href} onClick={l.onClick ? (e) => { e.preventDefault(); l.onClick(); } : undefined} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
-                      onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
-                      onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
-                    >{l.label}</a>
+                    {l.onClick ? (
+                      <a href="#" onClick={(e) => { e.preventDefault(); l.onClick(); }} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s', cursor: 'pointer' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</a>
+                    ) : l.scroll ? (
+                      <a href={l.href} onClick={(e) => { e.preventDefault(); document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: 'smooth' }); }} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s', cursor: 'pointer' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</a>
+                    ) : (
+                      <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</a>
+                    )}
                   </div>
                 ))}
               </div>
@@ -2173,17 +2185,24 @@ export default function Landing() {
               <div>
                 <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>חברה</h4>
                 {[
-                  { label: 'אודות', href: '/about' },
+                  { label: 'אודות', to: '/about' },
                   { label: 'בלוג', href: '#' },
                   { label: 'קריירה', href: '#' },
-                  { label: 'צור קשר', href: '/contact' },
+                  { label: 'צור קשר', to: '/contact' },
                   { label: 'שותפים', href: '#' },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
-                    <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
-                      onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
-                      onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
-                    >{l.label}</a>
+                    {l.to ? (
+                      <Link to={l.to} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</Link>
+                    ) : (
+                      <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</a>
+                    )}
                   </div>
                 ))}
               </div>
@@ -2195,14 +2214,21 @@ export default function Landing() {
                   { label: 'מרכז עזרה', href: '#' },
                   { label: 'תיעוד API', href: '#' },
                   { label: 'סטטוס מערכת', href: '#' },
-                  { label: 'פרטיות', href: '/privacy' },
-                  { label: 'תנאי שימוש', href: '/terms' },
+                  { label: 'פרטיות', to: '/privacy' },
+                  { label: 'תנאי שימוש', to: '/terms' },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
-                    <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
-                      onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
-                      onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
-                    >{l.label}</a>
+                    {l.to ? (
+                      <Link to={l.to} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</Link>
+                    ) : (
+                      <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</a>
+                    )}
                   </div>
                 ))}
               </div>

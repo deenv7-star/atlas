@@ -97,7 +97,8 @@ export default function Register() {
         recordAttempt(form.email);
       } else {
         recordAttempt(form.email);
-        toast.error(err.message || 'אירעה שגיאה. נסה שוב.');
+        const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err.name === 'TypeError';
+        toast.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err.message || 'אירעה שגיאה. נסה שוב.'));
       }
     } finally {
       setIsLoading(false);
