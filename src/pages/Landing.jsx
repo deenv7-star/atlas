@@ -150,14 +150,17 @@ export default function Landing() {
   const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
 
   // Transformation section: scroll-driven animation (chaos → unify → atlas while scrolling)
+  // Desktop: higher thresholds so animation waits until section is in focus (not visible at bottom)
   useEffect(() => {
     const el = psSectionRef.current;
     if (!el) return;
     const onScroll = () => {
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      const threshold1 = vh * 0.55; // chaos while section is lower
-      const threshold2 = vh * 0.25; // unify when section rises
+      const isDesktop = vh > 700;
+      // Desktop: chaos until section is in upper 60% (user has scrolled to it)
+      const threshold1 = isDesktop ? vh * 0.4 : vh * 0.55;
+      const threshold2 = isDesktop ? vh * 0.12 : vh * 0.25;
       if (rect.top > threshold1) setPsPhase('chaos');
       else if (rect.top > threshold2) setPsPhase('unify');
       else setPsPhase('atlas');
