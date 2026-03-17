@@ -516,29 +516,6 @@ export default function Landing() {
         }
         .atlas-dot { animation: atlasDot 2s ease-in-out infinite; }
 
-        /* ─ Transformation section: chaos animations ─ */
-        @keyframes atlasChaosPop {
-          0%   { opacity: 0; transform: scale(0.8) translateY(4px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes atlasChaosFloat {
-          0%, 100% { transform: translateY(0) rotate(var(--r,0deg)); }
-          50%      { transform: translateY(-6px) rotate(var(--r,0deg)); }
-        }
-        @keyframes atlasChaosPulse {
-          0%, 100% { box-shadow: 0 4px 12px rgba(239,68,68,0.25); }
-          50%      { box-shadow: 0 6px 20px rgba(239,68,68,0.45); }
-        }
-        @keyframes atlasChaosShake {
-          0%, 100% { transform: translateX(0); }
-          25%      { transform: translateX(-2px); }
-          75%      { transform: translateX(2px); }
-        }
-        .atlas-chaos-pop   { animation: atlasChaosPop 0.5s ease backwards; }
-        .atlas-chaos-float { animation: atlasChaosFloat 3s ease-in-out infinite; }
-        .atlas-chaos-pulse { animation: atlasChaosPulse 1.5s ease-in-out infinite; }
-        .atlas-chaos-shake { animation: atlasChaosShake 0.4s ease-in-out; }
-
         /* ─ Marquee ─ */
         @keyframes atlasMarquee {
           from { transform: translateX(0); }
@@ -1152,166 +1129,133 @@ export default function Landing() {
         </div>
 
         {/* ════════════════════════════════════════
-            SECTION 1 — THE TRANSFORMATION
+            SECTION 1 — THE TRANSFORMATION (Apple-level)
         ════════════════════════════════════════ */}
-        <section style={{ padding: '100px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
-              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מכירים את הכאוס הזה?</h2>
-              <p className="atlas-section-sub" style={{ fontSize: 18, color: '#6B7280', margin: 0, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>ככה נראה היום שלך בלי מערכת — וככה הוא נראה עם ATLAS</p>
+        <section style={{ padding: '120px 24px 140px', background: '#ffffff', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 980, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 72 }}>
+              <h2 style={{ fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, color: '#1d1d1f', margin: '0 0 12px', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                מכירים את הכאוס הזה?
+              </h2>
+              <p style={{ fontSize: 21, color: '#86868b', margin: 0, maxWidth: 480, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.4 }}>
+                בלי מערכת — כלים מפוזרים, הודעות שלא נענו, הזמנות אבודות. עם ATLAS — הכל במקום אחד.
+              </p>
             </div>
 
-            {/* Comparison slider — גרור כדי להשוות */}
+            {/* Apple-style comparison slider */}
             <div
               ref={psRef}
               className="atlas-reveal"
               style={{
-                position: 'relative', borderRadius: 24, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.12)', border: '1px solid #E5E7EB', minHeight: 380,
+                position: 'relative', borderRadius: 18, overflow: 'hidden', minHeight: 480,
+                boxShadow: '0 4px 24px rgba(0,0,0,0.06), 0 24px 80px rgba(0,0,0,0.08)',
                 cursor: psDragging ? 'grabbing' : 'grab', userSelect: 'none',
               }}
               onMouseDown={(e) => { e.preventDefault(); setPsDragging(true); handlePsMove(e.clientX); }}
               onTouchStart={(e) => { setPsDragging(true); handlePsMove(e.touches[0].clientX); }}
               onClick={(e) => { if (!psDragging) handlePsMove(e.clientX); }}
             >
-              {/* Chaos — base layer */}
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #FEF2F2 0%, #FDF8F7 100%)', padding: '32px 28px 28px', zIndex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: 6, background: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                  </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#991B1B' }}>בלי ATLAS — כאוס</span>
+              {/* Chaos — minimalist abstract representation */}
+              <div style={{ position: 'absolute', inset: 0, background: '#f5f5f7', padding: '48px 56px', zIndex: 1 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'flex-start', height: '100%', paddingTop: 24 }}>
+                  {[
+                    { w: 140, h: 100, t: 0, r: -1, label: 'Excel', sub: '???', c: '#e5e5ea' },
+                    { w: 120, h: 90, t: 20, r: 1.5, label: 'WhatsApp', sub: '27', c: '#e5e5ea' },
+                    { w: 130, h: 95, t: -10, r: 1, label: 'יומן', sub: 'כפולות', c: '#e5e5ea' },
+                    { w: 100, h: 70, t: 30, r: -2, label: 'אימייל', sub: '...', c: '#e5e5ea' },
+                    { w: 110, h: 75, t: -15, r: 0.5, label: 'תשלומים', sub: '???', c: '#e5e5ea' },
+                  ].map((card, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: card.w, height: card.h, background: 'white', borderRadius: 12,
+                        boxShadow: '0 2px 12px rgba(0,0,0,0.06)', transform: `rotate(${card.r}deg)`,
+                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4,
+                        border: '1px solid rgba(0,0,0,0.06)',
+                      }}
+                    >
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#86868b' }}>{card.label}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#1d1d1f' }}>{card.sub}</span>
+                    </div>
+                  ))}
                 </div>
-                <div style={{ position: 'relative', height: 280 }}>
-                  <div className="atlas-chaos-float" style={{ '--r': '-2deg', position: 'absolute', top: 0, right: 0, width: '72%', background: 'white', borderRadius: 12, border: '1px solid #FECACA', overflow: 'hidden', boxShadow: '0 4px 16px rgba(239,68,68,0.12)', zIndex: 2 }}>
-                    <div style={{padding:'8px 12px',background:'#FEE2E2',borderBottom:'1px solid #FECACA',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                      <span style={{fontSize:9,fontWeight:700,color:'#991B1B'}}>Excel — הזמנות.xlsx</span>
-                      <div style={{display:'flex',gap:4}}>{[1,2,3].map(n=><div key={n} style={{width:6,height:6,borderRadius:'50%',background:'#FCA5A5'}}/>)}</div>
-                    </div>
-                    <div style={{padding:10}}>
-                      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:3}}>
-                        {['שם','תאריך','סכום','סטטוס','???','12/03','???','??','דוד','13/03','₪800','שולם?','','','',''].map((c,i)=>(
-                          <div key={i} style={{fontSize:8,padding:'4px 6px',background:i<4?'#FEF2F2':'white',color:i<4?'#991B1B':'#6B7280',borderBottom:'1px solid #FEE2E2',fontWeight:i<4?700:400}}>{c}</div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="atlas-chaos-float" style={{ '--r': '1.5deg', animationDelay: '0.5s', position: 'absolute', top: 55, left: 0, width: '58%', background: 'white', borderRadius: 12, border: '1px solid #FECACA', overflow: 'hidden', boxShadow: '0 4px 16px rgba(239,68,68,0.12)', zIndex: 3 }}>
-                    <div style={{padding:'8px 12px',background:'#FEE2E2',borderBottom:'1px solid #FECACA',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                      <span style={{fontSize:9,fontWeight:700,color:'#991B1B'}}>WhatsApp — 27 הודעות</span>
-                      <div style={{width:18,height:18,borderRadius:'50%',background:'#EF4444',display:'flex',alignItems:'center',justifyContent:'center'}}><span style={{fontSize:8,color:'white',fontWeight:700}}>27</span></div>
-                    </div>
-                    <div style={{padding:10}}>
-                      {['היי, מתי הצ׳ק-אין?','שלחתי העברה, ראית?','החדר נקי?? אנחנו בדרך'].map((m,i)=>(
-                        <div key={i} className="atlas-chaos-pop" style={{fontSize:9,color:'#374151',background:'#FEF2F2',borderRadius:8,padding:'6px 10px',marginBottom:6,animationDelay:`${i*0.1}s`}}>{m}</div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="atlas-chaos-float" style={{ '--r': '1deg', animationDelay: '1s', position: 'absolute', bottom: 0, right: '8%', width: '52%', background: 'white', borderRadius: 12, border: '1px solid #FECACA', overflow: 'hidden', boxShadow: '0 4px 16px rgba(239,68,68,0.12)', zIndex: 1 }}>
-                    <div style={{padding:'8px 12px',background:'#FEE2E2',borderBottom:'1px solid #FECACA'}}>
-                      <span style={{fontSize:9,fontWeight:700,color:'#991B1B'}}>יומן — הזמנות כפולות!</span>
-                    </div>
-                    <div style={{padding:8}}>
-                      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:3}}>
-                        {[...Array(10)].map((_,i)=>{
-                          const clash = [2,3,7,8].includes(i);
-                          return <div key={i} style={{height:16,borderRadius:4,background:clash?'#FCA5A5':i%3===0?'#FDE68A':'#F3F4F6',border:clash?'2px solid #EF4444':'none'}}/>;
-                        })}
-                      </div>
-                      <div style={{fontSize:8,color:'#EF4444',fontWeight:700,marginTop:6,textAlign:'center'}}>⚠ הזמנה כפולה!</div>
-                    </div>
-                  </div>
-                  <div className="atlas-chaos-pulse" style={{ position: 'absolute', top: 12, left: '42%', background: '#EF4444', color: 'white', borderRadius: 10, padding: '6px 14px', fontSize: 9, fontWeight: 700, boxShadow: '0 4px 16px rgba(239,68,68,0.35)', zIndex: 10 }}>
-                    3 שיחות שלא נענו
-                  </div>
-                  <div className="atlas-chaos-pulse" style={{ animationDelay: '0.8s', position: 'absolute', bottom: 55, left: 0, background: '#F59E0B', color: 'white', borderRadius: 10, padding: '6px 14px', fontSize: 9, fontWeight: 700, boxShadow: '0 4px 16px rgba(245,158,11,0.35)', zIndex: 10 }}>
-                    תשלום באיחור!
-                  </div>
+                <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#86868b', fontWeight: 500 }}>
+                  בלי ATLAS
                 </div>
               </div>
 
-              {/* Order — reveal layer (clip from left) */}
+              {/* Order — refined dashboard */}
               <div
                 style={{
                   position: 'absolute', inset: 0, zIndex: 2, clipPath: `inset(0 0 0 ${100 - psSlider}%)`,
-                  transition: psDragging ? 'none' : 'clip-path 0.15s ease-out',
+                  transition: psDragging ? 'none' : 'clip-path 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
                 }}
               >
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #F0FDF4 0%, #F8FBF9 100%)', padding: '32px 28px 28px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                    <div style={{ width: 24, height: 24, borderRadius: 6, background: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
-                    </div>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: '#065F46' }}>עם ATLAS — מסודר</span>
-                  </div>
-                  <div style={{ background: 'white', borderRadius: 14, border: '1px solid #D1FAE5', overflow: 'hidden', boxShadow: '0 4px 20px rgba(16,185,129,0.08)' }}>
-                    <div style={{ padding: '12px 16px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', gap: 4 }}>{[6,6,6].map((_,i)=><div key={i} style={{width:8,height:8,borderRadius:'50%',background:i===0?'#EF4444':i===1?'#F59E0B':'#10B981'}}/>)}</div>
-                      <div style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 600 }}>ATLAS Dashboard</div>
-                    </div>
-                    <div style={{ padding: '14px 16px 10px', display: 'flex', gap: 10 }}>
-                      {[{l:'הכנסות',v:'₪48,200',c:'#10B981',bg:'#F0FDF4'},{l:'תפוסה',v:'92%',c:'#4F46E5',bg:'#EEF2FF'},{l:'הזמנות',v:'23',c:'#F59E0B',bg:'#FFFBEB'}].map(k=>(
-                        <div key={k.l} style={{flex:1,background:k.bg,borderRadius:10,padding:'10px 12px',textAlign:'center'}}>
-                          <div style={{fontSize:16,fontWeight:800,color:k.c}}>{k.v}</div>
-                          <div style={{fontSize:9,color:'#6B7280',marginTop:2}}>{k.l}</div>
+                <div style={{ position: 'absolute', inset: 0, background: '#ffffff', padding: '48px 56px' }}>
+                  <div style={{ maxWidth: 420, margin: '0 auto' }}>
+                    <div style={{ background: '#f5f5f7', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.04)' }}>
+                      <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#1d1d1f' }}>ATLAS</span>
+                        <div style={{ display: 'flex', gap: 6 }}>{[1,2,3].map(n=><div key={n} style={{width:8,height:8,borderRadius:'50%',background:n===3?'#34c759':'#d1d1d6'}}/>)}</div>
+                      </div>
+                      <div style={{ padding: 24 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
+                          {[{v:'₪48,200',l:'הכנסות'},{v:'92%',l:'תפוסה'},{v:'23',l:'הזמנות'}].map(k=>(
+                            <div key={k.l} style={{ background: 'white', borderRadius: 10, padding: '14px 16px', textAlign: 'center', border: '1px solid rgba(0,0,0,0.04)' }}>
+                              <div style={{ fontSize: 18, fontWeight: 600, color: '#1d1d1f' }}>{k.v}</div>
+                              <div style={{ fontSize: 11, color: '#86868b', marginTop: 2 }}>{k.l}</div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                    <div style={{ padding: '6px 16px 12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 48 }}>
-                        {[30,45,40,55,65,50,70,60,80,85,75,95].map((h,i)=>(
-                          <div key={i} style={{flex:1,height:`${h}%`,borderRadius:'4px 4px 0 0',background:`rgba(16,185,129,${0.3+i*0.05})`,transition:'height 0.5s ease'}}/>
-                        ))}
+                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 56, marginBottom: 20 }}>
+                          {[35,50,45,60,70,55,75,65,85,90,80,95].map((h,i)=>(
+                            <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '4px 4px 0 0', background: 'rgba(52,199,89,0.2)' }}/>
+                          ))}
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                          <span style={{ fontSize: 13, fontWeight: 500, color: '#1d1d1f' }}>דירת הגליל</span>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: '#34c759', background: 'rgba(52,199,89,0.12)', padding: '4px 10px', borderRadius: 6 }}>מאושר</span>
+                        </div>
                       </div>
                     </div>
-                    <div style={{ padding: '8px 16px 16px' }}>
-                      {[{name:'דירת הגליל',status:'מאושר',sc:'#10B981',sb:'#F0FDF4'},{name:'סוויטת הכרמל',status:'צ׳ק-אין היום',sc:'#4F46E5',sb:'#EEF2FF'}].map((b,i)=>(
-                        <div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 0',borderTop:i>0?'1px solid #F3F4F6':'none'}}>
-                          <div style={{display:'flex',alignItems:'center',gap:10}}>
-                            <div style={{width:28,height:28,borderRadius:8,background:'#F3F4F6',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                            </div>
-                            <span style={{fontSize:12,fontWeight:600,color:'#374151'}}>{b.name}</span>
-                          </div>
-                          <span style={{fontSize:10,fontWeight:600,color:b.sc,background:b.sb,padding:'4px 12px',borderRadius:999}}>{b.status}</span>
-                        </div>
-                      ))}
+                    <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', background: 'rgba(52,199,89,0.06)', borderRadius: 12, border: '1px solid rgba(52,199,89,0.2)' }}>
+                      <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(52,199,89,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34c759" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1d1d1f' }}>הזמנה חדשה</div>
+                        <div style={{ fontSize: 11, color: '#86868b' }}>₪1,200 · דוד כ.</div>
+                      </div>
                     </div>
                   </div>
-                  <div style={{ marginTop: 14, background: 'white', borderRadius: 12, padding: '12px 16px', border: '1px solid #D1FAE5', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 4px 20px rgba(16,185,129,0.12)' }}>
-                    <div style={{width:28,height:28,borderRadius:'50%',background:'#D1FAE5',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
-                    </div>
-                    <div>
-                      <div style={{fontSize:11,fontWeight:700,color:'#065F46'}}>הזמנה חדשה התקבלה!</div>
-                      <div style={{fontSize:10,color:'#6B7280'}}>₪1,200 — אורח: דוד כ. — 3 לילות</div>
-                    </div>
+                  <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#86868b', fontWeight: 500 }}>
+                    עם ATLAS
                   </div>
                 </div>
               </div>
 
-              {/* Draggable divider */}
+              {/* Minimal divider — Apple style */}
               <div
                 style={{
-                  position: 'absolute', top: 0, bottom: 0, width: 4, left: `${psSlider}%`, marginLeft: -2, zIndex: 10,
-                  background: 'linear-gradient(180deg, #10B981, #34D399)', borderRadius: 2, cursor: 'ew-resize',
-                  boxShadow: '0 0 20px rgba(16,185,129,0.5)',
-                  transition: psDragging ? 'none' : 'left 0.15s ease-out',
+                  position: 'absolute', top: 0, bottom: 0, width: 2, left: `${psSlider}%`, marginLeft: -1, zIndex: 10,
+                  background: 'rgba(255,255,255,0.95)', boxShadow: '0 0 0 1px rgba(0,0,0,0.08)',
+                  transition: psDragging ? 'none' : 'left 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
                 }}
               >
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 36, height: 36, borderRadius: '50%', background: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #10B981' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/><path d="M9 18l-6-6 6-6"/></svg>
+                <div style={{
+                  position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+                  width: 40, height: 40, borderRadius: '50%', background: 'white',
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="2" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/><path d="M9 18l-6-6 6-6"/></svg>
                 </div>
-              </div>
-
-              {/* Hint */}
-              <div style={{ position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)', fontSize: 11, color: '#9CA3AF', fontWeight: 500, zIndex: 5, pointerEvents: 'none' }}>
-                גרור כדי להשוות ← →
               </div>
             </div>
 
             {/* Bottom CTA */}
-            <div className="atlas-reveal atlas-delay-2" style={{ textAlign: 'center', marginTop: 40 }}>
-              <p style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>תפסיקו לנהל בכאוס. תתחילו לנהל עם ATLAS.</p>
+            <div className="atlas-reveal atlas-delay-2" style={{ textAlign: 'center', marginTop: 56 }}>
+              <p style={{ fontSize: 19, color: '#86868b', marginBottom: 24, fontWeight: 400 }}>תפסיקו לנהל בכאוס. תתחילו לנהל עם ATLAS.</p>
               <button
                 onClick={() => { setDemoOpen(true); setDemoSlide(0); }}
                 style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 12, padding: '14px 36px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', boxShadow: '0 4px 20px rgba(79,70,229,0.3)', transition: 'all 0.2s ease' }}
