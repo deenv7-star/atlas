@@ -16,6 +16,7 @@
     "ops:backup": "bash ops/backup.sh",
     "ops:restore": "bash ops/restore.sh",
     "test:backend": "node --test server/tests/*.test.js",
+    "generate:assets": "node scripts/generate-favicon.js && node scripts/generate-og-image.js",
     "lint:backend": "eslint server --quiet",
     "ops:verify-backup": "bash ops/verify-backup.sh",
     "typecheck:backend": "npm run check:backend"
