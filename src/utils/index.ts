@@ -1,3 +1,11 @@
+const pagePathMap: Record<string, string> = {
+    Landing: '/',
+    About: '/about',
+    Privacy: '/privacy',
+    Terms: '/terms',
+    Contact: '/contact',
+};
+
 export function createPageUrl(pageName: string) {
-    return '/' + pageName.replace(/ /g, '-');
+    return pagePathMap[pageName] ?? '/' + pageName.replace(/ /g, '-');
 }

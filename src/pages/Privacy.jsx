@@ -27,7 +27,7 @@ export default function Privacy() {
         
         <div className="prose prose-lg max-w-none text-gray-600 space-y-6">
           <p>
-            עדכון אחרון: ינואר 2024
+            עדכון אחרון: מרץ 2025
           </p>
           
           <section>
@@ -64,17 +64,49 @@ export default function Privacy() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#0B1220] mb-3">5. זכויותיכם</h2>
+            <h2 className="text-xl font-bold text-[#0B1220] mb-3">5. שמירה והחזקת מידע</h2>
             <p>
-              יש לכם זכות לגשת למידע האישי שלכם, לתקן אותו, או לבקש את מחיקתו. 
-              לכל בקשה, אנא צרו קשר עם צוות התמיכה שלנו.
+              אנו שומרים את המידע האישי שלכם כל עוד החשבון פעיל. לאחר ביטול חשבון, הנתונים נשמרים 
+              עד 30 יום לצורך גיבוי, ולאחר מכן נמחקים לצמיתות. נתוני חיוב נשמרים בהתאם לדרישות החוק 
+              (7 שנים בישראל).
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#0B1220] mb-3">6. יצירת קשר</h2>
+            <h2 className="text-xl font-bold text-[#0B1220] mb-3">6. זכויותיכם (תואם GDPR)</h2>
             <p>
-              לשאלות בנוגע למדיניות פרטיות זו, אנא צרו קשר בכתובת: privacy@stayflow.io
+              בהתאם לתקנות הגנת הפרטיות (GDPR ורשות הגנת הפרטיות בישראל), יש לכם זכות:
+            </p>
+            <ul className="list-disc pr-6 space-y-2 mt-2">
+              <li>גישה — לקבל עותק של המידע האישי שלכם</li>
+              <li>תיקון — לתקן מידע שגוי או לא מעודכן</li>
+              <li>מחיקה — לבקש מחיקת המידע שלכם ("הזכות להישכח")</li>
+              <li>הגבלת עיבוד — להגביל את השימוש במידע</li>
+              <li>ניידות נתונים — לקבל את הנתונים בפורמט מובנה</li>
+              <li>התנגדות — להתנגד לעיבוד למטרות שיווק</li>
+            </ul>
+            <p className="mt-3">
+              למימוש זכויותיכם, אנא צרו קשר בכתובת support@atlas-app.co.il. נענה בתוך 30 יום.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-[#0B1220] mb-3">7. עוגיות וטכנולוגיות דומות</h2>
+            <p>
+              אנו משתמשים בעוגיות וטכנולוגיות דומות לשיפור הפעילות, לאבטחה ולניתוח שימוש. 
+              ניתן להגדיר העדפות בדפדפן או לבטל עוגיות באמצעות ההגדרות.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-[#0B1220] mb-3">8. יצירת קשר</h2>
+            <p>
+              לשאלות בנוגע למדיניות פרטיות זו, מימוש זכויות או תלונות:
+            </p>
+            <p className="mt-2">
+              <strong>דוא"ל:</strong> support@atlas-app.co.il<br />
+              <strong>אתר:</strong> https://atlas-app.co.il<br />
+              <strong>שעות תמיכה:</strong> ימים א׳-ה׳ 09:00–18:00
             </p>
           </section>
         </div>
@@ -82,7 +114,7 @@ export default function Privacy() {
 
       <footer className="py-8 px-4 border-t bg-white mt-12">
         <div className="max-w-4xl mx-auto text-center text-gray-500 text-sm">
-          © 2024 STAYFLOW. כל הזכויות שמורות.
+          © 2025 ATLAS. כל הזכויות שמורות.
         </div>
       </footer>
     </div>

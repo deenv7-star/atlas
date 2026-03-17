@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Calendar, CreditCard, Users, CheckSquare, MessageSquare, FileText,
   Star, Zap, BarChart2, Link as LinkIcon, Receipt, Shield,
@@ -80,25 +80,31 @@ function useCountUp(target, duration = 1800) {
   return [count, ref];
 }
 
-// ─── Scroll-reveal hook ───────────────────────────────────────────────────────
+// ─── Scroll-reveal hook (bulletproof) ─────────────────────────────────────────
 function useScrollReveal() {
   useEffect(() => {
-    const els = document.querySelectorAll('.atlas-reveal');
-    if (!els.length) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('atlas-reveal--visible');
-            obs.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  });
+    let observer = null;
+    const raf = requestAnimationFrame(() => {
+      const els = document.querySelectorAll('.atlas-reveal');
+      if (!els.length) return;
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('atlas-reveal--visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      );
+      els.forEach((el) => observer.observe(el));
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      if (observer) observer.disconnect();
+    };
+  }, []);
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -135,12 +141,24 @@ export default function Landing() {
     return () => { document.removeEventListener('keydown', handleEsc); document.body.style.overflow = ''; };
   }, [demoOpen]);
 
-  const goToLogin = () => navigate('/Login');
+  const goToRegister = () => navigate('/register');
   const scrollToFeatures = () => {
     document.getElementById('atlas-features')?.scrollIntoView({ behavior: 'smooth' });
   };
   const nextSlide = () => setDemoSlide((s) => Math.min(s + 1, 4));
   const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
+
+  // Demo modal keyboard navigation (arrows, ESC)
+  useEffect(() => {
+    if (!demoOpen) return;
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setDemoOpen(false);
+      if (e.key === 'ArrowRight') prevSlide();
+      if (e.key === 'ArrowLeft') nextSlide();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [demoOpen, demoSlide]);
   const toggleFaq = (i) => setOpenFaq(openFaq === i ? null : i);
 
   const AVATARS = [
@@ -200,35 +218,35 @@ export default function Landing() {
 
   const PRICING_PLANS = [
     {
-      name: 'STARTER', monthlyPrice: 399, yearlyPrice: 319,
+      name: 'מתחיל', monthlyPrice: 399, yearlyPrice: 319,
       desc: 'למתחמים קטנים עד 3 נכסים',
       included: ['עד 3 נכסים', 'ניהול הזמנות', 'ניהול לידים', 'תשלומים בסיסיים', 'תמיכה במייל'],
       excluded: ['אוטומציות', 'חוזים דיגיטליים', 'אינטגרציות מתקדמות'],
       cta: 'התחל חינם', featured: false,
     },
     {
-      name: 'PRO', monthlyPrice: 699, yearlyPrice: 559,
+      name: 'מקצועי', monthlyPrice: 699, yearlyPrice: 559,
       desc: 'לעסקים צומחים עד 10 נכסים',
       included: ['עד 10 נכסים', 'כל תכונות Starter', 'אוטומציות חכמות', 'חוזים דיגיטליים', 'כל האינטגרציות', 'דוחות מתקדמים', 'תמיכה בוואטסאפ'],
       excluded: ['API מותאם אישית'],
       cta: 'התחל חינם 14 יום', featured: true,
     },
     {
-      name: 'BUSINESS', monthlyPrice: 999, yearlyPrice: 799,
+      name: 'עסקי', monthlyPrice: 999, yearlyPrice: 799,
       desc: 'לרשתות ומתחמים גדולים — ללא הגבלה',
       included: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API מותאם אישית', 'מנהל חשבון אישי', 'הדרכה והטמעה', 'SLA מובטח', 'תמיכה 24/7'],
       excluded: [],
-      cta: 'דברו איתנו', featured: false,
+      cta: 'דברו איתנו', featured: false, isBusiness: true,
     },
   ];
 
   const NEW_TESTIMONIALS = [
-    { text: 'ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות.', author: 'רחל מ.', role: 'מנהלת 5 צימרים, הגליל' },
-    { text: 'תוך שבוע הבנתי שזה הכלי שחיכיתי לו. הכל בעברית, הכל פשוט, הכל עובד.', author: 'יוסי כ.', role: 'בעל ריזורט, ים המלח' },
-    { text: 'ההכנסות שלי עלו ב-35% כי סוף סוף אני יכול לעקוב אחרי כל ליד ולא לפספס הזמנות.', author: 'מירי ש.', role: 'בעלת 8 בקתות, גולן' },
-    { text: 'הצוות שלי מקבל משימות ניקיון אוטומטית. אין יותר טלפונים מיותרים.', author: 'דני א.', role: 'מנהל מתחם, כרמל' },
-    { text: 'שלחתי חוזים לחתימה דיגיטלית לראשונה והלקוחות התרשמו. נראה מקצועי ברמה אחרת.', author: 'נועה ר.', role: 'בעלת וילות, שרון' },
-    { text: 'התמיכה בעברית היא המשחק-שינוי. סוף סוף מערכת שמבינה אותי.', author: 'אורי פ.', role: 'מנהל קומפלקס, אילת' },
+    { text: 'ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות.', author: 'רחל', role: 'בעלת 4 צימרים — הגליל', avatar: 'https://ui-avatars.com/api/?name=Rachel+M&background=random', rating: 5 },
+    { text: 'תוך שבוע הבנתי שזה הכלי שחיכיתי לו. הכל בעברית, הכל פשוט, הכל עובד.', author: 'יוסי', role: 'בעל ריזורט — ים המלח', avatar: 'https://ui-avatars.com/api/?name=Yossi+K&background=random', rating: 5 },
+    { text: 'ההכנסות שלי עלו ב-35% כי סוף סוף אני יכול לעקוב אחרי כל ליד ולא לפספס הזמנות.', author: 'מירי', role: 'בעלת 8 בקתות — גולן', avatar: 'https://ui-avatars.com/api/?name=Miri+S&background=random', rating: 4.5 },
+    { text: 'הצוות שלי מקבל משימות ניקיון אוטומטית. אין יותר טלפונים מיותרים.', author: 'דני', role: 'מנהל מתחם — כרמל', avatar: 'https://ui-avatars.com/api/?name=Dani+A&background=random', rating: 5 },
+    { text: 'שלחתי חוזים לחתימה דיגיטלית לראשונה והלקוחות התרשמו. נראה מקצועי ברמה אחרת.', author: 'נועה', role: 'בעלת וילות — שרון', avatar: 'https://ui-avatars.com/api/?name=Noa+R&background=random', rating: 4.5 },
+    { text: 'התמיכה בעברית היא המשחק-שינוי. סוף סוף מערכת שמבינה אותי.', author: 'אורי', role: 'מנהל קומפלקס — אילת', avatar: 'https://ui-avatars.com/api/?name=Uri+F&background=random', rating: 5 },
   ];
 
   const FAQ_DATA = [
@@ -440,20 +458,6 @@ export default function Landing() {
           bottom: -100px; left: 50%;
           transform: translateX(-50%);
         }
-
-        /* ─ Reveal ─ */
-        .atlas-reveal {
-          opacity: 0;
-          transform: translateY(30px);
-          transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1),
-                      transform 0.5s cubic-bezier(0.16,1,0.3,1);
-        }
-        .atlas-reveal--visible { opacity: 1; transform: translateY(0); }
-        .atlas-delay-1 { transition-delay: 0.10s; }
-        .atlas-delay-2 { transition-delay: 0.20s; }
-        .atlas-delay-3 { transition-delay: 0.30s; }
-        .atlas-delay-4 { transition-delay: 0.40s; }
-        .atlas-delay-5 { transition-delay: 0.50s; }
 
         /* ─ Dashboard floats ─ */
         @keyframes atlasMainFloat {
@@ -716,14 +720,14 @@ export default function Landing() {
         >
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 80 }}>
             <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-              <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 42, width: 'auto', objectFit: 'contain' }} />
+              <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" style={{ height: 42, width: 'auto', objectFit: 'contain' }} />
             </div>
 
             <div className="atlas-nav-links" style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
               {[
-                { label: 'תכונות', action: () => document.getElementById('atlas-features')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'מחירים', action: () => document.getElementById('מחירים')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'לקוחות', action: () => document.getElementById('לקוחות')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'תכונות', action: () => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'מחירים', action: () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'לקוחות', action: () => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }) },
                 { label: 'דמו', action: () => { setDemoOpen(true); setDemoSlide(0); } },
               ].map((l) => (
                 <a key={l.label} href="#" onClick={(e) => { e.preventDefault(); l.action(); }} className="atlas-nav-link">{l.label}</a>
@@ -733,7 +737,7 @@ export default function Landing() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <button
                 className="atlas-nav-cta"
-                onClick={goToLogin}
+                onClick={goToRegister}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -752,7 +756,7 @@ export default function Landing() {
               </button>
               <button
                 className="atlas-nav-cta"
-                onClick={goToLogin}
+                onClick={goToRegister}
                 style={{
                   background: '#4F46E5',
                   border: 'none',
@@ -791,21 +795,21 @@ export default function Landing() {
               style={{ background: 'white', borderTop: '1px solid #F3F4F6', padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}
             >
               {[
-                { label: 'תכונות', action: () => document.getElementById('atlas-features')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'מחירים', action: () => document.getElementById('מחירים')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'לקוחות', action: () => document.getElementById('לקוחות')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'תכונות', action: () => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'מחירים', action: () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'לקוחות', action: () => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }) },
                 { label: 'דמו', action: () => { setDemoOpen(true); setDemoSlide(0); } },
               ].map((l) => (
                 <a key={l.label} href="#" onClick={(e) => { e.preventDefault(); setMenuOpen(false); l.action(); }} className="atlas-nav-link" style={{ fontSize: 16 }}>{l.label}</a>
               ))}
               <button
-                onClick={() => { setMenuOpen(false); goToLogin(); }}
+                onClick={() => { setMenuOpen(false); goToRegister(); }}
                 style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '12px 22px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
               >
                 כניסה
               </button>
               <button
-                onClick={() => { setMenuOpen(false); goToLogin(); }}
+                onClick={() => { setMenuOpen(false); goToRegister(); }}
                 style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 8, padding: '12px 22px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
               >
                 הרשמה חינם
@@ -856,8 +860,7 @@ export default function Landing() {
                 </h1>
 
                 <p style={{ fontSize: 17, color: '#6B7280', maxWidth: 420, marginTop: 24, lineHeight: 1.65 }}>
-                  הפלטפורמה המובילה לניהול מתחמי נופש בישראל.<br />
-                  הזמנות, תשלומים, ניהול צוות ותקשורת לקוחות — הכל במקום אחד.
+                  מנהלים 3+ יחידות אירוח? ATLAS מאגד הזמנות, תשלומים, צוות ותקשורת עם אורחים — במערכת אחת בעברית.
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 28 }}>
@@ -884,9 +887,9 @@ export default function Landing() {
                 </div>
 
                 <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 36, flexWrap: 'wrap' }}>
-                  <button className="atlas-btn-primary" onClick={goToLogin}>התחל חינם</button>
+                  <button className="atlas-btn-primary" onClick={goToRegister}>פתח חשבון חינם — תוך 60 שניות</button>
                   <button
-                    onClick={scrollToFeatures}
+                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                     style={{
                       background: 'transparent', border: 'none',
                       color: '#374151', fontWeight: 600, fontSize: 16,
@@ -1267,10 +1270,10 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 2 — BENTO FEATURES GRID
         ════════════════════════════════════════ */}
-        <section id="atlas-features" style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+        <section id="features" style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
-              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>כל מה שצריך לנהל מתחם נופש</h2>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מערכת אחת. במקום 6 כלים שונים.</h2>
               <p style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>פלטפורמה אחת שמחליפה 6 כלים שונים</p>
             </div>
 
@@ -1430,6 +1433,40 @@ export default function Landing() {
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>אבטחה ופרטיות</h3>
                 <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>הצפנה מלאה, גיבויים אוטומטיים, עמידה בתקני GDPR.</p>
+              </div>
+            </div>
+
+            {/* Comparison table — למה ATLAS ולא Guesty או Hostaway? */}
+            <div className="atlas-reveal" style={{ marginTop: 80 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 32px', textAlign: 'center' }}>למה ATLAS ולא Guesty או Hostaway?</h2>
+              <div style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid #E5E7EB', background: 'white', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500, fontFamily: 'Heebo, sans-serif' }}>
+                  <thead>
+                    <tr style={{ background: '#F9FAFB', borderBottom: '2px solid #E5E7EB' }}>
+                      <th style={{ padding: '16px 20px', textAlign: 'right', fontWeight: 700, color: '#111827', fontSize: 14 }}>פיצ'ר</th>
+                      <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 800, color: '#4F46E5', fontSize: 14 }}>ATLAS</th>
+                      <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 600, color: '#6B7280', fontSize: 14 }}>Guesty</th>
+                      <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 600, color: '#6B7280', fontSize: 14 }}>Hostaway</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { feat: 'שפה', atlas: 'עברית מלאה', g: 'אנגלית', h: 'אנגלית' },
+                      { feat: 'מחיר', atlas: '₪399/חודש', g: '$200+/חודש', h: '$100+/נכס' },
+                      { feat: 'תמיכה', atlas: 'ישראלית', g: 'גלובלית', h: 'גלובלית' },
+                      { feat: 'WhatsApp', atlas: '✓', g: '✗', h: '✗' },
+                      { feat: 'חשבוניות ישראליות', atlas: '✓', g: '✗', h: '✗' },
+                      { feat: 'הגדרה', atlas: '5 דקות', g: 'שבועות', h: 'ימים' },
+                    ].map((row, i) => (
+                      <tr key={i} style={{ borderBottom: i < 5 ? '1px solid #F3F4F6' : 'none' }}>
+                        <td style={{ padding: '14px 20px', fontWeight: 600, color: '#374151', fontSize: 14 }}>{row.feat}</td>
+                        <td style={{ padding: '14px 20px', textAlign: 'center', fontWeight: 700, color: '#4F46E5', fontSize: 14 }}>{row.atlas}</td>
+                        <td style={{ padding: '14px 20px', textAlign: 'center', color: '#6B7280', fontSize: 14 }}>{row.g}</td>
+                        <td style={{ padding: '14px 20px', textAlign: 'center', color: '#6B7280', fontSize: 14 }}>{row.h}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -1595,7 +1632,7 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 6 — PRICING
         ════════════════════════════════════════ */}
-        <section id="מחירים" style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+        <section id="pricing" style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>תמחור פשוט ושקוף</h2>
@@ -1659,33 +1696,67 @@ export default function Landing() {
                     </div>
                   )}
                   <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>{plan.name}</h3>
+                  {billingYearly && (
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#D1FAE5', color: '#065F46', fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 999, marginBottom: 8 }}>
+                      חסוך 20%
+                    </div>
+                  )}
                   <p style={{ fontSize: 14, color: '#6B7280', margin: '0 0 20px' }}>{plan.desc}</p>
                   <div style={{ marginBottom: 24 }}>
                     <span style={{ fontSize: 42, fontWeight: 900, color: '#111827' }}><AnimatedPrice value={billingYearly ? plan.yearlyPrice : plan.monthlyPrice} /></span>
                     <span style={{ fontSize: 16, color: '#6B7280' }}>/חודש</span>
                   </div>
 
-                  <button
-                    onClick={goToLogin}
-                    style={{
-                      width: '100%',
-                      background: plan.featured ? '#4F46E5' : '#111827',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: 10,
-                      padding: '14px 0',
-                      fontWeight: 700,
-                      fontSize: 16,
-                      fontFamily: 'Heebo, sans-serif',
-                      cursor: 'pointer',
-                      transition: 'all 0.25s ease',
-                      marginBottom: 24,
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
-                  >
-                    {plan.cta}
-                  </button>
+                  {plan.isBusiness ? (
+                    <a
+                      href="https://wa.me/972545380085?text=מעוניין%20בחבילת%20עסקי"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        width: '100%',
+                        background: '#25D366',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '14px 0',
+                        fontWeight: 700,
+                        fontSize: 16,
+                        fontFamily: 'Heebo, sans-serif',
+                        cursor: 'pointer',
+                        transition: 'all 0.25s ease',
+                        marginBottom: 24,
+                        display: 'block',
+                        textAlign: 'center',
+                        textDecoration: 'none',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                    >
+                      {plan.cta}
+                    </a>
+                  ) : (
+                    <button
+                      onClick={goToRegister}
+                      style={{
+                        width: '100%',
+                        background: plan.featured ? '#4F46E5' : '#111827',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '14px 0',
+                        fontWeight: 700,
+                        fontSize: 16,
+                        fontFamily: 'Heebo, sans-serif',
+                        cursor: 'pointer',
+                        transition: 'all 0.25s ease',
+                        marginBottom: 24,
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                    >
+                      {plan.cta}
+                    </button>
+                  )}
 
                   <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: 20 }}>
                     {plan.included.map((item, j) => (
@@ -1714,7 +1785,7 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 7 — TESTIMONIALS (Premium Cards)
         ════════════════════════════════════════ */}
-        <section id="לקוחות" style={{ padding: '100px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1 }}>
+        <section id="testimonials" style={{ padding: '100px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FEF3C7', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
@@ -1734,49 +1805,51 @@ export default function Landing() {
                 "ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות. לא מאמין שניהלתי את הכל עם Excel עד עכשיו."
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700, color: 'white' }}>ר</div>
+                <img src={NEW_TESTIMONIALS[0].avatar} alt={`${NEW_TESTIMONIALS[0].author} — ${NEW_TESTIMONIALS[0].role}`} loading="lazy" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover' }} />
                 <div>
-                  <div style={{ fontWeight: 700, color: 'white', fontSize: 16 }}>רחל מ.</div>
-                  <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>מנהלת 5 צימרים, הגליל</div>
+                  <div style={{ fontWeight: 700, color: 'white', fontSize: 16 }}>{NEW_TESTIMONIALS[0].author}</div>
+                  <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>{NEW_TESTIMONIALS[0].role}</div>
                 </div>
-                <div style={{ marginRight: 'auto', display: 'flex', gap: 2 }}>
-                  {[...Array(5)].map((_, j) => <span key={j} style={{ color: '#FCD34D', fontSize: 16 }}>★</span>)}
+                <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: 999, fontSize: 12, fontWeight: 600 }}>ביקורת מאומתת ✓</span>
+                  <div style={{ display: 'flex', gap: 1 }}>
+                    {[...Array(5)].map((_, j) => <span key={j} style={{ color: j < NEW_TESTIMONIALS[0].rating ? '#FCD34D' : 'rgba(255,255,255,0.3)', fontSize: 16 }}>★</span>)}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Grid of remaining testimonials */}
             <div className="atlas-testi-grid-new" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-              {NEW_TESTIMONIALS.slice(1).map((t, i) => {
-                const initials = t.author.charAt(0);
-                const gradients = ['from-blue-400 to-indigo-500', 'from-emerald-400 to-teal-500', 'from-amber-400 to-orange-500', 'from-rose-400 to-pink-500', 'from-violet-400 to-purple-500'];
-                return (
-                  <div
-                    key={i}
-                    className={`atlas-reveal atlas-delay-${(i % 3) + 1}`}
-                    style={{
-                      background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, padding: 28,
-                      transition: 'all 0.25s ease', cursor: 'default',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(79,70,229,0.1)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: `linear-gradient(135deg, ${['#818CF8,#6366F1','#34D399,#10B981','#FBBF24,#F59E0B','#FB7185,#F43F5E','#A78BFA,#8B5CF6'][i % 5]})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: 'white' }}>{initials}</div>
-                        <div>
-                          <div style={{ fontWeight: 700, color: '#111827', fontSize: 14 }}>{t.author}</div>
-                          <div style={{ fontSize: 12, color: '#9CA3AF' }}>{t.role}</div>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: 1 }}>
-                        {[...Array(5)].map((_, j) => <span key={j} style={{ color: '#F59E0B', fontSize: 13 }}>★</span>)}
+              {NEW_TESTIMONIALS.slice(1).map((t, i) => (
+                <div
+                  key={i}
+                  className={`atlas-reveal atlas-delay-${(i % 3) + 1}`}
+                  style={{
+                    background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, padding: 28,
+                    transition: 'all 0.25s ease', cursor: 'default',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(79,70,229,0.1)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <img src={t.avatar} alt={`${t.author} — ${t.role}`} loading="lazy" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#111827', fontSize: 14 }}>{t.author}</div>
+                        <div style={{ fontSize: 12, color: '#9CA3AF' }}>{t.role}</div>
                       </div>
                     </div>
-                    <p style={{ fontSize: 15, color: '#374151', lineHeight: 1.7, margin: 0 }}>"{t.text}"</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, background: '#D1FAE5', color: '#065F46', padding: '2px 6px', borderRadius: 999, fontSize: 10, fontWeight: 600 }}>ביקורת מאומתת ✓</span>
+                      <div style={{ display: 'flex', gap: 1 }}>
+                        {[1,2,3,4,5].map((j) => <span key={j} style={{ color: j <= t.rating ? '#F59E0B' : '#D1D5DB', fontSize: 13 }}>★</span>)}
+                      </div>
+                    </div>
                   </div>
-                );
-              })}
+                  <p style={{ fontSize: 15, color: '#374151', lineHeight: 1.7, margin: 0 }}>"{t.text}"</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -1872,8 +1945,8 @@ export default function Landing() {
             {/* CTA below FAQ */}
             <div className="atlas-reveal" style={{ textAlign: 'center', marginTop: 48 }}>
               <p style={{ fontSize: 15, color: '#9CA3AF', marginBottom: 12 }}>לא מצאת תשובה?</p>
-              <a
-                href="#atlas-contact"
+              <Link
+                to="/contact"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
                   background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
@@ -1888,7 +1961,7 @@ export default function Landing() {
               >
                 דברו איתנו
                 <ChevronLeft size={16} />
-              </a>
+              </Link>
             </div>
           </div>
         </section>
@@ -1905,17 +1978,20 @@ export default function Landing() {
             </div>
             <div className="atlas-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
               {[
-                { num: '500+', label: 'נכסים מנוהלים', sub: 'בכל רחבי הארץ' },
-                { num: '₪12M+', label: 'הכנסות שעברו דרכנו', sub: 'בשנה האחרונה' },
-                { num: '3,200+', label: 'הזמנות בחודש', sub: 'מסונכרנות אוטומטית' },
+                { num: '50+', label: 'מתחמים בגרסת בטא', sub: 'בכל רחבי הארץ' },
+                { num: '₪500K+', label: 'הכנסות מנוהלות', sub: 'בשנה האחרונה' },
+                { num: '500+', label: 'הזמנות מנוהלות', sub: 'מסונכרנות אוטומטית' },
                 { num: '98%', label: 'שביעות רצון', sub: 'של המשתמשים שלנו' },
               ].map((s, i) => (
-                <div key={i} className="atlas-reveal" style={{ textAlign: 'center', padding: 24, background: 'rgba(255,255,255,0.1)', borderRadius: 16, backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <div key={i} className="atlas-reveal" style={{ textAlign: 'center', padding: 24, background: 'rgba(255,255,255,0.15)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.2)' }}>
                   <div style={{ fontSize: 42, fontWeight: 900, color: 'white', lineHeight: 1.1, fontFamily: 'Heebo, sans-serif' }}>{s.num}</div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.95)', marginTop: 6, fontFamily: 'Heebo, sans-serif' }}>{s.label}</div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>{s.sub}</div>
                 </div>
               ))}
+            <p className="atlas-reveal" style={{ gridColumn: '1 / -1', textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: -16, fontFamily: 'Heebo, sans-serif' }}>
+              נתוני גרסת הבטא — מעודכן מרץ 2025
+            </p>
             </div>
           </div>
         </section>
@@ -1974,14 +2050,14 @@ export default function Landing() {
                 margin: '0 0 12px',
               }}
             >
-              מוכן לנהל חכם יותר?
+              עדיין מנהל עם Excel ו-WhatsApp? הגיע הזמן לשדרג.
             </h2>
             <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.80)', margin: '12px 0 40px' }}>
               הצטרף ל-500+ מנהלים שכבר עובדים עם ATLAS
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
               <button
-                onClick={goToLogin}
+                onClick={goToRegister}
                 style={{
                   background: 'white',
                   color: '#4F46E5',
@@ -2001,7 +2077,7 @@ export default function Landing() {
                 התחל 14 יום חינם ←
               </button>
               <button
-                onClick={goToLogin}
+                onClick={goToRegister}
                 style={{
                   background: 'transparent',
                   color: 'white',
@@ -2045,27 +2121,31 @@ export default function Landing() {
               {/* Brand */}
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
-                  <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+                  <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" loading="lazy" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
                 </div>
                 <p style={{ fontSize: 15, color: '#9CA3AF', margin: '0 0 20px' }}>ניהול מתחמי נופש — פשוט יותר.</p>
                 <div style={{ display: 'flex', gap: 10 }}>
-                  {['f', 'in', 'tw', 'ig'].map((s) => (
-                    <div
-                      key={s}
+                  {[
+                    { name: 'Instagram', href: 'https://instagram.com', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> },
+                    { name: 'LinkedIn', href: 'https://linkedin.com', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
+                    { name: 'Facebook', href: 'https://facebook.com', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> },
+                    { name: 'Twitter', href: 'https://x.com', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
+                  ].map((s) => (
+                    <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.name}
                       style={{
                         width: 36, height: 36,
                         borderRadius: '50%',
                         background: 'rgba(255,255,255,0.08)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: '#9CA3AF', fontSize: 13, fontWeight: 600,
+                        color: '#9CA3AF',
                         cursor: 'pointer',
-                        transition: 'background 0.2s',
+                        transition: 'background 0.2s, color 0.2s',
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = 'white'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#9CA3AF'; }}
                     >
-                      {s}
-                    </div>
+                      {s.icon}
+                    </a>
                   ))}
                 </div>
               </div>
@@ -2074,9 +2154,9 @@ export default function Landing() {
               <div>
                 <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>מוצר</h4>
                 {[
-                  { label: 'תכונות', href: '#atlas-features' },
-                  { label: 'מחירים', href: '#מחירים' },
-                  { label: 'אינטגרציות', href: '#atlas-features' },
+                  { label: 'תכונות', href: '#features' },
+                  { label: 'מחירים', href: '#pricing' },
+                  { label: 'אינטגרציות', href: '#features' },
                   { label: 'עדכונים', href: '#' },
                   { label: 'דמו', href: '#', onClick: () => { setDemoOpen(true); setDemoSlide(0); } },
                 ].map((l) => (
@@ -2093,10 +2173,10 @@ export default function Landing() {
               <div>
                 <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>חברה</h4>
                 {[
-                  { label: 'אודות', href: '/About' },
+                  { label: 'אודות', href: '/about' },
                   { label: 'בלוג', href: '#' },
                   { label: 'קריירה', href: '#' },
-                  { label: 'צור קשר', href: '/Contact' },
+                  { label: 'צור קשר', href: '/contact' },
                   { label: 'שותפים', href: '#' },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
@@ -2115,8 +2195,8 @@ export default function Landing() {
                   { label: 'מרכז עזרה', href: '#' },
                   { label: 'תיעוד API', href: '#' },
                   { label: 'סטטוס מערכת', href: '#' },
-                  { label: 'פרטיות', href: '/Privacy' },
-                  { label: 'תנאי שימוש', href: '/Terms' },
+                  { label: 'פרטיות', href: '/privacy' },
+                  { label: 'תנאי שימוש', href: '/terms' },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
                     <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
@@ -2202,6 +2282,26 @@ export default function Landing() {
                 <div className="atlas-demo-slide-mockup">
                   {renderDemoSlide(demoSlide)}
                 </div>
+              </div>
+
+              {/* צפה בדמו המלא CTA */}
+              <div style={{ textAlign: 'center', padding: '0 24px 16px' }}>
+                <a
+                  href="https://wa.me/972545380085?text=מעוניין%20בדמו%20מלא%20של%20ATLAS"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    background: '#25D366', color: 'white', padding: '12px 24px',
+                    borderRadius: 10, fontWeight: 700, fontSize: 15,
+                    textDecoration: 'none', fontFamily: 'Heebo, sans-serif',
+                    transition: 'opacity 0.2s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; }}
+                  onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+                >
+                  צפה בדמו המלא
+                </a>
               </div>
 
               {/* Navigation */}

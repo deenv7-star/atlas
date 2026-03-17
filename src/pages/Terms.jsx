@@ -24,7 +24,7 @@ export default function Terms() {
 
       <main className="max-w-4xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-[#0B1220] mb-4">תנאי שימוש - ATLAS</h1>
-        <p className="text-gray-500 mb-8">עדכון אחרון: פברואר 2026</p>
+        <p className="text-gray-500 mb-8">עדכון אחרון: מרץ 2025</p>
         
         <div className="prose prose-lg max-w-none text-gray-700 space-y-8">
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
@@ -247,8 +247,8 @@ export default function Terms() {
               לשאלות, בקשות תמיכה או כל נושא הקשור לתנאי שימוש אלה, אנא צרו קשר:
             </p>
             <div className="space-y-2 text-sm">
-              <p><strong>דואר אלקטרוני:</strong> legal@atlas.io</p>
-              <p><strong>תמיכה טכנית:</strong> support@atlas.io</p>
+              <p><strong>דואר אלקטרוני:</strong> legal@atlas-app.co.il</p>
+              <p><strong>תמיכה טכנית:</strong> support@atlas-app.co.il</p>
               <p><strong>כתובת:</strong> רח' הרצל 1, תל אביב, ישראל</p>
             </div>
           </section>
@@ -257,7 +257,7 @@ export default function Terms() {
 
       <footer className="py-8 px-4 border-t bg-white mt-12">
         <div className="max-w-4xl mx-auto text-center text-gray-500 text-sm">
-          © 2024 STAYFLOW. כל הזכויות שמורות.
+          © 2025 ATLAS. כל הזכויות שמורות.
         </div>
       </footer>
     </div>

@@ -108,6 +108,23 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ─── Atlas scroll reveal (bulletproof) ──────────────── */
+.atlas-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.atlas-reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.atlas-delay-1 { transition-delay: 0.10s; }
+.atlas-delay-2 { transition-delay: 0.20s; }
+.atlas-delay-3 { transition-delay: 0.30s; }
+.atlas-delay-4 { transition-delay: 0.40s; }
+.atlas-delay-5 { transition-delay: 0.50s; }
+
 /* ─── Page & card backgrounds ──────────────────────── */
 .page-content {
   background-color: var(--page-bg);

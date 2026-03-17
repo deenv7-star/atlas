@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
 import Logo from '@/components/common/Logo';
 import { Button } from '@/components/ui/button';
-import { Target, Users, Globe, Shield } from 'lucide-react';
+import { Target, Users, Globe, Shield, Heart } from 'lucide-react';
 
 export default function About() {
   return (
@@ -67,10 +67,26 @@ export default function About() {
               className="bg-gradient-to-br from-[#00D1C1]/10 to-purple-100 rounded-3xl p-12 flex items-center justify-center"
             >
               <div className="text-center">
-                <div className="text-6xl font-bold text-[#00D1C1] mb-4">5,000+</div>
-                <div className="text-xl text-gray-700">נכסים מנוהלים</div>
+                <div className="text-6xl font-bold text-[#00D1C1] mb-4">50+</div>
+                <div className="text-xl text-gray-700">נכסים מנוהלים בגרסת בטא</div>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Founder Section */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">המייסד</h2>
+          <div className="flex flex-col items-center">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00D1C1] to-indigo-500 flex items-center justify-center text-white text-3xl font-bold mb-4 shadow-lg">
+              ?
+            </div>
+            <p className="text-lg text-gray-600 text-center max-w-xl">
+              ATLAS נוסדה על ידי צוות ישראלי שמכיר מקרוב את אתגרי ניהול מתחמי הנופש. 
+              אנחנו כאן כדי לתת לכם את הכלים שהעסק שלכם באמת צריך.
+            </p>
           </div>
         </div>
       </section>
@@ -79,7 +95,7 @@ export default function About() {
       <section className="py-20 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">הערכים שלנו</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -111,6 +127,17 @@ export default function About() {
               <Globe className="w-12 h-12 text-[#00D1C1] mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-3">חדשנות מתמדת</h3>
               <p className="text-gray-600">אנחנו משקיעים בפיתוח מתמיד כדי להבטיח שתמיד תהיה לכם הטכנולוגיה המתקדמת ביותר.</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-2xl p-8"
+            >
+              <Heart className="w-12 h-12 text-[#00D1C1] mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-3">פותח בישראל 🇮🇱</h3>
+              <p className="text-gray-600">המערכת פותחה בישראל, בעברית, עבור שוק האירוח הישראלי. אנחנו כאן בשבילכם.</p>
             </motion.div>
           </div>
         </div>
@@ -154,12 +181,12 @@ export default function About() {
       <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            מוכנים להצטרף למהפכה?
+            מוכנים להצטרף?
           </h2>
           <p className="text-xl text-white/70 mb-8">
-            הצטרפו לאלפי בעלי נכסים שכבר מנהלים את העסק שלהם בחכמה
+            הצטרפו למנהלי מתחמים שכבר עובדים עם ATLAS
           </p>
-          <Link to={createPageUrl('Landing')}>
+          <Link to="/register">
             <Button
               size="lg"
               className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"

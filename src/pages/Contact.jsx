@@ -52,7 +52,7 @@ export default function Contact() {
             {[
               { icon: Mail, label: 'אימייל', value: 'support@atlas-app.co.il', href: 'mailto:support@atlas-app.co.il' },
               { icon: Phone, label: 'טלפון', value: '03-1234567', href: 'tel:031234567' },
-              { icon: Clock, label: 'שעות פעילות', value: 'ימים א-ה 9:00-18:00' },
+              { icon: Clock, label: 'שעות פעילות', value: 'ימים א-ה 09:00-18:00' },
               { icon: MapPin, label: 'כתובת', value: 'תל אביב, ישראל' },
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-4">

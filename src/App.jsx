@@ -102,6 +102,12 @@ const AuthenticatedApp = () => {
       <Route path="/update-password" element={<UpdatePassword />} />
       <Route path="/login" element={<Navigate to="/Login" replace />} />
 
+      {/* Public static pages — no auth required */}
+      <Route path="/about" element={<LayoutWrapper currentPageName="About"><Pages.About /></LayoutWrapper>} />
+      <Route path="/privacy" element={<LayoutWrapper currentPageName="Privacy"><Pages.Privacy /></LayoutWrapper>} />
+      <Route path="/terms" element={<LayoutWrapper currentPageName="Terms"><Pages.Terms /></LayoutWrapper>} />
+      <Route path="/contact" element={<LayoutWrapper currentPageName="Contact"><Pages.Contact /></LayoutWrapper>} />
+
       {/* Onboarding — requires auth but NOT onboarding_completed (user lands here after verification) */}
       <Route
         path="/onboarding"
@@ -138,7 +144,7 @@ const AuthenticatedApp = () => {
 
       {/* All other pages — protected */}
       {Object.entries(Pages)
-        .filter(([path]) => !['Landing', 'Login', 'Onboarding', 'Register', 'VerifyEmail'].includes(path))
+        .filter(([path]) => !['Landing', 'Login', 'Onboarding', 'Register', 'VerifyEmail', 'About', 'Privacy', 'Terms', 'Contact'].includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}
