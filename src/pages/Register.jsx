@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -70,23 +70,15 @@ export default function Register() {
     setIsLoading(true);
     setEmailExists(false);
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      const data = await base44.auth.signUp({
         email: form.email.trim(),
         password: form.password,
+        full_name: '',
+        organization_name: '',
       });
-
-      if (signUpError) {
-        if (signUpError.message?.includes('already registered') || signUpError.message?.includes('already exists')) {
-          setEmailExists(true);
-          recordAttempt(form.email);
-          setIsLoading(false);
-          return;
-        }
-        throw signUpError;
-      }
       clearAttempts(form.email);
 
-      if (data?.user && !data.session) {
+      if (data?.user && !data?.session) {
         toast.success('נשלח מייל לאימות');
         navigate('/verify-email', { state: { email: form.email.trim() }, replace: true });
       } else if (data?.session) {
@@ -94,14 +86,14 @@ export default function Register() {
         navigate('/onboarding', { replace: true });
       }
     } catch (err) {
-      const msg = (err.message || '').toLowerCase();
+      const msg = String(err?.message || '').toLowerCase();
       if (msg.includes('already registered') || msg.includes('already exists')) {
         setEmailExists(true);
         recordAttempt(form.email);
       } else {
         recordAttempt(form.email);
-        const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err.name === 'TypeError';
-        toast.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err.message || 'אירעה שגיאה. נסה שוב.'));
+        const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err?.name === 'TypeError';
+        toast.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err?.message || 'אירעה שגיאה. נסה שוב.'));
       }
     } finally {
       setIsLoading(false);

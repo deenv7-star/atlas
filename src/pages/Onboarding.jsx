@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -87,9 +88,13 @@ export default function Onboarding() {
 
   const persistStep = useCallback(async (s) => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        await supabase.from('profiles').update({ onboarding_step: s + 1 }).eq('id', authUser.id);
+      if (isSupabaseConfigured && supabase) {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          await supabase.from('profiles').update({ onboarding_step: s + 1 }).eq('id', authUser.id);
+        }
+      } else {
+        await base44.auth.updateMe({ onboarding_step: s + 1 });
       }
     } catch {}
   }, []);
@@ -265,19 +270,32 @@ export default function Onboarding() {
     setSelectedPlanKey(planKey);
     setSaving(true);
     try {
-      if (user?.organization_id) {
-        await supabase.from('organizations').update({ subscription_plan: planKey }).eq('id', user.organization_id);
-      }
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const trialEnd = new Date();
-        trialEnd.setDate(trialEnd.getDate() + 14);
-        await supabase.from('profiles').update({
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 14);
+      if (isSupabaseConfigured && supabase) {
+        if (user?.organization_id) {
+          await supabase.from('organizations').update({ subscription_plan: planKey }).eq('id', user.organization_id);
+        }
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          await supabase.from('profiles').update({
+            selected_plan: planKey,
+            onboarding_step: TOTAL_STEPS,
+            trial_ends_at: trialEnd.toISOString(),
+            subscription_status: 'trialing',
+          }).eq('id', authUser.id);
+        }
+      } else {
+        if (user?.organization_id) {
+          await base44.entities.Organization.update(user.organization_id, { subscription_plan: planKey });
+        }
+        await base44.auth.updateMe({
           selected_plan: planKey,
+          subscription_plan: planKey,
           onboarding_step: TOTAL_STEPS,
           trial_ends_at: trialEnd.toISOString(),
           subscription_status: 'trialing',
-        }).eq('id', authUser.id);
+        });
       }
       setDirection(1);
       setAnimKey(k => k + 1);
@@ -341,25 +359,39 @@ export default function Onboarding() {
   const handleFinish = async () => {
     setSaving(true);
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const trialEnd = new Date();
-        trialEnd.setDate(trialEnd.getDate() + 14);
-        const { error } = await supabase.from('profiles').update({
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 14);
+      if (isSupabaseConfigured && supabase) {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          const { error } = await supabase.from('profiles').update({
+            onboarding_completed: true,
+            onboarding_step: TOTAL_STEPS,
+            selected_plan: selectedPlanKey,
+            trial_ends_at: trialEnd.toISOString(),
+            subscription_status: 'trialing',
+          }).eq('id', authUser.id);
+          if (error) {
+            console.warn('[Onboarding] handleFinish update failed:', error);
+            toast.error('שגיאה בשמירת הנתונים. הרץ את החלק האחרון של 001_initial.sql ב-Supabase SQL Editor.');
+          }
+        }
+      } else {
+        await base44.auth.updateMe({
           onboarding_completed: true,
           onboarding_step: TOTAL_STEPS,
           selected_plan: selectedPlanKey,
           trial_ends_at: trialEnd.toISOString(),
           subscription_status: 'trialing',
-        }).eq('id', authUser.id);
-        if (error) {
-          console.warn('[Onboarding] handleFinish update failed:', error);
-          toast.error('שגיאה בשמירת הנתונים. הרץ את החלק האחרון של 001_initial.sql ב-Supabase SQL Editor.');
-        }
+        });
       }
     } catch (err) {
       console.warn('[Onboarding] handleFinish:', err);
-      toast.error('שגיאה בשמירת הנתונים. הרץ את החלק האחרון של 001_initial.sql ב-Supabase SQL Editor.');
+      if (isSupabaseConfigured) {
+        toast.error('שגיאה בשמירת הנתונים. הרץ את החלק האחרון של 001_initial.sql ב-Supabase SQL Editor.');
+      } else {
+        toast.error('שגיאה בשמירת הנתונים. נסה שוב.');
+      }
     } finally {
       setSaving(false);
     }
@@ -396,21 +428,47 @@ export default function Onboarding() {
     }
     setSaving(true);
     try {
-      if (user?.organization_id) {
-        await supabase.from('organizations').update({
-          name: orgForm.name.trim().slice(0, 50),
-          address: orgForm.address.trim().slice(0, 255),
-        }).eq('id', user.organization_id);
-      }
-      await supabase.from('properties').insert({
-        name: propertyForm.name.trim().slice(0, 100),
-        org_id: user?.organization_id,
-        bedrooms: parseInt(propertyForm.bedrooms, 10) || 1,
-        base_price: parseFloat(String(propertyForm.base_price).replace(/[^\d.]/g, '')) || null,
-      });
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        await supabase.from('profiles').update({ onboarding_step: 2 }).eq('id', authUser.id);
+      if (isSupabaseConfigured && supabase) {
+        if (user?.organization_id) {
+          await supabase.from('organizations').update({
+            name: orgForm.name.trim().slice(0, 50),
+            address: orgForm.address.trim().slice(0, 255),
+          }).eq('id', user.organization_id);
+        }
+        await supabase.from('properties').insert({
+          name: propertyForm.name.trim().slice(0, 100),
+          org_id: user?.organization_id,
+          bedrooms: parseInt(propertyForm.bedrooms, 10) || 1,
+          base_price: parseFloat(String(propertyForm.base_price).replace(/[^\d.]/g, '')) || null,
+        });
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          await supabase.from('profiles').update({ onboarding_step: 2 }).eq('id', authUser.id);
+        }
+      } else {
+        const orgId = user?.organization_id || `org_${Date.now()}`;
+        const orgs = await base44.entities.Organization.list();
+        const orgList = Array.isArray(orgs) ? orgs : (orgs?.data ? orgs.data : []);
+        const existingOrg = orgList.find(o => o.id === orgId);
+        if (existingOrg) {
+          await base44.entities.Organization.update(orgId, {
+            name: orgForm.name.trim().slice(0, 50),
+            address: orgForm.address.trim().slice(0, 255),
+          });
+        } else {
+          await base44.entities.Organization.create({
+            id: orgId,
+            name: orgForm.name.trim().slice(0, 50),
+            address: orgForm.address.trim().slice(0, 255),
+          });
+        }
+        await base44.entities.Property.create({
+          name: propertyForm.name.trim().slice(0, 100),
+          org_id: orgId,
+          bedrooms: parseInt(propertyForm.bedrooms, 10) || 1,
+          base_price: parseFloat(String(propertyForm.base_price).replace(/[^\d.]/g, '')) || null,
+        });
+        await base44.auth.updateMe({ organization_id: orgId, organization_name: orgForm.name.trim(), onboarding_step: 2 });
       }
       setCreatedOrgName(orgForm.name.trim());
       setCreatedPropertyName(propertyForm.name.trim());
@@ -468,21 +526,24 @@ export default function Onboarding() {
                 if (saving) return;
                 setSaving(true);
                 try {
-                  const { data: { user: authUser } } = await supabase.auth.getUser();
-                  if (authUser) {
-                    const { error } = await supabase.from('profiles').update({
-                      onboarding_completed: true,
-                      onboarding_step: TOTAL_STEPS,
-                    }).eq('id', authUser.id);
-                    if (error) {
-                      toast.error('שגיאה. נסה שוב.');
-                      setSaving(false);
+                  if (isSupabaseConfigured && supabase) {
+                    const { data: { user: authUser } } = await supabase.auth.getUser();
+                    if (authUser) {
+                      const { error } = await supabase.from('profiles').update({
+                        onboarding_completed: true,
+                        onboarding_step: TOTAL_STEPS,
+                      }).eq('id', authUser.id);
+                      if (error) {
+                        toast.error('שגיאה. נסה שוב.');
+                        setSaving(false);
+                        return;
+                      }
+                    } else {
+                      window.location.href = `/login?return=${encodeURIComponent('/dashboard')}`;
                       return;
                     }
                   } else {
-                    // Not logged in — redirect to Login with return to Dashboard
-                    window.location.href = `/login?return=${encodeURIComponent('/dashboard')}`;
-                    return;
+                    await base44.auth.updateMe({ onboarding_completed: true, onboarding_step: TOTAL_STEPS });
                   }
                   try { localStorage.setItem('onboarding_just_completed', String(Date.now())); } catch {}
                   await checkAppState();

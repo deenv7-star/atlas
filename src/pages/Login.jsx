@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LogIn, Eye, EyeOff, Shield } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 import { validateEmail } from '@/lib/validation';
 import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
 import { toast } from 'sonner';
@@ -59,12 +59,7 @@ export default function Login() {
 
     setIsLoading(true);
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: form.email.trim(),
-        password: form.password,
-      });
-      if (signInError) throw signInError;
-
+      await base44.auth.signIn({ email: form.email.trim(), password: form.password });
       clearAttempts(form.email);
       const currentUser = await loginUser(null);
       const returnUrl = searchParams.get('return');
@@ -72,7 +67,7 @@ export default function Login() {
       navigate(dest, { replace: true });
     } catch (err) {
       recordAttempt(form.email);
-      const msg = (err.message || '').toLowerCase();
+      const msg = String(err?.message || '').toLowerCase();
       if (msg.includes('invalid') || msg.includes('credentials')) {
         setErrors({ email: 'אימייל או סיסמה שגויים', password: 'אימייל או סיסמה שגויים' });
       } else if (msg.includes('email not confirmed')) {

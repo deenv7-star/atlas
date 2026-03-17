@@ -530,6 +530,17 @@ const localAuth = {
     catch { const e = new Error('Not authenticated'); e.status = 401; throw e; }
   },
   async signUp({ email, password: _p, full_name = '', organization_name = '' }) {
+    const raw = localStorage.getItem(USER_KEY);
+    if (raw) {
+      try {
+        const existing = JSON.parse(raw);
+        if (existing.email && String(existing.email).toLowerCase() === String(email).toLowerCase()) {
+          throw new Error('User already registered');
+        }
+      } catch (e) {
+        if (e.message === 'User already registered') throw e;
+      }
+    }
     const u = {
       id: `user_${Date.now()}`,
       email,
@@ -537,20 +548,29 @@ const localAuth = {
       organization_id: `org_${Date.now()}`,
       organization_name: organization_name || 'My Organization',
       subscription_plan: 'starter',
+      onboarding_completed: false,
       created_date: new Date().toISOString(),
     };
     localStorage.setItem(USER_KEY, JSON.stringify(u));
-    return { user: u };
+    return { user: u, session: {} };
   },
   async signIn({ email }) {
     const raw = localStorage.getItem(USER_KEY);
     if (raw) {
       const u = JSON.parse(raw);
-      if (u.email === email) return { user: u };
+      if (u.email === email) return { user: u, session: {} };
     }
-    const u = { id: `user_${Date.now()}`, email, full_name: '', organization_id: `org_${Date.now()}`, subscription_plan: 'starter' };
+    const u = {
+      id: `user_${Date.now()}`,
+      email,
+      full_name: '',
+      organization_id: `org_${Date.now()}`,
+      organization_name: '',
+      subscription_plan: 'starter',
+      onboarding_completed: false,
+    };
     localStorage.setItem(USER_KEY, JSON.stringify(u));
-    return { user: u };
+    return { user: u, session: {} };
   },
   async logout() { localStorage.removeItem(USER_KEY); return { success: true }; },
   async updateMe(data) {
