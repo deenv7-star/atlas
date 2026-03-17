@@ -536,18 +536,12 @@ export default function Landing() {
           box-shadow: 0 8px 24px rgba(0,0,0,0.18);
         }
 
-        /* ─ FAQ answer transition ─ */
+        /* ─ FAQ answer ─ */
         .atlas-faq-answer {
-          max-height: 0;
           overflow: hidden;
-          transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
-          padding: 0 24px 0 48px;
-          opacity: 0;
         }
         .atlas-faq-answer--open {
-          max-height: 400px;
-          padding: 0 24px 20px 48px;
-          opacity: 1;
+          /* visible */
         }
         .atlas-faq-item {
           transition: all 0.25s ease;
@@ -1934,8 +1928,15 @@ export default function Landing() {
                         />
                       </div>
                     </button>
-                    <div className={`atlas-faq-answer ${isOpen ? 'atlas-faq-answer--open' : ''}`}>
-                      <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.8, margin: 0, borderTop: '1px solid #F3F4F6', paddingTop: 16 }}>{faq.a}</p>
+                    <div
+                      style={{
+                        display: isOpen ? 'block' : 'none',
+                        borderTop: '1px solid #F3F4F6',
+                        padding: '16px 24px 20px',
+                        background: '#FFFFFF',
+                      }}
+                    >
+                      <p style={{ fontSize: 15, color: '#374151', lineHeight: 1.8, margin: 0 }}>{faq.a}</p>
                     </div>
                   </div>
                 );

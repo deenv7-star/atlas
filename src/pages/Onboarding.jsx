@@ -431,6 +431,37 @@ export default function Onboarding() {
               בואו נתחיל!
               <ArrowLeft className="w-5 h-5" />
             </Button>
+
+            <button
+              type="button"
+              onClick={async () => {
+                setSaving(true);
+                try {
+                  const { data: { user: authUser } } = await supabase.auth.getUser();
+                  if (authUser) {
+                    const { error } = await supabase.from('profiles').update({
+                      onboarding_completed: true,
+                      onboarding_step: TOTAL_STEPS,
+                    }).eq('id', authUser.id);
+                    if (error) {
+                      toast.error('שגיאה. נסה שוב.');
+                      return;
+                    }
+                  }
+                  try { localStorage.setItem('onboarding_just_completed', String(Date.now())); } catch {}
+                  await checkAppState();
+                  window.location.replace('/Dashboard');
+                } catch (err) {
+                  toast.error('שגיאה. נסה שוב.');
+                } finally {
+                  setSaving(false);
+                }
+              }}
+              disabled={saving}
+              className="w-full mt-3 text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors py-2"
+            >
+              יש לי חשבון קיים — מעבר לדאשבורד
+            </button>
           </div>
         );
 
