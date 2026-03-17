@@ -23,8 +23,17 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
 
+// Fallback when DB update failed: allow through if user just completed onboarding (localStorage flag)
+function hasOnboardingBypass() {
+  try {
+    const ts = parseInt(localStorage.getItem('onboarding_just_completed') || '0', 10);
+    return !!(ts && Date.now() - ts < 10 * 60 * 1000);
+  } catch { return false; }
+}
+
 // Redirects to /Login if not authenticated; preserves return URL.
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
+
 const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   const { isLoadingAuth, isAuthenticated, user } = useAuth();
   if (isLoadingAuth) {
@@ -38,7 +47,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
     return <Navigate to={`/Login?return=${returnUrl}`} replace />;
   }
-  if (requireOnboarding && !user?.onboarding_completed) {
+  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass()) {
     return <Navigate to="/onboarding" replace />;
   }
   return children;
@@ -62,7 +71,7 @@ const AuthenticatedApp = () => {
       <Route
         path="/"
         element={
-          isAuthenticated && !user?.onboarding_completed
+          isAuthenticated && !user?.onboarding_completed && !hasOnboardingBypass()
             ? <Navigate to="/onboarding" replace />
             : <LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>
         }
@@ -73,7 +82,7 @@ const AuthenticatedApp = () => {
         path="/Login"
         element={
           isAuthenticated
-            ? <Navigate to={(user?.onboarding_completed ? '/Dashboard' : '/onboarding')} replace />
+            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/Dashboard' : '/onboarding')} replace />
             : <Login />
         }
       />
@@ -81,7 +90,7 @@ const AuthenticatedApp = () => {
         path="/register"
         element={
           isAuthenticated
-            ? <Navigate to={(user?.onboarding_completed ? '/Dashboard' : '/onboarding')} replace />
+            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/Dashboard' : '/onboarding')} replace />
             : <Register />
         }
       />

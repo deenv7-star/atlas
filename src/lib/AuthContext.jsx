@@ -22,6 +22,9 @@ export const AuthProvider = ({ children }) => {
       setUser(currentUser);
       setIsAuthenticated(true);
       setAuthError(null);
+      if (currentUser?.onboarding_completed) {
+        try { localStorage.removeItem('onboarding_just_completed'); } catch {}
+      }
       return currentUser;
     } catch {
       setUser(null);

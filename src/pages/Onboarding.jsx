@@ -376,6 +376,9 @@ export default function Onboarding() {
     if (!prefersReduced) {
       confetti({ origin: { y: 0.6 }, particleCount: 80, spread: 70 });
     }
+    try {
+      localStorage.setItem('onboarding_just_completed', String(Date.now()));
+    } catch {}
     window.location.replace('/Dashboard');
   };
 
