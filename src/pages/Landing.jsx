@@ -1129,133 +1129,136 @@ export default function Landing() {
         </div>
 
         {/* ════════════════════════════════════════
-            SECTION 1 — THE TRANSFORMATION (Apple-level)
+            SECTION 1 — THE TRANSFORMATION (ATLAS brand)
         ════════════════════════════════════════ */}
-        <section style={{ padding: '120px 24px 140px', background: '#ffffff', position: 'relative', zIndex: 1 }}>
+        <section style={{ padding: '120px 24px 140px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 50%, #EEF2FF 100%)', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 980, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 72 }}>
-              <h2 style={{ fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, color: '#1d1d1f', margin: '0 0 12px', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              <h2 style={{ fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 700, color: '#111827', margin: '0 0 14px', letterSpacing: '-0.02em', lineHeight: 1.15, fontFamily: 'Heebo, sans-serif' }}>
                 מכירים את הכאוס הזה?
               </h2>
-              <p style={{ fontSize: 21, color: '#86868b', margin: 0, maxWidth: 480, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.4 }}>
+              <p style={{ fontSize: 19, color: '#6B7280', margin: 0, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5, fontFamily: 'Heebo, sans-serif' }}>
                 בלי מערכת — כלים מפוזרים, הודעות שלא נענו, הזמנות אבודות. עם ATLAS — הכל במקום אחד.
               </p>
             </div>
 
-            {/* Apple-style comparison slider */}
+            {/* Comparison slider — ATLAS brand + refinement */}
             <div
               ref={psRef}
               className="atlas-reveal"
               style={{
-                position: 'relative', borderRadius: 18, overflow: 'hidden', minHeight: 480,
-                boxShadow: '0 4px 24px rgba(0,0,0,0.06), 0 24px 80px rgba(0,0,0,0.08)',
+                position: 'relative', borderRadius: 20, overflow: 'hidden', minHeight: 480,
+                boxShadow: '0 8px 32px rgba(79,70,229,0.08), 0 24px 80px rgba(0,0,0,0.06)',
+                border: '1px solid rgba(79,70,229,0.15)',
                 cursor: psDragging ? 'grabbing' : 'grab', userSelect: 'none',
               }}
               onMouseDown={(e) => { e.preventDefault(); setPsDragging(true); handlePsMove(e.clientX); }}
               onTouchStart={(e) => { setPsDragging(true); handlePsMove(e.touches[0].clientX); }}
               onClick={(e) => { if (!psDragging) handlePsMove(e.clientX); }}
             >
-              {/* Chaos — minimalist abstract representation */}
-              <div style={{ position: 'absolute', inset: 0, background: '#f5f5f7', padding: '48px 56px', zIndex: 1 }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'flex-start', height: '100%', paddingTop: 24 }}>
+              {/* Chaos — scattered tools, brand-tinted */}
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #FEF3C7 0%, #FEF9E7 40%, #FEF2F2 100%)', padding: '48px 56px', zIndex: 1 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 18, justifyContent: 'center', alignItems: 'flex-start', height: '100%', paddingTop: 20 }}>
                   {[
-                    { w: 140, h: 100, t: 0, r: -1, label: 'Excel', sub: '???', c: '#e5e5ea' },
-                    { w: 120, h: 90, t: 20, r: 1.5, label: 'WhatsApp', sub: '27', c: '#e5e5ea' },
-                    { w: 130, h: 95, t: -10, r: 1, label: 'יומן', sub: 'כפולות', c: '#e5e5ea' },
-                    { w: 100, h: 70, t: 30, r: -2, label: 'אימייל', sub: '...', c: '#e5e5ea' },
-                    { w: 110, h: 75, t: -15, r: 0.5, label: 'תשלומים', sub: '???', c: '#e5e5ea' },
+                    { w: 138, h: 98, r: -1.5, label: 'Excel', sub: '???', border: 'rgba(245,158,11,0.3)' },
+                    { w: 118, h: 88, r: 1.2, label: 'WhatsApp', sub: '27', border: 'rgba(245,158,11,0.3)' },
+                    { w: 128, h: 92, r: 0.8, label: 'יומן', sub: 'כפולות', border: 'rgba(239,68,68,0.25)' },
+                    { w: 98, h: 68, r: -2, label: 'אימייל', sub: '...', border: 'rgba(245,158,11,0.3)' },
+                    { w: 108, h: 72, r: 0.5, label: 'תשלומים', sub: '???', border: 'rgba(239,68,68,0.25)' },
                   ].map((card, i) => (
                     <div
                       key={i}
                       style={{
-                        width: card.w, height: card.h, background: 'white', borderRadius: 12,
-                        boxShadow: '0 2px 12px rgba(0,0,0,0.06)', transform: `rotate(${card.r}deg)`,
-                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4,
-                        border: '1px solid rgba(0,0,0,0.06)',
+                        width: card.w, height: card.h, background: 'rgba(255,255,255,0.9)', borderRadius: 14,
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.06)', transform: `rotate(${card.r}deg)`,
+                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6,
+                        border: `1px solid ${card.border}`,
                       }}
                     >
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#86868b' }}>{card.label}</span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#1d1d1f' }}>{card.sub}</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#6B7280', fontFamily: 'Heebo, sans-serif' }}>{card.label}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: '#374151', fontFamily: 'Heebo, sans-serif' }}>{card.sub}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#86868b', fontWeight: 500 }}>
+                <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#6B7280', fontWeight: 600, fontFamily: 'Heebo, sans-serif' }}>
                   בלי ATLAS
                 </div>
               </div>
 
-              {/* Order — refined dashboard */}
+              {/* Order — ATLAS dashboard with brand colors */}
               <div
                 style={{
                   position: 'absolute', inset: 0, zIndex: 2, clipPath: `inset(0 0 0 ${100 - psSlider}%)`,
                   transition: psDragging ? 'none' : 'clip-path 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
                 }}
               >
-                <div style={{ position: 'absolute', inset: 0, background: '#ffffff', padding: '48px 56px' }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #F8FAFF 0%, #EEF2FF 100%)', padding: '48px 56px' }}>
                   <div style={{ maxWidth: 420, margin: '0 auto' }}>
-                    <div style={{ background: '#f5f5f7', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.04)' }}>
-                      <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: '#1d1d1f' }}>ATLAS</span>
-                        <div style={{ display: 'flex', gap: 6 }}>{[1,2,3].map(n=><div key={n} style={{width:8,height:8,borderRadius:'50%',background:n===3?'#34c759':'#d1d1d6'}}/>)}</div>
+                    <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden', boxShadow: '0 4px 24px rgba(79,70,229,0.08)', border: '1px solid #E0E7FF' }}>
+                      <div style={{ padding: '18px 22px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(90deg, rgba(79,70,229,0.04), transparent)' }}>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: '#4F46E5', fontFamily: 'Heebo, sans-serif' }}>ATLAS</span>
+                        <div style={{ display: 'flex', gap: 6 }}>{[1,2,3].map(n=><div key={n} style={{width:8,height:8,borderRadius:'50%',background:n===3?'#4F46E5':n===2?'#F59E0B':'#EF4444'}}/>)}</div>
                       </div>
-                      <div style={{ padding: 24 }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
-                          {[{v:'₪48,200',l:'הכנסות'},{v:'92%',l:'תפוסה'},{v:'23',l:'הזמנות'}].map(k=>(
-                            <div key={k.l} style={{ background: 'white', borderRadius: 10, padding: '14px 16px', textAlign: 'center', border: '1px solid rgba(0,0,0,0.04)' }}>
-                              <div style={{ fontSize: 18, fontWeight: 600, color: '#1d1d1f' }}>{k.v}</div>
-                              <div style={{ fontSize: 11, color: '#86868b', marginTop: 2 }}>{k.l}</div>
+                      <div style={{ padding: 22 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 18 }}>
+                          {[{v:'₪48,200',l:'הכנסות',c:'#4F46E5',bg:'#EEF2FF'},{v:'92%',l:'תפוסה',c:'#7C3AED',bg:'#F5F3FF'},{v:'23',l:'הזמנות',c:'#4F46E5',bg:'#EEF2FF'}].map(k=>(
+                            <div key={k.l} style={{ background: k.bg, borderRadius: 10, padding: '14px 16px', textAlign: 'center', border: '1px solid rgba(79,70,229,0.15)' }}>
+                              <div style={{ fontSize: 18, fontWeight: 800, color: k.c, fontFamily: 'Heebo, sans-serif' }}>{k.v}</div>
+                              <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>{k.l}</div>
                             </div>
                           ))}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 56, marginBottom: 20 }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 52, marginBottom: 18 }}>
                           {[35,50,45,60,70,55,75,65,85,90,80,95].map((h,i)=>(
-                            <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '4px 4px 0 0', background: 'rgba(52,199,89,0.2)' }}/>
+                            <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '4px 4px 0 0', background: `linear-gradient(180deg, rgba(79,70,229,${0.3+i*0.04}), rgba(124,58,237,${0.3+i*0.04}))` }}/>
                           ))}
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                          <span style={{ fontSize: 13, fontWeight: 500, color: '#1d1d1f' }}>דירת הגליל</span>
-                          <span style={{ fontSize: 11, fontWeight: 600, color: '#34c759', background: 'rgba(52,199,89,0.12)', padding: '4px 10px', borderRadius: 6 }}>מאושר</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderTop: '1px solid #E5E7EB' }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#374151', fontFamily: 'Heebo, sans-serif' }}>דירת הגליל</span>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#4F46E5', background: '#EEF2FF', padding: '4px 12px', borderRadius: 8, fontFamily: 'Heebo, sans-serif' }}>מאושר</span>
                         </div>
                       </div>
                     </div>
-                    <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', background: 'rgba(52,199,89,0.06)', borderRadius: 12, border: '1px solid rgba(52,199,89,0.2)' }}>
-                      <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(52,199,89,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34c759" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', background: 'linear-gradient(180deg, #EEF2FF, #E0E7FF)', borderRadius: 12, border: '1px solid #C7D2FE', boxShadow: '0 2px 12px rgba(79,70,229,0.1)' }}>
+                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#4F46E5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
                       </div>
                       <div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1d1d1f' }}>הזמנה חדשה</div>
-                        <div style={{ fontSize: 11, color: '#86868b' }}>₪1,200 · דוד כ.</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#4F46E5', fontFamily: 'Heebo, sans-serif' }}>הזמנה חדשה התקבלה</div>
+                        <div style={{ fontSize: 11, color: '#6B7280', fontFamily: 'Heebo, sans-serif' }}>₪1,200 · דוד כ.</div>
                       </div>
                     </div>
                   </div>
-                  <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#86868b', fontWeight: 500 }}>
+                  <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#4F46E5', fontWeight: 700, fontFamily: 'Heebo, sans-serif' }}>
                     עם ATLAS
                   </div>
                 </div>
               </div>
 
-              {/* Minimal divider — Apple style */}
+              {/* Divider — ATLAS brand */}
               <div
                 style={{
-                  position: 'absolute', top: 0, bottom: 0, width: 2, left: `${psSlider}%`, marginLeft: -1, zIndex: 10,
-                  background: 'rgba(255,255,255,0.95)', boxShadow: '0 0 0 1px rgba(0,0,0,0.08)',
+                  position: 'absolute', top: 0, bottom: 0, width: 3, left: `${psSlider}%`, marginLeft: -1.5, zIndex: 10,
+                  background: 'linear-gradient(180deg, #4F46E5, #7C3AED)',
+                  boxShadow: '0 0 24px rgba(79,70,229,0.35)',
+                  borderRadius: 2,
                   transition: psDragging ? 'none' : 'left 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
                 }}
               >
                 <div style={{
                   position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-                  width: 40, height: 40, borderRadius: '50%', background: 'white',
-                  boxShadow: '0 2px 16px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)',
+                  width: 44, height: 44, borderRadius: '50%', background: 'white',
+                  boxShadow: '0 4px 20px rgba(79,70,229,0.25), 0 0 0 2px rgba(79,70,229,0.2)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="2" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/><path d="M9 18l-6-6 6-6"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/><path d="M9 18l-6-6 6-6"/></svg>
                 </div>
               </div>
             </div>
 
             {/* Bottom CTA */}
             <div className="atlas-reveal atlas-delay-2" style={{ textAlign: 'center', marginTop: 56 }}>
-              <p style={{ fontSize: 19, color: '#86868b', marginBottom: 24, fontWeight: 400 }}>תפסיקו לנהל בכאוס. תתחילו לנהל עם ATLAS.</p>
+              <p style={{ fontSize: 18, color: '#6B7280', marginBottom: 24, fontWeight: 500, fontFamily: 'Heebo, sans-serif' }}>תפסיקו לנהל בכאוס. תתחילו לנהל עם ATLAS.</p>
               <button
                 onClick={() => { setDemoOpen(true); setDemoSlide(0); }}
                 style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 12, padding: '14px 36px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', boxShadow: '0 4px 20px rgba(79,70,229,0.3)', transition: 'all 0.2s ease' }}
