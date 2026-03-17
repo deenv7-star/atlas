@@ -115,8 +115,7 @@ export default function Landing() {
   const [demoSlide, setDemoSlide] = useState(0);
   const [billingYearly, setBillingYearly] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
-  const [psSlider, setPsSlider] = useState(50);
-  const [psDragging, setPsDragging] = useState(false);
+  const [psPhase, setPsPhase] = useState('chaos'); // chaos → unify → atlas → loop
   const navigate = useNavigate();
 
   const [count1, ref1] = useCountUp(500);
@@ -149,30 +148,22 @@ export default function Landing() {
   const nextSlide = () => setDemoSlide((s) => Math.min(s + 1, 4));
   const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
 
-  // Transformation section: comparison slider drag handlers
-  const psRef = useRef(null);
-  const handlePsMove = (clientX) => {
-    if (!psRef.current) return;
-    const rect = psRef.current.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
-    setPsSlider(pct);
-  };
+  // Transformation section: auto-playing chaos → unify → atlas animation
   useEffect(() => {
-    if (!psDragging) return;
-    const onMove = (e) => handlePsMove(e.touches ? e.touches[0].clientX : e.clientX);
-    const onEnd = () => setPsDragging(false);
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onEnd);
-    window.addEventListener('touchmove', onMove, { passive: true });
-    window.addEventListener('touchend', onEnd);
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onEnd);
-      window.removeEventListener('touchmove', onMove);
-      window.removeEventListener('touchend', onEnd);
+    const ids = [];
+    const schedule = () => {
+      setPsPhase('chaos');
+      ids.push(setTimeout(() => {
+        setPsPhase('unify');
+        ids.push(setTimeout(() => {
+          setPsPhase('atlas');
+          ids.push(setTimeout(schedule, 4500));
+        }, 1500));
+      }, 4500));
     };
-  }, [psDragging]);
+    schedule();
+    return () => ids.forEach((id) => clearTimeout(id));
+  }, []);
 
   // Demo modal keyboard navigation (arrows, ESC)
   useEffect(() => {
@@ -515,6 +506,19 @@ export default function Landing() {
           50%      { opacity: 0.6; transform: scale(1.35); }
         }
         .atlas-dot { animation: atlasDot 2s ease-in-out infinite; }
+
+        /* ─ Transformation: chaos → atlas ─ */
+        @keyframes atlasChaosOut {
+          to { opacity: 0; transform: scale(0.9); }
+        }
+        @keyframes atlasUnifyPulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%      { opacity: 0.8; transform: scale(1.02); }
+        }
+        @keyframes atlasDashboardIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to   { opacity: 1; transform: scale(1); }
+        }
 
         /* ─ Marquee ─ */
         @keyframes atlasMarquee {
@@ -1142,22 +1146,25 @@ export default function Landing() {
               </p>
             </div>
 
-            {/* Comparison slider — ATLAS brand + refinement */}
+            {/* Auto-playing animation: chaos → unify → atlas */}
             <div
-              ref={psRef}
               className="atlas-reveal"
               style={{
                 position: 'relative', borderRadius: 20, overflow: 'hidden', minHeight: 480,
                 boxShadow: '0 8px 32px rgba(79,70,229,0.08), 0 24px 80px rgba(0,0,0,0.06)',
                 border: '1px solid rgba(79,70,229,0.15)',
-                cursor: psDragging ? 'grabbing' : 'grab', userSelect: 'none',
               }}
-              onMouseDown={(e) => { e.preventDefault(); setPsDragging(true); handlePsMove(e.clientX); }}
-              onTouchStart={(e) => { setPsDragging(true); handlePsMove(e.touches[0].clientX); }}
-              onClick={(e) => { if (!psDragging) handlePsMove(e.clientX); }}
             >
-              {/* Chaos — scattered tools + clear pain points */}
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #FEF3C7 0%, #FEF9E7 40%, #FEF2F2 100%)', padding: '48px 56px', zIndex: 1 }}>
+              {/* Chaos — scattered tools */}
+              <div
+                style={{
+                  position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #FEF3C7 0%, #FEF9E7 40%, #FEF2F2 100%)', padding: '48px 56px', zIndex: 1,
+                  opacity: psPhase === 'chaos' ? 1 : 0,
+                  transform: psPhase === 'unify' ? 'scale(0.95)' : psPhase === 'atlas' ? 'scale(0.9)' : 'scale(1)',
+                  transition: 'opacity 0.8s cubic-bezier(0.25,0.1,0.25,1), transform 0.8s cubic-bezier(0.25,0.1,0.25,1)',
+                  pointerEvents: psPhase === 'chaos' ? 'auto' : 'none',
+                }}
+              >
                 <div style={{ textAlign: 'center', marginBottom: 20 }}>
                   <p style={{ fontSize: 15, color: '#6B7280', fontWeight: 600, fontFamily: 'Heebo, sans-serif', margin: 0 }}>
                     כלים מפוזרים • אין סינכרון • אין תמונה אחת
@@ -1192,11 +1199,30 @@ export default function Landing() {
                 </div>
               </div>
 
-              {/* Order — ATLAS dashboard with brand colors */}
+              {/* Unify — brief transition moment */}
               <div
                 style={{
-                  position: 'absolute', inset: 0, zIndex: 2, clipPath: `inset(0 0 0 ${100 - psSlider}%)`,
-                  transition: psDragging ? 'none' : 'clip-path 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
+                  position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)', zIndex: 2,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  opacity: psPhase === 'unify' ? 1 : 0,
+                  pointerEvents: 'none',
+                  transition: 'opacity 0.4s ease',
+                }}
+              >
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: '#4F46E5', fontFamily: 'Heebo, sans-serif', marginBottom: 8 }}>הכל מתאחד</div>
+                  <div style={{ fontSize: 18, fontWeight: 600, color: '#7C3AED', fontFamily: 'Heebo, sans-serif' }}>ATLAS</div>
+                </div>
+              </div>
+
+              {/* Atlas — unified dashboard */}
+              <div
+                style={{
+                  position: 'absolute', inset: 0, zIndex: 3,
+                  opacity: psPhase === 'atlas' ? 1 : 0,
+                  transform: psPhase === 'atlas' ? 'scale(1)' : 'scale(0.95)',
+                  transition: 'opacity 0.8s cubic-bezier(0.25,0.1,0.25,1), transform 0.8s cubic-bezier(0.25,0.1,0.25,1)',
+                  pointerEvents: psPhase === 'atlas' ? 'auto' : 'none',
                 }}
               >
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #F8FAFF 0%, #EEF2FF 100%)', padding: '48px 56px' }}>
@@ -1237,28 +1263,8 @@ export default function Landing() {
                     </div>
                   </div>
                   <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#4F46E5', fontWeight: 700, fontFamily: 'Heebo, sans-serif' }}>
-                    עם ATLAS
+                    מערכת אחת. הכל במקום אחד.
                   </div>
-                </div>
-              </div>
-
-              {/* Divider — ATLAS brand */}
-              <div
-                style={{
-                  position: 'absolute', top: 0, bottom: 0, width: 3, left: `${psSlider}%`, marginLeft: -1.5, zIndex: 10,
-                  background: 'linear-gradient(180deg, #4F46E5, #7C3AED)',
-                  boxShadow: '0 0 24px rgba(79,70,229,0.35)',
-                  borderRadius: 2,
-                  transition: psDragging ? 'none' : 'left 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
-                }}
-              >
-                <div style={{
-                  position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-                  width: 44, height: 44, borderRadius: '50%', background: 'white',
-                  boxShadow: '0 4px 20px rgba(79,70,229,0.25), 0 0 0 2px rgba(79,70,229,0.2)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/><path d="M9 18l-6-6 6-6"/></svg>
                 </div>
               </div>
             </div>
