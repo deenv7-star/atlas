@@ -87,20 +87,44 @@
   }
 }
 
-/* ─── Custom Scrollbar ─────────────────────────────── */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+/* ─── Custom Scrollbar (desktop only — "סטיק" לגלילה) ─────────────────────────────── */
+@media (min-width: 769px) and (pointer: fine) {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 209, 193, 0.35);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 209, 193, 0.55);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:active {
+    background: rgba(0, 209, 193, 0.7);
+  }
 }
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 209, 193, 0.18);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 209, 193, 0.38);
+/* Mobile — scrollbar דק כדי לא להפריע */
+@media (max-width: 768px), (pointer: coarse) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 209, 193, 0.18);
+    border-radius: 10px;
+  }
 }
 
 /* ─── Smooth scrolling ─────────────────────────────── */
