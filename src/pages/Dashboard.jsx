@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { base44 } from '@/api/base44Client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -208,14 +208,16 @@ export default function Dashboard({ user, selectedPropertyId }) {
 
   const qOpts = { staleTime: 2 * 60 * 1000, retry: 1 };
 
+  const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
+
   const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
     queryKey: ['dashboard-bookings', selectedPropertyId],
     queryFn: async () => {
-      let q = supabase.from('bookings').select('*');
-      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
-      const { data, error } = await q.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+      try {
+        return await base44.entities.Booking.filter(filters, '-created_at', 100);
+      } catch {
+        return [];
+      }
     },
     ...qOpts,
   });
@@ -223,11 +225,11 @@ export default function Dashboard({ user, selectedPropertyId }) {
   const { data: leads = [], isLoading: leadsLoading } = useQuery({
     queryKey: ['dashboard-leads', selectedPropertyId],
     queryFn: async () => {
-      let q = supabase.from('leads').select('*');
-      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
-      const { data, error } = await q.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+      try {
+        return await base44.entities.Lead.filter(filters, '-created_at', 100);
+      } catch {
+        return [];
+      }
     },
     ...qOpts,
   });
@@ -235,9 +237,11 @@ export default function Dashboard({ user, selectedPropertyId }) {
   const { data: payments = [], isLoading: paymentsLoading } = useQuery({
     queryKey: ['dashboard-payments'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('payments').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+      try {
+        return await base44.entities.Payment.filter({}, '-created_at', 50);
+      } catch {
+        return [];
+      }
     },
     ...qOpts,
   });
@@ -245,11 +249,11 @@ export default function Dashboard({ user, selectedPropertyId }) {
   const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
     queryKey: ['dashboard-reviews', selectedPropertyId],
     queryFn: async () => {
-      let q = supabase.from('review_requests').select('*');
-      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
-      const { data, error } = await q.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+      try {
+        return await base44.entities.ReviewRequest.filter(filters, '-created_at', 50);
+      } catch {
+        return [];
+      }
     },
     ...qOpts,
   });
@@ -257,9 +261,11 @@ export default function Dashboard({ user, selectedPropertyId }) {
   const { data: properties = [] } = useQuery({
     queryKey: ['dashboard-properties'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('properties').select('*');
-      if (error) throw error;
-      return data ?? [];
+      try {
+        return await base44.entities.Property.list();
+      } catch {
+        return [];
+      }
     },
     ...qOpts,
   });
