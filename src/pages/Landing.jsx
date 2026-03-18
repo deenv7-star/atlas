@@ -144,6 +144,7 @@ export default function Landing() {
   }, [demoOpen]);
 
   const goToRegister = () => navigate('/register');
+  const goToLogin = () => navigate('/login');
   const scrollToFeatures = () => {
     document.getElementById('atlas-features')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -748,7 +749,7 @@ export default function Landing() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <button
                 className="atlas-nav-cta"
-                onClick={goToRegister}
+                onClick={goToLogin}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -814,7 +815,7 @@ export default function Landing() {
                 <a key={l.label} href="#" onClick={(e) => { e.preventDefault(); setMenuOpen(false); l.action(); }} className="atlas-nav-link" style={{ fontSize: 16 }}>{l.label}</a>
               ))}
               <button
-                onClick={() => { setMenuOpen(false); goToRegister(); }}
+                onClick={() => { setMenuOpen(false); goToLogin(); }}
                 style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '12px 22px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
               >
                 כניסה
