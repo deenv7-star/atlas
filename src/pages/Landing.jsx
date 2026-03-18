@@ -871,7 +871,7 @@ export default function Landing() {
                 </h1>
 
                 <p style={{ fontSize: 17, color: '#6B7280', maxWidth: 420, marginTop: 24, lineHeight: 1.65 }}>
-                  מנהלים 3+ יחידות אירוח? ATLAS מאגד הזמנות, תשלומים, צוות ותקשורת עם אורחים — במערכת אחת בעברית.
+                  ATLAS מנהלת את הכל בשבילך — מלידים לתשלומים, מהזמנות לחוזים.<br />אוטומציה חכמה שחוסכת לך 20+ שעות שבועיות.
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 28 }}>
