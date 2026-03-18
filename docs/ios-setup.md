@@ -68,7 +68,7 @@ In Xcode, set the following (Target → Signing & Capabilities):
 
 | Setting | Value |
 |---|---|
-| Bundle Identifier | `co.il.atlas-app` |
+| Bundle Identifier | `com.atlas-il.app` |
 | Display Name | `ATLAS` |
 | Version | `1.0.0` |
 | Team | your Apple Developer Team |

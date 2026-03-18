@@ -9,7 +9,7 @@ storage_mode("git")
 
 type("appstore")                     # default type
 
-app_identifier(["com.base6985b1fe56d9d0df97ea2f90.app"])
+app_identifier(["com.atlas-il.app"])
 
 # Authentication — uses App Store Connect API key (no password prompts)
 # api_key is passed from Fastfile lanes

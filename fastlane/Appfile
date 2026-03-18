@@ -1,4 +1,4 @@
-app_identifier("co.il.atlas-app")   # Bundle ID של האפליקציה
+app_identifier("com.atlas-il.app")   # Bundle ID של האפליקציה
 
 # Authentication via App Store Connect API key (set in GitHub Secrets)
 # No need for Apple ID / password

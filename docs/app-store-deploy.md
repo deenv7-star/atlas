@@ -37,7 +37,7 @@ Match מאחסן את ה-certificates שלך מוצפנים ב-Git repo פרטי
 1. App Store Connect → **My Apps → +** → New App
 2. מלא:
    - **Name:** ATLAS — ניהול נכסי אירוח
-   - **Bundle ID:** `co.il.atlas-app`
+   - **Bundle ID:** `com.atlas-il.app`
    - **SKU:** `atlas-il-001`
    - **Primary Language:** Hebrew
 3. שמור
@@ -90,7 +90,7 @@ bundle install
 # צור תעודות App Store ושמור אותן ב-atlas-certs
 MATCH_GIT_URL="https://github.com/YOUR_USER/atlas-certs" \
 MATCH_PASSWORD="הסיסמה שבחרת" \
-bundle exec fastlane match appstore --app-identifier co.il.atlas-app
+bundle exec fastlane match appstore --app-identifier com.atlas-il.app
 ```
 
 > **אין לך Ruby?** אפשר להשתמש ב-GitHub Codespaces — זה ממחשב ב-GitHub עצמו, בחינם.

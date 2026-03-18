@@ -15,7 +15,7 @@ warn() { echo -e "${YELLOW}⚠${NC}  $*"; }
 step() { echo -e "\n${BOLD}${BLUE}══ $* ══${NC}"; }
 ask()  { echo -en "${BOLD}$* ${NC}"; }
 
-BUNDLE_ID="co.il.atlas-app"
+BUNDLE_ID="com.atlas-il.app"
 CERTS_REPO_NAME="atlas-certs"
 GITHUB_SECRETS_SET=0
 
