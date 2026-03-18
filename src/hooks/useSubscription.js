@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
 
 export function useSubscription() {
@@ -9,8 +9,15 @@ export function useSubscription() {
     queryKey: ['subscription', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data: profile } = await supabase.from('profiles').select('trial_ends_at, selected_plan, subscription_status').eq('id', user.id).single();
-      return profile;
+      if (isSupabaseConfigured && supabase) {
+        const { data: profile } = await supabase.from('profiles').select('trial_ends_at, selected_plan, subscription_status').eq('id', user.id).single();
+        return profile;
+      }
+      return {
+        trial_ends_at: user?.trial_ends_at || null,
+        selected_plan: user?.selected_plan || 'trial',
+        subscription_status: user?.subscription_status || 'trialing',
+      };
     },
     enabled: Boolean(isAuthenticated && user?.id),
   });
