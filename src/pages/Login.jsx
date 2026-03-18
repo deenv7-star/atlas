@@ -62,11 +62,11 @@ export default function Login() {
     try {
       await base44.auth.signIn({ email: form.email.trim(), password: form.password });
       clearAttempts(form.email);
-      const currentUser = await loginUser(null);
+      await loginUser(null);
       const rawReturn = searchParams.get('return');
       const safeReturn = getSafeReturnUrl(rawReturn);
-      const dest = currentUser?.onboarding_completed ? (safeReturn || '/dashboard') : '/onboarding';
-      navigate(dest, { replace: true });
+      try { localStorage.setItem('login_just_completed', String(Date.now())); } catch {}
+      navigate(safeReturn || '/dashboard', { replace: true });
     } catch (err) {
       recordAttempt(form.email);
       const msg = String(err?.message || '').toLowerCase();
