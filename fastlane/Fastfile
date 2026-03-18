@@ -74,7 +74,7 @@ platform :ios do
   private_lane :sync_certificates do |options|
     match(
       type:         "appstore",
-      app_identifier: "co.il.atlas-app",
+      app_identifier: "com.base6985b1fe56d9d0df97ea2f90.app",
       api_key:      options[:api_key],
       readonly:     is_ci   # in CI: only read, never generate new certs
     )
@@ -91,7 +91,7 @@ platform :ios do
       clean:            true,
       export_options: {
         provisioningProfiles: {
-          "co.il.atlas-app" => "match AppStore co.il.atlas-app"
+          "com.base6985b1fe56d9d0df97ea2f90.app" => "match AppStore com.base6985b1fe56d9d0df97ea2f90.app"
         }
       }
     )
