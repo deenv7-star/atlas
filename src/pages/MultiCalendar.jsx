@@ -226,26 +226,26 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
       {/* Toolbar */}
       <div className="bg-white rounded-xl border border-gray-200 p-3 mb-4 flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 flex-wrap">
           <button
             onClick={goPrev}
-            className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation"
           >
             <ChevronRight className="w-4 h-4 text-gray-600" />
           </button>
           <button
             onClick={goToday}
-            className="px-3 h-8 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="min-h-[44px] px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation"
           >
             היום
           </button>
           <button
             onClick={goNext}
-            className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation"
           >
             <ChevronLeft className="w-4 h-4 text-gray-600" />
           </button>
-          <span className="text-sm font-semibold text-gray-800 mr-2 whitespace-nowrap">
+          <span className="text-sm font-semibold text-gray-800 mr-2 whitespace-nowrap max-w-[140px] sm:max-w-none truncate">
             {formatHebrewDate(days[0])} — {formatHebrewDate(days[days.length - 1])}
           </span>
         </div>
@@ -256,7 +256,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
               key={v.key}
               onClick={() => { setViewMode(v.key); setDateOffset(0); }}
               className={cn(
-                'px-3 py-1.5 rounded-md text-xs font-medium transition-all',
+                'min-h-[44px] px-3 py-2 rounded-md text-xs font-medium transition-all touch-manipulation',
                 viewMode === v.key ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
               )}
             >
@@ -265,8 +265,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
           ))}
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <Filter className="w-3.5 h-3.5 text-gray-400" />
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <Filter className="w-3.5 h-3.5 text-gray-400 hidden sm:block" />
           {[
             { key: 'all', label: 'הכל' },
             { key: 'airbnb', label: 'Airbnb' },
@@ -277,7 +277,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
               key={f.key}
               onClick={() => setChannelFilter(f.key)}
               className={cn(
-                'px-2.5 py-1 rounded-full text-xs font-medium border transition-all',
+                'min-h-[44px] px-3 py-2 rounded-full text-xs font-medium border transition-all touch-manipulation',
                 channelFilter === f.key
                   ? f.key === 'all'
                     ? 'bg-gray-900 text-white border-gray-900'
@@ -294,16 +294,17 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
         <button
           onClick={handleSync}
-          className="mr-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-medium hover:from-blue-600 hover:to-indigo-600 transition-all shadow-sm"
+          className="mr-auto flex items-center gap-1.5 min-h-[44px] px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-medium hover:from-blue-600 hover:to-indigo-600 transition-all shadow-sm touch-manipulation"
         >
           <RefreshCw className={cn('w-3.5 h-3.5', syncing && 'animate-spin')} />
           סנכרן עכשיו
         </button>
       </div>
 
-      {/* Calendar Grid */}
+      {/* Calendar Grid - horizontal scroll on mobile is intentional */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
-        <div className="overflow-x-auto">
+        <p className="sm:hidden text-xs text-gray-500 px-4 py-2 bg-gray-50 border-b">גלול לצדדים כדי לראות את כל התאריכים</p>
+        <div className="overflow-x-auto overflow-y-hidden scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
           <div
             className="min-w-[900px]"
             style={{ display: 'grid', gridTemplateColumns: `180px repeat(${totalDays}, ${COL_W})` }}

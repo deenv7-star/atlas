@@ -61,7 +61,7 @@ export default function GuestPortal() {
 
   return (
     <div className="min-h-screen bg-gray-50/50" dir="rtl">
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
         {/* Header */}
         <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
           <div className="flex items-center gap-3 mb-2">
@@ -70,15 +70,15 @@ export default function GuestPortal() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900">פורטל אורחים</h1>
           </div>
-          <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">צור פורטל דיגיטלי ממותג לאורחים שלך. הוראות צ׳ק-אין, חוקי בית, המלצות מקומיות וקוד WiFi — הכל במקום אחד שהאורח מקבל בלינק.</p>
-          <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: שלח את הלינק לאורח יום לפני הגעה — זה חוסך עשרות שאלות</p>
+          <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">צור פורטל דיגיטלי ממותג לאורחים שלך. הוראות צ׳ק-אין, חוקי בית, המלצות מקומיות וקוד WiFi — הכל במקום אחד שהאורח מקבל בלינק.</p>
+          <p className="text-indigo-500 text-xs mt-1 sm:mr-12">💡 טיפ: שלח את הלינק לאורח יום לפני הגעה — זה חוסך עשרות שאלות</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Preview mockup - phone frame */}
           <div className="lg:col-span-1 flex justify-center lg:justify-start">
             <div className="relative">
-              <div className="w-[280px] rounded-[2.5rem] border-[10px] border-gray-800 bg-gray-800 p-2 shadow-2xl">
+              <div className="w-full max-w-[280px] min-w-[220px] mx-auto rounded-[2.5rem] border-[8px] sm:border-[10px] border-gray-800 bg-gray-800 p-2 shadow-2xl">
                 <div className="rounded-[1.5rem] overflow-hidden bg-white aspect-[9/19]">
                   <div className="p-4 h-full overflow-y-auto bg-gray-50">
                     <div className="text-center mb-4">

@@ -146,7 +146,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
   };
 
   return (
-    <div className="h-[calc(100vh-140px)] flex flex-col" dir="rtl">
+    <div className="min-h-[calc(100dvh-180px)] h-[calc(100dvh-180px)] flex flex-col" dir="rtl">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-3">
@@ -176,7 +176,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
         </div>
         
         {/* Quick Stats */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 border border-blue-200">
             <div className="text-xs text-blue-600 mb-1">הזמנות החודש</div>
             <div className="text-xl font-bold text-blue-900">{bookings.filter(b => b.checkin_date?.startsWith(new Date().toISOString().substring(0, 7))).length}</div>
@@ -239,7 +239,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
                       onClick={() => handleQuickQuestion(question)}
-                      className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-white hover:from-indigo-50/50 hover:to-violet-50/30 border border-gray-200 hover:border-indigo-200 rounded-xl transition-all text-right group shadow-sm hover:shadow-md"
+                      className="flex items-center gap-3 p-4 min-h-[52px] bg-gradient-to-br from-gray-50 to-white hover:from-indigo-50/50 hover:to-violet-50/30 border border-gray-200 hover:border-indigo-200 rounded-xl transition-all text-right group shadow-sm hover:shadow-md touch-manipulation"
                     >
                       <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                         <question.icon className="h-5 w-5 text-white" />

@@ -89,8 +89,8 @@ export default function DynamicPricing() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900">תמחור דינאמי</h1>
           </div>
-          <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">מקסם את ההכנסות שלך עם תמחור חכם. המערכת ממליצה על מחירים אופטימליים לפי עונה, ביקוש ותחרות.</p>
-          <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: הפעל תמחור אוטומטי כדי למקסם הכנסות בלי מאמץ</p>
+          <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">מקסם את ההכנסות שלך עם תמחור חכם. המערכת ממליצה על מחירים אופטימליים לפי עונה, ביקוש ותחרות.</p>
+          <p className="text-indigo-500 text-xs mt-1 sm:mr-12">💡 טיפ: הפעל תמחור אוטומטי כדי למקסם הכנסות בלי מאמץ</p>
         </div>
 
         <DemoDataBanner message="נתוני דוגמה — המחירים וההמלצות המוצגים הם לצורך המחשה. חבר את הנכסים שלך כדי לראות המלצות אמיתיות." />
@@ -159,8 +159,8 @@ export default function DynamicPricing() {
               <Calendar className="w-5 h-5 text-indigo-600" />
               <span className="text-sm text-gray-600">ירוק = נמוך | כחול = בינוני | סגול = גבוה | אדום = שיא</span>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <table className="w-full min-w-[280px] border-collapse">
                 <thead>
                   <tr>
                     {calendarData.days.map((d, i) => (

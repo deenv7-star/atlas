@@ -138,14 +138,14 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         </div>
         <Button
           onClick={openNew}
-          className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm self-start sm:self-auto shadow-sm shadow-[#00D1C1]/20"
+          className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold min-h-[44px] h-11 text-sm self-start sm:self-auto shadow-sm shadow-[#00D1C1]/20 px-5"
         >
           <Plus className="w-4 h-4" />
           הזמנה חדשה
         </Button>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'סה"כ',    value: counts.total,     icon: CalendarDays, bg: 'bg-slate-50',    text: 'text-slate-700' },
           { label: 'פעילות',  value: counts.confirmed,  icon: CheckCircle2, bg: 'bg-emerald-50',  text: 'text-emerald-700' },
@@ -175,7 +175,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setStatusFilter('all')}
-            className={cn("px-3 py-1.5 rounded-xl text-xs font-semibold transition-all", statusFilter === 'all' ? 'bg-[#00D1C1] text-[#0B1220]' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}
+            className={cn("min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-semibold transition-all touch-manipulation", statusFilter === 'all' ? 'bg-[#00D1C1] text-[#0B1220]' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}
           >
             הכל
           </button>
@@ -183,7 +183,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
             <button
               key={s.value}
               onClick={() => setStatusFilter(prev => prev === s.value ? 'all' : s.value)}
-              className={cn("px-3 py-1.5 rounded-xl text-xs font-semibold transition-all", statusFilter === s.value ? s.color + ' ring-1 ring-current/30' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}
+              className={cn("min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-semibold transition-all touch-manipulation", statusFilter === s.value ? s.color + ' ring-1 ring-current/30' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}
             >
               {s.label}
             </button>
@@ -208,7 +208,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
               {searchTerm || statusFilter !== 'all' ? 'נסה לשנות את הסינון' : 'הוסף את ההזמנה הראשונה שלך'}
             </p>
             {!searchTerm && statusFilter === 'all' && (
-              <Button onClick={openNew} size="sm" className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl">
+              <Button onClick={openNew} size="sm" className="gap-1.5 min-h-[44px] bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl px-5 touch-manipulation">
                 <Plus className="w-3.5 h-3.5" />
                 הוסף הזמנה ראשונה
               </Button>
@@ -245,7 +245,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                       )}
                       {booking.nights ? <span className="text-xs text-gray-400">{booking.nights} לילות</span> : null}
                       {property && (
-                        <span className="flex items-center gap-1 text-xs text-gray-400 truncate max-w-[120px]">
+                        <span className="flex items-center gap-1 text-xs text-gray-400 truncate max-w-[100px] sm:max-w-[120px]">
                           <Building2 className="w-3 h-3 flex-shrink-0" />
                           <span className="truncate">{property.name}</span>
                         </span>
@@ -257,18 +257,18 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                       ₪{parseFloat(booking.total_price).toLocaleString('he-IL')}
                     </p>
                   ) : null}
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                  <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex-shrink-0">
                     <button
                       onClick={() => openEdit(booking)}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                      className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
                     >
-                      <Edit className="w-3.5 h-3.5" />
+                      <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(booking.id)}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 active:bg-red-100 transition-colors touch-manipulation"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

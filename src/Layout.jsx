@@ -57,7 +57,7 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden" style={{ backgroundColor: 'var(--page-bg)' }} dir="rtl">
+    <div className="flex flex-col h-screen overflow-hidden safe-top safe-left safe-right" style={{ backgroundColor: 'var(--page-bg)' }} dir="rtl">
       <TrialBanner />
       <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Mobile sidebar overlay */}
@@ -103,7 +103,7 @@ function LayoutContent({ children, currentPageName }) {
           selectedPropertyId={selectedPropertyId}
           onPropertyChange={setSelectedPropertyId}
         />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
           <Suspense fallback={<PageLoader />}>
             {React.cloneElement(children, {
               user,

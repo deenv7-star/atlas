@@ -728,9 +728,10 @@ export default function Landing() {
             background: scrolled ? '#FFFFFF' : 'transparent',
             boxShadow: scrolled ? '0 1px 12px rgba(0,0,0,0.06)' : 'none',
             transition: 'background 0.3s ease, box-shadow 0.3s ease',
+            paddingTop: 'env(safe-area-inset-top)',
           }}
         >
-          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 80 }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, height: 80 }}>
             <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" style={{ height: 52, width: 'auto', objectFit: 'contain' }} />
             </div>
@@ -754,7 +755,8 @@ export default function Landing() {
                   background: 'none',
                   border: 'none',
                   color: '#374151',
-                  padding: '9px 16px',
+                  padding: '12px 20px',
+                  minHeight: 44,
                   fontWeight: 600,
                   fontSize: 14,
                   fontFamily: 'Heebo, sans-serif',
@@ -774,7 +776,8 @@ export default function Landing() {
                   border: 'none',
                   color: 'white',
                   borderRadius: 8,
-                  padding: '9px 22px',
+                  padding: '12px 24px',
+                  minHeight: 44,
                   fontWeight: 600,
                   fontSize: 14,
                   fontFamily: 'Heebo, sans-serif',
@@ -791,7 +794,7 @@ export default function Landing() {
               <button
                 className="atlas-hamburger"
                 onClick={() => setMenuOpen((v) => !v)}
-                style={{ display: 'none', flexDirection: 'column', gap: 5, padding: 8, background: 'none', border: 'none', cursor: 'pointer' }}
+                style={{ display: 'none', flexDirection: 'column', gap: 5, padding: 12, minWidth: 44, minHeight: 44, background: 'none', border: 'none', cursor: 'pointer', alignItems: 'center', justifyContent: 'center' }}
                 aria-label="תפריט"
               >
                 {[0, 1, 2].map((i) => (
@@ -816,13 +819,13 @@ export default function Landing() {
               ))}
               <button
                 onClick={() => { setMenuOpen(false); goToLogin(); }}
-                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '12px 22px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
+                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
               >
                 כניסה
               </button>
               <button
                 onClick={() => { setMenuOpen(false); goToRegister(); }}
-                style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 8, padding: '12px 22px', fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
+                style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
               >
                 הרשמה חינם
               </button>
@@ -835,17 +838,18 @@ export default function Landing() {
         ════════════════════════════════════════ */}
         <section
           style={{
-            minHeight: '100vh',
+            minHeight: '100dvh',
             display: 'flex',
             alignItems: 'center',
-            paddingTop: 108,
-            paddingBottom: 80,
-            paddingLeft: 24,
-            paddingRight: 24,
+            paddingTop: 'calc(88px + env(safe-area-inset-top))',
+            paddingBottom: 'calc(80px + env(safe-area-inset-bottom))',
+            paddingLeft: 16,
+            paddingRight: 16,
             position: 'relative',
             zIndex: 1,
             overflow: 'hidden',
           }}
+          className="sm:!pl-6 sm:!pr-6"
         >
           <div className="atlas-blob atlas-blob-1" />
           <div className="atlas-blob atlas-blob-2" />

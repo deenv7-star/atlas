@@ -163,7 +163,7 @@ export default function LeadsPage({ user, selectedPropertyId }) {
         </div>
         <Button
           onClick={openNew}
-          className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm rounded-xl shadow-sm"
+          className="gap-1.5 min-h-[44px] bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-11 text-sm rounded-xl shadow-sm px-5 touch-manipulation"
         >
           <Plus className="w-4 h-4" />
           ליד חדש
@@ -201,7 +201,7 @@ export default function LeadsPage({ user, selectedPropertyId }) {
             <button
               key={s.value}
               onClick={() => setStatusFilter(s.value)}
-              className={`h-8 px-3 rounded-full text-xs font-medium transition-all border ${
+              className={`min-h-[44px] h-11 px-4 rounded-full text-xs font-medium transition-all border touch-manipulation ${
                 statusFilter === s.value
                   ? 'bg-[#0B1220] text-white border-[#0B1220]'
                   : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'

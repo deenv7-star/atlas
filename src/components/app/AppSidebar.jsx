@@ -99,7 +99,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
                   onMouseEnter={() => setHoveredItem(item.page)}
                   onMouseLeave={() => setHoveredItem(null)}
                   className={cn(
-                    "flex items-center rounded-xl transition-all duration-200 group relative py-2 px-2.5 gap-3 mb-0.5",
+                    "flex items-center rounded-xl transition-all duration-200 group relative py-3 px-3 gap-3 mb-0.5 min-h-[44px] touch-manipulation",
                     collapsed ? "justify-center" : "",
                     active
                       ? "bg-indigo-50 text-[#4F46E5] font-semibold"
@@ -127,7 +127,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
         <Link
           to={createPageUrl('Settings')}
           className={cn(
-            "flex items-center rounded-xl transition-all duration-200 py-2 px-2.5 gap-3",
+            "flex items-center rounded-xl transition-all duration-200 py-3 px-3 gap-3 min-h-[44px] touch-manipulation",
             collapsed ? "justify-center" : "",
             isActive('Settings') ? "bg-indigo-50 text-[#4F46E5]" : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
           )}
@@ -137,7 +137,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
         </Link>
         <button
           onClick={onLogout}
-          className={cn("w-full flex items-center rounded-xl transition-all duration-200 py-2 px-2.5 gap-3", collapsed ? "justify-center" : "", "text-gray-400 hover:text-red-500 hover:bg-red-50")}
+          className={cn("w-full flex items-center rounded-xl transition-all duration-200 py-3 px-3 gap-3 min-h-[44px] touch-manipulation", collapsed ? "justify-center" : "", "text-gray-400 hover:text-red-500 hover:bg-red-50")}
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           {!collapsed && <span className="text-sm font-medium">יציאה</span>}

@@ -171,7 +171,7 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
             <p className="text-sm text-gray-400 mb-3">{emptyText}</p>
             {addLink && (
               <Link to={addLink}>
-                <Button size="sm" variant="outline" className="text-xs h-7 rounded-lg">
+                <Button size="sm" variant="outline" className="text-xs min-h-[44px] h-11 rounded-lg px-4 touch-manipulation">
                   <Plus className="w-3 h-3 ml-1" /> הוסף
                 </Button>
               </Link>
@@ -323,12 +323,12 @@ export default function Dashboard({ user, selectedPropertyId }) {
             </h1>
             <p className="text-white/50 text-sm mt-1">הנה סיכום פעילות העסק שלך</p>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-shrink-0 flex-wrap">
             <Link to={createPageUrl('Leads')}>
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 text-xs border-white/15 text-white/80 hover:bg-white/10 hover:text-white bg-transparent gap-1.5"
+                className="min-h-[44px] h-11 text-xs border-white/15 text-white/80 hover:bg-white/10 hover:text-white bg-transparent gap-1.5 px-4 touch-manipulation"
               >
                 <Plus className="w-3.5 h-3.5" />
                 ליד חדש
@@ -337,7 +337,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
             <Link to={createPageUrl('Bookings')}>
               <Button
                 size="sm"
-                className="h-8 text-xs bg-white hover:bg-gray-50 text-indigo-700 font-semibold gap-1.5 shadow-md"
+                className="min-h-[44px] h-11 text-xs bg-white hover:bg-gray-50 text-indigo-700 font-semibold gap-1.5 shadow-md px-4 touch-manipulation"
               >
                 <Plus className="w-3.5 h-3.5" />
                 הזמנה חדשה

@@ -62,11 +62,11 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
   const pageTitle = pageNames[currentPageName] || currentPageName;
 
   return (
-    <header className="h-14 flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-4 gap-3 z-10">
+    <header className="min-h-[56px] h-14 flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-4 gap-3 z-10 safe-top">
       {/* Mobile menu button */}
       <button
         onClick={onMenuClick}
-        className="md:hidden p-1.5 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+        className="md:hidden min-w-[44px] min-h-[44px] p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors flex items-center justify-center touch-manipulation"
       >
         <Menu className="w-5 h-5" />
       </button>
@@ -104,7 +104,7 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="relative p-1.5 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+            <button className="relative min-w-[44px] min-h-[44px] p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors flex items-center justify-center touch-manipulation">
               <Bell className="w-4 h-4" />
             </button>
           </DropdownMenuTrigger>

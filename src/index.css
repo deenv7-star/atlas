@@ -131,6 +131,7 @@
 html, body {
   min-height: 100vh;
   min-height: 100dvh;
+  overflow-x: hidden;
 }
 html {
   scroll-behavior: smooth;
@@ -138,6 +139,17 @@ html {
 #root {
   min-height: 100vh;
   min-height: 100dvh;
+}
+/* Safe area for notched devices (iPhone X+) - applied via utility */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left { padding-left: env(safe-area-inset-left); }
+.safe-right { padding-right: env(safe-area-inset-right); }
+
+/* Touch-friendly: remove 300ms delay, improve tap response */
+button, a, [role="button"] { touch-action: manipulation; }
+@media (hover: none) {
+  button:active, a:active, [role="button"]:active { opacity: 0.9; }
 }
 
 /* ─── Atlas scroll reveal (bulletproof) ──────────────── */

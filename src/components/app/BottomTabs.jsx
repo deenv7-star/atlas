@@ -31,10 +31,10 @@ export default function BottomTabs() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t dark:border-gray-800 lg:hidden z-30 select-none"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t dark:border-gray-800 lg:hidden z-30 select-none safe-left safe-right"
+      style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 8px)' }}
     >
-      <nav className="flex items-center justify-around h-16">
+      <nav className="flex items-center justify-around h-16 min-h-[56px]">
         {tabs.map((tab) => {
           const isActive = isTabActive(tab.name);
           return (
