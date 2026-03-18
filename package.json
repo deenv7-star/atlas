@@ -17,7 +17,7 @@
     "ops:restore": "bash ops/restore.sh",
     "test:backend": "node --test server/tests/*.test.js",
     "generate:assets": "node scripts/generate-favicon.js && node scripts/generate-og-image.js",
-    "generate:icons": "node scripts/generate-icons.js",
+    "generate:icons": "node scripts/generate-icons.js && npx capacitor-assets generate --ios",
     "lint:backend": "eslint server --quiet",
     "ops:verify-backup": "bash ops/verify-backup.sh",
     "typecheck:backend": "npm run check:backend",
@@ -110,6 +110,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@eslint/js": "^9.19.0",
     "@types/node": "^22.13.5",
     "@types/react": "^18.2.66",

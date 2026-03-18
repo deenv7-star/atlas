@@ -55,6 +55,9 @@ jobs:
           rm -rf ios
           npx cap add ios
 
+      - name: Generate iOS app icons & splash screen
+        run: npx capacitor-assets generate --ios
+
       - name: Sync web assets to iOS
         run: npx cap sync ios
 
