@@ -1,8 +1,7 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import React, { useState, useMemo } from 'react';
+import { useBookings, useCreateBooking, useUpdateBooking, useDeleteBooking } from '@/data/entities';
+import { useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -15,7 +14,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import {
   CalendarDays, Plus, Search, Building2, Edit, Trash2, Check,
-  Clock, CheckCircle2, XCircle, UserCheck, Users,
+  Clock, CheckCircle2, XCircle,
 } from 'lucide-react';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -37,77 +36,23 @@ const emptyBooking = {
   property_id: '', check_in_date: '', check_out_date: '',
   nights: 1, adults: 2, children: 0,
   total_price: '', status: 'PENDING', notes: '',
+  guest_count: 2, booking_source: 'direct', payment_status: 'pending',
 };
 
 export default function BookingsPage({ user, selectedPropertyId }) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
   const [searchTerm, setSearchTerm]     = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showDialog, setShowDialog]     = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
   const [form, setForm] = useState(emptyBooking);
 
-  const { data: bookings = [], isLoading, isError } = useQuery({
-    queryKey: ['bookings', selectedPropertyId],
-    queryFn: async () => {
-      let q = supabase.from('bookings').select('*');
-      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
-      const { data, error } = await q.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
-    staleTime: 2 * 60 * 1000,
-  });
-
-  const { data: properties = [] } = useQuery({
-    queryKey: ['properties-list'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('properties').select('*');
-      if (error) throw error;
-      return data ?? [];
-    },
-    staleTime: 10 * 60 * 1000,
-  });
-
-  useEffect(() => {
-    const channel = supabase
-      .channel('bookings-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['bookings'] });
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [queryClient]);
-
-  const createMutation = useMutation({
-    mutationFn: async (payload) => {
-      const { data, error } = await supabase.from('bookings').insert(payload).select().single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['bookings'] }); toast({ title: 'הזמנה נוצרה בהצלחה' }); setShowDialog(false); setForm(emptyBooking); },
-    onError: () => toast({ title: 'שגיאה ביצירת ההזמנה', variant: 'destructive' }),
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, data: payload }) => {
-      const { data, error } = await supabase.from('bookings').update(payload).eq('id', id).select().single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['bookings'] }); toast({ title: 'ההזמנה עודכנה' }); setShowDialog(false); },
-    onError: () => toast({ title: 'שגיאה בעדכון ההזמנה', variant: 'destructive' }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id) => {
-      const { error } = await supabase.from('bookings').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['bookings'] }); toast({ title: 'ההזמנה נמחקה' }); },
-    onError: () => toast({ title: 'שגיאה במחיקת ההזמנה', variant: 'destructive' }),
-  });
+  const { data: bookings = [], isLoading, isError } = useBookings(filters, '-created_at', 200);
+  const { data: properties = [] } = useProperties();
+  const createMutation = useCreateBooking();
+  const updateMutation = useUpdateBooking();
+  const deleteMutation = useDeleteBooking();
 
   const filtered = useMemo(() => bookings.filter(b => {
     const q = searchTerm.toLowerCase();
@@ -118,16 +63,38 @@ export default function BookingsPage({ user, selectedPropertyId }) {
   const openNew = () => { setEditingBooking(null); setForm(emptyBooking); setShowDialog(true); };
   const openEdit = (b) => {
     setEditingBooking(b);
-    setForm({ guest_name: b.guest_name||'', guest_email: b.guest_email||'', guest_phone: b.guest_phone||'',
+    setForm({
+      guest_name: b.guest_name||'', guest_email: b.guest_email||'', guest_phone: b.guest_phone||'',
       property_id: b.property_id||'', check_in_date: b.check_in_date||'', check_out_date: b.check_out_date||'',
       nights: b.nights||1, adults: b.adults||2, children: b.children||0,
-      total_price: b.total_price||'', status: b.status||'PENDING', notes: b.notes||'' });
+      total_price: b.total_price||'', status: b.status||'PENDING', notes: b.notes||'',
+      guest_count: (b.adults||0)+(b.children||0)||2, booking_source: b.booking_source||'direct', payment_status: b.payment_status||'pending',
+    });
     setShowDialog(true);
   };
 
   const handleSave = () => {
     if (!form.guest_name || !form.check_in_date) { toast({ title: 'נא למלא שם אורח ותאריך כניסה', variant: 'destructive' }); return; }
-    editingBooking ? updateMutation.mutate({ id: editingBooking.id, data: form }) : createMutation.mutate(form);
+    const payload = { ...form };
+    if (editingBooking) {
+      updateMutation.mutate({ id: editingBooking.id, data: payload }, {
+        onSuccess: () => { toast({ title: 'ההזמנה עודכנה' }); setShowDialog(false); },
+        onError: () => toast({ title: 'שגיאה בעדכון ההזמנה', variant: 'destructive' }),
+      });
+    } else {
+      createMutation.mutate(payload, {
+        onSuccess: () => { toast({ title: 'הזמנה נוצרה בהצלחה' }); setShowDialog(false); setForm(emptyBooking); },
+        onError: () => toast({ title: 'שגיאה ביצירת ההזמנה', variant: 'destructive' }),
+      });
+    }
+  };
+
+  const handleDelete = (id) => {
+    if (!confirm('למחוק הזמנה זו?')) return;
+    deleteMutation.mutate(id, {
+      onSuccess: () => toast({ title: 'ההזמנה נמחקה' }),
+      onError: () => toast({ title: 'שגיאה במחיקת ההזמנה', variant: 'destructive' }),
+    });
   };
 
   const getNights = () => {
@@ -159,7 +126,6 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         <p className="text-indigo-500 text-xs mt-1 mr-12">טיפ: לחץ + הזמנה חדשה כדי להוסיף הזמנה ידנית</p>
       </div>
 
-      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2.5">
@@ -179,7 +145,6 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         </Button>
       </div>
 
-      {/* ── Stat Pills ── */}
       <div className="grid grid-cols-4 gap-3">
         {[
           { label: 'סה"כ',    value: counts.total,     icon: CalendarDays, bg: 'bg-slate-50',    text: 'text-slate-700' },
@@ -197,7 +162,6 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         ))}
       </div>
 
-      {/* ── Filters ── */}
       <div className="bg-white rounded-2xl border border-gray-100/80 shadow-sm p-3 flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -227,7 +191,6 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         </div>
       </div>
 
-      {/* ── Bookings List ── */}
       <div className="bg-white rounded-2xl border border-gray-100/80 shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="p-4 space-y-3">
@@ -262,12 +225,9 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                   key={booking.id}
                   className="flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50/60 transition-colors group"
                 >
-                  {/* Avatar */}
                   <div className={cn("w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold shadow-sm", avatarStyle)}>
                     {(booking.guest_name || 'א')[0]}
                   </div>
-
-                  {/* Core info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <p className="text-sm font-semibold text-gray-800 truncate">{booking.guest_name || 'אורח'}</p>
@@ -292,15 +252,11 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                       )}
                     </div>
                   </div>
-
-                  {/* Price */}
                   {booking.total_price ? (
                     <p className="text-sm font-bold text-gray-800 flex-shrink-0 hidden sm:block">
                       ₪{parseFloat(booking.total_price).toLocaleString('he-IL')}
                     </p>
                   ) : null}
-
-                  {/* Actions */}
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                     <button
                       onClick={() => openEdit(booking)}
@@ -309,7 +265,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                       <Edit className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      onClick={() => { if (confirm('למחוק הזמנה זו?')) deleteMutation.mutate(booking.id); }}
+                      onClick={() => handleDelete(booking.id)}
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -322,7 +278,6 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         )}
       </div>
 
-      {/* ── Create / Edit Dialog ── */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="max-w-lg rounded-2xl">
           <DialogHeader>
@@ -375,6 +330,10 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                   {STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="col-span-2 space-y-1.5">
+              <Label className="text-xs font-semibold">הערות</Label>
+              <Input value={form.notes} onChange={e => setForm(p => ({...p, notes: e.target.value}))} placeholder="הערות פנימיות" className="h-9 text-sm rounded-xl" />
             </div>
             {getNights() > 0 && (
               <div className="col-span-2">

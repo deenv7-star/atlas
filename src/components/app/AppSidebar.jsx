@@ -23,7 +23,7 @@ const navGroups = [
     ],
   },
   {
-    label: 'PRO',
+    label: 'מתקדם',
     items: [
       { icon: BarChart3, label: 'מודיעין הכנסות', page: 'RevenueIntelligence' },
       { icon: FileBarChart, label: 'דוחות בעלים', page: 'OwnerReports' },
@@ -83,9 +83,9 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
             {group.label && !collapsed && (
               <p className={cn(
                 "px-2 mb-1 text-[10px] font-semibold uppercase tracking-widest select-none",
-                group.label === 'PRO' ? "text-amber-500" : "text-gray-400"
+                group.label === 'מתקדם' ? "text-amber-500" : "text-gray-400"
               )}>
-                {group.label === 'PRO' ? '★ PRO' : group.label}
+                {group.label === 'מתקדם' ? '★ מתקדם' : group.label}
               </p>
             )}
             {group.label && collapsed && <div className="border-t border-gray-100 my-2 mx-1" />}

@@ -1,6 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import React, { useState, useMemo } from 'react';
+import { useLeads, useCreateLead, useUpdateLead, useDeleteLead, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -55,85 +54,18 @@ const emptyLead = {
 
 export default function LeadsPage({ user, selectedPropertyId }) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showDialog, setShowDialog] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [form, setForm] = useState(emptyLead);
 
-  const { data: leads = [], isLoading, isError } = useQuery({
-    queryKey: ['leads', selectedPropertyId],
-    queryFn: async () => {
-      let q = supabase.from('leads').select('*');
-      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
-      const { data, error } = await q.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
-    staleTime: 2 * 60 * 1000,
-  });
-
-  const { data: properties = [] } = useQuery({
-    queryKey: ['properties-list'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('properties').select('*');
-      if (error) throw error;
-      return data ?? [];
-    },
-    staleTime: 10 * 60 * 1000,
-  });
-
-  useEffect(() => {
-    const channel = supabase
-      .channel('leads-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['leads'] });
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [queryClient]);
-
-  const createMutation = useMutation({
-    mutationFn: async (payload) => {
-      const { data, error } = await supabase.from('leads').insert(payload).select().single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
-      toast({ title: 'ליד נוצר בהצלחה' });
-      setShowDialog(false);
-      setForm(emptyLead);
-    },
-    onError: () => toast({ title: 'שגיאה ביצירת הליד', variant: 'destructive' }),
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, data: payload }) => {
-      const { data, error } = await supabase.from('leads').update(payload).eq('id', id).select().single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
-      toast({ title: 'הליד עודכן' });
-      setShowDialog(false);
-    },
-    onError: () => toast({ title: 'שגיאה בעדכון הליד', variant: 'destructive' }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id) => {
-      const { error } = await supabase.from('leads').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
-      toast({ title: 'הליד נמחק' });
-    },
-    onError: () => toast({ title: 'שגיאה במחיקת הליד', variant: 'destructive' }),
-  });
+  const { data: leads = [], isLoading } = useLeads(filters, '-created_at', 200);
+  const { data: properties = [] } = useProperties();
+  const createMutation = useCreateLead();
+  const updateMutation = useUpdateLead();
+  const deleteMutation = useDeleteLead();
 
   const filtered = useMemo(() => {
     return leads.filter(l => {
@@ -184,10 +116,24 @@ export default function LeadsPage({ user, selectedPropertyId }) {
       return;
     }
     if (editingLead) {
-      updateMutation.mutate({ id: editingLead.id, data: form });
+      updateMutation.mutate({ id: editingLead.id, data: form }, {
+        onSuccess: () => { toast({ title: 'הליד עודכן' }); setShowDialog(false); },
+        onError: () => toast({ title: 'שגיאה בעדכון הליד', variant: 'destructive' }),
+      });
     } else {
-      createMutation.mutate(form);
+      createMutation.mutate(form, {
+        onSuccess: () => { toast({ title: 'ליד נוצר בהצלחה' }); setShowDialog(false); setForm(emptyLead); },
+        onError: () => toast({ title: 'שגיאה ביצירת הליד', variant: 'destructive' }),
+      });
     }
+  };
+
+  const handleDelete = (id) => {
+    if (!confirm('למחוק ליד זה?')) return;
+    deleteMutation.mutate(id, {
+      onSuccess: () => toast({ title: 'הליד נמחק' }),
+      onError: () => toast({ title: 'שגיאה במחיקת הליד', variant: 'destructive' }),
+    });
   };
 
   return (
@@ -355,7 +301,7 @@ export default function LeadsPage({ user, selectedPropertyId }) {
                     </button>
                     <button
                       className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      onClick={() => { if (confirm('למחוק ליד זה?')) deleteMutation.mutate(lead.id); }}
+                      onClick={() => handleDelete(lead.id)}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

@@ -1,8 +1,11 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { CalendarRange, ChevronRight, ChevronLeft, RefreshCw, Filter, Home, Eye, AlertCircle, Plus, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { CalendarRange, ChevronRight, ChevronLeft, RefreshCw, Filter, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
-import DemoDataBanner from '@/components/common/DemoDataBanner';
+import { useBookings } from '@/data/entities';
+import { useProperties } from '@/data/entities';
+import { Button } from '@/components/ui/button';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#FF5A5F', bg: 'bg-[#FF5A5F]', text: 'text-[#FF5A5F]', light: 'bg-red-50' },
@@ -11,40 +14,35 @@ const CHANNELS = {
   blocked: { label: 'חסום', color: '#9CA3AF', bg: 'bg-gray-400', text: 'text-gray-500', light: 'bg-gray-50' },
 };
 
-const PROPERTIES = [
-  { id: 1, name: 'דירת הים, תל אביב', dot: '#3B82F6', type: 'דירה', beds: 2 },
-  { id: 2, name: 'פנטהאוז מרינה, הרצליה', dot: '#8B5CF6', type: 'פנטהאוז', beds: 4 },
-  { id: 3, name: 'סטודיו נווה צדק, תל אביב', dot: '#F59E0B', type: 'סטודיו', beds: 1 },
-  { id: 4, name: 'וילה כרמל, חיפה', dot: '#EC4899', type: 'וילה', beds: 5 },
-  { id: 5, name: 'צימר משפחת לוי, צפת', dot: '#10B981', type: 'צימר', beds: 2 },
-];
+const DOTS = ['#3B82F6', '#8B5CF6', '#F59E0B', '#EC4899', '#10B981', '#6366F1'];
 
-function buildDemoBookings(startDate) {
-  const s = new Date(startDate);
-  const base = new Date(s.getFullYear(), s.getMonth(), s.getDate());
+function mapSourceToChannel(source) {
+  const s = (source || 'direct').toLowerCase();
+  if (s.includes('airbnb')) return 'airbnb';
+  if (s.includes('booking')) return 'booking';
+  return 'direct';
+}
 
-  return [
-    { id: 1, propertyId: 1, guest: 'דוד כהן', channel: 'airbnb', startOffset: -1, nights: 4, amount: 3200, status: 'מאושר' },
-    { id: 2, propertyId: 1, guest: 'שרה מזרחי', channel: 'booking', startOffset: 5, nights: 3, amount: 2400, status: 'מאושר' },
-    { id: 3, propertyId: 1, guest: '', channel: 'blocked', startOffset: 10, nights: 2, amount: 0, status: 'חסום' },
-    { id: 4, propertyId: 2, guest: 'משפחת לוי', channel: 'direct', startOffset: 0, nights: 5, amount: 5500, status: 'מאושר' },
-    { id: 5, propertyId: 2, guest: 'אורן אברהמי', channel: 'airbnb', startOffset: 7, nights: 4, amount: 4200, status: 'ממתין' },
-    { id: 6, propertyId: 3, guest: 'מיכל גולן', channel: 'booking', startOffset: 1, nights: 3, amount: 1500, status: 'מאושר' },
-    { id: 7, propertyId: 3, guest: 'רון אברהם', channel: 'airbnb', startOffset: 6, nights: 2, amount: 1100, status: 'מאושר' },
-    { id: 8, propertyId: 3, guest: 'יעל שמש', channel: 'direct', startOffset: 10, nights: 3, amount: 1350, status: 'מאושר' },
-    { id: 9, propertyId: 4, guest: 'משפחת גולדברג', channel: 'direct', startOffset: -2, nights: 7, amount: 9800, status: 'מאושר' },
-    { id: 10, propertyId: 4, guest: 'דניאל ברק', channel: 'booking', startOffset: 8, nights: 5, amount: 7200, status: 'מאושר' },
-    { id: 11, propertyId: 5, guest: 'נועה דוד', channel: 'airbnb', startOffset: 0, nights: 3, amount: 2100, status: 'מאושר' },
-    { id: 12, propertyId: 5, guest: '', channel: 'blocked', startOffset: 3, nights: 1, amount: 0, status: 'חסום' },
-    { id: 13, propertyId: 5, guest: 'עמית רוזן', channel: 'booking', startOffset: 6, nights: 4, amount: 2800, status: 'מאושר' },
-    { id: 14, propertyId: 5, guest: 'ליאור כץ', channel: 'direct', startOffset: 12, nights: 2, amount: 1500, status: 'ממתין' },
-  ].map(b => {
-    const start = new Date(base);
-    start.setDate(start.getDate() + b.startOffset);
-    const end = new Date(start);
-    end.setDate(end.getDate() + b.nights);
-    return { ...b, startDate: start, endDate: end };
-  });
+function transformBookings(rawBookings, properties) {
+  return rawBookings
+    .filter(b => b.check_in_date && b.property_id)
+    .map(b => {
+      const startDate = new Date(b.check_in_date);
+      const nights = b.nights || 1;
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + nights);
+      return {
+        id: b.id,
+        propertyId: b.property_id,
+        guest: b.guest_name || '',
+        channel: mapSourceToChannel(b.booking_source),
+        startDate,
+        endDate,
+        nights,
+        amount: parseFloat(b.total_price) || 0,
+        status: b.status === 'CANCELLED' ? 'בוטל' : ['APPROVED','CONFIRMED','CHECKED_IN'].includes(b.status) ? 'מאושר' : 'ממתין',
+      };
+    });
 }
 
 const HEB_DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
@@ -75,13 +73,25 @@ function ChannelDot({ channel, size = 8 }) {
   return <span className="inline-block rounded-full flex-shrink-0" style={{ width: size, height: size, backgroundColor: ch.color }} />;
 }
 
-export default function MultiCalendar() {
+export default function MultiCalendar({ selectedPropertyId }) {
   const [viewMode, setViewMode] = useState('week');
   const [dateOffset, setDateOffset] = useState(0);
   const [channelFilter, setChannelFilter] = useState('all');
   const [hoveredBooking, setHoveredBooking] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [syncing, setSyncing] = useState(false);
+
+  const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
+  const { data: rawBookings = [], isLoading } = useBookings(filters, '-created_at', 300);
+  const { data: rawProperties = [] } = useProperties();
+
+  const properties = useMemo(() => rawProperties.map((p, i) => ({
+    id: p.id,
+    name: p.name || `נכס ${i + 1}`,
+    dot: DOTS[i % DOTS.length],
+    type: p.type || 'דירה',
+    beds: p.beds || 2,
+  })), [rawProperties]);
 
   const totalDays = viewMode === 'week' ? 14 : 30;
 
@@ -99,7 +109,7 @@ export default function MultiCalendar() {
     });
   }, [baseDate, totalDays]);
 
-  const bookings = useMemo(() => buildDemoBookings(baseDate), [baseDate]);
+  const bookings = useMemo(() => transformBookings(rawBookings, properties), [rawBookings, properties]);
 
   const filteredBookings = useMemo(() => {
     if (channelFilter === 'all') return bookings;
@@ -141,7 +151,7 @@ export default function MultiCalendar() {
 
   const gaps = useMemo(() => {
     const result = [];
-    PROPERTIES.forEach(prop => {
+    properties.forEach(prop => {
       const propBookings = bookings
         .filter(b => b.propertyId === prop.id && b.channel !== 'blocked')
         .sort((a, b) => a.startDate - b.startDate);
@@ -163,7 +173,7 @@ export default function MultiCalendar() {
       }
     });
     return result;
-  }, [bookings]);
+  }, [bookings, properties]);
 
   const totalGapRevenue = gaps.reduce((s, g) => s + g.potentialRevenue, 0);
 
@@ -198,11 +208,21 @@ export default function MultiCalendar() {
         </p>
       </div>
 
-      <DemoDataBanner
-        message="נתוני דוגמה — הוסף הזמנות ונכסים כדי לראות את התפוסה האמיתית שלך."
-        actionLabel="הזמנות"
-        actionLink={createPageUrl('Bookings')}
-      />
+      {(properties.length === 0 || bookings.length === 0) && (
+        <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between flex-wrap gap-3">
+          <p className="text-sm text-amber-800">
+            {properties.length === 0
+              ? 'הוסף נכס ראשון בהגדרות כדי להתחיל'
+              : 'אין הזמנות בתקופה זו — הוסף הזמנה כדי לראות תפוסה'}
+          </p>
+          <Link to={createPageUrl(properties.length === 0 ? 'Settings' : 'Bookings')}>
+            <Button size="sm" className="gap-1.5 bg-amber-600 hover:bg-amber-700">
+              <Plus className="w-3.5 h-3.5" />
+              {properties.length === 0 ? 'הוסף נכס' : 'הזמנה חדשה'}
+            </Button>
+          </Link>
+        </div>
+      )}
 
       {/* Toolbar */}
       <div className="bg-white rounded-xl border border-gray-200 p-3 mb-4 flex flex-wrap items-center gap-3">
@@ -322,7 +342,19 @@ export default function MultiCalendar() {
             })}
 
             {/* Property rows */}
-            {PROPERTIES.map((prop) => {
+            {properties.length === 0 ? (
+              <div className="col-span-full p-12 text-center text-gray-500">
+                <CalendarRange className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p className="text-sm font-medium">אין נכסים עדיין</p>
+                <p className="text-xs mt-1">הוסף נכס בהגדרות כדי להתחיל לנהל תפוסה</p>
+                <Link to={createPageUrl('Settings')} className="mt-4 inline-block">
+                  <Button size="sm" className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa]">
+                    <Plus className="w-3.5 h-3.5" />
+                    הוסף נכס
+                  </Button>
+                </Link>
+              </div>
+            ) : properties.map((prop) => {
               const propBookings = getBookingsForProperty(prop.id);
               return (
                 <React.Fragment key={prop.id}>

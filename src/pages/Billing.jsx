@@ -86,7 +86,7 @@ export default function BillingPage({ user }) {
                 <CreditCard className="h-4 w-4" />
                 <span className="text-sm">אמצעי תשלום</span>
               </div>
-              <p className="font-semibold text-[#0B1220]">•••• 4242</p>
+              <p className="font-semibold text-[#0B1220]">חבר כרטיס בהגדרות</p>
             </div>
           </div>
 
@@ -171,29 +171,13 @@ export default function BillingPage({ user }) {
             <Receipt className="h-5 w-5" />
             היסטוריית חיובים
           </CardTitle>
+          <CardDescription>תשלומי מנוי חודשיים</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {[
-              { date: '2026-01-07', amount: PLANS[currentPlan].price, status: 'שולם' },
-              { date: '2025-12-07', amount: PLANS[currentPlan].price, status: 'שולם' },
-              { date: '2025-11-07', amount: PLANS[currentPlan].price, status: 'שולם' }
-            ].map((payment, i) => (
-              <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium">₪{payment.amount}</p>
-                    <p className="text-xs text-gray-500">{new Date(payment.date).toLocaleDateString('he-IL')}</p>
-                  </div>
-                </div>
-                <Badge className="bg-green-100 text-green-700 border-green-200">
-                  {payment.status}
-                </Badge>
-              </div>
-            ))}
+          <div className="py-8 text-center text-gray-500">
+            <Receipt className="h-10 w-10 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">אין חיובים עדיין</p>
+            <p className="text-xs mt-1">היסטוריית התשלומים תופיע כאן לאחר החיוב הראשון</p>
           </div>
         </CardContent>
       </Card>

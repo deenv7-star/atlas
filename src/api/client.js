@@ -598,10 +598,7 @@ const integrations = {
     async InvokeLLM({ prompt, model = 'gpt-4o-mini' } = {}) {
       const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
       if (!apiKey) {
-        return (
-          'תכונת ה-AI אינה מוגדרת.\n' +
-          'הוסף `VITE_OPENAI_API_KEY=<your-key>` לקובץ `.env` כדי להפעיל אותה.'
-        );
+        return 'תכונת ה-AI תהיה זמינה בקרוב. עד אז אפשר לפנות אלינו בכל שאלה.';
       }
       const res = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',

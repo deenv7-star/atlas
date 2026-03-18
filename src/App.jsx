@@ -139,6 +139,9 @@ const AuthenticatedApp = () => {
           </ProtectedRoute>
         }
       />
+      {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
+      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
+      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
       {/* Legacy routes — redirect to canonical lowercase paths */}
       {LEGACY_REDIRECTS.map(({ from, to }) => (
         <Route key={from} path={from} element={<Navigate to={to} replace />} />
@@ -166,9 +169,9 @@ const AuthenticatedApp = () => {
         }
       />
 
-      {/* All other pages — protected (Dashboard has explicit route above) */}
+      {/* All other pages — protected (Dashboard, Billing, Subscription have explicit routes) */}
       {Object.entries(Pages)
-        .filter(([path]) => path !== 'Dashboard' && !PUBLIC_PAGE_KEYS.includes(path))
+        .filter(([path]) => !['Dashboard', 'Billing', 'Subscription'].includes(path) && !PUBLIC_PAGE_KEYS.includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}
