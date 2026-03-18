@@ -128,6 +128,17 @@ const AuthenticatedApp = () => {
           </ProtectedRoute>
         }
       />
+      {/* Explicit dashboard route — ensures /dashboard always works */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <LayoutWrapper currentPageName="Dashboard">
+              <Pages.Dashboard />
+            </LayoutWrapper>
+          </ProtectedRoute>
+        }
+      />
       {/* Legacy routes — redirect to canonical lowercase paths */}
       {LEGACY_REDIRECTS.map(({ from, to }) => (
         <Route key={from} path={from} element={<Navigate to={to} replace />} />
@@ -155,9 +166,9 @@ const AuthenticatedApp = () => {
         }
       />
 
-      {/* All other pages — protected */}
+      {/* All other pages — protected (Dashboard has explicit route above) */}
       {Object.entries(Pages)
-        .filter(([path]) => !PUBLIC_PAGE_KEYS.includes(path))
+        .filter(([path]) => path !== 'Dashboard' && !PUBLIC_PAGE_KEYS.includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}
