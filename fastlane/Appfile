@@ -1,0 +1,7 @@
+app_identifier("co.il.atlas-app")   # Bundle ID של האפליקציה
+
+# Authentication via App Store Connect API key (set in GitHub Secrets)
+# No need for Apple ID / password
+
+itc_team_id(ENV["APP_STORE_CONNECT_TEAM_ID"])   # optional — needed if you have multiple teams
+team_id(ENV["APPLE_TEAM_ID"])                    # optional — needed if you have multiple teams

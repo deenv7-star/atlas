@@ -1,0 +1,109 @@
+default_platform(:ios)
+
+# ────────────────────────────────────────────────────────────────────────────
+# ATLAS — Fastlane configuration
+#
+# Lanes:
+#   beta    → Build + upload to TestFlight (לבדיקות פנימיות)
+#   release → Build + upload to App Store  (פרסום ציבורי)
+# ────────────────────────────────────────────────────────────────────────────
+
+platform :ios do
+
+  # ── Runs before every lane ──────────────────────────────────────
+  before_all do
+    # Required for CI to avoid interactive prompts
+    setup_ci if is_ci
+  end
+
+  # ── beta: build + upload to TestFlight ──────────────────────────
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    api_key = load_api_key
+
+    sync_certificates(api_key: api_key)
+    build_ipa_file
+
+    upload_to_testflight(
+      api_key:                          api_key,
+      skip_waiting_for_build_processing: true,   # don't wait ~20min
+      changelog:                        "גרסה חדשה של ATLAS"
+    )
+
+    notify_success("TestFlight")
+  end
+
+  # ── release: build + submit to App Store ────────────────────────
+  desc "Build and upload to App Store for review"
+  lane :release do
+    api_key = load_api_key
+
+    # Bump build number automatically using latest from App Store
+    increment_build_number(
+      build_number: latest_testflight_build_number(api_key: api_key) + 1,
+      xcodeproj:    "ios/App/App.xcodeproj"
+    )
+
+    sync_certificates(api_key: api_key)
+    build_ipa_file
+
+    upload_to_app_store(
+      api_key:              api_key,
+      submit_for_review:    false,    # change to true for automatic review submission
+      automatic_release:    false,
+      skip_screenshots:     true,
+      skip_metadata:        true,
+      force:                true
+    )
+
+    notify_success("App Store")
+  end
+
+  # ── Private lanes ───────────────────────────────────────────────
+
+  private_lane :load_api_key do
+    app_store_connect_api_key(
+      key_id:       ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id:    ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      duration:     1200,
+      in_house:     false
+    )
+  end
+
+  private_lane :sync_certificates do |options|
+    match(
+      type:         "appstore",
+      app_identifier: "co.il.atlas-app",
+      api_key:      options[:api_key],
+      readonly:     is_ci   # in CI: only read, never generate new certs
+    )
+  end
+
+  private_lane :build_ipa_file do
+    gym(
+      workspace:        "ios/App/App.xcworkspace",
+      scheme:           "App",
+      configuration:    "Release",
+      export_method:    "app-store",
+      output_directory: "build",
+      output_name:      "ATLAS.ipa",
+      clean:            true,
+      export_options: {
+        provisioningProfiles: {
+          "co.il.atlas-app" => "match AppStore co.il.atlas-app"
+        }
+      }
+    )
+  end
+
+  private_lane :notify_success do |destination|
+    puts "✅ ATLAS uploaded to #{destination} successfully!"
+  end
+
+  # ── Error handler ───────────────────────────────────────────────
+  error do |lane, exception|
+    puts "❌ Lane '#{lane}' failed: #{exception.message}"
+  end
+
+end

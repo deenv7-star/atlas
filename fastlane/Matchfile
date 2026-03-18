@@ -1,0 +1,18 @@
+# Fastlane Match — certificate & provisioning profile management
+#
+# Match stores encrypted certificates in a private Git repo.
+# In CI, it only reads (readonly: true) — never generates new ones.
+# First-time setup: run locally with  bundle exec fastlane match appstore
+
+git_url(ENV["MATCH_GIT_URL"])       # e.g. "https://github.com/your-org/atlas-certs"
+storage_mode("git")
+
+type("appstore")                     # default type
+
+app_identifier(["co.il.atlas-app"])
+
+# Authentication — uses App Store Connect API key (no password prompts)
+# api_key is passed from Fastfile lanes
+
+# Branch in the certs repo (optional, defaults to "main")
+git_branch("main")
