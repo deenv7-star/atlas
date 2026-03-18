@@ -65,7 +65,15 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F4F6FB;font-family:Heebo,sans-serif">
+        <div style="text-align:center">
+          <div style="width:40px;height:40px;border:3px solid #E2E8F0;border-top-color:#00D1C1;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px"></div>
+          <p style="color:#6B7280;font-size:14px">טוען...</p>
+        </div>
+      </div>
+    </div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

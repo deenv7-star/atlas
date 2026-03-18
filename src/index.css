@@ -127,9 +127,17 @@
   }
 }
 
-/* ─── Smooth scrolling ─────────────────────────────── */
+/* ─── Smooth scrolling & ensure page has height ─────── */
+html, body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
 html {
   scroll-behavior: smooth;
+}
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* ─── Atlas scroll reveal (bulletproof) ──────────────── */
