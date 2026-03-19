@@ -1,0 +1,11 @@
+# Netlify config for ATLAS SPA
+# Ensures /dashboard and all client routes work when visited directly
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# SPA: serve index.html for all routes so /dashboard, /login etc. work when visited directly
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

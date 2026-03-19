@@ -52,7 +52,7 @@ export default function AIChatBubble() {
       {isOpen && (
         <div
           className={cn(
-            "absolute bottom-16 left-0 w-full max-w-[400px] max-h-[500px]",
+            "absolute bottom-20 left-2 right-2 sm:left-0 sm:right-auto sm:w-full sm:max-w-[400px] max-h-[min(500px,70vh)]",
             "bg-white rounded-[24px] shadow-xl border border-gray-100",
             "flex flex-col overflow-hidden animate-fade-in"
           )}
@@ -68,7 +68,7 @@ export default function AIChatBubble() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1.5 rounded-full hover:bg-white/20 transition-colors"
+              className="min-w-[44px] min-h-[44px] p-2 rounded-full hover:bg-white/20 active:bg-white/30 transition-colors flex items-center justify-center touch-manipulation"
               aria-label="סגור"
             >
               <X className="w-5 h-5" />
@@ -89,8 +89,8 @@ export default function AIChatBubble() {
                   key={chip.id}
                   onClick={handleChipClick}
                   className={cn(
-                    "px-3 py-2 rounded-full text-sm font-medium",
-                    "bg-indigo-50 text-indigo-700 hover:bg-indigo-100",
+                    "min-h-[44px] px-4 py-3 rounded-full text-sm font-medium touch-manipulation",
+                    "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 active:bg-indigo-200",
                     "border border-indigo-100 transition-colors"
                   )}
                 >

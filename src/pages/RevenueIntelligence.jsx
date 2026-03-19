@@ -258,8 +258,8 @@ export default function RevenueIntelligence() {
             <h2 className="text-lg font-bold text-gray-900">ביצועי נכסים</h2>
             <p className="text-xs text-gray-400 mt-0.5">השוואת ביצועים בין כל הנכסים</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[700px]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="bg-gray-50/80">
                   {['נכס', 'הכנסות', 'לילות', 'ממוצע ללילה', 'תפוסה', 'RevPAR', 'מגמה'].map((h, i) => (

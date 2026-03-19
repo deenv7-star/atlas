@@ -13,34 +13,49 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const navGroups = [
   {
-    label: null,
+    label: 'ניהול',
     items: [
       { icon: LayoutDashboard, label: 'דשבורד', page: 'Dashboard' },
       { icon: CalendarRange, label: 'לוח שנה', page: 'MultiCalendar' },
       { icon: CalendarDays, label: 'הזמנות', page: 'Bookings' },
-      { icon: Users, label: 'אורחים', page: 'Leads' },
-      { icon: MessageSquare, label: 'הודעות', page: 'Messages' },
     ],
   },
   {
-    label: 'PRO',
+    label: 'אורחים',
     items: [
-      { icon: BarChart3, label: 'מודיעין הכנסות', page: 'RevenueIntelligence' },
-      { icon: FileBarChart, label: 'דוחות בעלים', page: 'OwnerReports' },
+      { icon: Users, label: 'אורחים', page: 'Leads' },
+      { icon: MessageSquare, label: 'הודעות', page: 'Messages' },
       { icon: Workflow, label: 'מסע אורח', page: 'GuestJourney' },
-      { icon: TrendingUp, label: 'תמחור דינאמי', page: 'DynamicPricing' },
       { icon: Globe, label: 'פורטל אורחים', page: 'GuestPortal' },
+      { icon: Star, label: 'ביקורות', page: 'Reviews' },
+    ],
+  },
+  {
+    label: 'תפעול',
+    items: [
       { icon: Wrench, label: 'ניקיון', page: 'Cleaning' },
       { icon: ClipboardList, label: 'חוזים', page: 'Contracts' },
+    ],
+  },
+  {
+    label: 'כספים',
+    items: [
       { icon: FileText, label: 'חשבוניות', page: 'Invoices' },
-      { icon: Star, label: 'ביקורות', page: 'Reviews' },
-      { icon: Brain, label: 'AI עוזר', page: 'AIAssistant' },
-      { icon: Zap, label: 'אוטומציות', page: 'Automations' },
-      { icon: Link2, label: 'אינטגרציות', page: 'Integrations' },
       { icon: Wallet, label: 'תשלומים', page: 'Payments' },
+      { icon: BarChart3, label: 'מודיעין הכנסות', page: 'RevenueIntelligence' },
+      { icon: FileBarChart, label: 'דוחות בעלים', page: 'OwnerReports' },
+      { icon: TrendingUp, label: 'תמחור דינאמי', page: 'DynamicPricing' },
       { icon: TrendingDown, label: 'מעקב הוצאות', page: 'ExpenseTracker' },
       { icon: Receipt, label: 'חיוב', page: 'Billing' },
       { icon: CreditCard, label: 'מנוי', page: 'Subscription' },
+    ],
+  },
+  {
+    label: 'כלים',
+    items: [
+      { icon: Brain, label: 'AI עוזר', page: 'AIAssistant' },
+      { icon: Zap, label: 'אוטומציות', page: 'Automations' },
+      { icon: Link2, label: 'אינטגרציות', page: 'Integrations' },
     ],
   },
 ];
@@ -79,13 +94,10 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2">
         {navGroups.map((group, groupIdx) => (
-          <div key={groupIdx} className={groupIdx > 0 ? "mt-3" : ""}>
+          <div key={groupIdx} className={groupIdx > 0 ? "mt-4" : ""}>
             {group.label && !collapsed && (
-              <p className={cn(
-                "px-2 mb-1 text-[10px] font-semibold uppercase tracking-widest select-none",
-                group.label === 'PRO' ? "text-amber-500" : "text-gray-400"
-              )}>
-                {group.label === 'PRO' ? '★ PRO' : group.label}
+              <p className="px-2 mb-1 text-[10px] font-bold uppercase tracking-widest select-none text-gray-400">
+                {group.label}
               </p>
             )}
             {group.label && collapsed && <div className="border-t border-gray-100 my-2 mx-1" />}
@@ -99,7 +111,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
                   onMouseEnter={() => setHoveredItem(item.page)}
                   onMouseLeave={() => setHoveredItem(null)}
                   className={cn(
-                    "flex items-center rounded-xl transition-all duration-200 group relative py-2 px-2.5 gap-3 mb-0.5",
+                    "flex items-center rounded-xl transition-all duration-200 group relative py-3 px-3 gap-3 mb-0.5 min-h-[44px] touch-manipulation",
                     collapsed ? "justify-center" : "",
                     active
                       ? "bg-indigo-50 text-[#4F46E5] font-semibold"
@@ -127,7 +139,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
         <Link
           to={createPageUrl('Settings')}
           className={cn(
-            "flex items-center rounded-xl transition-all duration-200 py-2 px-2.5 gap-3",
+            "flex items-center rounded-xl transition-all duration-200 py-3 px-3 gap-3 min-h-[44px] touch-manipulation",
             collapsed ? "justify-center" : "",
             isActive('Settings') ? "bg-indigo-50 text-[#4F46E5]" : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
           )}
@@ -137,7 +149,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
         </Link>
         <button
           onClick={onLogout}
-          className={cn("w-full flex items-center rounded-xl transition-all duration-200 py-2 px-2.5 gap-3", collapsed ? "justify-center" : "", "text-gray-400 hover:text-red-500 hover:bg-red-50")}
+          className={cn("w-full flex items-center rounded-xl transition-all duration-200 py-3 px-3 gap-3 min-h-[44px] touch-manipulation", collapsed ? "justify-center" : "", "text-gray-400 hover:text-red-500 hover:bg-red-50")}
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           {!collapsed && <span className="text-sm font-medium">יציאה</span>}

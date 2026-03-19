@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from 'sonner';
 import { QueryClientProvider } from '@tanstack/react-query'
+import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary';
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
@@ -32,6 +33,14 @@ function hasOnboardingBypass() {
   } catch { return false; }
 }
 
+// User came from Login = existing user, skip onboarding and go straight to dashboard
+function hasLoginBypass() {
+  try {
+    const ts = parseInt(localStorage.getItem('login_just_completed') || '0', 10);
+    return !!(ts && Date.now() - ts < 30 * 60 * 1000);
+  } catch { return false; }
+}
+
 // Redirects to /login if not authenticated; preserves return URL.
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
 
@@ -48,7 +57,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
     return <Navigate to={`/login?return=${returnUrl}`} replace />;
   }
-  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass()) {
+  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass() && !hasLoginBypass()) {
     return <Navigate to="/onboarding" replace />;
   }
   return children;
@@ -79,7 +88,7 @@ const AuthenticatedApp = () => {
         path="/login"
         element={
           isAuthenticated
-            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/dashboard' : '/onboarding')} replace />
+            ? <Navigate to="/dashboard" replace />
             : <Login />
         }
       />
@@ -119,6 +128,20 @@ const AuthenticatedApp = () => {
           </ProtectedRoute>
         }
       />
+      {/* Explicit dashboard route — ensures /dashboard always works */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <LayoutWrapper currentPageName="Dashboard">
+              <Pages.Dashboard />
+            </LayoutWrapper>
+          </ProtectedRoute>
+        }
+      />
+      {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
+      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
+      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
       {/* Legacy routes — redirect to canonical lowercase paths */}
       {LEGACY_REDIRECTS.map(({ from, to }) => (
         <Route key={from} path={from} element={<Navigate to={to} replace />} />
@@ -146,9 +169,9 @@ const AuthenticatedApp = () => {
         }
       />
 
-      {/* All other pages — protected */}
+      {/* All other pages — protected (Dashboard, Billing, Subscription have explicit routes) */}
       {Object.entries(Pages)
-        .filter(([path]) => !PUBLIC_PAGE_KEYS.includes(path))
+        .filter(([path]) => !['Dashboard', 'Billing', 'Subscription'].includes(path) && !PUBLIC_PAGE_KEYS.includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}
@@ -170,18 +193,19 @@ const AuthenticatedApp = () => {
 
 
 function App() {
-
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <NavigationTracker />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-        <SonnerToaster position="top-center" dir="rtl" richColors closeButton duration={4000} />
-      </QueryClientProvider>
-    </AuthProvider>
+    <GlobalErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <NavigationTracker />
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+          <SonnerToaster position="top-center" dir="rtl" richColors closeButton duration={4000} />
+        </QueryClientProvider>
+      </AuthProvider>
+    </GlobalErrorBoundary>
   )
 }
 

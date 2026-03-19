@@ -339,7 +339,7 @@ export default function IntegrationsPage() {
         </div>
       </div>
       <Tabs defaultValue="calendars">
-        <div className="overflow-x-auto -mx-6 px-6 snap-x snap-mandatory">
+        <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 snap-x snap-mandatory">
           <TabsList className="bg-gray-100 w-max sm:w-full inline-flex snap-center">
             <TabsTrigger value="calendars" className="flex items-center gap-2 whitespace-nowrap">
               <Calendar className="h-4 w-4" />

@@ -533,19 +533,23 @@ export default function Onboarding() {
                         onboarding_completed: true,
                         onboarding_step: TOTAL_STEPS,
                       }).eq('id', authUser.id);
-                      if (error) {
-                        toast.error('שגיאה. נסה שוב.');
-                        setSaving(false);
-                        return;
-                      }
+                      if (error) console.warn('[Onboarding] profiles update failed:', error);
                     } else {
                       window.location.href = `/login?return=${encodeURIComponent('/dashboard')}`;
+                      setSaving(false);
                       return;
                     }
                   } else {
-                    await base44.auth.updateMe({ onboarding_completed: true, onboarding_step: TOTAL_STEPS });
+                    try {
+                      await base44.auth.updateMe({ onboarding_completed: true, onboarding_step: TOTAL_STEPS });
+                    } catch (upErr) {
+                      console.warn('[Onboarding] updateMe failed:', upErr);
+                    }
                   }
-                  try { localStorage.setItem('onboarding_just_completed', String(Date.now())); } catch {}
+                  try {
+                    localStorage.setItem('onboarding_just_completed', String(Date.now()));
+                    localStorage.setItem('login_just_completed', String(Date.now()));
+                  } catch {}
                   await checkAppState();
                   window.location.replace(createPageUrl('Dashboard') || '/dashboard');
                 } catch (err) {

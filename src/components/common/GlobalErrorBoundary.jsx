@@ -1,7 +1,6 @@
 import React from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { createPageUrl } from '@/utils';
 
 class GlobalErrorBoundary extends React.Component {
   constructor(props) {
@@ -23,7 +22,7 @@ class GlobalErrorBoundary extends React.Component {
   };
 
   handleGoHome = () => {
-    window.location.href = createPageUrl('Dashboard');
+    window.location.href = '/';
   };
 
   render() {

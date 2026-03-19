@@ -109,7 +109,7 @@ export default function OwnerReports() {
             <span className="text-xs font-medium bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full">PRO</span>
           </div>
         </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">
+        <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">
           הפק דוחות אוטומטיים לבעלי הנכסים שלך — הכנסות, הוצאות, עמלות וסכום לתשלום. שלח בלחיצה אחת.
         </p>
       </div>
@@ -228,8 +228,8 @@ export default function OwnerReports() {
           {/* Property Breakdown Table */}
           <div className="p-6">
             <h4 className="text-sm font-bold text-gray-700 mb-4">פירוט לפי נכס</h4>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <table className="w-full min-w-[500px] text-sm">
                 <thead>
                   <tr className="border-b-2 border-gray-200">
                     <th className="text-right py-3 px-3 font-bold text-gray-700">נכס</th>
@@ -322,8 +322,8 @@ export default function OwnerReports() {
           היסטוריית תשלומים — {selectedOwner.name}
         </h2>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <table className="w-full min-w-[500px] text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
                   <th className="text-right py-3 px-4 font-bold text-gray-700">חודש</th>

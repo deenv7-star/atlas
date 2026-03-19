@@ -148,7 +148,7 @@ function StageCard({ stage, theme, index, total, onToggle }) {
 
       {/* Card */}
       <div className={cn(
-        'relative w-[320px] rounded-2xl border p-4 transition-all duration-300 group',
+        'relative w-full max-w-[320px] min-w-0 rounded-2xl border p-4 transition-all duration-300 group',
         stage.active
           ? `${theme.bg}/60 ${theme.border} shadow-sm hover:shadow-md hover:ring-2 ${theme.ring}`
           : 'bg-gray-50/60 border-gray-200 opacity-60'
@@ -314,7 +314,7 @@ export default function GuestJourney() {
             </div>
           </div>
         </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">
+        <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">
           בנה את מסע האורח המושלם — מהפנייה הראשונה ועד הביקורת. כל שלב אוטומטי, כל הודעה בזמן הנכון.
         </p>
       </div>
