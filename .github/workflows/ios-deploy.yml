@@ -1,7 +1,6 @@
 name: iOS — Build & Deploy
 
 on:
-  # Run automatically on every push to main
   push:
     branches: [main]
     paths:
@@ -12,92 +11,71 @@ on:
       - 'fastlane/**'
       - '.github/workflows/ios-deploy.yml'
 
-  # Allow manual trigger with choice of lane
   workflow_dispatch:
     inputs:
       lane:
-        description: 'איזו lane להריץ?'
+        description: 'Which lane to run'
         required: true
         default: 'beta'
         type: choice
         options:
-          - beta      # → TestFlight (לבדיקות)
-          - release   # → App Store (לפרסום)
+          - beta
+          - release
 
 jobs:
   deploy:
     name: Build & Deploy to App Store
-    runs-on: macos-15   # Xcode 16 pre-installed
+    runs-on: macos-15
     timeout-minutes: 60
 
     steps:
-      # ── 1. Checkout ────────────────────────────────────────────────
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ── 2. Node.js ───────────────────────────────────────
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
 
-      # ── 3. Build ────────────────────────────────────────────
       - name: Install Node dependencies
         run: npm install --legacy-peer-deps
 
       - name: Build Vite app
         run: npm run build
 
-      # ── 4. Capacitor iOS ──────────────────────────────────
       - name: Initialize Capacitor iOS project
         run: |
           rm -rf ios
           npx cap add ios
 
-      - name: Generate iOS app icons & splash screen
+      - name: Generate iOS app icons and splash screen
         run: npx capacitor-assets generate --ios
 
       - name: Sync web assets to iOS
         run: npx cap sync ios
 
-      # ── 5. CocoaPods ─────────────────────────────────────────
-      - name: Install CocoaPods dependencies
-        run: |
-          cd ios/App
-          pod install
-
-      # ── 6. Ruby / Fastlane ─────────────────────────────────
       - name: Setup Ruby 3.3
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
           bundler-cache: true
 
-      # ── 7. App Store Connect API Key ────────────────────────
       - name: Write App Store Connect API key to disk
         run: |
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}" \
-            | base64 --decode > /tmp/api_key.p8
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}" | base64 --decode > /tmp/api_key.p8
 
-      # ── 8. Fastlane ──────────────────────────────────────────
       - name: Run Fastlane lane
         run: bundle exec fastlane ${{ github.event.inputs.lane || 'beta' }}
         env:
-          # App Store Connect API (replaces username/password)
-          APP_STORE_CONNECT_API_KEY_ID:       ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_ISSUER_ID:    ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_PATH:     /tmp/api_key.p8
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_PATH: /tmp/api_key.p8
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
-          # Fastlane Match — certificate storage repo
-          MATCH_GIT_URL:                      ${{ secrets.MATCH_GIT_URL }}
-          MATCH_PASSWORD:                     ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION:      ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-
-          # Apple Team ID
-          APPLE_TEAM_ID:                      ${{ secrets.APPLE_TEAM_ID }}
-
-      # ── 9. Upload IPA as artifact (for debugging) ────────────────
       - name: Upload IPA artifact
         if: always()
         uses: actions/upload-artifact@v4
