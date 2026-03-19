@@ -64,7 +64,7 @@ jobs:
       # ── 5. CocoaPods ─────────────────────────────────────────────
       - name: Install CocoaPods dependencies
         
-        run: cd ios/App && pod install --repo-update
+        run: |            echo "=== iOS directory structure ===" && find ios -maxdepth 3 -type f | head -30 || echo "ios dir not found"
 
       # ── 6. Ruby / Fastlane ───────────────────────────────────────
       - name: Setup Ruby 3.3
