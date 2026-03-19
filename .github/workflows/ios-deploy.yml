@@ -43,7 +43,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Node dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       # ── 3. Build web app ─────────────────────────────────────────
       - name: Build Vite app
