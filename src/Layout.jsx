@@ -7,6 +7,7 @@ import AppHeader from '@/components/app/AppHeader';
 import BottomTabs from '@/components/app/BottomTabs';
 import AIChatBubble from '@/components/app/AIChatBubble';
 import TrialBanner from '@/components/TrialBanner';
+import IOSInstallBanner from '@/components/app/IOSInstallBanner';
 import { cn } from '@/lib/utils';
 
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status'];
@@ -116,6 +117,7 @@ function LayoutContent({ children, currentPageName }) {
         <BottomTabs />
       </div>
       {!isPublicPage && <AIChatBubble />}
+      <IOSInstallBanner />
       </div>
     </div>
   );

@@ -374,6 +374,21 @@ textarea:focus-visible {
   }
 }
 
+/* ─── iOS / PWA safe-area utilities ───────────────── */
+/* Use these classes on elements that need to respect iPhone notch/home bar */
+.safe-top    { padding-top:    env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left   { padding-left:   env(safe-area-inset-left); }
+.safe-right  { padding-right:  env(safe-area-inset-right); }
+
+/* When app is installed as PWA, hide the browser-only scrollbar on iOS */
+@media (display-mode: standalone) {
+  body {
+    /* Prevent elastic over-scroll effect showing white gaps */
+    overscroll-behavior: none;
+  }
+}
+
 /* ─── Print styles ─────────────────────────────────── */
 @media print {
   .no-print {
