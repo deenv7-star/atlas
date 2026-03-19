@@ -63,8 +63,8 @@ jobs:
 
       # ── 5. CocoaPods ─────────────────────────────────────────────
       - name: Install CocoaPods dependencies
-        working-directory: ios/App
-        run: pod install --repo-update
+        
+        run: cd ios/App && pod install --repo-update
 
       # ── 6. Ruby / Fastlane ───────────────────────────────────────
       - name: Setup Ruby 3.3
