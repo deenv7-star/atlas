@@ -31,25 +31,25 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      # ── 1. Checkout ──────────────────────────────────────────────
+      # ── 1. Checkout ────────────────────────────────────────────────
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ── 2. Node.js ───────────────────────────────────────────────
+      # ── 2. Node.js ───────────────────────────────────────
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
 
+      # ── 3. Build ────────────────────────────────────────────
       - name: Install Node dependencies
         run: npm install --legacy-peer-deps
 
-      # ── 3. Build web app ─────────────────────────────────────────
       - name: Build Vite app
         run: npm run build
 
-      # ── 4. Capacitor iOS ─────────────────────────────────────────
+      # ── 4. Capacitor iOS ──────────────────────────────────
       - name: Initialize Capacitor iOS project
         run: |
           rm -rf ios
@@ -61,25 +61,26 @@ jobs:
       - name: Sync web assets to iOS
         run: npx cap sync ios
 
-      # ── 5. CocoaPods ─────────────────────────────────────────────
+      # ── 5. CocoaPods ─────────────────────────────────────────
       - name: Install CocoaPods dependencies
-        
-        run: |            echo "=== iOS directory structure ===" && find ios -maxdepth 3 -type f | head -30 || echo "ios dir not found"
+        run: |
+          cd ios/App
+          pod install
 
-      # ── 6. Ruby / Fastlane ───────────────────────────────────────
+      # ── 6. Ruby / Fastlane ─────────────────────────────────
       - name: Setup Ruby 3.3
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
-          bundler-cache: true   # runs 'bundle install' automatically
+          bundler-cache: true
 
-      # ── 7. App Store Connect API Key ─────────────────────────────
+      # ── 7. App Store Connect API Key ────────────────────────
       - name: Write App Store Connect API key to disk
         run: |
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}" \
             | base64 --decode > /tmp/api_key.p8
 
-      # ── 8. Fastlane ──────────────────────────────────────────────
+      # ── 8. Fastlane ──────────────────────────────────────────
       - name: Run Fastlane lane
         run: bundle exec fastlane ${{ github.event.inputs.lane || 'beta' }}
         env:
@@ -92,6 +93,9 @@ jobs:
           MATCH_GIT_URL:                      ${{ secrets.MATCH_GIT_URL }}
           MATCH_PASSWORD:                     ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION:      ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+
+          # Apple Team ID
+          APPLE_TEAM_ID:                      ${{ secrets.APPLE_TEAM_ID }}
 
       # ── 9. Upload IPA as artifact (for debugging) ────────────────
       - name: Upload IPA artifact
