@@ -103,7 +103,7 @@ function LayoutContent({ children, currentPageName }) {
           selectedPropertyId={selectedPropertyId}
           onPropertyChange={setSelectedPropertyId}
         />
-        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0">
           <Suspense fallback={<PageLoader />}>
             {React.cloneElement(children, {
               user,
@@ -112,10 +112,8 @@ function LayoutContent({ children, currentPageName }) {
             })}
           </Suspense>
         </main>
-        {/* Mobile bottom tabs */}
-        <div className="md:hidden">
-          <BottomTabs />
-        </div>
+        {/* Mobile bottom tabs — fixed, self-manages visibility via lg:hidden */}
+        <BottomTabs />
       </div>
       {!isPublicPage && <AIChatBubble />}
       </div>

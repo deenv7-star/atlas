@@ -15,7 +15,7 @@ import {
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
+import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO, isSameDay } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 const STATUS_COLORS = {
@@ -287,6 +287,21 @@ export default function Dashboard({ user, selectedPropertyId }) {
     return { thisWeekBookings, confirmedBookings, newLeads, totalRevenue, avgRating };
   }, [bookings, leads, payments, reviews, weekStart, weekEnd]);
 
+  const todayCheckIns = bookings.filter(b => {
+    try { return isSameDay(parseISO(b.check_in_date), now); } catch { return false; }
+  });
+  const todayCheckOuts = bookings.filter(b => {
+    try {
+      if (!b.check_out_date) {
+        const nights = b.nights || 1;
+        const checkOut = new Date(parseISO(b.check_in_date));
+        checkOut.setDate(checkOut.getDate() + nights);
+        return isSameDay(checkOut, now);
+      }
+      return isSameDay(parseISO(b.check_out_date), now);
+    } catch { return false; }
+  });
+
   const upcomingBookings = bookings
     .filter(b => { try { return parseISO(b.check_in_date) >= now; } catch { return false; } })
     .sort((a, b) => { try { return parseISO(a.check_in_date) - parseISO(b.check_in_date); } catch { return 0; } })
@@ -346,6 +361,75 @@ export default function Dashboard({ user, selectedPropertyId }) {
           </div>
         </div>
       </div>
+
+      {/* ── Today Section (mobile-first) ── */}
+      {(todayCheckIns.length > 0 || todayCheckOuts.length > 0) && (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-3.5 border-b border-gray-50">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <h2 className="text-sm font-bold text-gray-800">היום</h2>
+            <span className="text-xs text-gray-400 font-medium">
+              {format(now, 'EEEE, d MMMM', { locale: he })}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 divide-x divide-x-reverse divide-gray-100">
+            <div className="p-4">
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                  ↓ כניסות
+                </span>
+                <span className="text-xs font-bold text-gray-700">{todayCheckIns.length}</span>
+              </div>
+              {todayCheckIns.length === 0 ? (
+                <p className="text-xs text-gray-400">אין כניסות היום</p>
+              ) : (
+                <div className="space-y-2">
+                  {todayCheckIns.map(b => (
+                    <Link key={b.id} to={createPageUrl('Bookings')} className="block">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
+                          {(b.guest_name || 'א')[0]}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-gray-800 truncate">{b.guest_name || 'אורח'}</p>
+                          {b.nights && <p className="text-[10px] text-gray-400">{b.nights} לילות</p>}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="p-4">
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
+                  ↑ יציאות
+                </span>
+                <span className="text-xs font-bold text-gray-700">{todayCheckOuts.length}</span>
+              </div>
+              {todayCheckOuts.length === 0 ? (
+                <p className="text-xs text-gray-400">אין יציאות היום</p>
+              ) : (
+                <div className="space-y-2">
+                  {todayCheckOuts.map(b => (
+                    <Link key={b.id} to={createPageUrl('Bookings')} className="block">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">
+                          {(b.guest_name || 'א')[0]}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-gray-800 truncate">{b.guest_name || 'אורח'}</p>
+                          {b.nights && <p className="text-[10px] text-gray-400">{b.nights} לילות</p>}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── KPI Stats Grid ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
