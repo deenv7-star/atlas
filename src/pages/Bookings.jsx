@@ -14,7 +14,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import {
   CalendarDays, Plus, Search, Building2, Edit, Trash2, Check,
-  Clock, CheckCircle2, XCircle,
+  Clock, CheckCircle2, XCircle, Phone, MessageCircle,
 } from 'lucide-react';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -252,24 +252,48 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                       )}
                     </div>
                   </div>
-                  {booking.total_price ? (
-                    <p className="text-sm font-bold text-gray-800 flex-shrink-0 hidden sm:block">
-                      ₪{parseFloat(booking.total_price).toLocaleString('he-IL')}
-                    </p>
-                  ) : null}
-                  <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex-shrink-0">
-                    <button
-                      onClick={() => openEdit(booking)}
-                      className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(booking.id)}
-                      className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 active:bg-red-100 transition-colors touch-manipulation"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                    {booking.total_price ? (
+                      <p className="text-sm font-bold text-gray-800">
+                        ₪{parseFloat(booking.total_price).toLocaleString('he-IL')}
+                      </p>
+                    ) : null}
+                    <div className="flex items-center gap-1">
+                      {booking.guest_phone && (
+                        <a
+                          href={`tel:${booking.guest_phone}`}
+                          onClick={e => e.stopPropagation()}
+                          className="min-w-[36px] min-h-[36px] w-9 h-9 rounded-xl flex items-center justify-center text-emerald-600 bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 transition-colors touch-manipulation"
+                          title="התקשר"
+                        >
+                          <Phone className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      {booking.guest_phone && (
+                        <a
+                          href={`https://wa.me/${booking.guest_phone.replace(/\D/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          className="min-w-[36px] min-h-[36px] w-9 h-9 rounded-xl flex items-center justify-center text-[#25D366] bg-green-50 hover:bg-green-100 active:bg-green-200 transition-colors touch-manipulation"
+                          title="WhatsApp"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      <button
+                        onClick={() => openEdit(booking)}
+                        className="min-w-[36px] min-h-[36px] w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(booking.id)}
+                        className="min-w-[36px] min-h-[36px] w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 active:bg-red-100 transition-colors touch-manipulation hidden sm:flex"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -278,8 +302,18 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         )}
       </div>
 
+      {/* Mobile FAB — New Booking */}
+      <button
+        onClick={openNew}
+        className="fixed bottom-20 left-4 z-30 lg:hidden w-14 h-14 rounded-full bg-[#4F46E5] shadow-xl flex items-center justify-center text-white touch-manipulation active:scale-95 transition-transform"
+        style={{ boxShadow: '0 4px 24px rgba(79,70,229,0.4)' }}
+        aria-label="הזמנה חדשה"
+      >
+        <Plus className="w-6 h-6" />
+      </button>
+
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-lg rounded-2xl">
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base font-bold">
               {editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}
@@ -289,21 +323,21 @@ export default function BookingsPage({ user, selectedPropertyId }) {
           <div className="grid grid-cols-2 gap-3 py-2">
             <div className="col-span-2 space-y-1.5">
               <Label className="text-xs font-semibold">שם אורח *</Label>
-              <Input value={form.guest_name} onChange={e => setForm(p => ({...p, guest_name: e.target.value}))} placeholder="שם מלא" className="h-9 text-sm rounded-xl" />
+              <Input value={form.guest_name} onChange={e => setForm(p => ({...p, guest_name: e.target.value}))} placeholder="שם מלא" className="h-11 text-sm rounded-xl" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">אימייל</Label>
-              <Input value={form.guest_email} onChange={e => setForm(p => ({...p, guest_email: e.target.value}))} placeholder="email@example.com" className="h-9 text-sm rounded-xl" />
+              <Input value={form.guest_email} onChange={e => setForm(p => ({...p, guest_email: e.target.value}))} placeholder="email@example.com" className="h-11 text-sm rounded-xl" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">טלפון</Label>
-              <Input value={form.guest_phone} onChange={e => setForm(p => ({...p, guest_phone: e.target.value}))} placeholder="050-0000000" className="h-9 text-sm rounded-xl" />
+              <Input value={form.guest_phone} onChange={e => setForm(p => ({...p, guest_phone: e.target.value}))} placeholder="050-0000000" className="h-11 text-sm rounded-xl" />
             </div>
             {properties.length > 0 && (
               <div className="col-span-2 space-y-1.5">
                 <Label className="text-xs font-semibold">נכס</Label>
                 <Select value={form.property_id} onValueChange={val => setForm(p => ({...p, property_id: val}))}>
-                  <SelectTrigger className="h-9 text-sm rounded-xl"><SelectValue placeholder="בחר נכס" /></SelectTrigger>
+                  <SelectTrigger className="h-11 text-sm rounded-xl"><SelectValue placeholder="בחר נכס" /></SelectTrigger>
                   <SelectContent>
                     {properties.map(prop => <SelectItem key={prop.id} value={prop.id}>{prop.name}</SelectItem>)}
                   </SelectContent>
@@ -312,20 +346,20 @@ export default function BookingsPage({ user, selectedPropertyId }) {
             )}
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">תאריך כניסה *</Label>
-              <Input type="date" value={form.check_in_date} onChange={e => setForm(p => ({...p, check_in_date: e.target.value}))} className="h-9 text-sm rounded-xl" />
+              <Input type="date" value={form.check_in_date} onChange={e => setForm(p => ({...p, check_in_date: e.target.value}))} className="h-11 text-sm rounded-xl" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">תאריך יציאה</Label>
-              <Input type="date" value={form.check_out_date} onChange={e => setForm(p => ({...p, check_out_date: e.target.value}))} className="h-9 text-sm rounded-xl" />
+              <Input type="date" value={form.check_out_date} onChange={e => setForm(p => ({...p, check_out_date: e.target.value}))} className="h-11 text-sm rounded-xl" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">מחיר כולל (₪)</Label>
-              <Input type="number" value={form.total_price} onChange={e => setForm(p => ({...p, total_price: e.target.value}))} placeholder="0" className="h-9 text-sm rounded-xl" />
+              <Input type="number" value={form.total_price} onChange={e => setForm(p => ({...p, total_price: e.target.value}))} placeholder="0" className="h-11 text-sm rounded-xl" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">סטטוס</Label>
               <Select value={form.status} onValueChange={val => setForm(p => ({...p, status: val}))}>
-                <SelectTrigger className="h-9 text-sm rounded-xl"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-11 text-sm rounded-xl"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                 </SelectContent>
@@ -333,7 +367,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
             </div>
             <div className="col-span-2 space-y-1.5">
               <Label className="text-xs font-semibold">הערות</Label>
-              <Input value={form.notes} onChange={e => setForm(p => ({...p, notes: e.target.value}))} placeholder="הערות פנימיות" className="h-9 text-sm rounded-xl" />
+              <Input value={form.notes} onChange={e => setForm(p => ({...p, notes: e.target.value}))} placeholder="הערות פנימיות" className="h-11 text-sm rounded-xl" />
             </div>
             {getNights() > 0 && (
               <div className="col-span-2">
@@ -345,12 +379,12 @@ export default function BookingsPage({ user, selectedPropertyId }) {
             )}
           </div>
 
-          <DialogFooter className="gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowDialog(false)} className="h-9 rounded-xl">ביטול</Button>
+          <DialogFooter className="gap-2 flex-col sm:flex-row">
+            <Button variant="outline" onClick={() => setShowDialog(false)} className="min-h-[44px] h-11 rounded-xl w-full sm:w-auto">ביטול</Button>
             <Button
-              size="sm" onClick={handleSave}
+              onClick={handleSave}
               disabled={createMutation.isPending || updateMutation.isPending}
-              className="h-9 gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl"
+              className="min-h-[44px] h-11 gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl w-full sm:w-auto"
             >
               {(createMutation.isPending || updateMutation.isPending)
                 ? <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
