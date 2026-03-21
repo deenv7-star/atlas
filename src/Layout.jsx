@@ -14,10 +14,18 @@ const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestS
 
 function PageLoader() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-gray-50/50">
+    <div className="flex-1 flex items-center justify-center" style={{ background: 'var(--page-bg)' }}>
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-2 border-[#00D1C1] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gray-400">טוען...</p>
+        <div
+          className="w-10 h-10 rounded-full animate-spin"
+          style={{
+            border: '2px solid transparent',
+            borderTopColor: '#00D1C1',
+            borderRightColor: 'rgba(0,209,193,0.3)',
+            boxShadow: '0 0 12px rgba(0,209,193,0.3)',
+          }}
+        />
+        <p className="text-sm font-medium" style={{ color: 'rgba(0,0,0,0.35)' }}>טוען...</p>
       </div>
     </div>
   );
@@ -58,7 +66,7 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden safe-top safe-left safe-right" style={{ backgroundColor: 'var(--page-bg)' }} dir="rtl">
+    <div className="flex flex-col h-screen overflow-hidden safe-top safe-left safe-right" style={{ background: 'linear-gradient(145deg, #f0f4ff 0%, #f4f6fb 40%, #f0f7f7 100%)' }} dir="rtl">
       <TrialBanner />
       <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Mobile sidebar overlay */}

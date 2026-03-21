@@ -1,9 +1,12 @@
 import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { LiquidGlassCard, LiquidBackground } from '@/components/ui/LiquidGlass';
+import { ShimmerButton, RippleButton } from '@/components/ui/AnimatedButton';
 import {
   Users, CalendarDays, Wallet, Star,
   ArrowUpLeft, ArrowDownRight, MessageSquare, Plus,
@@ -38,10 +41,18 @@ const STATUS_LABELS = {
 };
 
 /* ── Stat Card ─────────────────────────────────────── */
+const TINT_MAP = {
+  'icon-blue':   'blue',
+  'icon-purple': 'purple',
+  'icon-teal':   'teal',
+  'icon-amber':  'neutral',
+  'icon-green':  'teal',
+};
 function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, trend, loading }) {
+  const tint = TINT_MAP[iconClass] || 'neutral';
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100/80">
+      <div className="rounded-2xl p-5 bg-white/60 border border-gray-100/60" style={{ backdropFilter: 'blur(12px)' }}>
         <Skeleton className="h-3.5 w-20 mb-4" />
         <Skeleton className="h-9 w-24 mb-2" />
         <Skeleton className="h-3 w-28" />
@@ -49,27 +60,26 @@ function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, tre
     );
   }
   return (
-    <div className={cn(
-      "rounded-2xl p-5 border border-white/60 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-default group",
-      gradient
-    )}>
-      <div className="flex items-start justify-between mb-4">
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0", iconClass)}>
-          <Icon className="w-4.5 h-4.5" style={{ width: '18px', height: '18px' }} />
+    <motion.div whileHover={{ y: -2, scale: 1.01 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }}>
+      <LiquidGlassCard tint={tint} size="sm" className="h-full" shimmer={false}>
+        <div className="flex items-start justify-between mb-3">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{title}</p>
+          <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0", iconClass)}>
+            <Icon style={{ width: '16px', height: '16px' }} />
+          </div>
         </div>
-      </div>
-      <p className="text-3xl font-bold text-gray-900 mb-1 tracking-tight">{value}</p>
-      {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
-      {trend !== undefined && (
-        <div className={cn("flex items-center gap-1 text-xs font-semibold mt-2", trend >= 0 ? "text-emerald-600" : "text-red-500")}>
-          {trend >= 0
-            ? <ArrowUpLeft className="w-3 h-3" />
-            : <ArrowDownRight className="w-3 h-3" />}
-          <span>{Math.abs(trend)}% מהחודש הקודם</span>
-        </div>
-      )}
-    </div>
+        <p className="text-3xl font-bold text-gray-900 mb-1 tracking-tight">{value}</p>
+        {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+        {trend !== undefined && (
+          <div className={cn("flex items-center gap-1 text-xs font-semibold mt-2", trend >= 0 ? "text-emerald-600" : "text-red-500")}>
+            {trend >= 0
+              ? <ArrowUpLeft className="w-3 h-3" />
+              : <ArrowDownRight className="w-3 h-3" />}
+            <span>{Math.abs(trend)}% מהחודש הקודם</span>
+          </div>
+        )}
+      </LiquidGlassCard>
+    </motion.div>
   );
 }
 
@@ -142,16 +152,27 @@ function LeadRow({ lead }) {
 /* ── Section Card ──────────────────────────────────── */
 function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyIcon: EmptyIcon, emptyText, addLink }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
+    <div
+      className="rounded-2xl overflow-hidden"
+      style={{
+        background: 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(0,0,0,0.07)',
+        boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)',
+      }}
+    >
+      <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#00D1C1]/10 flex items-center justify-center">
-            <Icon className="w-3.5 h-3.5 text-[#00D1C1]" />
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: 'rgba(0,209,193,0.12)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)' }}
+          >
+            <Icon className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
           </div>
           <h2 className="text-sm font-semibold text-gray-800">{title}</h2>
         </div>
         <Link to={viewAllLink}>
-          <button className="flex items-center gap-0.5 text-xs font-medium text-[#00D1C1] hover:text-[#00b8aa] transition-colors">
+          <button className="flex items-center gap-0.5 text-xs font-medium transition-colors" style={{ color: '#00D1C1' }}>
             הכל
             <ChevronLeft className="w-3.5 h-3.5" />
           </button>
@@ -187,15 +208,28 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
 function QuickAction({ label, icon: Icon, page, iconClass }) {
   return (
     <Link to={createPageUrl(page)}>
-      <div className="flex flex-col items-center gap-2 p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-[#00D1C1]/30 hover:shadow-sm transition-all duration-200 group cursor-pointer">
+      <motion.div
+        whileHover={{ y: -3, scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        className="flex flex-col items-center gap-2.5 p-4 rounded-2xl cursor-pointer group"
+        style={{
+          background: 'rgba(255,255,255,0.75)',
+          border: '1px solid rgba(0,0,0,0.07)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+          transition: 'box-shadow 0.2s',
+        }}
+        onHoverStart={e => e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,209,193,0.15), 0 2px 8px rgba(0,0,0,0.06)'}
+        onHoverEnd={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'}
+      >
         <div className={cn(
-          "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-110",
+          "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm",
           iconClass
         )}>
           <Icon style={{ width: '18px', height: '18px' }} />
         </div>
         <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900 transition-colors">{label}</span>
-      </div>
+      </motion.div>
     </Link>
   );
 }
@@ -324,47 +358,58 @@ export default function Dashboard({ user, selectedPropertyId }) {
     <div className="min-h-full p-4 md:p-6 space-y-5 max-w-7xl mx-auto animate-fade-in">
 
       {/* ── Hero Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 px-6 py-5 shadow-md">
-        <div className="absolute -top-8 -left-8 w-40 h-40 rounded-full bg-white/5 blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-12 left-1/2 w-56 h-56 rounded-full bg-violet-400/10 blur-3xl pointer-events-none" />
-
-        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <LiquidBackground
+        className="rounded-2xl overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #0B1220 0%, #0f1a2e 55%, #111827 100%)' }}
+      >
+        <div className="relative px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p className="text-indigo-200 text-sm font-medium mb-1">
+            <p className="text-sm font-medium mb-1" style={{ color: 'rgba(0,209,193,0.7)' }}>
               {format(now, "EEEE, d MMMM yyyy", { locale: he })}
             </p>
             <h1 className="text-xl md:text-2xl font-bold text-white">
               {greeting}, {userName} 👋
             </h1>
-            <p className="text-white/50 text-sm mt-1">הנה סיכום פעילות העסק שלך</p>
+            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.40)' }}>הנה סיכום פעילות העסק שלך</p>
           </div>
           <div className="flex gap-2 flex-shrink-0 flex-wrap">
             <Link to={createPageUrl('Leads')}>
-              <Button
-                size="sm"
-                variant="outline"
-                className="min-h-[44px] h-11 text-xs border-white/15 text-white/80 hover:bg-white/10 hover:text-white bg-transparent gap-1.5 px-4 touch-manipulation"
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold flex items-center touch-manipulation"
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(255,255,255,0.14)',
+                  color: 'rgba(255,255,255,0.75)',
+                  backdropFilter: 'blur(12px)',
+                }}
               >
                 <Plus className="w-3.5 h-3.5" />
                 ליד חדש
-              </Button>
+              </motion.button>
             </Link>
             <Link to={createPageUrl('Bookings')}>
-              <Button
-                size="sm"
-                className="min-h-[44px] h-11 text-xs bg-white hover:bg-gray-50 text-indigo-700 font-semibold gap-1.5 shadow-md px-4 touch-manipulation"
+              <ShimmerButton
+                className="min-h-[44px] h-11 text-xs gap-1.5 px-4 flex items-center rounded-xl"
+                style={{
+                  background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
+                  color: '#0B1220',
+                  fontWeight: 700,
+                  boxShadow: '0 4px 16px rgba(0,209,193,0.35)',
+                }}
               >
                 <Plus className="w-3.5 h-3.5" />
                 הזמנה חדשה
-              </Button>
+              </ShimmerButton>
             </Link>
           </div>
         </div>
-      </div>
+      </LiquidBackground>
 
       {/* ── Today Section (mobile-first) ── */}
       {(todayCheckIns.length > 0 || todayCheckOuts.length > 0) && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+        <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
           <div className="flex items-center gap-2 px-5 py-3.5 border-b border-gray-50">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <h2 className="text-sm font-bold text-gray-800">היום</h2>
@@ -501,10 +546,10 @@ export default function Dashboard({ user, selectedPropertyId }) {
       </div>
 
       {/* ── Quick Actions ── */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 p-5">
+      <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 rounded-lg bg-[#00D1C1]/10 flex items-center justify-center">
-            <Zap className="w-3.5 h-3.5 text-[#00D1C1]" />
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,209,193,0.12)' }}>
+            <Zap className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
           </div>
           <h2 className="text-sm font-semibold text-gray-800">פעולות מהירות</h2>
         </div>
@@ -528,19 +573,25 @@ export default function Dashboard({ user, selectedPropertyId }) {
         const pct = Math.round((doneCount / steps.length) * 100);
         if (pct === 100) return null;
         return (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-50">
+          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+            <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
-                    <Target className="w-3.5 h-3.5 text-indigo-600" />
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,209,193,0.12)' }}>
+                    <Target className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
                   </div>
                   <h2 className="text-sm font-semibold text-gray-800">התחלה מהירה</h2>
                 </div>
-                <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">{doneCount}/{steps.length} הושלמו</span>
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ color: '#00a89a', background: 'rgba(0,209,193,0.10)' }}>{doneCount}/{steps.length} הושלמו</span>
               </div>
-              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.07)' }}>
+                <motion.div
+                  className="h-full rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${pct}%` }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                  style={{ background: 'linear-gradient(90deg, #00D1C1 0%, #00a89a 100%)' }}
+                />
               </div>
             </div>
             <div className="divide-y divide-gray-50">
@@ -570,7 +621,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
       {/* ── Insights & Activity Row ── */}
       <div className="grid md:grid-cols-3 gap-4">
         {/* Occupancy Gauge */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 p-5">
+        <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
               <BarChart2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -603,7 +654,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
         </div>
 
         {/* Revenue Summary */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 p-5">
+        <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
               <TrendingUp className="w-3.5 h-3.5 text-violet-600" />
@@ -634,7 +685,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
         </div>
 
         {/* Activity Timeline */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 p-5">
+        <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
               <Activity className="w-3.5 h-3.5 text-blue-600" />
@@ -678,7 +729,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
       </div>
 
       {/* ── Premium Features Teaser ── */}
-      <div className="bg-gradient-to-br from-indigo-50/80 via-white to-violet-50/60 rounded-2xl border border-indigo-100/60 p-6">
+      <div className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, rgba(0,209,193,0.05) 0%, rgba(255,255,255,0.95) 50%, rgba(139,92,246,0.05) 100%)', border: '1px solid rgba(0,209,193,0.15)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)' }}>
         <div className="flex items-center gap-3 mb-4">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-sm">
             <Crown className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
@@ -696,40 +747,50 @@ export default function Dashboard({ user, selectedPropertyId }) {
             { icon: BarChart2, label: 'דוחות מתקדמים', desc: 'הכנסות, תפוסה, מגמות', link: 'Invoices', color: 'from-amber-400 to-orange-500' },
           ].map((feat, i) => (
             <Link key={i} to={createPageUrl(feat.link)} className="group">
-              <div className="bg-white rounded-xl border border-gray-100 p-4 hover:border-indigo-200 hover:shadow-md transition-all duration-200 h-full">
+              <motion.div whileHover={{ y: -2, scale: 1.02 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} className="rounded-xl p-4 h-full cursor-pointer" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', backdropFilter: 'blur(12px)' }}>
                 <div className={cn("w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform", feat.color)}>
                   <feat.icon className="w-4 h-4 text-white" />
                 </div>
                 <p className="text-sm font-semibold text-gray-800 mb-0.5">{feat.label}</p>
                 <p className="text-xs text-gray-400 leading-relaxed">{feat.desc}</p>
-              </div>
+              </motion.div>
             </Link>
           ))}
         </div>
       </div>
 
       {/* ── Pro Upgrade Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-gray-900 via-indigo-900 to-violet-900 p-6">
-        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-violet-500/20 blur-3xl pointer-events-none" />
-        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <LiquidBackground
+        className="rounded-2xl overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #0B1220 0%, #0f1a2e 55%, #111827 100%)' }}
+      >
+        <div className="relative px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg flex-shrink-0">
               <Gift className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white">14 ימי ניסיון חינם</h3>
-              <p className="text-sm text-white/60">כל התכונות פתוחות — ללא כרטיס אשראי. נסה עכשיו וראה את ההבדל.</p>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.50)' }}>כל התכונות פתוחות — ללא כרטיס אשראי. נסה עכשיו וראה את ההבדל.</p>
             </div>
           </div>
           <Link to={createPageUrl('Subscription')}>
-            <Button className="bg-white hover:bg-gray-50 text-indigo-700 font-semibold shadow-lg px-6 h-10 flex-shrink-0">
+            <ShimmerButton
+              className="flex items-center gap-1.5 px-6 h-10 flex-shrink-0 rounded-xl"
+              style={{
+                background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
+                color: '#0B1220',
+                fontWeight: 700,
+                fontSize: '14px',
+                boxShadow: '0 4px 16px rgba(0,209,193,0.35)',
+              }}
+            >
               שדרג עכשיו
-              <ArrowUpRight className="w-4 h-4 mr-1.5" />
-            </Button>
+              <ArrowUpRight className="w-4 h-4" />
+            </ShimmerButton>
           </Link>
         </div>
-      </div>
+      </LiquidBackground>
 
     </div>
   );

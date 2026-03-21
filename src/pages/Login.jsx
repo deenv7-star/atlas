@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { base44 } from '@/api/base44Client';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { motion } from 'framer-motion';
 import { LogIn, Eye, EyeOff, Shield } from 'lucide-react';
 import { validateEmail } from '@/lib/validation';
 import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
 import { getSafeReturnUrl } from '@/config/routes';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { LiquidBackground } from '@/components/ui/LiquidGlass';
+import { ShimmerButton } from '@/components/ui/AnimatedButton';
 
 export default function Login() {
   const { loginUser } = useAuth();
@@ -83,18 +85,87 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>
-      <div className="w-full max-w-[440px]">
-        <div className="text-center mb-10">
-          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-6" style={{ height: 56, width: 'auto', objectFit: 'contain' }} />
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">ברוכים השבים</h1>
-          <p className="text-gray-500 text-sm mt-2">הזן את הפרטים שלך כדי להתחבר</p>
-        </div>
+    <LiquidBackground
+      className="min-h-screen flex items-center justify-center px-4 py-12"
+      style={{ background: 'linear-gradient(135deg, #0B1220 0%, #0f1a2e 50%, #0a1628 100%)' }}
+      dir="rtl"
+    >
+      <motion.div
+        className="w-full max-w-[440px]"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        style={{ fontFamily: "'Heebo', sans-serif" }}
+      >
+        {/* Logo & heading */}
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
+        >
+          <img
+            src="/atlas-logo-final.png"
+            alt="ATLAS"
+            className="mx-auto mb-6"
+            style={{ height: 52, width: 'auto', objectFit: 'contain', filter: 'brightness(1.15)' }}
+          />
+          <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: '#fff' }}>
+            ברוכים השבים
+          </h1>
+          <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            הזן את הפרטים שלך כדי להתחבר
+          </p>
+        </motion.div>
 
-        <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Glass card */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18, duration: 0.45 }}
+          style={{
+            background: 'rgba(255,255,255,0.07)',
+            backdropFilter: 'blur(40px) saturate(1.6)',
+            WebkitBackdropFilter: 'blur(40px) saturate(1.6)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: '24px',
+            padding: '32px',
+            boxShadow: `
+              0 8px 40px rgba(0,0,0,0.35),
+              0 2px 12px rgba(0,0,0,0.20),
+              inset 0 1px 0 rgba(255,255,255,0.12),
+              inset 0 -1px 0 rgba(0,0,0,0.15)
+            `,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Shimmer sweep */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ x: '-100%' }}
+            animate={{ x: '200%' }}
+            transition={{ duration: 3.5, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut' }}
+            style={{
+              background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.07) 50%, transparent 65%)',
+              borderRadius: '24px',
+            }}
+          />
+          {/* Top highlight */}
+          <div
+            className="absolute inset-x-0 top-0 pointer-events-none"
+            style={{
+              height: '1px',
+              background: 'linear-gradient(90deg, transparent, rgba(0,209,193,0.5) 40%, rgba(139,92,246,0.4) 70%, transparent)',
+            }}
+          />
+
+          <form onSubmit={handleSubmit} className="space-y-5" style={{ position: 'relative', zIndex: 1 }}>
+            {/* Email */}
             <div className="space-y-1.5">
-              <Label htmlFor="email">כתובת אימייל</Label>
+              <Label htmlFor="email" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: 500 }}>
+                כתובת אימייל
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -103,17 +174,33 @@ export default function Login() {
                 onChange={set('email')}
                 onBlur={handleBlur('email')}
                 className={cn("h-12 rounded-xl text-base", touched.email && errors.email && "border-red-500")}
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: touched.email && errors.email ? '1px solid rgba(239,68,68,0.6)' : '1px solid rgba(255,255,255,0.14)',
+                  color: '#fff',
+                }}
                 autoComplete="email"
                 autoFocus={!prefilledEmail}
                 maxLength={255}
               />
-              {touched.email && errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+              {touched.email && errors.email && (
+                <p className="text-sm" style={{ color: '#f87171' }}>{errors.email}</p>
+              )}
             </div>
 
+            {/* Password */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <Label htmlFor="password">סיסמה</Label>
-                <Link to="/reset-password" className="text-sm text-indigo-600 hover:text-indigo-700">שכחתי סיסמה</Link>
+                <Label htmlFor="password" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: 500 }}>
+                  סיסמה
+                </Label>
+                <Link
+                  to="/reset-password"
+                  className="text-sm font-medium transition-colors"
+                  style={{ color: '#00D1C1' }}
+                >
+                  שכחתי סיסמה
+                </Link>
               </div>
               <div className="relative">
                 <Input
@@ -123,35 +210,82 @@ export default function Login() {
                   value={form.password}
                   onChange={set('password')}
                   className={cn("h-12 rounded-xl text-base pl-10", touched.password && errors.password && "border-red-500")}
+                  style={{
+                    background: 'rgba(255,255,255,0.08)',
+                    border: touched.password && errors.password ? '1px solid rgba(239,68,68,0.6)' : '1px solid rgba(255,255,255,0.14)',
+                    color: '#fff',
+                  }}
                   autoComplete="current-password"
                   maxLength={128}
                 />
-                <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: 'rgba(255,255,255,0.4)' }}
+                  tabIndex={-1}
+                >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {touched.password && errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+              {touched.password && errors.password && (
+                <p className="text-sm" style={{ color: '#f87171' }}>{errors.password}</p>
+              )}
             </div>
 
-            <Button type="submit" disabled={isLoading} className="w-full h-12 bg-[#111827] hover:bg-black text-white font-bold rounded-xl gap-2">
-              {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <LogIn className="w-5 h-5" />}
+            {/* Submit */}
+            <ShimmerButton
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="w-full h-12 flex items-center justify-center gap-2 text-base"
+              style={{
+                background: isLoading
+                  ? 'linear-gradient(135deg, #0f1a2e 0%, #1e2d4a 100%)'
+                  : 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
+                color: isLoading ? 'rgba(255,255,255,0.6)' : '#0B1220',
+                boxShadow: isLoading ? 'none' : '0 4px 20px rgba(0,209,193,0.35), inset 0 1px 0 rgba(255,255,255,0.20)',
+              }}
+            >
+              {isLoading
+                ? <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                : <LogIn className="w-5 h-5" />
+              }
               {isLoading ? 'מתחבר...' : 'כניסה'}
-            </Button>
+            </ShimmerButton>
           </form>
 
-          <div className="flex items-center justify-center gap-1.5 mt-6 text-gray-400">
+          <div className="flex items-center justify-center gap-1.5 mt-6" style={{ color: 'rgba(255,255,255,0.30)' }}>
             <Shield className="w-3.5 h-3.5" />
             <p className="text-xs">המידע שלך מאובטח ומוגן בהצפנה מתקדמת</p>
           </div>
-        </div>
+        </motion.div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          אין לך חשבון? <Link to="/register" className="text-indigo-600 hover:text-indigo-700 font-semibold">צור חשבון חינמי</Link>
-        </p>
-        <p className="text-center text-xs text-gray-400 mt-3">
-          <Link to="/" className="hover:text-gray-600">חזרה לדף הבית</Link>
-        </p>
-      </div>
-    </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+        >
+          <p className="text-center text-sm mt-6" style={{ color: 'rgba(255,255,255,0.40)' }}>
+            אין לך חשבון?{' '}
+            <Link
+              to="/register"
+              className="font-semibold transition-colors"
+              style={{ color: '#00D1C1' }}
+            >
+              צור חשבון חינמי
+            </Link>
+          </p>
+          <p className="text-center text-xs mt-3">
+            <Link
+              to="/"
+              className="transition-colors"
+              style={{ color: 'rgba(255,255,255,0.25)' }}
+            >
+              חזרה לדף הבית
+            </Link>
+          </p>
+        </motion.div>
+      </motion.div>
+    </LiquidBackground>
   );
 }
