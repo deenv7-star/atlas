@@ -34,7 +34,9 @@ function setStoredToken(t) { if (t) localStorage.setItem(TOKEN_KEY, t); else loc
 
 async function apiFetch(path, options = {}) {
   const token = getStoredToken();
-  const res = await fetch(`${LOCAL_API_URL}${path}`, {
+  const base = LOCAL_API_URL || '';
+  const url = path.startsWith('/') ? `${base}${path}` : `${base}/${path}`;
+  const res = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -152,7 +154,8 @@ let _localApiAvailable = null;
 async function checkLocalApi() {
   if (_localApiAvailable !== null) return _localApiAvailable;
   try {
-    const res = await fetch(`${LOCAL_API_URL}/api/health`, { signal: AbortSignal.timeout(2000) });
+    const healthUrl = LOCAL_API_URL ? `${LOCAL_API_URL}/api/health` : '/api/health';
+    const res = await fetch(healthUrl, { signal: AbortSignal.timeout(2000) });
     _localApiAvailable = res.ok;
   } catch {
     _localApiAvailable = false;
@@ -726,7 +729,8 @@ export function createClient(_options = {}) {
   const allowHybridRest =
     !import.meta.env.PROD ||
     import.meta.env.VITE_API_URL ||
-    import.meta.env.VITE_ALLOW_LOCAL_DEMO === 'true';
+    import.meta.env.VITE_ALLOW_LOCAL_DEMO === 'true' ||
+    import.meta.env.VITE_DISABLE_RELATIVE_API !== 'true';
 
   if (allowHybridRest) {
     if (_restClientCache) return _restClientCache;

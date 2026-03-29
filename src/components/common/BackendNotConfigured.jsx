@@ -22,15 +22,16 @@ export default function BackendNotConfigured() {
         נדרשת הגדרת שרת
       </h1>
       <p style={{ color: '#6B7280', lineHeight: 1.7, marginBottom: 16 }}>
-        בפרודקשן חובה להגדיר <code style={{ background: '#E5E7EB', padding: '2px 6px', borderRadius: 4 }}>VITE_SUPABASE_URL</code>
+        בדרך כלל מספיק לחבר Supabase (<code style={{ background: '#E5E7EB', padding: '2px 6px', borderRadius: 4 }}>VITE_SUPABASE_URL</code>
         {' + '}
         <code style={{ background: '#E5E7EB', padding: '2px 6px', borderRadius: 4 }}>VITE_SUPABASE_ANON_KEY</code>
-        {' או '}
-        <code style={{ background: '#E5E7EB', padding: '2px 6px', borderRadius: 4 }}>VITE_API_URL</code>
-        {' (כתובת ה-API) — כדי שלא יישמרו נתוני לקוחות בדפדפן בלבד.'}
+        ) או לפרוס את ה-API מאחורי אותו דומיין (נתיב <code style={{ background: '#E5E7EB', padding: '2px 6px', borderRadius: 4 }}>/api</code>
+        ). אופציונלי: <code style={{ background: '#E5E7EB', padding: '2px 6px', borderRadius: 4 }}>VITE_API_URL</code>
+        {' '}לכתובת API מפורשת.
       </p>
       <p style={{ color: '#9CA3AF', fontSize: 14, marginBottom: 24 }}>
-        לפיתוח מקומי בלבד אפשר להגדיר <code style={{ background: '#FEF3C7', padding: '2px 6px', borderRadius: 4 }}>VITE_ALLOW_LOCAL_DEMO=true</code>
+        אם מופיע המסך הזה בטעות — בדוק שיש proxy ל־API או הגדר <code style={{ background: '#FEF3C7', padding: '2px 6px', borderRadius: 4 }}>VITE_ALLOW_LOCAL_DEMO=true</code>
+        {' '}לפיתוח. רק פריסת סטטיק בלי API: <code style={{ background: '#FEE2E2', padding: '2px 6px', borderRadius: 4 }}>VITE_DISABLE_RELATIVE_API=true</code>
       </p>
       <a
         href="/"

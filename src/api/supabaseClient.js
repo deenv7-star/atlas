@@ -27,10 +27,19 @@ export const supabase = (supabaseUrl && supabaseKey)
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey);
 
 // ── Local REST API (Express server) ──────────────────────────────────────────
-export const LOCAL_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-export const isLocalApiConfigured = Boolean(import.meta.env.VITE_API_URL || (
-  // Auto-detect: if not in prod and no Supabase creds, try local server
-  typeof window !== 'undefined' &&
-  !isSupabaseConfigured &&
-  !import.meta.env.PROD
-));
+// Explicit VITE_API_URL wins. In production builds, default to same-origin (empty
+// string) so fetches go to /api/* — typical when nginx/Render/Vercel proxies API.
+// Development defaults to localhost Express.
+function resolveApiBase() {
+  const explicit = import.meta.env.VITE_API_URL;
+  if (explicit) return String(explicit).replace(/\/$/, '');
+  if (import.meta.env.PROD) return '';
+  return 'http://localhost:3001';
+}
+
+export const LOCAL_API_URL = resolveApiBase();
+
+export const isLocalApiConfigured = Boolean(
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined' && !isSupabaseConfigured && !import.meta.env.PROD)
+);
