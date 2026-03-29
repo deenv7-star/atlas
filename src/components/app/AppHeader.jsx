@@ -43,6 +43,7 @@ const pageNames = {
   MultiCalendar: 'לוח שנה מרכזי',
   OwnerReports: 'דוחות בעלים',
   GuestJourney: 'מסע אורח',
+  PlatformAdmin: 'ניהול פלטפורמה',
 };
 
 export default function AppHeader({ user, currentPageName, onMenuClick, selectedPropertyId, onPropertyChange }) {

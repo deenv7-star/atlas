@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import { createHash, randomBytes } from 'node:crypto';
 import { pool } from './db.js';
 import { env } from './config/env.js';
+import { isPlatformAdminEmail } from './platform.js';
 
 const ROLE = {
   ADMIN: 'ADMIN',
@@ -85,9 +86,11 @@ export async function getUserWithOrg(userId) {
   if (!rows[0]) return null;
 
   const row = rows[0];
+
   return {
     ...row,
-    role: row.owner_id === row.id ? ROLE.ADMIN : ROLE.MANAGER
+    role: row.owner_id === row.id ? ROLE.ADMIN : ROLE.MANAGER,
+    is_platform_admin: isPlatformAdminEmail(row.email)
   };
 }
 
@@ -125,6 +128,13 @@ export function requireRole(allowedRoles) {
     }
     return next();
   };
+}
+
+export function requirePlatformAdmin(req, res, next) {
+  if (!req.authUser?.is_platform_admin) {
+    return res.status(403).json({ error: 'Platform admin access required' });
+  }
+  return next();
 }
 
 export { ROLE };

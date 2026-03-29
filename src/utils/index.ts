@@ -35,6 +35,7 @@ const pagePathMap: Record<string, string> = {
     ExpenseTracker: '/ExpenseTracker',
     BookingDetail: '/BookingDetail',
     LeadDetail: '/LeadDetail',
+    PlatformAdmin: '/platform-admin',
 };
 
 export function createPageUrl(pageName: string) {

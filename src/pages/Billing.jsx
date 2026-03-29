@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Check, Crown, Zap, Rocket, CreditCard, Calendar, Receipt } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PRICING_PLANS } from '@/config/pricing';
+import { isSupabaseConfigured, LOCAL_API_URL } from '@/api/supabaseClient';
 
 const PLANS = Object.fromEntries(
   PRICING_PLANS.map((p) => [
@@ -25,7 +23,57 @@ const PLANS = Object.fromEntries(
 
 export default function BillingPage({ user }) {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [stripeLoading, setStripeLoading] = useState(false);
+
+  const goStripeCheckout = async () => {
+    const token = localStorage.getItem('atlas_jwt_token');
+    if (!token) {
+      window.alert('יש להתחבר מחדש');
+      return;
+    }
+    setStripeLoading(true);
+    try {
+      const base = import.meta.env.VITE_API_URL || LOCAL_API_URL;
+      const res = await fetch(`${base}/api/billing/checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        window.alert(data.error || 'לא ניתן לפתוח דף תשלום — בדוק הגדרות Stripe בשרת');
+      }
+    } finally {
+      setStripeLoading(false);
+    }
+  };
+
+  const goStripePortal = async () => {
+    const token = localStorage.getItem('atlas_jwt_token');
+    if (!token) return;
+    setStripeLoading(true);
+    try {
+      const base = import.meta.env.VITE_API_URL || LOCAL_API_URL;
+      const res = await fetch(`${base}/api/billing/portal-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data.url) window.location.href = data.url;
+      else window.alert(data.error || 'לא ניתן לפתוח פורטל ניהול מנוי');
+    } finally {
+      setStripeLoading(false);
+    }
+  };
 
   const planKey = user?.subscription_plan;
   const currentPlan = (planKey && PLANS[planKey]) ? planKey : 'starter';
@@ -103,6 +151,31 @@ export default function BillingPage({ user }) {
           </div>
         </CardContent>
       </Card>
+
+      {!isSupabaseConfigured && (
+        <Card className="border border-indigo-100 rounded-2xl bg-indigo-50/40">
+          <CardHeader>
+            <CardTitle className="text-lg">חיוב מאובטח (Stripe)</CardTitle>
+            <CardDescription>
+              דורש הגדרה בשרת: STRIPE_SECRET_KEY, STRIPE_PRICE_STARTER, ו-STRIPE_WEBHOOK_SECRET ל-webhook.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              variant="default"
+              className="bg-[#635BFF] hover:bg-[#635BFF]/90 text-white"
+              disabled={stripeLoading}
+              onClick={goStripeCheckout}
+            >
+              {stripeLoading ? 'פותח...' : 'מנוי בתשלום (Checkout)'}
+            </Button>
+            <Button type="button" variant="outline" disabled={stripeLoading} onClick={goStripePortal}>
+              ניהול מנוי (פורטל Stripe)
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Upgrade Options */}
       {currentPlan !== 'business' && (

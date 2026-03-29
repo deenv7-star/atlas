@@ -8,9 +8,10 @@ import {
   CreditCard, FileText, Star, Settings, LogOut,
   ChevronLeft, ChevronRight, Zap, Brain, Link2,
   Wallet, ClipboardList, Wrench, Receipt, TrendingDown,
-  TrendingUp, Globe, BarChart3, CalendarRange, FileBarChart, Workflow,
+  TrendingUp, Globe, BarChart3, CalendarRange, FileBarChart, Workflow, Shield,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { isPlatformAdminViewer } from '@/lib/platformAdmin';
 
 const navGroups = [
   {
@@ -64,6 +65,17 @@ const navGroups = [
 export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState(null);
+  const showPlatform = isPlatformAdminViewer(user);
+  const mergedNavGroups = [
+    {
+      ...navGroups[0],
+      items: [
+        ...(showPlatform ? [{ icon: Shield, label: 'פלטפורמה', page: 'PlatformAdmin' }] : []),
+        ...navGroups[0].items,
+      ],
+    },
+    ...navGroups.slice(1),
+  ];
 
   const isActive = (page) => {
     const pageUrl = createPageUrl(page);
@@ -131,7 +143,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 scrollbar-none">
-        {navGroups.map((group, groupIdx) => (
+        {mergedNavGroups.map((group, groupIdx) => (
           <div key={groupIdx} className={groupIdx > 0 ? "mt-4" : ""}>
             {group.label && !collapsed && (
               <p

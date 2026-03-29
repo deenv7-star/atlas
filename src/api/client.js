@@ -354,6 +354,7 @@ const supabaseAuth = {
       selected_plan:        profile?.selected_plan || 'trial',
       trial_ends_at:        profile?.trial_ends_at || null,
       subscription_status:  profile?.subscription_status || 'trialing',
+      is_platform_admin:    Boolean(profile?.is_platform_admin),
     };
   },
 
@@ -549,6 +550,7 @@ const localAuth = {
       organization_name: organization_name || 'My Organization',
       subscription_plan: 'starter',
       onboarding_completed: false,
+      is_platform_admin: false,
       created_date: new Date().toISOString(),
     };
     localStorage.setItem(USER_KEY, JSON.stringify(u));
@@ -568,6 +570,7 @@ const localAuth = {
       organization_name: '',
       subscription_plan: 'starter',
       onboarding_completed: false,
+      is_platform_admin: false,
     };
     localStorage.setItem(USER_KEY, JSON.stringify(u));
     return { user: u, session: {} };
@@ -596,9 +599,31 @@ const localAuth = {
 const integrations = {
   Core: {
     async InvokeLLM({ prompt, model = 'gpt-4o-mini' } = {}) {
+      const token = getStoredToken();
+      const base = import.meta.env.VITE_API_URL || LOCAL_API_URL;
+      const canTryServer =
+        token &&
+        !isSupabaseConfigured &&
+        (import.meta.env.VITE_API_URL || (!import.meta.env.PROD && (await checkLocalApi())));
+      if (canTryServer) {
+        try {
+          const res = await fetch(`${base}/api/ai/chat`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({ prompt, model }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.text) return data.text;
+        } catch {
+          /* fall through to browser key or message */
+        }
+      }
       const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
       if (!apiKey) {
-        return 'תכונת ה-AI תהיה זמינה בקרוב. עד אז אפשר לפנות אלינו בכל שאלה.';
+        return 'הגדר OPENAI_API_KEY בשרת (מומלץ) או VITE_OPENAI_API_KEY לפיתוח מקומי.';
       }
       const res = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -613,8 +638,30 @@ const integrations = {
     },
 
     async SendEmail({ to, subject, body } = {}) {
+      const token = getStoredToken();
+      const base = import.meta.env.VITE_API_URL || LOCAL_API_URL;
+      const canTryServer =
+        token &&
+        !isSupabaseConfigured &&
+        (import.meta.env.VITE_API_URL || (!import.meta.env.PROD && (await checkLocalApi())));
+      if (canTryServer) {
+        try {
+          const res = await fetch(`${base}/api/email/send`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ to, subject, text: body || '' }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (res.ok) return { success: true, id: data.id };
+        } catch {
+          /* fall through */
+        }
+      }
       console.info('[SendEmail stub]', { to, subject, body });
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300));
       return { success: true };
     },
 
@@ -676,7 +723,12 @@ export function createClient(_options = {}) {
 
   // 2. Local REST API — return a client that dynamically delegates based on
   //    server availability.  The first entity/auth call will probe the server.
-  if (!import.meta.env.PROD || import.meta.env.VITE_API_URL) {
+  const allowHybridRest =
+    !import.meta.env.PROD ||
+    import.meta.env.VITE_API_URL ||
+    import.meta.env.VITE_ALLOW_LOCAL_DEMO === 'true';
+
+  if (allowHybridRest) {
     if (_restClientCache) return _restClientCache;
 
     // Build a transparent proxy that routes to REST when available, else localStorage

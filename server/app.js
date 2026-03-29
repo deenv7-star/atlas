@@ -4,6 +4,11 @@ import cors from 'cors';
 import authRouter from './routes/auth.js';
 import entitiesRouter from './routes/entities.js';
 import domainRouter from './routes/domain.js';
+import billingRouter from './routes/billing.js';
+import aiRouter from './routes/ai.js';
+import emailRouter from './routes/email.js';
+import platformRouter from './routes/platform.js';
+import { handleStripeWebhook } from './routes/stripe-webhook.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 import { requestContext } from './middleware/request-context.js';
@@ -21,6 +26,7 @@ export function createApp() {
   app.use(requestContext);
   app.use(securityHeaders);
   app.use(collectMetrics);
+  app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
   app.use(apiRateLimit);
   app.use(cors({
     origin: env.FRONTEND_URL,
@@ -30,6 +36,10 @@ export function createApp() {
 
   app.use('/api/auth', authRouter);
   app.use('/api/entities', entitiesRouter);
+  app.use('/api/billing', billingRouter);
+  app.use('/api/ai', aiRouter);
+  app.use('/api/email', emailRouter);
+  app.use('/api/platform', platformRouter);
   app.use('/api', domainRouter);
 
   app.get('/health', (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));

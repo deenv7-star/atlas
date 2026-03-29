@@ -13,7 +13,14 @@ const schema = z.object({
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
   REDIS_URL: z.string().url().optional(),
   SENTRY_DSN: z.string().url().optional(),
-  DATA_RETENTION_DAYS: z.coerce.number().int().positive().default(365)
+  DATA_RETENTION_DAYS: z.coerce.number().int().positive().default(365),
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PRICE_STARTER: z.string().optional(),
+  OPENAI_API_KEY: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
+  PLATFORM_ADMIN_EMAILS: z.string().optional()
 });
 
 export const env = schema.parse(process.env);

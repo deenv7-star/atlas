@@ -13,15 +13,16 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ─── users ───────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.users (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  email           TEXT UNIQUE NOT NULL,
-  password_hash   TEXT NOT NULL,
-  full_name       TEXT DEFAULT '',
-  phone           TEXT DEFAULT '',
-  profile_image   TEXT DEFAULT '',
-  organization_id UUID,
-  created_at      TIMESTAMPTZ DEFAULT NOW(),
-  updated_at      TIMESTAMPTZ DEFAULT NOW()
+  id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email               TEXT UNIQUE NOT NULL,
+  password_hash       TEXT NOT NULL,
+  full_name           TEXT DEFAULT '',
+  phone               TEXT DEFAULT '',
+  profile_image       TEXT DEFAULT '',
+  organization_id     UUID,
+  is_platform_admin   BOOLEAN NOT NULL DEFAULT false,
+  created_at          TIMESTAMPTZ DEFAULT NOW(),
+  updated_at          TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ─── organizations ───────────────────────────────────────────────────────────
@@ -178,22 +179,31 @@ CREATE TABLE IF NOT EXISTS public.cleaning_tasks (
 
 -- ─── invoices ────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.invoices (
-  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  org_id         UUID NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
-  booking_id     UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
-  invoice_number TEXT DEFAULT '',
-  guest_name     TEXT DEFAULT '',
-  guest_email    TEXT DEFAULT '',
-  amount         NUMERIC(10,2),
-  tax_amount     NUMERIC(10,2) DEFAULT 0,
-  total_amount   NUMERIC(10,2),
-  status         TEXT NOT NULL DEFAULT 'DRAFT',
-  issue_date     DATE,
-  due_date       DATE,
-  items          JSONB DEFAULT '[]',
-  notes          TEXT DEFAULT '',
-  created_at     TIMESTAMPTZ DEFAULT NOW(),
-  updated_at     TIMESTAMPTZ DEFAULT NOW()
+  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  org_id           UUID NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
+  booking_id       UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
+  invoice_number   TEXT DEFAULT '',
+  type             TEXT DEFAULT 'INVOICE',
+  guest_name       TEXT DEFAULT '',
+  guest_email      TEXT DEFAULT '',
+  customer_name    TEXT DEFAULT '',
+  customer_email   TEXT DEFAULT '',
+  customer_phone   TEXT DEFAULT '',
+  customer_address TEXT DEFAULT '',
+  customer_tax_id  TEXT DEFAULT '',
+  amount           NUMERIC(10,2),
+  subtotal         NUMERIC(12,2),
+  tax_rate         NUMERIC(6,2) DEFAULT 17,
+  tax_amount       NUMERIC(10,2) DEFAULT 0,
+  total_amount     NUMERIC(10,2),
+  currency         TEXT DEFAULT 'ILS',
+  status           TEXT NOT NULL DEFAULT 'DRAFT',
+  issue_date       DATE,
+  due_date         DATE,
+  items            JSONB DEFAULT '[]',
+  notes            TEXT DEFAULT '',
+  created_at       TIMESTAMPTZ DEFAULT NOW(),
+  updated_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ─── guest_requests ──────────────────────────────────────────────────────────

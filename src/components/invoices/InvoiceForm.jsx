@@ -56,6 +56,10 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
   };
 
   const handleBookingSelect = (bookingId) => {
+    if (!bookingId) {
+      setFormData(prev => ({ ...prev, booking_id: '' }));
+      return;
+    }
     const booking = bookings.find(b => b.id === bookingId);
     if (booking) {
       setFormData(prev => ({
@@ -118,12 +122,12 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label>בחר הזמנה (אופציונלי)</Label>
-          <Select value={formData.booking_id} onValueChange={handleBookingSelect}>
+          <Select value={formData.booking_id || ''} onValueChange={handleBookingSelect}>
             <SelectTrigger>
               <SelectValue placeholder="בחר הזמנה" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={null}>ללא הזמנה</SelectItem>
+              <SelectItem value="">ללא הזמנה</SelectItem>
               {bookings.map(booking => (
                 <SelectItem key={booking.id} value={booking.id}>
                   {booking.guest_name} - {format(new Date(booking.check_in_date), 'dd/MM/yyyy')}

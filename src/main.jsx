@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
+import BackendNotConfigured from '@/components/common/BackendNotConfigured'
+import { isProductionBackendConfigured } from '@/lib/backendConfig'
 import '@/index.css'
 
 // Minimal fallback when app crashes (no external deps)
@@ -24,7 +26,7 @@ if (!rootEl) throw new Error('Root element not found')
 
 try {
   const root = ReactDOM.createRoot(rootEl)
-  root.render(<App />)
+  root.render(isProductionBackendConfigured() ? <App /> : <BackendNotConfigured />)
 } catch (e) {
   rootEl.innerHTML = ''
   rootEl.style.minHeight = '100vh'

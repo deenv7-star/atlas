@@ -83,6 +83,7 @@ import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import Terms from './pages/Terms';
 import Onboarding from './pages/Onboarding';
+import PlatformAdmin from './pages/PlatformAdmin';
 import Register from './pages/Register';
 import VerifyEmail from './pages/VerifyEmail';
 import __Layout from './Layout.jsx';
@@ -114,6 +115,7 @@ export const PAGES = {
     "Leads": Leads,
     "Messages": Messages,
     "Onboarding": Onboarding,
+    "PlatformAdmin": PlatformAdmin,
     "Register": Register,
     "VerifyEmail": VerifyEmail,
     "MultiCalendar": MultiCalendar,

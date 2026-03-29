@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { 
-  FileText, Plus, Download, Send, Eye, Pencil, Trash2,
-  Search, Filter, CheckCircle2, Clock, XCircle, AlertCircle
+import {
+  FileText, Plus, Send, Eye, Pencil, Trash2,
+  Search, Clock, CheckCircle2, XCircle, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +46,56 @@ const typeConfig = {
   PROFORMA: 'חשבונית עסקה'
 };
 
+function normalizeInvoiceForUi(row) {
+  if (!row) return row;
+  let items = row.items;
+  if (typeof items === 'string') {
+    try {
+      items = JSON.parse(items);
+    } catch {
+      items = [];
+    }
+  }
+  if (!Array.isArray(items)) items = [];
+  return {
+    ...row,
+    type: row.type || 'INVOICE',
+    items,
+    customer_name: row.customer_name || row.guest_name,
+    customer_email: row.customer_email || row.guest_email,
+    customer_phone: row.customer_phone,
+    customer_address: row.customer_address,
+    customer_tax_id: row.customer_tax_id
+  };
+}
+
+function invoiceToPayload(formData, orgId) {
+  return {
+    org_id: orgId,
+    booking_id: formData.booking_id || null,
+    invoice_number: formData.invoice_number,
+    type: formData.type,
+    guest_name: formData.guest_name,
+    guest_email: formData.guest_email,
+    customer_name: formData.customer_name || formData.guest_name,
+    customer_email: formData.customer_email || formData.guest_email,
+    customer_phone: formData.customer_phone || '',
+    customer_address: formData.customer_address || '',
+    customer_tax_id: formData.customer_tax_id || '',
+    issue_date: formData.issue_date,
+    due_date: formData.due_date,
+    amount: formData.subtotal,
+    subtotal: formData.subtotal,
+    tax_rate: formData.tax_rate,
+    tax_amount: formData.tax_amount,
+    total_amount: formData.total_amount,
+    currency: formData.currency || 'ILS',
+    status: formData.status,
+    items: formData.items,
+    notes: formData.notes || ''
+  };
+}
+
 export default function InvoicesPage({ orgId }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -57,109 +107,97 @@ export default function InvoicesPage({ orgId }) {
 
   const queryClient = useQueryClient();
 
-  const { data: invoices = [], isLoading } = useQuery({
+  const { data: rawInvoices = [], isLoading } = useQuery({
     queryKey: ['invoices', orgId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+      const rows = await base44.entities.Invoice.filter({ org_id: orgId }, '-created_at', 500);
+      return (rows || []).map(normalizeInvoiceForUi);
     },
-    enabled: !!orgId,
+    enabled: !!orgId
   });
 
   const { data: bookings = [] } = useQuery({
     queryKey: ['bookings', orgId],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
-    enabled: !!orgId,
+    queryFn: () => base44.entities.Booking.filter({ org_id: orgId }, '-created_at', 300),
+    enabled: !!orgId
   });
 
   const createMutation = useMutation({
-    mutationFn: async (payload) => {
-      const { data, error } = await supabase.from('invoices').insert(payload).select().single();
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: async (payload) => base44.entities.Invoice.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
       toast.success('החשבונית נשמרה בהצלחה');
     },
-    onError: () => toast.error('שגיאה בשמירת החשבונית'),
+    onError: () => toast.error('שגיאה בשמירת החשבונית')
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data: payload }) => {
-      const { data, error } = await supabase.from('invoices').update(payload).eq('id', id).select().single();
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: async ({ id, data: payload }) => base44.entities.Invoice.update(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
       toast.success('החשבונית עודכנה בהצלחה');
     },
-    onError: () => toast.error('שגיאה בעדכון החשבונית'),
+    onError: () => toast.error('שגיאה בעדכון החשבונית')
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id) => {
-      const { error } = await supabase.from('invoices').delete().eq('id', id);
-      if (error) throw error;
-    },
+    mutationFn: (id) => base44.entities.Invoice.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success('החשבונית נמחקה');
     },
-    onError: () => toast.error('שגיאה במחיקת החשבונית'),
+    onError: () => toast.error('שגיאה במחיקת החשבונית')
   });
 
   const sendEmailMutation = useMutation({
     mutationFn: async (invoice) => {
-      console.info('[SendEmail]', { to: invoice.guest_email, subject: `חשבונית ${invoice.invoice_number}` });
-      const { data, error } = await supabase.from('invoices').update({ status: 'SENT' }).eq('id', invoice.id).select().single();
-      if (error) throw error;
-      return data;
+      await base44.integrations.Core.SendEmail({
+        to: invoice.guest_email || invoice.customer_email,
+        subject: `חשבונית ${invoice.invoice_number}`,
+        body: `מצורפת חשבונית ${invoice.invoice_number} לתשלום.`
+      });
+      return base44.entities.Invoice.update(invoice.id, { status: 'SENT' });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      toast.success('החשבונית נשלחה בהצלחה');
+      toast.success('החשבונית סומנה כנשלחה');
     },
-    onError: () => toast.error('שגיאה בשליחת החשבונית'),
+    onError: () => toast.error('שגיאה בשליחת החשבונית')
   });
 
   const handleSave = (data) => {
+    const payload = invoiceToPayload(data, orgId);
     if (editingInvoice) {
-      updateMutation.mutate({ id: editingInvoice.id, data });
+      updateMutation.mutate({ id: editingInvoice.id, data: payload });
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(payload);
     }
   };
 
   const handleEdit = (invoice) => {
-    setEditingInvoice(invoice);
+    setEditingInvoice(normalizeInvoiceForUi(invoice));
     setShowCreateDialog(true);
   };
 
   const handlePreview = (invoice) => {
-    setPreviewInvoice(invoice);
+    setPreviewInvoice(normalizeInvoiceForUi(invoice));
     setShowPreviewDialog(true);
   };
 
   const handleSendEmail = (invoice) => {
-    if (!invoice.guest_email) {
+    const to = invoice.guest_email || invoice.customer_email;
+    if (!to) {
       toast.error('אין כתובת אימייל ללקוח');
       return;
     }
     sendEmailMutation.mutate(invoice);
   };
 
-  const filteredInvoices = invoices.filter(inv => {
+  const filteredInvoices = rawInvoices.filter((inv) => {
     const matchesSearch = inv.guest_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          inv.invoice_number?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'ALL' || inv.status === statusFilter;
@@ -263,12 +301,15 @@ export default function InvoicesPage({ orgId }) {
               ) : (
                 filteredInvoices.map((invoice) => {
                   const StatusIcon = statusConfig[invoice.status]?.icon || Clock;
+                  const issueDate = invoice.issue_date
+                    ? format(new Date(invoice.issue_date), 'dd/MM/yyyy')
+                    : '—';
                   return (
                     <TableRow key={invoice.id}>
                       <TableCell className="font-mono text-sm">{invoice.invoice_number}</TableCell>
-                      <TableCell>{typeConfig[invoice.type]}</TableCell>
+                      <TableCell>{typeConfig[invoice.type] || 'חשבונית'}</TableCell>
                       <TableCell>{invoice.guest_name}</TableCell>
-                      <TableCell>{format(new Date(invoice.issue_date), 'dd/MM/yyyy')}</TableCell>
+                      <TableCell>{issueDate}</TableCell>
                       <TableCell className="font-semibold">₪{invoice.total_amount?.toLocaleString()}</TableCell>
                       <TableCell>
                         <Badge className={statusConfig[invoice.status]?.color}>
@@ -296,7 +337,7 @@ export default function InvoicesPage({ orgId }) {
                             size="sm"
                             variant="ghost"
                             onClick={() => handleSendEmail(invoice)}
-                            disabled={!invoice.guest_email}
+                            disabled={!(invoice.guest_email || invoice.customer_email)}
                           >
                             <Send className="w-4 h-4" />
                           </Button>

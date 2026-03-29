@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
+import { isPlatformAdminViewer } from '@/lib/platformAdmin';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import VerifyEmail from '@/pages/VerifyEmail';
@@ -59,6 +60,21 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   }
   if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass() && !hasLoginBypass()) {
     return <Navigate to="/onboarding" replace />;
+  }
+  return children;
+};
+
+const PlatformAdminRoute = ({ children }) => {
+  const { isLoadingAuth, isAuthenticated, user } = useAuth();
+  if (isLoadingAuth) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  if (!isAuthenticated || !isPlatformAdminViewer(user)) {
+    return <Navigate to="/dashboard" replace />;
   }
   return children;
 };
@@ -142,6 +158,18 @@ const AuthenticatedApp = () => {
       {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
       <Route path="/billing" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
       <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
+      <Route
+        path="/platform-admin"
+        element={
+          <ProtectedRoute requireOnboarding={false}>
+            <PlatformAdminRoute>
+              <LayoutWrapper currentPageName="PlatformAdmin">
+                <Pages.PlatformAdmin />
+              </LayoutWrapper>
+            </PlatformAdminRoute>
+          </ProtectedRoute>
+        }
+      />
       {/* Legacy routes — redirect to canonical lowercase paths */}
       {LEGACY_REDIRECTS.map(({ from, to }) => (
         <Route key={from} path={from} element={<Navigate to={to} replace />} />
@@ -171,7 +199,7 @@ const AuthenticatedApp = () => {
 
       {/* All other pages — protected (Dashboard, Billing, Subscription have explicit routes) */}
       {Object.entries(Pages)
-        .filter(([path]) => !['Dashboard', 'Billing', 'Subscription'].includes(path) && !PUBLIC_PAGE_KEYS.includes(path))
+        .filter(([path]) => !['Dashboard', 'Billing', 'Subscription', 'PlatformAdmin'].includes(path) && !PUBLIC_PAGE_KEYS.includes(path))
         .map(([path, Page]) => (
           <Route
             key={path}
