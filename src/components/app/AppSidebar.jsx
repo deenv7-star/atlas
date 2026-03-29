@@ -96,31 +96,24 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
       )}
       style={{
         fontFamily: "'Heebo', sans-serif",
-        background: 'linear-gradient(180deg, #0B1220 0%, #0f1a2e 60%, #0B1220 100%)',
-        borderLeft: '1px solid rgba(0,209,193,0.12)',
-        boxShadow: 'inset -1px 0 0 rgba(255,255,255,0.04), 4px 0 24px rgba(0,0,0,0.25)',
+        background: '#fff',
+        borderLeft: '1px solid #E5E7EB',
+        boxShadow: '1px 0 12px rgba(0,0,0,0.04)',
       }}
     >
-      {/* Subtle animated top glow */}
-      <div
-        className="absolute top-0 inset-x-0 pointer-events-none"
-        style={{
-          height: '2px',
-          background: 'linear-gradient(90deg, transparent 0%, rgba(0,209,193,0.7) 40%, rgba(139,92,246,0.5) 70%, transparent 100%)',
-        }}
-      />
 
       {/* Logo + collapse button */}
       <div className={cn(
         "flex items-center h-16 px-3 flex-shrink-0",
         collapsed ? "justify-center" : "gap-3",
-        "border-b border-white/[0.06]"
-      )}>
+      )}
+      style={{ borderBottom: '1px solid #E5E7EB' }}
+      >
         <Link to="/" title="חזרה לדף הבית">
           <img
             src="/atlas-logo-final.png"
             alt="ATLAS"
-            style={{ height: collapsed ? 30 : 40, width: 'auto', objectFit: 'contain', cursor: 'pointer', filter: 'brightness(1.1)' }}
+            style={{ height: collapsed ? 30 : 40, width: 'auto', objectFit: 'contain', cursor: 'pointer' }}
           />
         </Link>
         <motion.button
@@ -132,9 +125,9 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
             collapsed ? "mr-0" : "mr-auto"
           )}
           style={{
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.10)',
-            color: 'rgba(255,255,255,0.5)',
+            background: '#F3F4F6',
+            border: '1px solid #E5E7EB',
+            color: '#6B7280',
           }}
         >
           {collapsed ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
@@ -148,13 +141,13 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
             {group.label && !collapsed && (
               <p
                 className="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-widest select-none"
-                style={{ color: 'rgba(0,209,193,0.45)', letterSpacing: '0.12em' }}
+                style={{ color: '#00a89a', letterSpacing: '0.12em' }}
               >
                 {group.label}
               </p>
             )}
             {group.label && collapsed && (
-              <div className="my-2 mx-2" style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+              <div className="my-2 mx-2" style={{ height: '1px', background: '#E5E7EB' }} />
             )}
             {group.items.map((item) => {
               const active = isActive(item.page);
@@ -171,21 +164,18 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
                     )}
                     style={{
                       background: active
-                        ? 'linear-gradient(135deg, rgba(0,209,193,0.20) 0%, rgba(0,209,193,0.08) 100%)'
+                        ? 'rgba(0,209,193,0.08)'
                         : 'transparent',
                       border: active
-                        ? '1px solid rgba(0,209,193,0.25)'
+                        ? '1px solid rgba(0,209,193,0.20)'
                         : '1px solid transparent',
-                      boxShadow: active
-                        ? 'inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 8px rgba(0,209,193,0.10)'
-                        : 'none',
                     }}
                   >
                     {/* Active left indicator */}
                     {active && (
                       <span
                         className="absolute right-0 top-1/2 -translate-y-1/2 rounded-l-full"
-                        style={{ width: '3px', height: '18px', background: '#00D1C1', boxShadow: '0 0 8px rgba(0,209,193,0.8)' }}
+                        style={{ width: '3px', height: '18px', background: '#00D1C1' }}
                       />
                     )}
 
@@ -193,7 +183,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
                       "flex items-center justify-center w-5 h-5 flex-shrink-0 transition-all duration-200",
                       active ? "" : "group-hover:scale-110"
                     )}
-                    style={{ color: active ? '#00D1C1' : 'rgba(255,255,255,0.45)' }}
+                    style={{ color: active ? '#00D1C1' : '#6B7280' }}
                     >
                       <Icon className="w-[17px] h-[17px]" />
                     </div>
@@ -201,7 +191,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
                     {!collapsed && (
                       <span
                         className="text-[13px] truncate font-medium transition-colors duration-200"
-                        style={{ color: active ? '#e2fffe' : 'rgba(255,255,255,0.55)' }}
+                        style={{ color: active ? '#0B1220' : '#374151' }}
                       >
                         {item.label}
                       </span>
@@ -217,10 +207,10 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
                           transition={{ duration: 0.15 }}
                           className="absolute right-full mr-2 px-2.5 py-1.5 text-xs rounded-lg whitespace-nowrap z-50 pointer-events-none"
                           style={{
-                            background: '#0B1220',
-                            border: '1px solid rgba(0,209,193,0.25)',
-                            color: '#e2fffe',
-                            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                            background: '#fff',
+                            border: '1px solid #E5E7EB',
+                            color: '#0B1220',
+                            boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
                           }}
                         >
                           {item.label}
@@ -236,7 +226,7 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
       </nav>
 
       {/* Footer */}
-      <div className="flex-shrink-0 px-2 py-3 space-y-0.5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="flex-shrink-0 px-2 py-3 space-y-0.5" style={{ borderTop: '1px solid #E5E7EB' }}>
         <Link
           to={createPageUrl('Settings')}
           className={cn(
@@ -244,8 +234,8 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
             collapsed ? "justify-center" : "",
           )}
           style={{
-            background: isActive('Settings') ? 'rgba(0,209,193,0.12)' : 'transparent',
-            color: isActive('Settings') ? '#00D1C1' : 'rgba(255,255,255,0.40)',
+            background: isActive('Settings') ? 'rgba(0,209,193,0.08)' : 'transparent',
+            color: isActive('Settings') ? '#00D1C1' : '#6B7280',
           }}
         >
           <Settings className="w-[17px] h-[17px] flex-shrink-0 group-hover:rotate-45 transition-transform duration-300" />
@@ -258,9 +248,9 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
             "w-full flex items-center rounded-xl transition-all duration-200 py-2.5 px-3 gap-3 min-h-[42px] touch-manipulation group",
             collapsed ? "justify-center" : ""
           )}
-          style={{ color: 'rgba(255,255,255,0.30)' }}
-          onMouseEnter={e => e.currentTarget.style.color = '#f87171'}
-          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.30)'}
+          style={{ color: '#9CA3AF' }}
+          onMouseEnter={e => e.currentTarget.style.color = '#ef4444'}
+          onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}
         >
           <LogOut className="w-[17px] h-[17px] flex-shrink-0" />
           {!collapsed && <span className="text-[13px] font-medium">יציאה</span>}
@@ -272,20 +262,20 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
               "mt-2 pt-2 flex items-center gap-2.5",
               collapsed ? "justify-center" : "px-1"
             )}
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            style={{ borderTop: '1px solid #E5E7EB' }}
           >
-            <Avatar className="w-7 h-7 flex-shrink-0" style={{ boxShadow: '0 0 0 2px rgba(0,209,193,0.35)' }}>
+            <Avatar className="w-7 h-7 flex-shrink-0" style={{ boxShadow: '0 0 0 2px rgba(0,209,193,0.25)' }}>
               <AvatarImage src={user.profile_image} />
-              <AvatarFallback style={{ background: 'rgba(0,209,193,0.15)', color: '#00D1C1', fontSize: '11px', fontWeight: 700 }}>
+              <AvatarFallback style={{ background: 'rgba(0,209,193,0.10)', color: '#00a89a', fontSize: '11px', fontWeight: 700 }}>
                 {getUserInitials()}
               </AvatarFallback>
             </Avatar>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium truncate" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                <p className="text-xs font-medium truncate" style={{ color: '#0B1220' }}>
                   {user.full_name || user.email}
                 </p>
-                <p className="text-[10px] truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                <p className="text-[10px] truncate" style={{ color: '#6B7280' }}>
                   {user.email}
                 </p>
               </div>
