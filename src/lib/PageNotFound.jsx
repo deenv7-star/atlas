@@ -1,8 +1,19 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Home, ArrowRight } from 'lucide-react';
 
 export default function PageNotFound() {
+  useEffect(() => {
+    // Signal to crawlers this is a real 404, not indexable content
+    document.title = '404 — הדף לא נמצא | ATLAS';
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    return () => { document.head.removeChild(meta); };
+  }, []);
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50" dir="rtl">
       <div className="max-w-md w-full text-center space-y-6">
