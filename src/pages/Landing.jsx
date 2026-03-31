@@ -109,6 +109,99 @@ function useScrollReveal() {
   }, []);
 }
 
+// ─── Newsletter section ───────────────────────────────────────────────────────
+function NewsletterSection() {
+  const [email, setEmail] = React.useState('');
+  const [status, setStatus] = React.useState('idle'); // idle | success | error
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) { setStatus('error'); return; }
+    // Store locally; real integration wired via backend/CRM
+    const list = JSON.parse(localStorage.getItem('atlas_newsletter') || '[]');
+    list.push({ email, ts: new Date().toISOString() });
+    localStorage.setItem('atlas_newsletter', JSON.stringify(list));
+    setStatus('success');
+    setEmail('');
+  };
+
+  return (
+    <section style={{ background: '#F9FAFB', padding: '64px 24px', borderTop: '1px solid #F3F4F6' }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center' }}>
+        <h3 style={{ fontSize: 26, fontWeight: 800, color: '#111827', margin: '0 0 10px', fontFamily: 'Heebo, sans-serif' }}>
+          קבל טיפים לניהול מתחמים
+        </h3>
+        <p style={{ fontSize: 16, color: '#6B7280', margin: '0 0 28px', lineHeight: 1.6 }}>
+          עדכונים, מדריכים ותכונות חדשות — ישירות למייל. ללא ספאם.
+        </p>
+        {status === 'success' ? (
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#D1FAE5', borderRadius: 12, padding: '14px 24px' }}>
+            <span style={{ fontSize: 20 }}>✅</span>
+            <span style={{ fontSize: 16, fontWeight: 600, color: '#065F46', fontFamily: 'Heebo, sans-serif' }}>נרשמת בהצלחה! נתראה בתיבת הדואר.</span>
+          </div>
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}
+            noValidate
+          >
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setStatus('idle'); }}
+              placeholder="כתובת המייל שלך"
+              required
+              style={{
+                flex: '1 1 220px',
+                minWidth: 200,
+                maxWidth: 320,
+                padding: '13px 18px',
+                minHeight: 50,
+                fontSize: 15,
+                fontFamily: 'Heebo, sans-serif',
+                border: status === 'error' ? '1.5px solid #F87171' : '1.5px solid #E5E7EB',
+                borderRadius: 10,
+                outline: 'none',
+                direction: 'ltr',
+                textAlign: 'right',
+                background: 'white',
+              }}
+              onFocus={e => { e.currentTarget.style.borderColor = '#4F46E5'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = status === 'error' ? '#F87171' : '#E5E7EB'; }}
+            />
+            <button
+              type="submit"
+              style={{
+                background: '#4F46E5',
+                color: 'white',
+                border: 'none',
+                borderRadius: 10,
+                padding: '13px 26px',
+                minHeight: 50,
+                fontWeight: 700,
+                fontSize: 15,
+                fontFamily: 'Heebo, sans-serif',
+                cursor: 'pointer',
+                transition: 'background 0.2s',
+                flexShrink: 0,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#4338CA'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#4F46E5'; }}
+            >
+              הרשמה
+            </button>
+          </form>
+        )}
+        {status === 'error' && (
+          <p style={{ fontSize: 13, color: '#EF4444', marginTop: 8, fontFamily: 'Heebo, sans-serif' }}>
+            אנא הזן כתובת מייל תקינה
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Landing() {
   const [scrolled, setScrolled] = useState(false);
@@ -514,7 +607,7 @@ export default function Landing() {
           from { transform: translateX(0); }
           to   { transform: translateX(-50%); }
         }
-        .atlas-marquee { animation: atlasMarquee 22s linear infinite; }
+        .atlas-marquee { animation: atlasMarquee 40s linear infinite; }
 
         /* ─ Feature card hover ─ */
         .atlas-feat-card {
@@ -526,6 +619,16 @@ export default function Landing() {
           box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06) !important;
         }
 
+        /* ─ Global minimum touch target for interactive elements ─ */
+        .atlas-lp button,
+        .atlas-lp a {
+          min-height: 44px;
+        }
+        .atlas-lp button[aria-hidden="true"],
+        .atlas-lp .atlas-demo-dot {
+          min-height: unset;
+        }
+
         /* ─ Navbar link ─ */
         .atlas-nav-link {
           color: #374151;
@@ -533,6 +636,8 @@ export default function Landing() {
           font-size: 15px;
           text-decoration: none;
           transition: color 0.2s;
+          display: inline-flex;
+          align-items: center;
         }
         .atlas-nav-link:hover { color: #111827; }
 
@@ -2222,6 +2327,11 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
+            NEWSLETTER SIGNUP
+        ════════════════════════════════════════ */}
+        <NewsletterSection />
+
+        {/* ════════════════════════════════════════
             SECTION 10 — FOOTER
         ════════════════════════════════════════ */}
         <footer
@@ -2310,10 +2420,10 @@ export default function Landing() {
                 <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>חברה</h4>
                 {[
                   { label: 'אודות', to: '/about' },
-                  { label: 'בלוג', href: '#' },
-                  { label: 'קריירה', href: '#' },
                   { label: 'צור קשר', to: '/contact' },
-                  { label: 'שותפים', href: '#' },
+                  { label: 'אודות', to: '/about' },
+                  { label: 'עדכונים', to: '/changelog' },
+                  { label: 'סטטוס', to: '/status' },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
                     {l.to ? (
