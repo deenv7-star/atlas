@@ -6,6 +6,7 @@ import {
   ChevronDown, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
 import SupportChat from '@/components/landing/SupportChat';
+import CookieConsent from '@/components/landing/CookieConsent';
 
 // ─── Animated price roller ───────────────────────────────────────────────────
 function AnimatedPrice({ value, duration = 500 }) {
@@ -667,6 +668,13 @@ export default function Landing() {
           .atlas-footer-grid-new { grid-template-columns: 1fr !important; gap: 32px !important; }
           .atlas-why-grid { grid-template-columns: 1fr !important; }
 
+          /* Hero mobile: reduce padding so CTA stays above fold */
+          .atlas-lp > div > section:first-of-type {
+            padding-top: calc(72px + env(safe-area-inset-top)) !important;
+            padding-bottom: 32px !important;
+            min-height: auto !important;
+          }
+
           .atlas-demo-slide-mockup { min-height: 200px !important; }
           .atlas-demo-slide-mockup > div > div { grid-template-columns: repeat(2, 1fr) !important; }
           .atlas-demo-modal { border-radius: 12px !important; }
@@ -736,15 +744,17 @@ export default function Landing() {
               <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" style={{ height: 52, width: 'auto', objectFit: 'contain' }} />
             </div>
 
-            <div className="atlas-nav-links" style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
+            <div className="atlas-nav-links" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
               {[
-                { label: 'תכונות', action: () => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'מחירים', action: () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'לקוחות', action: () => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'דמו', action: () => { setDemoOpen(true); setDemoSlide(0); } },
+                { label: 'תכונות', href: '#features', action: () => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'מחירים', href: '#pricing', action: () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'לקוחות', href: '#testimonials', action: () => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'דמו', href: '#', action: () => { setDemoOpen(true); setDemoSlide(0); } },
               ].map((l) => (
-                <a key={l.label} href="#" onClick={(e) => { e.preventDefault(); l.action(); }} className="atlas-nav-link">{l.label}</a>
+                <a key={l.label} href={l.href} onClick={(e) => { e.preventDefault(); l.action(); }} className="atlas-nav-link">{l.label}</a>
               ))}
+              <Link to="/data-security" className="atlas-nav-link">אבטחה</Link>
+              <Link to="/about" className="atlas-nav-link">אודות</Link>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -810,13 +820,15 @@ export default function Landing() {
               style={{ background: 'white', borderTop: '1px solid #F3F4F6', padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}
             >
               {[
-                { label: 'תכונות', action: () => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'מחירים', action: () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'לקוחות', action: () => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }) },
-                { label: 'דמו', action: () => { setDemoOpen(true); setDemoSlide(0); } },
+                { label: 'תכונות', href: '#features', action: () => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'מחירים', href: '#pricing', action: () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'לקוחות', href: '#testimonials', action: () => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }) },
+                { label: 'דמו', href: '#', action: () => { setDemoOpen(true); setDemoSlide(0); } },
               ].map((l) => (
-                <a key={l.label} href="#" onClick={(e) => { e.preventDefault(); setMenuOpen(false); l.action(); }} className="atlas-nav-link" style={{ fontSize: 16 }}>{l.label}</a>
+                <a key={l.label} href={l.href} onClick={(e) => { e.preventDefault(); setMenuOpen(false); l.action(); }} className="atlas-nav-link" style={{ fontSize: 16 }}>{l.label}</a>
               ))}
+              <Link to="/data-security" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>אבטחה</Link>
+              <Link to="/about" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>אודות</Link>
               <button
                 onClick={() => { setMenuOpen(false); goToLogin(); }}
                 style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
@@ -841,8 +853,8 @@ export default function Landing() {
             minHeight: '100dvh',
             display: 'flex',
             alignItems: 'center',
-            paddingTop: 'calc(88px + env(safe-area-inset-top))',
-            paddingBottom: 'calc(80px + env(safe-area-inset-bottom))',
+            paddingTop: 'calc(80px + env(safe-area-inset-top))',
+            paddingBottom: 'calc(40px + env(safe-area-inset-bottom))',
             paddingLeft: 16,
             paddingRight: 16,
             position: 'relative',
@@ -861,12 +873,18 @@ export default function Landing() {
               style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 60, alignItems: 'center' }}
             >
               <div className="atlas-hero-right">
+                {/* USP badge */}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#EEF2FF', borderRadius: 999, padding: '6px 14px', marginBottom: 20 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#4F46E5', flexShrink: 0, display: 'inline-block' }} />
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#4F46E5' }}>מערכת ה-PMS הראשונה בישראל בעברית מלאה</span>
+                </div>
+
                 <h1
                   style={{
-                    fontSize: 'clamp(56px, 6.5vw, 84px)',
+                    fontSize: 'clamp(44px, 6.5vw, 84px)',
                     fontWeight: 900,
                     color: '#0A0A0A',
-                    lineHeight: 1.0,
+                    lineHeight: 1.05,
                     letterSpacing: '-0.03em',
                     margin: 0,
                   }}
@@ -875,11 +893,12 @@ export default function Landing() {
                   <span style={{ display: 'block' }}>תתחיל להרוויח.</span>
                 </h1>
 
-                <p style={{ fontSize: 17, color: '#6B7280', maxWidth: 420, marginTop: 24, lineHeight: 1.65 }}>
-                  ATLAS מנהלת את הכל בשבילך — מלידים לתשלומים, מהזמנות לחוזים.<br />אוטומציה חכמה שחוסכת לך 20+ שעות שבועיות.
+                <p style={{ fontSize: 17, color: '#6B7280', maxWidth: 420, marginTop: 20, lineHeight: 1.65 }}>
+                  ATLAS מנהלת את הכל בשבילך — מלידים לתשלומים, מהזמנות לחוזים.<br />
+                  <strong style={{ color: '#374151' }}>חוסכת 20+ שעות שבועיות</strong> לכל מנהל מתחם.
                 </p>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 28 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 20 }}>
                   <div style={{ display: 'flex' }}>
                     {AVATARS.map((av, i) => (
                       <div
@@ -899,11 +918,20 @@ export default function Landing() {
                       </div>
                     ))}
                   </div>
-                  <span style={{ fontSize: 14, color: '#6B7280' }}>+500 מנהלי מתחמים</span>
+                  <div>
+                    <div style={{ display: 'flex', gap: 2, marginBottom: 2 }}>
+                      {[...Array(5)].map((_, i) => (
+                        <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                      ))}
+                    </div>
+                    <span style={{ fontSize: 13, color: '#6B7280' }}>+500 מנהלי מתחמים מרוצים</span>
+                  </div>
                 </div>
 
-                <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 36, flexWrap: 'wrap' }}>
-                  <button className="atlas-btn-primary" onClick={goToRegister}>פתח חשבון חינם — תוך 60 שניות</button>
+                <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 28, flexWrap: 'wrap' }}>
+                  <button className="atlas-btn-primary" onClick={goToRegister} style={{ minHeight: 52 }}>
+                    פתח חשבון חינם — תוך 60 שניות
+                  </button>
                   <button
                     onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                     style={{
@@ -911,6 +939,7 @@ export default function Landing() {
                       color: '#374151', fontWeight: 600, fontSize: 16,
                       fontFamily: 'Heebo, sans-serif', cursor: 'pointer',
                       transition: 'color 0.2s', padding: '14px 4px',
+                      minHeight: 44,
                     }}
                     onMouseEnter={e => { e.currentTarget.style.color = '#111827'; }}
                     onMouseLeave={e => { e.currentTarget.style.color = '#374151'; }}
@@ -918,6 +947,7 @@ export default function Landing() {
                     איך זה עובד ←
                   </button>
                 </div>
+                <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 10 }}>ללא כרטיס אשראי • 14 יום ניסיון חינם • ביטול בכל עת</p>
               </div>
 
               <div
@@ -1119,6 +1149,44 @@ export default function Landing() {
                 <span key={`b${i}`} aria-hidden style={{ color: '#374151', fontWeight: 600, fontSize: 15, paddingRight: 24, flexShrink: 0 }}>
                   {t}
                 </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ════════════════════════════════════════
+            TRUST STRIP — INTEGRATION LOGOS
+        ════════════════════════════════════════ */}
+        <div style={{ background: '#FFFFFF', borderBottom: '1px solid #F3F4F6', padding: '28px 24px' }}>
+          <div style={{ maxWidth: 1000, margin: '0 auto', textAlign: 'center' }}>
+            <p style={{ fontSize: 13, color: '#9CA3AF', fontWeight: 500, marginBottom: 20, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+              משתלב עם הכלים שאתם כבר משתמשים בהם
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: '12px 28px' }}>
+              {[
+                { name: 'Airbnb', color: '#FF5A5F', bg: '#FFF0F0' },
+                { name: 'Booking.com', color: '#003580', bg: '#EEF3FF' },
+                { name: 'Stripe', color: '#635BFF', bg: '#F0EFFF' },
+                { name: 'WhatsApp', color: '#25D366', bg: '#F0FDF4' },
+                { name: 'Google', color: '#4285F4', bg: '#EFF6FF' },
+                { name: 'Expedia', color: '#FFCA00', bg: '#FEFCE8', textColor: '#92400E' },
+              ].map((brand) => (
+                <div
+                  key={brand.name}
+                  style={{
+                    background: brand.bg,
+                    borderRadius: 10,
+                    padding: '10px 18px',
+                    minHeight: 44,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <span style={{ fontSize: 14, fontWeight: 700, color: brand.textColor || brand.color, fontFamily: 'Heebo, sans-serif' }}>
+                    {brand.name}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
@@ -2208,7 +2276,7 @@ export default function Landing() {
                   { label: 'תכונות', href: '#features', scroll: true },
                   { label: 'מחירים', href: '#pricing', scroll: true },
                   { label: 'אינטגרציות', href: '#features', scroll: true },
-                  { label: 'עדכונים', href: '#', scroll: false },
+                  { label: 'עדכונים', to: '/changelog' },
                   { label: 'דמו', href: '#', onClick: () => { setDemoOpen(true); setDemoSlide(0); } },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
@@ -2217,6 +2285,11 @@ export default function Landing() {
                         onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
                         onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
                       >{l.label}</a>
+                    ) : l.to ? (
+                      <Link to={l.to} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</Link>
                     ) : l.scroll ? (
                       <a href={l.href} onClick={(e) => { e.preventDefault(); document.getElementById(l.href.slice(1))?.scrollIntoView({ behavior: 'smooth' }); }} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s', cursor: 'pointer' }}
                         onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
@@ -2262,24 +2335,18 @@ export default function Landing() {
               <div>
                 <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>תמיכה</h4>
                 {[
-                  { label: 'מרכז עזרה', href: '#' },
-                  { label: 'תיעוד API', href: '#' },
-                  { label: 'סטטוס מערכת', href: '#' },
+                  { label: 'מרכז עזרה', to: '/contact' },
+                  { label: 'תיעוד API', to: '/data-security' },
+                  { label: 'סטטוס מערכת', to: '/status' },
                   { label: 'פרטיות', to: '/privacy' },
                   { label: 'תנאי שימוש', to: '/terms' },
+                  { label: 'נגישות', to: '/accessibility' },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
-                    {l.to ? (
-                      <Link to={l.to} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
-                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
-                      >{l.label}</Link>
-                    ) : (
-                      <a href={l.href} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
-                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
-                      >{l.label}</a>
-                    )}
+                    <Link to={l.to} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                    >{l.label}</Link>
                   </div>
                 ))}
               </div>
@@ -2287,6 +2354,10 @@ export default function Landing() {
 
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', padding: '24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
               <p style={{ fontSize: 14, color: '#6B7280', margin: 0 }}>© 2025 ATLAS. כל הזכויות שמורות.</p>
+              <a href="mailto:hello@atlas.app" style={{ fontSize: 14, color: '#9CA3AF', textDecoration: 'none', transition: 'color 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+              >hello@atlas.app</a>
               <p style={{ fontSize: 14, color: '#6B7280', margin: 0 }}>פותח בישראל 🇮🇱</p>
             </div>
           </div>
@@ -2422,6 +2493,7 @@ export default function Landing() {
         )}
 
       <SupportChat autoOpenAfterMs={30000} />
+      <CookieConsent />
       </div>
     </>
   );
