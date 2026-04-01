@@ -783,6 +783,9 @@ export default function Landing() {
           .atlas-demo-slide-mockup { min-height: 200px !important; }
           .atlas-demo-slide-mockup > div > div { grid-template-columns: repeat(2, 1fr) !important; }
           .atlas-demo-modal { border-radius: 12px !important; }
+          .atlas-feat-testi { padding: 24px 20px !important; }
+          .atlas-use-cases-grid { grid-template-columns: 1fr !important; }
+          .atlas-personas-grid { grid-template-columns: 1fr !important; }
         }
 
         @media (max-width: 480px) {
@@ -1296,6 +1299,36 @@ export default function Landing() {
             </div>
           </div>
         </div>
+
+        {/* ════════════════════════════════════════
+            SECTION A — מספרים שמדברים (Social Proof Numbers)
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '80px 24px', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1), transparent 50%)', pointerEvents: 'none' }} />
+          <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2 style={{ fontSize: 36, fontWeight: 800, color: 'white', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>מספרים שמדברים</h2>
+              <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', margin: 0, fontFamily: 'Heebo, sans-serif' }}>מנהלי נכסים בכל הארץ כבר סומכים על ATLAS</p>
+            </div>
+            <div className="atlas-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+              {[
+                { num: '50+', label: 'מתחמים בגרסת בטא', sub: 'בכל רחבי הארץ' },
+                { num: '₪500K+', label: 'הכנסות מנוהלות', sub: 'בשנה האחרונה' },
+                { num: '500+', label: 'הזמנות מנוהלות', sub: 'מסונכרנות אוטומטית' },
+                { num: '98%', label: 'שביעות רצון', sub: 'של המשתמשים שלנו' },
+              ].map((s, i) => (
+                <div key={i} className="atlas-reveal" style={{ textAlign: 'center', padding: 24, background: 'rgba(255,255,255,0.15)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.2)' }}>
+                  <div style={{ fontSize: 42, fontWeight: 900, color: 'white', lineHeight: 1.1, fontFamily: 'Heebo, sans-serif' }}>{s.num}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.95)', marginTop: 6, fontFamily: 'Heebo, sans-serif' }}>{s.label}</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>{s.sub}</div>
+                </div>
+              ))}
+              <p className="atlas-reveal" style={{ gridColumn: '1 / -1', textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: -16, fontFamily: 'Heebo, sans-serif' }}>
+                נתוני גרסת הבטא — מעודכן מרץ 2025
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* ════════════════════════════════════════
             SECTION 1 — THE TRANSFORMATION (ATLAS brand)
@@ -1863,6 +1896,97 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
+            SECTION 4B — USE CASES BY INDUSTRY
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#F0FDF4', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
+                <span style={{ fontSize: 14 }}>🏡</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#065F46' }}>מותאם לכל סוג נכס</span>
+              </div>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>לאיזה סוג עסק ATLAS מתאים?</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>מצימרים בודדים ועד רשתות מלונות — הפתרון מותאם לכם</p>
+            </div>
+            <div className="atlas-use-cases-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+              {[
+                {
+                  emoji: '🏕️',
+                  title: 'צימרים ובקתות',
+                  color: '#10B981',
+                  bg: '#F0FDF4',
+                  border: '#D1FAE5',
+                  items: ['סנכרון אוטומטי עם Airbnb', 'הודעות WhatsApp לאורחים', 'חוזים דיגיטליים', 'קבלת תשלומים מקוונת'],
+                  cta: 'מתאים לצימרים ←',
+                },
+                {
+                  emoji: '🏢',
+                  title: 'חברות ניהול נכסים',
+                  color: '#4F46E5',
+                  bg: '#EEF2FF',
+                  border: '#C7D2FE',
+                  featured: true,
+                  badge: 'הכי פופולרי',
+                  items: ['ניהול עשרות נכסים במסך אחד', 'דוחות לבעלי נכסים', 'צוות עם הרשאות נפרדות', 'אוטומציות מלאות'],
+                  cta: 'מתאים לחברות ←',
+                },
+                {
+                  emoji: '🌊',
+                  title: 'וילות ובתי נופש',
+                  color: '#0EA5E9',
+                  bg: '#F0F9FF',
+                  border: '#BAE6FD',
+                  items: ['לוח שנה ויזואלי', 'מחירים דינמיים', 'צ׳ק-אין/אאוט אוטומטי', 'ניהול מפתחות'],
+                  cta: 'מתאים לוילות ←',
+                },
+                {
+                  emoji: '🏨',
+                  title: 'מלונות בוטיק',
+                  color: '#F59E0B',
+                  bg: '#FFFBEB',
+                  border: '#FDE68A',
+                  items: ['Front-desk דיגיטלי', 'ניהול חדרים וקטגוריות', 'אינטגרציה עם Booking.com', 'דוחות תפוסה ורווחיות'],
+                  cta: 'מתאים למלונות ←',
+                },
+              ].map((uc, i) => (
+                <div
+                  key={i}
+                  className="atlas-reveal"
+                  style={{
+                    background: uc.featured ? `linear-gradient(135deg, #4F46E5, #7C3AED)` : uc.bg,
+                    border: `1px solid ${uc.featured ? 'transparent' : uc.border}`,
+                    borderRadius: 20,
+                    padding: '28px 24px',
+                    position: 'relative',
+                    transition: 'all 0.25s ease',
+                    cursor: 'default',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = uc.featured ? '0 16px 48px rgba(79,70,229,0.3)' : '0 8px 32px rgba(0,0,0,0.1)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                  {uc.badge && (
+                    <div style={{ position: 'absolute', top: -12, right: 20, background: '#00D1C1', color: '#0B1220', fontSize: 11, fontWeight: 800, padding: '3px 12px', borderRadius: 999, fontFamily: 'Heebo, sans-serif' }}>
+                      {uc.badge}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 36, marginBottom: 12 }}>{uc.emoji}</div>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: uc.featured ? 'white' : '#111827', margin: '0 0 16px', fontFamily: 'Heebo, sans-serif' }}>{uc.title}</h3>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {uc.items.map((item, j) => (
+                      <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 14, color: uc.featured ? 'rgba(255,255,255,0.9)' : '#374151', fontFamily: 'Heebo, sans-serif' }}>
+                        <span style={{ color: uc.featured ? '#00D1C1' : uc.color, flexShrink: 0, marginTop: 2 }}>✓</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: uc.featured ? 'rgba(255,255,255,0.7)' : uc.color, fontFamily: 'Heebo, sans-serif' }}>{uc.cta}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
             SECTION 5 — INTEGRATIONS (Infinite Marquee)
         ════════════════════════════════════════ */}
         <section style={{ padding: '64px 0', background: '#FFFFFF', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
@@ -2120,7 +2244,7 @@ export default function Landing() {
             </div>
 
             {/* Featured testimonial */}
-            <div className="atlas-reveal" style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', borderRadius: 24, padding: '40px 44px', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
+            <div className="atlas-reveal atlas-feat-testi" style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', borderRadius: 24, padding: '40px 44px', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: -30, left: -30, width: 140, height: 140, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
               <div style={{ position: 'absolute', bottom: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style={{ marginBottom: 20, opacity: 0.4 }}><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" fill="white"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" fill="white"/></svg>
@@ -2178,6 +2302,39 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
+            SECTION B — למה דווקא ATLAS? (Extra Trust)
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '80px 24px', background: '#FAFAFA', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 900, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>למה דווקא ATLAS?</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 16, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>כי אנחנו יודעים מה מנהלי נכסים באמת צריכים</p>
+            </div>
+            <div className="atlas-why-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              {[
+                { title: 'בנוי לשוק הישראלי', desc: 'עברית מלאה, RTL, חשבוניות ישראליות, שערי תשלום מקומיים — הכל מותאם לישראל.', color: '#4F46E5', iconPath: 'M3 21V5a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M12 10v4 M10 12h4' },
+                { title: 'הקמה תוך 5 דקות', desc: 'אין צורך בידע טכני. נרשמים, מוסיפים נכס, ומתחילים לעבוד.', color: '#10B981', iconPath: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' },
+                { title: 'מחובר לכל הכלים', desc: 'Airbnb, Booking.com, WhatsApp, Stripe — כל האינטגרציות במקום אחד.', color: '#8B5CF6', iconPath: 'M15 7h2a5 5 0 0 1 0 10h-2 M9 17H7A5 5 0 0 1 7 7h2 M8 12h8' },
+                { title: 'אוטומציות חכמות', desc: 'הודעות אוטומטיות, עדכוני סטטוס, תזכורות — המערכת עובדת בשבילך 24/7.', color: '#F59E0B', iconPath: 'M12 6V2 M16.24 7.76l2.83-2.83 M18 12h4 M16.24 16.24l2.83 2.83 M12 18v4 M7.76 16.24l-2.83 2.83 M6 12H2 M7.76 7.76L4.93 4.93' },
+                { title: 'דוחות בזמן אמת', desc: 'הכנסות, תפוסה, ביצועים — כל המספרים שאתה צריך, בלחיצה אחת.', color: '#EC4899', iconPath: 'M18 20V10 M12 20V4 M6 20v-6' },
+                { title: 'אבטחה ופרטיות', desc: 'הנתונים שלך מוגנים בהצפנה מתקדמת. תואם GDPR ותקנות ישראליות.', color: '#06B6D4', iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
+              ].map((item, i) => (
+                <div key={i} className="atlas-reveal" style={{ background: 'white', borderRadius: 16, padding: '28px 28px', border: '1px solid #F3F4F6', transition: 'all 0.2s ease', cursor: 'default' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
+                >
+                  <div style={{ width: 48, height: 48, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.iconPath} /></svg>
+                  </div>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif' }}>{item.title}</h3>
+                  <p style={{ fontSize: 14, color: '#6B7280', margin: 0, lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
             SECTION 8 — FAQ
         ════════════════════════════════════════ */}
         <section style={{ padding: '80px 24px', background: 'linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
@@ -2192,7 +2349,7 @@ export default function Landing() {
                 <span style={{ fontSize: 13, fontWeight: 600, color: '#4338CA' }}>יש שאלות? יש תשובות</span>
               </div>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 10px' }}>שאלות נפוצות</h2>
-              <p style={{ fontSize: 17, color: '#9CA3AF', margin: 0 }}>כל מה שצריך לדעת לפני שמתחילים</p>
+              <p style={{ fontSize: 17, color: '#6B7280', margin: 0 }}>כל מה שצריך לדעת לפני שמתחילים</p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -2292,69 +2449,6 @@ export default function Landing() {
                 דברו איתנו
                 <ChevronLeft size={16} />
               </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════
-            SECTION A — מספרים שמדברים (Social Proof Numbers)
-        ════════════════════════════════════════ */}
-        <section style={{ padding: '80px 24px', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1), transparent 50%)', pointerEvents: 'none' }} />
-          <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
-              <h2 style={{ fontSize: 36, fontWeight: 800, color: 'white', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>מספרים שמדברים</h2>
-              <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', margin: 0, fontFamily: 'Heebo, sans-serif' }}>מנהלי נכסים בכל הארץ כבר סומכים על ATLAS</p>
-            </div>
-            <div className="atlas-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
-              {[
-                { num: '50+', label: 'מתחמים בגרסת בטא', sub: 'בכל רחבי הארץ' },
-                { num: '₪500K+', label: 'הכנסות מנוהלות', sub: 'בשנה האחרונה' },
-                { num: '500+', label: 'הזמנות מנוהלות', sub: 'מסונכרנות אוטומטית' },
-                { num: '98%', label: 'שביעות רצון', sub: 'של המשתמשים שלנו' },
-              ].map((s, i) => (
-                <div key={i} className="atlas-reveal" style={{ textAlign: 'center', padding: 24, background: 'rgba(255,255,255,0.15)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.2)' }}>
-                  <div style={{ fontSize: 42, fontWeight: 900, color: 'white', lineHeight: 1.1, fontFamily: 'Heebo, sans-serif' }}>{s.num}</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.95)', marginTop: 6, fontFamily: 'Heebo, sans-serif' }}>{s.label}</div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>{s.sub}</div>
-                </div>
-              ))}
-            <p className="atlas-reveal" style={{ gridColumn: '1 / -1', textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: -16, fontFamily: 'Heebo, sans-serif' }}>
-              נתוני גרסת הבטא — מעודכן מרץ 2025
-            </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════
-            SECTION B — למה דווקא ATLAS? (Extra Trust)
-        ════════════════════════════════════════ */}
-        <section style={{ padding: '80px 24px', background: '#FAFAFA', position: 'relative', zIndex: 1 }}>
-          <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
-              <h2 className="atlas-section-title" style={{ fontSize: 36, fontWeight: 800, color: '#111827', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>למה דווקא ATLAS?</h2>
-              <p className="atlas-section-sub" style={{ fontSize: 16, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>כי אנחנו יודעים מה מנהלי נכסים באמת צריכים</p>
-            </div>
-            <div className="atlas-why-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-              {[
-                { title: 'בנוי לשוק הישראלי', desc: 'עברית מלאה, RTL, חשבוניות ישראליות, שערי תשלום מקומיים — הכל מותאם לישראל.', color: '#4F46E5', iconPath: 'M3 21V5a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M12 10v4 M10 12h4' },
-                { title: 'הקמה תוך 5 דקות', desc: 'אין צורך בידע טכני. נרשמים, מוסיפים נכס, ומתחילים לעבוד.', color: '#10B981', iconPath: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' },
-                { title: 'מחובר לכל הכלים', desc: 'Airbnb, Booking.com, WhatsApp, Stripe — כל האינטגרציות במקום אחד.', color: '#8B5CF6', iconPath: 'M15 7h2a5 5 0 0 1 0 10h-2 M9 17H7A5 5 0 0 1 7 7h2 M8 12h8' },
-                { title: 'אוטומציות חכמות', desc: 'הודעות אוטומטיות, עדכוני סטטוס, תזכורות — המערכת עובדת בשבילך 24/7.', color: '#F59E0B', iconPath: 'M12 6V2 M16.24 7.76l2.83-2.83 M18 12h4 M16.24 16.24l2.83 2.83 M12 18v4 M7.76 16.24l-2.83 2.83 M6 12H2 M7.76 7.76L4.93 4.93' },
-                { title: 'דוחות בזמן אמת', desc: 'הכנסות, תפוסה, ביצועים — כל המספרים שאתה צריך, בלחיצה אחת.', color: '#EC4899', iconPath: 'M18 20V10 M12 20V4 M6 20v-6' },
-                { title: 'אבטחה ופרטיות', desc: 'הנתונים שלך מוגנים בהצפנה מתקדמת. תואם GDPR ותקנות ישראליות.', color: '#06B6D4', iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
-              ].map((item, i) => (
-                <div key={i} className="atlas-reveal" style={{ background: 'white', borderRadius: 16, padding: '28px 28px', border: '1px solid #F3F4F6', transition: 'all 0.2s ease', cursor: 'default' }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
-                >
-                  <div style={{ width: 48, height: 48, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.iconPath} /></svg>
-                  </div>
-                  <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif' }}>{item.title}</h3>
-                  <p style={{ fontSize: 14, color: '#6B7280', margin: 0, lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{item.desc}</p>
-                </div>
-              ))}
             </div>
           </div>
         </section>
