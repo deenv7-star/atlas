@@ -804,7 +804,7 @@ export default function Landing() {
         /* Mobile section padding */
         @media (max-width: 768px) {
           .atlas-lp section { padding-left: 16px !important; padding-right: 16px !important; }
-          .atlas-lp section[style*="padding: 100px"] { padding-top: 56px !important; padding-bottom: 56px !important; }
+          .atlas-lp section[style*="padding: 80px"] { padding-top: 48px !important; padding-bottom: 48px !important; }
         }
 
         @media (min-width: 769px) and (max-width: 1024px) {
@@ -1239,7 +1239,7 @@ export default function Landing() {
           }}
         >
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 10px' }}>
-            <span style={{ fontSize: 14, color: '#9CA3AF', fontWeight: 500 }}>
+            <span style={{ fontSize: 14, color: '#6B7280', fontWeight: 500 }}>
               מצטרפים ל-500+ מנהלים שכבר עובדים חכם יותר:
             </span>
           </div>
@@ -1487,7 +1487,7 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 2 — BENTO FEATURES GRID
         ════════════════════════════════════════ */}
-        <section id="features" style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+        <section id="features" style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מערכת אחת. במקום 6 כלים שונים.</h2>
@@ -1722,7 +1722,7 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 4 — HOW IT WORKS
         ════════════════════════════════════════ */}
-        <section style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+        <section style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מתחילים תוך 5 דקות</h2>
@@ -1787,13 +1787,89 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
+            SECTION PERSONAS — למי זה מיועד?
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 52 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>למי זה מיועד?</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#6B7280', margin: 0 }}>ATLAS נבנתה עבור כל מי שמנהל נכסי נופש בישראל</p>
+            </div>
+            <div className="atlas-how-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+              {[
+                {
+                  emoji: '🏠',
+                  title: 'בעל נכסים עצמאי',
+                  pain: 'מנהל 1–5 נכסים לבד, מבלה שעות על תיאום ידני',
+                  gains: ['הזמנות אוטומטיות מ-Airbnb ו-WhatsApp', 'גביית תשלומים ללא מעקב ידני', 'חיסכון של 15–20 שעות בשבוע'],
+                  cta: 'מתחיל מ-₪399/חודש',
+                  color: '#4F46E5', bg: '#EEF2FF',
+                },
+                {
+                  emoji: '🏢',
+                  title: 'חברת ניהול נכסים',
+                  pain: 'מנהלת נכסים של לקוחות מרובים, צריכה שקיפות ודיווח',
+                  gains: ['דוחות בעלים אוטומטיים', 'ניהול עשרות נכסים ממסך אחד', 'SLA מובטח ו-SSO לצוות'],
+                  cta: 'חבילת Business מ-₪999/חודש',
+                  color: '#8B5CF6', bg: '#F5F3FF',
+                  featured: true,
+                },
+                {
+                  emoji: '💼',
+                  title: 'מנהל/ת כספים ו-CFO',
+                  pain: 'צריך ROI ברור ושקיפות פיננסית לפני כל השקעה',
+                  gains: ['מחשבון ROI מובנה — ראה חיסכון בזמן אמת', 'דוחות רווח/הפסד אוטומטיים', 'הצפנה מלאה + תאימות GDPR'],
+                  cta: 'ROI ממוצע: 4× תוך 3 חודשים',
+                  color: '#10B981', bg: '#F0FDF4',
+                },
+              ].map((p) => (
+                <div
+                  key={p.title}
+                  className="atlas-reveal"
+                  style={{
+                    background: p.featured ? `linear-gradient(135deg, #4F46E5, #7C3AED)` : 'white',
+                    border: p.featured ? 'none' : `2px solid ${p.bg}`,
+                    borderRadius: 20,
+                    padding: 32,
+                    position: 'relative',
+                    transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(0,0,0,0.12)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                  {p.featured && (
+                    <div style={{ position: 'absolute', top: -12, right: 24, background: '#FCD34D', color: '#92400E', fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 999, fontFamily: 'Heebo, sans-serif' }}>
+                      הפופולרי ביותר
+                    </div>
+                  )}
+                  <div style={{ width: 52, height: 52, borderRadius: 14, background: p.featured ? 'rgba(255,255,255,0.15)' : p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, fontSize: 26 }}>
+                    {p.emoji}
+                  </div>
+                  <h3 style={{ fontSize: 20, fontWeight: 800, color: p.featured ? 'white' : '#111827', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>{p.title}</h3>
+                  <p style={{ fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.7)' : '#6B7280', margin: '0 0 18px', lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{p.pain}</p>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {p.gains.map((g) => (
+                      <li key={g} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.9)' : '#374151', fontFamily: 'Heebo, sans-serif', lineHeight: 1.5 }}>
+                        <span style={{ color: p.featured ? '#A5F3FC' : p.color, fontWeight: 700, flexShrink: 0 }}>✓</span>
+                        {g}
+                      </li>
+                    ))}
+                  </ul>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: p.featured ? 'rgba(255,255,255,0.6)' : p.color, fontFamily: 'Heebo, sans-serif' }}>{p.cta}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
             SECTION 5 — INTEGRATIONS (Infinite Marquee)
         ════════════════════════════════════════ */}
         <section style={{ padding: '64px 0', background: '#FFFFFF', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 36 }}>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 10px' }}>מתחברים לכלים שאתם כבר משתמשים בהם</h2>
-              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#9CA3AF', margin: 0 }}>Airbnb, Booking.com, WhatsApp, Stripe ועוד — הכל מסונכרן</p>
+              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#6B7280', margin: 0 }}>Airbnb, Booking.com, WhatsApp, Stripe ועוד — הכל מסונכרן</p>
             </div>
           </div>
 
@@ -1849,7 +1925,7 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 6 — PRICING
         ════════════════════════════════════════ */}
-        <section id="pricing" style={{ padding: '100px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+        <section id="pricing" style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>תמחור פשוט ושקוף</h2>
@@ -1985,7 +2061,7 @@ export default function Landing() {
                     {plan.excluded.map((item, j) => (
                       <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
                         <span style={{ color: '#D1D5DB', fontSize: 16, fontWeight: 700, flexShrink: 0 }}>✗</span>
-                        <span style={{ fontSize: 14, color: '#9CA3AF' }}>{item}</span>
+                        <span style={{ fontSize: 14, color: '#6B7280' }}>{item}</span>
                       </div>
                     ))}
                   </div>
@@ -2000,9 +2076,39 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
+            ROI CALLOUT STRIP
+        ════════════════════════════════════════ */}
+        <section style={{ padding: '56px 24px', background: '#F9FAFB', borderTop: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6' }}>
+          <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+            <p className="atlas-reveal" style={{ textAlign: 'center', fontSize: 14, fontWeight: 600, color: '#6B7280', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 32 }}>
+              תוצאות מדידות — מנהלים שכבר עובדים עם ATLAS
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }} className="atlas-how-grid">
+              {[
+                { name: 'רחל מ.', role: 'בעלת 4 צימרים — הגליל', result: 'חסכה 3 שעות ביום', detail: '= ₪3,600/חודש בעלות הזדמנות', color: '#4F46E5' },
+                { name: 'יוסי כ.', role: 'ריזורט — ים המלח', result: '+35% הכנסות', detail: 'בזכות מעקב לידים שיטתי', color: '#10B981' },
+                { name: 'מירי ס.', role: 'בעלת 8 בקתות — גולן', result: '0 הזמנות כפולות', detail: 'מאז חיבור ATLAS ל-Airbnb', color: '#8B5CF6' },
+              ].map((c) => (
+                <div key={c.name} className="atlas-reveal" style={{ background: 'white', border: '1px solid #E5E7EB', borderRadius: 16, padding: '24px 28px', borderRight: `4px solid ${c.color}` }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: c.color, marginBottom: 4, fontFamily: 'Heebo, sans-serif' }}>{c.result}</div>
+                  <div style={{ fontSize: 13, color: '#374151', fontWeight: 600, marginBottom: 12, fontFamily: 'Heebo, sans-serif' }}>{c.detail}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${c.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: c.color }}>{c.name[0]}</div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', fontFamily: 'Heebo, sans-serif' }}>{c.name}</div>
+                      <div style={{ fontSize: 11, color: '#6B7280', fontFamily: 'Heebo, sans-serif' }}>{c.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════
             SECTION 7 — TESTIMONIALS (Premium Cards)
         ════════════════════════════════════════ */}
-        <section id="testimonials" style={{ padding: '100px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1 }}>
+        <section id="testimonials" style={{ padding: '80px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FEF3C7', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
@@ -2054,7 +2160,7 @@ export default function Landing() {
                       <img src={t.avatar} alt={`${t.author} — ${t.role}`} loading="lazy" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
                       <div>
                         <div style={{ fontWeight: 700, color: '#111827', fontSize: 14 }}>{t.author}</div>
-                        <div style={{ fontSize: 12, color: '#9CA3AF' }}>{t.role}</div>
+                        <div style={{ fontSize: 12, color: '#6B7280' }}>{t.role}</div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
@@ -2074,7 +2180,7 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 8 — FAQ
         ════════════════════════════════════════ */}
-        <section style={{ padding: '100px 24px', background: 'linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+        <section style={{ padding: '80px 24px', background: 'linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
           {/* Decorative background elements */}
           <div style={{ position: 'absolute', top: 60, right: -120, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,70,229,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
           <div style={{ position: 'absolute', bottom: 40, left: -80, width: 250, height: 250, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,209,193,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
@@ -2259,7 +2365,7 @@ export default function Landing() {
         <section
           style={{
             background: '#4F46E5',
-            padding: '100px 24px',
+            padding: '80px 24px',
             textAlign: 'center',
             position: 'relative',
             zIndex: 1,
@@ -2300,28 +2406,34 @@ export default function Landing() {
               >
                 התחל 14 יום חינם ←
               </button>
-              <button
-                onClick={goToRegister}
+              <a
+                href="https://wa.me/972545380085?text=מעוניין%20בדמו%20אישי%20של%20ATLAS"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
-                  background: 'transparent',
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  background: '#25D366',
                   color: 'white',
-                  border: '2px solid rgba(255,255,255,0.4)',
+                  border: 'none',
                   borderRadius: 10,
                   padding: '13px 28px',
-                  fontWeight: 600,
+                  minHeight: 50,
+                  fontWeight: 700,
                   fontSize: 16,
                   fontFamily: 'Heebo, sans-serif',
                   cursor: 'pointer',
+                  textDecoration: 'none',
                   transition: 'all 0.25s ease',
+                  boxShadow: '0 4px 16px rgba(37,211,102,0.35)',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'white'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'; e.currentTarget.style.background = 'transparent'; }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'none'; }}
               >
-                קבע דמו אישי
-              </button>
+                💬 קבע דמו אישי ב-WhatsApp
+              </a>
             </div>
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.60)', marginTop: 16 }}>
-              ללא כרטיס אשראי • ביטול בכל עת • תמיכה בעברית
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.70)', marginTop: 20 }}>
+              ללא כרטיס אשראי • ביטול בכל עת • תמיכה בעברית 24/7
             </p>
           </div>
         </section>
