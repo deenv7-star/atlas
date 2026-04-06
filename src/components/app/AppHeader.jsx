@@ -28,6 +28,7 @@ const pageNames = {
   Payments: 'תשלומים',
   Contracts: 'חוזים',
   Cleaning: 'ניקיון',
+  ServiceRequests: 'בקשות שירות',
   Settings: 'הגדרות',
   Subscription: 'מנוי',
   Billing: 'חיוב',

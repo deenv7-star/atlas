@@ -47,7 +47,6 @@ function LayoutContent({ children, currentPageName }) {
     link.rel = 'icon';
     link.href = '/icon.png';
     document.head.appendChild(link);
-    document.title = 'ATLAS';
   }, []);
 
   // Mobile: close sidebar on route change

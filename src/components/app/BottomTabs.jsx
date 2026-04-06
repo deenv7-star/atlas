@@ -3,8 +3,8 @@ import { useLocation, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   LayoutDashboard, CalendarRange, CalendarDays, MessageSquare,
-  MoreHorizontal, X, Users, Wrench, ClipboardList, FileText,
-  Star, Brain, Zap, Link2, Wallet, TrendingUp, BarChart3,
+  MoreHorizontal, X, Users, Wrench,   ClipboardList, FileText,
+  Star, Brain, Zap, Link2, Wallet, TrendingUp, BarChart3, Headset,
   FileBarChart, Globe, Workflow, Settings, TrendingDown,
   Receipt, CreditCard,
 } from 'lucide-react';
@@ -30,6 +30,7 @@ const moreGroups = [
     label: 'תפעול',
     items: [
       { name: 'Cleaning',   label: 'ניקיון', icon: Wrench },
+      { name: 'ServiceRequests', label: 'בקשות שירות', icon: Headset },
       { name: 'Contracts',  label: 'חוזים',  icon: ClipboardList },
     ],
   },

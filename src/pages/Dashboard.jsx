@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LiquidGlassCard } from '@/components/ui/LiquidGlass';
 import { ShimmerButton, RippleButton } from '@/components/ui/AnimatedButton';
 import {
@@ -14,6 +15,7 @@ import {
   CheckCircle2, Link2, CreditCard,
   ArrowUpRight, Activity,
   Home, BarChart2, Target, Gift, FileText,
+  AlertCircle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -247,65 +249,38 @@ export default function Dashboard({ user, selectedPropertyId }) {
 
   const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
 
-  const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
+  const { data: bookings = [], isLoading: bookingsLoading, isError: bookingsError } = useQuery({
     queryKey: ['dashboard-bookings', selectedPropertyId],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Booking.filter(filters, '-created_at', 100);
-      } catch {
-        return [];
-      }
-    },
+    queryFn: () => base44.entities.Booking.filter(filters, '-created_at', 100),
     ...qOpts,
   });
 
-  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+  const { data: leads = [], isLoading: leadsLoading, isError: leadsError } = useQuery({
     queryKey: ['dashboard-leads', selectedPropertyId],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Lead.filter(filters, '-created_at', 100);
-      } catch {
-        return [];
-      }
-    },
+    queryFn: () => base44.entities.Lead.filter(filters, '-created_at', 100),
     ...qOpts,
   });
 
-  const { data: payments = [], isLoading: paymentsLoading } = useQuery({
+  const { data: payments = [], isLoading: paymentsLoading, isError: paymentsError } = useQuery({
     queryKey: ['dashboard-payments'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Payment.filter({}, '-created_at', 50);
-      } catch {
-        return [];
-      }
-    },
+    queryFn: () => base44.entities.Payment.filter({}, '-created_at', 50),
     ...qOpts,
   });
 
-  const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
+  const { data: reviews = [], isLoading: reviewsLoading, isError: reviewsError } = useQuery({
     queryKey: ['dashboard-reviews', selectedPropertyId],
-    queryFn: async () => {
-      try {
-        return await base44.entities.ReviewRequest.filter(filters, '-created_at', 50);
-      } catch {
-        return [];
-      }
-    },
+    queryFn: () => base44.entities.ReviewRequest.filter(filters, '-created_at', 50),
     ...qOpts,
   });
 
-  const { data: properties = [] } = useQuery({
+  const { data: properties = [], isError: propertiesError } = useQuery({
     queryKey: ['dashboard-properties'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.Property.list();
-      } catch {
-        return [];
-      }
-    },
+    queryFn: () => base44.entities.Property.list(),
     ...qOpts,
   });
+
+  const dataFetchError =
+    bookingsError || leadsError || paymentsError || reviewsError || propertiesError;
 
   const stats = useMemo(() => {
     const thisWeekBookings = bookings.filter(b => {
@@ -370,6 +345,16 @@ export default function Dashboard({ user, selectedPropertyId }) {
 
   return (
     <div className="min-h-full p-4 md:p-6 space-y-6 max-w-7xl mx-auto animate-fade-in">
+
+      {dataFetchError && (
+        <Alert className="border-amber-200 bg-amber-50/90 text-amber-950 [&>svg]:absolute [&>svg]:text-amber-700">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>בעיה בטעינת נתונים</AlertTitle>
+          <AlertDescription>
+            חלק מהמידע מהשרת לא נטען. בדקו חיבור לאינטרנט ורעננו את הדף. אם זה נמשך — פנו לתמיכה.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* ── Hero Banner (light — aligned with atlas-page-hero & app shell) ── */}
       <div

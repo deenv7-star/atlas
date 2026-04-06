@@ -5,8 +5,10 @@ import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary';
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useParams } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
+import SeoManager from '@/components/seo/SeoManager';
+import { createPageUrl } from '@/utils';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
 import { isPlatformAdminViewer } from '@/lib/platformAdmin';
@@ -17,10 +19,26 @@ import ResetPassword from '@/pages/ResetPassword';
 import UpdatePassword from '@/pages/UpdatePassword';
 import Onboarding from '@/pages/Onboarding';
 
-const { Pages, Layout, mainPage } = pagesConfig;
-const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
-const DashboardPage = Pages.Dashboard;
+const { Pages, Layout } = pagesConfig;
+
+const EXPLICIT_PROTECTED_KEYS = new Set([
+  'Dashboard',
+  'Billing',
+  'Subscription',
+  'PlatformAdmin',
+  'BookingDetail',
+  'LeadDetail',
+]);
+
+function LegacyBookingDetailRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/booking/${id}`} replace />;
+}
+
+function LegacyLeadDetailRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/lead/${id}`} replace />;
+}
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
@@ -176,9 +194,12 @@ const AuthenticatedApp = () => {
         <Route key={from} path={from} element={<Navigate to={to} replace />} />
       ))}
 
+      <Route path="/BookingDetail/:id" element={<LegacyBookingDetailRedirect />} />
+      <Route path="/LeadDetail/:id" element={<LegacyLeadDetailRedirect />} />
+
       {/* Protected detail pages with :id param */}
       <Route
-        path="/BookingDetail/:id"
+        path="/booking/:id"
         element={
           <ProtectedRoute>
             <LayoutWrapper currentPageName="BookingDetail">
@@ -188,7 +209,7 @@ const AuthenticatedApp = () => {
         }
       />
       <Route
-        path="/LeadDetail/:id"
+        path="/lead/:id"
         element={
           <ProtectedRoute>
             <LayoutWrapper currentPageName="LeadDetail">
@@ -198,13 +219,16 @@ const AuthenticatedApp = () => {
         }
       />
 
-      {/* All other pages — protected (Dashboard, Billing, Subscription have explicit routes) */}
+      {/* All other pages — protected (explicit keys excluded above) */}
       {Object.entries(Pages)
-        .filter(([path]) => !['Dashboard', 'Billing', 'Subscription', 'PlatformAdmin'].includes(path) && !PUBLIC_PAGE_KEYS.includes(path))
+        .filter(
+          ([path]) =>
+            !EXPLICIT_PROTECTED_KEYS.has(path) && !PUBLIC_PAGE_KEYS.includes(path),
+        )
         .map(([path, Page]) => (
           <Route
             key={path}
-            path={path === 'Dashboard' ? '/dashboard' : `/${path}`}
+            path={createPageUrl(path)}
             element={
               <ProtectedRoute>
                 <LayoutWrapper currentPageName={path}>
@@ -227,6 +251,7 @@ function App() {
       <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
           <Router>
+            <SeoManager />
             <NavigationTracker />
             <AuthenticatedApp />
           </Router>

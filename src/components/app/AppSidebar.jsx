@@ -7,8 +7,9 @@ import {
   LayoutDashboard, Users, CalendarDays, MessageSquare,
   CreditCard, FileText, Star, Settings, LogOut,
   ChevronLeft, ChevronRight, Zap, Brain, Link2,
-  Wallet, ClipboardList, Wrench, Receipt, TrendingDown,
+  Wallet,   ClipboardList, Wrench, Receipt, TrendingDown,
   TrendingUp, Globe, BarChart3, CalendarRange, FileBarChart, Workflow, Shield,
+  Headset,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { isPlatformAdminViewer } from '@/lib/platformAdmin';
@@ -34,6 +35,7 @@ const navGroups = [
     label: 'תפעול',
     items: [
       { icon: Wrench, label: 'ניקיון', page: 'Cleaning' },
+      { icon: Headset, label: 'בקשות שירות', page: 'ServiceRequests' },
       { icon: ClipboardList, label: 'חוזים', page: 'Contracts' },
     ],
   },

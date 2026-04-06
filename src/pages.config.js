@@ -78,6 +78,7 @@ import Messages from './pages/Messages';
 import Payments from './pages/Payments';
 import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
+import ServiceRequests from './pages/ServiceRequests';
 import SLA from './pages/SLA';
 import Status from './pages/Status';
 import Settings from './pages/Settings';
@@ -126,6 +127,7 @@ export const PAGES = {
     "Privacy": Privacy,
     "RevenueIntelligence": RevenueIntelligence,
     "Reviews": Reviews,
+    "ServiceRequests": ServiceRequests,
     "SLA": SLA,
     "Status": Status,
     "Settings": Settings,
