@@ -1454,7 +1454,7 @@ export default function Landing() {
                 {/* USP badge */}
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#EEF2FF', borderRadius: 999, padding: '6px 14px', marginBottom: 20 }}>
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#4F46E5', flexShrink: 0, display: 'inline-block' }} />
-                  <span style={{ fontSize: 14, fontWeight: 600, color: '#4F46E5' }}>PMS בעברית · אירוח קצר בישראל</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#4F46E5' }}>ניהול אירוח ומתחמי נופש — בעברית ובישראל</span>
                 </div>
                 <h1
                   style={{
