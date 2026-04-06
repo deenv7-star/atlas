@@ -10,7 +10,7 @@ import TrialBanner from '@/components/TrialBanner';
 import IOSInstallBanner from '@/components/app/IOSInstallBanner';
 import { cn } from '@/lib/utils';
 
-const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status'];
+const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs'];
 
 function PageLoader() {
   return (

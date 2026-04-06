@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { CheckCircle2, ExternalLink } from 'lucide-react';
 
 export default function Status() {
   const services = [
@@ -11,6 +11,11 @@ export default function Status() {
     { name: 'API ונתונים', status: 'operational' },
     { name: 'אימייל ותזכורות', status: 'operational' },
   ];
+
+  const updated = new Date().toLocaleString('he-IL', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
 
   return (
     <div dir="rtl" className="min-h-screen bg-white" style={{ fontFamily: "'Heebo', sans-serif" }}>
@@ -28,14 +33,31 @@ export default function Status() {
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">סטטוס המערכת</h1>
-          <p className="text-gray-600 mb-8">מעקב אחר זמינות השירותים</p>
+          <p className="text-gray-600 mb-4">מעקב אחר זמינות השירותים והתראות תפעול</p>
+          <p className="text-sm text-gray-500 mb-8">
+            עדכון אחרון: {updated} (שעון ישראל). אין אירועים פתוחים כרגע.
+          </p>
 
           <div className="flex items-center gap-3 p-4 bg-green-50 rounded-xl border border-green-200 mb-8">
-            <CheckCircle2 className="w-8 h-8 text-green-600" />
+            <CheckCircle2 className="w-8 h-8 text-green-600 shrink-0" />
             <div>
-              <p className="font-bold text-green-800">כל המערכות פועלות</p>
-              <p className="text-sm text-green-700">עדכון אחרון: עכשיו</p>
+              <p className="font-bold text-green-800">כל המערכות פועלות כרגיל</p>
+              <p className="text-sm text-green-700">אין השבתה מתוכננת. במקרה של תקלה — נעדכן כאן ובמייל ללקוחות.</p>
             </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-100 bg-gray-50/80 p-4 mb-8">
+            <p className="text-sm text-gray-700 leading-relaxed">
+              דף זה מציג את מצב השירותים ברמת המוצר. לבדיקות טכניות (health) ניתן להשתמש בנקודות{' '}
+              <code className="text-xs bg-white px-1 py-0.5 rounded border">/api/health</code>
+              {' ו־'}
+              <code className="text-xs bg-white px-1 py-0.5 rounded border">/api/ready</code>
+              {' (דורשות גישה לשרת ה־API).'}
+            </p>
+            <Link to={createPageUrl('ApiDocs')} className="inline-flex items-center gap-1 text-sm font-medium text-[#4F46E5] mt-3 hover:underline">
+              תיעוד API
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
           <div className="space-y-4">

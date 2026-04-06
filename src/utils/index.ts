@@ -11,6 +11,7 @@ const pagePathMap: Record<string, string> = {
     DataSecurity: '/data-security',
     Accessibility: '/accessibility',
     SLA: '/sla',
+    ApiDocs: '/api-docs',
     // App pages (must match route paths in App.jsx)
     Bookings: '/Bookings',
     Leads: '/Leads',

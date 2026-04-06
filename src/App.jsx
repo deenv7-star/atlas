@@ -134,6 +134,7 @@ const AuthenticatedApp = () => {
       <Route path="/data-security" element={<LayoutWrapper currentPageName="DataSecurity"><Pages.DataSecurity /></LayoutWrapper>} />
       <Route path="/accessibility" element={<LayoutWrapper currentPageName="Accessibility"><Pages.Accessibility /></LayoutWrapper>} />
       <Route path="/sla" element={<LayoutWrapper currentPageName="SLA"><Pages.SLA /></LayoutWrapper>} />
+      <Route path="/api-docs" element={<LayoutWrapper currentPageName="ApiDocs"><Pages.ApiDocs /></LayoutWrapper>} />
 
       {/* Onboarding — requires auth but NOT onboarding_completed (user lands here after verification) */}
       <Route

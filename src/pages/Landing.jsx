@@ -849,7 +849,9 @@ export default function Landing() {
         >
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, height: 80 }}>
             <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-              <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" style={{ height: 52, width: 'auto', objectFit: 'contain' }} />
+              <Link to="/" aria-label="דף הבית ATLAS">
+                <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" style={{ height: 52, width: 'auto', objectFit: 'contain', display: 'block' }} />
+              </Link>
             </div>
 
             <div className="atlas-nav-links" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
@@ -984,9 +986,8 @@ export default function Landing() {
                 {/* USP badge */}
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#EEF2FF', borderRadius: 999, padding: '6px 14px', marginBottom: 20 }}>
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#4F46E5', flexShrink: 0, display: 'inline-block' }} />
-                  <span style={{ fontSize: 14, fontWeight: 600, color: '#4F46E5' }}>מערכת ה-PMS הראשונה בישראל בעברית מלאה</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#4F46E5' }}>PMS בעברית · אירוח קצר בישראל</span>
                 </div>
-
                 <h1
                   style={{
                     fontSize: 'clamp(44px, 6.5vw, 84px)',
@@ -2596,7 +2597,12 @@ export default function Landing() {
                   { label: 'דמו', href: '#', onClick: () => { setDemoOpen(true); setDemoSlide(0); } },
                 ].map((l) => (
                   <div key={l.label} style={{ marginBottom: 12 }}>
-                    {l.onClick ? (
+                    {l.to ? (
+                      <Link to={l.to} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
+                      >{l.label}</Link>
+                    ) : l.onClick ? (
                       <a href="#" onClick={(e) => { e.preventDefault(); l.onClick(); }} style={{ color: '#9CA3AF', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s', cursor: 'pointer' }}
                         onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
                         onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
@@ -2652,8 +2658,9 @@ export default function Landing() {
                 <h4 style={{ fontWeight: 700, color: 'white', fontSize: 14, marginBottom: 18, marginTop: 0 }}>תמיכה</h4>
                 {[
                   { label: 'מרכז עזרה', to: '/contact' },
-                  { label: 'תיעוד API', to: '/data-security' },
+                  { label: 'תיעוד API', to: '/api-docs' },
                   { label: 'סטטוס מערכת', to: '/status' },
+                  { label: 'אבטחת מידע', to: '/data-security' },
                   { label: 'פרטיות', to: '/privacy' },
                   { label: 'תנאי שימוש', to: '/terms' },
                   { label: 'נגישות', to: '/accessibility' },

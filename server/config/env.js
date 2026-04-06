@@ -1,6 +1,16 @@
 import 'dotenv/config';
 import { z } from 'zod';
 
+// Local development only: match docker-compose.yml postgres service if .env is missing.
+if (process.env.NODE_ENV !== 'production') {
+  if (!process.env.DATABASE_URL) {
+    process.env.DATABASE_URL = 'postgresql://atlas:atlas@127.0.0.1:5432/atlas';
+  }
+  if (!process.env.JWT_SECRET) {
+    process.env.JWT_SECRET = 'dev_jwt_secret_minimum_32_chars_long!!';
+  }
+}
+
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),

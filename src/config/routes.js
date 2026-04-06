@@ -29,6 +29,7 @@ export const PUBLIC_PAGE_KEYS = [
   'DataSecurity',
   'Accessibility',
   'SLA',
+  'ApiDocs',
 ];
 
 /** Legacy path → canonical path redirects */
@@ -38,6 +39,10 @@ export const LEGACY_REDIRECTS = [
   { from: '/Login', to: '/login' },
   { from: '/Register', to: '/register' },
   { from: '/GuestService', to: '/guest-service' },
+  { from: '/security', to: '/data-security' },
+  { from: '/Security', to: '/data-security' },
+  { from: '/legal', to: '/terms' },
+  { from: '/Legal', to: '/terms' },
 ];
 
 /**
