@@ -3151,17 +3151,13 @@ export default function Landing() {
                 fontWeight: 900,
                 color: 'white',
                 margin: '0 0 12px',
-                lineHeight: 1.18,
+                lineHeight: 1.2,
               }}
             >
-              הכאס הזה כבר עולה לך יותר מכל מנוי — בשעות, בהזמנות שברחות ובשינה.
-              <br />
-              <span style={{ display: 'inline-block', marginTop: '0.25em', fontWeight: 800, opacity: 0.98 }}>
-                הגעת עד לכאן: או שעוד שבוע ככה, או שאתה נותן לעצמך 14 יום להוכיח שיש דרך אחרת — בלי כרטיס, בלי התחייבות.
-              </span>
+              עדיין מנהל עם Excel ו-WhatsApp? הגיע הזמן לשדרג.
             </h2>
-            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.88)', margin: '16px 0 40px', lineHeight: 1.55, maxWidth: 560, marginLeft: 'auto', marginRight: 'auto' }}>
-              מאות מנהלים כבר לא סופרים הזמנות בין גיליון לקבוצת ווטסאפ — כי כבר ראו מה זה כשהכל במקום אחד. עכשיו תורך לבדוק על העור שלך.
+            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.80)', margin: '12px 0 40px' }}>
+              הצטרף ל-500+ מנהלים שכבר עובדים עם ATLAS
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
               <button
