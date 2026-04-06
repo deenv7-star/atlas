@@ -343,16 +343,45 @@ const supabaseAuth = {
       .eq('id', user.id)
       .single();
 
+    let onboarding_completed = Boolean(profile?.onboarding_completed);
+    const orgId = profile?.organization_id || null;
+
+    // טריגר handle_new_user נותן organization_id כבר בהרשמה, אז דגל false לבד לא אומר "חדש".
+    // אם כבר יש נכסים/הזמנות/לידים בארגון — נחשב אונבורדינג כהושלם לניתוב (ותיקים שלא סומנו ב-DB).
+    if (!onboarding_completed && orgId) {
+      try {
+        const [pRes, bRes, lRes] = await Promise.all([
+          supabase.from('properties').select('id', { count: 'exact', head: true }).eq('org_id', orgId),
+          supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('org_id', orgId),
+          supabase.from('leads').select('id', { count: 'exact', head: true }).eq('org_id', orgId),
+        ]);
+        const hasActivity =
+          (pRes.count || 0) > 0 || (bRes.count || 0) > 0 || (lRes.count || 0) > 0;
+        if (hasActivity) {
+          onboarding_completed = true;
+          supabase
+            .from('profiles')
+            .update({ onboarding_completed: true })
+            .eq('id', user.id)
+            .then(({ error: upErr }) => {
+              if (upErr) console.warn('[auth.me] persist onboarding_completed:', upErr.message);
+            });
+        }
+      } catch {
+        /* keep DB flag */
+      }
+    }
+
     return {
       id:                   user.id,
       email:                user.email,
       full_name:            profile?.full_name || user.user_metadata?.full_name || '',
       phone:                profile?.phone || '',
       profile_image:        profile?.profile_image || '',
-      organization_id:      profile?.organization_id || null,
+      organization_id:      orgId,
       organization_name:    profile?.organizations?.name || '',
       subscription_plan:    profile?.organizations?.subscription_plan || 'starter',
-      onboarding_completed: Boolean(profile?.onboarding_completed),
+      onboarding_completed,
       onboarding_step:      Math.max(1, parseInt(profile?.onboarding_step, 10) || 1),
       selected_plan:        profile?.selected_plan || 'trial',
       trial_ends_at:        profile?.trial_ends_at || null,
