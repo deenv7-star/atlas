@@ -1,6 +1,17 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarRange, ChevronRight, ChevronLeft, RefreshCw, Filter, Plus } from 'lucide-react';
+import {
+  AlertCircle,
+  CalendarRange,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Eye,
+  Filter,
+  Home,
+  Plus,
+  RefreshCw,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
 import { useBookings } from '@/data/entities';
