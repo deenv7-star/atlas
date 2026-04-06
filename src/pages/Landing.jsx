@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import SupportChat from '@/components/landing/SupportChat';
 import CookieConsent from '@/components/landing/CookieConsent';
+import { motion, useReducedMotion } from 'framer-motion';
 
 // ─── Animated price roller ───────────────────────────────────────────────────
 function AnimatedPrice({ value, duration = 500 }) {
@@ -213,6 +214,7 @@ export default function Landing() {
   const [psPhase, setPsPhase] = useState('chaos'); // chaos → unify → atlas (scroll-driven)
   const psSectionRef = useRef(null);
   const navigate = useNavigate();
+  const reducedMotion = useReducedMotion();
 
   const [count1, ref1] = useCountUp(500);
   const [count2, ref2] = useCountUp(98);
@@ -1756,14 +1758,32 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 4 — HOW IT WORKS
         ════════════════════════════════════════ */}
-        <section style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+        <section id="atlas-how" style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
+            <motion.div
+              initial={reducedMotion ? false : { opacity: 0, y: 28 }}
+              whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              style={{ textAlign: 'center', marginBottom: 64 }}
+            >
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מתחילים תוך 5 דקות</h2>
               <p style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>ללא הגדרות מסובכות, ללא צורך בטכנאי</p>
-            </div>
+            </motion.div>
 
-            <div className="atlas-how-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+            <motion.div
+              className="atlas-how-grid"
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-40px' }}
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: { staggerChildren: reducedMotion ? 0 : 0.12, delayChildren: reducedMotion ? 0 : 0.06 },
+                },
+              }}
+            >
               {HOW_STEPS.map((step, i) => {
                 const illustrations = [
                   <svg key="s1" viewBox="0 0 120 100" fill="none" style={{ width: '100%', height: 100 }}>
@@ -1802,21 +1822,61 @@ export default function Landing() {
                   </svg>,
                 ];
                 return (
-                  <div key={i} className={`atlas-reveal atlas-delay-${i + 1}`} style={{ textAlign: 'center', position: 'relative' }}>
+                  <motion.div
+                    key={i}
+                    variants={{
+                      hidden: reducedMotion
+                        ? { opacity: 1, y: 0, scale: 1 }
+                        : { opacity: 0, y: 32, scale: 0.96 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        transition: { type: 'spring', stiffness: 380, damping: 30, mass: 0.85 },
+                      },
+                    }}
+                    whileHover={reducedMotion ? undefined : { y: -6, transition: { duration: 0.22 } }}
+                    style={{
+                      textAlign: 'center',
+                      position: 'relative',
+                      borderRadius: 20,
+                      padding: '20px 16px 24px',
+                      background: '#FFFFFF',
+                      border: '1px solid rgba(79, 70, 229, 0.08)',
+                      boxShadow: '0 4px 24px rgba(15, 23, 42, 0.06)',
+                    }}
+                  >
                     <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
-                      <div style={{ width: 140, height: 100 }}>{illustrations[i]}</div>
+                      <motion.div
+                        style={{ width: 140, height: 100 }}
+                        animate={reducedMotion ? false : { y: [0, -6, 0] }}
+                        transition={reducedMotion ? undefined : {
+                          duration: 3.2 + i * 0.35,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                          delay: i * 0.2,
+                        }}
+                      >
+                        {illustrations[i]}
+                      </motion.div>
                     </div>
-                    <div style={{
-                      width: 40, height: 40, borderRadius: '50%', background: '#4F46E5', color: 'white',
-                      fontSize: 18, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      margin: '0 auto 14px', boxShadow: '0 6px 20px rgba(79,70,229,0.25)',
-                    }}>{step.num}</div>
+                    <motion.div
+                      initial={reducedMotion ? false : { scale: 0 }}
+                      whileInView={reducedMotion ? undefined : { scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: 'spring', stiffness: 420, damping: 22, delay: 0.05 + i * 0.08 }}
+                      style={{
+                        width: 40, height: 40, borderRadius: '50%', background: '#4F46E5', color: 'white',
+                        fontSize: 18, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        margin: '0 auto 14px', boxShadow: '0 6px 20px rgba(79,70,229,0.25)',
+                      }}
+                    >{step.num}</motion.div>
                     <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: '0 0 8px' }}>{step.title}</h3>
                     <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{step.text}</p>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </section>
 
