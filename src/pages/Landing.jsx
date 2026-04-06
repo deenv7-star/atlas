@@ -2793,13 +2793,34 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION B — למה דווקא ATLAS? (Extra Trust)
         ════════════════════════════════════════ */}
-        <section style={{ padding: '80px 24px', background: '#FAFAFA', position: 'relative', zIndex: 1 }}>
+        <section style={{ padding: '80px 24px', background: '#FAFAFA', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
           <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
+            <motion.div
+              style={{ textAlign: 'center', marginBottom: 48 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 24 }}
+              whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-12% 0px' }}
+              transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
+            >
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>למה דווקא ATLAS?</h2>
               <p className="atlas-section-sub" style={{ fontSize: 16, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>כי אנחנו יודעים מה מנהלי נכסים באמת צריכים</p>
-            </div>
-            <div className="atlas-why-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            </motion.div>
+            <motion.div
+              className="atlas-why-grid"
+              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-10% 0px' }}
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: reducedMotion ? 0 : 0.09,
+                    delayChildren: reducedMotion ? 0 : 0.08,
+                  },
+                },
+              }}
+            >
               {[
                 { title: 'בנוי לשוק הישראלי', desc: 'עברית מלאה, RTL, חשבוניות ישראליות, שערי תשלום מקומיים — הכל מותאם לישראל.', color: '#4F46E5', iconPath: 'M3 21V5a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M12 10v4 M10 12h4' },
                 { title: 'הקמה תוך 5 דקות', desc: 'אין צורך בידע טכני. נרשמים, מוסיפים נכס, ומתחילים לעבוד.', color: '#10B981', iconPath: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' },
@@ -2808,18 +2829,28 @@ export default function Landing() {
                 { title: 'דוחות בזמן אמת', desc: 'הכנסות, תפוסה, ביצועים — כל המספרים שאתה צריך, בלחיצה אחת.', color: '#EC4899', iconPath: 'M18 20V10 M12 20V4 M6 20v-6' },
                 { title: 'אבטחה ופרטיות', desc: 'הנתונים שלך מוגנים בהצפנה מתקדמת. תואם GDPR ותקנות ישראליות.', color: '#06B6D4', iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
               ].map((item, i) => (
-                <div key={i} className="atlas-reveal" style={{ background: 'white', borderRadius: 16, padding: '28px 28px', border: '1px solid #F3F4F6', transition: 'all 0.2s ease', cursor: 'default' }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
+                <motion.div
+                  key={i}
+                  variants={{
+                    hidden: reducedMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.97 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] },
+                    },
+                  }}
+                  whileHover={reducedMotion ? undefined : { y: -4, boxShadow: '0 12px 36px rgba(0,0,0,0.1)', transition: { type: 'spring', stiffness: 400, damping: 28 } }}
+                  style={{ background: 'white', borderRadius: 16, padding: '28px 28px', border: '1px solid #F3F4F6', cursor: 'default', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
                 >
                   <div style={{ width: 48, height: 48, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.iconPath} /></svg>
                   </div>
                   <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif' }}>{item.title}</h3>
                   <p style={{ fontSize: 14, color: '#6B7280', margin: 0, lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{item.desc}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
