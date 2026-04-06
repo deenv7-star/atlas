@@ -27,6 +27,18 @@ import confetti from 'canvas-confetti';
 import { PRICING_PLANS } from '@/config/pricing';
 
 const TOTAL_STEPS = 4;
+const SAVE_TIMEOUT_MS = 45_000;
+
+function withSaveTimeout(promise, ms = SAVE_TIMEOUT_MS) {
+  let t;
+  const timeout = new Promise((_, reject) => {
+    t = setTimeout(
+      () => reject(new Error('השמירה ארכה יותר מדי זמן. בדוק חיבור לאינטרנט ונסה שוב.')),
+      ms
+    );
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(t));
+}
 
 function handleOnboardingError(err, context) {
   console.error(`[Onboarding] ${context}:`, err);
@@ -36,6 +48,10 @@ function handleOnboardingError(err, context) {
     toast.error('המסד נתונים לא מעודכן. הרץ את supabase/migrations/002_trial_system.sql ב-Supabase SQL Editor.');
   } else if (msg.includes('JWT') || msg.includes('session')) {
     toast.error('ההתחברות פגה. נא להתחבר מחדש.');
+  } else if (msg.includes('row-level security') || msg.includes('RLS')) {
+    toast.error('אין הרשאה לשמור נתונים. בדוק את מדיניות ה-RLS ב-Supabase או פנה לתמיכה.');
+  } else if (msg && msg.length < 280) {
+    toast.error(msg);
   } else {
     toast.error('שגיאה בשמירת הנתונים, נסה שוב.');
   }
@@ -123,12 +139,12 @@ export default function Onboarding() {
     }
   }, [step]);
 
-  const goNext = () => {
+  const goNext = async () => {
     setDirection(1);
     setAnimKey(k => k + 1);
     const next = Math.min(step + 1, TOTAL_STEPS - 1);
     setStep(next);
-    persistStep(next);
+    await persistStep(next);
   };
 
   const goBack = () => {
@@ -172,7 +188,7 @@ export default function Onboarding() {
       if (stepError) {
         console.warn('[Onboarding] onboarding_step update failed (migration 002?), continuing:', stepError);
       }
-      goNext();
+      await goNext();
     } catch (err) {
       handleOnboardingError(err, 'handleSavePersonal');
     } finally {
@@ -211,7 +227,7 @@ export default function Onboarding() {
         if (profErr) console.warn('[Onboarding] profiles onboarding_step update failed:', profErr);
       }
       setCreatedOrgName(orgForm.name.trim());
-      goNext();
+      await goNext();
     } catch (err) {
       if (!user?.organization_id) {
         toast.error('חשבון לא מוגדר במלואו. נא להתחבר מחדש או ליצור חשבון חדש.');
@@ -254,7 +270,7 @@ export default function Onboarding() {
         if (profErr) console.warn('[Onboarding] profiles onboarding_step update failed:', profErr);
       }
       setCreatedPropertyName(propertyForm.name.trim());
-      goNext();
+      await goNext();
     } catch (err) {
       if (!user?.organization_id) {
         toast.error('חשבון לא מוגדר במלואו. נא להתחבר מחדש.');
@@ -300,10 +316,10 @@ export default function Onboarding() {
       setDirection(1);
       setAnimKey(k => k + 1);
       setStep(3);
-      persistStep(3);
+      await persistStep(3);
     } catch (err) {
       console.warn('[Onboarding] handleSelectPlan:', err);
-      goNext();
+      await goNext();
     } finally {
       setSaving(false);
     }
@@ -348,7 +364,7 @@ export default function Onboarding() {
           console.warn('[Onboarding] savePlanAndProceed profiles update failed:', error);
         }
       }
-      goNext();
+      await goNext();
     } catch (err) {
       handleOnboardingError(err, 'savePlanAndProceed');
     } finally {
@@ -428,51 +444,91 @@ export default function Onboarding() {
     }
     setSaving(true);
     try {
-      if (isSupabaseConfigured && supabase) {
-        if (user?.organization_id) {
-          await supabase.from('organizations').update({
-            name: orgForm.name.trim().slice(0, 50),
-            address: orgForm.address.trim().slice(0, 255),
-          }).eq('id', user.organization_id);
-        }
-        await supabase.from('properties').insert({
-          name: propertyForm.name.trim().slice(0, 100),
-          org_id: user?.organization_id,
-          bedrooms: parseInt(propertyForm.bedrooms, 10) || 1,
-          base_price: parseFloat(String(propertyForm.base_price).replace(/[^\d.]/g, '')) || null,
-        });
-        const { data: { user: authUser } } = await supabase.auth.getUser();
-        if (authUser) {
-          await supabase.from('profiles').update({ onboarding_step: 2 }).eq('id', authUser.id);
-        }
-      } else {
-        const orgId = user?.organization_id || `org_${Date.now()}`;
-        const orgs = await base44.entities.Organization.list();
-        const orgList = Array.isArray(orgs) ? orgs : (orgs?.data ? orgs.data : []);
-        const existingOrg = orgList.find(o => o.id === orgId);
-        if (existingOrg) {
-          await base44.entities.Organization.update(orgId, {
-            name: orgForm.name.trim().slice(0, 50),
-            address: orgForm.address.trim().slice(0, 255),
+      await withSaveTimeout((async () => {
+        if (isSupabaseConfigured && supabase) {
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          if (!authUser) throw new Error('ההתחברות פגה. נא להתחבר מחדש.');
+
+          const { data: prof, error: profErr } = await supabase
+            .from('profiles')
+            .select('organization_id')
+            .eq('id', authUser.id)
+            .maybeSingle();
+          if (profErr) throw new Error(profErr.message);
+
+          const orgId = prof?.organization_id ?? user?.organization_id;
+          if (!orgId) {
+            throw new Error('לא נמצא ארגון לחשבון. נסה להתחבר מחדש או פנה לתמיכה.');
+          }
+
+          const { error: orgErr } = await supabase
+            .from('organizations')
+            .update({
+              name: orgForm.name.trim().slice(0, 50),
+              address: orgForm.address.trim().slice(0, 255),
+            })
+            .eq('id', orgId);
+          if (orgErr) throw new Error(orgErr.message);
+
+          const { error: propErr } = await supabase.from('properties').insert({
+            name: propertyForm.name.trim().slice(0, 100),
+            org_id: orgId,
+            type: orgForm.type?.trim() || null,
+            bedrooms: parseInt(propertyForm.bedrooms, 10) || 1,
+            base_price: parseFloat(String(propertyForm.base_price).replace(/[^\d.]/g, '')) || null,
           });
+          if (propErr) throw new Error(propErr.message);
         } else {
-          await base44.entities.Organization.create({
-            id: orgId,
-            name: orgForm.name.trim().slice(0, 50),
-            address: orgForm.address.trim().slice(0, 255),
+          let orgId = user?.organization_id || null;
+          if (orgId) {
+            try {
+              await base44.entities.Organization.update(orgId, {
+                name: orgForm.name.trim().slice(0, 50),
+                address: orgForm.address.trim().slice(0, 255),
+              });
+            } catch {
+              await base44.entities.Organization.create({
+                id: orgId,
+                name: orgForm.name.trim().slice(0, 50),
+                address: orgForm.address.trim().slice(0, 255),
+              });
+            }
+          } else {
+            orgId = `org_${Date.now()}`;
+            const orgs = await base44.entities.Organization.list();
+            const orgList = Array.isArray(orgs) ? orgs : (orgs?.data ? orgs.data : []);
+            const existingOrg = orgList.find(o => o.id === orgId);
+            if (existingOrg) {
+              await base44.entities.Organization.update(orgId, {
+                name: orgForm.name.trim().slice(0, 50),
+                address: orgForm.address.trim().slice(0, 255),
+              });
+            } else {
+              await base44.entities.Organization.create({
+                id: orgId,
+                name: orgForm.name.trim().slice(0, 50),
+                address: orgForm.address.trim().slice(0, 255),
+              });
+            }
+          }
+          await base44.entities.Property.create({
+            name: propertyForm.name.trim().slice(0, 100),
+            org_id: orgId,
+            type: orgForm.type?.trim() || null,
+            bedrooms: parseInt(propertyForm.bedrooms, 10) || 1,
+            base_price: parseFloat(String(propertyForm.base_price).replace(/[^\d.]/g, '')) || null,
+          });
+          await base44.auth.updateMe({
+            organization_id: orgId,
+            organization_name: orgForm.name.trim(),
+            onboarding_step: 3,
           });
         }
-        await base44.entities.Property.create({
-          name: propertyForm.name.trim().slice(0, 100),
-          org_id: orgId,
-          bedrooms: parseInt(propertyForm.bedrooms, 10) || 1,
-          base_price: parseFloat(String(propertyForm.base_price).replace(/[^\d.]/g, '')) || null,
-        });
-        await base44.auth.updateMe({ organization_id: orgId, organization_name: orgForm.name.trim(), onboarding_step: 2 });
-      }
+      })());
+
       setCreatedOrgName(orgForm.name.trim());
       setCreatedPropertyName(propertyForm.name.trim());
-      goNext();
+      await goNext();
     } catch (err) {
       handleOnboardingError(err, 'handleSaveOrgAndProperty');
     } finally {
