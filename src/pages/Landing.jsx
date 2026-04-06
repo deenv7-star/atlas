@@ -4,7 +4,7 @@ import {
   Calendar, CreditCard, Users, CheckSquare, MessageSquare, FileText,
   Star, Zap, BarChart2, Link as LinkIcon, Receipt, Shield,
   ChevronDown, ChevronLeft, ChevronRight, X,
-  Home, Building2, Tent, Waves, Hotel, Target, House, MessageCircle,
+  Home, Building2, Tent, Waves, Hotel, MessageCircle,
   TrendingUp, PieChart,
 } from 'lucide-react';
 import SupportChat from '@/components/landing/SupportChat';
@@ -790,6 +790,9 @@ export default function Landing() {
           .atlas-feat-testi { padding: 24px 20px !important; }
           .atlas-use-cases-grid { grid-template-columns: 1fr !important; }
           .atlas-personas-grid { grid-template-columns: 1fr !important; }
+          .atlas-audience-min { padding: 64px 16px !important; }
+          .atlas-audience-grid,
+          .atlas-audience-grid-venues { grid-template-columns: 1fr !important; gap: 12px !important; }
 
           /* Features (#features) — bento readable on phone; no overlapping mocks */
           .atlas-features-section {
@@ -1895,190 +1898,88 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            AUDIENCE — מי אתם + סוג עסק (מאוחד)
+            AUDIENCE — מינימלי (תפקיד + סוג נכס)
         ════════════════════════════════════════ */}
-        <section id="atlas-audience" style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 44 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#EEF2FF', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
-                <Target size={15} strokeWidth={2.25} color="#4338CA" aria-hidden />
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#4338CA' }}>תפקיד וסוג עסק — במקום אחד</span>
-              </div>
-              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px', fontFamily: 'Heebo, sans-serif' }}>למי ATLAS מתאימה?</h2>
-              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#6B7280', margin: 0, maxWidth: 640, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.65, fontFamily: 'Heebo, sans-serif' }}>
-                שני מימדים משלימים: <strong style={{ color: '#374151', fontWeight: 700 }}>מי אתם בארגון</strong> (בעלים, חברת ניהול או הנהלה פיננסית)
-                — ו-<strong style={{ color: '#374151', fontWeight: 700 }}>איזה סוג נכסים ועסק</strong> אתם מנהלים. כך בוחרים נכון את החבילה וההטמעה.
+        <section id="atlas-audience" className="atlas-audience-min" style={{ padding: '96px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 980, margin: '0 auto' }}>
+            <header className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 700, color: '#1D1D1F', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif', letterSpacing: '-0.02em' }}>
+                למי זה מתאים
+              </h2>
+              <p style={{ fontSize: 17, color: '#86868B', margin: 0, maxWidth: 420, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.47, fontFamily: 'Heebo, sans-serif' }}>
+                ניהול נכסי נופש בישראל — לפי תפקיד ולפי סוג עסק.
               </p>
-            </div>
+            </header>
 
-            {/* שכבה 1: תפקיד */}
-            <div style={{ marginBottom: 48 }}>
-              <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', textAlign: 'center', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>לפי תפקיד וארגון</h3>
-              <p style={{ fontSize: 15, color: '#6B7280', textAlign: 'center', margin: '0 0 28px', fontFamily: 'Heebo, sans-serif' }}>מי מחליט, מי מפעיל יום-יום ומי צריך מספרים — לכל תפקיד יש כלים מתאימים.</p>
-              <div className="atlas-how-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
-                {[
-                  {
-                    Icon: Home,
-                    title: 'בעל נכסים עצמאי',
-                    pain: 'מנהל 1–5 נכסים לבד, מבלה שעות על תיאום ידני',
-                    gains: ['הזמנות אוטומטיות מ-Airbnb ו-WhatsApp', 'גביית תשלומים ללא מעקב ידני', 'חיסכון של 15–20 שעות בשבוע'],
-                    cta: 'מתחיל מ-₪399/חודש',
-                    color: '#4F46E5', bg: '#EEF2FF',
-                  },
-                  {
-                    Icon: Building2,
-                    title: 'חברת ניהול נכסים',
-                    pain: 'מנהלת נכסים של לקוחות מרובים, צריכה שקיפות ודיווח',
-                    gains: ['דוחות בעלים אוטומטיים', 'ניהול עשרות נכסים ממסך אחד', 'SLA מובטח ו-SSO לצוות'],
-                    cta: 'חבילת Business מ-₪999/חודש',
-                    color: '#8B5CF6', bg: '#F5F3FF',
-                    featured: true,
-                  },
-                  {
-                    Icon: PieChart,
-                    title: 'מנהל/ת כספים ו-CFO',
-                    pain: 'צריך ROI ברור ושקיפות פיננסית לפני כל השקעה',
-                    gains: ['מחשבון ROI מובנה — ראה חיסכון בזמן אמת', 'דוחות רווח/הפסד אוטומטיים', 'הצפנה מלאה + תאימות GDPR'],
-                    cta: 'ROI ממוצע: 4× תוך 3 חודשים',
-                    color: '#10B981', bg: '#F0FDF4',
-                  },
-                ].map((p) => (
-                  <div
-                    key={p.title}
-                    className="atlas-reveal"
-                    style={{
-                      background: p.featured ? `linear-gradient(135deg, #4F46E5, #7C3AED)` : 'white',
-                      border: p.featured ? 'none' : `2px solid ${p.bg}`,
-                      borderRadius: 20,
-                      padding: 32,
-                      position: 'relative',
-                      transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(0,0,0,0.12)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-                  >
-                    {p.featured && (
-                      <div style={{ position: 'absolute', top: -12, right: 24, background: '#FCD34D', color: '#92400E', fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 999, fontFamily: 'Heebo, sans-serif' }}>
-                        הפופולרי ביותר
-                      </div>
-                    )}
-                    <div style={{ width: 52, height: 52, borderRadius: 14, background: p.featured ? 'rgba(255,255,255,0.15)' : p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
-                      <p.Icon size={24} strokeWidth={1.75} color={p.featured ? '#FFFFFF' : p.color} aria-hidden />
-                    </div>
-                    <h4 style={{ fontSize: 20, fontWeight: 800, color: p.featured ? 'white' : '#111827', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>{p.title}</h4>
-                    <p style={{ fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.7)' : '#6B7280', margin: '0 0 18px', lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{p.pain}</p>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {p.gains.map((g) => (
-                        <li key={g} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.9)' : '#374151', fontFamily: 'Heebo, sans-serif', lineHeight: 1.5 }}>
-                          <span style={{ color: p.featured ? '#A5F3FC' : p.color, fontWeight: 700, flexShrink: 0 }}>✓</span>
-                          {g}
-                        </li>
-                      ))}
-                    </ul>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: p.featured ? 'rgba(255,255,255,0.6)' : p.color, fontFamily: 'Heebo, sans-serif' }}>{p.cta}</div>
+            {/* תפקיד — שלושה כרטיסים, שורה אחת לכל אחד */}
+            <p className="atlas-audience-label atlas-reveal" style={{ fontSize: 12, fontWeight: 600, color: '#86868B', letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'center', margin: '0 0 20px', fontFamily: 'Heebo, sans-serif' }}>
+              תפקיד
+            </p>
+            <div className="atlas-audience-grid atlas-how-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 56 }}>
+              {[
+                { Icon: Home, title: 'בעל נכסים עצמאי', line: 'נכסים בודדים, ניהול ישיר', color: '#4F46E5', bg: '#F5F5F7' },
+                { Icon: Building2, title: 'חברת ניהול נכסים', line: 'ריבוי נכסים ולקוחות', color: '#4F46E5', bg: '#F5F5F7', ring: true },
+                { Icon: PieChart, title: 'הנהלה וכספים', line: 'דוחות, ROI ושקיפות', color: '#4F46E5', bg: '#F5F5F7' },
+              ].map((p) => (
+                <div
+                  key={p.title}
+                  className="atlas-reveal"
+                  style={{
+                    background: '#FBFBFD',
+                    borderRadius: 18,
+                    padding: '28px 22px',
+                    border: p.ring ? '1px solid rgba(79, 70, 229, 0.35)' : '1px solid #E8E8ED',
+                    boxShadow: p.ring ? '0 1px 2px rgba(0,0,0,0.04)' : 'none',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.06)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = p.ring ? '0 1px 2px rgba(0,0,0,0.04)' : 'none'; }}
+                >
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                    <p.Icon size={22} strokeWidth={1.75} color={p.color} aria-hidden />
                   </div>
-                ))}
-              </div>
+                  <h3 style={{ fontSize: 17, fontWeight: 600, color: '#1D1D1F', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif', letterSpacing: '-0.01em' }}>{p.title}</h3>
+                  <p style={{ fontSize: 14, color: '#86868B', margin: 0, lineHeight: 1.5, fontFamily: 'Heebo, sans-serif' }}>{p.line}</p>
+                </div>
+              ))}
             </div>
 
-            {/* שכבה 2: סוג נכס ועסק */}
-            <div
-              style={{
-                marginTop: 8,
-                padding: '40px 28px 36px',
-                borderRadius: 24,
-                background: '#F9FAFB',
-                border: '1px solid #F3F4F6',
-              }}
-            >
-              <div style={{ textAlign: 'center', marginBottom: 28 }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#F0FDF4', borderRadius: 999, padding: '6px 16px', marginBottom: 12 }}>
-                  <House size={15} strokeWidth={2.25} color="#065F46" aria-hidden />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#065F46' }}>מותאם לכל סוג נכס</span>
-                </div>
-                <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>לפי סוג נכס ופעילות</h3>
-                <p style={{ fontSize: 15, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>מצימרים בודדים ועד מלונות בוטיק — אותה מערכת, עם הדגשות שונות לפי סוג העסק.</p>
-              </div>
-              <div className="atlas-use-cases-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
-                {[
-                  {
-                    Icon: Tent,
-                    title: 'צימרים ובקתות',
-                    color: '#10B981',
-                    bg: '#F0FDF4',
-                    border: '#D1FAE5',
-                    items: ['סנכרון אוטומטי עם Airbnb', 'הודעות WhatsApp לאורחים', 'חוזים דיגיטליים', 'קבלת תשלומים מקוונת'],
-                    cta: 'מתאים לצימרים ←',
-                  },
-                  {
-                    Icon: Building2,
-                    title: 'חברות ניהול נכסים',
-                    color: '#4F46E5',
-                    bg: '#EEF2FF',
-                    border: '#C7D2FE',
-                    featured: true,
-                    badge: 'הכי פופולרי',
-                    items: ['ניהול עשרות נכסים במסך אחד', 'דוחות לבעלי נכסים', 'צוות עם הרשאות נפרדות', 'אוטומציות מלאות'],
-                    cta: 'מתאים לחברות ←',
-                  },
-                  {
-                    Icon: Waves,
-                    title: 'וילות ובתי נופש',
-                    color: '#0EA5E9',
-                    bg: '#F0F9FF',
-                    border: '#BAE6FD',
-                    items: ['לוח שנה ויזואלי', 'מחירים דינמיים', 'צ׳ק-אין/אאוט אוטומטי', 'ניהול מפתחות'],
-                    cta: 'מתאים לוילות ←',
-                  },
-                  {
-                    Icon: Hotel,
-                    title: 'מלונות בוטיק',
-                    color: '#F59E0B',
-                    bg: '#FFFBEB',
-                    border: '#FDE68A',
-                    items: ['Front-desk דיגיטלי', 'ניהול חדרים וקטגוריות', 'אינטגרציה עם Booking.com', 'דוחות תפוסה ורווחיות'],
-                    cta: 'מתאים למלונות ←',
-                  },
-                ].map((uc, i) => {
-                  const UcIcon = uc.Icon;
-                  return (
+            <div style={{ height: 1, background: '#D2D2D7', maxWidth: 120, margin: '0 auto 48px', opacity: 0.6 }} aria-hidden />
+
+            {/* סוג נכס — ארבעה כרטיסים קלים */}
+            <p className="atlas-audience-label atlas-reveal" style={{ fontSize: 12, fontWeight: 600, color: '#86868B', letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'center', margin: '0 0 20px', fontFamily: 'Heebo, sans-serif' }}>
+              סוג נכס
+            </p>
+            <div className="atlas-use-cases-grid atlas-audience-grid-venues" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+              {[
+                { Icon: Tent, title: 'צימרים ובקתות', line: 'ערוצי הזמנות ואורחים' },
+                { Icon: Building2, title: 'חברות ניהול', line: 'צוותים וריבוי נכסים' },
+                { Icon: Waves, title: 'וילות ונופש', line: 'מחירים ותפוסה' },
+                { Icon: Hotel, title: 'מלונות בוטיק', line: 'חדרים וערוצים גלובליים' },
+              ].map((uc, i) => {
+                const UcIcon = uc.Icon;
+                return (
                   <div
                     key={i}
                     className="atlas-reveal"
                     style={{
-                      background: uc.featured ? `linear-gradient(135deg, #4F46E5, #7C3AED)` : uc.bg,
-                      border: `1px solid ${uc.featured ? 'transparent' : uc.border}`,
-                      borderRadius: 20,
-                      padding: '28px 24px',
-                      position: 'relative',
-                      transition: 'all 0.25s ease',
-                      cursor: 'default',
+                      background: '#FBFBFD',
+                      borderRadius: 18,
+                      padding: '26px 20px',
+                      border: '1px solid #E8E8ED',
+                      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = uc.featured ? '0 16px 48px rgba(79,70,229,0.3)' : '0 8px 32px rgba(0,0,0,0.1)'; }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.06)'; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
                   >
-                    {uc.badge && (
-                      <div style={{ position: 'absolute', top: -12, right: 20, background: '#00D1C1', color: '#0B1220', fontSize: 11, fontWeight: 800, padding: '3px 12px', borderRadius: 999, fontFamily: 'Heebo, sans-serif' }}>
-                        {uc.badge}
-                      </div>
-                    )}
-                    <div style={{ width: 48, height: 48, borderRadius: 14, marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', background: uc.featured ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.6)' }}>
-                      <UcIcon size={26} strokeWidth={1.75} color={uc.featured ? '#FFFFFF' : uc.color} aria-hidden />
+                    <div style={{ width: 40, height: 40, borderRadius: 10, background: '#F5F5F7', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                      <UcIcon size={20} strokeWidth={1.75} color="#4F46E5" aria-hidden />
                     </div>
-                    <h4 style={{ fontSize: 18, fontWeight: 800, color: uc.featured ? 'white' : '#111827', margin: '0 0 16px', fontFamily: 'Heebo, sans-serif' }}>{uc.title}</h4>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {uc.items.map((item, j) => (
-                        <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 14, color: uc.featured ? 'rgba(255,255,255,0.9)' : '#374151', fontFamily: 'Heebo, sans-serif' }}>
-                          <span style={{ color: uc.featured ? '#00D1C1' : uc.color, flexShrink: 0, marginTop: 2 }}>✓</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: uc.featured ? 'rgba(255,255,255,0.7)' : uc.color, fontFamily: 'Heebo, sans-serif' }}>{uc.cta}</div>
+                    <h3 style={{ fontSize: 16, fontWeight: 600, color: '#1D1D1F', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif' }}>{uc.title}</h3>
+                    <p style={{ fontSize: 13, color: '#86868B', margin: 0, lineHeight: 1.45, fontFamily: 'Heebo, sans-serif' }}>{uc.line}</p>
                   </div>
                 );
-                })}
-              </div>
+              })}
             </div>
           </div>
         </section>
