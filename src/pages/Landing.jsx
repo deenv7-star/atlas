@@ -845,16 +845,46 @@ export default function Landing() {
           margin-bottom: 48px;
         }
 
-        /* Why ATLAS cards: avoid scale/transform motion blur on text (GPU subpixels) */
+        /* Why ATLAS — Apple-like surfaces (no scale on typography; shadow + border only) */
         .atlas-why-card {
-          -webkit-font-smoothing: subpixel-antialiased;
+          -webkit-font-smoothing: antialiased;
           text-rendering: geometricPrecision;
-          transition: box-shadow 0.22s ease, border-color 0.22s ease;
+          border-radius: 18px;
+          background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          box-shadow:
+            0 0 0 0.5px rgba(255, 255, 255, 0.8) inset,
+            0 1px 2px rgba(0, 0, 0, 0.04),
+            0 12px 40px rgba(0, 0, 0, 0.06);
+          transition:
+            box-shadow 0.55s cubic-bezier(0.25, 0.1, 0.25, 1),
+            border-color 0.55s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
         @media (hover: hover) {
           .atlas-why-card:hover {
-            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
-            border-color: #e5e7eb;
+            border-color: rgba(0, 0, 0, 0.09);
+            box-shadow:
+              0 0 0 0.5px rgba(255, 255, 255, 0.9) inset,
+              0 2px 8px rgba(0, 0, 0, 0.06),
+              0 24px 56px rgba(0, 0, 0, 0.1);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .atlas-why-card {
+            transition: none;
+          }
+        }
+        .atlas-why-icon-wrap {
+          transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        @media (hover: hover) {
+          .atlas-why-card:hover .atlas-why-icon-wrap {
+            transform: scale(1.04);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .atlas-why-card:hover .atlas-why-icon-wrap {
+            transform: none;
           }
         }
         .atlas-footer-logo-row {
@@ -2992,33 +3022,15 @@ export default function Landing() {
           <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 }}>
             <motion.div
               style={{ textAlign: 'center', marginBottom: 48 }}
-              initial={reducedMotion ? false : { opacity: 0, y: 28 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 18 }}
               whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.25, margin: '0px 0px -12% 0px' }}
-              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>למה דווקא ATLAS?</h2>
               <p className="atlas-section-sub" style={{ fontSize: 16, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>כי אנחנו יודעים מה מנהלי נכסים באמת צריכים</p>
             </motion.div>
-            <motion.div
-              className="atlas-why-grid"
-              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.18, margin: '0px 0px -10% 0px' }}
-              variants={{
-                hidden: reducedMotion ? { opacity: 1 } : { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    duration: 0.4,
-                    ease: [0.22, 1, 0.36, 1],
-                    staggerChildren: reducedMotion ? 0 : 0.09,
-                    delayChildren: reducedMotion ? 0 : 0.08,
-                  },
-                },
-              }}
-            >
+            <div className="atlas-why-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               {[
                 { title: 'בנוי לשוק הישראלי', desc: 'עברית מלאה, RTL, חשבוניות ישראליות, שערי תשלום מקומיים — הכל מותאם לישראל.', color: '#4F46E5', iconPath: 'M3 21V5a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M12 10v4 M10 12h4' },
                 { title: 'הקמה תוך 5 דקות', desc: 'אין צורך בידע טכני. נרשמים, מוסיפים נכס, ומתחילים לעבוד.', color: '#10B981', iconPath: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' },
@@ -3026,29 +3038,40 @@ export default function Landing() {
                 { title: 'אוטומציות חכמות', desc: 'הודעות אוטומטיות, עדכוני סטטוס, תזכורות — המערכת עובדת בשבילך 24/7.', color: '#F59E0B', iconPath: 'M12 6V2 M16.24 7.76l2.83-2.83 M18 12h4 M16.24 16.24l2.83 2.83 M12 18v4 M7.76 16.24l-2.83 2.83 M6 12H2 M7.76 7.76L4.93 4.93' },
                 { title: 'דוחות בזמן אמת', desc: 'הכנסות, תפוסה, ביצועים — כל המספרים שאתה צריך, בלחיצה אחת.', color: '#EC4899', iconPath: 'M18 20V10 M12 20V4 M6 20v-6' },
                 { title: 'אבטחה ופרטיות', desc: 'הנתונים שלך מוגנים בהצפנה מתקדמת. תואם GDPR ותקנות ישראליות.', color: '#06B6D4', iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
-              ].map((item) => (
+              ].map((item, i) => (
                 <motion.div
                   key={item.title}
                   className="atlas-why-card"
-                  variants={{
-                    hidden: reducedMotion ? { opacity: 1 } : { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-                    },
+                  initial={reducedMotion ? false : { opacity: 0, y: 22 }}
+                  whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.22, margin: '0px 0px -8% 0px' }}
+                  transition={{
+                    duration: 0.72,
+                    delay: reducedMotion ? 0 : i * 0.055,
+                    ease: [0.25, 0.1, 0.25, 1],
                   }}
-                  style={{ background: 'white', borderRadius: 16, padding: '28px 28px', border: '1px solid #F3F4F6', cursor: 'default', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+                  style={{ padding: '28px 28px', cursor: 'default' }}
                 >
                   <div
-                    style={{ width: 48, height: 48, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}
+                    className="atlas-why-icon-wrap"
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 12,
+                      background: `${item.color}14`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: 14,
+                    }}
                   >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.iconPath} /></svg>
                   </div>
-                  <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif' }}>{item.title}</h3>
-                  <p style={{ fontSize: 14, color: '#6B7280', margin: 0, lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{item.desc}</p>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif', letterSpacing: '-0.02em' }}>{item.title}</h3>
+                  <p style={{ fontSize: 14, color: '#6B7280', margin: 0, lineHeight: 1.65, fontFamily: 'Heebo, sans-serif' }}>{item.desc}</p>
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
 
