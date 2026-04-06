@@ -1578,46 +1578,331 @@ export default function Landing() {
                   pointerEvents: psPhase === 'atlas' ? 'auto' : 'none',
                 }}
               >
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #F8FAFF 0%, #EEF2FF 100%)', padding: '48px 56px' }}>
-                  <div style={{ maxWidth: 420, margin: '0 auto' }}>
-                    <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden', boxShadow: '0 4px 24px rgba(79,70,229,0.08)', border: '1px solid #E0E7FF' }}>
-                      <div dir="ltr" style={{ padding: '18px 22px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, background: 'linear-gradient(90deg, rgba(79,70,229,0.04), transparent)' }}>
-                        <span style={{ fontSize: 14, fontWeight: 700, color: '#4F46E5', fontFamily: 'Heebo, sans-serif' }}>ATLAS</span>
+                <div
+                  className="atlas-demo-unified-wrap"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    overflow: 'hidden',
+                    background: 'linear-gradient(145deg, #F5F3FF 0%, #EEF2FF 45%, #F8FAFF 100%)',
+                    padding: 'clamp(28px, 4vw, 48px) clamp(20px, 3vw, 40px)',
+                  }}
+                >
+                  <div
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      opacity: 0.045,
+                      backgroundImage: 'linear-gradient(#6366F1 1px, transparent 1px), linear-gradient(90deg, #6366F1 1px, transparent 1px)',
+                      backgroundSize: '28px 28px',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                  {psPhase === 'atlas' && !reducedMotion && (
+                    <>
+                      <motion.div
+                        aria-hidden
+                        style={{
+                          position: 'absolute',
+                          width: 320,
+                          height: 320,
+                          borderRadius: '50%',
+                          top: '-12%',
+                          insetInlineStart: '-8%',
+                          background: 'radial-gradient(circle, rgba(99,102,241,0.45) 0%, transparent 68%)',
+                          filter: 'blur(48px)',
+                          pointerEvents: 'none',
+                        }}
+                        animate={{ opacity: [0.45, 0.75, 0.45], scale: [1, 1.06, 1] }}
+                        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                      <motion.div
+                        aria-hidden
+                        style={{
+                          position: 'absolute',
+                          width: 260,
+                          height: 260,
+                          borderRadius: '50%',
+                          bottom: '-5%',
+                          insetInlineEnd: '-6%',
+                          background: 'radial-gradient(circle, rgba(167,139,250,0.5) 0%, transparent 65%)',
+                          filter: 'blur(44px)',
+                          pointerEvents: 'none',
+                        }}
+                        animate={{ opacity: [0.4, 0.7, 0.4], scale: [1.05, 1, 1.05] }}
+                        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+                      />
+                    </>
+                  )}
+                  <div style={{ position: 'relative', zIndex: 1, maxWidth: 480, margin: '0 auto', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ textAlign: 'center', marginBottom: 14 }}>
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          fontSize: 11,
+                          fontWeight: 800,
+                          color: '#4338CA',
+                          fontFamily: 'Heebo, sans-serif',
+                          background: 'rgba(255,255,255,0.88)',
+                          borderRadius: 999,
+                          padding: '7px 16px',
+                          border: '1px solid rgba(99,102,241,0.22)',
+                          boxShadow: '0 4px 20px rgba(79,70,229,0.08)',
+                          backdropFilter: 'blur(10px)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 7,
+                            height: 7,
+                            borderRadius: '50%',
+                            background: '#22C55E',
+                            boxShadow: '0 0 0 4px rgba(34,197,94,0.25)',
+                          }}
+                        />
+                        חי · כל הערוצים מסונכרנים
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 14 }}>
+                      {[
+                        { label: 'Airbnb', bg: '#FF5A5F', fg: '#fff' },
+                        { label: 'Booking', bg: '#003580', fg: '#fff' },
+                        { label: 'WhatsApp', bg: '#25D366', fg: '#fff' },
+                      ].map((ch) => (
+                        <span
+                          key={ch.label}
+                          style={{
+                            fontSize: 10,
+                            fontWeight: 800,
+                            fontFamily: 'Heebo, sans-serif',
+                            padding: '5px 11px',
+                            borderRadius: 8,
+                            background: ch.bg,
+                            color: ch.fg,
+                            letterSpacing: '0.02em',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                          }}
+                        >
+                          {ch.label}
+                        </span>
+                      ))}
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(255,255,255,0.72)',
+                        borderRadius: 18,
+                        overflow: 'hidden',
+                        border: '1px solid rgba(199,210,254,0.9)',
+                        boxShadow: '0 4px 6px rgba(79,70,229,0.04), 0 24px 64px rgba(79,70,229,0.14), 0 0 0 1px rgba(255,255,255,0.8) inset',
+                        backdropFilter: 'blur(12px)',
+                      }}
+                    >
+                      <div
+                        dir="ltr"
+                        style={{
+                          padding: '16px 20px',
+                          borderBottom: '1px solid rgba(229,231,235,0.9)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 12,
+                          background: 'linear-gradient(105deg, rgba(79,70,229,0.09) 0%, rgba(255,255,255,0.4) 55%)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <span style={{ fontSize: 15, fontWeight: 800, color: '#4F46E5', fontFamily: 'Heebo, sans-serif', letterSpacing: '-0.02em' }}>ATLAS</span>
+                          <span
+                            style={{
+                              fontSize: 9,
+                              fontWeight: 800,
+                              color: '#059669',
+                              background: 'rgba(16,185,129,0.12)',
+                              padding: '3px 8px',
+                              borderRadius: 6,
+                              fontFamily: 'Heebo, sans-serif',
+                            }}
+                          >
+                            LIVE
+                          </span>
+                        </div>
                         <IsraelDemoClock active={psPhase === 'atlas'} />
-                        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>{[1,2,3].map(n=><div key={n} style={{width:8,height:8,borderRadius:'50%',background:n===3?'#4F46E5':n===2?'#F59E0B':'#EF4444'}}/>)}</div>
+                        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>{[1, 2, 3].map((n) => <div key={n} style={{ width: 8, height: 8, borderRadius: '50%', background: n === 3 ? '#4F46E5' : n === 2 ? '#F59E0B' : '#EF4444' }} />)}</div>
                       </div>
-                      <div style={{ padding: 22 }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 18 }}>
-                          {[{v:'₪48,200',l:'הכנסות',c:'#4F46E5',bg:'#EEF2FF'},{v:'92%',l:'תפוסה',c:'#7C3AED',bg:'#F5F3FF'},{v:'23',l:'הזמנות',c:'#4F46E5',bg:'#EEF2FF'}].map(k=>(
-                            <div key={k.l} style={{ background: k.bg, borderRadius: 10, padding: '14px 16px', textAlign: 'center', border: '1px solid rgba(79,70,229,0.15)' }}>
-                              <div style={{ fontSize: 18, fontWeight: 800, color: k.c, fontFamily: 'Heebo, sans-serif' }}>{k.v}</div>
-                              <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>{k.l}</div>
+                      <div style={{ padding: 20, background: 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, #FAFBFF 100%)' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
+                          {[
+                            { v: '₪48,200', l: 'הכנסות', c: '#4F46E5', bg: 'linear-gradient(160deg, #EEF2FF, #E0E7FF)', trend: '+12%', trendUp: true },
+                            { v: '92%', l: 'תפוסה', c: '#7C3AED', bg: 'linear-gradient(160deg, #F5F3FF, #EDE9FE)', trend: '+4%', trendUp: true },
+                            { v: '23', l: 'הזמנות', c: '#4F46E5', bg: 'linear-gradient(160deg, #EEF2FF, #E0E7FF)', trend: 'השבוע', trendUp: null },
+                          ].map((k) => (
+                            <div
+                              key={k.l}
+                              style={{
+                                background: k.bg,
+                                borderRadius: 12,
+                                padding: '12px 10px',
+                                textAlign: 'center',
+                                border: '1px solid rgba(99,102,241,0.14)',
+                                boxShadow: '0 2px 10px rgba(79,70,229,0.06)',
+                              }}
+                            >
+                              <div style={{ fontSize: 17, fontWeight: 900, color: k.c, fontFamily: 'Heebo, sans-serif', lineHeight: 1.1 }}>{k.v}</div>
+                              <div style={{ fontSize: 10, color: '#6B7280', marginTop: 3, fontFamily: 'Heebo, sans-serif', fontWeight: 600 }}>{k.l}</div>
+                              <div
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 3,
+                                  marginTop: 6,
+                                  fontSize: 9,
+                                  fontWeight: 700,
+                                  color: k.trendUp === true ? '#059669' : k.trendUp === false ? '#DC2626' : '#9CA3AF',
+                                  fontFamily: 'Heebo, sans-serif',
+                                }}
+                              >
+                                {k.trendUp === true && <TrendingUp size={11} strokeWidth={2.5} />}
+                                {k.trend}
+                              </div>
                             </div>
                           ))}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 52, marginBottom: 18 }}>
-                          {[35,50,45,60,70,55,75,65,85,90,80,95].map((h,i)=>(
-                            <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '4px 4px 0 0', background: `linear-gradient(180deg, rgba(79,70,229,${0.3+i*0.04}), rgba(124,58,237,${0.3+i*0.04}))` }}/>
-                          ))}
+                        <div style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: '#9CA3AF', fontFamily: 'Heebo, sans-serif' }}>מגמת הכנסות</span>
+                          <span style={{ fontSize: 9, fontWeight: 600, color: '#A5B4FC', fontFamily: 'Heebo, sans-serif' }}>12 ימים אחרונים</span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderTop: '1px solid #E5E7EB' }}>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: '#374151', fontFamily: 'Heebo, sans-serif' }}>דירת הגליל</span>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#4F46E5', background: '#EEF2FF', padding: '4px 12px', borderRadius: 8, fontFamily: 'Heebo, sans-serif' }}>מאושר</span>
+                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, height: 56, marginBottom: 16, padding: '0 2px' }}>
+                          {[35, 50, 45, 60, 70, 55, 75, 65, 85, 90, 80, 95].map((h, i) =>
+                            reducedMotion || psPhase !== 'atlas' ? (
+                              <div
+                                key={i}
+                                style={{
+                                  flex: 1,
+                                  height: `${h}%`,
+                                  borderRadius: '5px 5px 2px 2px',
+                                  background: `linear-gradient(180deg, #818CF8 0%, #6366F1 55%, #4F46E5 100%)`,
+                                  boxShadow: '0 -2px 12px rgba(79,70,229,0.15)',
+                                }}
+                              />
+                            ) : (
+                              <motion.div
+                                key={i}
+                                style={{
+                                  flex: 1,
+                                  height: `${h}%`,
+                                  borderRadius: '5px 5px 2px 2px',
+                                  background: 'linear-gradient(180deg, #818CF8 0%, #6366F1 55%, #4F46E5 100%)',
+                                  boxShadow: '0 -2px 12px rgba(79,70,229,0.15)',
+                                  transformOrigin: '50% 100%',
+                                }}
+                                initial={{ scaleY: 0, opacity: 0.5 }}
+                                animate={psPhase === 'atlas' ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0.5 }}
+                                transition={{ type: 'spring', stiffness: 380, damping: 28, delay: 0.04 * i }}
+                              />
+                            )
+                          )}
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '14px 12px',
+                            borderRadius: 12,
+                            border: '1px solid #E5E7EB',
+                            background: 'linear-gradient(90deg, #FFFFFF, #F9FAFB)',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                            <div
+                              style={{
+                                width: 44,
+                                height: 44,
+                                borderRadius: 10,
+                                flexShrink: 0,
+                                background: 'linear-gradient(135deg, #A5B4FC, #6366F1)',
+                                boxShadow: '0 4px 14px rgba(79,70,229,0.25)',
+                              }}
+                            />
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontSize: 13, fontWeight: 800, color: '#111827', fontFamily: 'Heebo, sans-serif' }}>דירת הגליל</div>
+                              <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>צפון · דירוג אורחים 4.9</div>
+                            </div>
+                          </div>
+                          <span
+                            style={{
+                              fontSize: 10,
+                              fontWeight: 800,
+                              color: '#fff',
+                              background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
+                              padding: '6px 14px',
+                              borderRadius: 999,
+                              fontFamily: 'Heebo, sans-serif',
+                              boxShadow: '0 4px 14px rgba(79,70,229,0.35)',
+                              flexShrink: 0,
+                            }}
+                          >
+                            מאושר
+                          </span>
                         </div>
                       </div>
                     </div>
-                    <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', background: 'linear-gradient(180deg, #EEF2FF, #E0E7FF)', borderRadius: 12, border: '1px solid #C7D2FE', boxShadow: '0 2px 12px rgba(79,70,229,0.1)' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#4F46E5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    <motion.div
+                      style={{
+                        marginTop: 14,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        padding: '14px 18px',
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.95), #EEF2FF)',
+                        borderRadius: 14,
+                        border: '1px solid rgba(199,210,254,0.95)',
+                        boxShadow: '0 8px 28px rgba(79,70,229,0.12)',
+                      }}
+                      initial={reducedMotion ? false : { opacity: 0, y: 14 }}
+                      animate={psPhase === 'atlas' && !reducedMotion ? { opacity: 1, y: 0 } : reducedMotion && psPhase === 'atlas' ? { opacity: 1, y: 0 } : { opacity: 0.98, y: 0 }}
+                      transition={{ type: 'spring', stiffness: 320, damping: 26, delay: reducedMotion ? 0 : 0.35 }}
+                    >
+                      <div
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #4F46E5, #6366F1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 4px 16px rgba(79,70,229,0.35)',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5" /></svg>
                       </div>
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: '#4F46E5', fontFamily: 'Heebo, sans-serif' }}>הזמנה חדשה התקבלה</div>
-                        <div style={{ fontSize: 11, color: '#6B7280', fontFamily: 'Heebo, sans-serif' }}>₪1,200 · דוד כ.</div>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: '#312E81', fontFamily: 'Heebo, sans-serif' }}>הזמנה חדשה התקבלה</div>
+                        <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>
+                          ₪1,200 · דוד כ. · סונכרן מאוטומטית
+                        </div>
                       </div>
+                    </motion.div>
+                    <div
+                      style={{
+                        marginTop: 'auto',
+                        paddingTop: 20,
+                        textAlign: 'center',
+                        fontSize: 15,
+                        fontWeight: 800,
+                        fontFamily: 'Heebo, sans-serif',
+                        background: 'linear-gradient(90deg, #4F46E5, #7C3AED, #4F46E5)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      מערכת אחת. הכל במקום אחד.
                     </div>
-                  </div>
-                  <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', fontSize: 13, color: '#4F46E5', fontWeight: 700, fontFamily: 'Heebo, sans-serif' }}>
-                    מערכת אחת. הכל במקום אחד.
                   </div>
                 </div>
               </div>
