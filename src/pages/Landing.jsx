@@ -1266,44 +1266,6 @@ export default function Landing() {
         </div>
 
         {/* ════════════════════════════════════════
-            TRUST STRIP — INTEGRATION LOGOS
-        ════════════════════════════════════════ */}
-        <div style={{ background: '#FFFFFF', borderBottom: '1px solid #F3F4F6', padding: '28px 24px' }}>
-          <div style={{ maxWidth: 1000, margin: '0 auto', textAlign: 'center' }}>
-            <p style={{ fontSize: 13, color: '#9CA3AF', fontWeight: 500, marginBottom: 20, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-              משתלב עם הכלים שאתם כבר משתמשים בהם
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: '12px 28px' }}>
-              {[
-                { name: 'Airbnb', color: '#FF5A5F', bg: '#FFF0F0' },
-                { name: 'Booking.com', color: '#003580', bg: '#EEF3FF' },
-                { name: 'Stripe', color: '#635BFF', bg: '#F0EFFF' },
-                { name: 'WhatsApp', color: '#25D366', bg: '#F0FDF4' },
-                { name: 'Google', color: '#4285F4', bg: '#EFF6FF' },
-                { name: 'Expedia', color: '#FFCA00', bg: '#FEFCE8', textColor: '#92400E' },
-              ].map((brand) => (
-                <div
-                  key={brand.name}
-                  style={{
-                    background: brand.bg,
-                    borderRadius: 10,
-                    padding: '10px 18px',
-                    minHeight: 44,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <span style={{ fontSize: 14, fontWeight: 700, color: brand.textColor || brand.color, fontFamily: 'Heebo, sans-serif' }}>
-                    {brand.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ════════════════════════════════════════
             SECTION A — מספרים שמדברים (Social Proof Numbers)
         ════════════════════════════════════════ */}
         <section style={{ padding: '80px 24px', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
