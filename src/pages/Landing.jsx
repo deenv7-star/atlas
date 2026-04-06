@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Calendar, CreditCard, Users, CheckSquare, MessageSquare, FileText,
@@ -205,13 +205,19 @@ function NewsletterSection() {
   );
 }
 
-/** Live clock for hero dashboard mock — avoids static “frozen” time in the demo */
-function IsraelDemoClock() {
+/** Live clock for scroll-driven ATLAS mock — ticks only when layer is visible; snaps on reveal */
+function IsraelDemoClock({ active = true }) {
   const [now, setNow] = useState(() => new Date());
+  useLayoutEffect(() => {
+    if (!active) return;
+    setNow(new Date());
+  }, [active]);
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
+    if (!active) return;
+    const tick = () => setNow(new Date());
+    const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [active]);
   const text = now.toLocaleTimeString('he-IL', {
     hour: '2-digit',
     minute: '2-digit',
@@ -285,20 +291,30 @@ export default function Landing() {
   useEffect(() => {
     const el = psSectionRef.current;
     if (!el) return;
-    const onScroll = () => {
+    let rafId = 0;
+    const updatePhase = () => {
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
       const isDesktop = vh > 700;
-      // chaos → unify only after section has moved further into view; atlas only when nearly centered
       const threshold1 = isDesktop ? vh * 0.30 : vh * 0.44;
       const threshold2 = isDesktop ? vh * 0.065 : vh * 0.14;
       if (rect.top > threshold1) setPsPhase('chaos');
       else if (rect.top > threshold2) setPsPhase('unify');
       else setPsPhase('atlas');
     };
-    onScroll(); // initial
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        updatePhase();
+      });
+    };
+    updatePhase();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Demo modal keyboard navigation (arrows, ESC)
@@ -1524,7 +1540,7 @@ export default function Landing() {
                     <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden', boxShadow: '0 4px 24px rgba(79,70,229,0.08)', border: '1px solid #E0E7FF' }}>
                       <div dir="ltr" style={{ padding: '18px 22px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, background: 'linear-gradient(90deg, rgba(79,70,229,0.04), transparent)' }}>
                         <span style={{ fontSize: 14, fontWeight: 700, color: '#4F46E5', fontFamily: 'Heebo, sans-serif' }}>ATLAS</span>
-                        <IsraelDemoClock />
+                        <IsraelDemoClock active={psPhase === 'atlas'} />
                         <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>{[1,2,3].map(n=><div key={n} style={{width:8,height:8,borderRadius:'50%',background:n===3?'#4F46E5':n===2?'#F59E0B':'#EF4444'}}/>)}</div>
                       </div>
                       <div style={{ padding: 22 }}>
