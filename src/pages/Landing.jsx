@@ -3,7 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import {
   Calendar, CreditCard, Users, CheckSquare, MessageSquare, FileText,
   Star, Zap, BarChart2, Link as LinkIcon, Receipt, Shield,
-  ChevronDown, ChevronLeft, ChevronRight, X
+  ChevronDown, ChevronLeft, ChevronRight, X,
+  Home, Building2, Tent, Waves, Hotel, Target, House, MessageCircle,
+  TrendingUp, PieChart,
 } from 'lucide-react';
 import SupportChat from '@/components/landing/SupportChat';
 import CookieConsent from '@/components/landing/CookieConsent';
@@ -289,7 +291,7 @@ export default function Landing() {
     { bg: 'linear-gradient(135deg,#8B5CF6,#C4B5FD)', letter: 'ה' },
   ];
 
-  const MARQUEE_TEXT = 'מתחם הגליל ✦ צימר בגולן ✦ וילות כרמל ✦ ריזורט ים המלח ✦ צימרים בצפון ✦ מתחם הנגב ✦ נאות מדבר ✦ בקתות גולן ✦\u00A0\u00A0\u00A0';
+  const MARQUEE_TEXT = 'מתחם הגליל · צימר בגולן · וילות כרמל · ריזורט ים המלח · צימרים בצפון · מתחם הנגב · נאות מדבר · בקתות גולן ·\u00A0\u00A0\u00A0';
 
   const PAIN_POINTS = [
     'הזמנות מפוזרות ב-WhatsApp, אימייל ו-Booking.com',
@@ -1094,7 +1096,7 @@ export default function Landing() {
                         <div className="atlas-dot" style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981' }} />
                         <span style={{ fontSize: 11, color: '#10B981', fontWeight: 600 }}>פעיל</span>
                       </div>
-                      <span style={{ fontSize: 11, color: '#9CA3AF' }}>לוח בקרה ✦ ATLAS</span>
+                      <span style={{ fontSize: 11, color: '#9CA3AF' }}>לוח בקרה · ATLAS</span>
                     </div>
 
                     <div style={{ background: 'linear-gradient(135deg, rgba(79,70,229,0.08), rgba(124,58,237,0.06))', borderRadius: 10, padding: '10px 14px', marginBottom: 14, border: '1px solid rgba(79,70,229,0.12)' }}>
@@ -1171,7 +1173,7 @@ export default function Landing() {
                   }}
                 >
                   <div style={{ width: 34, height: 34, borderRadius: 9, background: 'rgba(79,70,229,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <span style={{ fontSize: 16 }}>📈</span>
+                    <TrendingUp size={18} strokeWidth={2} color="#4F46E5" aria-hidden />
                   </div>
                   <div>
                     <div style={{ fontSize: 15, fontWeight: 800, color: '#4F46E5', lineHeight: 1 }}>+62%</div>
@@ -1848,8 +1850,8 @@ export default function Landing() {
         <section id="atlas-audience" style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1100, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 44 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#EEF2FF', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
-                <span style={{ fontSize: 14 }}>🎯</span>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#EEF2FF', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
+                <Target size={15} strokeWidth={2.25} color="#4338CA" aria-hidden />
                 <span style={{ fontSize: 13, fontWeight: 600, color: '#4338CA' }}>תפקיד וסוג עסק — במקום אחד</span>
               </div>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px', fontFamily: 'Heebo, sans-serif' }}>למי ATLAS מתאימה?</h2>
@@ -1866,7 +1868,7 @@ export default function Landing() {
               <div className="atlas-how-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
                 {[
                   {
-                    emoji: '🏠',
+                    Icon: Home,
                     title: 'בעל נכסים עצמאי',
                     pain: 'מנהל 1–5 נכסים לבד, מבלה שעות על תיאום ידני',
                     gains: ['הזמנות אוטומטיות מ-Airbnb ו-WhatsApp', 'גביית תשלומים ללא מעקב ידני', 'חיסכון של 15–20 שעות בשבוע'],
@@ -1874,7 +1876,7 @@ export default function Landing() {
                     color: '#4F46E5', bg: '#EEF2FF',
                   },
                   {
-                    emoji: '🏢',
+                    Icon: Building2,
                     title: 'חברת ניהול נכסים',
                     pain: 'מנהלת נכסים של לקוחות מרובים, צריכה שקיפות ודיווח',
                     gains: ['דוחות בעלים אוטומטיים', 'ניהול עשרות נכסים ממסך אחד', 'SLA מובטח ו-SSO לצוות'],
@@ -1883,7 +1885,7 @@ export default function Landing() {
                     featured: true,
                   },
                   {
-                    emoji: '💼',
+                    Icon: PieChart,
                     title: 'מנהל/ת כספים ו-CFO',
                     pain: 'צריך ROI ברור ושקיפות פיננסית לפני כל השקעה',
                     gains: ['מחשבון ROI מובנה — ראה חיסכון בזמן אמת', 'דוחות רווח/הפסד אוטומטיים', 'הצפנה מלאה + תאימות GDPR'],
@@ -1910,8 +1912,8 @@ export default function Landing() {
                         הפופולרי ביותר
                       </div>
                     )}
-                    <div style={{ width: 52, height: 52, borderRadius: 14, background: p.featured ? 'rgba(255,255,255,0.15)' : p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, fontSize: 26 }}>
-                      {p.emoji}
+                    <div style={{ width: 52, height: 52, borderRadius: 14, background: p.featured ? 'rgba(255,255,255,0.15)' : p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+                      <p.Icon size={24} strokeWidth={1.75} color={p.featured ? '#FFFFFF' : p.color} aria-hidden />
                     </div>
                     <h4 style={{ fontSize: 20, fontWeight: 800, color: p.featured ? 'white' : '#111827', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>{p.title}</h4>
                     <p style={{ fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.7)' : '#6B7280', margin: '0 0 18px', lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{p.pain}</p>
@@ -1940,8 +1942,8 @@ export default function Landing() {
               }}
             >
               <div style={{ textAlign: 'center', marginBottom: 28 }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#F0FDF4', borderRadius: 999, padding: '6px 16px', marginBottom: 12 }}>
-                  <span style={{ fontSize: 14 }}>🏡</span>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#F0FDF4', borderRadius: 999, padding: '6px 16px', marginBottom: 12 }}>
+                  <House size={15} strokeWidth={2.25} color="#065F46" aria-hidden />
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#065F46' }}>מותאם לכל סוג נכס</span>
                 </div>
                 <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>לפי סוג נכס ופעילות</h3>
@@ -1950,7 +1952,7 @@ export default function Landing() {
               <div className="atlas-use-cases-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
                 {[
                   {
-                    emoji: '🏕️',
+                    Icon: Tent,
                     title: 'צימרים ובקתות',
                     color: '#10B981',
                     bg: '#F0FDF4',
@@ -1959,7 +1961,7 @@ export default function Landing() {
                     cta: 'מתאים לצימרים ←',
                   },
                   {
-                    emoji: '🏢',
+                    Icon: Building2,
                     title: 'חברות ניהול נכסים',
                     color: '#4F46E5',
                     bg: '#EEF2FF',
@@ -1970,7 +1972,7 @@ export default function Landing() {
                     cta: 'מתאים לחברות ←',
                   },
                   {
-                    emoji: '🌊',
+                    Icon: Waves,
                     title: 'וילות ובתי נופש',
                     color: '#0EA5E9',
                     bg: '#F0F9FF',
@@ -1979,7 +1981,7 @@ export default function Landing() {
                     cta: 'מתאים לוילות ←',
                   },
                   {
-                    emoji: '🏨',
+                    Icon: Hotel,
                     title: 'מלונות בוטיק',
                     color: '#F59E0B',
                     bg: '#FFFBEB',
@@ -1987,7 +1989,9 @@ export default function Landing() {
                     items: ['Front-desk דיגיטלי', 'ניהול חדרים וקטגוריות', 'אינטגרציה עם Booking.com', 'דוחות תפוסה ורווחיות'],
                     cta: 'מתאים למלונות ←',
                   },
-                ].map((uc, i) => (
+                ].map((uc, i) => {
+                  const UcIcon = uc.Icon;
+                  return (
                   <div
                     key={i}
                     className="atlas-reveal"
@@ -2008,7 +2012,9 @@ export default function Landing() {
                         {uc.badge}
                       </div>
                     )}
-                    <div style={{ fontSize: 36, marginBottom: 12 }}>{uc.emoji}</div>
+                    <div style={{ width: 48, height: 48, borderRadius: 14, marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', background: uc.featured ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.6)' }}>
+                      <UcIcon size={26} strokeWidth={1.75} color={uc.featured ? '#FFFFFF' : uc.color} aria-hidden />
+                    </div>
                     <h4 style={{ fontSize: 18, fontWeight: 800, color: uc.featured ? 'white' : '#111827', margin: '0 0 16px', fontFamily: 'Heebo, sans-serif' }}>{uc.title}</h4>
                     <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {uc.items.map((item, j) => (
@@ -2020,7 +2026,8 @@ export default function Landing() {
                     </ul>
                     <div style={{ fontSize: 13, fontWeight: 700, color: uc.featured ? 'rgba(255,255,255,0.7)' : uc.color, fontFamily: 'Heebo, sans-serif' }}>{uc.cta}</div>
                   </div>
-                ))}
+                );
+                })}
               </div>
             </div>
           </div>
@@ -2385,7 +2392,7 @@ export default function Landing() {
           <div style={{ maxWidth: 800, margin: '0 auto', position: 'relative' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', padding: '6px 16px', borderRadius: 999, marginBottom: 16 }}>
-                <span style={{ fontSize: 14 }}>💬</span>
+                <MessageCircle size={15} strokeWidth={2.25} color="#4338CA" aria-hidden />
                 <span style={{ fontSize: 13, fontWeight: 600, color: '#4338CA' }}>יש שאלות? יש תשובות</span>
               </div>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 10px' }}>שאלות נפוצות</h2>
@@ -2563,7 +2570,8 @@ export default function Landing() {
                 onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'none'; }}
               >
-                💬 קבע דמו אישי ב-WhatsApp
+                <MessageCircle size={18} strokeWidth={2} aria-hidden style={{ flexShrink: 0 }} />
+                קבע דמו אישי ב-WhatsApp
               </a>
             </div>
             <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.70)', marginTop: 20 }}>
@@ -2720,7 +2728,7 @@ export default function Landing() {
                 onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
                 onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; }}
               >hello@atlas.app</a>
-              <p style={{ fontSize: 14, color: '#6B7280', margin: 0 }}>פותח בישראל 🇮🇱</p>
+              <p style={{ fontSize: 14, color: '#6B7280', margin: 0 }}>פותח בישראל</p>
             </div>
           </div>
         </footer>
