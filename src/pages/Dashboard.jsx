@@ -63,7 +63,7 @@ function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, tre
     <motion.div whileHover={{ y: -2, scale: 1.01 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }}>
       <LiquidGlassCard tint={tint} size="sm" className="h-full" shimmer={false}>
         <div className="flex items-start justify-between mb-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{title}</p>
+          <p className="text-xs font-semibold text-gray-500 leading-snug">{title}</p>
           <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0", iconClass)}>
             <Icon style={{ width: '16px', height: '16px' }} />
           </div>
@@ -169,7 +169,7 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
           >
             <Icon className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
           </div>
-          <h2 className="text-sm font-semibold text-gray-800">{title}</h2>
+          <h2 className="text-base font-bold text-gray-900 tracking-tight">{title}</h2>
         </div>
         <Link to={viewAllLink}>
           <button className="flex items-center gap-0.5 text-xs font-medium transition-colors" style={{ color: '#00D1C1' }}>
@@ -185,11 +185,12 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
             {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}
           </div>
         ) : React.Children.count(children) === 0 ? (
-          <div className="py-10 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-3">
+          <div className="py-10 text-center px-2">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 flex items-center justify-center mx-auto mb-3 ring-1 ring-gray-100/80">
               <EmptyIcon className="w-6 h-6 text-gray-300" />
             </div>
-            <p className="text-sm text-gray-400 mb-3">{emptyText}</p>
+            <p className="text-sm text-gray-500 mb-1.5 font-medium">{emptyText}</p>
+            <p className="text-xs text-gray-400 leading-relaxed max-w-[220px] mx-auto">כשהנתונים יגיעו — הם יופיעו כאן מיד, בלי לחפש.</p>
             {addLink && (
               <Link to={addLink}>
                 <Button size="sm" variant="outline" className="text-xs min-h-[44px] h-11 rounded-lg px-4 touch-manipulation">
@@ -354,23 +355,49 @@ export default function Dashboard({ user, selectedPropertyId }) {
     return 'לילה טוב';
   })();
 
+  const delightLine = useMemo(() => {
+    const lines = [
+      'הכל במקום אחד — בדיוק כמו שחלמת.',
+      'פחות רעש, יותר שליטה. ככה זה אמור להרגיש.',
+      'פשוט, ברור, בלי כאוס — ברוך הבא הביתה.',
+      'אם זה נראה קל — זה בדיוק הרעיון.',
+    ];
+    const d = new Date();
+    return lines[(d.getDate() + d.getMonth()) % lines.length];
+  }, []);
+
   return (
-    <div className="min-h-full p-4 md:p-6 space-y-5 max-w-7xl mx-auto animate-fade-in">
+    <div className="min-h-full p-4 md:p-6 space-y-6 max-w-7xl mx-auto animate-fade-in">
 
       {/* ── Hero Banner ── */}
       <LiquidBackground
-        className="rounded-2xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0B1220 0%, #0f1a2e 55%, #111827 100%)' }}
+        className="rounded-2xl overflow-hidden relative"
+        style={{ background: 'linear-gradient(135deg, #0B1220 0%, #0f1a2e 50%, #111827 100%)' }}
       >
-        <div className="relative px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium mb-1" style={{ color: 'rgba(0,209,193,0.7)' }}>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
+          <div className="absolute -top-24 -right-16 w-[280px] h-[280px] rounded-full opacity-40 blur-3xl" style={{ background: 'radial-gradient(circle, rgba(0,209,193,0.45) 0%, transparent 70%)' }} />
+          <div className="absolute -bottom-20 -left-12 w-[240px] h-[240px] rounded-full opacity-35 blur-3xl" style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%)' }} />
+        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="relative px-6 py-6 md:py-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5"
+        >
+          <div className="max-w-xl">
+            <p className="text-sm font-medium mb-1.5" style={{ color: 'rgba(0,209,193,0.85)' }}>
               {format(now, "EEEE, d MMMM yyyy", { locale: he })}
             </p>
-            <h1 className="text-xl md:text-2xl font-bold text-white">
-              {greeting}, {userName} 👋
+            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
+              {greeting}, {userName}
+              <span className="inline-block mr-1.5" aria-hidden>👋</span>
             </h1>
-            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.40)' }}>הנה סיכום פעילות העסק שלך</p>
+            <p className="text-sm md:text-[15px] mt-2 leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              {delightLine}
+            </p>
+            <p className="text-xs mt-2 font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              הנה מה שקורה אצלך עכשיו — בלי לרדוף אחרי טבלאות.
+            </p>
           </div>
           <div className="flex gap-2 flex-shrink-0 flex-wrap">
             <Link to={createPageUrl('Leads')}>
@@ -404,7 +431,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
               </ShimmerButton>
             </Link>
           </div>
-        </div>
+        </motion.div>
       </LiquidBackground>
 
       {/* ── Today Section (mobile-first) ── */}
@@ -525,7 +552,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
           viewAllLink={createPageUrl('Bookings')}
           loading={bookingsLoading}
           emptyIcon={CalendarDays}
-          emptyText="אין הזמנות קרובות"
+          emptyText="אין עדיין הזמנות קרובות"
           addLink={createPageUrl('Bookings')}
         >
           {upcomingBookings.map(b => <BookingRow key={b.id} booking={b} />)}
@@ -538,7 +565,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
           viewAllLink={createPageUrl('Leads')}
           loading={leadsLoading}
           emptyIcon={Users}
-          emptyText="אין לידים עדיין"
+          emptyText="עדיין אין לידים — רגע אחד ומתחילים"
           addLink={createPageUrl('Leads')}
         >
           {recentLeads.map(l => <LeadRow key={l.id} lead={l} />)}
@@ -546,12 +573,15 @@ export default function Dashboard({ user, selectedPropertyId }) {
       </div>
 
       {/* ── Quick Actions ── */}
-      <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,209,193,0.12)' }}>
-            <Zap className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
+      <div className="rounded-2xl p-5 md:p-6" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 24px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.95)' }}>
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,209,193,0.12)' }}>
+              <Zap className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
+            </div>
+            <h2 className="text-base font-bold text-gray-900 tracking-tight">מה נעשה עכשיו?</h2>
           </div>
-          <h2 className="text-sm font-semibold text-gray-800">פעולות מהירות</h2>
+          <p className="text-xs text-gray-500 mr-9 leading-relaxed">קיצורי דרך לפעולות שאתה הכי צריך — בלחיצה אחת.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <QuickAction label="ליד חדש"      icon={Users}         page="Leads"     iconClass="icon-purple" />
@@ -693,10 +723,10 @@ export default function Dashboard({ user, selectedPropertyId }) {
             <h3 className="text-sm font-semibold text-gray-800">פעילות אחרונה</h3>
           </div>
           {bookings.length === 0 && leads.length === 0 ? (
-            <div className="text-center py-6">
+            <div className="text-center py-6 px-2">
               <Activity className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-              <p className="text-sm text-gray-400">אין פעילות עדיין</p>
-              <p className="text-xs text-gray-300">התחל להוסיף הזמנות ולידים</p>
+              <p className="text-sm font-medium text-gray-500">עדיין שקט פה</p>
+              <p className="text-xs text-gray-400 mt-1 leading-relaxed">ברגע שתוסיף הזמנה או ליד — נרקום לך ציר זמן ברור.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -729,14 +759,14 @@ export default function Dashboard({ user, selectedPropertyId }) {
       </div>
 
       {/* ── Premium Features Teaser ── */}
-      <div className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, rgba(0,209,193,0.05) 0%, rgba(255,255,255,0.95) 50%, rgba(139,92,246,0.05) 100%)', border: '1px solid rgba(0,209,193,0.15)', boxShadow: '0 2px 16px rgba(0,0,0,0.05)' }}>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-sm">
+      <div className="rounded-2xl p-6 md:p-7" style={{ background: 'linear-gradient(135deg, rgba(0,209,193,0.06) 0%, rgba(255,255,255,0.96) 48%, rgba(139,92,246,0.06) 100%)', border: '1px solid rgba(0,209,193,0.14)', boxShadow: '0 4px 28px rgba(0,209,193,0.06)' }}>
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
             <Crown className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
           </div>
           <div>
-            <h2 className="text-base font-bold text-gray-900">שדרג את החוויה שלך</h2>
-            <p className="text-xs text-gray-500">גלה את כל מה ש-ATLAS יכול לעשות עבורך</p>
+            <h2 className="text-base md:text-lg font-bold text-gray-900 tracking-tight">עוד קסם בפנים</h2>
+            <p className="text-xs md:text-sm text-gray-500 leading-relaxed">תכונות שחוסכות זמן כל יום — כדאי להכיר.</p>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

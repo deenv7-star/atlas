@@ -73,6 +73,11 @@
   * {
     @apply border-border;
   }
+  /* App shell (logged-in): warmer Hebrew-first stack */
+  .atlas-app-shell {
+    font-family: 'Heebo', 'Inter', system-ui, sans-serif;
+  }
+
   body {
     @apply text-foreground;
     background-color: var(--page-bg);
