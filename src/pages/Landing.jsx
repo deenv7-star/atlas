@@ -790,6 +790,47 @@ export default function Landing() {
           .atlas-feat-testi { padding: 24px 20px !important; }
           .atlas-use-cases-grid { grid-template-columns: 1fr !important; }
           .atlas-personas-grid { grid-template-columns: 1fr !important; }
+
+          /* Features (#features) — bento readable on phone; no overlapping mocks */
+          .atlas-features-section {
+            padding-left: max(16px, env(safe-area-inset-left)) !important;
+            padding-right: max(16px, env(safe-area-inset-right)) !important;
+          }
+          .atlas-features-intro { margin-bottom: 40px !important; }
+          .atlas-features-lead { font-size: 16px !important; line-height: 1.55 !important; }
+          .atlas-bento-hero-card,
+          .atlas-bento-auto-card {
+            padding: 20px 16px !important;
+            min-height: auto !important;
+            overflow: visible !important;
+          }
+          .atlas-bento-calendar-mock,
+          .atlas-bento-auto-mock {
+            position: static !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            left: auto !important;
+            bottom: auto !important;
+          }
+          .atlas-bento-calendar-mock {
+            margin-top: 18px !important;
+            max-width: 260px !important;
+            width: 100% !important;
+          }
+          .atlas-bento-auto-mock {
+            margin-top: 16px !important;
+            max-width: 260px !important;
+            width: 100% !important;
+          }
+          .atlas-bento-card-title { font-size: 18px !important; line-height: 1.3 !important; }
+          .atlas-bento-grid .atlas-feat-card { padding: 20px 16px !important; }
+          .atlas-feat-card:hover { transform: none !important; }
+          .atlas-features-compare { margin-top: 48px !important; }
+          .atlas-features-compare-title { font-size: 22px !important; margin-bottom: 20px !important; }
+          .atlas-compare-scroll { border-radius: 12px !important; }
+          .atlas-compare-table { min-width: 420px !important; }
+          .atlas-compare-table th,
+          .atlas-compare-table td { padding: 12px 10px !important; font-size: 12px !important; }
         }
 
         @media (max-width: 480px) {
@@ -800,6 +841,15 @@ export default function Landing() {
           .atlas-bento-grid { gap: 12px !important; }
           .atlas-section-title { font-size: 22px !important; }
           .atlas-section-sub { font-size: 13px !important; }
+          .atlas-features-lead { font-size: 15px !important; }
+          .atlas-compare-table { min-width: 320px !important; }
+          .atlas-compare-table th,
+          .atlas-compare-table td { padding: 10px 6px !important; font-size: 11px !important; }
+          .atlas-features-compare-title { font-size: 19px !important; }
+          .atlas-features-section {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
           .atlas-ps-grid > div { padding: 20px 16px !important; }
           .atlas-ps-grid > div h3 { font-size: 16px !important; }
           .atlas-nav { padding: 10px 12px !important; }
@@ -1487,26 +1537,26 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 2 — BENTO FEATURES GRID
         ════════════════════════════════════════ */}
-        <section id="features" style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
+        <section id="features" className="atlas-features-section" style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 64 }}>
+            <div className="atlas-reveal atlas-features-intro" style={{ textAlign: 'center', marginBottom: 64 }}>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מערכת אחת. במקום 6 כלים שונים.</h2>
-              <p style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>פלטפורמה אחת שמחליפה 6 כלים שונים</p>
+              <p className="atlas-features-lead" style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>פלטפורמה אחת שמחליפה 6 כלים שונים</p>
             </div>
 
             {/* Bento grid — varied sizes */}
             <div className="atlas-bento-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridTemplateRows: 'auto', gap: 16 }}>
               {/* LARGE — Bookings (spans 2 cols) */}
-              <div className="atlas-feat-card atlas-reveal atlas-bento-large" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', border: '1px solid #C7D2FE', borderRadius: 20, padding: 28, position: 'relative', overflow: 'hidden', minHeight: 220 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-large atlas-bento-hero-card" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', border: '1px solid #C7D2FE', borderRadius: 20, padding: 28, position: 'relative', overflow: 'hidden', minHeight: 220 }}>
                 <div style={{ position: 'relative', zIndex: 1 }}>
                   <div style={{ width: 48, height: 48, background: '#4F46E5', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 16px rgba(79,70,229,0.25)' }}>
                     <Calendar size={24} color="white" />
                   </div>
-                  <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px' }}>ניהול הזמנות חכם</h3>
+                  <h3 className="atlas-bento-card-title" style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px' }}>ניהול הזמנות חכם</h3>
                   <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.6, margin: 0, maxWidth: 320 }}>קבל הזמנות מכל הערוצים במקום אחד. תצוגת לוח שנה חכמה עם סינכרון אוטומטי.</p>
                 </div>
-                {/* Mini calendar mockup floating */}
-                <div style={{ position: 'absolute', bottom: 16, left: 16, background: 'white', borderRadius: 12, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', border: '1px solid #E5E7EB', width: 180 }}>
+                {/* Mini calendar mockup — absolute on desktop; stacked on mobile (see CSS) */}
+                <div className="atlas-bento-calendar-mock" style={{ position: 'absolute', bottom: 16, left: 16, background: 'white', borderRadius: 12, padding: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', border: '1px solid #E5E7EB', width: 180 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 4 }}>
                     {['א','ב','ג','ד','ה','ו','ש'].map(d => <div key={d} style={{ fontSize: 8, color: '#9CA3AF', textAlign: 'center' }}>{d}</div>)}
                   </div>
@@ -1564,15 +1614,15 @@ export default function Landing() {
               </div>
 
               {/* LARGE — Automations (spans 2 cols) */}
-              <div className="atlas-feat-card atlas-reveal atlas-bento-large" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #FDF4FF, #FAE8FF)', border: '1px solid #E9D5FF', borderRadius: 20, padding: 28, overflow: 'hidden', position: 'relative', minHeight: 180 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-large atlas-bento-auto-card" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #FDF4FF, #FAE8FF)', border: '1px solid #E9D5FF', borderRadius: 20, padding: 28, overflow: 'hidden', position: 'relative', minHeight: 180 }}>
                 <div style={{ position: 'relative', zIndex: 1 }}>
                   <div style={{ width: 48, height: 48, background: '#7C3AED', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 16px rgba(124,58,237,0.25)' }}>
                     <Zap size={24} color="white" />
                   </div>
-                  <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px' }}>אוטומציות חכמות</h3>
+                  <h3 className="atlas-bento-card-title" style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px' }}>אוטומציות חכמות</h3>
                   <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.6, margin: 0, maxWidth: 340 }}>הגדר חוקים אוטומטיים — חסוך שעות עבודה כל שבוע. הודעות, משימות, תזכורות — הכל אוטומטי.</p>
                 </div>
-                <div style={{ position: 'absolute', bottom: 16, left: 16, display: 'flex', flexDirection: 'column', gap: 6, width: 200 }}>
+                <div className="atlas-bento-auto-mock" style={{ position: 'absolute', bottom: 16, left: 16, display: 'flex', flexDirection: 'column', gap: 6, width: 200 }}>
                   {['הודעת ברוכים הבאים', 'תזכורת תשלום', 'בקשת ביקורת'].map((r, i) => (
                     <div key={i} style={{ background: 'white', borderRadius: 8, padding: '6px 10px', fontSize: 10, fontWeight: 600, color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #E9D5FF' }}>
                       {r}
@@ -1654,10 +1704,10 @@ export default function Landing() {
             </div>
 
             {/* Comparison table — למה ATLAS ולא Guesty או Hostaway? */}
-            <div className="atlas-reveal" style={{ marginTop: 80 }}>
-              <h2 className="atlas-section-title" style={{ fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 32px', textAlign: 'center' }}>למה ATLAS ולא Guesty או Hostaway?</h2>
-              <div style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid #E5E7EB', background: 'white', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500, fontFamily: 'Heebo, sans-serif' }}>
+            <div className="atlas-reveal atlas-features-compare" style={{ marginTop: 80 }}>
+              <h2 className="atlas-section-title atlas-features-compare-title" style={{ fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 32px', textAlign: 'center' }}>למה ATLAS ולא Guesty או Hostaway?</h2>
+              <div className="atlas-compare-scroll" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: 16, border: '1px solid #E5E7EB', background: 'white', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+                <table className="atlas-compare-table" style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500, fontFamily: 'Heebo, sans-serif' }}>
                   <thead>
                     <tr style={{ background: '#F9FAFB', borderBottom: '2px solid #E5E7EB' }}>
                       <th style={{ padding: '16px 20px', textAlign: 'right', fontWeight: 700, color: '#111827', fontSize: 14 }}>פיצ'ר</th>
