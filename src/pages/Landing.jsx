@@ -3346,7 +3346,7 @@ export default function Landing() {
           </div>
         )}
 
-      <SupportChat autoOpenAfterMs={30000} />
+      <SupportChat />
       <CookieConsent />
       </div>
     </>
