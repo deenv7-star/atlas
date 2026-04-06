@@ -205,6 +205,37 @@ function NewsletterSection() {
   );
 }
 
+/** Live clock for hero dashboard mock — avoids static “frozen” time in the demo */
+function IsraelDemoClock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const text = now.toLocaleTimeString('he-IL', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Jerusalem',
+  });
+  return (
+    <span
+      style={{
+        fontSize: 12,
+        fontWeight: 600,
+        color: '#64748B',
+        fontFamily: 'ui-monospace, "Cascadia Code", monospace',
+        fontVariantNumeric: 'tabular-nums',
+        letterSpacing: '0.02em',
+      }}
+      suppressHydrationWarning
+    >
+      {text}
+    </span>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Landing() {
   const [scrolled, setScrolled] = useState(false);
@@ -1478,9 +1509,10 @@ export default function Landing() {
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #F8FAFF 0%, #EEF2FF 100%)', padding: '48px 56px' }}>
                   <div style={{ maxWidth: 420, margin: '0 auto' }}>
                     <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden', boxShadow: '0 4px 24px rgba(79,70,229,0.08)', border: '1px solid #E0E7FF' }}>
-                      <div style={{ padding: '18px 22px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(90deg, rgba(79,70,229,0.04), transparent)' }}>
+                      <div dir="ltr" style={{ padding: '18px 22px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, background: 'linear-gradient(90deg, rgba(79,70,229,0.04), transparent)' }}>
                         <span style={{ fontSize: 14, fontWeight: 700, color: '#4F46E5', fontFamily: 'Heebo, sans-serif' }}>ATLAS</span>
-                        <div style={{ display: 'flex', gap: 6 }}>{[1,2,3].map(n=><div key={n} style={{width:8,height:8,borderRadius:'50%',background:n===3?'#4F46E5':n===2?'#F59E0B':'#EF4444'}}/>)}</div>
+                        <IsraelDemoClock />
+                        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>{[1,2,3].map(n=><div key={n} style={{width:8,height:8,borderRadius:'50%',background:n===3?'#4F46E5':n===2?'#F59E0B':'#EF4444'}}/>)}</div>
                       </div>
                       <div style={{ padding: 22 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 18 }}>
