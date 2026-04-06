@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { LiquidGlassCard, LiquidBackground } from '@/components/ui/LiquidGlass';
+import { LiquidGlassCard } from '@/components/ui/LiquidGlass';
 import { ShimmerButton, RippleButton } from '@/components/ui/AnimatedButton';
 import {
   Users, CalendarDays, Wallet, Star,
@@ -369,50 +369,44 @@ export default function Dashboard({ user, selectedPropertyId }) {
   return (
     <div className="min-h-full p-4 md:p-6 space-y-6 max-w-7xl mx-auto animate-fade-in">
 
-      {/* ── Hero Banner ── */}
-      <LiquidBackground
-        className="rounded-2xl overflow-hidden relative"
-        style={{ background: 'linear-gradient(135deg, #0B1220 0%, #0f1a2e 50%, #111827 100%)' }}
+      {/* ── Hero Banner (light — aligned with atlas-page-hero & app shell) ── */}
+      <div
+        className="relative overflow-hidden rounded-2xl border border-indigo-100/70 bg-gradient-to-br from-white via-slate-50/90 to-indigo-50/50 p-6 md:p-7"
+        style={{ boxShadow: 'var(--atlas-shadow-hero, 0 2px 20px rgba(79, 70, 229, 0.06))' }}
       >
-        <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
-          <div className="absolute -top-24 -right-16 w-[280px] h-[280px] rounded-full opacity-40 blur-3xl" style={{ background: 'radial-gradient(circle, rgba(0,209,193,0.45) 0%, transparent 70%)' }} />
-          <div className="absolute -bottom-20 -left-12 w-[240px] h-[240px] rounded-full opacity-35 blur-3xl" style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%)' }} />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+          <div className="absolute -top-16 -right-10 w-52 h-52 rounded-full opacity-[0.14] blur-3xl bg-teal-400" />
+          <div className="absolute -bottom-12 -left-8 w-44 h-44 rounded-full opacity-[0.12] blur-3xl bg-indigo-400" />
         </div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="relative px-6 py-6 md:py-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5"
+          className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5"
         >
           <div className="max-w-xl">
-            <p className="text-sm font-medium mb-1.5" style={{ color: 'rgba(0,209,193,0.85)' }}>
+            <p className="text-sm font-semibold mb-1.5 text-[#00a89a]">
               {format(now, "EEEE, d MMMM yyyy", { locale: he })}
             </p>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
               {greeting}, {userName}
               <span className="inline-block mr-1.5" aria-hidden>👋</span>
             </h1>
-            <p className="text-sm md:text-[15px] mt-2 leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+            <p className="text-sm md:text-[15px] mt-2 leading-relaxed text-gray-600">
               {delightLine}
             </p>
-            <p className="text-xs mt-2 font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            <p className="text-xs mt-2 font-medium text-gray-500">
               הנה מה שקורה אצלך עכשיו — בלי לרדוף אחרי טבלאות.
             </p>
           </div>
           <div className="flex gap-2 flex-shrink-0 flex-wrap">
             <Link to={createPageUrl('Leads')}>
               <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold flex items-center touch-manipulation"
-                style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  border: '1px solid rgba(255,255,255,0.14)',
-                  color: 'rgba(255,255,255,0.75)',
-                  backdropFilter: 'blur(12px)',
-                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold flex items-center touch-manipulation border border-gray-200 bg-white text-gray-700 shadow-sm hover:bg-gray-50 hover:border-gray-300 transition-colors"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-3.5 h-3.5 text-gray-600" />
                 ליד חדש
               </motion.button>
             </Link>
@@ -423,7 +417,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
                   background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
                   color: '#0B1220',
                   fontWeight: 700,
-                  boxShadow: '0 4px 16px rgba(0,209,193,0.35)',
+                  boxShadow: '0 4px 14px rgba(0,209,193,0.28)',
                 }}
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -432,7 +426,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
             </Link>
           </div>
         </motion.div>
-      </LiquidBackground>
+      </div>
 
       {/* ── Today Section (mobile-first) ── */}
       {(todayCheckIns.length > 0 || todayCheckOuts.length > 0) && (
@@ -790,37 +784,32 @@ export default function Dashboard({ user, selectedPropertyId }) {
       </div>
 
       {/* ── Pro Upgrade Banner ── */}
-      <LiquidBackground
-        className="rounded-2xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0B1220 0%, #0f1a2e 55%, #111827 100%)' }}
-      >
-        <div className="relative px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg flex-shrink-0">
-              <Gift className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">14 ימי ניסיון חינם</h3>
-              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.50)' }}>כל התכונות פתוחות — ללא כרטיס אשראי. נסה עכשיו וראה את ההבדל.</p>
-            </div>
+      <div className="rounded-2xl border border-amber-200/60 bg-gradient-to-br from-amber-50/90 via-white to-teal-50/40 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm" style={{ boxShadow: 'var(--atlas-shadow-card, 0 4px 24px rgba(15,23,42,0.06))' }}>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-amber-500/20 flex-shrink-0">
+            <Gift className="w-6 h-6 text-white" />
           </div>
-          <Link to={createPageUrl('Subscription')}>
-            <ShimmerButton
-              className="flex items-center gap-1.5 px-6 h-10 flex-shrink-0 rounded-xl"
-              style={{
-                background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
-                color: '#0B1220',
-                fontWeight: 700,
-                fontSize: '14px',
-                boxShadow: '0 4px 16px rgba(0,209,193,0.35)',
-              }}
-            >
-              שדרג עכשיו
-              <ArrowUpRight className="w-4 h-4" />
-            </ShimmerButton>
-          </Link>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">14 ימי ניסיון חינם</h3>
+            <p className="text-sm text-gray-600">כל התכונות פתוחות — ללא כרטיס אשראי. נסה עכשיו וראה את ההבדל.</p>
+          </div>
         </div>
-      </LiquidBackground>
+        <Link to={createPageUrl('Subscription')}>
+          <ShimmerButton
+            className="flex items-center gap-1.5 px-6 h-10 flex-shrink-0 rounded-xl"
+            style={{
+              background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
+              color: '#0B1220',
+              fontWeight: 700,
+              fontSize: '14px',
+              boxShadow: '0 4px 14px rgba(0,209,193,0.28)',
+            }}
+          >
+            שדרג עכשיו
+            <ArrowUpRight className="w-4 h-4" />
+          </ShimmerButton>
+        </Link>
+      </div>
 
     </div>
   );
