@@ -783,8 +783,9 @@ export default function Landing() {
 
           .atlas-feat-grid  { grid-template-columns: 1fr !important; }
           .atlas-feat-grid-new { grid-template-columns: 1fr !important; }
-          .atlas-bento-grid { grid-template-columns: 1fr !important; }
-          .atlas-bento-large { grid-column: span 1 !important; min-height: auto !important; }
+          /* Bento: two columns on phone so feature tiles sit side by side */
+          .atlas-bento-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+          .atlas-bento-large { grid-column: span 2 !important; min-height: auto !important; }
           .atlas-section-title { font-size: 28px !important; }
           .atlas-section-sub { font-size: 15px !important; }
 
