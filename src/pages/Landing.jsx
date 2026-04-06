@@ -300,7 +300,13 @@ export default function Landing() {
   const goToRegister = () => navigate('/register');
   const goToLogin = () => navigate('/login');
   const scrollToFeatures = () => {
-    document.getElementById('atlas-features')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('features')?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
+  };
+  const scrollToBentoAnchor = (id) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: reducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
   };
   const nextSlide = () => setDemoSlide((s) => Math.min(s + 1, 4));
   const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
@@ -682,14 +688,54 @@ export default function Landing() {
           .atlas-marquee { animation: none !important; }
         }
 
-        /* ─ Feature card hover ─ */
-        .atlas-feat-card {
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-          cursor: default;
+        /* ─ Feature / bento cards ─ */
+        .atlas-bento-grid {
+          scroll-margin-top: 96px;
         }
-        .atlas-feat-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06) !important;
+        .atlas-feat-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.25s ease;
+          cursor: default;
+          scroll-margin-top: 96px;
+        }
+        .atlas-bento-card-surface {
+          border: 1px solid #F3F4F6;
+        }
+        .atlas-bento-icon {
+          transition: transform 0.38s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.3s ease;
+        }
+        @media (hover: hover) {
+          .atlas-feat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06) !important;
+          }
+          .atlas-feat-card:hover .atlas-bento-icon {
+            transform: scale(1.06) translateY(-2px);
+          }
+          .atlas-bento-card-surface:hover {
+            border-color: #E0E7FF !important;
+          }
+        }
+        .atlas-bento-quick-nav-btn {
+          font-family: 'Heebo', sans-serif;
+          font-size: 13px;
+          font-weight: 600;
+          padding: 8px 16px;
+          border-radius: 999px;
+          border: 1px solid #E5E7EB;
+          background: #fff;
+          color: #4B5563;
+          cursor: pointer;
+          transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+        .atlas-bento-quick-nav-btn:hover {
+          border-color: #C7D2FE;
+          color: #4338CA;
+          background: #F5F3FF;
+        }
+        .atlas-bento-quick-nav-btn:focus-visible {
+          outline: 2px solid #4F46E5;
+          outline-offset: 2px;
         }
 
         /* ─ Global minimum touch target for interactive elements ─ */
@@ -868,6 +914,8 @@ export default function Landing() {
           }
           .atlas-features-intro { margin-bottom: 40px !important; }
           .atlas-features-lead { font-size: 16px !important; line-height: 1.55 !important; }
+          .atlas-bento-quick-nav { margin-bottom: 20px !important; gap: 8px !important; }
+          .atlas-bento-quick-nav-btn { font-size: 12px !important; padding: 7px 12px !important; }
           .atlas-bento-hero-card,
           .atlas-bento-auto-card {
             padding: 20px 16px !important;
@@ -895,6 +943,7 @@ export default function Landing() {
           .atlas-bento-card-title { font-size: 18px !important; line-height: 1.3 !important; }
           .atlas-bento-grid .atlas-feat-card { padding: 20px 16px !important; }
           .atlas-feat-card:hover { transform: none !important; }
+          .atlas-feat-card:hover .atlas-bento-icon { transform: none !important; }
           .atlas-features-compare { margin-top: 48px !important; }
           .atlas-features-compare-title { font-size: 22px !important; margin-bottom: 20px !important; }
           .atlas-compare-scroll { border-radius: 12px !important; }
@@ -1933,12 +1982,28 @@ export default function Landing() {
               <p className="atlas-features-lead" style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>פלטפורמה אחת שמחליפה 6 כלים שונים</p>
             </div>
 
+            <nav className="atlas-reveal atlas-bento-quick-nav" aria-label="ניווט מהיר בין נושאי התכונות" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, marginBottom: 28 }}>
+              <span style={{ fontSize: 13, color: '#6B7280', fontWeight: 600, fontFamily: 'Heebo, sans-serif' }}>גלו לפי נושא</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
+                {[
+                  { id: 'atlas-bento-grid', label: 'סקירה' },
+                  { id: 'feat-bento-calendar', label: 'הזמנות ולוח' },
+                  { id: 'feat-bento-money', label: 'כסף וניירת' },
+                  { id: 'feat-bento-auto', label: 'אוטומציה' },
+                ].map((p) => (
+                  <button key={p.id} type="button" className="atlas-bento-quick-nav-btn" onClick={() => scrollToBentoAnchor(p.id)}>
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </nav>
+
             {/* Bento grid — varied sizes */}
-            <div className="atlas-bento-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridTemplateRows: 'auto', gap: 16 }}>
+            <div id="atlas-bento-grid" className="atlas-bento-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridTemplateRows: 'auto', gap: 16 }}>
               {/* LARGE — Bookings (spans 2 cols) */}
-              <div className="atlas-feat-card atlas-reveal atlas-bento-large atlas-bento-hero-card" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', border: '1px solid #C7D2FE', borderRadius: 20, padding: 28, position: 'relative', overflow: 'hidden', minHeight: 220 }}>
+              <div id="feat-bento-calendar" className="atlas-feat-card atlas-reveal atlas-bento-large atlas-bento-hero-card" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)', border: '1px solid #C7D2FE', borderRadius: 20, padding: 28, position: 'relative', overflow: 'hidden', minHeight: 220 }}>
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div style={{ width: 48, height: 48, background: '#4F46E5', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 16px rgba(79,70,229,0.25)' }}>
+                  <div className="atlas-bento-icon" style={{ width: 48, height: 48, background: '#4F46E5', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 16px rgba(79,70,229,0.25)' }}>
                     <Calendar size={24} color="white" />
                   </div>
                   <h3 className="atlas-bento-card-title" style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px' }}>ניהול הזמנות חכם</h3>
@@ -1959,8 +2024,8 @@ export default function Landing() {
               </div>
 
               {/* Payments */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-1" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(16,185,129,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div id="feat-bento-money" className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-1" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(16,185,129,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <CreditCard size={22} color="#10B981" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>תשלומים חכמים</h3>
@@ -1971,8 +2036,8 @@ export default function Landing() {
               </div>
 
               {/* Leads */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-2" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(139,92,246,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-2" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(139,92,246,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <Users size={22} color="#8B5CF6" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>ניהול לידים</h3>
@@ -1980,8 +2045,8 @@ export default function Landing() {
               </div>
 
               {/* Cleaning */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-3" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(245,158,11,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-3" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(245,158,11,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <CheckSquare size={22} color="#F59E0B" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>ניהול ניקיון</h3>
@@ -1994,8 +2059,8 @@ export default function Landing() {
               </div>
 
               {/* Messages */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-4" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(59,130,246,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-4" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(59,130,246,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <MessageSquare size={22} color="#3B82F6" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>תקשורת אוטומטית</h3>
@@ -2003,9 +2068,9 @@ export default function Landing() {
               </div>
 
               {/* LARGE — Automations (spans 2 cols) */}
-              <div className="atlas-feat-card atlas-reveal atlas-bento-large atlas-bento-auto-card" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #FDF4FF, #FAE8FF)', border: '1px solid #E9D5FF', borderRadius: 20, padding: 28, overflow: 'hidden', position: 'relative', minHeight: 180 }}>
+              <div id="feat-bento-auto" className="atlas-feat-card atlas-reveal atlas-bento-large atlas-bento-auto-card" style={{ gridColumn: 'span 2', background: 'linear-gradient(135deg, #FDF4FF, #FAE8FF)', border: '1px solid #E9D5FF', borderRadius: 20, padding: 28, overflow: 'hidden', position: 'relative', minHeight: 180 }}>
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div style={{ width: 48, height: 48, background: '#7C3AED', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 16px rgba(124,58,237,0.25)' }}>
+                  <div className="atlas-bento-icon" style={{ width: 48, height: 48, background: '#7C3AED', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 16px rgba(124,58,237,0.25)' }}>
                     <Zap size={24} color="white" />
                   </div>
                   <h3 className="atlas-bento-card-title" style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px' }}>אוטומציות חכמות</h3>
@@ -2031,8 +2096,8 @@ export default function Landing() {
               </div>
 
               {/* Contracts */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-1" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(79,70,229,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-1" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(79,70,229,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <FileText size={22} color="#4F46E5" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>חוזים דיגיטליים</h3>
@@ -2040,8 +2105,8 @@ export default function Landing() {
               </div>
 
               {/* Reports */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-2" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(236,72,153,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-2" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(236,72,153,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <BarChart2 size={22} color="#EC4899" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>דוחות ואנליטיקס</h3>
@@ -2056,8 +2121,8 @@ export default function Landing() {
               </div>
 
               {/* Integrations */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-3" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(79,70,229,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-3" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(79,70,229,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <LinkIcon size={22} color="#4F46E5" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>אינטגרציות</h3>
@@ -2065,8 +2130,8 @@ export default function Landing() {
               </div>
 
               {/* Invoices */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-4" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(234,179,8,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-4" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(234,179,8,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <Receipt size={22} color="#EAB308" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>חשבוניות ומע"מ</h3>
@@ -2074,8 +2139,8 @@ export default function Landing() {
               </div>
 
               {/* Reviews */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-1" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(245,158,11,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-1" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(245,158,11,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <Star size={22} color="#F59E0B" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>ניהול ביקורות</h3>
@@ -2083,8 +2148,8 @@ export default function Landing() {
               </div>
 
               {/* Security */}
-              <div className="atlas-feat-card atlas-reveal atlas-delay-2" style={{ background: '#FFFFFF', border: '1px solid #F3F4F6', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
-                <div style={{ width: 44, height: 44, background: 'rgba(16,185,129,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+              <div className="atlas-feat-card atlas-reveal atlas-bento-card-surface atlas-delay-2" style={{ background: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: 24 }}>
+                <div className="atlas-bento-icon" style={{ width: 44, height: 44, background: 'rgba(16,185,129,0.10)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <Shield size={22} color="#10B981" />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>אבטחה ופרטיות</h3>
