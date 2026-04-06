@@ -2846,32 +2846,32 @@ export default function Landing() {
             </div>
 
             {/* Featured testimonial */}
-            <div className="atlas-reveal atlas-feat-testi" style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', borderRadius: 24, padding: '40px 44px', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: -30, left: -30, width: 140, height: 140, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
-              <div style={{ position: 'absolute', bottom: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style={{ marginBottom: 20, opacity: 0.4 }}><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" fill="white"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" fill="white"/></svg>
-              <p style={{ fontSize: 22, color: 'white', lineHeight: 1.7, margin: '0 0 24px', fontWeight: 500, maxWidth: 700 }}>
+            <div className="atlas-reveal atlas-feat-testi" style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', borderRadius: 20, padding: '28px 32px', marginBottom: 24, marginLeft: 'auto', marginRight: 'auto', maxWidth: 820, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: -24, left: -24, width: 112, height: 112, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', bottom: -16, right: -16, width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style={{ marginBottom: 14, opacity: 0.4 }}><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" fill="white"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" fill="white"/></svg>
+              <p style={{ fontSize: 18, color: 'white', lineHeight: 1.65, margin: '0 0 18px', fontWeight: 500, maxWidth: '100%' }}>
                 "ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות. לא מאמין שניהלתי את הכל עם Excel עד עכשיו."
               </p>
-              <div style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)', marginBottom: 4 }}>{NEW_TESTIMONIALS[0].context}</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>{NEW_TESTIMONIALS[0].source}</div>
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.85)', marginBottom: 3 }}>{NEW_TESTIMONIALS[0].context}</div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)' }}>{NEW_TESTIMONIALS[0].source}</div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-                <img src={NEW_TESTIMONIALS[0].avatar} alt={`${NEW_TESTIMONIALS[0].author}, ${NEW_TESTIMONIALS[0].role}`} loading="lazy" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.25)' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                <img src={NEW_TESTIMONIALS[0].avatar} alt={`${NEW_TESTIMONIALS[0].author}, ${NEW_TESTIMONIALS[0].role}`} loading="lazy" style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.25)' }} />
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, color: 'white', fontSize: 16 }}>{NEW_TESTIMONIALS[0].author}</div>
-                  <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>{NEW_TESTIMONIALS[0].role}</div>
+                  <div style={{ fontWeight: 700, color: 'white', fontSize: 15 }}>{NEW_TESTIMONIALS[0].author}</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>{NEW_TESTIMONIALS[0].role}</div>
                 </div>
                 <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                   <span
                     title="לקוח עם חשבון פעיל ב-ATLAS; הזהות נבדקה מול המנוי לפני פרסום הציטוט."
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700 }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,0.2)', padding: '3px 9px', borderRadius: 999, fontSize: 10, fontWeight: 700 }}
                   >
                     אומת מול חשבון
-                    <CheckCircle2 size={13} strokeWidth={2.5} aria-hidden />
+                    <CheckCircle2 size={12} strokeWidth={2.5} aria-hidden />
                   </span>
-                  <TestimonialStarRow rating={NEW_TESTIMONIALS[0].rating} filled="#FCD34D" empty="rgba(255,255,255,0.35)" size={16} />
+                  <TestimonialStarRow rating={NEW_TESTIMONIALS[0].rating} filled="#FCD34D" empty="rgba(255,255,255,0.35)" size={14} />
                 </div>
               </div>
             </div>
