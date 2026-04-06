@@ -8,12 +8,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { LiquidGlassCard } from '@/components/ui/LiquidGlass';
 import { ShimmerButton, RippleButton } from '@/components/ui/AnimatedButton';
 import {
-  Users, CalendarDays, Wallet, Star,
+  Users, CalendarDays, CalendarRange, Wallet, Star,
   ArrowUpLeft, ArrowDownRight, MessageSquare, Plus,
   ChevronLeft, TrendingUp, Zap, Settings,
-  Clock, CheckCircle2, Link2, Building2, CreditCard,
-  Sparkles, Lock, Crown, ArrowUpRight, Activity,
-  Home, Bell, BarChart2, Target, Gift,
+  CheckCircle2, Link2, CreditCard,
+  ArrowUpRight, Activity,
+  Home, BarChart2, Target, Gift, FileText,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -47,6 +47,7 @@ const TINT_MAP = {
   'icon-teal':   'teal',
   'icon-amber':  'neutral',
   'icon-green':  'teal',
+  'icon-rose':   'neutral',
 };
 function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, trend, loading }) {
   const tint = TINT_MAP[iconClass] || 'neutral';
@@ -358,10 +359,10 @@ export default function Dashboard({ user, selectedPropertyId }) {
 
   const delightLine = useMemo(() => {
     const lines = [
-      'הכל במקום אחד — בדיוק כמו שחלמת.',
-      'פחות רעש, יותר שליטה. ככה זה אמור להרגיש.',
-      'פשוט, ברור, בלי כאוס — ברוך הבא הביתה.',
-      'אם זה נראה קל — זה בדיוק הרעיון.',
+      'הזמנות, לידים ותשלומים — במבט אחד.',
+      'מנהלים את הנכס בלי לרדוף אחרי טבלאות.',
+      'מה שחשוב להיום: לוח, הזמנות ותזרים.',
+      'פחות רעש, יותר שליטה על התפעול.',
     ];
     const d = new Date();
     return lines[(d.getDate() + d.getMonth()) % lines.length];
@@ -397,7 +398,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
               {delightLine}
             </p>
             <p className="text-xs mt-2 font-medium text-gray-500">
-              הנה מה שקורה אצלך עכשיו — בלי לרדוף אחרי טבלאות.
+              סיכום מהיר לניהול יומיומי — הזמנות, לידים וכספים.
             </p>
           </div>
           <div className="flex gap-2 flex-shrink-0 flex-wrap">
@@ -576,13 +577,15 @@ export default function Dashboard({ user, selectedPropertyId }) {
             </div>
             <h2 className="text-base font-bold text-gray-900 tracking-tight">מה נעשה עכשיו?</h2>
           </div>
-          <p className="text-xs text-gray-500 mr-9 leading-relaxed">קיצורי דרך לפעולות שאתה הכי צריך — בלחיצה אחת.</p>
+          <p className="text-xs text-gray-500 mr-9 leading-relaxed">הזמנות, יומן, לידים, תשלומים והגדרות — מה שרוב המארחים צריכים כל יום.</p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <QuickAction label="ליד חדש"      icon={Users}         page="Leads"     iconClass="icon-purple" />
-          <QuickAction label="הזמנה חדשה"  icon={CalendarDays}  page="Bookings"  iconClass="icon-blue" />
-          <QuickAction label="הודעות"       icon={MessageSquare} page="Messages"  iconClass="icon-teal" />
-          <QuickAction label="הגדרות"       icon={Settings}      page="Settings"  iconClass="icon-green" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <QuickAction label="הזמנות"     icon={CalendarDays}  page="Bookings"      iconClass="icon-blue" />
+          <QuickAction label="יומן"       icon={CalendarRange} page="MultiCalendar" iconClass="icon-teal" />
+          <QuickAction label="לידים"      icon={Users}         page="Leads"         iconClass="icon-purple" />
+          <QuickAction label="הודעות"     icon={MessageSquare} page="Messages"      iconClass="icon-green" />
+          <QuickAction label="תשלומים"    icon={Wallet}        page="Payments"      iconClass="icon-amber" />
+          <QuickAction label="הגדרות"     icon={Settings}      page="Settings"      iconClass="icon-rose" />
         </div>
       </div>
 
@@ -753,23 +756,23 @@ export default function Dashboard({ user, selectedPropertyId }) {
         </div>
       </div>
 
-      {/* ── Premium Features Teaser ── */}
-      <div className="rounded-2xl p-6 md:p-7" style={{ background: 'linear-gradient(135deg, rgba(0,209,193,0.06) 0%, rgba(255,255,255,0.96) 48%, rgba(139,92,246,0.06) 100%)', border: '1px solid rgba(0,209,193,0.14)', boxShadow: '0 4px 28px rgba(0,209,193,0.06)' }}>
+      {/* ── Quick links (operational focus) ── */}
+      <div className="rounded-2xl p-6 md:p-7" style={{ background: 'linear-gradient(135deg, rgba(0,209,193,0.06) 0%, rgba(255,255,255,0.96) 48%, rgba(79,70,229,0.05) 100%)', border: '1px solid rgba(0,209,193,0.14)', boxShadow: '0 4px 28px rgba(0,209,193,0.06)' }}>
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
-            <Crown className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00D1C1] to-[#00a89a] flex items-center justify-center shadow-md shadow-teal-500/20">
+            <Zap className="w-4.5 h-4.5 text-[#0B1220]" style={{ width: 18, height: 18 }} />
           </div>
           <div>
-            <h2 className="text-base md:text-lg font-bold text-gray-900 tracking-tight">עוד קסם בפנים</h2>
-            <p className="text-xs md:text-sm text-gray-500 leading-relaxed">תכונות שחוסכות זמן כל יום — כדאי להכיר.</p>
+            <h2 className="text-base md:text-lg font-bold text-gray-900 tracking-tight">מעבר מהיר</h2>
+            <p className="text-xs md:text-sm text-gray-500 leading-relaxed">כלים מרכזיים לניהול שוטף — לוח, תזרים ומסמכים.</p>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { icon: Sparkles, label: 'ניקיון אוטומטי', desc: 'משימות ניקיון נוצרות לבד', link: 'Cleaning', color: 'from-emerald-400 to-teal-500' },
-            { icon: Link2, label: 'אינטגרציות', desc: 'חבר Airbnb, Booking ועוד', link: 'Integrations', color: 'from-blue-400 to-indigo-500' },
-            { icon: MessageSquare, label: 'הודעות אוטומטיות', desc: 'WhatsApp, SMS, מייל', link: 'Automations', color: 'from-violet-400 to-purple-500' },
-            { icon: BarChart2, label: 'דוחות מתקדמים', desc: 'הכנסות, תפוסה, מגמות', link: 'Invoices', color: 'from-amber-400 to-orange-500' },
+            { icon: CalendarRange, label: 'יומן', desc: 'לוח הזמנות וזמינות', link: 'MultiCalendar', color: 'from-cyan-400 to-teal-500' },
+            { icon: Wallet, label: 'תשלומים', desc: 'תזרים וגבייה', link: 'Payments', color: 'from-amber-400 to-orange-500' },
+            { icon: Link2, label: 'אינטגרציות', desc: 'Airbnb, Booking, יומנים', link: 'Integrations', color: 'from-blue-400 to-indigo-500' },
+            { icon: FileText, label: 'חשבוניות', desc: 'חשבוניות ומסמכים', link: 'Invoices', color: 'from-violet-400 to-purple-500' },
           ].map((feat, i) => (
             <Link key={i} to={createPageUrl(feat.link)} className="group">
               <motion.div whileHover={{ y: -2, scale: 1.02 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} className="rounded-xl p-4 h-full cursor-pointer" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', backdropFilter: 'blur(12px)' }}>

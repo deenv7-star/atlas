@@ -22,10 +22,8 @@ const moreGroups = [
   {
     label: 'אורחים',
     items: [
-      { name: 'Leads',        label: 'ליד אורח',      icon: Users },
-      { name: 'GuestJourney', label: 'מסע אורח',      icon: Workflow },
-      { name: 'GuestPortal',  label: 'פורטל אורחים',  icon: Globe },
-      { name: 'Reviews',      label: 'ביקורות',        icon: Star },
+      { name: 'Leads',   label: 'ליד אורח', icon: Users },
+      { name: 'Reviews', label: 'ביקורות',  icon: Star },
     ],
   },
   {
@@ -54,6 +52,8 @@ const moreGroups = [
       { name: 'AIAssistant',  label: 'AI עוזר',      icon: Brain },
       { name: 'Automations',  label: 'אוטומציות',    icon: Zap },
       { name: 'Integrations', label: 'אינטגרציות',   icon: Link2 },
+      { name: 'GuestJourney', label: 'מסע אורח',      icon: Workflow },
+      { name: 'GuestPortal',  label: 'פורטל אורחים',  icon: Globe },
       { name: 'Settings',     label: 'הגדרות',        icon: Settings },
     ],
   },

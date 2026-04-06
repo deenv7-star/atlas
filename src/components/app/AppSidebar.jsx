@@ -27,8 +27,6 @@ const navGroups = [
     items: [
       { icon: Users, label: 'אורחים', page: 'Leads' },
       { icon: MessageSquare, label: 'הודעות', page: 'Messages' },
-      { icon: Workflow, label: 'מסע אורח', page: 'GuestJourney' },
-      { icon: Globe, label: 'פורטל אורחים', page: 'GuestPortal' },
       { icon: Star, label: 'ביקורות', page: 'Reviews' },
     ],
   },
@@ -58,6 +56,8 @@ const navGroups = [
       { icon: Brain, label: 'AI עוזר', page: 'AIAssistant' },
       { icon: Zap, label: 'אוטומציות', page: 'Automations' },
       { icon: Link2, label: 'אינטגרציות', page: 'Integrations' },
+      { icon: Workflow, label: 'מסע אורח', page: 'GuestJourney' },
+      { icon: Globe, label: 'פורטל אורחים', page: 'GuestPortal' },
     ],
   },
 ];
