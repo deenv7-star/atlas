@@ -7,9 +7,14 @@ export default function Logo({ variant = 'dark', size = 'default' }) {
   return (
     <div className="flex items-center" style={{ height: h }}>
       <img
-        src="/atlas-logo-final.png"
+        src="/atlas-logo-clean.png"
+        srcSet="/atlas-logo-clean.png 1024w"
+        sizes={`${Math.ceil(h * 3.2)}px`}
+        width={1024}
+        height={1024}
         alt="ATLAS"
-        style={{ height: h, width: 'auto', objectFit: 'contain' }}
+        decoding="async"
+        style={{ height: h, width: 'auto', maxHeight: h, objectFit: 'contain' }}
       />
     </div>
   );

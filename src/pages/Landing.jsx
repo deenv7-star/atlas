@@ -964,7 +964,23 @@ export default function Landing() {
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, height: 80 }}>
             <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <Link to="/" aria-label="דף הבית ATLAS">
-                <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" style={{ height: 52, width: 'auto', objectFit: 'contain', display: 'block' }} />
+                <img
+                  src="/atlas-logo-clean.png"
+                  srcSet="/atlas-logo-clean.png 1024w"
+                  sizes="(max-width: 640px) 130px, 180px"
+                  width={1024}
+                  height={1024}
+                  alt="ATLAS — מערכת ניהול מתחמי נופש"
+                  decoding="async"
+                  fetchPriority="high"
+                  style={{
+                    height: 52,
+                    width: 'auto',
+                    maxHeight: 52,
+                    objectFit: 'contain',
+                    display: 'block',
+                  }}
+                />
               </Link>
             </div>
 
