@@ -2466,7 +2466,18 @@ export default function Landing() {
               {/* Brand */}
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
-                  <img src="/atlas-logo-final.png" alt="ATLAS — מערכת ניהול מתחמי נופש" loading="lazy" style={{ height: 44, width: 'auto', objectFit: 'contain' }} />
+                  <img
+                    src="/atlas-logo-final.png"
+                    alt="ATLAS — מערכת ניהול מתחמי נופש"
+                    loading="lazy"
+                    style={{
+                      height: 44,
+                      width: 'auto',
+                      objectFit: 'contain',
+                      display: 'block',
+                      filter: 'brightness(0) invert(1)',
+                    }}
+                  />
                 </div>
                 <p style={{ fontSize: 15, color: '#9CA3AF', margin: '0 0 20px' }}>ניהול מתחמי נופש — פשוט יותר.</p>
                 <div style={{ display: 'flex', gap: 10 }}>
