@@ -210,7 +210,11 @@ function QuickAction({ label, icon: Icon, page, iconClass }) {
   return (
     <Link to={createPageUrl(page)}>
       <motion.div
-        whileHover={{ y: -3, scale: 1.03 }}
+        whileHover={{
+          y: -3,
+          scale: 1.03,
+          boxShadow: '0 8px 24px rgba(0,209,193,0.15), 0 2px 8px rgba(0,0,0,0.06)',
+        }}
         whileTap={{ scale: 0.97 }}
         transition={{ type: 'spring', stiffness: 400, damping: 20 }}
         className="flex flex-col items-center gap-2.5 p-4 rounded-2xl cursor-pointer group"
@@ -218,10 +222,7 @@ function QuickAction({ label, icon: Icon, page, iconClass }) {
           background: 'rgba(255,255,255,0.75)',
           border: '1px solid rgba(0,0,0,0.07)',
           boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-          transition: 'box-shadow 0.2s',
         }}
-        onHoverStart={e => e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,209,193,0.15), 0 2px 8px rgba(0,0,0,0.06)'}
-        onHoverEnd={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'}
       >
         <div className={cn(
           "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm",

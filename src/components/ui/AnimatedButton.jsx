@@ -46,7 +46,7 @@ export function ShimmerButton({ children, onClick, className = '', style = {}, d
       />
       {/* Top bevel */}
       <div className="absolute inset-x-0 top-0 pointer-events-none" style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)', zIndex: 1 }} />
-      <span style={{ position: 'relative', zIndex: 2 }}>{children}</span>
+      <span className="relative z-[2] inline-flex items-center justify-center gap-1.5">{children}</span>
     </motion.button>
   );
 }
