@@ -1801,37 +1801,7 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            SECTION 3 — DEMO CTA + MODAL
-        ════════════════════════════════════════ */}
-        <section style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1, textAlign: 'center' }}>
-          <div style={{ maxWidth: 600, margin: '0 auto' }} className="atlas-reveal">
-            <h2 style={{ fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 12px' }}>רוצה לראות את ATLAS בפעולה?</h2>
-            <p style={{ fontSize: 17, color: '#6B7280', margin: '0 0 32px' }}>צפה בדמו אינטראקטיבי של המוצר</p>
-            <button
-              onClick={() => { setDemoOpen(true); setDemoSlide(0); }}
-              style={{
-                background: '#4F46E5',
-                color: 'white',
-                border: 'none',
-                borderRadius: 12,
-                padding: '16px 36px',
-                fontWeight: 700,
-                fontSize: 17,
-                fontFamily: 'Heebo, sans-serif',
-                cursor: 'pointer',
-                transition: 'all 0.25s ease',
-                boxShadow: '0 8px 28px rgba(79,70,229,0.3)',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#4338CA'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#4F46E5'; e.currentTarget.style.transform = 'translateY(0)'; }}
-            >
-              צפה בדמו המוצר ←
-            </button>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════
-            SECTION 4 — HOW IT WORKS
+            SECTION 3 — HOW IT WORKS
         ════════════════════════════════════════ */}
         <section id="atlas-how" style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -1956,7 +1926,7 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            SECTION 5 — INTEGRATIONS (Infinite Marquee)
+            SECTION 4 — INTEGRATIONS (Infinite Marquee)
         ════════════════════════════════════════ */}
         <section className="atlas-int-marquee-section" style={{ padding: '3px 0', background: '#FFFFFF', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
@@ -2016,7 +1986,7 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            SECTION 6 — PRICING
+            SECTION 5 — PRICING
         ════════════════════════════════════════ */}
         <section id="pricing" style={{ padding: '80px 24px', background: '#F9FAFB', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -2169,7 +2139,7 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            SECTION 7 — TESTIMONIALS (Premium Cards)
+            SECTION 6 — TESTIMONIALS (Premium Cards)
         ════════════════════════════════════════ */}
         <section id="testimonials" style={{ padding: '80px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -2274,7 +2244,7 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            SECTION 8 — FAQ
+            SECTION 7 — FAQ
         ════════════════════════════════════════ */}
         <section style={{ padding: '80px 24px', background: 'linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
           {/* Decorative background elements */}
@@ -2393,7 +2363,7 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            SECTION 9 — FINAL CTA
+            SECTION 8 — FINAL CTA
         ════════════════════════════════════════ */}
         <section
           style={{
@@ -2478,7 +2448,7 @@ export default function Landing() {
         <NewsletterSection />
 
         {/* ════════════════════════════════════════
-            SECTION 10 — FOOTER
+            SECTION 9 — FOOTER
         ════════════════════════════════════════ */}
         <footer
           style={{
