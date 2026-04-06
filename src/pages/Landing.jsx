@@ -1881,168 +1881,185 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            SECTION PERSONAS — למי זה מיועד?
+            AUDIENCE — מי אתם + סוג עסק (מאוחד)
         ════════════════════════════════════════ */}
-        <section style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
+        <section id="atlas-audience" style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 52 }}>
-              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>למי זה מיועד?</h2>
-              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#6B7280', margin: 0 }}>ATLAS נבנתה עבור כל מי שמנהל נכסי נופש בישראל</p>
-            </div>
-            <div className="atlas-how-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
-              {[
-                {
-                  emoji: '🏠',
-                  title: 'בעל נכסים עצמאי',
-                  pain: 'מנהל 1–5 נכסים לבד, מבלה שעות על תיאום ידני',
-                  gains: ['הזמנות אוטומטיות מ-Airbnb ו-WhatsApp', 'גביית תשלומים ללא מעקב ידני', 'חיסכון של 15–20 שעות בשבוע'],
-                  cta: 'מתחיל מ-₪399/חודש',
-                  color: '#4F46E5', bg: '#EEF2FF',
-                },
-                {
-                  emoji: '🏢',
-                  title: 'חברת ניהול נכסים',
-                  pain: 'מנהלת נכסים של לקוחות מרובים, צריכה שקיפות ודיווח',
-                  gains: ['דוחות בעלים אוטומטיים', 'ניהול עשרות נכסים ממסך אחד', 'SLA מובטח ו-SSO לצוות'],
-                  cta: 'חבילת Business מ-₪999/חודש',
-                  color: '#8B5CF6', bg: '#F5F3FF',
-                  featured: true,
-                },
-                {
-                  emoji: '💼',
-                  title: 'מנהל/ת כספים ו-CFO',
-                  pain: 'צריך ROI ברור ושקיפות פיננסית לפני כל השקעה',
-                  gains: ['מחשבון ROI מובנה — ראה חיסכון בזמן אמת', 'דוחות רווח/הפסד אוטומטיים', 'הצפנה מלאה + תאימות GDPR'],
-                  cta: 'ROI ממוצע: 4× תוך 3 חודשים',
-                  color: '#10B981', bg: '#F0FDF4',
-                },
-              ].map((p) => (
-                <div
-                  key={p.title}
-                  className="atlas-reveal"
-                  style={{
-                    background: p.featured ? `linear-gradient(135deg, #4F46E5, #7C3AED)` : 'white',
-                    border: p.featured ? 'none' : `2px solid ${p.bg}`,
-                    borderRadius: 20,
-                    padding: 32,
-                    position: 'relative',
-                    transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(0,0,0,0.12)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-                >
-                  {p.featured && (
-                    <div style={{ position: 'absolute', top: -12, right: 24, background: '#FCD34D', color: '#92400E', fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 999, fontFamily: 'Heebo, sans-serif' }}>
-                      הפופולרי ביותר
-                    </div>
-                  )}
-                  <div style={{ width: 52, height: 52, borderRadius: 14, background: p.featured ? 'rgba(255,255,255,0.15)' : p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, fontSize: 26 }}>
-                    {p.emoji}
-                  </div>
-                  <h3 style={{ fontSize: 20, fontWeight: 800, color: p.featured ? 'white' : '#111827', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>{p.title}</h3>
-                  <p style={{ fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.7)' : '#6B7280', margin: '0 0 18px', lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{p.pain}</p>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {p.gains.map((g) => (
-                      <li key={g} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.9)' : '#374151', fontFamily: 'Heebo, sans-serif', lineHeight: 1.5 }}>
-                        <span style={{ color: p.featured ? '#A5F3FC' : p.color, fontWeight: 700, flexShrink: 0 }}>✓</span>
-                        {g}
-                      </li>
-                    ))}
-                  </ul>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: p.featured ? 'rgba(255,255,255,0.6)' : p.color, fontFamily: 'Heebo, sans-serif' }}>{p.cta}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════
-            SECTION 4B — USE CASES BY INDUSTRY
-        ════════════════════════════════════════ */}
-        <section style={{ padding: '80px 24px', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#F0FDF4', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
-                <span style={{ fontSize: 14 }}>🏡</span>
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#065F46' }}>מותאם לכל סוג נכס</span>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 44 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#EEF2FF', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
+                <span style={{ fontSize: 14 }}>🎯</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#4338CA' }}>תפקיד וסוג עסק — במקום אחד</span>
               </div>
-              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>לאיזה סוג עסק ATLAS מתאים?</h2>
-              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>מצימרים בודדים ועד רשתות מלונות — הפתרון מותאם לכם</p>
+              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px', fontFamily: 'Heebo, sans-serif' }}>למי ATLAS מתאימה?</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#6B7280', margin: 0, maxWidth: 640, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.65, fontFamily: 'Heebo, sans-serif' }}>
+                שני מימדים משלימים: <strong style={{ color: '#374151', fontWeight: 700 }}>מי אתם בארגון</strong> (בעלים, חברת ניהול או הנהלה פיננסית)
+                — ו-<strong style={{ color: '#374151', fontWeight: 700 }}>איזה סוג נכסים ועסק</strong> אתם מנהלים. כך בוחרים נכון את החבילה וההטמעה.
+              </p>
             </div>
-            <div className="atlas-use-cases-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
-              {[
-                {
-                  emoji: '🏕️',
-                  title: 'צימרים ובקתות',
-                  color: '#10B981',
-                  bg: '#F0FDF4',
-                  border: '#D1FAE5',
-                  items: ['סנכרון אוטומטי עם Airbnb', 'הודעות WhatsApp לאורחים', 'חוזים דיגיטליים', 'קבלת תשלומים מקוונת'],
-                  cta: 'מתאים לצימרים ←',
-                },
-                {
-                  emoji: '🏢',
-                  title: 'חברות ניהול נכסים',
-                  color: '#4F46E5',
-                  bg: '#EEF2FF',
-                  border: '#C7D2FE',
-                  featured: true,
-                  badge: 'הכי פופולרי',
-                  items: ['ניהול עשרות נכסים במסך אחד', 'דוחות לבעלי נכסים', 'צוות עם הרשאות נפרדות', 'אוטומציות מלאות'],
-                  cta: 'מתאים לחברות ←',
-                },
-                {
-                  emoji: '🌊',
-                  title: 'וילות ובתי נופש',
-                  color: '#0EA5E9',
-                  bg: '#F0F9FF',
-                  border: '#BAE6FD',
-                  items: ['לוח שנה ויזואלי', 'מחירים דינמיים', 'צ׳ק-אין/אאוט אוטומטי', 'ניהול מפתחות'],
-                  cta: 'מתאים לוילות ←',
-                },
-                {
-                  emoji: '🏨',
-                  title: 'מלונות בוטיק',
-                  color: '#F59E0B',
-                  bg: '#FFFBEB',
-                  border: '#FDE68A',
-                  items: ['Front-desk דיגיטלי', 'ניהול חדרים וקטגוריות', 'אינטגרציה עם Booking.com', 'דוחות תפוסה ורווחיות'],
-                  cta: 'מתאים למלונות ←',
-                },
-              ].map((uc, i) => (
-                <div
-                  key={i}
-                  className="atlas-reveal"
-                  style={{
-                    background: uc.featured ? `linear-gradient(135deg, #4F46E5, #7C3AED)` : uc.bg,
-                    border: `1px solid ${uc.featured ? 'transparent' : uc.border}`,
-                    borderRadius: 20,
-                    padding: '28px 24px',
-                    position: 'relative',
-                    transition: 'all 0.25s ease',
-                    cursor: 'default',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = uc.featured ? '0 16px 48px rgba(79,70,229,0.3)' : '0 8px 32px rgba(0,0,0,0.1)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-                >
-                  {uc.badge && (
-                    <div style={{ position: 'absolute', top: -12, right: 20, background: '#00D1C1', color: '#0B1220', fontSize: 11, fontWeight: 800, padding: '3px 12px', borderRadius: 999, fontFamily: 'Heebo, sans-serif' }}>
-                      {uc.badge}
+
+            {/* שכבה 1: תפקיד */}
+            <div style={{ marginBottom: 48 }}>
+              <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', textAlign: 'center', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>לפי תפקיד וארגון</h3>
+              <p style={{ fontSize: 15, color: '#6B7280', textAlign: 'center', margin: '0 0 28px', fontFamily: 'Heebo, sans-serif' }}>מי מחליט, מי מפעיל יום-יום ומי צריך מספרים — לכל תפקיד יש כלים מתאימים.</p>
+              <div className="atlas-how-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+                {[
+                  {
+                    emoji: '🏠',
+                    title: 'בעל נכסים עצמאי',
+                    pain: 'מנהל 1–5 נכסים לבד, מבלה שעות על תיאום ידני',
+                    gains: ['הזמנות אוטומטיות מ-Airbnb ו-WhatsApp', 'גביית תשלומים ללא מעקב ידני', 'חיסכון של 15–20 שעות בשבוע'],
+                    cta: 'מתחיל מ-₪399/חודש',
+                    color: '#4F46E5', bg: '#EEF2FF',
+                  },
+                  {
+                    emoji: '🏢',
+                    title: 'חברת ניהול נכסים',
+                    pain: 'מנהלת נכסים של לקוחות מרובים, צריכה שקיפות ודיווח',
+                    gains: ['דוחות בעלים אוטומטיים', 'ניהול עשרות נכסים ממסך אחד', 'SLA מובטח ו-SSO לצוות'],
+                    cta: 'חבילת Business מ-₪999/חודש',
+                    color: '#8B5CF6', bg: '#F5F3FF',
+                    featured: true,
+                  },
+                  {
+                    emoji: '💼',
+                    title: 'מנהל/ת כספים ו-CFO',
+                    pain: 'צריך ROI ברור ושקיפות פיננסית לפני כל השקעה',
+                    gains: ['מחשבון ROI מובנה — ראה חיסכון בזמן אמת', 'דוחות רווח/הפסד אוטומטיים', 'הצפנה מלאה + תאימות GDPR'],
+                    cta: 'ROI ממוצע: 4× תוך 3 חודשים',
+                    color: '#10B981', bg: '#F0FDF4',
+                  },
+                ].map((p) => (
+                  <div
+                    key={p.title}
+                    className="atlas-reveal"
+                    style={{
+                      background: p.featured ? `linear-gradient(135deg, #4F46E5, #7C3AED)` : 'white',
+                      border: p.featured ? 'none' : `2px solid ${p.bg}`,
+                      borderRadius: 20,
+                      padding: 32,
+                      position: 'relative',
+                      transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(0,0,0,0.12)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                  >
+                    {p.featured && (
+                      <div style={{ position: 'absolute', top: -12, right: 24, background: '#FCD34D', color: '#92400E', fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 999, fontFamily: 'Heebo, sans-serif' }}>
+                        הפופולרי ביותר
+                      </div>
+                    )}
+                    <div style={{ width: 52, height: 52, borderRadius: 14, background: p.featured ? 'rgba(255,255,255,0.15)' : p.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, fontSize: 26 }}>
+                      {p.emoji}
                     </div>
-                  )}
-                  <div style={{ fontSize: 36, marginBottom: 12 }}>{uc.emoji}</div>
-                  <h3 style={{ fontSize: 18, fontWeight: 800, color: uc.featured ? 'white' : '#111827', margin: '0 0 16px', fontFamily: 'Heebo, sans-serif' }}>{uc.title}</h3>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {uc.items.map((item, j) => (
-                      <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 14, color: uc.featured ? 'rgba(255,255,255,0.9)' : '#374151', fontFamily: 'Heebo, sans-serif' }}>
-                        <span style={{ color: uc.featured ? '#00D1C1' : uc.color, flexShrink: 0, marginTop: 2 }}>✓</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: uc.featured ? 'rgba(255,255,255,0.7)' : uc.color, fontFamily: 'Heebo, sans-serif' }}>{uc.cta}</div>
+                    <h4 style={{ fontSize: 20, fontWeight: 800, color: p.featured ? 'white' : '#111827', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>{p.title}</h4>
+                    <p style={{ fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.7)' : '#6B7280', margin: '0 0 18px', lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{p.pain}</p>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {p.gains.map((g) => (
+                        <li key={g} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 14, color: p.featured ? 'rgba(255,255,255,0.9)' : '#374151', fontFamily: 'Heebo, sans-serif', lineHeight: 1.5 }}>
+                          <span style={{ color: p.featured ? '#A5F3FC' : p.color, fontWeight: 700, flexShrink: 0 }}>✓</span>
+                          {g}
+                        </li>
+                      ))}
+                    </ul>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: p.featured ? 'rgba(255,255,255,0.6)' : p.color, fontFamily: 'Heebo, sans-serif' }}>{p.cta}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* שכבה 2: סוג נכס ועסק */}
+            <div
+              style={{
+                marginTop: 8,
+                padding: '40px 28px 36px',
+                borderRadius: 24,
+                background: '#F9FAFB',
+                border: '1px solid #F3F4F6',
+              }}
+            >
+              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#F0FDF4', borderRadius: 999, padding: '6px 16px', marginBottom: 12 }}>
+                  <span style={{ fontSize: 14 }}>🏡</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#065F46' }}>מותאם לכל סוג נכס</span>
                 </div>
-              ))}
+                <h3 style={{ fontSize: 22, fontWeight: 800, color: '#111827', margin: '0 0 8px', fontFamily: 'Heebo, sans-serif' }}>לפי סוג נכס ופעילות</h3>
+                <p style={{ fontSize: 15, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>מצימרים בודדים ועד מלונות בוטיק — אותה מערכת, עם הדגשות שונות לפי סוג העסק.</p>
+              </div>
+              <div className="atlas-use-cases-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+                {[
+                  {
+                    emoji: '🏕️',
+                    title: 'צימרים ובקתות',
+                    color: '#10B981',
+                    bg: '#F0FDF4',
+                    border: '#D1FAE5',
+                    items: ['סנכרון אוטומטי עם Airbnb', 'הודעות WhatsApp לאורחים', 'חוזים דיגיטליים', 'קבלת תשלומים מקוונת'],
+                    cta: 'מתאים לצימרים ←',
+                  },
+                  {
+                    emoji: '🏢',
+                    title: 'חברות ניהול נכסים',
+                    color: '#4F46E5',
+                    bg: '#EEF2FF',
+                    border: '#C7D2FE',
+                    featured: true,
+                    badge: 'הכי פופולרי',
+                    items: ['ניהול עשרות נכסים במסך אחד', 'דוחות לבעלי נכסים', 'צוות עם הרשאות נפרדות', 'אוטומציות מלאות'],
+                    cta: 'מתאים לחברות ←',
+                  },
+                  {
+                    emoji: '🌊',
+                    title: 'וילות ובתי נופש',
+                    color: '#0EA5E9',
+                    bg: '#F0F9FF',
+                    border: '#BAE6FD',
+                    items: ['לוח שנה ויזואלי', 'מחירים דינמיים', 'צ׳ק-אין/אאוט אוטומטי', 'ניהול מפתחות'],
+                    cta: 'מתאים לוילות ←',
+                  },
+                  {
+                    emoji: '🏨',
+                    title: 'מלונות בוטיק',
+                    color: '#F59E0B',
+                    bg: '#FFFBEB',
+                    border: '#FDE68A',
+                    items: ['Front-desk דיגיטלי', 'ניהול חדרים וקטגוריות', 'אינטגרציה עם Booking.com', 'דוחות תפוסה ורווחיות'],
+                    cta: 'מתאים למלונות ←',
+                  },
+                ].map((uc, i) => (
+                  <div
+                    key={i}
+                    className="atlas-reveal"
+                    style={{
+                      background: uc.featured ? `linear-gradient(135deg, #4F46E5, #7C3AED)` : uc.bg,
+                      border: `1px solid ${uc.featured ? 'transparent' : uc.border}`,
+                      borderRadius: 20,
+                      padding: '28px 24px',
+                      position: 'relative',
+                      transition: 'all 0.25s ease',
+                      cursor: 'default',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = uc.featured ? '0 16px 48px rgba(79,70,229,0.3)' : '0 8px 32px rgba(0,0,0,0.1)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                  >
+                    {uc.badge && (
+                      <div style={{ position: 'absolute', top: -12, right: 20, background: '#00D1C1', color: '#0B1220', fontSize: 11, fontWeight: 800, padding: '3px 12px', borderRadius: 999, fontFamily: 'Heebo, sans-serif' }}>
+                        {uc.badge}
+                      </div>
+                    )}
+                    <div style={{ fontSize: 36, marginBottom: 12 }}>{uc.emoji}</div>
+                    <h4 style={{ fontSize: 18, fontWeight: 800, color: uc.featured ? 'white' : '#111827', margin: '0 0 16px', fontFamily: 'Heebo, sans-serif' }}>{uc.title}</h4>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {uc.items.map((item, j) => (
+                        <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 14, color: uc.featured ? 'rgba(255,255,255,0.9)' : '#374151', fontFamily: 'Heebo, sans-serif' }}>
+                          <span style={{ color: uc.featured ? '#00D1C1' : uc.color, flexShrink: 0, marginTop: 2 }}>✓</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: uc.featured ? 'rgba(255,255,255,0.7)' : uc.color, fontFamily: 'Heebo, sans-serif' }}>{uc.cta}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
