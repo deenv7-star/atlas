@@ -2153,36 +2153,6 @@ export default function Landing() {
         </section>
 
         {/* ════════════════════════════════════════
-            ROI CALLOUT STRIP
-        ════════════════════════════════════════ */}
-        <section style={{ padding: '56px 24px', background: '#F9FAFB', borderTop: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6' }}>
-          <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-            <p className="atlas-reveal" style={{ textAlign: 'center', fontSize: 14, fontWeight: 600, color: '#6B7280', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 32 }}>
-              תוצאות מדידות — מנהלים שכבר עובדים עם ATLAS
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }} className="atlas-how-grid">
-              {[
-                { name: 'רחל מ.', role: 'בעלת 4 צימרים — הגליל', result: 'חסכה 3 שעות ביום', detail: '= ₪3,600/חודש בעלות הזדמנות', color: '#4F46E5' },
-                { name: 'יוסי כ.', role: 'ריזורט — ים המלח', result: '+35% הכנסות', detail: 'בזכות מעקב לידים שיטתי', color: '#10B981' },
-                { name: 'מירי ס.', role: 'בעלת 8 בקתות — גולן', result: '0 הזמנות כפולות', detail: 'מאז חיבור ATLAS ל-Airbnb', color: '#8B5CF6' },
-              ].map((c) => (
-                <div key={c.name} className="atlas-reveal" style={{ background: 'white', border: '1px solid #E5E7EB', borderRadius: 16, padding: '24px 28px', borderRight: `4px solid ${c.color}` }}>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: c.color, marginBottom: 4, fontFamily: 'Heebo, sans-serif' }}>{c.result}</div>
-                  <div style={{ fontSize: 13, color: '#374151', fontWeight: 600, marginBottom: 12, fontFamily: 'Heebo, sans-serif' }}>{c.detail}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${c.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: c.color }}>{c.name[0]}</div>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', fontFamily: 'Heebo, sans-serif' }}>{c.name}</div>
-                      <div style={{ fontSize: 11, color: '#6B7280', fontFamily: 'Heebo, sans-serif' }}>{c.role}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════
             SECTION 7 — TESTIMONIALS (Premium Cards)
         ════════════════════════════════════════ */}
         <section id="testimonials" style={{ padding: '80px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1 }}>
