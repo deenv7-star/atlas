@@ -250,7 +250,7 @@ export default function Landing() {
   const prevSlide = () => setDemoSlide((s) => Math.max(s - 1, 0));
 
   // Transformation section: scroll-driven animation (chaos → unify → atlas while scrolling)
-  // Desktop: higher thresholds so animation waits until section is in focus (not visible at bottom)
+  // Lower thresholds = need more scroll before phase changes — keeps pace with reading / slower feel.
   useEffect(() => {
     const el = psSectionRef.current;
     if (!el) return;
@@ -258,9 +258,9 @@ export default function Landing() {
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
       const isDesktop = vh > 700;
-      // Desktop: chaos until section is in upper 60% (user has scrolled to it)
-      const threshold1 = isDesktop ? vh * 0.4 : vh * 0.55;
-      const threshold2 = isDesktop ? vh * 0.12 : vh * 0.25;
+      // chaos → unify only after section has moved further into view; atlas only when nearly centered
+      const threshold1 = isDesktop ? vh * 0.30 : vh * 0.44;
+      const threshold2 = isDesktop ? vh * 0.065 : vh * 0.14;
       if (rect.top > threshold1) setPsPhase('chaos');
       else if (rect.top > threshold2) setPsPhase('unify');
       else setPsPhase('atlas');
@@ -596,8 +596,8 @@ export default function Landing() {
 
         /* ─ Transformation: chaos cards converge to center ─ */
         .atlas-chaos-card {
-          transition: left 1s cubic-bezier(0.25,0.1,0.25,1), top 1s cubic-bezier(0.25,0.1,0.25,1),
-            transform 1s cubic-bezier(0.25,0.1,0.25,1), opacity 0.6s ease;
+          transition: left 1.35s cubic-bezier(0.25,0.1,0.25,1), top 1.35s cubic-bezier(0.25,0.1,0.25,1),
+            transform 1.35s cubic-bezier(0.25,0.1,0.25,1), opacity 0.85s ease;
         }
         .atlas-chaos-card.atlas-converge {
           left: 50% !important;
@@ -1325,7 +1325,7 @@ export default function Landing() {
                 style={{
                   position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #F1F5F9 0%, #E2E8F0 50%, #F8FAFC 100%)', zIndex: 1,
                   opacity: psPhase === 'chaos' || psPhase === 'unify' ? 1 : 0,
-                  transition: 'opacity 0.6s ease',
+                  transition: 'opacity 0.95s cubic-bezier(0.4, 0, 0.2, 1)',
                   pointerEvents: psPhase === 'chaos' || psPhase === 'unify' ? 'auto' : 'none',
                 }}
               >
@@ -1405,7 +1405,7 @@ export default function Landing() {
                   position: 'absolute', inset: 0, zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
                   opacity: psPhase === 'unify' ? 1 : 0,
                   pointerEvents: 'none',
-                  transition: 'opacity 0.5s ease',
+                  transition: 'opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
               >
                 <div style={{ textAlign: 'center' }}>
@@ -1421,7 +1421,7 @@ export default function Landing() {
                   opacity: psPhase === 'atlas' ? 1 : 0,
                   transform: psPhase === 'atlas' ? 'scale(1)' : 'scale(0.6)',
                   transformOrigin: 'center center',
-                  transition: 'opacity 0.9s cubic-bezier(0.25,0.1,0.25,1), transform 0.9s cubic-bezier(0.34,1.56,0.64,1)',
+                  transition: 'opacity 1.25s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1.25s cubic-bezier(0.34, 1.4, 0.64, 1)',
                   pointerEvents: psPhase === 'atlas' ? 'auto' : 'none',
                 }}
               >
