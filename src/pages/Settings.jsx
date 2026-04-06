@@ -117,16 +117,16 @@ export default function SettingsPage({ user }) {
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-4xl mx-auto animate-fade-in" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+    <div className="atlas-page-shell max-w-4xl" dir="rtl">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shadow-sm">
             <Settings className="w-5 h-5 text-indigo-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">הגדרות</h1>
+          <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">הגדרות</h1>
         </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל את הגדרות החשבון, פרטי הארגון, העדפות התראות ועוד.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: ודא שפרטי הארגון מעודכנים — הם מופיעים בחשבוניות</p>
+        <p className="text-gray-600 text-sm leading-relaxed max-w-2xl">חשבון, ארגון, התראות ואבטחה — הכל במקום אחד, ברור ושקט.</p>
+        <p className="text-indigo-600/90 text-xs mt-2 font-medium">טיפ: פרטי ארגון מעודכנים = חשבוניות ומסמכים נכונים אוטומטית.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
@@ -139,10 +139,10 @@ export default function SettingsPage({ user }) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-right",
+                  "flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors text-right min-h-[44px] touch-manipulation",
                   activeTab === tab.id
-                    ? "bg-[#00D1C1]/10 text-[#00D1C1]"
-                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                    ? "bg-[#00D1C1]/12 text-[#00a89a] ring-1 ring-[#00D1C1]/20"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                 )}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />

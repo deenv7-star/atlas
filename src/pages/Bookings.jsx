@@ -113,17 +113,17 @@ export default function BookingsPage({ user, selectedPropertyId }) {
     'bg-emerald-100 text-emerald-700', 'bg-rose-100 text-rose-700', 'bg-amber-100 text-amber-700'];
 
   return (
-    <div className="min-h-full p-4 md:p-6 space-y-5 max-w-6xl mx-auto animate-fade-in" dir="rtl">
+    <div className="atlas-page-shell max-w-6xl space-y-5" dir="rtl">
 
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shadow-sm">
             <CalendarDays className="w-5 h-5 text-indigo-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">ניהול הזמנות</h1>
+          <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">ניהול הזמנות</h1>
         </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-12">כל ההזמנות במקום אחד. צפה בהזמנות קרובות, נהל צ'ק-אין וצ'ק-אאוט, ועקוב אחר סטטוס.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-12">טיפ: לחץ + הזמנה חדשה כדי להוסיף הזמנה ידנית</p>
+        <p className="text-gray-600 text-sm leading-relaxed max-w-2xl">כל ההזמנות במקום אחד — צ'ק-אין, צ'ק-אאוט וסטטוס, בלי לקפוץ בין מסכים.</p>
+        <p className="text-indigo-600/90 text-xs mt-2 font-medium">טיפ: &quot;הזמנה חדשה&quot; מוסיף רשומה ידנית בשנייה.</p>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -191,21 +191,21 @@ export default function BookingsPage({ user, selectedPropertyId }) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100/80 shadow-sm overflow-hidden">
+      <div className="atlas-card-surface overflow-hidden">
         {isLoading ? (
           <div className="p-4 space-y-3">
-            {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}
+            {[...Array(5)].map((_, i) => <Skeleton key={i} className="atlas-list-skeleton" />)}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-16 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+          <div className="py-16 text-center px-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 ring-1 ring-gray-100 flex items-center justify-center mx-auto mb-4">
               <CalendarDays className="w-7 h-7 text-gray-300" />
             </div>
-            <p className="text-sm font-semibold text-gray-500 mb-1">
-              {searchTerm || statusFilter !== 'all' ? 'לא נמצאו תוצאות' : 'אין הזמנות עדיין'}
+            <p className="text-sm font-bold text-gray-600 mb-1">
+              {searchTerm || statusFilter !== 'all' ? 'לא נמצאו תוצאות' : 'עדיין אין הזמנות — מתחילים בקלות'}
             </p>
-            <p className="text-xs text-gray-400 mb-4">
-              {searchTerm || statusFilter !== 'all' ? 'נסה לשנות את הסינון' : 'הוסף את ההזמנה הראשונה שלך'}
+            <p className="text-xs text-gray-400 mb-4 max-w-xs mx-auto leading-relaxed">
+              {searchTerm || statusFilter !== 'all' ? 'נסה חיפוש אחר או נקה את הסינון.' : 'הוסף הזמנה ראשונה ותראה איך הכל מתיישר לבד.'}
             </p>
             {!searchTerm && statusFilter === 'all' && (
               <Button onClick={openNew} size="sm" className="gap-1.5 min-h-[44px] bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl px-5 touch-manipulation">

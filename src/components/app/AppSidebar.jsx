@@ -95,10 +95,10 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
         collapsed ? "w-[64px]" : "w-[240px]"
       )}
       style={{
-        fontFamily: "'Heebo', sans-serif",
-        background: '#fff',
-        borderLeft: '1px solid #E5E7EB',
-        boxShadow: '1px 0 12px rgba(0,0,0,0.04)',
+        fontFamily: "'Heebo', system-ui, sans-serif",
+        background: 'var(--atlas-surface, #fff)',
+        borderLeft: '1px solid var(--atlas-border-soft, #E5E7EB)',
+        boxShadow: '1px 0 16px rgba(15, 23, 42, 0.04)',
       }}
     >
 
@@ -140,8 +140,8 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
           <div key={groupIdx} className={groupIdx > 0 ? "mt-4" : ""}>
             {group.label && !collapsed && (
               <p
-                className="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-widest select-none"
-                style={{ color: '#00a89a', letterSpacing: '0.12em' }}
+                className="px-2 mb-1.5 text-[11px] font-bold select-none tracking-tight"
+                style={{ color: '#00a89a' }}
               >
                 {group.label}
               </p>

@@ -44,6 +44,16 @@
 
     /* Page background */
     --page-bg: #F4F6FB;
+
+    /* Atlas app UI tokens (dashboard + inner pages) */
+    --atlas-ink: #0b1220;
+    --atlas-ink-muted: #4b5563;
+    --atlas-border-soft: rgba(15, 23, 42, 0.07);
+    --atlas-surface: rgba(255, 255, 255, 0.94);
+    --atlas-shadow-card: 0 4px 24px rgba(15, 23, 42, 0.06);
+    --atlas-shadow-hero: 0 2px 20px rgba(79, 70, 229, 0.06);
+    --atlas-radius-card: 1rem;
+    --atlas-radius-lg: 1.25rem;
   }
 
   .dark {
@@ -89,6 +99,31 @@
   /* RTL Support */
   [dir="rtl"] {
     font-family: 'Rubik', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+@layer components {
+  /* Shared page wrappers — match Dashboard tone */
+  .atlas-page-shell {
+    @apply min-h-full p-4 md:p-6 mx-auto animate-fade-in;
+  }
+
+  .atlas-page-hero {
+    @apply rounded-[var(--atlas-radius-lg)] border p-5 mb-6;
+    background: linear-gradient(135deg, rgba(238, 242, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 55%, rgba(255, 255, 255, 1) 100%);
+    border-color: rgba(99, 102, 241, 0.14);
+    box-shadow: var(--atlas-shadow-hero);
+  }
+
+  .atlas-card-surface {
+    @apply rounded-[var(--atlas-radius-card)] border bg-white/95 backdrop-blur-sm;
+    border-color: var(--atlas-border-soft);
+    box-shadow: var(--atlas-shadow-card);
+  }
+
+  /* List loading — consistent with inner pages */
+  .atlas-list-skeleton {
+    @apply h-16 w-full rounded-xl bg-muted/50;
   }
 }
 

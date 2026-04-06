@@ -137,17 +137,17 @@ export default function LeadsPage({ user, selectedPropertyId }) {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-5 max-w-5xl mx-auto animate-fade-in" dir="rtl">
+    <div className="atlas-page-shell max-w-5xl space-y-5" dir="rtl">
 
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shadow-sm">
             <Users className="w-5 h-5 text-indigo-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">ניהול לידים</h1>
+          <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">ניהול לידים</h1>
         </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-12">כאן מנהלים את כל הפניות והלידים שלך. הוסף ליד חדש, עקוב אחר סטטוס, ותהפוך פניות להזמנות.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-12">טיפ: לחץ על ליד כדי לראות פרטים מלאים ולשנות סטטוס</p>
+        <p className="text-gray-600 text-sm leading-relaxed max-w-2xl">כל הפניות במקום אחד — מעקב סטטוס, פרטים מלאים, ודרך קצרה להפוך ליד להזמנה.</p>
+        <p className="text-indigo-600/90 text-xs mt-2 font-medium">טיפ: לחיצה על ליד פותחת עריכה ושינוי סטטוס מהר.</p>
       </div>
 
       {/* ── Page header ── */}
@@ -214,26 +214,29 @@ export default function LeadsPage({ user, selectedPropertyId }) {
       </div>
 
       {/* ── Leads list ── */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="atlas-card-surface overflow-hidden">
         {isLoading ? (
           <div className="p-4 space-y-3">
             {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-16 rounded-xl" />
+              <Skeleton key={i} className="atlas-list-skeleton" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-14">
-            <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-3">
+          <div className="text-center py-14 px-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 ring-1 ring-gray-100 flex items-center justify-center mx-auto mb-3">
               <Users className="w-7 h-7 text-gray-300" />
             </div>
-            <p className="text-sm font-medium text-gray-500">
-              {searchTerm || statusFilter !== 'all' ? 'לא נמצאו תוצאות' : 'אין לידים עדיין'}
+            <p className="text-sm font-bold text-gray-600 mb-1">
+              {searchTerm || statusFilter !== 'all' ? 'לא נמצאו תוצאות' : 'עדיין אין לידים — בואו נפתח שורה ראשונה'}
+            </p>
+            <p className="text-xs text-gray-400 mb-3 max-w-xs mx-auto leading-relaxed">
+              {searchTerm || statusFilter !== 'all' ? 'נסה חיפוש אחר או בחר סטטוס אחר.' : 'ליד אחד מתחיל צינור מכירות שאפשר לעקוב אחריו כאן.'}
             </p>
             {!searchTerm && statusFilter === 'all' && (
               <Button
                 onClick={openNew}
                 size="sm"
-                className="mt-3 gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl"
+                className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl min-h-[44px] touch-manipulation"
               >
                 <Plus className="w-3.5 h-3.5" />
                 הוסף ליד ראשון

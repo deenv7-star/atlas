@@ -20,12 +20,12 @@ function PageLoader() {
           className="w-10 h-10 rounded-full animate-spin"
           style={{
             border: '2px solid transparent',
-            borderTopColor: '#00D1C1',
-            borderRightColor: 'rgba(0,209,193,0.3)',
-            boxShadow: '0 0 12px rgba(0,209,193,0.3)',
+            borderTopColor: 'var(--brand-teal, #00D1C1)',
+            borderRightColor: 'rgba(0,209,193,0.25)',
+            boxShadow: '0 0 20px rgba(0,209,193,0.2)',
           }}
         />
-        <p className="text-sm font-medium" style={{ color: 'rgba(0,0,0,0.35)' }}>טוען...</p>
+        <p className="text-sm font-semibold" style={{ color: 'var(--atlas-ink-muted, rgba(0,0,0,0.4))' }}>טוען את המסך…</p>
       </div>
     </div>
   );

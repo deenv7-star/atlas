@@ -101,10 +101,10 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
       {/* Page title */}
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <h1
-          className="text-[15px] font-bold truncate"
+          className="text-base md:text-[17px] font-extrabold truncate tracking-tight"
           style={{
-            color: '#0B1220',
-            letterSpacing: '-0.01em',
+            color: 'var(--atlas-ink, #0B1220)',
+            letterSpacing: '-0.02em',
           }}
         >
           {pageTitle}
@@ -163,9 +163,10 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
             <div className="px-3 py-2 border-b border-gray-100">
               <p className="text-sm font-semibold text-gray-800">התראות</p>
             </div>
-            <div className="py-6 text-center">
+            <div className="py-6 text-center px-3">
               <Bell className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-              <p className="text-sm text-gray-400">אין התראות חדשות</p>
+              <p className="text-sm font-medium text-gray-500">הכל שקט כרגע</p>
+              <p className="text-xs text-gray-400 mt-1 leading-relaxed">כשמשהו חשוב יקרה — תקבל עדכון כאן.</p>
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
