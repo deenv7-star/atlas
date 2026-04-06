@@ -2953,13 +2953,36 @@ export default function Landing() {
             SECTION B — למה דווקא ATLAS? (Extra Trust)
         ════════════════════════════════════════ */}
         <section style={{ padding: '80px 24px', background: '#FAFAFA', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
-          <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          {reducedMotion ? (
+            <>
+              <div style={{ position: 'absolute', top: '8%', right: '-6%', width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 72%)', pointerEvents: 'none' }} aria-hidden />
+              <div style={{ position: 'absolute', bottom: '6%', left: '-8%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 72%)', pointerEvents: 'none' }} aria-hidden />
+            </>
+          ) : (
+            <>
+              <motion.div
+                aria-hidden
+                style={{ position: 'absolute', top: '8%', right: '-6%', width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,70,229,0.12) 0%, transparent 72%)', pointerEvents: 'none' }}
+                initial={{ opacity: 0.4, scale: 1 }}
+                animate={{ opacity: [0.4, 0.65, 0.4], scale: [1, 1.09, 1] }}
+                transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <motion.div
+                aria-hidden
+                style={{ position: 'absolute', bottom: '6%', left: '-8%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 72%)', pointerEvents: 'none' }}
+                initial={{ opacity: 0.35, scale: 1 }}
+                animate={{ opacity: [0.35, 0.58, 0.35], scale: [1, 1.07, 1] }}
+                transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 1.2 }}
+              />
+            </>
+          )}
+          <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 }}>
             <motion.div
               style={{ textAlign: 'center', marginBottom: 48 }}
-              initial={reducedMotion ? false : { opacity: 0, y: 24 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 28 }}
               whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-12% 0px' }}
-              transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
+              viewport={{ once: true, amount: 0.25, margin: '0px 0px -12% 0px' }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 12px', fontFamily: 'Heebo, sans-serif' }}>למה דווקא ATLAS?</h2>
               <p className="atlas-section-sub" style={{ fontSize: 16, color: '#6B7280', margin: 0, fontFamily: 'Heebo, sans-serif' }}>כי אנחנו יודעים מה מנהלי נכסים באמת צריכים</p>
@@ -2969,13 +2992,17 @@ export default function Landing() {
               style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-10% 0px' }}
+              viewport={{ once: true, amount: 0.18, margin: '0px 0px -10% 0px' }}
               variants={{
-                hidden: {},
+                hidden: reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 },
                 visible: {
+                  opacity: 1,
+                  y: 0,
                   transition: {
-                    staggerChildren: reducedMotion ? 0 : 0.09,
-                    delayChildren: reducedMotion ? 0 : 0.08,
+                    duration: 0.5,
+                    ease: [0.22, 1, 0.36, 1],
+                    staggerChildren: reducedMotion ? 0 : 0.11,
+                    delayChildren: reducedMotion ? 0 : 0.12,
                   },
                 },
               }}
@@ -2989,22 +3016,32 @@ export default function Landing() {
                 { title: 'אבטחה ופרטיות', desc: 'הנתונים שלך מוגנים בהצפנה מתקדמת. תואם GDPR ותקנות ישראליות.', color: '#06B6D4', iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
               ].map((item, i) => (
                 <motion.div
-                  key={i}
+                  key={item.title}
                   variants={{
-                    hidden: reducedMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.97 },
+                    hidden: reducedMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 44, scale: 0.92 },
                     visible: {
                       opacity: 1,
                       y: 0,
                       scale: 1,
-                      transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] },
+                      transition: { duration: 0.58, ease: [0.22, 1, 0.36, 1] },
                     },
                   }}
-                  whileHover={reducedMotion ? undefined : { y: -4, boxShadow: '0 12px 36px rgba(0,0,0,0.1)', transition: { type: 'spring', stiffness: 400, damping: 28 } }}
+                  whileHover={reducedMotion ? undefined : { y: -6, boxShadow: '0 16px 40px rgba(15,23,42,0.12)', transition: { type: 'spring', stiffness: 380, damping: 26 } }}
                   style={{ background: 'white', borderRadius: 16, padding: '28px 28px', border: '1px solid #F3F4F6', cursor: 'default', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
                 >
-                  <div style={{ width: 48, height: 48, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <motion.div
+                    style={{ width: 48, height: 48, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}
+                    variants={{
+                      hidden: reducedMotion ? { scale: 1, rotate: 0 } : { scale: 0.75, rotate: -6 },
+                      visible: {
+                        scale: 1,
+                        rotate: 0,
+                        transition: { type: 'spring', stiffness: 420, damping: 22, delay: reducedMotion ? 0 : 0.04 },
+                      },
+                    }}
+                  >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.iconPath} /></svg>
-                  </div>
+                  </motion.div>
                   <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif' }}>{item.title}</h3>
                   <p style={{ fontSize: 14, color: '#6B7280', margin: 0, lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{item.desc}</p>
                 </motion.div>
