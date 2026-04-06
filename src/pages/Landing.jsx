@@ -844,6 +844,19 @@ export default function Landing() {
           gap: 48px;
           margin-bottom: 48px;
         }
+
+        /* Why ATLAS cards: avoid scale/transform motion blur on text (GPU subpixels) */
+        .atlas-why-card {
+          -webkit-font-smoothing: subpixel-antialiased;
+          text-rendering: geometricPrecision;
+          transition: box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+        @media (hover: hover) {
+          .atlas-why-card:hover {
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
+            border-color: #e5e7eb;
+          }
+        }
         .atlas-footer-logo-row {
           display: flex;
           align-items: center;
@@ -2994,15 +3007,14 @@ export default function Landing() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.18, margin: '0px 0px -10% 0px' }}
               variants={{
-                hidden: reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 },
+                hidden: reducedMotion ? { opacity: 1 } : { opacity: 0 },
                 visible: {
                   opacity: 1,
-                  y: 0,
                   transition: {
-                    duration: 0.5,
+                    duration: 0.4,
                     ease: [0.22, 1, 0.36, 1],
-                    staggerChildren: reducedMotion ? 0 : 0.11,
-                    delayChildren: reducedMotion ? 0 : 0.12,
+                    staggerChildren: reducedMotion ? 0 : 0.09,
+                    delayChildren: reducedMotion ? 0 : 0.08,
                   },
                 },
               }}
@@ -3014,34 +3026,24 @@ export default function Landing() {
                 { title: 'אוטומציות חכמות', desc: 'הודעות אוטומטיות, עדכוני סטטוס, תזכורות — המערכת עובדת בשבילך 24/7.', color: '#F59E0B', iconPath: 'M12 6V2 M16.24 7.76l2.83-2.83 M18 12h4 M16.24 16.24l2.83 2.83 M12 18v4 M7.76 16.24l-2.83 2.83 M6 12H2 M7.76 7.76L4.93 4.93' },
                 { title: 'דוחות בזמן אמת', desc: 'הכנסות, תפוסה, ביצועים — כל המספרים שאתה צריך, בלחיצה אחת.', color: '#EC4899', iconPath: 'M18 20V10 M12 20V4 M6 20v-6' },
                 { title: 'אבטחה ופרטיות', desc: 'הנתונים שלך מוגנים בהצפנה מתקדמת. תואם GDPR ותקנות ישראליות.', color: '#06B6D4', iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
-              ].map((item, i) => (
+              ].map((item) => (
                 <motion.div
                   key={item.title}
+                  className="atlas-why-card"
                   variants={{
-                    hidden: reducedMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 44, scale: 0.92 },
+                    hidden: reducedMotion ? { opacity: 1 } : { opacity: 0 },
                     visible: {
                       opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      transition: { duration: 0.58, ease: [0.22, 1, 0.36, 1] },
+                      transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
                     },
                   }}
-                  whileHover={reducedMotion ? undefined : { y: -6, boxShadow: '0 16px 40px rgba(15,23,42,0.12)', transition: { type: 'spring', stiffness: 380, damping: 26 } }}
                   style={{ background: 'white', borderRadius: 16, padding: '28px 28px', border: '1px solid #F3F4F6', cursor: 'default', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
                 >
-                  <motion.div
+                  <div
                     style={{ width: 48, height: 48, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}
-                    variants={{
-                      hidden: reducedMotion ? { scale: 1, rotate: 0 } : { scale: 0.75, rotate: -6 },
-                      visible: {
-                        scale: 1,
-                        rotate: 0,
-                        transition: { type: 'spring', stiffness: 420, damping: 22, delay: reducedMotion ? 0 : 0.04 },
-                      },
-                    }}
                   >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={item.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.iconPath} /></svg>
-                  </motion.div>
+                  </div>
                   <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 6px', fontFamily: 'Heebo, sans-serif' }}>{item.title}</h3>
                   <p style={{ fontSize: 14, color: '#6B7280', margin: 0, lineHeight: 1.6, fontFamily: 'Heebo, sans-serif' }}>{item.desc}</p>
                 </motion.div>
