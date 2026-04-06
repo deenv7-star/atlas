@@ -19,6 +19,7 @@ const QUICK_CHIPS = [
 
 export default function AIChatBubble() {
   const [isOpen, setIsOpen] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [showComingSoon, setShowComingSoon] = useState(false);
 
@@ -44,7 +45,12 @@ export default function AIChatBubble() {
 
   return (
     <div
-      className="fixed bottom-6 left-6 z-50"
+      className={cn(
+        'fixed z-40 left-4 sm:left-6',
+        /* מעל שורת הטאבים במובייל (h-14) + מרווח; בדסקטופ אין טאב תחתון */
+        'bottom-[calc(3.5rem+0.75rem+env(safe-area-inset-bottom,0px))]',
+        'lg:bottom-6'
+      )}
       dir="rtl"
       style={{ fontFamily: "'Heebo', sans-serif" }}
     >
@@ -141,39 +147,49 @@ export default function AIChatBubble() {
         </div>
       )}
 
-      {/* Floating button */}
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => setIsOpen((prev) => !prev)}
-              className={cn(
-                "w-14 h-14 rounded-full flex items-center justify-center",
-                "bg-gradient-to-br from-[#4F46E5] to-[#7C3AED] text-white",
-                "shadow-lg hover:shadow-xl transition-all duration-200",
-                "hover:scale-105 active:scale-95",
-                "animate-[pulse-bubble_2s_ease-in-out_infinite]"
-              )}
-              aria-label="עוזר חכם — שאל אותי הכל"
+      {/* Floating button — מעל שורת הטאבים; טבעת פעימה בנפרד כדי לא לדרוס shadow */}
+      <div className="relative inline-flex items-center justify-center">
+        <span
+          className="pointer-events-none absolute inset-0 z-0 rounded-full animate-[pulse-bubble_2s_ease-in-out_infinite]"
+          aria-hidden
+        />
+        <TooltipProvider delayDuration={400} skipDelayDuration={200}>
+          <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={() => {
+                  setTooltipOpen(false);
+                  setIsOpen((prev) => !prev);
+                }}
+                className={cn(
+                  'relative z-10 w-14 h-14 rounded-full flex items-center justify-center',
+                  'bg-gradient-to-br from-[#4F46E5] to-[#7C3AED] text-white',
+                  'shadow-lg hover:shadow-xl transition-all duration-200',
+                  'hover:scale-105 active:scale-95',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2'
+                )}
+                aria-label="עוזר חכם — שאל אותי הכל"
+                aria-expanded={isOpen}
+              >
+                <MessageCircle className="w-7 h-7" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              sideOffset={8}
+              className="font-heebo max-w-[220px] text-center"
             >
-              <MessageCircle className="w-7 h-7" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent
-            side="top"
-            sideOffset={8}
-            className="font-heebo"
-          >
-            <p>עוזר חכם — שאל אותי הכל</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+              <p>עוזר חכם — שאל אותי הכל</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
-      {/* Pulse animation keyframes - inline style for the bubble */}
       <style>{`
         @keyframes pulse-bubble {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
-          50% { box-shadow: 0 0 0 12px rgba(79, 70, 229, 0); }
+          0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.35); }
+          50% { box-shadow: 0 0 0 14px rgba(79, 70, 229, 0); }
         }
       `}</style>
     </div>
