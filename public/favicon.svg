@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="ATLAS">
+  <defs>
+    <linearGradient id="atlasFavBg" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#00D1C1"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#atlasFavBg)"/>
+  <path fill="#ffffff" d="M16 6.5l7.2 18h-3.4l-1.4-3.8h-5l-1.4 3.8H8.8L16 6.5zm0 5.2L13.6 17h4.8L16 11.7z"/>
+</svg>

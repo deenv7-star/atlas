@@ -42,11 +42,14 @@ function LayoutContent({ children, currentPageName }) {
   const isPublicPage = publicPages.includes(currentPageName);
 
   useEffect(() => {
-    const link = document.querySelector("link[rel~='icon']") || document.createElement('link');
-    link.type = 'image/png';
-    link.rel = 'icon';
-    link.href = '/icon.png';
-    document.head.appendChild(link);
+    let link = document.querySelector("link[rel='icon'][type='image/svg+xml']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/svg+xml';
+      document.head.appendChild(link);
+    }
+    link.href = '/favicon.svg';
   }, []);
 
   // Mobile: close sidebar on route change

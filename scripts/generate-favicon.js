@@ -1,10 +1,21 @@
 import sharp from 'sharp';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(__dirname, '..', 'public');
-const logoPath = join(publicDir, 'atlas-logo-final.png');
+
+/** Prefer crisp monogram SVG; fallback to full logo PNG if present. */
+const svgSource = join(publicDir, 'favicon.svg');
+const pngFallback = join(publicDir, 'atlas-logo-final.png');
+
+const input = existsSync(svgSource) ? svgSource : pngFallback;
+
+if (!existsSync(input)) {
+  console.error('Missing favicon source:', svgSource, 'or', pngFallback);
+  process.exit(1);
+}
 
 const sizes = [
   { name: 'favicon-16x16.png', size: 16 },
@@ -13,16 +24,15 @@ const sizes = [
 ];
 
 for (const { name, size } of sizes) {
-  await sharp(logoPath)
-    .resize(size, size)
+  await sharp(input)
+    .resize(size, size, { fit: 'cover' })
     .png()
     .toFile(join(publicDir, name));
   console.log('Generated', name);
 }
 
-// favicon.ico as 32x32 (browsers accept PNG in .ico for simple cases)
-await sharp(logoPath)
-  .resize(32, 32)
+await sharp(input)
+  .resize(32, 32, { fit: 'cover' })
   .png()
   .toFile(join(publicDir, 'favicon.ico'));
 console.log('Generated favicon.ico');
