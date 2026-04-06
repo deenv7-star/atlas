@@ -911,6 +911,18 @@ export default function Landing() {
           .atlas-hamburger    { display: none !important; }
           .atlas-mobile-drawer { display: none !important; }
         }
+
+        /* Integrations marquee — minimal vertical padding (overrides global section padding on mobile) */
+        .atlas-int-marquee-section {
+          padding-top: 3px !important;
+          padding-bottom: 3px !important;
+        }
+        @media (max-width: 480px) {
+          .atlas-lp section.atlas-int-marquee-section {
+            padding-top: 3px !important;
+            padding-bottom: 3px !important;
+          }
+        }
       `}</style>
 
       <div
@@ -1930,11 +1942,11 @@ export default function Landing() {
         {/* ════════════════════════════════════════
             SECTION 5 — INTEGRATIONS (Infinite Marquee)
         ════════════════════════════════════════ */}
-        <section style={{ padding: '64px 0', background: '#FFFFFF', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+        <section className="atlas-int-marquee-section" style={{ padding: '3px 0', background: '#FFFFFF', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 36 }}>
-              <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 10px' }}>מתחברים לכלים שאתם כבר משתמשים בהם</h2>
-              <p className="atlas-section-sub" style={{ fontSize: 17, color: '#6B7280', margin: 0 }}>Airbnb, Booking.com, WhatsApp, Stripe ועוד — הכל מסונכרן</p>
+            <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 14 }}>
+              <h2 className="atlas-section-title atlas-int-marquee-title" style={{ fontSize: 28, fontWeight: 800, color: '#111827', margin: '0 0 6px', lineHeight: 1.25 }}>מתחברים לכלים שאתם כבר משתמשים בהם</h2>
+              <p className="atlas-section-sub" style={{ fontSize: 15, color: '#6B7280', margin: 0, lineHeight: 1.45 }}>Airbnb, Booking.com, WhatsApp, Stripe ועוד — הכל מסונכרן</p>
             </div>
           </div>
 
@@ -1973,10 +1985,10 @@ export default function Landing() {
               </div>
             );
             return (
-              <div style={{ position: 'relative', marginTop: 8 }}>
+              <div style={{ position: 'relative', marginTop: 4 }}>
                 <div style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: 100, background: 'linear-gradient(to left, white, transparent)', zIndex: 2, pointerEvents: 'none' }} />
                 <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 100, background: 'linear-gradient(to right, white, transparent)', zIndex: 2, pointerEvents: 'none' }} />
-                <div style={{ overflow: 'hidden', padding: '12px 0' }}>
+                <div style={{ overflow: 'hidden', padding: '6px 0' }}>
                   <div className="atlas-int-track" style={{ gap: 14 }}>
                     {[...allItems, ...allItems].map((item, i) => renderBadge(item, i))}
                     {[...allItems, ...allItems].map((item, i) => renderBadge(item, i + allItems.length * 2))}
