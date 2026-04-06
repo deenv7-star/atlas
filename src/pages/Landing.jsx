@@ -51,38 +51,61 @@ function AnimatedPrice({ value, duration = 500 }) {
   );
 }
 
-// ─── Count-up hook ────────────────────────────────────────────────────────────
-function useCountUp(target, duration = 1800) {
-  const [count, setCount] = useState(0);
+// ─── Hero stats: count up when section enters view ───────────────────────────
+function LandingStatCount({
+  endValue,
+  format,
+  duration = 2200,
+  delayMs = 0,
+  reducedMotion = false,
+}) {
+  const [v, setV] = useState(reducedMotion ? endValue : 0);
   const ref = useRef(null);
   const started = useRef(false);
 
   useEffect(() => {
+    if (reducedMotion) {
+      setV(endValue);
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true;
+        if (!entry.isIntersecting || started.current) return;
+        started.current = true;
+        const run = () => {
           let startTime = null;
           const step = (ts) => {
             if (!startTime) startTime = ts;
             const progress = Math.min((ts - startTime) / duration, 1);
             const ease = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.round(ease * target));
+            setV(Math.round(ease * endValue));
             if (progress < 1) requestAnimationFrame(step);
           };
           requestAnimationFrame(step);
-          obs.disconnect();
-        }
+        };
+        if (delayMs > 0) window.setTimeout(run, delayMs);
+        else run();
+        obs.disconnect();
       },
-      { threshold: 0.5 }
+      { threshold: 0.35, rootMargin: '0px 0px -8% 0px' }
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [target, duration]);
+  }, [endValue, duration, delayMs, reducedMotion]);
 
-  return [count, ref];
+  return (
+    <span
+      ref={ref}
+      style={{
+        fontVariantNumeric: 'tabular-nums',
+        fontFeatureSettings: '"tnum"',
+      }}
+    >
+      {format(v)}
+    </span>
+  );
 }
 
 // ─── Scroll-reveal hook (bulletproof) ─────────────────────────────────────────
@@ -254,10 +277,6 @@ export default function Landing() {
   const psSectionRef = useRef(null);
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion();
-
-  const [count1, ref1] = useCountUp(500);
-  const [count2, ref2] = useCountUp(98);
-  const [count3, ref3] = useCountUp(3);
 
   useScrollReveal();
 
@@ -1405,13 +1424,21 @@ export default function Landing() {
             </div>
             <div className="atlas-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
               {[
-                { num: '50+', label: 'מתחמים בגרסת בטא', sub: 'בכל רחבי הארץ' },
-                { num: '₪500K+', label: 'הכנסות מנוהלות', sub: 'בשנה האחרונה' },
-                { num: '500+', label: 'הזמנות מנוהלות', sub: 'מסונכרנות אוטומטית' },
-                { num: '98%', label: 'שביעות רצון', sub: 'של המשתמשים שלנו' },
+                { endValue: 50, delayMs: 0, format: (n) => `${n}+`, label: 'מתחמים בגרסת בטא', sub: 'בכל רחבי הארץ' },
+                { endValue: 500, delayMs: 120, format: (n) => `₪${n}K+`, label: 'הכנסות מנוהלות', sub: 'בשנה האחרונה' },
+                { endValue: 500, delayMs: 240, format: (n) => `${n}+`, label: 'הזמנות מנוהלות', sub: 'מסונכרנות אוטומטית' },
+                { endValue: 98, delayMs: 360, format: (n) => `${n}%`, label: 'שביעות רצון', sub: 'של המשתמשים שלנו' },
               ].map((s, i) => (
                 <div key={i} className="atlas-reveal" style={{ textAlign: 'center', padding: 24, background: 'rgba(255,255,255,0.15)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.2)' }}>
-                  <div style={{ fontSize: 42, fontWeight: 900, color: 'white', lineHeight: 1.1, fontFamily: 'Heebo, sans-serif' }}>{s.num}</div>
+                  <div style={{ fontSize: 42, fontWeight: 900, color: 'white', lineHeight: 1.1, fontFamily: 'Heebo, sans-serif' }}>
+                    <LandingStatCount
+                      endValue={s.endValue}
+                      format={s.format}
+                      delayMs={s.delayMs}
+                      duration={2200}
+                      reducedMotion={Boolean(reducedMotion)}
+                    />
+                  </div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.95)', marginTop: 6, fontFamily: 'Heebo, sans-serif' }}>{s.label}</div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 2, fontFamily: 'Heebo, sans-serif' }}>{s.sub}</div>
                 </div>
