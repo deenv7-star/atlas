@@ -659,6 +659,9 @@ export default function Landing() {
           to   { transform: translateX(-50%); }
         }
         .atlas-marquee { animation: atlasMarquee 40s linear infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .atlas-marquee { animation: none !important; }
+        }
 
         /* ─ Feature card hover ─ */
         .atlas-feat-card {
@@ -1367,6 +1370,11 @@ export default function Landing() {
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 10px' }}>
             <span style={{ fontSize: 14, color: '#6B7280', fontWeight: 500 }}>
               מצטרפים ל-500+ מנהלים שכבר עובדים חכם יותר:
+            </span>
+          </div>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 8px' }}>
+            <span style={{ fontSize: 13, color: '#9CA3AF', fontWeight: 500, display: 'block' }}>
+              דוגמאות לסוגי מתחמים ונכסים שאפשר לנהל עם ATLAS בישראל (שמות לדוגמה בלבד):
             </span>
           </div>
           <div style={{ overflow: 'hidden' }}>
