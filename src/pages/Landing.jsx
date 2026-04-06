@@ -2159,18 +2159,53 @@ export default function Landing() {
 
             {/* Comparison table — למה ATLAS ולא Guesty או Hostaway? */}
             <div className="atlas-reveal atlas-features-compare" style={{ marginTop: 80 }}>
-              <h2 className="atlas-section-title atlas-features-compare-title" style={{ fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 32px', textAlign: 'center' }}>למה ATLAS ולא Guesty או Hostaway?</h2>
-              <div className="atlas-compare-scroll" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: 16, border: '1px solid #E5E7EB', background: 'white', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+              <motion.h2
+                className="atlas-section-title atlas-features-compare-title"
+                style={{ fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 32px', textAlign: 'center' }}
+                initial={reducedMotion ? false : { opacity: 0, y: 22 }}
+                whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-10% 0px' }}
+                transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
+              >
+                למה ATLAS ולא Guesty או Hostaway?
+              </motion.h2>
+              <motion.div
+                className="atlas-compare-scroll"
+                style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: 16, border: '1px solid #E5E7EB', background: 'white', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}
+                initial={reducedMotion ? false : { opacity: 0, y: 26, scale: 0.985 }}
+                whileInView={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: '-8% 0px' }}
+                transition={{ duration: 0.58, delay: reducedMotion ? 0 : 0.05, ease: [0.22, 1, 0.36, 1] }}
+              >
                 <table className="atlas-compare-table" style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500, fontFamily: 'Heebo, sans-serif' }}>
                   <thead>
-                    <tr style={{ background: '#F9FAFB', borderBottom: '2px solid #E5E7EB' }}>
+                    <motion.tr
+                      style={{ background: '#F9FAFB', borderBottom: '2px solid #E5E7EB' }}
+                      initial={reducedMotion ? false : { opacity: 0, y: -8 }}
+                      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: '-6% 0px' }}
+                      transition={{ duration: 0.4, delay: reducedMotion ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    >
                       <th style={{ padding: '16px 20px', textAlign: 'right', fontWeight: 700, color: '#111827', fontSize: 14 }}>פיצ'ר</th>
                       <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 800, color: '#4F46E5', fontSize: 14 }}>ATLAS</th>
                       <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 600, color: '#6B7280', fontSize: 14 }}>Guesty</th>
                       <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 600, color: '#6B7280', fontSize: 14 }}>Hostaway</th>
-                    </tr>
+                    </motion.tr>
                   </thead>
-                  <tbody>
+                  <motion.tbody
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: '-14% 0px' }}
+                    variants={{
+                      hidden: {},
+                      visible: {
+                        transition: {
+                          staggerChildren: reducedMotion ? 0 : 0.075,
+                          delayChildren: reducedMotion ? 0 : 0.12,
+                        },
+                      },
+                    }}
+                  >
                     {[
                       { feat: 'שפה', atlas: 'עברית מלאה', g: 'אנגלית', h: 'אנגלית' },
                       { feat: 'מחיר', atlas: '₪399/חודש', g: '$200+/חודש', h: '$100+/נכס' },
@@ -2179,16 +2214,27 @@ export default function Landing() {
                       { feat: 'חשבוניות ישראליות', atlas: '✓', g: '✗', h: '✗' },
                       { feat: 'הגדרה', atlas: '5 דקות', g: 'שבועות', h: 'ימים' },
                     ].map((row, i) => (
-                      <tr key={i} style={{ borderBottom: i < 5 ? '1px solid #F3F4F6' : 'none' }}>
+                      <motion.tr
+                        key={i}
+                        style={{ borderBottom: i < 5 ? '1px solid #F3F4F6' : 'none' }}
+                        variants={{
+                          hidden: reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 },
+                          visible: {
+                            opacity: 1,
+                            y: 0,
+                            transition: { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
+                          },
+                        }}
+                      >
                         <td style={{ padding: '14px 20px', fontWeight: 600, color: '#374151', fontSize: 14 }}>{row.feat}</td>
                         <td style={{ padding: '14px 20px', textAlign: 'center', fontWeight: 700, color: '#4F46E5', fontSize: 14 }}>{row.atlas}</td>
                         <td style={{ padding: '14px 20px', textAlign: 'center', color: '#6B7280', fontSize: 14 }}>{row.g}</td>
                         <td style={{ padding: '14px 20px', textAlign: 'center', color: '#6B7280', fontSize: 14 }}>{row.h}</td>
-                      </tr>
+                      </motion.tr>
                     ))}
-                  </tbody>
+                  </motion.tbody>
                 </table>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
