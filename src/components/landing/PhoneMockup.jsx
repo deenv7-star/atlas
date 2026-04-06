@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Calendar, TrendingUp, Users } from 'lucide-react';
+import { Calendar, TrendingUp, Users } from 'lucide-react';
 
 export default function PhoneMockup({ variant = 'dark' }) {
   return (

@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Plus, Zap, Mail, MessageSquare, CreditCard, Sparkles, 
-  FileText, Bell, ChevronRight, Play, Pause, Copy, Trash2,
+  FileText, Bell, ChevronRight, Trash2,
   Users, Calendar, CheckCircle, AlertTriangle
 } from 'lucide-react';
 

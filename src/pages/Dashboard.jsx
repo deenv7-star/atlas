@@ -2,12 +2,11 @@ import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LiquidGlassCard } from '@/components/ui/LiquidGlass';
-import { ShimmerButton, RippleButton } from '@/components/ui/AnimatedButton';
+import { ShimmerButton } from '@/components/ui/AnimatedButton';
 import {
   Users, CalendarDays, CalendarRange, Wallet, Star,
   ArrowUpLeft, ArrowDownRight, MessageSquare, Plus,
@@ -92,9 +91,10 @@ function BookingRow({ booking }) {
     ? format(parseISO(booking.check_in_date), 'd MMM', { locale: he })
     : '';
 
+  const detailUrl = booking?.id ? `${createPageUrl('BookingDetail')}/${booking.id}` : createPageUrl('Bookings');
   return (
     <Link
-      to={createPageUrl('Bookings')}
+      to={detailUrl}
       className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
     >
       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex flex-col items-center justify-center flex-shrink-0 shadow-sm">
@@ -125,9 +125,10 @@ function BookingRow({ booking }) {
 /* ── Lead Row ──────────────────────────────────────── */
 function LeadRow({ lead }) {
   const initials = (lead.full_name || lead.name || 'א')[0];
+  const detailUrl = lead?.id ? `${createPageUrl('LeadDetail')}/${lead.id}` : createPageUrl('Leads');
   return (
     <Link
-      to={createPageUrl('Leads')}
+      to={detailUrl}
       className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
     >
       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00D1C1]/30 to-blue-200/60 flex items-center justify-center flex-shrink-0 text-sm font-bold text-[#00a89a]">
@@ -438,7 +439,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
               ) : (
                 <div className="space-y-2">
                   {todayCheckIns.map(b => (
-                    <Link key={b.id} to={createPageUrl('Bookings')} className="block">
+                    <Link key={b.id} to={b.id ? `${createPageUrl('BookingDetail')}/${b.id}` : createPageUrl('Bookings')} className="block">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
                           {(b.guest_name || 'א')[0]}
@@ -465,7 +466,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
               ) : (
                 <div className="space-y-2">
                   {todayCheckOuts.map(b => (
-                    <Link key={b.id} to={createPageUrl('Bookings')} className="block">
+                    <Link key={b.id} to={b.id ? `${createPageUrl('BookingDetail')}/${b.id}` : createPageUrl('Bookings')} className="block">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">
                           {(b.guest_name || 'א')[0]}

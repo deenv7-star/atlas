@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Play, Star, Shield, TrendingUp, Calendar, MessageSquare, CreditCard, CheckCircle2, Zap, Bell, Settings, LayoutDashboard, Users, Sparkles, FileText } from 'lucide-react';
+import { ArrowLeft, Play, Star, Shield, TrendingUp, Calendar, MessageSquare, CreditCard, Bell, Settings, LayoutDashboard, Users, Sparkles, FileText } from 'lucide-react';
 
 /* ─── Realistic App Screenshot Mockup ─────────────────────────── */
 function AppScreenshot() {

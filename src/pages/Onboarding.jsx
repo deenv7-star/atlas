@@ -10,17 +10,16 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  ArrowLeft, ArrowRight, Check, Sparkles, Building2, Home,
+  ArrowLeft, ArrowRight, Check, Building2, Home,
   CalendarDays, CreditCard, Users, BarChart2, Crown, X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
 import {
-  validateFirstName, validateLastName, validatePhone, formatPhone,
+  validateFirstName, validateLastName, validatePhone,
   validateOrgName, validateAddress, validateOrgType,
   validatePropertyName, validateRooms, validatePricePerNight,
   validateCardNumber, validateExpiry, validateCvv, validateNameOnCard,
-  formatCardNumber, formatExpiry, getCardType,
 } from '@/lib/validation';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';

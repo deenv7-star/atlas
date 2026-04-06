@@ -8,8 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  MessageSquare, Send, Search, User, Clock, Check,
-  CheckCheck, AlertCircle, Plus, X,
+  MessageSquare, Send, Search, X,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';

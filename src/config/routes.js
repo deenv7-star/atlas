@@ -63,6 +63,10 @@ export const LEGACY_REDIRECTS = [
   { from: '/GuestPortal', to: '/guest-portal' },
   { from: '/DynamicPricing', to: '/dynamic-pricing' },
   { from: '/ExpenseTracker', to: '/expense-tracker' },
+  { from: '/ServiceRequests', to: '/service-requests' },
+  { from: '/PlatformAdmin', to: '/platform-admin' },
+  { from: '/Billing', to: '/billing' },
+  { from: '/Landing', to: '/' },
 ];
 
 /**

@@ -29,6 +29,7 @@ const EXPLICIT_PROTECTED_KEYS = new Set([
   'PlatformAdmin',
   'BookingDetail',
   'LeadDetail',
+  'Onboarding',
 ]);
 
 function LegacyBookingDetailRedirect() {

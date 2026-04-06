@@ -37,6 +37,12 @@ const pagePathMap: Record<string, string> = {
   LeadDetail: '/lead',
   PlatformAdmin: '/platform-admin',
   ServiceRequests: '/service-requests',
+  Onboarding: '/onboarding',
+  Login: '/login',
+  Register: '/register',
+  VerifyEmail: '/verify-email',
+  ResetPassword: '/reset-password',
+  UpdatePassword: '/update-password',
 };
 
 export function createPageUrl(pageName: string) {

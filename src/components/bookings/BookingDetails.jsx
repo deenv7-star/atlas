@@ -34,15 +34,11 @@ import {
   MessageSquare,
   Sparkles,
   FileText,
-  Star,
   Plus,
   CheckCircle2,
-  Circle,
-  Clock,
   Receipt
 } from 'lucide-react';
 import { format, parseISO, differenceInDays } from 'date-fns';
-import { he } from 'date-fns/locale';
 
 const statusColors = {
   PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',

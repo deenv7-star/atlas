@@ -4,13 +4,10 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import CalendarSetupWizard from '@/components/integrations/CalendarSetupWizard';
 import MessagingSetupDialog from '@/components/integrations/MessagingSetupDialog';
@@ -18,8 +15,7 @@ import PaymentSetupDialog from '@/components/integrations/PaymentSetupDialog';
 import AccountingSetupDialog from '@/components/integrations/AccountingSetupDialog';
 import PMSSetupDialog from '@/components/integrations/PMSSetupDialog';
 import { 
-  Link2, Calendar, CreditCard, MessageSquare, Settings2,
-  Check, X, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle, Clock, Zap, Info
+  Link2, Calendar, CreditCard, MessageSquare, Settings2, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle, Clock, Zap, Info
 } from 'lucide-react';
 
 const CALENDAR_PROVIDERS = {

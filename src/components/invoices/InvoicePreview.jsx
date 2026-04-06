@@ -1,7 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { Download, Printer } from 'lucide-react';
+import { Printer } from 'lucide-react';
 
 export default function InvoicePreview({ invoice }) {
   const handlePrint = () => {

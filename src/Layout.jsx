@@ -114,7 +114,7 @@ function LayoutContent({ children, currentPageName }) {
           selectedPropertyId={selectedPropertyId}
           onPropertyChange={setSelectedPropertyId}
         />
-        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+        <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0">
           <Suspense fallback={<PageLoader />}>
             {React.cloneElement(children, {
               user,

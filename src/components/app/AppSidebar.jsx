@@ -67,6 +67,7 @@ const navGroups = [
 export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [logoSrc, setLogoSrc] = useState('/atlas-logo-final.png');
   const showPlatform = isPlatformAdminViewer(user);
   const mergedNavGroups = [
     {
@@ -113,8 +114,9 @@ export default function AppSidebar({ collapsed, onCollapse, onLogout, user }) {
       >
         <Link to="/" title="חזרה לדף הבית">
           <img
-            src="/atlas-logo-final.png"
+            src={logoSrc}
             alt="ATLAS"
+            onError={() => setLogoSrc('/favicon.svg')}
             style={{ height: collapsed ? 30 : 40, width: 'auto', objectFit: 'contain', cursor: 'pointer' }}
           />
         </Link>

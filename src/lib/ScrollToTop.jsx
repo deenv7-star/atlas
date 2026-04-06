@@ -12,6 +12,8 @@ export default function ScrollToTop() {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+    const main = document.getElementById('atlas-main-scroll');
+    if (main) main.scrollTop = 0;
   }, [pathname, search]);
 
   useEffect(() => {

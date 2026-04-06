@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { 
   Bot, Send, Sparkles, Loader2, TrendingUp, Calendar, 
-  DollarSign, Users, MessageSquare, Lightbulb
+  DollarSign, Users, Lightbulb
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';

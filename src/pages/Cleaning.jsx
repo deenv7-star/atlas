@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +38,7 @@ import {
   Calendar,
   User,
 } from 'lucide-react';
-import { format, parseISO, isToday, isTomorrow, isPast, addDays } from 'date-fns';
+import { format, parseISO, isToday, isTomorrow, isPast } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 const statusColors = {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileBarChart, Send, Download, Users, Home, DollarSign, Percent, Mail, Calendar, CheckCircle, Clock, ChevronDown, Settings, Building2, Phone, CreditCard, ToggleLeft, ToggleRight, MessageCircle } from 'lucide-react';
+import { FileBarChart, Send, Download, Users, Home, DollarSign, Percent, Mail, Calendar, CheckCircle, Clock, ChevronDown, Settings, Building2, Phone, CreditCard, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const OWNERS = [

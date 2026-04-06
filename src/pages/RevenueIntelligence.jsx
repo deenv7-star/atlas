@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart3, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, DollarSign, Calendar, Home, Zap, AlertTriangle, Sparkles, Target, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BarChart3, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, DollarSign, Calendar, Home, Zap, AlertTriangle, Sparkles, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const MONTHS_HEB = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
