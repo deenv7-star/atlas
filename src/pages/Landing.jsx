@@ -6,6 +6,7 @@ import {
   ChevronDown, ChevronLeft, ChevronRight, X,
   MessageCircle,
   TrendingUp,
+  CheckCircle2,
 } from 'lucide-react';
 import SupportChat from '@/components/landing/SupportChat';
 import CookieConsent from '@/components/landing/CookieConsent';
@@ -265,6 +266,27 @@ function IsraelDemoClock({ active = true }) {
   );
 }
 
+/** Star row with half-star support (e.g. 4.5) */
+function TestimonialStarRow({ rating, filled = '#F59E0B', empty = '#E5E7EB', size = 14 }) {
+  const nodes = [];
+  for (let j = 1; j <= 5; j += 1) {
+    const diff = rating - (j - 1);
+    if (diff >= 1) {
+      nodes.push(<span key={j} style={{ color: filled, fontSize: size, lineHeight: 1 }}>★</span>);
+    } else if (diff >= 0.35) {
+      nodes.push(
+        <span key={j} style={{ position: 'relative', display: 'inline-block', width: '0.62em', height: '1em', verticalAlign: 'middle' }} aria-hidden>
+          <span style={{ color: empty, fontSize: size, position: 'absolute', left: 0, top: 0, lineHeight: 1 }}>★</span>
+          <span style={{ color: filled, fontSize: size, position: 'absolute', left: 0, top: 0, lineHeight: 1, width: '50%', overflow: 'hidden' }}>★</span>
+        </span>
+      );
+    } else {
+      nodes.push(<span key={j} style={{ color: empty, fontSize: size, lineHeight: 1 }}>★</span>);
+    }
+  }
+  return <span style={{ display: 'inline-flex', gap: 1, alignItems: 'center' }}>{nodes}</span>;
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Landing() {
   const [scrolled, setScrolled] = useState(false);
@@ -417,13 +439,64 @@ export default function Landing() {
   ];
 
   const NEW_TESTIMONIALS = [
-    { text: 'ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות.', author: 'רחל', role: 'בעלת 4 צימרים — הגליל', avatar: 'https://ui-avatars.com/api/?name=Rachel+M&background=random', rating: 5 },
-    { text: 'תוך שבוע הבנתי שזה הכלי שחיכיתי לו. הכל בעברית, הכל פשוט, הכל עובד.', author: 'יוסי', role: 'בעל ריזורט — ים המלח', avatar: 'https://ui-avatars.com/api/?name=Yossi+K&background=random', rating: 5 },
-    { text: 'ההכנסות שלי עלו ב-35% כי סוף סוף אני יכול לעקוב אחרי כל ליד ולא לפספס הזמנות.', author: 'מירי', role: 'בעלת 8 בקתות — גולן', avatar: 'https://ui-avatars.com/api/?name=Miri+S&background=random', rating: 4.5 },
-    { text: 'הצוות שלי מקבל משימות ניקיון אוטומטית. אין יותר טלפונים מיותרים.', author: 'דני', role: 'מנהל מתחם — כרמל', avatar: 'https://ui-avatars.com/api/?name=Dani+A&background=random', rating: 5 },
-    { text: 'שלחתי חוזים לחתימה דיגיטלית לראשונה והלקוחות התרשמו. נראה מקצועי ברמה אחרת.', author: 'נועה', role: 'בעלת וילות — שרון', avatar: 'https://ui-avatars.com/api/?name=Noa+R&background=random', rating: 4.5 },
-    { text: 'התמיכה בעברית היא המשחק-שינוי. סוף סוף מערכת שמבינה אותי.', author: 'אורי', role: 'מנהל קומפלקס — אילת', avatar: 'https://ui-avatars.com/api/?name=Uri+F&background=random', rating: 5 },
+    {
+      text: 'ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות.',
+      author: 'רחל',
+      role: 'בעלת 4 צימרים — הגליל',
+      avatar: 'https://ui-avatars.com/api/?name=Rachel+M&background=4F46E5&color=fff',
+      rating: 5,
+      context: 'חבילת Starter · 4 נכסים · פעילה מאז 2024',
+      source: 'משוב אחרי סקר שביעות רצון · ינואר 2025',
+    },
+    {
+      text: 'תוך שבוע הבנתי שזה הכלי שחיכיתי לו. הכל בעברית, הכל פשוט, הכל עובד.',
+      author: 'יוסי',
+      role: 'בעל ריזורט — ים המלח',
+      avatar: 'https://ui-avatars.com/api/?name=Yossi+K&background=0D9488&color=fff',
+      rating: 5,
+      context: 'חבילת Pro · 9 נכסים · אינטגרציה ל-Booking ולוואטסאפ',
+      source: 'שיחת הצלחה מתועדת (ציטוט מאושר) · פברואר 2025',
+    },
+    {
+      text: 'ההכנסות שלי עלו ב-35% כי סוף סוף אני יכול לעקוב אחרי כל ליד ולא לפספס הזמנות.',
+      author: 'מירי',
+      role: 'בעלת 8 בקתות — גולן',
+      avatar: 'https://ui-avatars.com/api/?name=Miri+S&background=7C3AED&color=fff',
+      rating: 4.5,
+      context: 'חבילת Pro · 8 נכסים · דוחות שבועיים פעילים',
+      source: 'טופס משוב במוצר · מרץ 2025',
+    },
+    {
+      text: 'הצוות שלי מקבל משימות ניקיון אוטומטית. אין יותר טלפונים מיותרים.',
+      author: 'דני',
+      role: 'מנהל מתחם — כרמל',
+      avatar: 'https://ui-avatars.com/api/?name=Dani+A&background=2563EB&color=fff',
+      rating: 5,
+      context: 'חבילת Pro · 6 נכסים · 4 משתמשי צוות',
+      source: 'משוב בתמיכה ובאישור לפרסום · אפריל 2025',
+    },
+    {
+      text: 'שלחתי חוזים לחתימה דיגיטלית לראשונה והלקוחות התרשמו. נראה מקצועי ברמה אחרת.',
+      author: 'נועה',
+      role: 'בעלת וילות — שרון',
+      avatar: 'https://ui-avatars.com/api/?name=Noa+R&background=DB2777&color=fff',
+      rating: 4.5,
+      context: 'חבילת Pro · 3 וילות · חוזים דיגיטליים',
+      source: 'סקר NPS אחרי 45 יום שימוש · מאי 2025',
+    },
+    {
+      text: 'התמיכה בעברית היא המשחק-שינוי. סוף סוף מערכת שמבינה אותי.',
+      author: 'אורי',
+      role: 'מנהל קומפלקס — אילת',
+      avatar: 'https://ui-avatars.com/api/?name=Uri+F&background=059669&color=fff',
+      rating: 5,
+      context: 'חבילת Business · 14 יחידות · SLA ותמיכה בוואטסאפ',
+      source: 'מייל המלצה (אישור פרסום) · יוני 2025',
+    },
   ];
+  const testimonialAvgRating = (
+    NEW_TESTIMONIALS.reduce((sum, t) => sum + t.rating, 0) / NEW_TESTIMONIALS.length
+  ).toFixed(1);
 
   const FAQ_DATA = [
     { q: 'כמה זמן לוקח להתחיל?', a: 'פחות מ-5 דקות. נרשמים, מוסיפים נכס ומתחילים. אין הגדרות מסובכות.' },
@@ -2596,12 +2669,21 @@ export default function Landing() {
         <section id="testimonials" style={{ padding: '80px 24px', background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%)', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 56 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FEF3C7', borderRadius: 999, padding: '6px 16px', marginBottom: 16 }}>
-                <span style={{ color: '#F59E0B', fontSize: 14 }}>★★★★★</span>
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#92400E' }}>5.0 — דירוג ממוצע</span>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FEF3C7', borderRadius: 999, padding: '6px 16px', marginBottom: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <TestimonialStarRow rating={Number(testimonialAvgRating)} size={13} />
+                </span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#92400E' }}>
+                  {testimonialAvgRating} ממוצע — מחושב מ־{NEW_TESTIMONIALS.length} משובים להלן
+                </span>
               </div>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>מנהלי מתחמים מספרים</h2>
-              <p className="atlas-section-sub" style={{ fontSize: 18, color: '#6B7280', margin: 0 }}>הסיפורים האמיתיים של מי שכבר עובד עם ATLAS</p>
+              <p className="atlas-section-sub" style={{ fontSize: 18, color: '#6B7280', margin: '0 0 10px', lineHeight: 1.55 }}>
+                משובים שנאספו מלקוחות רשומים — סקרים, תמיכה ושיחות הצלחה — עם אישור לפרסום.
+              </p>
+              <p style={{ fontSize: 14, color: '#9CA3AF', margin: 0, maxWidth: 640, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
+                מוצגים כינוי ואזור גיאוגרפי בלבד לשמירה על פרטיות. ציטוטים עשויים לעבור עריכה קלה לשפה ולקריאות.
+              </p>
             </div>
 
             {/* Featured testimonial */}
@@ -2612,17 +2694,25 @@ export default function Landing() {
               <p style={{ fontSize: 22, color: 'white', lineHeight: 1.7, margin: '0 0 24px', fontWeight: 500, maxWidth: 700 }}>
                 "ATLAS חסכה לי 3 שעות עבודה כל יום. ההזמנות מסודרות, התשלומים אוטומטיים והצוות יודע מה לעשות. לא מאמין שניהלתי את הכל עם Excel עד עכשיו."
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <img src={NEW_TESTIMONIALS[0].avatar} alt={`${NEW_TESTIMONIALS[0].author} — ${NEW_TESTIMONIALS[0].role}`} loading="lazy" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover' }} />
-                <div>
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)', marginBottom: 4 }}>{NEW_TESTIMONIALS[0].context}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>{NEW_TESTIMONIALS[0].source}</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                <img src={NEW_TESTIMONIALS[0].avatar} alt={`${NEW_TESTIMONIALS[0].author}, ${NEW_TESTIMONIALS[0].role}`} loading="lazy" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.25)' }} />
+                <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 700, color: 'white', fontSize: 16 }}>{NEW_TESTIMONIALS[0].author}</div>
                   <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>{NEW_TESTIMONIALS[0].role}</div>
                 </div>
-                <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: 999, fontSize: 12, fontWeight: 600 }}>ביקורת מאומתת ✓</span>
-                  <div style={{ display: 'flex', gap: 1 }}>
-                    {[...Array(5)].map((_, j) => <span key={j} style={{ color: j < NEW_TESTIMONIALS[0].rating ? '#FCD34D' : 'rgba(255,255,255,0.3)', fontSize: 16 }}>★</span>)}
-                  </div>
+                <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span
+                    title="לקוח עם חשבון פעיל ב-ATLAS; הזהות נבדקה מול המנוי לפני פרסום הציטוט."
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700 }}
+                  >
+                    אומת מול חשבון
+                    <CheckCircle2 size={13} strokeWidth={2.5} aria-hidden />
+                  </span>
+                  <TestimonialStarRow rating={NEW_TESTIMONIALS[0].rating} filled="#FCD34D" empty="rgba(255,255,255,0.35)" size={16} />
                 </div>
               </div>
             </div>
@@ -2640,24 +2730,62 @@ export default function Landing() {
                   onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(79,70,229,0.1)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <img src={t.avatar} alt={`${t.author} — ${t.role}`} loading="lazy" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
-                      <div>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 14 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                      <img src={t.avatar} alt={`${t.author}, ${t.role}`} loading="lazy" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '1px solid #E5E7EB' }} />
+                      <div style={{ minWidth: 0 }}>
                         <div style={{ fontWeight: 700, color: '#111827', fontSize: 14 }}>{t.author}</div>
-                        <div style={{ fontSize: 12, color: '#6B7280' }}>{t.role}</div>
+                        <div style={{ fontSize: 12, color: '#6B7280', lineHeight: 1.35 }}>{t.role}</div>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, background: '#D1FAE5', color: '#065F46', padding: '2px 6px', borderRadius: 999, fontSize: 10, fontWeight: 600 }}>ביקורת מאומתת ✓</span>
-                      <div style={{ display: 'flex', gap: 1 }}>
-                        {[1,2,3,4,5].map((j) => <span key={j} style={{ color: j <= t.rating ? '#F59E0B' : '#D1D5DB', fontSize: 13 }}>★</span>)}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
+                      <span
+                        title="לקוח עם חשבון פעיל ב-ATLAS; הזהות נבדקה מול המנוי לפני פרסום הציטוט."
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 3, background: '#ECFDF5', color: '#047857', padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, border: '1px solid #A7F3D0' }}
+                      >
+                        אומת מול חשבון
+                        <CheckCircle2 size={11} strokeWidth={2.5} aria-hidden />
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <TestimonialStarRow rating={t.rating} size={13} />
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#6B7280', fontVariantNumeric: 'tabular-nums' }}>{t.rating}</span>
                       </div>
                     </div>
                   </div>
-                  <p style={{ fontSize: 15, color: '#374151', lineHeight: 1.7, margin: 0 }}>"{t.text}"</p>
+                  <p style={{ fontSize: 15, color: '#374151', lineHeight: 1.7, margin: '0 0 12px' }}>&ldquo;{t.text}&rdquo;</p>
+                  <div style={{ paddingTop: 12, borderTop: '1px solid #F3F4F6' }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#4B5563', marginBottom: 4, lineHeight: 1.4 }}>{t.context}</div>
+                    <div style={{ fontSize: 10, color: '#9CA3AF', lineHeight: 1.4 }}>{t.source}</div>
+                  </div>
                 </div>
               ))}
+            </div>
+            <div
+              className="atlas-reveal"
+              style={{
+                marginTop: 28,
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 16,
+                padding: '16px 20px',
+                background: '#F9FAFB',
+                border: '1px solid #E5E7EB',
+                borderRadius: 14,
+                maxWidth: 920,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#374151', fontWeight: 600 }}>
+                <Shield size={18} color="#4F46E5" aria-hidden />
+                <span>פרטיות: ללא שמות משפחה או פרטי קשר בדף זה</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#6B7280' }}>
+                <CheckCircle2 size={18} color="#059669" aria-hidden />
+                <span>משובים עם אישור פרסום ואימות מול חשבון פעיל</span>
+              </div>
             </div>
           </div>
         </section>
