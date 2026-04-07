@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -58,7 +58,7 @@ const emptyPayment = {
   paid_date: '',
 };
 
-export default function PaymentsPage({ user, selectedPropertyId }) {
+export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,20 +68,22 @@ export default function PaymentsPage({ user, selectedPropertyId }) {
   const [form, setForm] = useState(emptyPayment);
 
   const { data: payments = [], isLoading } = useQuery({
-    queryKey: ['payments'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('payments').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryKey: ['payments', orgId],
+    queryFn: () =>
+      orgId
+        ? base44.entities.Payment.filter({ org_id: orgId }, '-created_date')
+        : Promise.resolve([]),
+    enabled: !!orgId,
     staleTime: 2 * 60 * 1000,
   });
 
   const createMutation = useMutation({
     mutationFn: async (payload) => {
-      const { data, error } = await supabase.from('payments').insert(payload).select().single();
-      if (error) throw error;
-      return data;
+      return base44.entities.Payment.create({
+        ...payload,
+        org_id: orgId,
+        amount: parseFloat(payload.amount) || 0,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
@@ -94,9 +96,11 @@ export default function PaymentsPage({ user, selectedPropertyId }) {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data: payload }) => {
-      const { data, error } = await supabase.from('payments').update(payload).eq('id', id).select().single();
-      if (error) throw error;
-      return data;
+      const next = { ...payload };
+      if (next.amount !== undefined && next.amount !== null && next.amount !== '') {
+        next.amount = parseFloat(next.amount) || 0;
+      }
+      return base44.entities.Payment.update(id, next);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
@@ -107,10 +111,7 @@ export default function PaymentsPage({ user, selectedPropertyId }) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id) => {
-      const { error } = await supabase.from('payments').delete().eq('id', id);
-      if (error) throw error;
-    },
+    mutationFn: (id) => base44.entities.Payment.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
       toast({ title: 'התשלום נמחק' });

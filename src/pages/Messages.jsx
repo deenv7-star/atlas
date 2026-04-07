@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +30,7 @@ const CHANNEL_LABELS = {
   booking: 'Booking.com',
 };
 
-export default function MessagesPage({ user, selectedPropertyId }) {
+export default function MessagesPage({ user, selectedPropertyId, orgId }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,14 +39,14 @@ export default function MessagesPage({ user, selectedPropertyId }) {
   const messagesEndRef = useRef(null);
 
   const { data: logs = [], isLoading } = useQuery({
-    queryKey: ['message-logs', selectedPropertyId],
+    queryKey: ['message-logs', orgId, selectedPropertyId],
     queryFn: async () => {
-      let q = supabase.from('message_logs').select('*');
-      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
-      const { data, error } = await q.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+      const filters = {};
+      if (orgId) filters.org_id = orgId;
+      if (selectedPropertyId) filters.property_id = selectedPropertyId;
+      return base44.entities.MessageLog.filter(filters, '-created_date');
     },
+    enabled: !!orgId,
     staleTime: 60 * 1000,
     refetchInterval: 30 * 1000,
   });
@@ -57,9 +57,10 @@ export default function MessagesPage({ user, selectedPropertyId }) {
 
   const sendMutation = useMutation({
     mutationFn: async (payload) => {
-      const { data, error } = await supabase.from('message_logs').insert(payload).select().single();
-      if (error) throw error;
-      return data;
+      return base44.entities.MessageLog.create({
+        ...payload,
+        org_id: orgId,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['message-logs'] });

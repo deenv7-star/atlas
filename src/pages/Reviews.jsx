@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -36,29 +36,30 @@ function StarRating({ rating, max = 5 }) {
   );
 }
 
-export default function ReviewsPage({ user, selectedPropertyId }) {
+export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
   const { data: reviews = [], isLoading } = useQuery({
-    queryKey: ['reviews', selectedPropertyId],
+    queryKey: ['reviews', orgId, selectedPropertyId],
     queryFn: async () => {
-      let q = supabase.from('review_requests').select('*');
-      if (selectedPropertyId) q = q.eq('property_id', selectedPropertyId);
-      const { data, error } = await q.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+      const filters = {};
+      if (orgId) filters.org_id = orgId;
+      if (selectedPropertyId) filters.property_id = selectedPropertyId;
+      return base44.entities.ReviewRequest.filter(filters, '-created_date');
     },
+    enabled: !!orgId,
     staleTime: 5 * 60 * 1000,
   });
 
   const sendReminderMutation = useMutation({
     mutationFn: async (id) => {
-      const { data, error } = await supabase.from('review_requests').update({ status: 'SENT', sent_at: new Date().toISOString() }).eq('id', id).select().single();
-      if (error) throw error;
-      return data;
+      return base44.entities.ReviewRequest.update(id, {
+        status: 'SENT',
+        sent_at: new Date().toISOString(),
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews'] });

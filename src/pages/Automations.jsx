@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -85,19 +85,16 @@ export default function AutomationsPage({ user, orgId }) {
 
   const { data: automations = [], isLoading } = useQuery({
     queryKey: ['automations', orgId],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('automation_rules').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () =>
+      orgId
+        ? base44.entities.AutomationRule.filter({ org_id: orgId }, '-created_date')
+        : Promise.resolve([]),
     enabled: !!orgId,
   });
 
   const createMutation = useMutation({
     mutationFn: async (payload) => {
-      const { data, error } = await supabase.from('automation_rules').insert({ ...payload, org_id: orgId }).select().single();
-      if (error) throw error;
-      return data;
+      return base44.entities.AutomationRule.create({ ...payload, org_id: orgId });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['automations'] });
@@ -108,18 +105,13 @@ export default function AutomationsPage({ user, orgId }) {
 
   const toggleMutation = useMutation({
     mutationFn: async ({ id, is_active }) => {
-      const { data, error } = await supabase.from('automation_rules').update({ is_active }).eq('id', id).select().single();
-      if (error) throw error;
-      return data;
+      return base44.entities.AutomationRule.update(id, { is_active });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['automations'] }),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id) => {
-      const { error } = await supabase.from('automation_rules').delete().eq('id', id);
-      if (error) throw error;
-    },
+    mutationFn: (id) => base44.entities.AutomationRule.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['automations'] }),
   });
 
