@@ -297,7 +297,9 @@ export default function Landing() {
   const [openFaq, setOpenFaq] = useState(null);
   const [psPhase, setPsPhase] = useState('chaos'); // chaos → unify → atlas (scroll-driven)
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const [navMoreOpen, setNavMoreOpen] = useState(false);
   const psSectionRef = useRef(null);
+  const navMoreRef = useRef(null);
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion();
 
@@ -318,6 +320,7 @@ export default function Landing() {
     const handleEsc = (e) => { if (e.key === 'Escape') setDemoOpen(false); };
     if (demoOpen) {
       setShowStickyCta(false);
+      setNavMoreOpen(false);
       document.addEventListener('keydown', handleEsc);
       document.body.style.overflow = 'hidden';
     } else {
@@ -325,6 +328,20 @@ export default function Landing() {
     }
     return () => { document.removeEventListener('keydown', handleEsc); document.body.style.overflow = ''; };
   }, [demoOpen]);
+
+  useEffect(() => {
+    if (!navMoreOpen) return;
+    const onDown = (e) => {
+      if (navMoreRef.current && !navMoreRef.current.contains(e.target)) setNavMoreOpen(false);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') setNavMoreOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [navMoreOpen]);
 
   const goToRegister = () => navigate('/register');
   const goToLogin = () => navigate('/login');
@@ -1063,7 +1080,7 @@ export default function Landing() {
           min-height: unset;
         }
 
-        /* ─ Navbar link ─ */
+        /* ─ Navbar link (nowrap: prevent Hebrew labels breaking mid-phrase in tight flex) ─ */
         .atlas-nav-link {
           color: #374151;
           font-weight: 500;
@@ -1072,8 +1089,51 @@ export default function Landing() {
           transition: color 0.2s;
           display: inline-flex;
           align-items: center;
+          white-space: nowrap;
+          flex-shrink: 0;
         }
         .atlas-nav-link:hover { color: #111827; }
+
+        .atlas-nav-more-wrap {
+          position: relative;
+          flex-shrink: 0;
+        }
+        .atlas-nav-more-btn {
+          cursor: pointer;
+        }
+        .atlas-nav-more-chevron {
+          transition: transform 0.2s ease;
+        }
+        .atlas-nav-more-chevron--open {
+          transform: rotate(180deg);
+        }
+        .atlas-nav-more-panel {
+          position: absolute;
+          top: calc(100% + 10px);
+          inset-inline-end: 0;
+          min-width: 220px;
+          background: #fff;
+          border-radius: 12px;
+          border: 1px solid #E5E7EB;
+          box-shadow: 0 16px 48px rgba(15, 23, 42, 0.12);
+          padding: 8px 0;
+          z-index: 160;
+        }
+        .atlas-nav-dd-link {
+          display: flex;
+          align-items: center;
+          padding: 12px 18px;
+          color: #374151;
+          font-weight: 500;
+          font-size: 15px;
+          text-decoration: none;
+          white-space: nowrap;
+          transition: background 0.15s, color 0.15s;
+        }
+        .atlas-nav-dd-link:hover {
+          background: #F9FAFB;
+          color: #111827;
+        }
 
         /* ─ CTA button primary ─ */
         .atlas-btn-primary {
@@ -1330,21 +1390,19 @@ export default function Landing() {
         .atlas-nav-actions {
           flex-wrap: nowrap !important;
         }
+        .atlas-nav-actions .atlas-nav-cta,
+        .atlas-nav-actions button.atlas-nav-cta,
+        .atlas-nav-actions a.atlas-nav-cta {
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
         .atlas-nav-links {
           flex: 1 1 auto;
           min-width: 0;
           justify-content: center;
           flex-wrap: nowrap !important;
-          overflow-x: auto;
-          overflow-y: hidden;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: thin;
-          gap: 16px !important;
+          gap: 14px !important;
           padding: 4px 0;
-        }
-        @media (min-width: 1101px) and (max-width: 1320px) {
-          .atlas-nav-link { font-size: 13px !important; }
-          .atlas-nav-links { gap: 10px !important; }
         }
 
         /* Integrations marquee — minimal vertical padding (overrides global section padding on mobile) */
@@ -1386,7 +1444,7 @@ export default function Landing() {
         >
           <div
             className="atlas-nav-inner"
-            style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, height: 80 }}
+            style={{ maxWidth: 1320, margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, height: 80 }}
           >
             <div className="atlas-nav-brand" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <Link to="/" aria-label="דף הבית ATLAS">
@@ -1413,11 +1471,33 @@ export default function Landing() {
               ))}
               <Link to="/how-it-works" className="atlas-nav-link">איך זה עובד</Link>
               <Link to="/pricing" className="atlas-nav-link">תוכניות</Link>
-              <Link to="/data-security" className="atlas-nav-link">אבטחה</Link>
-              <Link to="/about" className="atlas-nav-link">אודות</Link>
               <Link to="/contact" className="atlas-nav-link">צור קשר</Link>
-              <Link to="/changelog" className="atlas-nav-link">מה חדש</Link>
-              <Link to="/api-docs" className="atlas-nav-link">API</Link>
+              <div className="atlas-nav-more-wrap" ref={navMoreRef}>
+                <button
+                  type="button"
+                  className="atlas-nav-link atlas-nav-more-btn"
+                  aria-expanded={navMoreOpen}
+                  aria-haspopup="true"
+                  aria-label="קישורים נוספים"
+                  onClick={() => setNavMoreOpen((o) => !o)}
+                >
+                  עוד
+                  <ChevronDown
+                    className={`atlas-nav-more-chevron${navMoreOpen ? ' atlas-nav-more-chevron--open' : ''}`}
+                    size={16}
+                    style={{ marginInlineStart: 4 }}
+                    aria-hidden
+                  />
+                </button>
+                {navMoreOpen && (
+                  <div className="atlas-nav-more-panel" role="menu">
+                    <Link to="/data-security" role="menuitem" className="atlas-nav-dd-link" onClick={() => setNavMoreOpen(false)}>אבטחה</Link>
+                    <Link to="/about" role="menuitem" className="atlas-nav-dd-link" onClick={() => setNavMoreOpen(false)}>אודות</Link>
+                    <Link to="/changelog" role="menuitem" className="atlas-nav-dd-link" onClick={() => setNavMoreOpen(false)}>מה חדש</Link>
+                    <Link to="/api-docs" role="menuitem" className="atlas-nav-dd-link" onClick={() => setNavMoreOpen(false)}>API</Link>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="atlas-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
