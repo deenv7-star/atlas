@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, X } from 'lucide-react';
+import { MessageCircle, X, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SupportChat({ autoOpenAfterMs = null }) {
@@ -110,6 +111,17 @@ export default function SupportChat({ autoOpenAfterMs = null }) {
               >
                 <MessageCircle className="h-4 w-4 ml-2" />
                 שלח הודעה בוואטסאפ
+              </Button>
+
+              <Button variant="outline" className="w-full font-medium border-gray-200" asChild>
+                <a href="mailto:support@atlas-app.co.il?subject=שאלה%20מאתר%20ATLAS">
+                  <Mail className="h-4 w-4 ml-2" />
+                  כתבו לנו במייל
+                </a>
+              </Button>
+
+              <Button variant="ghost" className="w-full text-gray-700 font-medium" asChild>
+                <Link to="/contact">טופס צור קשר מלא</Link>
               </Button>
 
               <div className="text-center pt-2">

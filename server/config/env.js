@@ -30,6 +30,8 @@ const schema = z.object({
   OPENAI_API_KEY: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
+  /** Inbox for /api/public/contact (Resend). Required together with RESEND_API_KEY + EMAIL_FROM for email delivery. */
+  CONTACT_INBOX_EMAIL: z.string().email().optional(),
   PLATFORM_ADMIN_EMAILS: z.string().optional(),
   /** Absolute path to Vite `dist/` — when set, Express serves the SPA and falls back to index.html (fixes direct loads of /changelog, /contact, etc.). */
   STATIC_DIST_PATH: z.string().optional()

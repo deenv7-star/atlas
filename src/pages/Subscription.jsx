@@ -147,7 +147,7 @@ export default function SubscriptionPage({ user }) {
           </div>
           
           <p className="text-gray-400 text-sm">
-            יש שאלות? <a href="mailto:support@stayflow.io" className="text-[#00D1C1] hover:underline">צור קשר עם התמיכה</a>
+            יש שאלות? <a href="mailto:support@atlas-app.co.il" className="text-[#00D1C1] hover:underline">צור קשר עם התמיכה</a>
           </p>
         </motion.div>
       </div>

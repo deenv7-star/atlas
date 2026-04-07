@@ -1,17 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import Logo from '@/components/common/Logo';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Mail, Phone, Clock, MapPin, MessageCircle, Send } from 'lucide-react';
+import { ArrowRight, Mail, Phone, Clock, MapPin, MessageCircle, Send, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { submitPublicContact, buildContactMailto } from '@/lib/submitPublicContact';
+
+const SUBJECT_OPTIONS = [
+  { value: '', label: 'בחר נושא' },
+  { value: 'sales', label: 'שאלה לפני רכישה' },
+  { value: 'support', label: 'תמיכה טכנית' },
+  { value: 'billing', label: 'חיוב ותשלומים' },
+  { value: 'partnership', label: 'שותפויות' },
+  { value: 'other', label: 'אחר' },
+];
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const honeypotRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSent(true);
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      if (honeypotRef.current?.value?.trim()) {
+        return;
+      }
+      const { ok, status, data } = await submitPublicContact({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        subject: form.subject,
+        message: form.message.trim(),
+        website: honeypotRef.current?.value || '',
+      });
+      if (status === 204) {
+        return;
+      }
+      if (ok) {
+        setSent(true);
+        toast.success('הפנייה נשלחה בהצלחה');
+        return;
+      }
+      if (status === 503 && data?.code === 'EMAIL_NOT_CONFIGURED') {
+        window.location.href = buildContactMailto({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          subject: SUBJECT_OPTIONS.find((o) => o.value === form.subject)?.label || '',
+          message: form.message.trim(),
+        });
+        setSent(true);
+        toast.message('נפתח לכם מייל — שלחו את ההודעה מתוך תיבת הדואר שלכם');
+        return;
+      }
+      toast.error(typeof data?.error === 'string' ? data.error : 'לא הצלחנו לשלוח. נסו שוב או כתבו ל־support@atlas-app.co.il');
+    } catch {
+      window.location.href = buildContactMailto({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        subject: SUBJECT_OPTIONS.find((o) => o.value === form.subject)?.label || '',
+        message: form.message.trim(),
+      });
+      setSent(true);
+      toast.message('נפתח מייל — שלחו את ההודעה ידנית');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputStyle = {
@@ -43,7 +103,9 @@ export default function Contact() {
       <main className="max-w-5xl mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">צור קשר</h1>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto">נשמח לשמוע ממך. צוות ATLAS כאן לענות על כל שאלה.</p>
+          <p className="text-lg text-gray-500 max-w-xl mx-auto">
+            נשמח לשמוע ממך. צוות ATLAS זמין בימים א–ה 09:00–18:00 — גם בוואטסאפ וגם במייל.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-5 gap-12">
@@ -99,11 +161,18 @@ export default function Contact() {
                 <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
                   <Send className="w-7 h-7 text-green-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">ההודעה נשלחה!</h3>
-                <p className="text-gray-600">נחזור אליך תוך 24 שעות.</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">תודה על הפנייה</h3>
+                <p className="text-gray-600">
+                  אם נפתח לכם חלון מייל — שלחו את ההודעה. אחרת נחזור אליכם תוך יום עסקים לרוב הפניות.
+                </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="bg-gray-50 rounded-2xl border border-gray-100 p-8 space-y-5">
+              <form onSubmit={handleSubmit} className="bg-gray-50 rounded-2xl border border-gray-100 p-8 space-y-5" noValidate>
+                {/* Honeypot — leave hidden; bots often fill */}
+                <div className="sr-only" aria-hidden="true">
+                  <label htmlFor="contact-website">Website</label>
+                  <input ref={honeypotRef} type="text" id="contact-website" name="website" tabIndex={-1} autoComplete="off" />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">שם מלא</label>
@@ -149,12 +218,9 @@ export default function Contact() {
                     value={form.subject}
                     onChange={e => setForm({ ...form, subject: e.target.value })}
                   >
-                    <option value="">בחר נושא</option>
-                    <option value="sales">שאלה לפני רכישה</option>
-                    <option value="support">תמיכה טכנית</option>
-                    <option value="billing">חיוב ותשלומים</option>
-                    <option value="partnership">שותפויות</option>
-                    <option value="other">אחר</option>
+                    {SUBJECT_OPTIONS.map((o) => (
+                      <option key={o.value || 'general'} value={o.value}>{o.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -171,16 +237,25 @@ export default function Contact() {
                 </div>
                 <button
                   type="submit"
+                  disabled={submitting}
                   style={{
-                    width: '100%', background: '#4F46E5', color: 'white', border: 'none',
+                    width: '100%', background: submitting ? '#9CA3AF' : '#4F46E5', color: 'white', border: 'none',
                     borderRadius: 12, padding: '14px 0', fontWeight: 700, fontSize: 16,
-                    fontFamily: "'Heebo', sans-serif", cursor: 'pointer', transition: 'all 0.25s ease',
+                    fontFamily: "'Heebo', sans-serif", cursor: submitting ? 'wait' : 'pointer', transition: 'all 0.25s ease',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#4338CA'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#4F46E5'; }}
+                  onMouseEnter={e => { if (!submitting) e.currentTarget.style.background = '#4338CA'; }}
+                  onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = '#4F46E5'; }}
                 >
-                  שלח הודעה
+                  {submitting ? <Loader2 className="w-5 h-5 animate-spin" aria-hidden /> : null}
+                  {submitting ? 'שולח…' : 'שלח הודעה'}
                 </button>
+                <p className="text-xs text-gray-500 text-center leading-relaxed">
+                  לחלופין:{' '}
+                  <a href="mailto:support@atlas-app.co.il" className="text-indigo-600 font-medium hover:underline">support@atlas-app.co.il</a>
+                  {' · '}
+                  <a href="https://wa.me/972545380085" className="text-indigo-600 font-medium hover:underline" target="_blank" rel="noopener noreferrer">וואטסאפ</a>
+                </p>
               </form>
             )}
           </div>

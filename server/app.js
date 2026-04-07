@@ -9,6 +9,7 @@ import domainRouter from './routes/domain.js';
 import billingRouter from './routes/billing.js';
 import aiRouter from './routes/ai.js';
 import emailRouter from './routes/email.js';
+import publicApiRouter from './routes/public.js';
 import platformRouter from './routes/platform.js';
 import { handleStripeWebhook } from './routes/stripe-webhook.js';
 import { env } from './config/env.js';
@@ -41,6 +42,7 @@ export function createApp() {
   app.use('/api/billing', billingRouter);
   app.use('/api/ai', aiRouter);
   app.use('/api/email', emailRouter);
+  app.use('/api/public', publicApiRouter);
   app.use('/api/platform', platformRouter);
   app.use('/api', domainRouter);
 

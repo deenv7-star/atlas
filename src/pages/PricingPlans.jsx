@@ -142,7 +142,28 @@ export default function PricingPlans() {
           ))}
         </div>
 
-        <p className="text-center text-xs text-gray-500 max-w-xl mx-auto mt-10 leading-relaxed">
+        <div className="max-w-3xl mx-auto mt-12 rounded-2xl border border-gray-100 bg-gray-50/80 p-6 text-right space-y-3">
+          <h2 className="text-lg font-bold text-gray-900">שקיפות לפני שמחליטים</h2>
+          <ul className="text-sm text-gray-600 space-y-2 leading-relaxed list-disc pr-5">
+            <li>
+              <strong className="text-gray-800">ניסיון:</strong> 14 יום ללא חיוב (ללא כרטיס אשראי), ביטול בכל עת — כפי שמופיע גם בהרשמה.
+            </li>
+            <li>
+              <strong className="text-gray-800">בסיסית / מתקדמת:</strong> המחירים להמחשה; בפועל עשויים לחול מבצעים, תשלום שנתי או התאמה לארגון.
+            </li>
+            <li>
+              <strong className="text-gray-800">Enterprise:</strong> תמחור, SLA ואינטגרציות —{' '}
+              <Link to="/contact" className="text-[#00a89a] font-semibold underline-offset-2 hover:underline">בשיחה עם המכירות</Link>.
+            </li>
+            <li>
+              <strong className="text-gray-800">תמיכה:</strong> ימים א–ה 09:00–18:00 — דף{' '}
+              <Link to="/contact" className="text-[#00a89a] font-semibold underline-offset-2 hover:underline">צור קשר</Link>
+              {' '}או וואטסאפ מהאתר.
+            </li>
+          </ul>
+        </div>
+
+        <p className="text-center text-xs text-gray-500 max-w-xl mx-auto mt-8 leading-relaxed">
           מחירים בשקלים חדשים, לא כוללים מע״ם אם חל. תכונות ספציפיות עשויות להשתנות לפי גרסת המוצר.
         </p>
       </main>

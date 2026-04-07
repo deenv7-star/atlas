@@ -1717,7 +1717,7 @@ export default function Landing() {
                   </button>
                 </div>
                 <p style={{ fontSize: 15, color: '#6B7280', marginTop: 12, fontWeight: 600, maxWidth: 420, lineHeight: 1.5 }}>
-                  הצטרפו ל־500+ מנהלים שכבר מנהלים את הנכס שלהם ב־ATLAS
+                  קהילה צומחת של מנהלי מתחמים ונכסי אירוח בישראל סומכים על ATLAS
                 </p>
                 <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 10 }}>ללא כרטיס אשראי • 14 יום ניסיון חינם • ביטול בכל עת</p>
 
@@ -1747,7 +1747,7 @@ export default function Landing() {
                         <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                       ))}
                     </div>
-                    <span style={{ fontSize: 13, color: '#6B7280' }}>+500 מנהלי מתחמים מרוצים</span>
+                    <span style={{ fontSize: 13, color: '#6B7280' }}>מנהלי מתחמים מדווחים על חיסכון בזמן</span>
                   </div>
                 </div>
               </div>
@@ -1937,7 +1937,7 @@ export default function Landing() {
         >
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 10px' }}>
             <span style={{ fontSize: 14, color: '#6B7280', fontWeight: 500 }}>
-              מצטרפים ל-500+ מנהלים שכבר עובדים חכם יותר:
+              עסקי אירוח בישראל שעוברים לניהול מרוכז וחכם יותר:
             </span>
           </div>
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 8px' }}>
@@ -3449,7 +3449,7 @@ export default function Landing() {
               עדיין מנהל עם Excel ו-WhatsApp? הגיע הזמן לשדרג.
             </h2>
             <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.80)', margin: '12px 0 40px' }}>
-              הצטרף ל-500+ מנהלים שכבר עובדים עם ATLAS
+              הצטרפו למאות עסקים שכבר מנהלים הזמנות ולידים ב־ATLAS
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
               <button
@@ -3628,8 +3628,8 @@ export default function Landing() {
 
             <div className="atlas-footer-bottom">
               <p className="atlas-footer-copy-muted">© 2026 ATLAS. כל הזכויות שמורות.</p>
-              <a href="mailto:hello@atlas.app" className="atlas-footer-link atlas-footer-mail">
-                hello@atlas.app
+              <a href="mailto:support@atlas-app.co.il" className="atlas-footer-link atlas-footer-mail">
+                support@atlas-app.co.il
               </a>
               <p className="atlas-footer-copy-muted">פותח בישראל</p>
             </div>

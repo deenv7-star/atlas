@@ -28,6 +28,13 @@ import { PRICING_PLANS } from '@/config/pricing';
 const TOTAL_STEPS = 4;
 const SAVE_TIMEOUT_MS = 45_000;
 
+const ONBOARDING_STEP_LABELS = [
+  'ברוכים הבאים',
+  'פרטי מתחם ונכס',
+  'בחירת תוכנית',
+  'סיום — כניסה לדשבורד',
+];
+
 /* Emil: snappy press feedback, strong ease-out */
 const EMIL_TAP = { type: 'tween', duration: 0.14, ease: [0.23, 1, 0.32, 1] };
 
@@ -961,6 +968,11 @@ export default function Onboarding() {
           </div>
           <p className="text-xs mt-2 text-center text-zinc-500 font-medium tabular-nums">
             שלב {step + 1} מתוך {TOTAL_STEPS}
+            {ONBOARDING_STEP_LABELS[step] ? (
+              <span className="block text-[13px] text-zinc-600 font-semibold mt-1 tabular-nums">
+                {ONBOARDING_STEP_LABELS[step]}
+              </span>
+            ) : null}
           </p>
         </div>
 

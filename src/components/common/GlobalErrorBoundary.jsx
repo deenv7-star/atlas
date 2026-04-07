@@ -97,7 +97,7 @@ class GlobalErrorBoundary extends React.Component {
                 <p className="text-sm text-gray-500">
                   אם הבעיה נמשכת,{' '}
                   <a 
-                    href="mailto:support@stayflow.io" 
+                    href="mailto:support@atlas-app.co.il" 
                     className="text-[#00D1C1] hover:text-[#00B8A9] font-medium underline"
                   >
                     צור קשר עם התמיכה
