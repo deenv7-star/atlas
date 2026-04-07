@@ -11,7 +11,7 @@ import IOSInstallBanner from '@/components/app/IOSInstallBanner';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
-const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs'];
+const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans'];
 
 function PageLoader() {
   return (

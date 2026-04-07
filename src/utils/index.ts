@@ -12,6 +12,8 @@ const pagePathMap: Record<string, string> = {
   Accessibility: '/accessibility',
   SLA: '/sla',
   ApiDocs: '/api-docs',
+  HowItWorks: '/how-it-works',
+  PricingPlans: '/pricing',
   Bookings: '/bookings',
   Leads: '/leads',
   Messages: '/messages',

@@ -12,6 +12,10 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'icons/*.png'],
       manifest: false, // we manage our own manifest.json in public/
       workbox: {
+        // SPA: direct visits to /api-docs, /changelog, etc. must resolve to index.html
+        // (avoids blank pages / stuck loaders when the SW or host mishandles navigation).
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         // Cache API calls for offline fallback
         runtimeCaching: [

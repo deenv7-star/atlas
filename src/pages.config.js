@@ -65,6 +65,7 @@ import DynamicPricing from './pages/DynamicPricing';
 import GuestJourney from './pages/GuestJourney';
 import GuestPortal from './pages/GuestPortal';
 import GuestService from './pages/GuestService';
+import HowItWorks from './pages/HowItWorks';
 import MultiCalendar from './pages/MultiCalendar';
 import OwnerReports from './pages/OwnerReports';
 import RevenueIntelligence from './pages/RevenueIntelligence';
@@ -76,6 +77,7 @@ import LeadDetail from './pages/LeadDetail';
 import Leads from './pages/Leads';
 import Messages from './pages/Messages';
 import Payments from './pages/Payments';
+import PricingPlans from './pages/PricingPlans';
 import Privacy from './pages/Privacy';
 import Reviews from './pages/Reviews';
 import ServiceRequests from './pages/ServiceRequests';
@@ -110,6 +112,7 @@ export const PAGES = {
     "GuestJourney": GuestJourney,
     "GuestPortal": GuestPortal,
     "GuestService": GuestService,
+    "HowItWorks": HowItWorks,
     "Integrations": Integrations,
     "Invoices": Invoices,
     "ExpenseTracker": ExpenseTracker,
@@ -124,6 +127,7 @@ export const PAGES = {
     "MultiCalendar": MultiCalendar,
     "OwnerReports": OwnerReports,
     "Payments": Payments,
+    "PricingPlans": PricingPlans,
     "Privacy": Privacy,
     "RevenueIntelligence": RevenueIntelligence,
     "Reviews": Reviews,

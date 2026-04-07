@@ -78,6 +78,14 @@ const EXACT = {
     title: 'תיעוד API | ATLAS',
     description: 'תיעוד ממשק ה-API של ATLAS.',
   },
+  '/how-it-works': {
+    title: 'איך זה עובד | ATLAS',
+    description: 'איך ATLAS מסנכרנת ערוצי הזמנה ומונעת הזמנות כפולות — זרימת נתונים וכללי התנגשות.',
+  },
+  '/pricing': {
+    title: 'תמחור ותוכניות | ATLAS',
+    description: 'השוואת חבילות ATLAS — בסיסית, מתקדמת ו-Enterprise.',
+  },
   '/billing': {
     title: 'חיוב | ATLAS',
     description: 'ניהול חיוב ותשלומים ב-ATLAS.',

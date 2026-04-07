@@ -296,6 +296,7 @@ export default function Landing() {
   const [billingYearly, setBillingYearly] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
   const [psPhase, setPsPhase] = useState('chaos'); // chaos → unify → atlas (scroll-driven)
+  const [showStickyCta, setShowStickyCta] = useState(false);
   const psSectionRef = useRef(null);
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion();
@@ -303,14 +304,20 @@ export default function Landing() {
   useScrollReveal();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 50);
+      setShowStickyCta(y > 480 && !demoOpen);
+    };
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [demoOpen]);
 
   useEffect(() => {
     const handleEsc = (e) => { if (e.key === 'Escape') setDemoOpen(false); };
     if (demoOpen) {
+      setShowStickyCta(false);
       document.addEventListener('keydown', handleEsc);
       document.body.style.overflow = 'hidden';
     } else {
@@ -1013,6 +1020,38 @@ export default function Landing() {
           }
         }
 
+        /* ─ Skip to main content (a11y) ─ */
+        .atlas-skip-link {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+        .atlas-skip-link:focus {
+          position: fixed;
+          top: 12px;
+          right: 12px;
+          z-index: 10001;
+          width: auto;
+          height: auto;
+          margin: 0;
+          clip: auto;
+          padding: 12px 18px;
+          background: #111827;
+          color: #fff;
+          font-weight: 700;
+          font-size: 16px;
+          font-family: 'Heebo', sans-serif;
+          border-radius: 10px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+          text-decoration: none;
+        }
+
         /* ─ Global minimum touch target for interactive elements ─ */
         .atlas-lp button,
         .atlas-lp a {
@@ -1043,7 +1082,7 @@ export default function Landing() {
           border-radius: 10px;
           padding: 14px 28px;
           font-weight: 700;
-          font-size: 16px;
+          font-size: 19px;
           font-family: 'Heebo', sans-serif;
           cursor: pointer;
           transition: all 0.25s ease;
@@ -1191,7 +1230,7 @@ export default function Landing() {
           .atlas-features-intro { margin-bottom: 40px !important; }
           .atlas-features-lead { font-size: 16px !important; line-height: 1.55 !important; }
           .atlas-bento-quick-nav { margin-bottom: 20px !important; gap: 8px !important; }
-          .atlas-bento-quick-nav-btn { font-size: 12px !important; padding: 7px 12px !important; }
+          .atlas-bento-quick-nav-btn { font-size: 14px !important; padding: 8px 14px !important; }
           .atlas-bento-hero-card,
           .atlas-bento-auto-card {
             padding: 20px 16px !important;
@@ -1293,6 +1332,9 @@ export default function Landing() {
         dir="rtl"
         style={{ background: '#FFFFFF', minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}
       >
+        <a href="#main-content" className="atlas-skip-link">
+          דלג לתוכן הראשי
+        </a>
 
         {/* ════════════════════════════════════════
             NAVBAR
@@ -1332,10 +1374,13 @@ export default function Landing() {
               ].map((l) => (
                 <a key={l.label} href={l.href} onClick={(e) => { e.preventDefault(); l.action(); }} className="atlas-nav-link">{l.label}</a>
               ))}
+              <Link to="/how-it-works" className="atlas-nav-link">איך זה עובד</Link>
+              <Link to="/pricing" className="atlas-nav-link">תוכניות</Link>
               <Link to="/data-security" className="atlas-nav-link">אבטחה</Link>
               <Link to="/about" className="atlas-nav-link">אודות</Link>
               <Link to="/contact" className="atlas-nav-link">צור קשר</Link>
               <Link to="/changelog" className="atlas-nav-link">מה חדש</Link>
+              <Link to="/api-docs" className="atlas-nav-link">API</Link>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1349,7 +1394,7 @@ export default function Landing() {
                   padding: '12px 20px',
                   minHeight: 44,
                   fontWeight: 600,
-                  fontSize: 14,
+                  fontSize: 17,
                   fontFamily: 'Heebo, sans-serif',
                   cursor: 'pointer',
                   transition: 'color 0.2s',
@@ -1370,7 +1415,7 @@ export default function Landing() {
                   padding: '12px 24px',
                   minHeight: 44,
                   fontWeight: 600,
-                  fontSize: 14,
+                  fontSize: 17,
                   fontFamily: 'Heebo, sans-serif',
                   cursor: 'pointer',
                   transition: 'background 0.2s',
@@ -1408,19 +1453,22 @@ export default function Landing() {
               ].map((l) => (
                 <a key={l.label} href={l.href} onClick={(e) => { e.preventDefault(); setMenuOpen(false); l.action(); }} className="atlas-nav-link" style={{ fontSize: 16 }}>{l.label}</a>
               ))}
+              <Link to="/how-it-works" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>איך זה עובד</Link>
+              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>תוכניות</Link>
               <Link to="/data-security" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>אבטחה</Link>
               <Link to="/about" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>אודות</Link>
               <Link to="/contact" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>צור קשר</Link>
               <Link to="/changelog" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>מה חדש</Link>
+              <Link to="/api-docs" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>API</Link>
               <button
                 onClick={() => { setMenuOpen(false); goToLogin(); }}
-                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
+                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
               >
                 כניסה
               </button>
               <button
                 onClick={() => { setMenuOpen(false); goToRegister(); }}
-                style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
+                style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
               >
                 הרשמה חינם
               </button>
@@ -1432,6 +1480,8 @@ export default function Landing() {
             HERO
         ════════════════════════════════════════ */}
         <section
+          id="main-content"
+          tabIndex={-1}
           style={{
             minHeight: '100dvh',
             display: 'flex',
@@ -1485,10 +1535,11 @@ export default function Landing() {
                     פתח חשבון חינם — תוך 60 שניות
                   </button>
                   <button
-                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                    type="button"
+                    onClick={() => navigate('/how-it-works')}
                     style={{
                       background: 'transparent', border: 'none',
-                      color: '#374151', fontWeight: 600, fontSize: 16,
+                      color: '#374151', fontWeight: 600, fontSize: 17,
                       fontFamily: 'Heebo, sans-serif', cursor: 'pointer',
                       transition: 'color 0.2s', padding: '14px 4px',
                       minHeight: 44,
@@ -1499,6 +1550,9 @@ export default function Landing() {
                     איך זה עובד ←
                   </button>
                 </div>
+                <p style={{ fontSize: 15, color: '#6B7280', marginTop: 12, fontWeight: 600, maxWidth: 420, lineHeight: 1.5 }}>
+                  הצטרפו ל־500+ מנהלים שכבר מנהלים את הנכס שלהם ב־ATLAS
+                </p>
                 <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 10 }}>ללא כרטיס אשראי • 14 יום ניסיון חינם • ביטול בכל עת</p>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 20 }}>
@@ -3337,6 +3391,8 @@ export default function Landing() {
                 {[
                   { label: 'תכונות', href: '#features', scroll: true },
                   { label: 'מחירים', href: '#pricing', scroll: true },
+                  { label: 'איך זה עובד', to: '/how-it-works' },
+                  { label: 'תוכניות', to: '/pricing' },
                   { label: 'אינטגרציות', href: '#features', scroll: true },
                   { label: 'עדכונים', to: '/changelog' },
                   { label: 'דמו', href: '#', onClick: () => { setDemoOpen(true); setDemoSlide(0); } },
@@ -3542,6 +3598,41 @@ export default function Landing() {
             </div>
           </div>
         )}
+
+      {showStickyCta && (
+        <div
+          role="region"
+          aria-label="הרשמה מהירה"
+          style={{
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 95,
+            padding: '12px 16px calc(12px + env(safe-area-inset-bottom))',
+            background: 'rgba(255,255,255,0.94)',
+            borderTop: '1px solid rgba(0,0,0,0.08)',
+            boxShadow: '0 -8px 32px rgba(15,23,42,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            flexWrap: 'wrap',
+          }}
+        >
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#374151', flex: '1 1 200px', fontFamily: 'Heebo, sans-serif' }}>
+            מוכנים להתחיל? הרשמה חינם — ללא כרטיס אשראי
+          </p>
+          <button
+            type="button"
+            onClick={goToRegister}
+            className="atlas-btn-primary"
+            style={{ minHeight: 48, fontSize: 17, flexShrink: 0 }}
+          >
+            פתחו חשבון
+          </button>
+        </div>
+      )}
 
       <SupportChat />
       <CookieConsent />

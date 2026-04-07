@@ -30,6 +30,8 @@ export const PUBLIC_PAGE_KEYS = [
   'Accessibility',
   'SLA',
   'ApiDocs',
+  'HowItWorks',
+  'PricingPlans',
 ];
 
 /** Legacy path → canonical path redirects */
@@ -67,6 +69,9 @@ export const LEGACY_REDIRECTS = [
   { from: '/PlatformAdmin', to: '/platform-admin' },
   { from: '/Billing', to: '/billing' },
   { from: '/Landing', to: '/' },
+  { from: '/HowItWorks', to: '/how-it-works' },
+  { from: '/Pricing', to: '/pricing' },
+  { from: '/PricingPlans', to: '/pricing' },
 ];
 
 /**
