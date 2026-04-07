@@ -1162,12 +1162,15 @@ export default function Landing() {
         }
         .atlas-int-track:hover { animation-play-state: paused; }
 
-        /* ─ Responsive ─ */
-        @media (max-width: 768px) {
+        /* ─ Nav: many links + CTAs don’t fit between ~800–1300px — use drawer below this width ─ */
+        @media (max-width: 1100px) {
           .atlas-nav-links  { display: none !important; }
           .atlas-nav-cta    { display: none !important; }
           .atlas-hamburger  { display: flex !important; }
+        }
 
+        /* ─ Responsive ─ */
+        @media (max-width: 768px) {
           .atlas-hero-grid  { grid-template-columns: 1fr !important; text-align: center !important; }
           .atlas-hero-right { order: 1; }
           .atlas-hero-left  { display: none !important; }
@@ -1310,9 +1313,38 @@ export default function Landing() {
           .atlas-how-grid { grid-template-columns: 1fr 1fr !important; }
         }
 
-        @media (min-width: 769px) {
+        @media (min-width: 1101px) {
           .atlas-hamburger    { display: none !important; }
           .atlas-mobile-drawer { display: none !important; }
+        }
+
+        /* Desktop nav row: never wrap — drawer handles narrow widths */
+        .atlas-nav-inner {
+          flex-wrap: nowrap !important;
+          gap: 12px;
+        }
+        .atlas-nav-brand,
+        .atlas-nav-actions {
+          flex-shrink: 0;
+        }
+        .atlas-nav-actions {
+          flex-wrap: nowrap !important;
+        }
+        .atlas-nav-links {
+          flex: 1 1 auto;
+          min-width: 0;
+          justify-content: center;
+          flex-wrap: nowrap !important;
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: thin;
+          gap: 16px !important;
+          padding: 4px 0;
+        }
+        @media (min-width: 1101px) and (max-width: 1320px) {
+          .atlas-nav-link { font-size: 13px !important; }
+          .atlas-nav-links { gap: 10px !important; }
         }
 
         /* Integrations marquee — minimal vertical padding (overrides global section padding on mobile) */
@@ -1341,6 +1373,7 @@ export default function Landing() {
             NAVBAR
         ════════════════════════════════════════ */}
         <nav
+          className="atlas-nav"
           style={{
             position: 'fixed',
             top: 0, left: 0, right: 0,
@@ -1351,8 +1384,11 @@ export default function Landing() {
             paddingTop: 'env(safe-area-inset-top)',
           }}
         >
-          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, height: 80 }}>
-            <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          <div
+            className="atlas-nav-inner"
+            style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, height: 80 }}
+          >
+            <div className="atlas-nav-brand" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <Link to="/" aria-label="דף הבית ATLAS">
                 <img
                   src="/atlas-logo-final.png"
@@ -1366,7 +1402,7 @@ export default function Landing() {
               </Link>
             </div>
 
-            <div className="atlas-nav-links" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+            <div className="atlas-nav-links" style={{ display: 'flex', alignItems: 'center' }}>
               {[
                 { label: 'תכונות', href: '#features', action: () => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }) },
                 { label: 'מחירים', href: '#pricing', action: () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }) },
@@ -1384,7 +1420,7 @@ export default function Landing() {
               <Link to="/api-docs" className="atlas-nav-link">API</Link>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <div className="atlas-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <button
                 className="atlas-nav-cta"
                 onClick={goToLogin}
