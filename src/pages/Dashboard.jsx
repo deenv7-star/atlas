@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LiquidGlassCard } from '@/components/ui/LiquidGlass';
-import { ShimmerButton } from '@/components/ui/AnimatedButton';
+
+const MotionLink = motion(Link);
 import {
   Users, CalendarDays, CalendarRange, Wallet, Star,
   ArrowUpLeft, ArrowDownRight, MessageSquare, Plus,
@@ -44,18 +45,21 @@ const STATUS_LABELS = {
 const dashStaggerParent = {
   hidden: {},
   show: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.04 },
+    transition: { staggerChildren: 0.055, delayChildren: 0.03 },
   },
 };
 
+/* Emil: prefer transform strings for compositor-friendly motion; enter snappy spring */
 const dashItem = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: { opacity: 0, transform: 'translate3d(0, 12px, 0)' },
   show: {
     opacity: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 120, damping: 24, mass: 0.85 },
+    transform: 'translate3d(0, 0, 0)',
+    transition: { type: 'spring', stiffness: 420, damping: 32, mass: 0.82 },
   },
 };
+
+const tapTween = { type: 'tween', duration: 0.14, ease: [0.23, 1, 0.32, 1] };
 
 /* ── Stat Card ─────────────────────────────────────── */
 const TINT_MAP = {
@@ -78,7 +82,7 @@ function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, tre
     );
   }
   return (
-    <motion.div whileHover={{ y: -2, scale: 1.01 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }}>
+    <div className="atlas-dash-stat-lift h-full rounded-2xl">
       <LiquidGlassCard tint={tint} size="sm" className="h-full" shimmer={false}>
         <div className="flex items-start justify-between mb-3">
           <p className="text-xs font-semibold text-gray-500 leading-snug">{title}</p>
@@ -97,7 +101,7 @@ function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, tre
           </div>
         )}
       </LiquidGlassCard>
-    </motion.div>
+    </div>
   );
 }
 
@@ -111,7 +115,7 @@ function BookingRow({ booking }) {
   return (
     <Link
       to={detailUrl}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color,transform] duration-200 atlas-ease-out-trans active:scale-[0.99] group"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color,transform] duration-200 atlas-ease-out-trans active:scale-[0.97] active:duration-150 group"
     >
       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex flex-col items-center justify-center flex-shrink-0 shadow-sm">
         <span className="text-[10px] font-semibold text-white/80 leading-none">
@@ -145,7 +149,7 @@ function LeadRow({ lead }) {
   return (
     <Link
       to={detailUrl}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color,transform] duration-200 atlas-ease-out-trans active:scale-[0.99] group"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color,transform] duration-200 atlas-ease-out-trans active:scale-[0.97] active:duration-150 group"
     >
       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00D1C1]/30 to-blue-200/60 flex items-center justify-center flex-shrink-0 text-sm font-bold text-[#00a89a]">
         {initials}
@@ -230,16 +234,9 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
 /* ── Quick Action ──────────────────────────────────── */
 function QuickAction({ label, icon: Icon, page, iconClass }) {
   return (
-    <Link to={createPageUrl(page)}>
-      <motion.div
-        whileHover={{
-          y: -3,
-          scale: 1.03,
-          boxShadow: '0 8px 24px rgba(0,209,193,0.15), 0 2px 8px rgba(0,0,0,0.06)',
-        }}
-        whileTap={{ scale: 0.97 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-        className="flex flex-col items-center gap-2.5 p-4 rounded-2xl cursor-pointer group"
+    <Link to={createPageUrl(page)} className="block touch-manipulation">
+      <div
+        className="atlas-dash-quick-tile flex flex-col items-center gap-2.5 p-4 rounded-2xl cursor-pointer"
         style={{
           background: 'rgba(255,255,255,0.75)',
           border: '1px solid rgba(0,0,0,0.07)',
@@ -252,8 +249,8 @@ function QuickAction({ label, icon: Icon, page, iconClass }) {
         )}>
           <Icon style={{ width: '18px', height: '18px' }} />
         </div>
-        <span className="text-xs font-semibold text-gray-600 group-hover:text-gray-900 transition-colors">{label}</span>
-      </motion.div>
+        <span className="atlas-dash-quick-label text-xs font-semibold text-zinc-600 transition-colors duration-200 atlas-ease-out-trans">{label}</span>
+      </div>
     </Link>
   );
 }
@@ -265,7 +262,10 @@ export default function Dashboard({ user, selectedPropertyId }) {
     ? { hidden: {}, show: { transition: { staggerChildren: 0 } } }
     : dashStaggerParent;
   const kpiItemVariants = reduceMotion
-    ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0, transition: { duration: 0 } } }
+    ? {
+        hidden: { opacity: 1, transform: 'translate3d(0, 0, 0)' },
+        show: { opacity: 1, transform: 'translate3d(0, 0, 0)', transition: { duration: 0 } },
+      }
     : dashItem;
   const now = new Date();
   const weekStart = startOfWeek(now, { weekStartsOn: 0 });
@@ -392,9 +392,9 @@ export default function Dashboard({ user, selectedPropertyId }) {
           <div className="absolute -bottom-14 -left-10 w-48 h-48 rounded-full opacity-[0.08] blur-3xl bg-slate-400" />
         </div>
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 22, mass: 0.9 }}
+          initial={reduceMotion ? false : { opacity: 0, transform: 'translate3d(0, 12px, 0)' }}
+          animate={{ opacity: 1, transform: 'translate3d(0, 0, 0)' }}
+          transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 28, mass: 0.88 }}
           className="relative flex flex-col lg:flex-row lg:items-start justify-between gap-6 lg:gap-10"
         >
           <div className="max-w-xl lg:max-w-[min(36rem,52%)]">
@@ -412,31 +412,28 @@ export default function Dashboard({ user, selectedPropertyId }) {
               סיכום מהיר לניהול יומיומי — הזמנות, לידים וכספים.
             </p>
           </div>
-          <div className="flex gap-2 flex-shrink-0 flex-wrap lg:pt-1 lg:mr-auto">
-            <Link to={createPageUrl('Leads')}>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold flex items-center touch-manipulation border border-gray-200 bg-white text-gray-700 shadow-sm hover:bg-gray-50 hover:border-gray-300 transition-colors"
-              >
-                <Plus className="w-3.5 h-3.5 text-gray-600" />
-                ליד חדש
-              </motion.button>
-            </Link>
-            <Link to={createPageUrl('Bookings')}>
-              <ShimmerButton
-                className="min-h-[44px] h-11 text-xs gap-1.5 px-4 flex items-center rounded-xl"
-                style={{
-                  background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
-                  color: '#0B1220',
-                  fontWeight: 700,
-                  boxShadow: '0 4px 14px rgba(0,209,193,0.28)',
-                }}
-              >
-                <Plus className="w-3.5 h-3.5" />
-                הזמנה חדשה
-              </ShimmerButton>
-            </Link>
+          <div className="flex gap-2 flex-shrink-0 flex-wrap lg:pt-1 lg:ms-auto">
+            <MotionLink
+              to={createPageUrl('Leads')}
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              transition={tapTween}
+              className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold inline-flex items-center justify-center touch-manipulation border border-zinc-200 bg-white text-zinc-700 shadow-sm transition-[background-color,border-color] duration-200 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50 [@media(hover:hover)_and_(pointer:fine)]:hover:border-zinc-300"
+            >
+              <Plus className="w-3.5 h-3.5 text-zinc-600 shrink-0" strokeWidth={2} aria-hidden />
+              ליד חדש
+            </MotionLink>
+            <MotionLink
+              to={createPageUrl('Bookings')}
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              transition={tapTween}
+              className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-bold inline-flex items-center justify-center touch-manipulation text-[#0B1220] shadow-[0_4px_14px_rgba(0,209,193,0.28)] transition-[filter] duration-200 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:brightness-[1.03]"
+              style={{
+                background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
+              }}
+            >
+              <Plus className="w-3.5 h-3.5 shrink-0" strokeWidth={2} aria-hidden />
+              הזמנה חדשה
+            </MotionLink>
           </div>
         </motion.div>
       </div>
@@ -601,7 +598,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
             </div>
             <h2 className="text-base font-bold text-gray-900 tracking-tight">מה נעשה עכשיו?</h2>
           </div>
-          <p className="text-xs text-gray-500 mr-9 leading-relaxed">הזמנות, יומן, לידים, תשלומים והגדרות — מה שרוב המארחים צריכים כל יום.</p>
+          <p className="text-xs text-gray-500 ms-9 leading-relaxed">הזמנות, יומן, לידים, תשלומים והגדרות — מה שרוב המארחים צריכים כל יום.</p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <QuickAction label="הזמנות"     icon={CalendarDays}  page="Bookings"      iconClass="icon-blue" />
@@ -636,15 +633,14 @@ export default function Dashboard({ user, selectedPropertyId }) {
                 </div>
                 <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ color: '#00a89a', background: 'rgba(0,209,193,0.10)' }}>{doneCount}/{steps.length} הושלמו</span>
               </div>
-              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.07)' }}>
+              <div className="relative w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.07)' }}>
                 <motion.div
-                  className="h-full rounded-full"
+                  className="absolute inset-y-0 left-0 right-0 rounded-full"
                   initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ type: 'spring', stiffness: 90, damping: 22, mass: 0.9 }}
+                  animate={{ scaleX: pct / 100 }}
+                  transition={{ type: 'spring', stiffness: 100, damping: 24, mass: 0.82 }}
                   style={{
-                    width: `${pct}%`,
-                    transformOrigin: 'right center',
+                    transformOrigin: '100% 50%',
                     background: 'linear-gradient(90deg, #00D1C1 0%, #00a89a 100%)',
                   }}
                 />
@@ -652,7 +648,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
             </div>
             <div className="divide-y divide-gray-50">
               {steps.map((step) => (
-                <Link key={step.key} to={createPageUrl(step.link)} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 transition-colors">
+                <Link key={step.key} to={createPageUrl(step.link)} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 transition-colors duration-200 atlas-ease-out-trans active:scale-[0.97] active:duration-150 touch-manipulation">
                   <div className={cn(
                     "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
                     step.done ? "bg-emerald-100" : "bg-gray-100"
@@ -695,7 +691,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
                     <circle cx="50" cy="50" r="42" fill="none" stroke="#F3F4F6" strokeWidth="8" />
                     <circle cx="50" cy="50" r="42" fill="none" stroke="url(#gauge-grad)" strokeWidth="8" strokeLinecap="round"
                       strokeDasharray={`${occupancy * 2.64} 264`}
-                      style={{ transition: 'stroke-dasharray 1s ease' }}
+                      style={{ transition: 'stroke-dasharray 0.55s cubic-bezier(0.23, 1, 0.32, 1)' }}
                     />
                     <defs><linearGradient id="gauge-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#10B981" /><stop offset="100%" stopColor="#059669" /></linearGradient></defs>
                   </svg>
@@ -728,11 +724,12 @@ export default function Dashboard({ user, selectedPropertyId }) {
             </div>
             <div className="flex items-end gap-1.5 h-16">
               {[25, 40, 35, 55, 65, 50, 80, 70, 90, 85, 95, 100].map((h, i) => (
-                <div key={i} className="flex-1 rounded-t" style={{
+                <div key={i} className="flex-1 rounded-t origin-bottom" style={{
                   height: `${h}%`,
                   background: `linear-gradient(180deg, ${i >= 10 ? '#8B5CF6' : '#C4B5FD'} 0%, ${i >= 10 ? '#7C3AED' : '#A78BFA'} 100%)`,
                   opacity: 0.4 + (i * 0.05),
-                  transition: 'height 0.85s cubic-bezier(0.16, 1, 0.3, 1)',
+                  transform: 'scaleY(1)',
+                  transition: 'opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1)',
                 }} />
               ))}
             </div>
@@ -802,14 +799,17 @@ export default function Dashboard({ user, selectedPropertyId }) {
             { icon: Link2, label: 'אינטגרציות', desc: 'Airbnb, Booking, יומנים', link: 'Integrations', color: 'from-blue-400 to-indigo-500' },
             { icon: FileText, label: 'חשבוניות', desc: 'חשבוניות ומסמכים', link: 'Invoices', color: 'from-violet-400 to-purple-500' },
           ].map((feat, i) => (
-            <Link key={i} to={createPageUrl(feat.link)} className="group">
-              <motion.div whileHover={{ y: -2, scale: 1.02 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} className="rounded-xl p-4 h-full cursor-pointer" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', backdropFilter: 'blur(12px)' }}>
-                <div className={cn("w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform", feat.color)}>
+            <Link key={i} to={createPageUrl(feat.link)} className="group block h-full touch-manipulation">
+              <div
+                className="atlas-dash-link-card rounded-xl p-4 h-full cursor-pointer"
+                style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', backdropFilter: 'blur(12px)' }}
+              >
+                <div className={cn('atlas-dash-link-card-icon w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center mb-3 shadow-sm', feat.color)}>
                   <feat.icon className="w-4 h-4 text-white" />
                 </div>
                 <p className="text-sm font-semibold text-gray-800 mb-0.5">{feat.label}</p>
                 <p className="text-xs text-gray-400 leading-relaxed">{feat.desc}</p>
-              </motion.div>
+              </div>
             </Link>
           ))}
         </div>
@@ -826,21 +826,18 @@ export default function Dashboard({ user, selectedPropertyId }) {
             <p className="text-sm text-gray-600">כל התכונות פתוחות — ללא כרטיס אשראי. נסה עכשיו וראה את ההבדל.</p>
           </div>
         </div>
-        <Link to={createPageUrl('Subscription')}>
-          <ShimmerButton
-            className="flex items-center gap-1.5 px-6 h-10 flex-shrink-0 rounded-xl"
-            style={{
-              background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
-              color: '#0B1220',
-              fontWeight: 700,
-              fontSize: '14px',
-              boxShadow: '0 4px 14px rgba(0,209,193,0.28)',
-            }}
-          >
-            שדרג עכשיו
-            <ArrowUpRight className="w-4 h-4" />
-          </ShimmerButton>
-        </Link>
+        <MotionLink
+          to={createPageUrl('Subscription')}
+          whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+          transition={tapTween}
+          className="inline-flex items-center gap-1.5 px-6 h-10 flex-shrink-0 rounded-xl font-bold text-sm text-[#0B1220] shadow-[0_4px_14px_rgba(0,209,193,0.28)] touch-manipulation transition-[filter] duration-200 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:brightness-[1.03]"
+          style={{
+            background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
+          }}
+        >
+          שדרג עכשיו
+          <ArrowUpRight className="w-4 h-4 shrink-0" strokeWidth={2} aria-hidden />
+        </MotionLink>
       </div>
 
     </div>

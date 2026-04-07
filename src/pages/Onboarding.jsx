@@ -28,6 +28,9 @@ import { PRICING_PLANS } from '@/config/pricing';
 const TOTAL_STEPS = 4;
 const SAVE_TIMEOUT_MS = 45_000;
 
+/* Emil: snappy press feedback, strong ease-out */
+const EMIL_TAP = { type: 'tween', duration: 0.14, ease: [0.23, 1, 0.32, 1] };
+
 function withSaveTimeout(promise, ms = SAVE_TIMEOUT_MS) {
   let t;
   const timeout = new Promise((_, reject) => {
@@ -131,7 +134,7 @@ export default function Onboarding() {
     if (step === 2) {
       setVisibleFeatures(0);
       const timers = FEATURES.slice(0, 2).map((_, i) =>
-        setTimeout(() => setVisibleFeatures(v => Math.max(v, i + 1)), 300 + i * 300)
+        setTimeout(() => setVisibleFeatures(v => Math.max(v, i + 1)), 200 + i * 60)
       );
       return () => timers.forEach(clearTimeout);
     }
@@ -547,9 +550,15 @@ export default function Onboarding() {
               {['חינם ל-14 יום', 'ללא כרטיס אשראי', 'ביטול בכל עת'].map((t, i) => (
                 <motion.span
                   key={t}
-                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ type: 'spring', stiffness: 120, damping: 22, delay: reduceMotion ? 0 : 0.06 * i }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 6, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 380,
+                    damping: 28,
+                    mass: 0.82,
+                    delay: reduceMotion ? 0 : 0.05 * i,
+                  }}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-teal-500/8 border border-teal-600/15 text-teal-800"
                 >
                   <Check className="w-3 h-3 shrink-0" strokeWidth={2.5} />
@@ -560,7 +569,7 @@ export default function Onboarding() {
 
             <Button
               onClick={goNext}
-              className="w-full h-12 text-base font-bold rounded-xl gap-2 transition-[transform,opacity] duration-200 atlas-ease-out-trans active:scale-[0.99] bg-zinc-900 text-white hover:bg-zinc-800"
+              className="w-full h-12 text-base font-bold rounded-xl gap-2 transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] bg-zinc-900 text-white [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
             >
               בואו נתחיל!
               <ArrowLeft className="w-5 h-5" />
@@ -741,14 +750,14 @@ export default function Onboarding() {
               </div>
             </div>
             <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold">
+              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold transition-transform duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50">
                 <ArrowRight className="w-4 h-4" />
                 חזור
               </Button>
               <Button
                 onClick={handleSaveOrgAndProperty}
                 disabled={!combinedValid || saving}
-                className="flex-1 h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white hover:bg-zinc-800 transition-colors duration-200"
+                className="flex-1 h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
               >
                 {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
                 {saving ? 'שומר...' : 'הבא'}
@@ -775,9 +784,8 @@ export default function Onboarding() {
                   key={plan.key}
                   type="button"
                   onClick={() => handleSelectPlan(plan.key)}
-                  whileHover={reduceMotion ? undefined : { y: -1 }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.995 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                  transition={EMIL_TAP}
                   className={cn(
                     'w-full text-right p-4 rounded-xl border-2 transition-shadow duration-300 atlas-ease-out-trans hover:shadow-md',
                     selectedPlanKey === plan.key
@@ -811,12 +819,12 @@ export default function Onboarding() {
               ))}
             </div>
             <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold">
+              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold transition-transform duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50">
                 <ArrowRight className="w-4 h-4" />
                 חזור
               </Button>
             </div>
-            <button onClick={handleSkipPlan} disabled={saving} className="w-full text-center text-sm text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50">
+            <button onClick={handleSkipPlan} disabled={saving} className="w-full text-center text-sm text-gray-400 hover:text-gray-600 transition-[transform,color] duration-200 atlas-ease-out-trans active:scale-[0.97] active:duration-150 disabled:opacity-50 [@media(hover:hover)_and_(pointer:fine)]:hover:text-zinc-600">
               אדלג לעכשיו →
             </button>
           </div>
@@ -876,7 +884,7 @@ export default function Onboarding() {
             <Button
               onClick={handleFinish}
               disabled={saving}
-              className="w-full h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white hover:bg-zinc-800 transition-colors duration-200"
+              className="w-full h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
             >
               {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
               {saving ? 'מעביר...' : 'כניסה ללוח הבקרה'}
@@ -920,7 +928,7 @@ export default function Onboarding() {
           aria-label={`התקדמות בהגדרה, שלב ${step + 1} מתוך ${TOTAL_STEPS}`}
         >
           <div
-            className="h-1.5 bg-zinc-100 rounded-full overflow-hidden"
+            className="relative h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden"
             role="progressbar"
             aria-valuemin={0}
             aria-valuemax={100}
@@ -928,11 +936,12 @@ export default function Onboarding() {
             aria-label={`אחוז השלמה ${Math.round(progress)}%`}
           >
             <motion.div
-              className="h-full rounded-full"
+              className="absolute inset-y-0 left-0 right-0 rounded-full"
               initial={false}
-              animate={{ width: `${progress}%` }}
-              transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 95, damping: 22, mass: 0.8 }}
+              animate={{ scaleX: progress / 100 }}
+              transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 100, damping: 24, mass: 0.82 }}
               style={{
+                transformOrigin: '100% 50%',
                 background: 'linear-gradient(90deg, #00D1C1 0%, #089b8e 100%)',
               }}
               aria-hidden
@@ -963,13 +972,29 @@ export default function Onboarding() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={step}
-              initial={reduceMotion ? false : { opacity: 0, y: direction > 0 ? 18 : -18, filter: 'blur(6px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={reduceMotion ? undefined : { opacity: 0, y: direction > 0 ? -12 : 12, filter: 'blur(4px)' }}
+              initial={reduceMotion ? false : {
+                opacity: 0,
+                scale: 0.98,
+                y: direction > 0 ? 14 : -14,
+                filter: 'blur(5px)',
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                filter: 'blur(0px)',
+              }}
+              exit={reduceMotion ? undefined : {
+                opacity: 0,
+                scale: 0.99,
+                y: direction > 0 ? -8 : 8,
+                filter: 'blur(3px)',
+                transition: { duration: 0.18, ease: [0.23, 1, 0.32, 1] },
+              }}
               transition={
                 reduceMotion
                   ? { duration: 0 }
-                  : { type: 'spring', stiffness: 110, damping: 24, mass: 0.88 }
+                  : { type: 'spring', stiffness: 400, damping: 30, mass: 0.82 }
               }
             >
               {renderStep()}
