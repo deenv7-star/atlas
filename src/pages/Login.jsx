@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import { ShimmerButton } from '@/components/ui/AnimatedButton';
 
 export default function Login() {
-  const { loginUser } = useAuth();
+  const { loginUser, isLoadingAuth } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const prefilledEmail = searchParams.get('email') || '';
@@ -82,6 +82,18 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+
+  if (isLoadingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F4F6FB' }} dir="rtl">
+        <div
+          className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"
+          role="status"
+          aria-label="טוען"
+        />
+      </div>
+    );
+  }
 
   return (
     <div

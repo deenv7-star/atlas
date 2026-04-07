@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 
 export default function Register() {
   const navigate = useNavigate();
-  const { loginUser } = useAuth();
+  const { loginUser, isLoadingAuth } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +102,18 @@ export default function Register() {
 
   const passwordStrength = getPasswordStrength(form.password);
   const canSubmit = form.email && form.password && form.confirmPassword && !errors.email && !errors.password && form.password === form.confirmPassword;
+
+  if (isLoadingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30" dir="rtl">
+        <div
+          className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"
+          role="status"
+          aria-label="טוען"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>

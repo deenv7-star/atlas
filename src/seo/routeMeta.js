@@ -84,7 +84,8 @@ const EXACT = {
   },
   '/pricing': {
     title: 'תמחור ותוכניות | ATLAS',
-    description: 'השוואת חבילות ATLAS — בסיסית, מתקדמת ו-Enterprise.',
+    description:
+      'תמחור ATLAS לניהול צימרים ומתחמי נופש: חבילה בסיסית, מתקדמת ו-Enterprise. השוואת תכונות, מחירים להמחשה וצור קשר להצעה.',
   },
   '/billing': {
     title: 'חיוב | ATLAS',

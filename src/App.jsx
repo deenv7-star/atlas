@@ -100,16 +100,9 @@ const PlatformAdminRoute = ({ children }) => {
 };
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isAuthenticated, user } = useAuth();
-
-  // Show loading spinner while checking auth on root/login routes
-  if (isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  // Do not block public routes (/, /pricing, /status, /contact, …) on auth hydration.
+  // Slow or hanging /auth/me would otherwise show a full-screen spinner for everyone.
+  const { isAuthenticated, user } = useAuth();
 
   return (
     <Routes>

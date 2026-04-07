@@ -328,6 +328,7 @@ export default function Landing() {
 
   const goToRegister = () => navigate('/register');
   const goToLogin = () => navigate('/login');
+  const goToContact = () => navigate('/contact');
   const scrollToFeatures = () => {
     document.getElementById('features')?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
   };
@@ -1383,7 +1384,7 @@ export default function Landing() {
               <Link to="/api-docs" className="atlas-nav-link">API</Link>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <button
                 className="atlas-nav-cta"
                 onClick={goToLogin}
@@ -1404,6 +1405,27 @@ export default function Landing() {
               >
                 כניסה
               </button>
+              <Link
+                to="/contact"
+                className="atlas-nav-cta"
+                style={{
+                  background: 'none',
+                  border: '1.5px solid #E5E7EB',
+                  color: '#374151',
+                  borderRadius: 8,
+                  padding: '12px 18px',
+                  minHeight: 44,
+                  fontWeight: 600,
+                  fontSize: 16,
+                  fontFamily: 'Heebo, sans-serif',
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                }}
+              >
+                מכירות
+              </Link>
               <button
                 className="atlas-nav-cta"
                 onClick={goToRegister}
@@ -1466,6 +1488,13 @@ export default function Landing() {
               >
                 כניסה
               </button>
+              <Link
+                to="/contact"
+                onClick={() => setMenuOpen(false)}
+                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'block' }}
+              >
+                מכירות
+              </Link>
               <button
                 onClick={() => { setMenuOpen(false); goToRegister(); }}
                 style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
@@ -1530,9 +1559,30 @@ export default function Landing() {
                   <strong style={{ color: '#374151' }}>חוסכת 20+ שעות שבועיות</strong> לכל מנהל מתחם.
                 </p>
 
-                <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 22, flexWrap: 'wrap' }}>
+                <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 22, flexWrap: 'wrap' }}>
                   <button className="atlas-btn-primary" onClick={goToRegister} style={{ minHeight: 52 }}>
-                    פתח חשבון חינם — תוך 60 שניות
+                    חסכו שעות תפעול — 14 יום בחינם
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToContact}
+                    style={{
+                      background: '#FFFFFF',
+                      border: '2px solid #E5E7EB',
+                      color: '#111827',
+                      fontWeight: 600,
+                      fontSize: 16,
+                      fontFamily: 'Heebo, sans-serif',
+                      cursor: 'pointer',
+                      borderRadius: 8,
+                      padding: '14px 20px',
+                      minHeight: 52,
+                      transition: 'border-color 0.2s, background 0.2s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#D1D5DB'; e.currentTarget.style.background = '#F9FAFB'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = '#FFFFFF'; }}
+                  >
+                    דברו עם מכירות
                   </button>
                   <button
                     type="button"
@@ -3304,7 +3354,7 @@ export default function Landing() {
                 onMouseEnter={e => { e.currentTarget.style.background = '#F5F3FF'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.transform = 'translateY(0)'; }}
               >
-                התחל 14 יום חינם ←
+                חסכו זמן — 14 יום בחינם ←
               </button>
               <a
                 href="https://wa.me/972545380085?text=מעוניין%20בדמו%20אישי%20של%20ATLAS"
@@ -3621,7 +3671,7 @@ export default function Landing() {
           }}
         >
           <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#374151', flex: '1 1 200px', fontFamily: 'Heebo, sans-serif' }}>
-            מוכנים להתחיל? הרשמה חינם — ללא כרטיס אשראי
+            פחות תפעול, יותר הכנסות — ניסיון 14 יום, ללא כרטיס אשראי
           </p>
           <button
             type="button"
@@ -3629,7 +3679,7 @@ export default function Landing() {
             className="atlas-btn-primary"
             style={{ minHeight: 48, fontSize: 17, flexShrink: 0 }}
           >
-            פתחו חשבון
+            התחילו בחינם
           </button>
         </div>
       )}
