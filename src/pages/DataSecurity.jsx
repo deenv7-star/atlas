@@ -149,11 +149,17 @@ export default function DataSecurity() {
           </p>
         </div>
 
-        {/* Compliance */}
-        <div className="bg-white rounded-2xl shadow-sm p-8">
+        {/* Compliance — anchor for marketing footer "security whitepaper" link */}
+        <div id="security-compliance" className="bg-white rounded-2xl shadow-sm p-8 scroll-mt-24">
           <div className="flex items-center gap-3 mb-4">
             <Globe className="w-6 h-6 text-[#00D1C1]" />
             <h2 className="text-2xl font-bold text-[#0B1220]">עמידה בתקנים ורגולציה</h2>
+          </div>
+          <div className="rounded-xl border border-teal-100 bg-teal-50/40 p-4 mb-6 text-gray-700 text-sm leading-relaxed">
+            <strong className="text-[#0B1220]">שקיפות לגבי SOC 2 / ISO:</strong>{' '}
+            דוחות תאימות של ספקי הענן (למשל AWS — SOC 2 Type II, ISO 27001) ותיעוד תהליכי אבטחה פנימיים
+            זמינים ללקוחות <strong>Enterprise</strong> לפי בקשה, בכפוף ל-NDA ולסיווג המידע.
+            אין כאן תעודת SOC 2 על חברת ATLAS עצמה — אנחנו בונים על תשתית מאושרת ושכבות אבטחה נוספות באפליקציה.
           </div>
           <div className="space-y-3">
             {[
@@ -183,11 +189,11 @@ export default function DataSecurity() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <a
-              href="mailto:security@atlas.app"
+              href="mailto:support@atlas-app.co.il?subject=בקשת%20מידע%20אבטחה%20(ATLAS)"
               className="inline-flex items-center gap-2 px-5 py-3 bg-[#00D1C1] text-[#0B1220] rounded-lg font-semibold text-sm hover:bg-[#00b8aa] transition-colors"
             >
               <Shield className="w-4 h-4" />
-              security@atlas.app
+              support@atlas-app.co.il
             </a>
             <Link
               to="/contact"

@@ -1081,10 +1081,13 @@ export default function Landing() {
         }
 
         /* ─ Navbar link (nowrap: prevent Hebrew labels breaking mid-phrase in tight flex) ─ */
+        .atlas-lp {
+          font-size: 16px;
+        }
         .atlas-nav-link {
           color: #374151;
           font-weight: 500;
-          font-size: 15px;
+          font-size: 16px;
           text-decoration: none;
           transition: color 0.2s;
           display: inline-flex;
@@ -1239,6 +1242,8 @@ export default function Landing() {
           .atlas-hero-btns { flex-direction: column !important; align-items: stretch !important; }
           .atlas-hero-btns > button,
           .atlas-hero-btns > a { width: 100% !important; text-align: center !important; }
+          .atlas-hero-top-cta { justify-content: stretch !important; }
+          .atlas-hero-top-cta button { width: 100% !important; }
 
           .atlas-ps-grid { grid-template-columns: 1fr !important; }
           .atlas-ps-section { padding: 60px 16px !important; }
@@ -1502,16 +1507,39 @@ export default function Landing() {
 
             <div className="atlas-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <button
+                type="button"
+                className="atlas-nav-cta"
+                onClick={goToRegister}
+                style={{
+                  background: '#00D1C1',
+                  border: 'none',
+                  color: '#0B1220',
+                  borderRadius: 8,
+                  padding: '12px 20px',
+                  minHeight: 44,
+                  fontWeight: 700,
+                  fontSize: 16,
+                  fontFamily: 'Heebo, sans-serif',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 2px 12px rgba(0,209,193,0.35)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#00c4b4'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#00D1C1'; }}
+              >
+                14 יום חינם
+              </button>
+              <button
                 className="atlas-nav-cta"
                 onClick={goToLogin}
                 style={{
                   background: 'none',
                   border: 'none',
                   color: '#374151',
-                  padding: '12px 20px',
+                  padding: '12px 16px',
                   minHeight: 44,
                   fontWeight: 600,
-                  fontSize: 17,
+                  fontSize: 16,
                   fontFamily: 'Heebo, sans-serif',
                   cursor: 'pointer',
                   transition: 'color 0.2s',
@@ -1529,7 +1557,7 @@ export default function Landing() {
                   border: '1.5px solid #E5E7EB',
                   color: '#374151',
                   borderRadius: 8,
-                  padding: '12px 18px',
+                  padding: '12px 16px',
                   minHeight: 44,
                   fontWeight: 600,
                   fontSize: 16,
@@ -1542,28 +1570,6 @@ export default function Landing() {
               >
                 מכירות
               </Link>
-              <button
-                className="atlas-nav-cta"
-                onClick={goToRegister}
-                style={{
-                  background: '#4F46E5',
-                  border: 'none',
-                  color: 'white',
-                  borderRadius: 8,
-                  padding: '12px 24px',
-                  minHeight: 44,
-                  fontWeight: 600,
-                  fontSize: 17,
-                  fontFamily: 'Heebo, sans-serif',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s',
-                  boxShadow: '0 2px 8px rgba(79,70,229,0.25)',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = '#4338CA'}
-                onMouseLeave={e => e.currentTarget.style.background = '#4F46E5'}
-              >
-                הרשמה חינם
-              </button>
 
               <button
                 className="atlas-hamburger"
@@ -1599,8 +1605,16 @@ export default function Landing() {
               <Link to="/changelog" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>מה חדש</Link>
               <Link to="/api-docs" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>API</Link>
               <button
+                type="button"
+                onClick={() => { setMenuOpen(false); goToRegister(); }}
+                style={{ background: '#00D1C1', color: '#0B1220', border: 'none', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 800, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
+              >
+                14 יום חינם — הרשמה
+              </button>
+              <button
+                type="button"
                 onClick={() => { setMenuOpen(false); goToLogin(); }}
-                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
+                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
               >
                 כניסה
               </button>
@@ -1611,12 +1625,6 @@ export default function Landing() {
               >
                 מכירות
               </Link>
-              <button
-                onClick={() => { setMenuOpen(false); goToRegister(); }}
-                style={{ background: '#4F46E5', color: 'white', border: 'none', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer' }}
-              >
-                הרשמה חינם
-              </button>
             </div>
           )}
         </nav>
@@ -1646,6 +1654,30 @@ export default function Landing() {
           <div className="atlas-blob atlas-blob-3" />
 
           <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
+            {/* High-intent CTA — visible immediately in hero (GoNoGo: primary trial above the fold) */}
+            <div
+              className="atlas-hero-top-cta"
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'flex-start',
+                marginBottom: 20,
+              }}
+            >
+              <button
+                type="button"
+                className="atlas-btn-primary"
+                onClick={goToRegister}
+                style={{
+                  minHeight: 48,
+                  fontSize: 17,
+                  padding: '12px 24px',
+                  boxShadow: '0 4px 20px rgba(0,209,193,0.25)',
+                }}
+              >
+                התחילו ניסיון חינם 14 יום
+              </button>
+            </div>
             <div
               className="atlas-hero-grid"
               style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 60, alignItems: 'center' }}
@@ -1670,9 +1702,9 @@ export default function Landing() {
                   <span style={{ display: 'block' }}>תתחיל להרוויח.</span>
                 </h1>
 
-                <p style={{ fontSize: 17, color: '#6B7280', maxWidth: 420, marginTop: 20, lineHeight: 1.65 }}>
-                  ATLAS מנהלת את הכל בשבילך — מלידים לתשלומים, מהזמנות לחוזים.<br />
-                  <strong style={{ color: '#374151' }}>חוסכת 20+ שעות שבועיות</strong> לכל מנהל מתחם.
+                <p style={{ fontSize: 17, color: '#6B7280', maxWidth: 480, marginTop: 20, lineHeight: 1.65 }}>
+                  <strong style={{ color: '#374151' }}>חסכו מעל 15 שעות בשבוע</strong> על הזמנות ידניות, תשלומים ותיאומים בין ערוצים.
+                  ATLAS מרכזת לידים, יומן, חיובים וחוזים במקום אחד — עם כללי מניעת הזמנות כפולות שאפשר לסמוך עליהם.
                 </p>
 
                 <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 22, flexWrap: 'wrap' }}>
@@ -3618,6 +3650,7 @@ export default function Landing() {
                   { label: 'פרטיות', to: '/privacy' },
                   { label: 'תנאי שימוש', to: '/terms' },
                   { label: 'נגישות', to: '/accessibility' },
+                  { label: 'עמידה בתקנים (SOC 2 / ISO)', to: '/data-security#security-compliance' },
                 ].map((l) => (
                   <div key={l.label}>
                     <Link to={l.to} className="atlas-footer-link">{l.label}</Link>

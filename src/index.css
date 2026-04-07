@@ -99,6 +99,7 @@
     @apply text-foreground;
     background-color: var(--page-bg);
     font-family: 'Heebo', 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 1rem; /* 16px — readability & WCAG-friendly body text */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
