@@ -68,7 +68,7 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="atlas-app-shell flex flex-col h-screen overflow-hidden safe-top safe-left safe-right" style={{ background: 'linear-gradient(160deg, #eef2ff 0%, #f4f6fb 38%, #f0fdf9 100%)' }} dir="rtl">
+    <div className="atlas-app-shell flex flex-col min-h-[100dvh] h-[100dvh] max-h-[100dvh] overflow-hidden safe-top safe-left safe-right" style={{ background: 'linear-gradient(165deg, #f0fdf9 0%, #f4f6fb 42%, #eef6f4 100%)' }} dir="rtl">
       <TrialBanner />
       <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Mobile sidebar overlay */}

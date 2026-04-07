@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { base44 } from '@/api/base44Client';
@@ -81,12 +81,11 @@ const FEATURES = [
 ];
 
 export default function Onboarding() {
-  const navigate = useNavigate();
   const { user, checkAppState } = useAuth();
+  const reduceMotion = useReducedMotion();
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [saving, setSaving] = useState(false);
-  const [animKey, setAnimKey] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
   const [personalForm, setPersonalForm] = useState({ first_name: '', last_name: '', phone: '' });
@@ -140,7 +139,6 @@ export default function Onboarding() {
 
   const goNext = async () => {
     setDirection(1);
-    setAnimKey(k => k + 1);
     const next = Math.min(step + 1, TOTAL_STEPS - 1);
     setStep(next);
     await persistStep(next);
@@ -148,7 +146,6 @@ export default function Onboarding() {
 
   const goBack = () => {
     setDirection(-1);
-    setAnimKey(k => k + 1);
     setStep(s => Math.max(s - 1, 0));
   };
 
@@ -313,7 +310,6 @@ export default function Onboarding() {
         });
       }
       setDirection(1);
-      setAnimKey(k => k + 1);
       setStep(3);
       await persistStep(3);
     } catch (err) {
@@ -544,30 +540,27 @@ export default function Onboarding() {
             <div className="flex items-center justify-center gap-2 mb-5">
               <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 56, width: 'auto', objectFit: 'contain' }} />
             </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#111827', marginBottom: 8 }}>ברוך הבא ל-ATLAS!</h2>
-            <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginBottom: 24 }}>בואו נגדיר את המתחם שלך תוך 2 דקות</p>
+            <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight mb-2">ברוך הבא ל-ATLAS!</h2>
+            <p className="text-sm text-zinc-600 mb-6 leading-relaxed">בואו נגדיר את המתחם שלך תוך 2 דקות</p>
 
             <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
-              {['חינם ל-14 יום', 'ללא כרטיס אשראי', 'ביטול בכל עת'].map(t => (
-                <span
+              {['חינם ל-14 יום', 'ללא כרטיס אשראי', 'ביטול בכל עת'].map((t, i) => (
+                <motion.span
                   key={t}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
-                  style={{
-                    background: 'rgba(79,70,229,0.06)',
-                    border: '1px solid rgba(79,70,229,0.15)',
-                    color: '#4F46E5',
-                  }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ type: 'spring', stiffness: 120, damping: 22, delay: reduceMotion ? 0 : 0.06 * i }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-teal-500/8 border border-teal-600/15 text-teal-800"
                 >
-                  <Check className="w-3 h-3" />
+                  <Check className="w-3 h-3 shrink-0" strokeWidth={2.5} />
                   {t}
-                </span>
+                </motion.span>
               ))}
             </div>
 
             <Button
               onClick={goNext}
-              className="w-full h-12 text-base font-bold rounded-xl gap-2 hover:opacity-90 transition-opacity"
-              style={{ background: '#111827', color: 'white' }}
+              className="w-full h-12 text-base font-bold rounded-xl gap-2 transition-[transform,opacity] duration-200 atlas-ease-out-trans active:scale-[0.99] bg-zinc-900 text-white hover:bg-zinc-800"
             >
               בואו נתחיל!
               <ArrowLeft className="w-5 h-5" />
@@ -613,7 +606,7 @@ export default function Onboarding() {
                 }
               }}
               disabled={saving}
-              className="w-full mt-3 text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors py-2 cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500/30 rounded"
+              className="w-full mt-3 text-sm font-medium text-zinc-500 hover:text-teal-700 transition-colors duration-200 ease-out py-2 cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-teal-500/25 rounded"
             >
               יש לי חשבון קיים — מעבר לדאשבורד
             </button>
@@ -638,11 +631,11 @@ export default function Onboarding() {
         return (
           <div className="space-y-5">
             <div className="text-center mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-                <Building2 className="w-6 h-6" style={{ color: '#4F46E5' }} />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-teal-500/8 border border-teal-600/15">
+                <Building2 className="w-6 h-6 text-teal-700" strokeWidth={2} />
               </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>הגדרת המתחם והנכס הראשון</h2>
-              <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginTop: 4 }}>פרטי הארגון והנכס הראשון</p>
+              <h2 className="text-xl font-extrabold text-zinc-900 tracking-tight">הגדרת המתחם והנכס הראשון</h2>
+              <p className="text-sm text-zinc-600 mt-1 leading-relaxed">פרטי הארגון והנכס הראשון</p>
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm font-semibold text-gray-700">שם הארגון *</Label>
@@ -699,8 +692,8 @@ export default function Onboarding() {
             </div>
             <div className="border-t border-gray-100 pt-4 mt-4">
               <div className="flex items-center gap-2 mb-3">
-                <Home className="w-5 h-5 text-indigo-500" />
-                <h3 className="text-sm font-semibold text-gray-800">נכס ראשון</h3>
+                <Home className="w-5 h-5 text-teal-600" strokeWidth={2} />
+                <h3 className="text-sm font-semibold text-zinc-800">נכס ראשון</h3>
               </div>
               <div className="space-y-1.5">
                 <Label className="text-sm font-semibold text-gray-700">שם הנכס *</Label>
@@ -755,8 +748,7 @@ export default function Onboarding() {
               <Button
                 onClick={handleSaveOrgAndProperty}
                 disabled={!combinedValid || saving}
-                className="flex-1 h-12 text-base font-bold rounded-xl gap-2"
-                style={{ background: '#111827', color: 'white' }}
+                className="flex-1 h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white hover:bg-zinc-800 transition-colors duration-200"
               >
                 {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
                 {saving ? 'שומר...' : 'הבא'}
@@ -771,44 +763,51 @@ export default function Onboarding() {
         return (
           <div className="space-y-5">
             <div className="text-center mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-                <Crown className="w-6 h-6" style={{ color: '#4F46E5' }} />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-teal-500/8 border border-teal-600/15">
+                <Crown className="w-6 h-6 text-teal-700" strokeWidth={2} />
               </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>בחר את התוכנית שמתאימה לך</h2>
-              <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginTop: 4 }}>כל התוכניות כוללות 14 יום ניסיון חינם</p>
+              <h2 className="text-xl font-extrabold text-zinc-900 tracking-tight">בחר את התוכנית שמתאימה לך</h2>
+              <p className="text-sm text-zinc-600 mt-1 leading-relaxed">כל התוכניות כוללות 14 יום ניסיון חינם</p>
             </div>
             <div className="space-y-3">
               {PLANS.map(plan => (
-                <button
+                <motion.button
                   key={plan.key}
+                  type="button"
                   onClick={() => handleSelectPlan(plan.key)}
-                  className="w-full text-right p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-md"
-                  style={{
-                    borderColor: selectedPlanKey === plan.key ? '#4F46E5' : plan.recommended ? 'rgba(79,70,229,0.3)' : '#F3F4F6',
-                    background: selectedPlanKey === plan.key ? 'rgba(79,70,229,0.06)' : plan.recommended ? 'rgba(79,70,229,0.04)' : '#FFFFFF',
-                  }}
+                  whileHover={reduceMotion ? undefined : { y: -1 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.995 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                  className={cn(
+                    'w-full text-right p-4 rounded-xl border-2 transition-shadow duration-300 atlas-ease-out-trans hover:shadow-md',
+                    selectedPlanKey === plan.key
+                      ? 'border-teal-600/50 bg-teal-500/6 shadow-sm'
+                      : plan.recommended
+                        ? 'border-teal-500/25 bg-teal-500/[0.03]'
+                        : 'border-zinc-100 bg-white',
+                  )}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-extrabold" style={{ color: '#111827' }}>{plan.name}</span>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-extrabold text-zinc-900">{plan.name}</span>
                         {plan.recommended && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)', color: '#4F46E5' }}>מומלץ</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-500/10 border border-teal-600/20 text-teal-800">מומלץ</span>
                         )}
                       </div>
-                      <p className="text-xs mt-0.5" style={{ color: '#6B7280', fontWeight: 400 }}>{plan.desc}</p>
+                      <p className="text-xs mt-0.5 text-zinc-600 font-normal leading-relaxed">{plan.desc}</p>
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {plan.features.slice(0, 3).map(f => (
-                          <span key={f} className="text-[10px] px-2 py-0.5 rounded-full" style={{ color: '#6B7280', background: '#F3F4F6' }}>{f}</span>
+                          <span key={f} className="text-[10px] px-2 py-0.5 rounded-full text-zinc-600 bg-zinc-100">{f}</span>
                         ))}
                       </div>
                     </div>
-                    <div className="text-left flex-shrink-0 mr-4">
-                      <div className="text-lg font-extrabold" style={{ color: '#111827' }}>₪{plan.price}</div>
-                      <div className="text-[10px]" style={{ color: '#6B7280' }}>לחודש</div>
+                    <div className="text-left flex-shrink-0 mr-2">
+                      <div className="text-lg font-extrabold text-zinc-900 atlas-tabular">₪{plan.price}</div>
+                      <div className="text-[10px] text-zinc-500">לחודש</div>
                     </div>
                   </div>
-                </button>
+                </motion.button>
               ))}
             </div>
             <div className="flex gap-3 pt-2">
@@ -844,30 +843,30 @@ export default function Onboarding() {
                 <path d="M38 60 L52 74 L82 44" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               </svg>
             </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#111827', marginBottom: 8 }}>המתחם שלך מוכן!</h2>
-            <p style={{ fontSize: 14, fontWeight: 400, color: '#6B7280', marginBottom: 24 }}>הכל מוגדר ומוכן לשימוש</p>
+            <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight mb-2">המתחם שלך מוכן!</h2>
+            <p className="text-sm text-zinc-600 mb-6 leading-relaxed">הכל מוגדר ומוכן לשימוש</p>
 
             {(createdOrgName || createdPropertyName) && (
-              <div className="rounded-xl p-4 mb-6 space-y-2 text-right" style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
+              <div className="rounded-xl p-4 mb-6 space-y-2 text-right bg-zinc-50 border border-zinc-100">
                 {createdOrgName && (
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-                      <Building2 className="w-3.5 h-3.5" style={{ color: '#4F46E5' }} />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-teal-500/8 border border-teal-600/15">
+                      <Building2 className="w-3.5 h-3.5 text-teal-700" strokeWidth={2} />
                     </div>
                     <div>
-                      <p className="text-[10px]" style={{ color: '#6B7280' }}>ארגון</p>
-                      <p className="text-sm font-semibold" style={{ color: '#111827' }}>{createdOrgName}</p>
+                      <p className="text-[10px] text-zinc-500">ארגון</p>
+                      <p className="text-sm font-semibold text-zinc-900">{createdOrgName}</p>
                     </div>
                   </div>
                 )}
                 {createdPropertyName && (
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)' }}>
-                      <Home className="w-3.5 h-3.5" style={{ color: '#4F46E5' }} />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-teal-500/8 border border-teal-600/15">
+                      <Home className="w-3.5 h-3.5 text-teal-700" strokeWidth={2} />
                     </div>
                     <div>
-                      <p className="text-[10px]" style={{ color: '#6B7280' }}>נכס</p>
-                      <p className="text-sm font-semibold" style={{ color: '#111827' }}>{createdPropertyName}</p>
+                      <p className="text-[10px] text-zinc-500">נכס</p>
+                      <p className="text-sm font-semibold text-zinc-900">{createdPropertyName}</p>
                     </div>
                   </div>
                 )}
@@ -877,8 +876,7 @@ export default function Onboarding() {
             <Button
               onClick={handleFinish}
               disabled={saving}
-              className="w-full h-12 text-base font-bold rounded-xl gap-2"
-              style={{ background: '#111827', color: 'white' }}
+              className="w-full h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white hover:bg-zinc-800 transition-colors duration-200"
             >
               {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
               {saving ? 'מעביר...' : 'כניסה ללוח הבקרה'}
@@ -893,7 +891,7 @@ export default function Onboarding() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      className="min-h-[100dvh] flex items-center justify-center p-4 relative overflow-hidden"
       dir="rtl"
       style={{ fontFamily: "'Heebo', sans-serif", background: '#FFFFFF' }}
       onKeyDown={handleKeyDown}
@@ -913,37 +911,56 @@ export default function Onboarding() {
           />
         </div>
 
-        {/* Progress bar — app primary (teal/indigo) */}
-        <div className="mb-2">
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${progress}%`, background: '#4F46E5' }}
+        {/* Progress — spring-driven fill + step chips */}
+        <div className="mb-4">
+          <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full rounded-full"
+              initial={false}
+              animate={{ width: `${progress}%` }}
+              transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 95, damping: 22, mass: 0.8 }}
+              style={{
+                background: 'linear-gradient(90deg, #00D1C1 0%, #089b8e 100%)',
+              }}
             />
           </div>
-          <p className="text-xs mt-2 text-center" style={{ color: '#6B7280', fontWeight: 400 }}>
+          <div className="flex justify-center gap-1.5 mt-3" aria-hidden>
+            {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+              <motion.span
+                key={i}
+                layout
+                className={cn(
+                  'h-1.5 rounded-full',
+                  i === step ? 'w-7 bg-teal-600' : 'w-1.5 bg-zinc-200',
+                )}
+                transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              />
+            ))}
+          </div>
+          <p className="text-xs mt-2 text-center text-zinc-500 font-medium tabular-nums">
             שלב {step + 1} מתוך {TOTAL_STEPS}
           </p>
         </div>
 
         {/* Card — app style */}
         <div
-          className="rounded-[20px] p-8 overflow-hidden"
-          style={{
-            background: '#FFFFFF',
-            border: '1px solid #F3F4F6',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-          }}
+          className="rounded-[20px] p-8 overflow-hidden bg-white border border-zinc-100 shadow-[0_4px_24px_rgba(15,23,42,0.06)]"
         >
-          <div
-            key={animKey}
-            className="animate-fade-in"
-            style={{
-              animation: `slideIn 0.3s ease-out`,
-            }}
-          >
-            {renderStep()}
-          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={step}
+              initial={reduceMotion ? false : { opacity: 0, x: direction > 0 ? -20 : 20, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+              exit={reduceMotion ? undefined : { opacity: 0, x: direction > 0 ? 14 : -14, filter: 'blur(4px)' }}
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : { type: 'spring', stiffness: 110, damping: 24, mass: 0.88 }
+              }
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 
@@ -955,32 +972,22 @@ export default function Onboarding() {
         }
         .atlas-onb-blob-1 {
           width: 600px; height: 600px;
-          background: radial-gradient(circle, #93C5FD 0%, transparent 70%);
-          opacity: 0.08;
+          background: radial-gradient(circle, #5EEAD4 0%, transparent 70%);
+          opacity: 0.09;
           top: -120px; right: -150px;
         }
         .atlas-onb-blob-2 {
           width: 500px; height: 500px;
-          background: radial-gradient(circle, #A78BFA 0%, transparent 70%);
-          opacity: 0.06;
+          background: radial-gradient(circle, #94A3B8 0%, transparent 70%);
+          opacity: 0.05;
           top: 40%; left: -180px;
         }
         .atlas-onb-blob-3 {
           width: 400px; height: 400px;
-          background: radial-gradient(circle, #67E8F9 0%, transparent 70%);
-          opacity: 0.05;
+          background: radial-gradient(circle, #99F6E4 0%, transparent 70%);
+          opacity: 0.06;
           bottom: -80px; left: 50%;
           transform: translateX(-50%);
-        }
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(${direction > 0 ? '-20px' : '20px'});
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
         }
       `}</style>
     </div>

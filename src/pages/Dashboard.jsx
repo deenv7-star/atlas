@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import {
   CheckCircle2, Link2, CreditCard,
   ArrowUpRight, Activity,
   Home, BarChart2, Target, Gift, FileText,
-  AlertCircle,
+  AlertCircle, Sparkles,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -39,6 +39,22 @@ const STATUS_LABELS = {
   NEW: 'חדש', CONTACTED: 'נוצר קשר', OFFER_SENT: 'הצעה נשלחה',
   CONFIRMED: 'מאושר', REJECTED: 'נדחה', LOST: 'אבוד',
   APPROVED: 'מאושר', PENDING: 'ממתין', WAITLIST: 'המתנה', CANCELLED: 'בוטל',
+};
+
+const dashStaggerParent = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.08, delayChildren: 0.04 },
+  },
+};
+
+const dashItem = {
+  hidden: { opacity: 0, y: 14 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'spring', stiffness: 120, damping: 24, mass: 0.85 },
+  },
 };
 
 /* ── Stat Card ─────────────────────────────────────── */
@@ -70,7 +86,7 @@ function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, tre
             <Icon style={{ width: '16px', height: '16px' }} />
           </div>
         </div>
-        <p className="text-3xl font-bold text-gray-900 mb-1 tracking-tight">{value}</p>
+        <p className="text-3xl font-bold text-zinc-900 mb-1 tracking-tight atlas-tabular">{value}</p>
         {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
         {trend !== undefined && (
           <div className={cn("flex items-center gap-1 text-xs font-semibold mt-2", trend >= 0 ? "text-emerald-600" : "text-red-500")}>
@@ -95,7 +111,7 @@ function BookingRow({ booking }) {
   return (
     <Link
       to={detailUrl}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color,transform] duration-200 atlas-ease-out-trans active:scale-[0.99] group"
     >
       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex flex-col items-center justify-center flex-shrink-0 shadow-sm">
         <span className="text-[10px] font-semibold text-white/80 leading-none">
@@ -129,7 +145,7 @@ function LeadRow({ lead }) {
   return (
     <Link
       to={detailUrl}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color,transform] duration-200 atlas-ease-out-trans active:scale-[0.99] group"
     >
       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00D1C1]/30 to-blue-200/60 flex items-center justify-center flex-shrink-0 text-sm font-bold text-[#00a89a]">
         {initials}
@@ -242,6 +258,13 @@ function QuickAction({ label, icon: Icon, page, iconClass }) {
 
 /* ── Main Dashboard ────────────────────────────────── */
 export default function Dashboard({ user, selectedPropertyId }) {
+  const reduceMotion = useReducedMotion();
+  const kpiParentVariants = reduceMotion
+    ? { hidden: {}, show: { transition: { staggerChildren: 0 } } }
+    : dashStaggerParent;
+  const kpiItemVariants = reduceMotion
+    ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0, transition: { duration: 0 } } }
+    : dashItem;
   const now = new Date();
   const weekStart = startOfWeek(now, { weekStartsOn: 0 });
   const weekEnd   = endOfWeek(now,   { weekStartsOn: 0 });
@@ -359,35 +382,35 @@ export default function Dashboard({ user, selectedPropertyId }) {
 
       {/* ── Hero Banner (light — aligned with atlas-page-hero & app shell) ── */}
       <div
-        className="relative overflow-hidden rounded-2xl border border-indigo-100/70 bg-gradient-to-br from-white via-slate-50/90 to-indigo-50/50 p-6 md:p-7"
-        style={{ boxShadow: 'var(--atlas-shadow-hero, 0 2px 20px rgba(79, 70, 229, 0.06))' }}
+        className="relative overflow-hidden rounded-2xl border border-teal-200/40 bg-gradient-to-br from-white via-zinc-50/80 to-teal-50/30 p-6 md:p-8 md:pr-10"
+        style={{ boxShadow: '0 2px 24px rgba(15, 23, 42, 0.05)' }}
       >
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
-          <div className="absolute -top-16 -right-10 w-52 h-52 rounded-full opacity-[0.14] blur-3xl bg-teal-400" />
-          <div className="absolute -bottom-12 -left-8 w-44 h-44 rounded-full opacity-[0.12] blur-3xl bg-indigo-400" />
+          <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full opacity-[0.12] blur-3xl bg-teal-400" />
+          <div className="absolute -bottom-14 -left-10 w-48 h-48 rounded-full opacity-[0.08] blur-3xl bg-slate-400" />
         </div>
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5"
+          transition={{ type: 'spring', stiffness: 100, damping: 22, mass: 0.9 }}
+          className="relative flex flex-col lg:flex-row lg:items-start justify-between gap-6 lg:gap-10"
         >
-          <div className="max-w-xl">
-            <p className="text-sm font-semibold mb-1.5 text-[#00a89a]">
+          <div className="max-w-xl lg:max-w-[min(36rem,52%)]">
+            <p className="text-sm font-semibold mb-2 text-teal-700 tabular-nums">
               {format(now, "EEEE, d MMMM yyyy", { locale: he })}
             </p>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-              {greeting}, {userName}
-              <span className="inline-block mr-1.5" aria-hidden>👋</span>
+            <h1 className="text-2xl md:text-[1.65rem] font-extrabold text-zinc-900 tracking-tight leading-snug flex flex-wrap items-center gap-2">
+              <span>{greeting}, {userName}</span>
+              <Sparkles className="w-5 h-5 text-teal-600 opacity-80 shrink-0" aria-hidden strokeWidth={2} />
             </h1>
-            <p className="text-sm md:text-[15px] mt-2 leading-relaxed text-gray-600">
+            <p className="text-sm mt-3 leading-relaxed text-zinc-600 max-w-[65ch]">
               {delightLine}
             </p>
-            <p className="text-xs mt-2 font-medium text-gray-500">
+            <p className="text-xs mt-3 font-medium text-zinc-500 max-w-[65ch]">
               סיכום מהיר לניהול יומיומי — הזמנות, לידים וכספים.
             </p>
           </div>
-          <div className="flex gap-2 flex-shrink-0 flex-wrap">
+          <div className="flex gap-2 flex-shrink-0 flex-wrap lg:pt-1 lg:mr-auto">
             <Link to={createPageUrl('Leads')}>
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -485,45 +508,58 @@ export default function Dashboard({ user, selectedPropertyId }) {
         </div>
       )}
 
-      {/* ── KPI Stats Grid ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard
-          title="הזמנות השבוע"
-          value={bookingsLoading ? '—' : stats.thisWeekBookings.length}
-          subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`}
-          icon={CalendarDays}
-          gradient="bg-gradient-to-br from-blue-50 to-blue-100/60"
-          iconClass="icon-blue"
-          loading={bookingsLoading}
-        />
-        <StatCard
-          title="לידים חדשים"
-          value={leadsLoading ? '—' : stats.newLeads.length}
-          subtitle={`${leads.length} לידים סה"כ`}
-          icon={Users}
-          gradient="bg-gradient-to-br from-violet-50 to-purple-100/60"
-          iconClass="icon-purple"
-          loading={leadsLoading}
-        />
-        <StatCard
-          title="הכנסות"
-          value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')}
-          subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'}
-          icon={Wallet}
-          gradient="bg-gradient-to-br from-teal-50 to-emerald-100/60"
-          iconClass="icon-teal"
-          loading={paymentsLoading}
-        />
-        <StatCard
-          title="דירוג ממוצע"
-          value={reviewsLoading ? '—' : (stats.avgRating ? `★ ${stats.avgRating}` : '—')}
-          subtitle={`${reviews.length} ביקורות`}
-          icon={Star}
-          gradient="bg-gradient-to-br from-amber-50 to-yellow-100/60"
-          iconClass="icon-amber"
-          loading={reviewsLoading}
-        />
-      </div>
+      {/* ── KPI Stats Grid (staggered entrance) ── */}
+      <motion.div
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+        variants={kpiParentVariants}
+        initial={reduceMotion ? false : 'hidden'}
+        animate="show"
+      >
+        <motion.div variants={kpiItemVariants} className="min-w-0">
+          <StatCard
+            title="הזמנות השבוע"
+            value={bookingsLoading ? '—' : stats.thisWeekBookings.length}
+            subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`}
+            icon={CalendarDays}
+            gradient="bg-gradient-to-br from-blue-50 to-blue-100/60"
+            iconClass="icon-blue"
+            loading={bookingsLoading}
+          />
+        </motion.div>
+        <motion.div variants={kpiItemVariants} className="min-w-0">
+          <StatCard
+            title="לידים חדשים"
+            value={leadsLoading ? '—' : stats.newLeads.length}
+            subtitle={`${leads.length} לידים סה"כ`}
+            icon={Users}
+            gradient="bg-gradient-to-br from-violet-50 to-purple-100/60"
+            iconClass="icon-purple"
+            loading={leadsLoading}
+          />
+        </motion.div>
+        <motion.div variants={kpiItemVariants} className="min-w-0">
+          <StatCard
+            title="הכנסות"
+            value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')}
+            subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'}
+            icon={Wallet}
+            gradient="bg-gradient-to-br from-teal-50 to-emerald-100/60"
+            iconClass="icon-teal"
+            loading={paymentsLoading}
+          />
+        </motion.div>
+        <motion.div variants={kpiItemVariants} className="min-w-0">
+          <StatCard
+            title="דירוג ממוצע"
+            value={reviewsLoading ? '—' : (stats.avgRating ? `★ ${stats.avgRating}` : '—')}
+            subtitle={`${reviews.length} ביקורות`}
+            icon={Star}
+            gradient="bg-gradient-to-br from-amber-50 to-yellow-100/60"
+            iconClass="icon-amber"
+            loading={reviewsLoading}
+          />
+        </motion.div>
+      </motion.div>
 
       {/* ── Main Content Grid ── */}
       <div className="grid md:grid-cols-2 gap-4">
@@ -565,7 +601,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
           </div>
           <p className="text-xs text-gray-500 mr-9 leading-relaxed">הזמנות, יומן, לידים, תשלומים והגדרות — מה שרוב המארחים צריכים כל יום.</p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <QuickAction label="הזמנות"     icon={CalendarDays}  page="Bookings"      iconClass="icon-blue" />
           <QuickAction label="יומן"       icon={CalendarRange} page="MultiCalendar" iconClass="icon-teal" />
           <QuickAction label="לידים"      icon={Users}         page="Leads"         iconClass="icon-purple" />
@@ -601,10 +637,14 @@ export default function Dashboard({ user, selectedPropertyId }) {
               <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.07)' }}>
                 <motion.div
                   className="h-full rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${pct}%` }}
-                  transition={{ duration: 0.8, ease: 'easeOut' }}
-                  style={{ background: 'linear-gradient(90deg, #00D1C1 0%, #00a89a 100%)' }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ type: 'spring', stiffness: 90, damping: 22, mass: 0.9 }}
+                  style={{
+                    width: `${pct}%`,
+                    transformOrigin: 'right center',
+                    background: 'linear-gradient(90deg, #00D1C1 0%, #00a89a 100%)',
+                  }}
                 />
               </div>
             </div>
@@ -632,10 +672,10 @@ export default function Dashboard({ user, selectedPropertyId }) {
         );
       })()}
 
-      {/* ── Insights & Activity Row ── */}
-      <div className="grid md:grid-cols-3 gap-4">
+      {/* ── Insights & Activity — asymmetric columns (variance ~6) ── */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
         {/* Occupancy Gauge */}
-        <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+        <div className="md:col-span-5 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
               <BarChart2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -658,7 +698,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
                     <defs><linearGradient id="gauge-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#10B981" /><stop offset="100%" stopColor="#059669" /></linearGradient></defs>
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-bold text-gray-900">{occupancy}%</span>
+                    <span className="text-2xl font-bold text-zinc-900 atlas-tabular">{occupancy}%</span>
                   </div>
                 </div>
                 <p className="text-xs text-gray-400 mt-2">מתוך {properties.length} נכסים</p>
@@ -668,7 +708,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
         </div>
 
         {/* Revenue Summary */}
-        <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+        <div className="md:col-span-4 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
               <TrendingUp className="w-3.5 h-3.5 text-violet-600" />
@@ -677,7 +717,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
           </div>
           <div className="space-y-3">
             <div>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-zinc-900 atlas-tabular">
                 {stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'אין עדיין'}
               </p>
               <p className="text-xs text-gray-400 mt-0.5">
@@ -690,7 +730,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
                   height: `${h}%`,
                   background: `linear-gradient(180deg, ${i >= 10 ? '#8B5CF6' : '#C4B5FD'} 0%, ${i >= 10 ? '#7C3AED' : '#A78BFA'} 100%)`,
                   opacity: 0.4 + (i * 0.05),
-                  transition: 'height 0.8s ease',
+                  transition: 'height 0.85s cubic-bezier(0.16, 1, 0.3, 1)',
                 }} />
               ))}
             </div>
@@ -699,7 +739,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
         </div>
 
         {/* Activity Timeline */}
-        <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+        <div className="md:col-span-3 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
               <Activity className="w-3.5 h-3.5 text-blue-600" />

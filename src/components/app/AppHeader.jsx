@@ -80,7 +80,7 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
         className="absolute inset-x-0 bottom-0 pointer-events-none"
         style={{
           height: '1px',
-          background: 'linear-gradient(90deg, transparent 0%, rgba(0,209,193,0.3) 30%, rgba(139,92,246,0.2) 70%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(0,209,193,0.35) 35%, rgba(11,18,32,0.12) 65%, transparent 100%)',
         }}
       />
 
