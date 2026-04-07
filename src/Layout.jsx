@@ -92,7 +92,7 @@ function LayoutContent({ children, currentPageName }) {
       {/* Sidebar - mobile drawer */}
       <div className={cn(
         "fixed inset-y-0 right-0 z-40 w-[240px] md:hidden transition-transform duration-300",
-        sidebarOpen ? "translate-x-0" : "translate-x-full"
+        sidebarOpen ? "translate-x-0 pointer-events-auto" : "translate-x-full pointer-events-none"
       )}>
         <AppSidebar
           collapsed={false}
@@ -113,11 +113,13 @@ function LayoutContent({ children, currentPageName }) {
         />
         <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0">
           <Suspense fallback={<PageLoader />}>
-            {React.cloneElement(children, {
-              user,
-              selectedPropertyId,
-              orgId: user?.organization_id,
-            })}
+            {React.isValidElement(children)
+              ? React.cloneElement(children, {
+                  user,
+                  selectedPropertyId,
+                  orgId: user?.organization_id ?? user?.org_id ?? null,
+                })
+              : children}
           </Suspense>
         </main>
         {/* Mobile bottom tabs — fixed, self-manages visibility via lg:hidden */}

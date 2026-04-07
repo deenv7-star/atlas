@@ -262,7 +262,12 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
         </div>
 
         {/* Request Details Sheet */}
-        <Sheet open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
+        <Sheet
+          open={!!selectedRequest}
+          onOpenChange={(open) => {
+            if (!open) setSelectedRequest(null);
+          }}
+        >
           <SheetContent side="left" className="w-full sm:max-w-lg overflow-y-auto">
             {selectedRequest && (
               <>

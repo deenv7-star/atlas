@@ -110,7 +110,7 @@ export default function BottomTabs() {
       <div
         className={cn(
           'fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white rounded-t-3xl shadow-2xl transition-transform duration-300 ease-in-out overflow-hidden',
-          moreOpen ? 'translate-y-0' : 'translate-y-full'
+          moreOpen ? 'translate-y-0 pointer-events-auto' : 'translate-y-full pointer-events-none'
         )}
         style={{ maxHeight: '75vh', paddingBottom: 'max(env(safe-area-inset-bottom), 8px)' }}
         dir="rtl"

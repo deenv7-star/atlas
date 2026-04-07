@@ -6,8 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LiquidGlassCard } from '@/components/ui/LiquidGlass';
-
-const MotionLink = motion(Link);
 import {
   Users, CalendarDays, CalendarRange, Wallet, Star,
   ArrowUpLeft, ArrowDownRight, MessageSquare, Plus,
@@ -18,6 +16,8 @@ import {
   AlertCircle, Sparkles,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+const MotionLink = motion(Link);
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO, isSameDay } from 'date-fns';
