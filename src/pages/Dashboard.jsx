@@ -191,11 +191,12 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
           </div>
           <h2 className="text-base font-bold text-gray-900 tracking-tight">{title}</h2>
         </div>
-        <Link to={viewAllLink}>
-          <button className="flex items-center gap-0.5 text-xs font-medium transition-colors" style={{ color: '#00D1C1' }}>
-            הכל
-            <ChevronLeft className="w-3.5 h-3.5" />
-          </button>
+        <Link
+          to={viewAllLink}
+          className="inline-flex items-center gap-0.5 text-xs font-medium text-teal-600 hover:text-teal-700 rounded-md py-1.5 ps-1 pe-1 -me-1 transition-colors duration-200 atlas-ease-out-trans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/35 focus-visible:ring-offset-2"
+        >
+          הכל
+          <ChevronLeft className="w-3.5 h-3.5 shrink-0" aria-hidden strokeWidth={2} />
         </Link>
       </div>
 
@@ -212,11 +213,12 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
             <p className="text-sm text-gray-500 mb-1.5 font-medium">{emptyText}</p>
             <p className="text-xs text-gray-400 leading-relaxed max-w-[220px] mx-auto">כשהנתונים יגיעו — הם יופיעו כאן מיד, בלי לחפש.</p>
             {addLink && (
-              <Link to={addLink}>
-                <Button size="sm" variant="outline" className="text-xs min-h-[44px] h-11 rounded-lg px-4 touch-manipulation">
-                  <Plus className="w-3 h-3 ml-1" /> הוסף
-                </Button>
-              </Link>
+              <Button asChild size="sm" variant="outline" className="text-xs min-h-[44px] h-11 rounded-lg px-4 touch-manipulation">
+                <Link to={addLink}>
+                  <Plus className="w-3 h-3 ms-1 shrink-0" strokeWidth={2} aria-hidden />
+                  הוסף
+                </Link>
+              </Button>
             )}
           </div>
         ) : children}

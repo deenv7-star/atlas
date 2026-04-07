@@ -896,10 +896,12 @@ export default function Onboarding() {
       style={{ fontFamily: "'Heebo', sans-serif", background: '#FFFFFF' }}
       onKeyDown={handleKeyDown}
     >
-      {/* Subtle gradient blobs (landing page style) */}
-      <div className="atlas-onb-blob atlas-onb-blob-1" />
-      <div className="atlas-onb-blob atlas-onb-blob-2" />
-      <div className="atlas-onb-blob atlas-onb-blob-3" />
+      {/* Subtle gradient blobs — decorative only (Emil: no a11y noise) */}
+      <div className="pointer-events-none" aria-hidden>
+        <div className="atlas-onb-blob atlas-onb-blob-1" />
+        <div className="atlas-onb-blob atlas-onb-blob-2" />
+        <div className="atlas-onb-blob atlas-onb-blob-3" />
+      </div>
 
       <div className="w-full max-w-[520px] relative z-10">
         {/* Logo */}
@@ -911,9 +913,20 @@ export default function Onboarding() {
           />
         </div>
 
-        {/* Progress — spring-driven fill + step chips */}
-        <div className="mb-4">
-          <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+        {/* Progress — spring-driven fill + step chips (vertical step motion = RTL-safe) */}
+        <div
+          className="mb-4"
+          role="group"
+          aria-label={`התקדמות בהגדרה, שלב ${step + 1} מתוך ${TOTAL_STEPS}`}
+        >
+          <div
+            className="h-1.5 bg-zinc-100 rounded-full overflow-hidden"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress)}
+            aria-label={`אחוז השלמה ${Math.round(progress)}%`}
+          >
             <motion.div
               className="h-full rounded-full"
               initial={false}
@@ -922,6 +935,7 @@ export default function Onboarding() {
               style={{
                 background: 'linear-gradient(90deg, #00D1C1 0%, #089b8e 100%)',
               }}
+              aria-hidden
             />
           </div>
           <div className="flex justify-center gap-1.5 mt-3" aria-hidden>
@@ -949,9 +963,9 @@ export default function Onboarding() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={step}
-              initial={reduceMotion ? false : { opacity: 0, x: direction > 0 ? -20 : 20, filter: 'blur(6px)' }}
-              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-              exit={reduceMotion ? undefined : { opacity: 0, x: direction > 0 ? 14 : -14, filter: 'blur(4px)' }}
+              initial={reduceMotion ? false : { opacity: 0, y: direction > 0 ? 18 : -18, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: direction > 0 ? -12 : 12, filter: 'blur(4px)' }}
               transition={
                 reduceMotion
                   ? { duration: 0 }
