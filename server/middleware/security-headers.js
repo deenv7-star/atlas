@@ -1,7 +1,7 @@
 export function securityHeaders(req, res, next) {
   res.setHeader('x-content-type-options', 'nosniff');
   res.setHeader('x-frame-options', 'DENY');
-  res.setHeader('referrer-policy', 'no-referrer');
+  res.setHeader('referrer-policy', 'strict-origin-when-cross-origin');
   res.setHeader('x-xss-protection', '0');
   res.setHeader('permissions-policy', 'geolocation=(), microphone=(), camera=()');
   res.setHeader(

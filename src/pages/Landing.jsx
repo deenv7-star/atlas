@@ -1168,11 +1168,12 @@ export default function Landing() {
           .atlas-footer-grid-new { grid-template-columns: 1fr !important; gap: 32px !important; }
           .atlas-why-grid { grid-template-columns: 1fr !important; }
 
-          /* Hero mobile: reduce padding so CTA stays above fold */
+          /* Hero mobile: reduce padding + top-align so primary CTA stays in first viewport */
           .atlas-lp > div > section:first-of-type {
             padding-top: calc(72px + env(safe-area-inset-top)) !important;
             padding-bottom: 32px !important;
             min-height: auto !important;
+            align-items: flex-start !important;
           }
 
           .atlas-demo-slide-mockup { min-height: 200px !important; }
@@ -1333,6 +1334,8 @@ export default function Landing() {
               ))}
               <Link to="/data-security" className="atlas-nav-link">אבטחה</Link>
               <Link to="/about" className="atlas-nav-link">אודות</Link>
+              <Link to="/contact" className="atlas-nav-link">צור קשר</Link>
+              <Link to="/changelog" className="atlas-nav-link">מה חדש</Link>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1407,6 +1410,8 @@ export default function Landing() {
               ))}
               <Link to="/data-security" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>אבטחה</Link>
               <Link to="/about" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>אודות</Link>
+              <Link to="/contact" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>צור קשר</Link>
+              <Link to="/changelog" onClick={() => setMenuOpen(false)} className="atlas-nav-link" style={{ fontSize: 16 }}>מה חדש</Link>
               <button
                 onClick={() => { setMenuOpen(false); goToLogin(); }}
                 style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 15, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', marginTop: 8 }}
@@ -1475,6 +1480,27 @@ export default function Landing() {
                   <strong style={{ color: '#374151' }}>חוסכת 20+ שעות שבועיות</strong> לכל מנהל מתחם.
                 </p>
 
+                <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 22, flexWrap: 'wrap' }}>
+                  <button className="atlas-btn-primary" onClick={goToRegister} style={{ minHeight: 52 }}>
+                    פתח חשבון חינם — תוך 60 שניות
+                  </button>
+                  <button
+                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                    style={{
+                      background: 'transparent', border: 'none',
+                      color: '#374151', fontWeight: 600, fontSize: 16,
+                      fontFamily: 'Heebo, sans-serif', cursor: 'pointer',
+                      transition: 'color 0.2s', padding: '14px 4px',
+                      minHeight: 44,
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#111827'; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = '#374151'; }}
+                  >
+                    איך זה עובד ←
+                  </button>
+                </div>
+                <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 10 }}>ללא כרטיס אשראי • 14 יום ניסיון חינם • ביטול בכל עת</p>
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 20 }}>
                   <div style={{ display: 'flex' }}>
                     {AVATARS.map((av, i) => (
@@ -1504,27 +1530,6 @@ export default function Landing() {
                     <span style={{ fontSize: 13, color: '#6B7280' }}>+500 מנהלי מתחמים מרוצים</span>
                   </div>
                 </div>
-
-                <div className="atlas-hero-btns" style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 28, flexWrap: 'wrap' }}>
-                  <button className="atlas-btn-primary" onClick={goToRegister} style={{ minHeight: 52 }}>
-                    פתח חשבון חינם — תוך 60 שניות
-                  </button>
-                  <button
-                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                    style={{
-                      background: 'transparent', border: 'none',
-                      color: '#374151', fontWeight: 600, fontSize: 16,
-                      fontFamily: 'Heebo, sans-serif', cursor: 'pointer',
-                      transition: 'color 0.2s', padding: '14px 4px',
-                      minHeight: 44,
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#111827'; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = '#374151'; }}
-                  >
-                    איך זה עובד ←
-                  </button>
-                </div>
-                <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 10 }}>ללא כרטיס אשראי • 14 יום ניסיון חינם • ביטול בכל עת</p>
               </div>
 
               <div
@@ -2719,7 +2724,12 @@ export default function Landing() {
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <div className="atlas-reveal" style={{ textAlign: 'center', marginBottom: 48 }}>
               <h2 className="atlas-section-title" style={{ fontSize: 40, fontWeight: 800, color: '#111827', margin: '0 0 14px' }}>תמחור פשוט ושקוף</h2>
-              <p style={{ fontSize: 18, color: '#6B7280', margin: '0 0 32px' }}>ללא עמלות מוסתרות. ללא הפתעות.</p>
+              <p style={{ fontSize: 18, color: '#6B7280', margin: '0 0 12px' }}>ללא עמלות מוסתרות. ללא הפתעות.</p>
+            <p style={{ fontSize: 15, color: '#4F46E5', margin: '0 0 32px', fontWeight: 600 }}>
+              <Link to="/contact" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>צריכים הצעת מחיר לעסק או למספר נכסים?</Link>
+              {' · '}
+              <Link to="/status" style={{ color: '#6B7280', fontWeight: 500 }}>סטטוס מערכת</Link>
+            </p>
 
               {/* Billing toggle */}
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, background: 'white', borderRadius: 999, padding: '6px 8px', border: '1px solid #E5E7EB' }}>

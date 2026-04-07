@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
 
 import authRouter from './routes/auth.js';
 import entitiesRouter from './routes/entities.js';
@@ -84,6 +86,18 @@ export function createApp() {
     res.setHeader('content-type', 'text/plain; version=0.0.4; charset=utf-8');
     return res.send(renderPrometheusMetrics());
   });
+
+  const staticRoot = env.STATIC_DIST_PATH ? path.resolve(env.STATIC_DIST_PATH) : null;
+  if (staticRoot && fs.existsSync(staticRoot)) {
+    app.use(express.static(staticRoot, { index: false }));
+    app.use((req, res, next) => {
+      if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+      if (req.path.startsWith('/api')) return next();
+      res.sendFile(path.join(staticRoot, 'index.html'), next);
+    });
+  } else if (env.STATIC_DIST_PATH) {
+    logger.warn('server.static_dist_missing', { path: staticRoot });
+  }
 
   app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
 

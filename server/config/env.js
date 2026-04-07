@@ -30,7 +30,9 @@ const schema = z.object({
   OPENAI_API_KEY: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
-  PLATFORM_ADMIN_EMAILS: z.string().optional()
+  PLATFORM_ADMIN_EMAILS: z.string().optional(),
+  /** Absolute path to Vite `dist/` — when set, Express serves the SPA and falls back to index.html (fixes direct loads of /changelog, /contact, etc.). */
+  STATIC_DIST_PATH: z.string().optional()
 });
 
 export const env = schema.parse(process.env);
