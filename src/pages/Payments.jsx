@@ -16,7 +16,7 @@ import {
   Wallet, Plus, Search, Check, Edit, Trash2,
   TrendingUp, Clock, AlertCircle, CheckCircle2,
 } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { formatIsoSafe } from '@/lib/formatIsoSafe';
 
 const PAYMENT_STATUSES = [
   { value: 'PENDING',  label: 'ממתין', color: 'bg-amber-100 text-amber-700 border-amber-200' },
@@ -73,12 +73,12 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       orgId
         ? base44.entities.Payment.filter({ org_id: orgId }, '-created_date')
         : Promise.resolve([]),
-    enabled: !!orgId,
     staleTime: 2 * 60 * 1000,
   });
 
   const createMutation = useMutation({
     mutationFn: async (payload) => {
+      if (!orgId) throw new Error('missing_org');
       return base44.entities.Payment.create({
         ...payload,
         org_id: orgId,
@@ -91,7 +91,11 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       setShowDialog(false);
       setForm(emptyPayment);
     },
-    onError: () => toast({ title: 'שגיאה ביצירת התשלום', variant: 'destructive' }),
+    onError: (e) =>
+      toast({
+        title: e?.message === 'missing_org' ? 'חסר ארגון — השלם הגדרה או התחבר מחדש' : 'שגיאה ביצירת התשלום',
+        variant: 'destructive',
+      }),
   });
 
   const updateMutation = useMutation({
@@ -161,6 +165,10 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   };
 
   const handleSave = () => {
+    if (!orgId) {
+      toast({ title: 'לא ניתן לשמור לפני שמקושר ארגון לחשבון', variant: 'destructive' });
+      return;
+    }
     if (!form.amount) {
       toast({ title: 'נא להזין סכום', variant: 'destructive' });
       return;
@@ -174,6 +182,18 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
   return (
     <div className="p-4 md:p-6 space-y-5 max-w-5xl mx-auto animate-fade-in" dir="rtl">
+
+      {!orgId && (
+        <div
+          role="status"
+          className="rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 text-right"
+        >
+          <p className="font-semibold">תשלומים זמינים אחרי קישור ארגון</p>
+          <p className="text-amber-900/80 mt-1">
+            אם סיימת הרשמה, נסה לרענן את הדף או להשלים את תהליך ההקמה. בינתיים המסך מוצג ללא נתוני תשלום.
+          </p>
+        </div>
+      )}
 
       <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
         <div className="flex items-center gap-3 mb-2">
@@ -199,7 +219,8 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         </div>
         <Button
           onClick={openNew}
-          className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm rounded-xl shadow-sm"
+          disabled={!orgId}
+          className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm rounded-xl shadow-sm disabled:opacity-50"
         >
           <Plus className="w-4 h-4" />
           תשלום חדש
@@ -298,6 +319,8 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
             {filtered.map(payment => {
               const statusInfo = STATUS_MAP[payment.status] || STATUS_MAP.PENDING;
               const methodIcon = METHOD_ICONS[payment.method] || '💰';
+              const paidLabel = formatIsoSafe(payment.paid_date, 'dd/MM/yy');
+              const dueLabel = formatIsoSafe(payment.due_date, 'dd/MM/yy');
               return (
                 <div
                   key={payment.id}
@@ -317,14 +340,12 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
                       <span className={`inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${statusInfo.color}`}>
                         {statusInfo.label}
                       </span>
-                      {payment.paid_date && (
-                        <span className="text-xs text-gray-400">
-                          {format(parseISO(payment.paid_date), 'dd/MM/yy')}
-                        </span>
+                      {paidLabel && (
+                        <span className="text-xs text-gray-400">{paidLabel}</span>
                       )}
-                      {payment.due_date && payment.status === 'PENDING' && (
+                      {payment.due_date && payment.status === 'PENDING' && dueLabel && (
                         <span className="text-xs text-gray-400">
-                          לתשלום: {format(parseISO(payment.due_date), 'dd/MM/yy')}
+                          לתשלום: {dueLabel}
                         </span>
                       )}
                     </div>
