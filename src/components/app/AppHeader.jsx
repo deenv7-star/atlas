@@ -87,14 +87,9 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
       {/* Mobile menu button */}
       <motion.button
         onClick={onMenuClick}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.92 }}
-        className="md:hidden min-w-[40px] min-h-[40px] p-2 rounded-xl flex items-center justify-center touch-manipulation"
-        style={{
-          background: 'rgba(0,0,0,0.05)',
-          border: '1px solid rgba(0,0,0,0.07)',
-          color: '#374151',
-        }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: 'tween', duration: 0.12, ease: [0.23, 1, 0.32, 1] }}
+        className="md:hidden min-w-[40px] min-h-[40px] p-2 rounded-xl flex items-center justify-center touch-manipulation bg-black/[0.05] border border-black/[0.07] text-gray-700 transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-black/[0.08]"
       >
         <Menu className="w-4.5 h-4.5" style={{ width: 18, height: 18 }} />
       </motion.button>
@@ -148,14 +143,9 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.92 }}
-              className="relative min-w-[36px] min-h-[36px] p-2 rounded-xl flex items-center justify-center touch-manipulation"
-              style={{
-                background: 'rgba(0,0,0,0.04)',
-                border: '1px solid rgba(0,0,0,0.06)',
-                color: '#6b7280',
-              }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'tween', duration: 0.12, ease: [0.23, 1, 0.32, 1] }}
+              className="relative min-w-[36px] min-h-[36px] p-2 rounded-xl flex items-center justify-center touch-manipulation bg-black/[0.04] border border-black/[0.06] text-gray-500 transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-black/[0.07]"
             >
               <Bell className="w-4 h-4" />
             </motion.button>
@@ -177,13 +167,9 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl transition-colors touch-manipulation"
-                style={{
-                  background: 'rgba(0,209,193,0.08)',
-                  border: '1px solid rgba(0,209,193,0.18)',
-                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'tween', duration: 0.12, ease: [0.23, 1, 0.32, 1] }}
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl touch-manipulation bg-[rgba(0,209,193,0.08)] border border-[rgba(0,209,193,0.18)] transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[rgba(0,209,193,0.14)]"
               >
                 <Avatar className="w-6 h-6">
                   <AvatarImage src={user.profile_image} />

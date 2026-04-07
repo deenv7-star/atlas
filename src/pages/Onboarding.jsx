@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import {
   ArrowLeft, ArrowRight, Check, Building2, Home,
-  CalendarDays, CreditCard, Users, BarChart2, Crown, X,
+  CalendarDays, CreditCard, Users, BarChart2, Crown, X, Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
@@ -550,13 +550,12 @@ export default function Onboarding() {
               {['חינם ל-14 יום', 'ללא כרטיס אשראי', 'ביטול בכל עת'].map((t, i) => (
                 <motion.span
                   key={t}
-                  initial={reduceMotion ? false : { opacity: 0, y: 6, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{
                     type: 'spring',
-                    stiffness: 380,
-                    damping: 28,
-                    mass: 0.82,
+                    stiffness: 300,
+                    damping: 30,
                     delay: reduceMotion ? 0 : 0.05 * i,
                   }}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-teal-500/8 border border-teal-600/15 text-teal-800"
@@ -759,7 +758,7 @@ export default function Onboarding() {
                 disabled={!combinedValid || saving}
                 className="flex-1 h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
               >
-                {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
+                {saving ? <Loader2 className="w-5 h-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden /> : <ArrowLeft className="w-5 h-5" />}
                 {saving ? 'שומר...' : 'הבא'}
               </Button>
             </div>
@@ -787,7 +786,7 @@ export default function Onboarding() {
                   whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                   transition={EMIL_TAP}
                   className={cn(
-                    'w-full text-right p-4 rounded-xl border-2 transition-shadow duration-300 atlas-ease-out-trans hover:shadow-md',
+                    'w-full text-right p-4 rounded-xl border-2 transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50/80',
                     selectedPlanKey === plan.key
                       ? 'border-teal-600/50 bg-teal-500/6 shadow-sm'
                       : plan.recommended
@@ -824,7 +823,7 @@ export default function Onboarding() {
                 חזור
               </Button>
             </div>
-            <button onClick={handleSkipPlan} disabled={saving} className="w-full text-center text-sm text-gray-400 hover:text-gray-600 transition-[transform,color] duration-200 atlas-ease-out-trans active:scale-[0.97] active:duration-150 disabled:opacity-50 [@media(hover:hover)_and_(pointer:fine)]:hover:text-zinc-600">
+            <button onClick={handleSkipPlan} disabled={saving} className="w-full text-center text-sm text-gray-400 hover:text-gray-600 transition-colors duration-150 atlas-ease-out-trans disabled:opacity-50 [@media(hover:hover)_and_(pointer:fine)]:hover:text-zinc-600">
               אדלג לעכשיו →
             </button>
           </div>
@@ -886,7 +885,7 @@ export default function Onboarding() {
               disabled={saving}
               className="w-full h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
             >
-              {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
+              {saving ? <Loader2 className="w-5 h-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden /> : <ArrowLeft className="w-5 h-5" />}
               {saving ? 'מעביר...' : 'כניסה ללוח הבקרה'}
             </Button>
           </div>
@@ -974,27 +973,21 @@ export default function Onboarding() {
               key={step}
               initial={reduceMotion ? false : {
                 opacity: 0,
-                scale: 0.98,
-                y: direction > 0 ? 14 : -14,
-                filter: 'blur(5px)',
+                y: direction > 0 ? 12 : -12,
               }}
               animate={{
                 opacity: 1,
-                scale: 1,
                 y: 0,
-                filter: 'blur(0px)',
               }}
               exit={reduceMotion ? undefined : {
                 opacity: 0,
-                scale: 0.99,
-                y: direction > 0 ? -8 : 8,
-                filter: 'blur(3px)',
-                transition: { duration: 0.18, ease: [0.23, 1, 0.32, 1] },
+                y: direction > 0 ? -6 : 6,
+                transition: { duration: 0.1, ease: [0.23, 1, 0.32, 1] },
               }}
               transition={
                 reduceMotion
                   ? { duration: 0 }
-                  : { type: 'spring', stiffness: 400, damping: 30, mass: 0.82 }
+                  : { type: 'spring', stiffness: 300, damping: 30 }
               }
             >
               {renderStep()}

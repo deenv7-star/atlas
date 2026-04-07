@@ -1,33 +1,7 @@
-import React, { useRef, useEffect } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 
-/* ─── Liquid Glass Component ──────────────────────────────────
-   Inspired by Apple's Liquid Glass design language — a living,
-   refractive glass surface with morphing gradients and soft
-   inner reflections.
-──────────────────────────────────────────────────────────────── */
-
-function useMagneticTilt(strength = 15) {
-  const ref = useRef(null);
-  const rawX = useMotionValue(0);
-  const rawY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [strength, -strength]), { stiffness: 200, damping: 20 });
-  const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-strength, strength]), { stiffness: 200, damping: 20 });
-
-  const handleMouseMove = (e) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    rawX.set((e.clientX - rect.left) / rect.width - 0.5);
-    rawY.set((e.clientY - rect.top) / rect.height - 0.5);
-  };
-
-  const handleMouseLeave = () => {
-    rawX.set(0);
-    rawY.set(0);
-  };
-
-  return { ref, rotateX, rotateY, handleMouseMove, handleMouseLeave };
-}
+/* ─── Liquid Glass Component — static glass (no tilt, no looping motion) ─ */
 
 /* ── Liquid Glass Card ──────────────────────────────────────── */
 export function LiquidGlassCard({
@@ -35,12 +9,8 @@ export function LiquidGlassCard({
   className = '',
   tint = 'teal',      // 'teal' | 'purple' | 'blue' | 'neutral' | 'dark'
   size = 'md',        // 'sm' | 'md' | 'lg'
-  animated = true,
-  shimmer = true,
   style = {},
 }) {
-  const { ref, rotateX, rotateY, handleMouseMove, handleMouseLeave } = useMagneticTilt(8);
-
   const tints = {
     teal:    { from: 'rgba(0,209,193,0.22)', to: 'rgba(0,168,160,0.10)', glow: 'rgba(0,209,193,0.35)', border: 'rgba(0,209,193,0.40)' },
     purple:  { from: 'rgba(139,92,246,0.22)', to: 'rgba(109,40,217,0.10)', glow: 'rgba(139,92,246,0.35)', border: 'rgba(139,92,246,0.40)' },
@@ -54,11 +24,8 @@ export function LiquidGlassCard({
   const borderRadius = { sm: '16px', md: '24px', lg: '32px' }[size];
 
   return (
-    <motion.div
-      ref={ref}
+    <div
       className={`liquid-glass ${className}`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       style={{
         ...style,
         position: 'relative',
@@ -75,44 +42,17 @@ export function LiquidGlassCard({
           inset 0 -1px 0 rgba(0,0,0,0.08),
           0 0 0 1px rgba(255,255,255,0.10)
         `,
-        transformStyle: 'preserve-3d',
-        rotateX: animated ? rotateX : 0,
-        rotateY: animated ? rotateY : 0,
         overflow: 'hidden',
       }}
     >
-      {/* Animated refraction gradient */}
-      {animated && (
-        <motion.div
-          className="pointer-events-none absolute inset-0"
-          animate={{
-            background: [
-              `radial-gradient(ellipse 80% 60% at 20% 20%, ${t.from} 0%, transparent 60%)`,
-              `radial-gradient(ellipse 80% 60% at 80% 80%, ${t.from} 0%, transparent 60%)`,
-              `radial-gradient(ellipse 80% 60% at 20% 80%, ${t.from} 0%, transparent 60%)`,
-              `radial-gradient(ellipse 80% 60% at 80% 20%, ${t.from} 0%, transparent 60%)`,
-              `radial-gradient(ellipse 80% 60% at 20% 20%, ${t.from} 0%, transparent 60%)`,
-            ],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-          style={{ borderRadius, zIndex: 0 }}
-        />
-      )}
-
-      {/* Shimmer sweep */}
-      {shimmer && (
-        <motion.div
-          className="pointer-events-none absolute inset-0"
-          initial={{ x: '-100%' }}
-          animate={{ x: '200%' }}
-          transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: 'easeInOut' }}
-          style={{
-            background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.30) 50%, transparent 60%)',
-            borderRadius,
-            zIndex: 1,
-          }}
-        />
-      )}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          borderRadius,
+          zIndex: 0,
+          background: `radial-gradient(ellipse 80% 60% at 30% 25%, ${t.from} 0%, transparent 55%)`,
+        }}
+      />
 
       {/* Inner highlight top edge */}
       <div
@@ -125,11 +65,10 @@ export function LiquidGlassCard({
         }}
       />
 
-      {/* Content */}
       <div style={{ position: 'relative', zIndex: 3 }}>
         {children}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -153,7 +92,6 @@ export function LiquidGlassPanel({ children, className = '', style = {}, blur = 
         overflow: 'hidden',
       }}
     >
-      {/* Chromatic aberration top highlight */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0"
         style={{
@@ -197,8 +135,6 @@ export function LiquidGlassButton({ children, onClick, className = '', variant =
     <motion.button
       onClick={onClick}
       className={`relative overflow-hidden font-semibold ${className}`}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
       style={{
         background: v.bg,
         backdropFilter: 'blur(20px) saturate(1.5)',
@@ -212,19 +148,9 @@ export function LiquidGlassButton({ children, onClick, className = '', variant =
         fontSize: '14px',
         letterSpacing: '-0.01em',
       }}
-      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: 'tween', duration: 0.12, ease: [0.23, 1, 0.32, 1] }}
     >
-      {/* Shimmer */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        initial={{ x: '-100%' }}
-        whileHover={{ x: '200%' }}
-        transition={{ duration: 0.6, ease: 'easeInOut' }}
-        style={{
-          background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.45) 50%, transparent 65%)',
-        }}
-      />
-      {/* Top highlight */}
       <div
         className="absolute inset-x-0 top-0 pointer-events-none"
         style={{
@@ -248,23 +174,13 @@ export function LiquidOrb({ size = 200, tint = 'teal', className = '', style = {
   const c = colors[tint] || colors.teal;
 
   return (
-    <motion.div
+    <div
       className={`pointer-events-none ${className}`}
-      animate={{
-        scale: [1, 1.08, 0.96, 1.04, 1],
-        borderRadius: [
-          '60% 40% 70% 30% / 50% 60% 40% 50%',
-          '40% 60% 30% 70% / 60% 40% 60% 40%',
-          '70% 30% 50% 50% / 40% 70% 30% 60%',
-          '50% 50% 40% 60% / 70% 30% 70% 30%',
-          '60% 40% 70% 30% / 50% 60% 40% 50%',
-        ],
-      }}
-      transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       style={{
         ...style,
         width: size,
         height: size,
+        borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%',
         background: `radial-gradient(ellipse at 35% 35%, ${c[0]} 0%, ${c[1]} 45%, ${c[2]} 100%)`,
         boxShadow: `0 0 ${size * 0.4}px ${c[0]}55, inset 0 ${size * 0.08}px ${size * 0.15}px rgba(255,255,255,0.35)`,
         filter: `blur(${size * 0.015}px)`,
@@ -277,15 +193,8 @@ export function LiquidOrb({ size = 200, tint = 'teal', className = '', style = {
 export function LiquidBackground({ children, className = '', style = {} }) {
   return (
     <div className={`relative overflow-hidden ${className}`} style={style}>
-      {/* Large orb 1 */}
-      <motion.div
+      <div
         className="absolute pointer-events-none"
-        animate={{
-          x: [0, 60, -30, 20, 0],
-          y: [0, -40, 60, -20, 0],
-          scale: [1, 1.15, 0.90, 1.05, 1],
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
         style={{
           top: '-15%', left: '-10%',
           width: '60%', height: '60%',
@@ -294,15 +203,8 @@ export function LiquidBackground({ children, className = '', style = {} }) {
           filter: 'blur(60px)',
         }}
       />
-      {/* Large orb 2 */}
-      <motion.div
+      <div
         className="absolute pointer-events-none"
-        animate={{
-          x: [0, -50, 30, -10, 0],
-          y: [0, 50, -30, 40, 0],
-          scale: [1, 0.90, 1.15, 0.95, 1],
-        }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
         style={{
           bottom: '-15%', right: '-10%',
           width: '55%', height: '55%',
@@ -311,15 +213,8 @@ export function LiquidBackground({ children, className = '', style = {} }) {
           filter: 'blur(60px)',
         }}
       />
-      {/* Mid orb */}
-      <motion.div
+      <div
         className="absolute pointer-events-none"
-        animate={{
-          x: [0, 80, -60, 0],
-          y: [0, -60, 40, 0],
-          scale: [1, 1.2, 0.85, 1],
-        }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
         style={{
           top: '30%', left: '40%',
           width: '35%', height: '35%',

@@ -9,6 +9,7 @@ import AIChatBubble from '@/components/app/AIChatBubble';
 import TrialBanner from '@/components/TrialBanner';
 import IOSInstallBanner from '@/components/app/IOSInstallBanner';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs'];
 
@@ -16,14 +17,10 @@ function PageLoader() {
   return (
     <div className="flex-1 flex items-center justify-center" style={{ background: 'var(--page-bg)' }}>
       <div className="flex flex-col items-center gap-3">
-        <div
-          className="w-10 h-10 rounded-full animate-spin"
-          style={{
-            border: '2px solid transparent',
-            borderTopColor: 'var(--brand-teal, #00D1C1)',
-            borderRightColor: 'rgba(0,209,193,0.25)',
-            boxShadow: '0 0 20px rgba(0,209,193,0.2)',
-          }}
+        <Loader2
+          className="w-10 h-10 text-[var(--brand-teal,#00D1C1)] opacity-90"
+          strokeWidth={2}
+          aria-hidden
         />
         <p className="text-sm font-semibold" style={{ color: 'var(--atlas-ink-muted, rgba(0,0,0,0.4))' }}>טוען את המסך…</p>
       </div>

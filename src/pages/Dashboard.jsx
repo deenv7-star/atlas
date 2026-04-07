@@ -45,17 +45,17 @@ const STATUS_LABELS = {
 const dashStaggerParent = {
   hidden: {},
   show: {
-    transition: { staggerChildren: 0.055, delayChildren: 0.03 },
+    transition: { staggerChildren: 0.06, delayChildren: 0.03 },
   },
 };
 
-/* Emil: prefer transform strings for compositor-friendly motion; enter snappy spring */
+/* KPI enter: y 8→0, ease-out (no spring) */
 const dashItem = {
-  hidden: { opacity: 0, transform: 'translate3d(0, 12px, 0)' },
+  hidden: { opacity: 0, y: 8 },
   show: {
     opacity: 1,
-    transform: 'translate3d(0, 0, 0)',
-    transition: { type: 'spring', stiffness: 420, damping: 32, mass: 0.82 },
+    y: 0,
+    transition: { duration: 0.28, ease: [0.23, 1, 0.32, 1] },
   },
 };
 
@@ -83,7 +83,7 @@ function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, tre
   }
   return (
     <div className="atlas-dash-stat-lift h-full rounded-2xl">
-      <LiquidGlassCard tint={tint} size="sm" className="h-full" shimmer={false}>
+      <LiquidGlassCard tint={tint} size="sm" className="h-full">
         <div className="flex items-start justify-between mb-3">
           <p className="text-xs font-semibold text-gray-500 leading-snug">{title}</p>
           <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0", iconClass)}>
@@ -115,7 +115,7 @@ function BookingRow({ booking }) {
   return (
     <Link
       to={detailUrl}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color,transform] duration-200 atlas-ease-out-trans active:scale-[0.97] active:duration-150 group"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color] duration-150 atlas-ease-out-trans group"
     >
       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex flex-col items-center justify-center flex-shrink-0 shadow-sm">
         <span className="text-[10px] font-semibold text-white/80 leading-none">
@@ -149,7 +149,7 @@ function LeadRow({ lead }) {
   return (
     <Link
       to={detailUrl}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color,transform] duration-200 atlas-ease-out-trans active:scale-[0.97] active:duration-150 group"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color] duration-150 atlas-ease-out-trans group"
     >
       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00D1C1]/30 to-blue-200/60 flex items-center justify-center flex-shrink-0 text-sm font-bold text-[#00a89a]">
         {initials}
@@ -197,7 +197,7 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
         </div>
         <Link
           to={viewAllLink}
-          className="inline-flex items-center gap-0.5 text-xs font-medium text-teal-600 hover:text-teal-700 rounded-md py-1.5 ps-1 pe-1 -me-1 transition-colors duration-200 atlas-ease-out-trans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/35 focus-visible:ring-offset-2"
+          className="inline-flex items-center gap-0.5 text-xs font-medium text-teal-600 hover:text-teal-700 rounded-md py-1.5 ps-1 pe-1 -me-1 transition-colors duration-150 atlas-ease-out-trans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/35 focus-visible:ring-offset-2"
         >
           הכל
           <ChevronLeft className="w-3.5 h-3.5 shrink-0" aria-hidden strokeWidth={2} />
@@ -249,7 +249,7 @@ function QuickAction({ label, icon: Icon, page, iconClass }) {
         )}>
           <Icon style={{ width: '18px', height: '18px' }} />
         </div>
-        <span className="atlas-dash-quick-label text-xs font-semibold text-zinc-600 transition-colors duration-200 atlas-ease-out-trans">{label}</span>
+        <span className="atlas-dash-quick-label text-xs font-semibold text-zinc-600 transition-colors duration-150 atlas-ease-out-trans">{label}</span>
       </div>
     </Link>
   );
@@ -263,8 +263,8 @@ export default function Dashboard({ user, selectedPropertyId }) {
     : dashStaggerParent;
   const kpiItemVariants = reduceMotion
     ? {
-        hidden: { opacity: 1, transform: 'translate3d(0, 0, 0)' },
-        show: { opacity: 1, transform: 'translate3d(0, 0, 0)', transition: { duration: 0 } },
+        hidden: { opacity: 1, y: 0 },
+        show: { opacity: 1, y: 0, transition: { duration: 0 } },
       }
     : dashItem;
   const now = new Date();
@@ -392,9 +392,9 @@ export default function Dashboard({ user, selectedPropertyId }) {
           <div className="absolute -bottom-14 -left-10 w-48 h-48 rounded-full opacity-[0.08] blur-3xl bg-slate-400" />
         </div>
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, transform: 'translate3d(0, 12px, 0)' }}
-          animate={{ opacity: 1, transform: 'translate3d(0, 0, 0)' }}
-          transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 28, mass: 0.88 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={reduceMotion ? { duration: 0 } : { duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
           className="relative flex flex-col lg:flex-row lg:items-start justify-between gap-6 lg:gap-10"
         >
           <div className="max-w-xl lg:max-w-[min(36rem,52%)]">
@@ -417,7 +417,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
               to={createPageUrl('Leads')}
               whileTap={reduceMotion ? undefined : { scale: 0.97 }}
               transition={tapTween}
-              className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold inline-flex items-center justify-center touch-manipulation border border-zinc-200 bg-white text-zinc-700 shadow-sm transition-[background-color,border-color] duration-200 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50 [@media(hover:hover)_and_(pointer:fine)]:hover:border-zinc-300"
+              className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold inline-flex items-center justify-center touch-manipulation border border-zinc-200 bg-white text-zinc-700 shadow-sm transition-[background-color,border-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50 [@media(hover:hover)_and_(pointer:fine)]:hover:border-zinc-300"
             >
               <Plus className="w-3.5 h-3.5 text-zinc-600 shrink-0" strokeWidth={2} aria-hidden />
               ליד חדש
@@ -426,7 +426,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
               to={createPageUrl('Bookings')}
               whileTap={reduceMotion ? undefined : { scale: 0.97 }}
               transition={tapTween}
-              className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-bold inline-flex items-center justify-center touch-manipulation text-[#0B1220] shadow-[0_4px_14px_rgba(0,209,193,0.28)] transition-[filter] duration-200 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:brightness-[1.03]"
+              className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-bold inline-flex items-center justify-center touch-manipulation text-[#0B1220] shadow-[0_4px_14px_rgba(0,209,193,0.28)]"
               style={{
                 background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
               }}
@@ -648,7 +648,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
             </div>
             <div className="divide-y divide-gray-50">
               {steps.map((step) => (
-                <Link key={step.key} to={createPageUrl(step.link)} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 transition-colors duration-200 atlas-ease-out-trans active:scale-[0.97] active:duration-150 touch-manipulation">
+                <Link key={step.key} to={createPageUrl(step.link)} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 transition-[background-color] duration-150 atlas-ease-out-trans touch-manipulation">
                   <div className={cn(
                     "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
                     step.done ? "bg-emerald-100" : "bg-gray-100"
@@ -830,7 +830,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
           to={createPageUrl('Subscription')}
           whileTap={reduceMotion ? undefined : { scale: 0.97 }}
           transition={tapTween}
-          className="inline-flex items-center gap-1.5 px-6 h-10 flex-shrink-0 rounded-xl font-bold text-sm text-[#0B1220] shadow-[0_4px_14px_rgba(0,209,193,0.28)] touch-manipulation transition-[filter] duration-200 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:brightness-[1.03]"
+          className="inline-flex items-center gap-1.5 px-6 h-10 flex-shrink-0 rounded-xl font-bold text-sm text-[#0B1220] shadow-[0_4px_14px_rgba(0,209,193,0.28)] touch-manipulation"
           style={{
             background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
           }}
