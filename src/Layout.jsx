@@ -62,7 +62,13 @@ function LayoutContent({ children, currentPageName }) {
   };
 
   if (isPublicPage) {
-    return <>{children}</>;
+    // Public routes use lazy() in pages.config — must suspend inside a boundary
+    // or client navigation to /contact, /about, etc. throws and hits GlobalErrorBoundary.
+    return (
+      <Suspense fallback={<PageLoader />}>
+        {children}
+      </Suspense>
+    );
   }
 
   return (

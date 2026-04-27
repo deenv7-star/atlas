@@ -4,7 +4,7 @@
  * שינוי: כל הדפים עוטפים ב-React.lazy() כדי לחלק את הבאנדל.
  * הדפים נטענים רק כשהמשתמש מנווט אליהם — First Load JS קטן ב-30-50%.
  * 
- * Suspense כבר קיים ב-Layout.jsx עם PageLoader — לא צריך לשנות שם.
+ * Suspense ב-Layout.jsx (דפים ציבוריים ומאובטחים) עם PageLoader — טעינת lazy().
  */
 import { lazy } from 'react';
 import __Layout from './Layout.jsx';
