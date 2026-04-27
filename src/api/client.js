@@ -175,6 +175,17 @@ async function checkLocalApi() {
   return _localApiAvailable;
 }
 
+/** Same-origin or explicit API base — used so prod + /api proxy still hits the server. */
+async function isBackendApiReachable() {
+  if (import.meta.env.VITE_API_URL) return true;
+  if (LOCAL_API_URL) return true;
+  return checkLocalApi();
+}
+
+function apiRootPrefix() {
+  return (import.meta.env.VITE_API_URL || LOCAL_API_URL || '').replace(/\/$/, '');
+}
+
 // =============================================================================
 // Entity → table name mapping
 // =============================================================================
@@ -644,14 +655,15 @@ const integrations = {
   Core: {
     async InvokeLLM({ prompt, model = 'gpt-4o-mini' } = {}) {
       const token = getStoredToken();
-      const base = import.meta.env.VITE_API_URL || LOCAL_API_URL;
+      const root = apiRootPrefix();
+      const aiUrl = root ? `${root}/api/ai/chat` : '/api/ai/chat';
       const canTryServer =
         token &&
         !isSupabaseConfigured &&
-        (import.meta.env.VITE_API_URL || (!import.meta.env.PROD && (await checkLocalApi())));
+        (await isBackendApiReachable());
       if (canTryServer) {
         try {
-          const res = await fetch(`${base}/api/ai/chat`, {
+          const res = await fetch(aiUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -683,14 +695,15 @@ const integrations = {
 
     async SendEmail({ to, subject, body } = {}) {
       const token = getStoredToken();
-      const base = import.meta.env.VITE_API_URL || LOCAL_API_URL;
+      const root = apiRootPrefix();
+      const emailUrl = root ? `${root}/api/email/send` : '/api/email/send';
       const canTryServer =
         token &&
         !isSupabaseConfigured &&
-        (import.meta.env.VITE_API_URL || (!import.meta.env.PROD && (await checkLocalApi())));
+        (await isBackendApiReachable());
       if (canTryServer) {
         try {
-          const res = await fetch(`${base}/api/email/send`, {
+          const res = await fetch(emailUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

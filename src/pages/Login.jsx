@@ -156,7 +156,7 @@ export default function Login() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="הזן כתובת מייל"
                 value={form.email}
                 onChange={set('email')}
                 onBlur={handleBlur('email')}
