@@ -3,17 +3,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+import { FinancialTable } from '@/components/tables/FinancialTable';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  Wallet, Plus, Search, Edit, Trash2,
+  Wallet, Plus, Search,
   TrendingUp, Clock, AlertCircle, CheckCircle2, Download,
 } from 'lucide-react';
-import { formatIsoSafe } from '@/lib/formatIsoSafe';
 import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
 import { PaymentForm } from '@/components/forms/PaymentForm';
 import { emptyPaymentFormValues } from '@/components/forms/atlasFormSchemas';
@@ -26,12 +25,6 @@ const PAYMENT_STATUSES = [
   { value: 'REFUNDED', label: 'הוחזר', color: 'bg-gray-100 text-gray-500 border-gray-200' },
   { value: 'OVERDUE',  label: 'באיחור', color: 'bg-orange-100 text-orange-700 border-orange-200' },
 ];
-
-const STATUS_MAP = Object.fromEntries(PAYMENT_STATUSES.map(s => [s.value, s]));
-const METHOD_ICONS = {
-  credit_card: '💳', bank_transfer: '🏦', cash: '💵',
-  paypal: '🅿️', bit: '📱', other: '💰',
-};
 
 function paymentEntityToFormValues(p) {
   if (!p) return { ...emptyPaymentFormValues };
@@ -61,7 +54,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
     if (!showDialog) paymentDialogInterceptRef.current = null;
   }, [showDialog]);
 
-  const { data: payments = [], isLoading } = useQuery({
+  const { data: payments = [], isLoading, isError, error: paymentsError } = useQuery({
     queryKey: ['payments', orgId],
     queryFn: () =>
       orgId ? base44.entities.Payment.filter({ org_id: orgId }, '-created_date') : Promise.resolve([]),
@@ -237,11 +230,11 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         </div>
       </div>
 
-      {/* Payments list */}
+      {/* Financial / payments table */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        {isLoading ? (
-          <div className="p-4 space-y-3">{[...Array(5)].map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
-        ) : filtered.length === 0 ? (
+        {!orgId ? (
+          <div className="p-6 text-center text-sm text-gray-500">התחבר לארגון כדי לראות תשלומים</div>
+        ) : filtered.length === 0 && !isLoading ? (
           <div className="text-center py-14">
             <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-3">
               <Wallet className="w-7 h-7 text-gray-300" />
@@ -249,41 +242,19 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
             <p className="text-sm font-medium text-gray-500">אין תשלומים</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
-            {filtered.map(payment => {
-              const statusInfo = STATUS_MAP[payment.status] || STATUS_MAP.PENDING;
-              const methodIcon = METHOD_ICONS[payment.method] || '💰';
-              const paidLabel  = formatIsoSafe(payment.paid_date, 'dd/MM/yy');
-              const dueLabel   = formatIsoSafe(payment.due_date, 'dd/MM/yy');
-              return (
-                <div key={payment.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50/60 transition-colors group">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 border border-emerald-100 flex items-center justify-center flex-shrink-0 text-base">
-                    {methodIcon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-800 truncate">
-                      {payment.description || `תשלום${payment.booking_id ? ' #' + payment.booking_id.slice(-4) : ''}`}
-                    </p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className={`inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${statusInfo.color}`}>{statusInfo.label}</span>
-                      {paidLabel && <span className="text-xs text-gray-400">{paidLabel}</span>}
-                      {payment.due_date && payment.status === 'PENDING' && dueLabel && <span className="text-xs text-gray-400">לתשלום: {dueLabel}</span>}
-                    </div>
-                  </div>
-                  <p className="text-sm font-bold text-gray-900 flex-shrink-0 tabular-nums">₪{parseFloat(payment.amount || 0).toLocaleString()}</p>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                    <button onClick={() => openEdit(payment)} className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
-                      <Edit className="w-3.5 h-3.5" />
-                    </button>
-                    <button onClick={() => { if (confirm('למחוק תשלום זה?')) deleteMutation.mutate(payment.id); }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <FinancialTable
+            payments={filtered}
+            isLoading={isLoading}
+            error={isError ? (paymentsError instanceof Error ? paymentsError : new Error('שגיאת טעינה')) : null}
+            onEdit={openEdit}
+            onDelete={(id) => {
+              if (confirm('למחוק תשלום זה?')) deleteMutation.mutate(id);
+            }}
+            onBulkDelete={(rows) => {
+              if (!confirm(`למחוק ${rows.length} תשלומים?`)) return;
+              rows.forEach((r) => deleteMutation.mutate(r.id));
+            }}
+          />
         )}
       </div>
 

@@ -8,18 +8,18 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { 
-  CheckCircle2, 
-  Clock, 
-  Phone, 
+import {
+  Clock,
+  Phone,
   User,
   Filter,
   ArrowUpCircle,
   Bell,
-  Wrench
+  Wrench,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PullToRefresh from '@/components/common/PullToRefresh';
+import { MaintenanceTable } from '@/components/tables/MaintenanceTable';
 
 export default function ServiceRequests({ orgId, selectedPropertyId }) {
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -27,7 +27,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
   const [filterUrgency, setFilterUrgency] = useState('all');
   const queryClient = useQueryClient();
 
-  const { data: requests = [], isLoading, refetch } = useQuery({
+  const { data: requests = [], isLoading, isError, error: requestsError, refetch } = useQuery({
     queryKey: ['guestRequests', orgId, selectedPropertyId],
     queryFn: () => {
       const filters = { org_id: orgId };
@@ -91,10 +91,6 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
     const property = properties.find(p => p.id === propertyId);
     return property?.name || 'לא ידוע';
   };
-
-  if (isLoading) {
-    return <div className="flex items-center justify-center h-64">טוען...</div>;
-  }
 
   return (
     <PullToRefresh onRefresh={refetch}>
@@ -187,78 +183,15 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
           </div>
         </div>
 
-        {/* Requests List */}
-        <div className="space-y-3">
-          <AnimatePresence>
-            {filteredRequests.map((request) => {
-              const urgency = urgencyConfig[request.urgency];
-              const status = statusConfig[request.status];
-              const UrgencyIcon = urgency.icon;
-
-              return (
-                <motion.div
-                  key={request.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  onClick={() => setSelectedRequest(request)}
-                >
-                  <Card className="cursor-pointer hover:shadow-lg transition-shadow border-r-4" style={{
-                    borderRightColor: request.urgency === 'URGENT' ? '#EF4444' : '#E5E7EB'
-                  }}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge className={urgency.color}>
-                              <UrgencyIcon className="h-3 w-3 ml-1" />
-                              {urgency.label}
-                            </Badge>
-                            <Badge className={status.color}>
-                              {status.label}
-                            </Badge>
-                            <span className="text-xs text-[#64748B]">{requestTypes[request.request_type]}</span>
-                          </div>
-                          
-                          <h3 className="font-bold text-[#0F172A] mb-1">{request.title}</h3>
-                          <p className="text-sm text-[#64748B] line-clamp-2 mb-2">{request.description}</p>
-                          
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-[#64748B]">
-                            <div className="flex items-center gap-1">
-                              <User className="h-3 w-3" />
-                              {request.guest_name}
-                            </div>
-                            {request.guest_phone && (
-                              <div className="flex items-center gap-1">
-                                <Phone className="h-3 w-3" />
-                                {request.guest_phone}
-                              </div>
-                            )}
-                            <div className="text-[#64748B]">
-                              {getPropertyName(request.property_id)}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="text-left text-xs text-[#64748B]">
-                          {new Date(request.created_date).toLocaleDateString('he-IL')}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-
-          {filteredRequests.length === 0 && (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <CheckCircle2 className="h-12 w-12 text-[#64748B] mx-auto mb-4" />
-                <p className="text-[#64748B]">אין בקשות להצגה</p>
-              </CardContent>
-            </Card>
-          )}
+        {/* Requests table */}
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+          <MaintenanceTable
+            requests={filteredRequests}
+            properties={properties}
+            isLoading={isLoading}
+            error={isError ? (requestsError instanceof Error ? requestsError : new Error('שגיאת טעינה')) : null}
+            onOpen={setSelectedRequest}
+          />
         </div>
 
         {/* Request Details Sheet */}

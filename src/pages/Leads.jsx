@@ -2,18 +2,17 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLeads, useCreateLead, useUpdateLead, useDeleteLead, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  Users, Plus, Search, Edit, Trash2,
-  Phone, Mail, CalendarDays, Building2,
-  Download, CheckSquare, Square, X, ChevronDown,
+  Users, Plus, Search,
+  Download,
 } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
 import { exportToCSV, LEAD_COLUMNS } from '@/lib/csvExport';
+import { GuestsTable } from '@/components/tables/GuestsTable';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { GuestForm } from '@/components/forms/GuestForm';
 import { emptyGuestFormValues } from '@/components/forms/atlasFormSchemas';
 
@@ -26,11 +25,6 @@ const STATUS_OPTIONS = [
   { value: 'LOST',       label: 'לא רלוונטי',   color: 'bg-gray-100 text-gray-500 border-gray-200' },
 ];
 const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
-
-const AVATAR_COLORS = [
-  'from-blue-400 to-blue-600', 'from-purple-400 to-purple-600',
-  'from-teal-400 to-teal-600', 'from-amber-400 to-amber-600', 'from-rose-400 to-rose-600',
-];
 
 function leadEntityToGuestFormValues(lead) {
   if (!lead) return { ...emptyGuestFormValues };
@@ -65,11 +59,7 @@ export default function LeadsPage({ user, selectedPropertyId }) {
     if (!showDialog) guestDialogInterceptRef.current = null;
   }, [showDialog]);
 
-  // ── Bulk selection ──────────────────────────────────────────────────────────
-  const [selected, setSelected]       = useState(new Set());
-  const [showBulkMenu, setShowBulkMenu] = useState(false);
-
-  const { data: leads = [], isLoading } = useLeads(filters, '-created_at', 200);
+  const { data: leads = [], isLoading, isError, error: leadsError } = useLeads(filters, '-created_at', 200);
   const { data: properties = [] }       = useProperties();
   const createMutation = useCreateLead();
   const updateMutation = useUpdateLead();
@@ -124,30 +114,17 @@ export default function LeadsPage({ user, selectedPropertyId }) {
     });
   };
 
-  // ── Bulk ─────────────────────────────────────────────────────────────────────
-  const allFilteredIds = filtered.map(l => l.id);
-  const allSelected    = allFilteredIds.length > 0 && allFilteredIds.every(id => selected.has(id));
-  const someSelected   = selected.size > 0;
-
-  const toggleSelect = id => setSelected(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
-  const toggleAll    = () => {
-    if (allSelected) setSelected(prev => { const next = new Set(prev); allFilteredIds.forEach(id => next.delete(id)); return next; });
-    else setSelected(prev => new Set([...prev, ...allFilteredIds]));
-  };
-  const clearSelection = () => setSelected(new Set());
-
-  const handleBulkStatusChange = async status => {
-    const ids = [...selected];
+  const handleBulkSetStatus = async (rows, status) => {
     let done = 0;
-    for (const id of ids) { await updateMutation.mutateAsync({ id, data: { status } }).catch(() => {}); done++; }
+    for (const row of rows) {
+      await updateMutation.mutateAsync({ id: row.id, data: { status } }).catch(() => {});
+      done++;
+    }
     toast({ title: `עודכנו ${done} לידים ל-${STATUS_MAP[status]?.label || status}` });
-    clearSelection(); setShowBulkMenu(false);
   };
 
-  const handleBulkDelete = () => {
-    if (!confirm(`למחוק ${selected.size} לידים?`)) return;
-    [...selected].forEach(id => deleteMutation.mutate(id));
-    clearSelection();
+  const handleBulkDeleteRows = (rows) => {
+    rows.forEach((row) => deleteMutation.mutate(row.id));
   };
 
   // ── CSV Export ───────────────────────────────────────────────────────────────
@@ -224,50 +201,11 @@ export default function LeadsPage({ user, selectedPropertyId }) {
         </div>
       </div>
 
-      {/* Bulk Action Bar */}
-      {someSelected && (
-        <div className="flex items-center gap-3 px-4 py-3 bg-purple-50 border border-purple-200 rounded-2xl">
-          <button onClick={clearSelection} className="w-7 h-7 rounded-lg flex items-center justify-center text-purple-400 hover:text-purple-600 hover:bg-purple-100 transition-colors">
-            <X className="w-4 h-4" />
-          </button>
-          <span className="text-sm font-semibold text-purple-700">{selected.size} נבחרו</span>
-          <div className="mr-auto flex items-center gap-2">
-            <div className="relative">
-              <button onClick={() => setShowBulkMenu(v => !v)}
-                className="flex items-center gap-1.5 min-h-[36px] px-3 rounded-xl text-xs font-semibold bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 transition-colors">
-                שנה סטטוס <ChevronDown className="w-3 h-3" />
-              </button>
-              {showBulkMenu && (
-                <div className="absolute left-0 top-full mt-1 z-50 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden min-w-[150px]">
-                  {STATUS_OPTIONS.map(s => (
-                    <button key={s.value} onClick={() => handleBulkStatusChange(s.value)}
-                      className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-right hover:bg-gray-50 transition-colors border-r-2 ${s.color.split(' ')[0].replace('bg-', 'border-')}`}>
-                      {s.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            <button onClick={handleBulkDelete}
-              className="flex items-center gap-1.5 min-h-[36px] px-3 rounded-xl text-xs font-semibold bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition-colors">
-              <Trash2 className="w-3.5 h-3.5" /> מחק
-            </button>
-            <button onClick={() => {
-              const data = filtered.filter(l => selected.has(l.id)).map(l => ({ ...l, property_name: properties.find(p => p.id === l.property_id)?.name || '' }));
-              exportToCSV(data, 'leads_selected', LEAD_COLUMNS);
-              toast({ title: `יוצאו ${data.length} לידים` });
-            }} className="flex items-center gap-1.5 min-h-[36px] px-3 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-              <Download className="w-3.5 h-3.5" /> ייצוא
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Leads list */}
+      {/* Guests / leads table */}
       <div className="atlas-card-surface overflow-hidden">
-        {isLoading ? (
-          <div className="p-4 space-y-3">{[...Array(5)].map((_, i) => <Skeleton key={i} className="atlas-list-skeleton" />)}</div>
-        ) : filtered.length === 0 ? (
+        {isError ? (
+          <div className="p-4 text-center text-sm text-red-600">שגיאה בטעינת הלידים</div>
+        ) : filtered.length === 0 && !isLoading ? (
           <div className="text-center py-14 px-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 ring-1 ring-gray-100 flex items-center justify-center mx-auto mb-3">
               <Users className="w-7 h-7 text-gray-300" />
@@ -282,79 +220,18 @@ export default function LeadsPage({ user, selectedPropertyId }) {
             )}
           </div>
         ) : (
-          <>
-            {/* Select all header */}
-            <div className="flex items-center gap-3 px-4 py-2 border-b border-gray-50 bg-gray-50/50">
-              <button onClick={toggleAll} className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-700 transition-colors touch-manipulation min-h-[36px]">
-                {allSelected ? <CheckSquare className="w-4 h-4 text-purple-500" /> : <Square className="w-4 h-4" />}
-                {allSelected ? 'בטל הכל' : `בחר הכל (${filtered.length})`}
-              </button>
-            </div>
-            <div className="divide-y divide-gray-50">
-              {filtered.map((lead, idx) => {
-                const statusInfo    = STATUS_MAP[lead.status] || STATUS_MAP.NEW;
-                const property      = properties.find(p => p.id === lead.property_id);
-                const avatarGradient = AVATAR_COLORS[idx % AVATAR_COLORS.length];
-                const displayName   = lead.full_name || lead.name || 'ליד';
-                const isChecked     = selected.has(lead.id);
-                return (
-                  <div key={lead.id} className={`flex items-center gap-3 px-4 py-3 hover:bg-gray-50/60 transition-colors group ${isChecked ? 'bg-purple-50/40' : ''}`}>
-                    {/* Checkbox */}
-                    <button onClick={() => toggleSelect(lead.id)}
-                      className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 hover:text-purple-400 hover:bg-purple-50 transition-colors touch-manipulation">
-                      {isChecked ? <CheckSquare className="w-4 h-4 text-purple-500" /> : <Square className="w-4 h-4" />}
-                    </button>
-
-                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${avatarGradient} flex items-center justify-center flex-shrink-0 text-sm font-bold text-white shadow-sm`}>
-                      {displayName[0]}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold text-gray-800">{displayName}</p>
-                        <span className={`inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${statusInfo.color}`}>
-                          {statusInfo.label}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
-                        {lead.phone && (
-                          <span className="flex items-center gap-1 text-xs text-gray-400">
-                            <Phone className="w-3 h-3" /><span dir="ltr">{lead.phone}</span>
-                          </span>
-                        )}
-                        {lead.email && (
-                          <span className="flex items-center gap-1 text-xs text-gray-400 truncate max-w-[160px]">
-                            <Mail className="w-3 h-3 flex-shrink-0" />{lead.email}
-                          </span>
-                        )}
-                        {lead.check_in_date && (
-                          <span className="flex items-center gap-1 text-xs text-gray-400">
-                            <CalendarDays className="w-3 h-3" />{format(parseISO(lead.check_in_date), 'dd/MM/yy')}
-                          </span>
-                        )}
-                        {property && (
-                          <span className="flex items-center gap-1 text-xs text-gray-400">
-                            <Building2 className="w-3 h-3" />{property.name}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                      <button onClick={() => openEdit(lead)}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => handleDelete(lead.id)}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </>
+          <ErrorBoundary section="guests-table" variant="inline" resetKey={`${selectedPropertyId ?? 'all'}|${statusFilter}|${searchTerm}`}>
+            <GuestsTable
+              leads={filtered}
+              properties={properties}
+              isLoading={isLoading}
+              error={isError ? (leadsError instanceof Error ? leadsError : new Error('שגיאת טעינה')) : null}
+              onEdit={openEdit}
+              onDelete={handleDelete}
+              onBulkDelete={handleBulkDeleteRows}
+              onBulkSetStatus={handleBulkSetStatus}
+            />
+          </ErrorBoundary>
         )}
       </div>
 
