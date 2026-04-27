@@ -75,6 +75,10 @@ export default function Login() {
         setErrors({ email: 'אימייל או סיסמה שגויים', password: 'אימייל או סיסמה שגויים' });
       } else if (msg.includes('email not confirmed')) {
         toast.error('יש לאמת את כתובת האימייל תחילה. בדוק את תיבת הדואר.');
+      } else if (err?.status === 404 || msg.includes('http 404')) {
+        toast.error(
+          'שרת ה-API לא נמצא. הגדר Supabase או שרת Express עם הפניה ל-/api.'
+        );
       } else {
         toast.error(err.message || 'אירעה שגיאה. נסה שוב.');
       }

@@ -93,7 +93,14 @@ export default function Register() {
       } else {
         recordAttempt(form.email);
         const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err?.name === 'TypeError';
-        toast.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err?.message || 'אירעה שגיאה. נסה שוב.'));
+        const isApiMissing = err?.status === 404 || msg.includes('http 404');
+        if (isApiMissing) {
+          toast.error(
+            'שרת ה-API לא נמצא. אם האתר מוצג כקבצים סטטיים בלבד, הגדר Supabase (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY) או פרוס את שרת Express והפנה את הנתיב /api אליו.'
+          );
+        } else {
+          toast.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err?.message || 'אירעה שגיאה. נסה שוב.'));
+        }
       }
     } finally {
       setIsLoading(false);
