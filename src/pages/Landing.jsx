@@ -1244,8 +1244,6 @@ export default function Landing() {
           .atlas-hero-btns { flex-direction: column !important; align-items: stretch !important; }
           .atlas-hero-btns > button,
           .atlas-hero-btns > a { width: 100% !important; text-align: center !important; }
-          .atlas-hero-top-cta { justify-content: stretch !important; }
-          .atlas-hero-top-cta button { width: 100% !important; }
 
           .atlas-ps-grid { grid-template-columns: 1fr !important; }
           .atlas-ps-section { padding: 60px 16px !important; }
@@ -1656,30 +1654,6 @@ export default function Landing() {
           <div className="atlas-blob atlas-blob-3" />
 
           <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
-            {/* High-intent CTA — visible immediately in hero (GoNoGo: primary trial above the fold) */}
-            <div
-              className="atlas-hero-top-cta"
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'flex-start',
-                marginBottom: 20,
-              }}
-            >
-              <button
-                type="button"
-                className="atlas-btn-primary"
-                onClick={goToRegister}
-                style={{
-                  minHeight: 48,
-                  fontSize: 17,
-                  padding: '12px 24px',
-                  boxShadow: '0 4px 20px rgba(0,209,193,0.25)',
-                }}
-              >
-                התחילו ניסיון חינם 14 יום
-              </button>
-            </div>
             <div
               className="atlas-hero-grid"
               style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 60, alignItems: 'center' }}
