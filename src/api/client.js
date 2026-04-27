@@ -151,28 +151,38 @@ const restAuth = {
 
 // ─── Probe local server on startup ───────────────────────────────────────────
 let _localApiAvailable = null;
+/** Single in-flight probe so concurrent callers cannot race and overwrite the cache (e.g. one fetch succeeds, a slower one errors and would set false after true). */
+let _healthProbePromise = null;
 async function checkLocalApi() {
   if (_localApiAvailable !== null) return _localApiAvailable;
-  try {
-    const healthUrl = LOCAL_API_URL ? `${LOCAL_API_URL}/api/health` : '/api/health';
-    const res = await fetch(healthUrl, { signal: AbortSignal.timeout(2500) });
-    if (!res.ok) {
-      _localApiAvailable = false;
-      return false;
-    }
-    // Static hosts often return 200 + index.html for every path; res.ok alone would
-    // wrongly enable REST and then POST /api/auth/* returns 404.
-    const ct = res.headers.get('content-type') || '';
-    if (!ct.includes('application/json')) {
-      _localApiAvailable = false;
-      return false;
-    }
-    const body = await res.json().catch(() => ({}));
-    _localApiAvailable = body?.status === 'ok';
-  } catch {
-    _localApiAvailable = false;
+  if (!_healthProbePromise) {
+    _healthProbePromise = (async () => {
+      try {
+        const healthUrl = LOCAL_API_URL ? `${LOCAL_API_URL}/api/health` : '/api/health';
+        const res = await fetch(healthUrl, { signal: AbortSignal.timeout(2500) });
+        if (!res.ok) {
+          _localApiAvailable = false;
+          return false;
+        }
+        // Static hosts often return 200 + index.html for every path; res.ok alone would
+        // wrongly enable REST and then POST /api/auth/* returns 404.
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) {
+          _localApiAvailable = false;
+          return false;
+        }
+        const body = await res.json().catch(() => ({}));
+        _localApiAvailable = body?.status === 'ok';
+        return _localApiAvailable;
+      } catch {
+        _localApiAvailable = false;
+        return false;
+      } finally {
+        _healthProbePromise = null;
+      }
+    })();
   }
-  return _localApiAvailable;
+  return _healthProbePromise;
 }
 
 /** Same-origin or explicit API base — used so prod + /api proxy still hits the server. */
