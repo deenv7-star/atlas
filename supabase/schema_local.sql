@@ -139,6 +139,7 @@ CREATE TABLE IF NOT EXISTS public.payments (
   booking_id  UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
   amount      NUMERIC(10,2) NOT NULL,
   currency    TEXT NOT NULL DEFAULT 'ILS',
+  payment_type TEXT DEFAULT '',
   status      TEXT NOT NULL DEFAULT 'PENDING',
   method      TEXT DEFAULT 'credit_card',
   description TEXT DEFAULT '',
@@ -262,6 +263,22 @@ CREATE TABLE IF NOT EXISTS public.message_logs (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ─── messages (guest / staff thread; used by entities API) ───────────────────
+CREATE TABLE IF NOT EXISTS public.messages (
+  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  org_id     UUID NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
+  booking_id UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
+  content    TEXT,
+  sent_at    TIMESTAMPTZ DEFAULT NOW(),
+  channel    TEXT DEFAULT 'email',
+  direction  TEXT DEFAULT 'outbound',
+  recipient  TEXT,
+  subject    TEXT,
+  status     TEXT DEFAULT 'sent',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ─── review_requests ─────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.review_requests (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -352,6 +369,8 @@ CREATE INDEX IF NOT EXISTS idx_bookings_org_id      ON public.bookings(org_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_property_id ON public.bookings(property_id);
 CREATE INDEX IF NOT EXISTS idx_leads_org_id         ON public.leads(org_id);
 CREATE INDEX IF NOT EXISTS idx_payments_org_id      ON public.payments(org_id);
+CREATE INDEX IF NOT EXISTS idx_messages_org_id      ON public.messages(org_id);
+CREATE INDEX IF NOT EXISTS idx_messages_booking_id  ON public.messages(booking_id);
 CREATE INDEX IF NOT EXISTS idx_properties_org_id    ON public.properties(org_id);
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user  ON public.refresh_tokens(user_id);
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token ON public.refresh_tokens(token);
@@ -373,7 +392,7 @@ BEGIN
   FOREACH t IN ARRAY ARRAY[
     'users','organizations','properties','units','bookings','leads',
     'payments','subscriptions','cleaning_tasks','invoices','guest_requests',
-    'contract_templates','contract_instances','message_logs','review_requests',
+    'contract_templates','contract_instances','message_logs','messages','review_requests',
     'automation_rules','calendar_syncs','messaging_integrations',
     'accounting_integrations','pms_integrations','payment_gateways'
   ]

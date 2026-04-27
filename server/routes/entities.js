@@ -37,6 +37,8 @@ const TABLE_MAP = {
   contractinstance: 'contract_instances',
   messagelogs: 'message_logs',
   messagelog: 'message_logs',
+  messages: 'messages',
+  message: 'messages',
   reviewrequests: 'review_requests',
   reviewrequest: 'review_requests',
   automationrules: 'automation_rules',

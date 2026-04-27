@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -15,40 +15,49 @@ import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import {
   Menu, Bell, Settings, LogOut, User, ChevronDown,
-  Building2, Home,
+  Building2, Home, Moon, Sun,
 } from 'lucide-react';
 
 const pageNames = {
-  Dashboard: 'דשבורד',
-  Bookings: 'הזמנות',
-  Leads: 'לידים',
-  Messages: 'הודעות',
-  Reviews: 'ביקורות',
-  Invoices: 'חשבוניות',
-  Payments: 'תשלומים',
-  Contracts: 'חוזים',
-  Cleaning: 'ניקיון',
-  ServiceRequests: 'בקשות שירות',
-  Settings: 'הגדרות',
-  Subscription: 'מנוי',
-  Billing: 'חיוב',
-  Integrations: 'אינטגרציות',
-  BookingDetail: 'פרטי הזמנה',
-  LeadDetail: 'פרטי ליד',
-  Automations: 'אוטומציות',
-  AIAssistant: 'AI עוזר',
-  ExpenseTracker: 'מעקב הוצאות',
-  DynamicPricing: 'תמחור דינאמי',
-  GuestPortal: 'פורטל אורחים',
-  RevenueIntelligence: 'מודיעין הכנסות',
-  MultiCalendar: 'לוח שנה מרכזי',
-  OwnerReports: 'דוחות בעלים',
-  GuestJourney: 'מסע אורח',
-  PlatformAdmin: 'ניהול פלטפורמה',
+  Dashboard: 'דשבורד', Bookings: 'הזמנות', Leads: 'לידים',
+  Messages: 'הודעות', Reviews: 'ביקורות', Invoices: 'חשבוניות',
+  Payments: 'תשלומים', Contracts: 'חוזים', Cleaning: 'ניקיון',
+  ServiceRequests: 'בקשות שירות', Settings: 'הגדרות',
+  Subscription: 'מנוי', Billing: 'חיוב', Integrations: 'אינטגרציות',
+  BookingDetail: 'פרטי הזמנה', LeadDetail: 'פרטי ליד',
+  Automations: 'אוטומציות', AIAssistant: 'AI עוזר',
+  ExpenseTracker: 'מעקב הוצאות', DynamicPricing: 'תמחור דינאמי',
+  GuestPortal: 'פורטל אורחים', RevenueIntelligence: 'מודיעין הכנסות',
+  MultiCalendar: 'לוח שנה מרכזי', OwnerReports: 'דוחות בעלים',
+  GuestJourney: 'מסע אורח', PlatformAdmin: 'ניהול פלטפורמה',
 };
+
+// ── Dark Mode Hook ──────────────────────────────────────────────────────────
+function useDarkMode() {
+  const [isDark, setIsDark] = useState(() => {
+    try {
+      const stored = localStorage.getItem('atlas-dark-mode');
+      if (stored !== null) return stored === 'true';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch { return false; }
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    try { localStorage.setItem('atlas-dark-mode', String(isDark)); } catch {}
+  }, [isDark]);
+
+  return [isDark, setIsDark];
+}
 
 export default function AppHeader({ user, currentPageName, onMenuClick, selectedPropertyId, onPropertyChange }) {
   const { logout } = useAuth();
+  const [isDark, setIsDark] = useDarkMode();
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties-header'],
@@ -89,7 +98,7 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
         onClick={onMenuClick}
         whileTap={{ scale: 0.97 }}
         transition={{ type: 'tween', duration: 0.12, ease: [0.23, 1, 0.32, 1] }}
-        className="md:hidden min-w-[40px] min-h-[40px] p-2 rounded-xl flex items-center justify-center touch-manipulation bg-black/[0.05] border border-black/[0.07] text-gray-700 transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-black/[0.08]"
+        className="md:hidden min-w-[40px] min-h-[40px] p-2 rounded-xl flex items-center justify-center touch-manipulation bg-black/[0.05] border border-black/[0.07] text-gray-700 transition-[background-color] duration-150"
       >
         <Menu className="w-4.5 h-4.5" style={{ width: 18, height: 18 }} />
       </motion.button>
@@ -98,10 +107,7 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <h1
           className="text-base md:text-[17px] font-extrabold truncate tracking-tight"
-          style={{
-            color: 'var(--atlas-ink, #0B1220)',
-            letterSpacing: '-0.02em',
-          }}
+          style={{ color: 'var(--atlas-ink, #0B1220)', letterSpacing: '-0.02em' }}
         >
           {pageTitle}
         </h1>
@@ -139,13 +145,33 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
 
       {/* Action buttons */}
       <div className="flex items-center gap-1.5">
+
+        {/* ── Dark Mode Toggle ── */}
+        <motion.button
+          onClick={() => setIsDark(d => !d)}
+          whileTap={{ scale: 0.92 }}
+          transition={{ type: 'tween', duration: 0.12 }}
+          title={isDark ? 'עבור למצב בהיר' : 'עבור למצב לילה'}
+          aria-label={isDark ? 'עבור למצב בהיר' : 'עבור למצב לילה'}
+          className="relative min-w-[36px] min-h-[36px] p-2 rounded-xl flex items-center justify-center touch-manipulation border transition-all duration-200"
+          style={{
+            background: isDark ? 'rgba(0,209,193,0.12)' : 'rgba(0,0,0,0.04)',
+            borderColor: isDark ? 'rgba(0,209,193,0.25)' : 'rgba(0,0,0,0.06)',
+            color: isDark ? '#00D1C1' : '#6b7280',
+          }}
+        >
+          {isDark
+            ? <Sun className="w-4 h-4" />
+            : <Moon className="w-4 h-4" />}
+        </motion.button>
+
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <motion.button
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'tween', duration: 0.12, ease: [0.23, 1, 0.32, 1] }}
-              className="relative min-w-[36px] min-h-[36px] p-2 rounded-xl flex items-center justify-center touch-manipulation bg-black/[0.04] border border-black/[0.06] text-gray-500 transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-black/[0.07]"
+              className="relative min-w-[36px] min-h-[36px] p-2 rounded-xl flex items-center justify-center touch-manipulation bg-black/[0.04] border border-black/[0.06] text-gray-500 transition-[background-color] duration-150"
             >
               <Bell className="w-4 h-4" />
             </motion.button>
@@ -169,7 +195,7 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: 'tween', duration: 0.12, ease: [0.23, 1, 0.32, 1] }}
-                className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl touch-manipulation bg-[rgba(0,209,193,0.08)] border border-[rgba(0,209,193,0.18)] transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-[rgba(0,209,193,0.14)]"
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl touch-manipulation bg-[rgba(0,209,193,0.08)] border border-[rgba(0,209,193,0.18)] transition-[background-color] duration-150"
               >
                 <Avatar className="w-6 h-6">
                   <AvatarImage src={user.profile_image} />

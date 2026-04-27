@@ -16,61 +16,52 @@ import {
   AlertCircle, Sparkles,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const MotionLink = motion(Link);
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO, isSameDay } from 'date-fns';
+import {
+  format, startOfWeek, endOfWeek, isWithinInterval,
+  parseISO, isSameDay, subMonths, startOfMonth, endOfMonth,
+} from 'date-fns';
 import { he } from 'date-fns/locale';
 
-const STATUS_COLORS = {
-  NEW:        'bg-blue-100 text-blue-700',
-  CONTACTED:  'bg-yellow-100 text-yellow-700',
-  OFFER_SENT: 'bg-purple-100 text-purple-700',
-  CONFIRMED:  'bg-emerald-100 text-emerald-700',
-  REJECTED:   'bg-red-100 text-red-700',
-  LOST:       'bg-gray-100 text-gray-500',
-  APPROVED:   'bg-emerald-100 text-emerald-700',
-  PENDING:    'bg-amber-100 text-amber-700',
-  WAITLIST:   'bg-purple-100 text-purple-700',
-  CANCELLED:  'bg-red-100 text-red-700',
-};
+// ── Simple widget-level ErrorBoundary ────────────────────────────────────────
+class WidgetErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: false }; }
+  static getDerivedStateFromError() { return { error: true }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="rounded-2xl p-5 bg-red-50/60 border border-red-100 text-center">
+          <AlertCircle className="w-5 h-5 text-red-400 mx-auto mb-1" />
+          <p className="text-xs text-red-500 font-medium">לא ניתן לטעון את הווידג'ט</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
+const STATUS_COLORS = {
+  NEW: 'bg-blue-100 text-blue-700', CONTACTED: 'bg-yellow-100 text-yellow-700',
+  OFFER_SENT: 'bg-purple-100 text-purple-700', CONFIRMED: 'bg-emerald-100 text-emerald-700',
+  REJECTED: 'bg-red-100 text-red-700', LOST: 'bg-gray-100 text-gray-500',
+  APPROVED: 'bg-emerald-100 text-emerald-700', PENDING: 'bg-amber-100 text-amber-700',
+  WAITLIST: 'bg-purple-100 text-purple-700', CANCELLED: 'bg-red-100 text-red-700',
+};
 const STATUS_LABELS = {
   NEW: 'חדש', CONTACTED: 'נוצר קשר', OFFER_SENT: 'הצעה נשלחה',
   CONFIRMED: 'מאושר', REJECTED: 'נדחה', LOST: 'אבוד',
   APPROVED: 'מאושר', PENDING: 'ממתין', WAITLIST: 'המתנה', CANCELLED: 'בוטל',
 };
 
-const dashStaggerParent = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.06, delayChildren: 0.03 },
-  },
-};
-
-/* KPI enter: y 8→0, ease-out (no spring) */
-const dashItem = {
-  hidden: { opacity: 0, y: 8 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.28, ease: [0.23, 1, 0.32, 1] },
-  },
-};
-
+const dashStaggerParent = { hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.03 } } };
+const dashItem = { hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.23, 1, 0.32, 1] } } };
 const tapTween = { type: 'tween', duration: 0.14, ease: [0.23, 1, 0.32, 1] };
 
-/* ── Stat Card ─────────────────────────────────────── */
-const TINT_MAP = {
-  'icon-blue':   'blue',
-  'icon-purple': 'purple',
-  'icon-teal':   'teal',
-  'icon-amber':  'neutral',
-  'icon-green':  'teal',
-  'icon-rose':   'neutral',
-};
-function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, trend, loading }) {
+const TINT_MAP = { 'icon-blue': 'blue', 'icon-purple': 'purple', 'icon-teal': 'teal', 'icon-amber': 'neutral', 'icon-green': 'teal', 'icon-rose': 'neutral' };
+
+function StatCard({ title, value, subtitle, icon: Icon, iconClass, trend, loading }) {
   const tint = TINT_MAP[iconClass] || 'neutral';
   if (loading) {
     return (
@@ -86,17 +77,15 @@ function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, tre
       <LiquidGlassCard tint={tint} size="sm" className="h-full">
         <div className="flex items-start justify-between mb-3">
           <p className="text-xs font-semibold text-gray-500 leading-snug">{title}</p>
-          <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0", iconClass)}>
+          <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0', iconClass)}>
             <Icon style={{ width: '16px', height: '16px' }} />
           </div>
         </div>
         <p className="text-3xl font-bold text-zinc-900 mb-1 tracking-tight atlas-tabular">{value}</p>
         {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
         {trend !== undefined && (
-          <div className={cn("flex items-center gap-1 text-xs font-semibold mt-2", trend >= 0 ? "text-emerald-600" : "text-red-500")}>
-            {trend >= 0
-              ? <ArrowUpLeft className="w-3 h-3" />
-              : <ArrowDownRight className="w-3 h-3" />}
+          <div className={cn('flex items-center gap-1 text-xs font-semibold mt-2', trend >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+            {trend >= 0 ? <ArrowUpLeft className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
             <span>{Math.abs(trend)}% מהחודש הקודם</span>
           </div>
         )}
@@ -105,18 +94,10 @@ function StatCard({ title, value, subtitle, icon: Icon, gradient, iconClass, tre
   );
 }
 
-/* ── Booking Row ───────────────────────────────────── */
 function BookingRow({ booking }) {
-  const dateStr = booking.check_in_date
-    ? format(parseISO(booking.check_in_date), 'd MMM', { locale: he })
-    : '';
-
   const detailUrl = booking?.id ? `${createPageUrl('BookingDetail')}/${booking.id}` : createPageUrl('Bookings');
   return (
-    <Link
-      to={detailUrl}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color] duration-150 atlas-ease-out-trans group"
-    >
+    <Link to={detailUrl} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color] duration-150 group">
       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex flex-col items-center justify-center flex-shrink-0 shadow-sm">
         <span className="text-[10px] font-semibold text-white/80 leading-none">
           {booking.check_in_date ? format(parseISO(booking.check_in_date), 'MMM', { locale: he }) : ''}
@@ -132,96 +113,62 @@ function BookingRow({ booking }) {
           {booking.property_name ? ` · ${booking.property_name}` : ''}
         </p>
       </div>
-      <span className={cn(
-        "text-[11px] font-medium px-2 py-0.5 rounded-full border-0 flex-shrink-0",
-        STATUS_COLORS[booking.status] || 'bg-gray-100 text-gray-600'
-      )}>
+      <span className={cn('text-[11px] font-medium px-2 py-0.5 rounded-full flex-shrink-0', STATUS_COLORS[booking.status] || 'bg-gray-100 text-gray-600')}>
         {STATUS_LABELS[booking.status] || booking.status}
       </span>
     </Link>
   );
 }
 
-/* ── Lead Row ──────────────────────────────────────── */
 function LeadRow({ lead }) {
   const initials = (lead.full_name || lead.name || 'א')[0];
   const detailUrl = lead?.id ? `${createPageUrl('LeadDetail')}/${lead.id}` : createPageUrl('Leads');
   return (
-    <Link
-      to={detailUrl}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color] duration-150 atlas-ease-out-trans group"
-    >
+    <Link to={detailUrl} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50/90 transition-[background-color] duration-150 group">
       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00D1C1]/30 to-blue-200/60 flex items-center justify-center flex-shrink-0 text-sm font-bold text-[#00a89a]">
         {initials}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-gray-800 truncate">
-          {lead.full_name || lead.name || 'ליד חדש'}
-        </p>
+        <p className="text-sm font-semibold text-gray-800 truncate">{lead.full_name || lead.name || 'ליד חדש'}</p>
         <p className="text-xs text-gray-400 truncate">
           {lead.check_in_date ? `כניסה: ${format(parseISO(lead.check_in_date), 'dd/MM/yy')}` : ''}
           {lead.nights ? ` · ${lead.nights} לילות` : ''}
         </p>
       </div>
-      <span className={cn(
-        "text-[11px] font-medium px-2 py-0.5 rounded-full flex-shrink-0",
-        STATUS_COLORS[lead.status] || 'bg-gray-100 text-gray-600'
-      )}>
+      <span className={cn('text-[11px] font-medium px-2 py-0.5 rounded-full flex-shrink-0', STATUS_COLORS[lead.status] || 'bg-gray-100 text-gray-600')}>
         {STATUS_LABELS[lead.status] || lead.status}
       </span>
     </Link>
   );
 }
 
-/* ── Section Card ──────────────────────────────────── */
 function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyIcon: EmptyIcon, emptyText, addLink }) {
   return (
-    <div
-      className="rounded-2xl overflow-hidden"
-      style={{
-        background: 'rgba(255,255,255,0.92)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(0,0,0,0.07)',
-        boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)',
-      }}
-    >
+    <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
       <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
         <div className="flex items-center gap-2">
-          <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ background: 'rgba(0,209,193,0.12)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)' }}
-          >
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,209,193,0.12)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)' }}>
             <Icon className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
           </div>
           <h2 className="text-base font-bold text-gray-900 tracking-tight">{title}</h2>
         </div>
-        <Link
-          to={viewAllLink}
-          className="inline-flex items-center gap-0.5 text-xs font-medium text-teal-600 hover:text-teal-700 rounded-md py-1.5 ps-1 pe-1 -me-1 transition-colors duration-150 atlas-ease-out-trans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/35 focus-visible:ring-offset-2"
-        >
-          הכל
-          <ChevronLeft className="w-3.5 h-3.5 shrink-0" aria-hidden strokeWidth={2} />
+        <Link to={viewAllLink} className="inline-flex items-center gap-0.5 text-xs font-medium text-teal-600 hover:text-teal-700 rounded-md py-1.5 ps-1 pe-1 -me-1 transition-colors duration-150">
+          הכל <ChevronLeft className="w-3.5 h-3.5 shrink-0" strokeWidth={2} />
         </Link>
       </div>
-
       <div className="p-3">
         {loading ? (
-          <div className="space-y-2 p-1">
-            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}
-          </div>
+          <div className="space-y-2 p-1">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
         ) : React.Children.count(children) === 0 ? (
           <div className="py-10 text-center px-2">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 flex items-center justify-center mx-auto mb-3 ring-1 ring-gray-100/80">
               <EmptyIcon className="w-6 h-6 text-gray-300" />
             </div>
             <p className="text-sm text-gray-500 mb-1.5 font-medium">{emptyText}</p>
-            <p className="text-xs text-gray-400 leading-relaxed max-w-[220px] mx-auto">כשהנתונים יגיעו — הם יופיעו כאן מיד, בלי לחפש.</p>
+            <p className="text-xs text-gray-400 leading-relaxed max-w-[220px] mx-auto">כשהנתונים יגיעו — הם יופיעו כאן מיד.</p>
             {addLink && (
-              <Button asChild size="sm" variant="outline" className="text-xs min-h-[44px] h-11 rounded-lg px-4 touch-manipulation">
-                <Link to={addLink}>
-                  <Plus className="w-3 h-3 ms-1 shrink-0" strokeWidth={2} aria-hidden />
-                  הוסף
-                </Link>
+              <Button asChild size="sm" variant="outline" className="text-xs min-h-[44px] h-11 rounded-lg px-4 mt-2 touch-manipulation">
+                <Link to={addLink}><Plus className="w-3 h-3 ms-1 shrink-0" strokeWidth={2} />הוסף</Link>
               </Button>
             )}
           </div>
@@ -231,48 +178,157 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
   );
 }
 
-/* ── Quick Action ──────────────────────────────────── */
 function QuickAction({ label, icon: Icon, page, iconClass }) {
   return (
     <Link to={createPageUrl(page)} className="block touch-manipulation">
-      <div
-        className="atlas-dash-quick-tile flex flex-col items-center gap-2.5 p-4 rounded-2xl cursor-pointer"
-        style={{
-          background: 'rgba(255,255,255,0.75)',
-          border: '1px solid rgba(0,0,0,0.07)',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-        }}
-      >
-        <div className={cn(
-          "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm",
-          iconClass
-        )}>
+      <div className="atlas-dash-quick-tile flex flex-col items-center gap-2.5 p-4 rounded-2xl cursor-pointer" style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+        <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shadow-sm', iconClass)}>
           <Icon style={{ width: '18px', height: '18px' }} />
         </div>
-        <span className="atlas-dash-quick-label text-xs font-semibold text-zinc-600 transition-colors duration-150 atlas-ease-out-trans">{label}</span>
+        <span className="atlas-dash-quick-label text-xs font-semibold text-zinc-600 transition-colors duration-150">{label}</span>
       </div>
     </Link>
   );
 }
 
-/* ── Main Dashboard ────────────────────────────────── */
+// ── Real Revenue Chart ───────────────────────────────────────────────────────
+function RevenueChart({ payments }) {
+  const months = useMemo(() => {
+    const now = new Date();
+    return Array.from({ length: 12 }, (_, i) => {
+      const d = subMonths(now, 11 - i);
+      const monthStart = startOfMonth(d);
+      const monthEnd = endOfMonth(d);
+      const total = payments
+        .filter(p => p.status === 'PAID')
+        .reduce((sum, p) => {
+          try {
+            const pd = parseISO(p.paid_date || p.created_date || p.created_at);
+            if (pd >= monthStart && pd <= monthEnd) return sum + (parseFloat(p.amount) || 0);
+          } catch {}
+          return sum;
+        }, 0);
+      return {
+        label: format(d, 'MMM', { locale: he }),
+        total,
+        isCurrentMonth: d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(),
+      };
+    });
+  }, [payments]);
+
+  const maxVal = Math.max(...months.map(m => m.total), 1);
+  const totalRevenue = months.reduce((s, m) => s + m.total, 0);
+
+  return (
+    <div className="md:col-span-4 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
+          <TrendingUp className="w-3.5 h-3.5 text-violet-600" />
+        </div>
+        <h3 className="text-sm font-semibold text-gray-800">מגמת הכנסות</h3>
+      </div>
+      <div className="space-y-3">
+        <div>
+          <p className="text-2xl font-bold text-zinc-900 atlas-tabular">
+            {totalRevenue > 0 ? `₪${totalRevenue.toLocaleString('he-IL')}` : 'אין עדיין'}
+          </p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            {totalRevenue > 0 ? '12 חודשים אחרונים' : 'הוסף הזמנות ותשלומים'}
+          </p>
+        </div>
+        {/* Real chart bars */}
+        <div className="flex items-end gap-1 h-16">
+          {months.map((m, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
+              <div
+                className="w-full rounded-t transition-all duration-500 origin-bottom"
+                style={{
+                  height: `${Math.max(4, (m.total / maxVal) * 100)}%`,
+                  background: m.isCurrentMonth
+                    ? 'linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%)'
+                    : 'linear-gradient(180deg, #C4B5FD 0%, #A78BFA 100%)',
+                  opacity: m.total === 0 ? 0.25 : 1,
+                }}
+                title={`${m.label}: ₪${m.total.toLocaleString('he-IL')}`}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between text-[10px] text-gray-400">
+          <span>{months[0]?.label}</span>
+          <span>{months[11]?.label}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Accurate Occupancy Gauge ─────────────────────────────────────────────────
+function OccupancyGauge({ bookings, properties }) {
+  const occupancy = useMemo(() => {
+    if (!properties.length) return 0;
+    const now = new Date();
+    const monthStart = startOfMonth(now);
+    const monthEnd = endOfMonth(now);
+    const daysInMonth = monthEnd.getDate();
+    const totalAvailable = properties.length * daysInMonth;
+    const bookedNights = bookings
+      .filter(b => ['APPROVED', 'CONFIRMED', 'CHECKED_IN'].includes(b.status))
+      .filter(b => {
+        try {
+          const ci = parseISO(b.check_in_date);
+          return ci >= monthStart && ci <= monthEnd;
+        } catch { return false; }
+      })
+      .reduce((sum, b) => sum + (b.nights || 1), 0);
+    return Math.min(100, Math.round((bookedNights / totalAvailable) * 100));
+  }, [bookings, properties]);
+
+  const color = occupancy >= 70 ? '#10B981' : occupancy >= 40 ? '#F59E0B' : '#6366F1';
+
+  return (
+    <div className="md:col-span-5 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+          <BarChart2 className="w-3.5 h-3.5 text-emerald-600" />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-gray-800">שיעור תפוסה</h3>
+          <p className="text-xs text-gray-400">חודש נוכחי</p>
+        </div>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="relative w-28 h-28">
+          <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#F3F4F6" strokeWidth="8" />
+            <circle cx="50" cy="50" r="42" fill="none" stroke={color} strokeWidth="8" strokeLinecap="round"
+              strokeDasharray={`${occupancy * 2.64} 264`}
+              style={{ transition: 'stroke-dasharray 0.55s cubic-bezier(0.23, 1, 0.32, 1)' }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold text-zinc-900 atlas-tabular">{occupancy}%</span>
+          </div>
+        </div>
+        <p className="text-xs text-gray-400 mt-2">מתוך {properties.length} נכסים</p>
+        <p className="text-[10px] text-gray-400 mt-0.5">
+          {occupancy === 0 ? 'אין הזמנות החודש' : occupancy >= 70 ? 'תפוסה גבוהה!' : 'יש מקום לשיפור'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Dashboard ────────────────────────────────────────────────────────────
 export default function Dashboard({ user, selectedPropertyId }) {
   const reduceMotion = useReducedMotion();
-  const kpiParentVariants = reduceMotion
-    ? { hidden: {}, show: { transition: { staggerChildren: 0 } } }
-    : dashStaggerParent;
-  const kpiItemVariants = reduceMotion
-    ? {
-        hidden: { opacity: 1, y: 0 },
-        show: { opacity: 1, y: 0, transition: { duration: 0 } },
-      }
-    : dashItem;
+  const kpiParentVariants = reduceMotion ? { hidden: {}, show: { transition: { staggerChildren: 0 } } } : dashStaggerParent;
+  const kpiItemVariants = reduceMotion ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0, transition: { duration: 0 } } } : dashItem;
   const now = new Date();
   const weekStart = startOfWeek(now, { weekStartsOn: 0 });
-  const weekEnd   = endOfWeek(now,   { weekStartsOn: 0 });
+  const weekEnd = endOfWeek(now, { weekStartsOn: 0 });
 
   const qOpts = { staleTime: 2 * 60 * 1000, retry: 1 };
-
   const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
 
   const { data: bookings = [], isLoading: bookingsLoading, isError: bookingsError } = useQuery({
@@ -280,61 +336,49 @@ export default function Dashboard({ user, selectedPropertyId }) {
     queryFn: () => base44.entities.Booking.filter(filters, '-created_at', 100),
     ...qOpts,
   });
-
   const { data: leads = [], isLoading: leadsLoading, isError: leadsError } = useQuery({
     queryKey: ['dashboard-leads', selectedPropertyId],
     queryFn: () => base44.entities.Lead.filter(filters, '-created_at', 100),
     ...qOpts,
   });
-
   const { data: payments = [], isLoading: paymentsLoading, isError: paymentsError } = useQuery({
     queryKey: ['dashboard-payments'],
-    queryFn: () => base44.entities.Payment.filter({}, '-created_at', 50),
+    queryFn: () => base44.entities.Payment.filter({}, '-created_at', 200),
     ...qOpts,
   });
-
-  const { data: reviews = [], isLoading: reviewsLoading, isError: reviewsError } = useQuery({
+  const { data: reviews = [], isError: reviewsError } = useQuery({
     queryKey: ['dashboard-reviews', selectedPropertyId],
     queryFn: () => base44.entities.ReviewRequest.filter(filters, '-created_at', 50),
     ...qOpts,
   });
-
   const { data: properties = [], isError: propertiesError } = useQuery({
     queryKey: ['dashboard-properties'],
     queryFn: () => base44.entities.Property.list(),
     ...qOpts,
   });
 
-  const dataFetchError =
-    bookingsError || leadsError || paymentsError || reviewsError || propertiesError;
+  const dataFetchError = bookingsError || leadsError || paymentsError || reviewsError || propertiesError;
 
   const stats = useMemo(() => {
     const thisWeekBookings = bookings.filter(b => {
-      try { return isWithinInterval(parseISO(b.check_in_date), { start: weekStart, end: weekEnd }); }
-      catch { return false; }
+      try { return isWithinInterval(parseISO(b.check_in_date), { start: weekStart, end: weekEnd }); } catch { return false; }
     });
     const confirmedBookings = bookings.filter(b => ['CONFIRMED', 'APPROVED'].includes(b.status));
     const newLeads = leads.filter(l => l.status === 'NEW');
-    const totalRevenue = payments
-      .filter(p => p.status === 'PAID')
-      .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+    const totalRevenue = payments.filter(p => p.status === 'PAID').reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
     const withRating = reviews.filter(r => r.rating);
-    const avgRating = withRating.length > 0
-      ? (withRating.reduce((sum, r) => sum + (r.rating || 0), 0) / withRating.length).toFixed(1)
-      : null;
+    const avgRating = withRating.length > 0 ? (withRating.reduce((sum, r) => sum + (r.rating || 0), 0) / withRating.length).toFixed(1) : null;
     return { thisWeekBookings, confirmedBookings, newLeads, totalRevenue, avgRating };
   }, [bookings, leads, payments, reviews, weekStart, weekEnd]);
 
-  const todayCheckIns = bookings.filter(b => {
-    try { return isSameDay(parseISO(b.check_in_date), now); } catch { return false; }
-  });
+  const todayCheckIns = bookings.filter(b => { try { return isSameDay(parseISO(b.check_in_date), now); } catch { return false; } });
   const todayCheckOuts = bookings.filter(b => {
     try {
       if (!b.check_out_date) {
         const nights = b.nights || 1;
-        const checkOut = new Date(parseISO(b.check_in_date));
-        checkOut.setDate(checkOut.getDate() + nights);
-        return isSameDay(checkOut, now);
+        const co = new Date(parseISO(b.check_in_date));
+        co.setDate(co.getDate() + nights);
+        return isSameDay(co, now);
       }
       return isSameDay(parseISO(b.check_out_date), now);
     } catch { return false; }
@@ -345,9 +389,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
     .sort((a, b) => { try { return parseISO(a.check_in_date) - parseISO(b.check_in_date); } catch { return 0; } })
     .slice(0, 5);
 
-  const recentLeads = leads
-    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
-    .slice(0, 5);
+  const recentLeads = leads.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)).slice(0, 5);
 
   const userName = user?.full_name?.split(' ')[0] || 'שלום';
   const greeting = (() => {
@@ -373,20 +415,15 @@ export default function Dashboard({ user, selectedPropertyId }) {
     <div className="min-h-full p-4 md:p-6 space-y-6 max-w-7xl mx-auto animate-fade-in">
 
       {dataFetchError && (
-        <Alert className="border-amber-200 bg-amber-50/90 text-amber-950 [&>svg]:absolute [&>svg]:text-amber-700">
+        <Alert className="border-amber-200 bg-amber-50/90 text-amber-950">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>בעיה בטעינת נתונים</AlertTitle>
-          <AlertDescription>
-            חלק מהמידע מהשרת לא נטען. בדקו חיבור לאינטרנט ורעננו את הדף. אם זה נמשך — פנו לתמיכה.
-          </AlertDescription>
+          <AlertDescription>חלק מהמידע לא נטען. בדקו חיבור לאינטרנט ורעננו.</AlertDescription>
         </Alert>
       )}
 
-      {/* ── Hero Banner (light — aligned with atlas-page-hero & app shell) ── */}
-      <div
-        className="relative overflow-hidden rounded-2xl border border-teal-200/40 bg-gradient-to-br from-white via-zinc-50/80 to-teal-50/30 p-6 md:p-8 md:pr-10"
-        style={{ boxShadow: '0 2px 24px rgba(15, 23, 42, 0.05)' }}
-      >
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden rounded-2xl border border-teal-200/40 bg-gradient-to-br from-white via-zinc-50/80 to-teal-50/30 p-6 md:p-8 md:pr-10" style={{ boxShadow: '0 2px 24px rgba(15, 23, 42, 0.05)' }}>
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
           <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full opacity-[0.12] blur-3xl bg-teal-400" />
           <div className="absolute -bottom-14 -left-10 w-48 h-48 rounded-full opacity-[0.08] blur-3xl bg-slate-400" />
@@ -399,198 +436,111 @@ export default function Dashboard({ user, selectedPropertyId }) {
         >
           <div className="max-w-xl lg:max-w-[min(36rem,52%)]">
             <p className="text-sm font-semibold mb-2 text-teal-700 tabular-nums">
-              {format(now, "EEEE, d MMMM yyyy", { locale: he })}
+              {format(now, 'EEEE, d MMMM yyyy', { locale: he })}
             </p>
             <h1 className="text-2xl md:text-[1.65rem] font-extrabold text-zinc-900 tracking-tight leading-snug flex flex-wrap items-center gap-2">
               <span>{greeting}, {userName}</span>
-              <Sparkles className="w-5 h-5 text-teal-600 opacity-80 shrink-0" aria-hidden strokeWidth={2} />
+              <Sparkles className="w-5 h-5 text-teal-600 opacity-80 shrink-0" />
             </h1>
-            <p className="text-sm mt-3 leading-relaxed text-zinc-600 max-w-[65ch]">
-              {delightLine}
-            </p>
-            <p className="text-xs mt-3 font-medium text-zinc-500 max-w-[65ch]">
-              סיכום מהיר לניהול יומיומי — הזמנות, לידים וכספים.
-            </p>
+            <p className="text-sm mt-3 leading-relaxed text-zinc-600 max-w-[65ch]">{delightLine}</p>
           </div>
           <div className="flex gap-2 flex-shrink-0 flex-wrap lg:pt-1 lg:ms-auto">
-            <MotionLink
-              to={createPageUrl('Leads')}
-              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-              transition={tapTween}
-              className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold inline-flex items-center justify-center touch-manipulation border border-zinc-200 bg-white text-zinc-700 shadow-sm transition-[background-color,border-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50 [@media(hover:hover)_and_(pointer:fine)]:hover:border-zinc-300"
-            >
-              <Plus className="w-3.5 h-3.5 text-zinc-600 shrink-0" strokeWidth={2} aria-hidden />
-              ליד חדש
+            <MotionLink to={createPageUrl('Leads')} whileTap={reduceMotion ? undefined : { scale: 0.97 }} transition={tapTween}
+              className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-semibold inline-flex items-center justify-center touch-manipulation border border-zinc-200 bg-white text-zinc-700 shadow-sm transition-colors duration-150">
+              <Plus className="w-3.5 h-3.5 text-zinc-600 shrink-0" strokeWidth={2} /> ליד חדש
             </MotionLink>
-            <MotionLink
-              to={createPageUrl('Bookings')}
-              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-              transition={tapTween}
+            <MotionLink to={createPageUrl('Bookings')} whileTap={reduceMotion ? undefined : { scale: 0.97 }} transition={tapTween}
               className="min-h-[44px] h-11 text-xs gap-1.5 px-4 rounded-xl font-bold inline-flex items-center justify-center touch-manipulation text-[#0B1220] shadow-[0_4px_14px_rgba(0,209,193,0.28)]"
-              style={{
-                background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
-              }}
-            >
-              <Plus className="w-3.5 h-3.5 shrink-0" strokeWidth={2} aria-hidden />
-              הזמנה חדשה
+              style={{ background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)' }}>
+              <Plus className="w-3.5 h-3.5 shrink-0" strokeWidth={2} /> הזמנה חדשה
             </MotionLink>
           </div>
         </motion.div>
       </div>
 
-      {/* ── Today Section (mobile-first) ── */}
+      {/* Today Section */}
       {(todayCheckIns.length > 0 || todayCheckOuts.length > 0) && (
-        <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
-          <div className="flex items-center gap-2 px-5 py-3.5 border-b border-gray-50">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <h2 className="text-sm font-bold text-gray-800">היום</h2>
-            <span className="text-xs text-gray-400 font-medium">
-              {format(now, 'EEEE, d MMMM', { locale: he })}
-            </span>
-          </div>
-          <div className="grid grid-cols-2 divide-x divide-x-reverse divide-gray-100">
-            <div className="p-4">
-              <div className="flex items-center gap-1.5 mb-3">
-                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                  ↓ כניסות
-                </span>
-                <span className="text-xs font-bold text-gray-700">{todayCheckIns.length}</span>
-              </div>
-              {todayCheckIns.length === 0 ? (
-                <p className="text-xs text-gray-400">אין כניסות היום</p>
-              ) : (
+        <WidgetErrorBoundary>
+          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
+            <div className="flex items-center gap-2 px-5 py-3.5 border-b border-gray-50">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <h2 className="text-sm font-bold text-gray-800">היום</h2>
+              <span className="text-xs text-gray-400 font-medium">{format(now, 'EEEE, d MMMM', { locale: he })}</span>
+            </div>
+            <div className="grid grid-cols-2 divide-x divide-x-reverse divide-gray-100">
+              <div className="p-4">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">↓ כניסות</span>
+                  <span className="text-xs font-bold text-gray-700">{todayCheckIns.length}</span>
+                </div>
                 <div className="space-y-2">
-                  {todayCheckIns.map(b => (
-                    <Link key={b.id} to={b.id ? `${createPageUrl('BookingDetail')}/${b.id}` : createPageUrl('Bookings')} className="block">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
-                          {(b.guest_name || 'א')[0]}
-                        </div>
+                  {todayCheckIns.length === 0 ? <p className="text-xs text-gray-400">אין כניסות היום</p> :
+                    todayCheckIns.map(b => (
+                      <Link key={b.id} to={b.id ? `${createPageUrl('BookingDetail')}/${b.id}` : createPageUrl('Bookings')} className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">{(b.guest_name || 'א')[0]}</div>
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-gray-800 truncate">{b.guest_name || 'אורח'}</p>
                           {b.nights && <p className="text-[10px] text-gray-400">{b.nights} לילות</p>}
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    ))}
                 </div>
-              )}
-            </div>
-            <div className="p-4">
-              <div className="flex items-center gap-1.5 mb-3">
-                <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
-                  ↑ יציאות
-                </span>
-                <span className="text-xs font-bold text-gray-700">{todayCheckOuts.length}</span>
               </div>
-              {todayCheckOuts.length === 0 ? (
-                <p className="text-xs text-gray-400">אין יציאות היום</p>
-              ) : (
+              <div className="p-4">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">↑ יציאות</span>
+                  <span className="text-xs font-bold text-gray-700">{todayCheckOuts.length}</span>
+                </div>
                 <div className="space-y-2">
-                  {todayCheckOuts.map(b => (
-                    <Link key={b.id} to={b.id ? `${createPageUrl('BookingDetail')}/${b.id}` : createPageUrl('Bookings')} className="block">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">
-                          {(b.guest_name || 'א')[0]}
-                        </div>
+                  {todayCheckOuts.length === 0 ? <p className="text-xs text-gray-400">אין יציאות היום</p> :
+                    todayCheckOuts.map(b => (
+                      <Link key={b.id} to={b.id ? `${createPageUrl('BookingDetail')}/${b.id}` : createPageUrl('Bookings')} className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">{(b.guest_name || 'א')[0]}</div>
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-gray-800 truncate">{b.guest_name || 'אורח'}</p>
                           {b.nights && <p className="text-[10px] text-gray-400">{b.nights} לילות</p>}
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    ))}
                 </div>
-              )}
+              </div>
             </div>
           </div>
-        </div>
+        </WidgetErrorBoundary>
       )}
 
-      {/* ── KPI Stats Grid (staggered entrance) ── */}
-      <motion.div
-        className="grid grid-cols-2 lg:grid-cols-4 gap-3"
-        variants={kpiParentVariants}
-        initial={reduceMotion ? false : 'hidden'}
-        animate="show"
-      >
+      {/* KPI Stats */}
+      <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-3" variants={kpiParentVariants} initial={reduceMotion ? false : 'hidden'} animate="show">
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard
-            title="הזמנות השבוע"
-            value={bookingsLoading ? '—' : stats.thisWeekBookings.length}
-            subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`}
-            icon={CalendarDays}
-            gradient="bg-gradient-to-br from-blue-50 to-blue-100/60"
-            iconClass="icon-blue"
-            loading={bookingsLoading}
-          />
+          <StatCard title="הזמנות השבוע" value={bookingsLoading ? '—' : stats.thisWeekBookings.length} subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`} icon={CalendarDays} iconClass="icon-blue" loading={bookingsLoading} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard
-            title="לידים חדשים"
-            value={leadsLoading ? '—' : stats.newLeads.length}
-            subtitle={`${leads.length} לידים סה"כ`}
-            icon={Users}
-            gradient="bg-gradient-to-br from-violet-50 to-purple-100/60"
-            iconClass="icon-purple"
-            loading={leadsLoading}
-          />
+          <StatCard title="לידים חדשים" value={leadsLoading ? '—' : stats.newLeads.length} subtitle={`${leads.length} לידים סה"כ`} icon={Users} iconClass="icon-purple" loading={leadsLoading} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard
-            title="הכנסות"
-            value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')}
-            subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'}
-            icon={Wallet}
-            gradient="bg-gradient-to-br from-teal-50 to-emerald-100/60"
-            iconClass="icon-teal"
-            loading={paymentsLoading}
-          />
+          <StatCard title="הכנסות" value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')} subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'} icon={Wallet} iconClass="icon-teal" loading={paymentsLoading} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard
-            title="דירוג ממוצע"
-            value={reviewsLoading ? '—' : (stats.avgRating ? `★ ${stats.avgRating}` : '—')}
-            subtitle={`${reviews.length} ביקורות`}
-            icon={Star}
-            gradient="bg-gradient-to-br from-amber-50 to-yellow-100/60"
-            iconClass="icon-amber"
-            loading={reviewsLoading}
-          />
+          <StatCard title="דירוג ממוצע" value={stats.avgRating ? `★ ${stats.avgRating}` : '—'} subtitle={`${reviews.length} ביקורות`} icon={Star} iconClass="icon-amber" />
         </motion.div>
       </motion.div>
 
-      {/* ── Main Content Grid ── */}
+      {/* Main Content Grid */}
       <div className="grid md:grid-cols-2 gap-4">
-        {/* Upcoming Bookings */}
-        <SectionCard
-          title="הזמנות קרובות"
-          icon={CalendarDays}
-          viewAllLink={createPageUrl('Bookings')}
-          loading={bookingsLoading}
-          emptyIcon={CalendarDays}
-          emptyText="אין עדיין הזמנות קרובות"
-          addLink={createPageUrl('Bookings')}
-        >
-          {upcomingBookings.map(b => <BookingRow key={b.id} booking={b} />)}
-        </SectionCard>
-
-        {/* Recent Leads */}
-        <SectionCard
-          title="לידים אחרונים"
-          icon={Users}
-          viewAllLink={createPageUrl('Leads')}
-          loading={leadsLoading}
-          emptyIcon={Users}
-          emptyText="עדיין אין לידים — רגע אחד ומתחילים"
-          addLink={createPageUrl('Leads')}
-        >
-          {recentLeads.map(l => <LeadRow key={l.id} lead={l} />)}
-        </SectionCard>
+        <WidgetErrorBoundary>
+          <SectionCard title="הזמנות קרובות" icon={CalendarDays} viewAllLink={createPageUrl('Bookings')} loading={bookingsLoading} emptyIcon={CalendarDays} emptyText="אין עדיין הזמנות קרובות" addLink={createPageUrl('Bookings')}>
+            {upcomingBookings.map(b => <BookingRow key={b.id} booking={b} />)}
+          </SectionCard>
+        </WidgetErrorBoundary>
+        <WidgetErrorBoundary>
+          <SectionCard title="לידים אחרונים" icon={Users} viewAllLink={createPageUrl('Leads')} loading={leadsLoading} emptyIcon={Users} emptyText="עדיין אין לידים" addLink={createPageUrl('Leads')}>
+            {recentLeads.map(l => <LeadRow key={l.id} lead={l} />)}
+          </SectionCard>
+        </WidgetErrorBoundary>
       </div>
 
-      {/* ── Quick Actions ── */}
-      <div className="rounded-2xl p-5 md:p-6" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 24px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.95)' }}>
+      {/* Quick Actions */}
+      <div className="rounded-2xl p-5 md:p-6" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 24px rgba(0,0,0,0.05)' }}>
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,209,193,0.12)' }}>
@@ -598,190 +548,109 @@ export default function Dashboard({ user, selectedPropertyId }) {
             </div>
             <h2 className="text-base font-bold text-gray-900 tracking-tight">מה נעשה עכשיו?</h2>
           </div>
-          <p className="text-xs text-gray-500 ms-9 leading-relaxed">הזמנות, יומן, לידים, תשלומים והגדרות — מה שרוב המארחים צריכים כל יום.</p>
+          <p className="text-xs text-gray-500 ms-9">הזמנות, יומן, לידים, תשלומים והגדרות — הכלים היומיומיים.</p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <QuickAction label="הזמנות"     icon={CalendarDays}  page="Bookings"      iconClass="icon-blue" />
-          <QuickAction label="יומן"       icon={CalendarRange} page="MultiCalendar" iconClass="icon-teal" />
-          <QuickAction label="לידים"      icon={Users}         page="Leads"         iconClass="icon-purple" />
-          <QuickAction label="הודעות"     icon={MessageSquare} page="Messages"      iconClass="icon-green" />
-          <QuickAction label="תשלומים"    icon={Wallet}        page="Payments"      iconClass="icon-amber" />
-          <QuickAction label="הגדרות"     icon={Settings}      page="Settings"      iconClass="icon-rose" />
+          <QuickAction label="הזמנות" icon={CalendarDays} page="Bookings" iconClass="icon-blue" />
+          <QuickAction label="יומן" icon={CalendarRange} page="MultiCalendar" iconClass="icon-teal" />
+          <QuickAction label="לידים" icon={Users} page="Leads" iconClass="icon-purple" />
+          <QuickAction label="הודעות" icon={MessageSquare} page="Messages" iconClass="icon-green" />
+          <QuickAction label="תשלומים" icon={Wallet} page="Payments" iconClass="icon-amber" />
+          <QuickAction label="הגדרות" icon={Settings} page="Settings" iconClass="icon-rose" />
         </div>
       </div>
 
-      {/* ── Getting Started Progress ── */}
+      {/* Getting Started */}
       {(() => {
         const steps = [
-          { key: 'property', label: 'הוסף נכס ראשון', desc: 'הכנס את פרטי המתחם, כתובת ותמונות', icon: Home, link: 'Settings', done: properties.length > 0 },
+          { key: 'property', label: 'הוסף נכס ראשון', desc: 'פרטי מתחם, כתובת ותמונות', icon: Home, link: 'Settings', done: properties.length > 0 },
           { key: 'integration', label: 'חבר יומן או ערוץ הזמנות', desc: 'סנכרן Airbnb, Booking.com או Google Calendar', icon: Link2, link: 'Integrations', done: false },
           { key: 'payment', label: 'הגדר שער תשלומים', desc: 'חבר Stripe, PayPal או שער מקומי', icon: CreditCard, link: 'Integrations', done: false },
-          { key: 'booking', label: 'צור הזמנה ראשונה', desc: 'הוסף הזמנה ידנית או חכה לסנכרון', icon: CalendarDays, link: 'Bookings', done: bookings.length > 0 },
+          { key: 'booking', label: 'צור הזמנה ראשונה', desc: 'הוסף ידנית או חכה לסנכרון', icon: CalendarDays, link: 'Bookings', done: bookings.length > 0 },
         ];
         const doneCount = steps.filter(s => s.done).length;
         const pct = Math.round((doneCount / steps.length) * 100);
         if (pct === 100) return null;
         return (
-          <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
-            <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,209,193,0.12)' }}>
-                    <Target className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
+          <WidgetErrorBoundary>
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+              <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,209,193,0.12)' }}>
+                      <Target className="w-3.5 h-3.5" style={{ color: '#00D1C1' }} />
+                    </div>
+                    <h2 className="text-sm font-semibold text-gray-800">התחלה מהירה</h2>
                   </div>
-                  <h2 className="text-sm font-semibold text-gray-800">התחלה מהירה</h2>
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ color: '#00a89a', background: 'rgba(0,209,193,0.10)' }}>{doneCount}/{steps.length} הושלמו</span>
                 </div>
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ color: '#00a89a', background: 'rgba(0,209,193,0.10)' }}>{doneCount}/{steps.length} הושלמו</span>
+                <div className="relative w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.07)' }}>
+                  <motion.div className="absolute inset-y-0 left-0 right-0 rounded-full" initial={{ scaleX: 0 }} animate={{ scaleX: pct / 100 }} transition={{ type: 'spring', stiffness: 100, damping: 24, mass: 0.82 }} style={{ transformOrigin: '100% 50%', background: 'linear-gradient(90deg, #00D1C1 0%, #00a89a 100%)' }} />
+                </div>
               </div>
-              <div className="relative w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.07)' }}>
-                <motion.div
-                  className="absolute inset-y-0 left-0 right-0 rounded-full"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: pct / 100 }}
-                  transition={{ type: 'spring', stiffness: 100, damping: 24, mass: 0.82 }}
-                  style={{
-                    transformOrigin: '100% 50%',
-                    background: 'linear-gradient(90deg, #00D1C1 0%, #00a89a 100%)',
-                  }}
-                />
+              <div className="divide-y divide-gray-50">
+                {steps.map(step => (
+                  <Link key={step.key} to={createPageUrl(step.link)} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 transition-colors touch-manipulation">
+                    <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0', step.done ? 'bg-emerald-100' : 'bg-gray-100')}>
+                      {step.done ? <CheckCircle2 className="text-emerald-600" style={{ width: 18, height: 18 }} /> : <step.icon className="w-4 h-4 text-gray-400" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={cn('text-sm font-semibold', step.done ? 'text-gray-400 line-through' : 'text-gray-800')}>{step.label}</p>
+                      <p className="text-xs text-gray-400">{step.desc}</p>
+                    </div>
+                    {!step.done && <ArrowUpRight className="w-4 h-4 text-indigo-400 flex-shrink-0" />}
+                  </Link>
+                ))}
               </div>
             </div>
-            <div className="divide-y divide-gray-50">
-              {steps.map((step) => (
-                <Link key={step.key} to={createPageUrl(step.link)} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 transition-[background-color] duration-150 atlas-ease-out-trans touch-manipulation">
-                  <div className={cn(
-                    "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
-                    step.done ? "bg-emerald-100" : "bg-gray-100"
-                  )}>
-                    {step.done
-                      ? <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600" style={{ width: 18, height: 18 }} />
-                      : <step.icon className="w-4 h-4 text-gray-400" />
-                    }
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={cn("text-sm font-semibold", step.done ? "text-gray-400 line-through" : "text-gray-800")}>{step.label}</p>
-                    <p className="text-xs text-gray-400">{step.desc}</p>
-                  </div>
-                  {!step.done && <ArrowUpRight className="w-4 h-4 text-indigo-400 flex-shrink-0" />}
-                </Link>
-              ))}
-            </div>
-          </div>
+          </WidgetErrorBoundary>
         );
       })()}
 
-      {/* ── Insights & Activity — asymmetric columns (variance ~6) ── */}
+      {/* Insights */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-        {/* Occupancy Gauge */}
-        <div className="md:col-span-5 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-              <BarChart2 className="w-3.5 h-3.5 text-emerald-600" />
-            </div>
-            <h3 className="text-sm font-semibold text-gray-800">שיעור תפוסה</h3>
-          </div>
-          {(() => {
-            const occupancy = properties.length > 0 && bookings.length > 0
-              ? Math.min(100, Math.round((bookings.filter(b => b.status === 'APPROVED' || b.status === 'CONFIRMED').length / Math.max(properties.length * 4, 1)) * 100))
-              : 0;
-            return (
-              <div className="flex flex-col items-center">
-                <div className="relative w-28 h-28">
-                  <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#F3F4F6" strokeWidth="8" />
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="url(#gauge-grad)" strokeWidth="8" strokeLinecap="round"
-                      strokeDasharray={`${occupancy * 2.64} 264`}
-                      style={{ transition: 'stroke-dasharray 0.55s cubic-bezier(0.23, 1, 0.32, 1)' }}
-                    />
-                    <defs><linearGradient id="gauge-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#10B981" /><stop offset="100%" stopColor="#059669" /></linearGradient></defs>
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-bold text-zinc-900 atlas-tabular">{occupancy}%</span>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-400 mt-2">מתוך {properties.length} נכסים</p>
-              </div>
-            );
-          })()}
-        </div>
-
-        {/* Revenue Summary */}
-        <div className="md:col-span-4 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
-              <TrendingUp className="w-3.5 h-3.5 text-violet-600" />
-            </div>
-            <h3 className="text-sm font-semibold text-gray-800">מגמת הכנסות</h3>
-          </div>
-          <div className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-zinc-900 atlas-tabular">
-                {stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'אין עדיין'}
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {stats.totalRevenue > 0 ? 'סה״כ הכנסות' : 'הוסף הזמנות ותשלומים'}
-              </p>
-            </div>
-            <div className="flex items-end gap-1.5 h-16">
-              {[25, 40, 35, 55, 65, 50, 80, 70, 90, 85, 95, 100].map((h, i) => (
-                <div key={i} className="flex-1 rounded-t origin-bottom" style={{
-                  height: `${h}%`,
-                  background: `linear-gradient(180deg, ${i >= 10 ? '#8B5CF6' : '#C4B5FD'} 0%, ${i >= 10 ? '#7C3AED' : '#A78BFA'} 100%)`,
-                  opacity: 0.4 + (i * 0.05),
-                  transform: 'scaleY(1)',
-                  transition: 'opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1)',
-                }} />
-              ))}
-            </div>
-            <p className="text-xs text-gray-400 text-center">12 חודשים אחרונים</p>
-          </div>
-        </div>
-
+        <WidgetErrorBoundary>
+          <OccupancyGauge bookings={bookings} properties={properties} />
+        </WidgetErrorBoundary>
+        <WidgetErrorBoundary>
+          <RevenueChart payments={payments} />
+        </WidgetErrorBoundary>
         {/* Activity Timeline */}
-        <div className="md:col-span-3 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-              <Activity className="w-3.5 h-3.5 text-blue-600" />
+        <WidgetErrorBoundary>
+          <div className="md:col-span-3 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><Activity className="w-3.5 h-3.5 text-blue-600" /></div>
+              <h3 className="text-sm font-semibold text-gray-800">פעילות אחרונה</h3>
             </div>
-            <h3 className="text-sm font-semibold text-gray-800">פעילות אחרונה</h3>
+            {bookings.length === 0 && leads.length === 0 ? (
+              <div className="text-center py-6 px-2">
+                <Activity className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-500">עדיין שקט פה</p>
+                <p className="text-xs text-gray-400 mt-1 leading-relaxed">ברגע שתוסיף הזמנה — נרקום ציר זמן.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {[
+                  ...bookings.slice(0, 2).map(b => ({ type: 'booking', icon: CalendarDays, color: 'text-blue-600 bg-blue-50', text: `הזמנה ${b.status === 'APPROVED' ? 'אושרה' : 'נוספה'} — ${b.guest_name || 'אורח'}`, time: b.created_at })),
+                  ...leads.slice(0, 2).map(l => ({ type: 'lead', icon: Users, color: 'text-violet-600 bg-violet-50', text: `ליד חדש — ${l.full_name || l.name || 'ללא שם'}`, time: l.created_at })),
+                ].sort((a, b) => (b.time || '').localeCompare(a.time || '')).slice(0, 4).map((item, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5', item.color)}>
+                      <item.icon className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm text-gray-700 truncate">{item.text}</p>
+                      <p className="text-xs text-gray-400">{item.time ? format(parseISO(item.time), 'd MMM, HH:mm', { locale: he }) : ''}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          {bookings.length === 0 && leads.length === 0 ? (
-            <div className="text-center py-6 px-2">
-              <Activity className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-              <p className="text-sm font-medium text-gray-500">עדיין שקט פה</p>
-              <p className="text-xs text-gray-400 mt-1 leading-relaxed">ברגע שתוסיף הזמנה או ליד — נרקום לך ציר זמן ברור.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {[...bookings.slice(0, 2).map(b => ({
-                type: 'booking',
-                icon: CalendarDays,
-                color: 'text-blue-600 bg-blue-50',
-                text: `הזמנה ${b.status === 'APPROVED' ? 'אושרה' : 'נוספה'} — ${b.guest_name || 'אורח'}`,
-                time: b.created_at || b.check_in_date,
-              })), ...leads.slice(0, 2).map(l => ({
-                type: 'lead',
-                icon: Users,
-                color: 'text-violet-600 bg-violet-50',
-                text: `ליד חדש — ${l.full_name || l.name || 'ללא שם'}`,
-                time: l.created_at,
-              }))].sort((a, b) => (b.time || '').localeCompare(a.time || '')).slice(0, 4).map((item, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5", item.color)}>
-                    <item.icon className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm text-gray-700 truncate">{item.text}</p>
-                    <p className="text-xs text-gray-400">{item.time ? format(parseISO(item.time), 'd MMM, HH:mm', { locale: he }) : ''}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        </WidgetErrorBoundary>
       </div>
 
-      {/* ── Quick links (operational focus) ── */}
+      {/* Quick Links */}
       <div className="rounded-2xl p-6 md:p-7" style={{ background: 'linear-gradient(135deg, rgba(0,209,193,0.06) 0%, rgba(255,255,255,0.96) 48%, rgba(79,70,229,0.05) 100%)', border: '1px solid rgba(0,209,193,0.14)', boxShadow: '0 4px 28px rgba(0,209,193,0.06)' }}>
         <div className="flex items-center gap-3 mb-5">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00D1C1] to-[#00a89a] flex items-center justify-center shadow-md shadow-teal-500/20">
@@ -789,7 +658,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
           </div>
           <div>
             <h2 className="text-base md:text-lg font-bold text-gray-900 tracking-tight">מעבר מהיר</h2>
-            <p className="text-xs md:text-sm text-gray-500 leading-relaxed">כלים מרכזיים לניהול שוטף — לוח, תזרים ומסמכים.</p>
+            <p className="text-xs md:text-sm text-gray-500">כלים מרכזיים לניהול שוטף.</p>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -800,10 +669,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
             { icon: FileText, label: 'חשבוניות', desc: 'חשבוניות ומסמכים', link: 'Invoices', color: 'from-violet-400 to-purple-500' },
           ].map((feat, i) => (
             <Link key={i} to={createPageUrl(feat.link)} className="group block h-full touch-manipulation">
-              <div
-                className="atlas-dash-link-card rounded-xl p-4 h-full cursor-pointer"
-                style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', backdropFilter: 'blur(12px)' }}
-              >
+              <div className="atlas-dash-link-card rounded-xl p-4 h-full cursor-pointer" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', backdropFilter: 'blur(12px)' }}>
                 <div className={cn('atlas-dash-link-card-icon w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center mb-3 shadow-sm', feat.color)}>
                   <feat.icon className="w-4 h-4 text-white" />
                 </div>
@@ -815,28 +681,21 @@ export default function Dashboard({ user, selectedPropertyId }) {
         </div>
       </div>
 
-      {/* ── Pro Upgrade Banner ── */}
-      <div className="rounded-2xl border border-amber-200/60 bg-gradient-to-br from-amber-50/90 via-white to-teal-50/40 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm" style={{ boxShadow: 'var(--atlas-shadow-card, 0 4px 24px rgba(15,23,42,0.06))' }}>
+      {/* Trial Banner */}
+      <div className="rounded-2xl border border-amber-200/60 bg-gradient-to-br from-amber-50/90 via-white to-teal-50/40 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-amber-500/20 flex-shrink-0">
             <Gift className="w-6 h-6 text-white" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">14 ימי ניסיון חינם</h3>
-            <p className="text-sm text-gray-600">כל התכונות פתוחות — ללא כרטיס אשראי. נסה עכשיו וראה את ההבדל.</p>
+            <p className="text-sm text-gray-600">כל התכונות פתוחות — ללא כרטיס אשראי.</p>
           </div>
         </div>
-        <MotionLink
-          to={createPageUrl('Subscription')}
-          whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-          transition={tapTween}
+        <MotionLink to={createPageUrl('Subscription')} whileTap={reduceMotion ? undefined : { scale: 0.97 }} transition={tapTween}
           className="inline-flex items-center gap-1.5 px-6 h-10 flex-shrink-0 rounded-xl font-bold text-sm text-[#0B1220] shadow-[0_4px_14px_rgba(0,209,193,0.28)] touch-manipulation"
-          style={{
-            background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
-          }}
-        >
-          שדרג עכשיו
-          <ArrowUpRight className="w-4 h-4 shrink-0" strokeWidth={2} aria-hidden />
+          style={{ background: 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)' }}>
+          שדרג עכשיו <ArrowUpRight className="w-4 h-4 shrink-0" strokeWidth={2} />
         </MotionLink>
       </div>
 

@@ -144,8 +144,8 @@ function createMockDb() {
       return { rows: [booking], rowCount: 1 };
     }
 
-    if (q.includes('INSERT INTO public.payments (org_id, booking_id, amount, payment_type, status)')) {
-      const payment = { id: uid(), org_id: params[0], booking_id: params[1], amount: params[2], payment_type: params[3], status: params[4] };
+    if (q.includes('INSERT INTO public.payments (org_id, booking_id, amount, payment_type, currency, status)')) {
+      const payment = { id: uid(), org_id: params[0], booking_id: params[1], amount: params[2], payment_type: params[3], currency: 'ILS', status: params[4] };
       db.payments.push(payment);
       return { rows: [payment], rowCount: 1 };
     }

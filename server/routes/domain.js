@@ -115,10 +115,11 @@ router.post('/payments', requireAuth, async (req, res) => {
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
 
   const data = parsed.data;
+  const statusDb = String(data.status).toUpperCase();
   const { rows } = await pool.query(
-    `INSERT INTO public.payments (org_id, booking_id, amount, payment_type, status)
-     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-    [req.orgId, data.booking_id, data.amount, data.payment_type, data.status]
+    `INSERT INTO public.payments (org_id, booking_id, amount, payment_type, currency, status)
+     VALUES ($1, $2, $3, $4, 'ILS', $5) RETURNING *`,
+    [req.orgId, data.booking_id, data.amount, data.payment_type, statusDb]
   );
   return res.status(201).json(rows[0]);
 });
@@ -133,8 +134,8 @@ router.post('/automations/booking-confirmed', requireAuth, async (req, res) => {
   if (bookingRows[0].status !== 'CONFIRMED') return res.status(409).json({ error: 'Booking not confirmed' });
 
   await pool.query(
-    `INSERT INTO public.message_logs (org_id, guest_name, channel, message_type, status, content)
-     VALUES ($1, 'guest', 'whatsapp', 'before_checkin', 'queued', 'Automated check-in message')`,
+    `INSERT INTO public.message_logs (org_id, channel, direction, recipient, subject, body, status)
+     VALUES ($1, 'whatsapp', 'outbound', 'guest', 'before_checkin', 'Automated check-in message', 'queued')`,
     [req.orgId]
   );
 
