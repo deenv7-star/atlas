@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, OnChangeFn, SortingState } from '@tanstack/react-table';
 import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { AtlasTable, type AtlasCsvColumn, actionsColumn, bookingStatusColumn, currencyColumn, dateColumn, guestNameColumn } from '@/components/ui/AtlasTable';
@@ -39,6 +39,10 @@ export type BookingsTableProps = {
   onDelete: (id: string) => void;
   onBulkDelete: (rows: BookingRow[]) => void;
   onBulkSetStatus: (rows: BookingRow[], status: string) => void | Promise<void>;
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
+  manualSorting?: boolean;
+  highlightRowId?: string | null;
 };
 
 function formatHeDate(iso: string | null | undefined): string {
@@ -51,7 +55,20 @@ function formatHeDate(iso: string | null | undefined): string {
 }
 
 export function BookingsTable(props: BookingsTableProps): React.ReactElement {
-  const { bookings, properties, isLoading, error, onEdit, onDelete, onBulkDelete, onBulkSetStatus } = props;
+  const {
+    bookings,
+    properties,
+    isLoading,
+    error,
+    onEdit,
+    onDelete,
+    onBulkDelete,
+    onBulkSetStatus,
+    sorting,
+    onSortingChange,
+    manualSorting,
+    highlightRowId,
+  } = props;
   const [statusMenuRows, setStatusMenuRows] = useState<BookingRow[] | null>(null);
 
   const propertyName = useCallback(
@@ -127,9 +144,13 @@ export function BookingsTable(props: BookingsTableProps): React.ReactElement {
         isLoading={isLoading}
         error={error}
         onRowClick={onEdit}
+        sorting={sorting}
+        onSortingChange={onSortingChange}
+        manualSorting={manualSorting}
+        highlightRowId={highlightRowId}
         enableSelection
         enableColumnResize
-        enableMultiSort
+        enableMultiSort={!(sorting !== undefined && onSortingChange !== undefined)}
         stickyHeader
         virtualScroll={bookings.length >= 400}
         emptyMessage="אין הזמנות להצגה"

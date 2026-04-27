@@ -43,6 +43,7 @@ export type MaintenanceTableProps = {
   isLoading: boolean;
   error: Error | null;
   onOpen: (row: MaintenanceRequestRow) => void;
+  highlightRowId?: string | null;
 };
 
 function formatOpened(iso: string | null | undefined): string {
@@ -55,7 +56,7 @@ function formatOpened(iso: string | null | undefined): string {
 }
 
 export function MaintenanceTable(props: MaintenanceTableProps): React.ReactElement {
-  const { requests, properties, isLoading, error, onOpen } = props;
+  const { requests, properties, isLoading, error, onOpen, highlightRowId } = props;
 
   const propertyName = useCallback(
     (pid: string | null | undefined) => properties.find((p) => p.id === pid)?.name || '—',
@@ -132,6 +133,7 @@ export function MaintenanceTable(props: MaintenanceTableProps): React.ReactEleme
       isLoading={isLoading}
       error={error}
       onRowClick={onOpen}
+      highlightRowId={highlightRowId}
       enableSelection={false}
       enableColumnResize
       enableMultiSort

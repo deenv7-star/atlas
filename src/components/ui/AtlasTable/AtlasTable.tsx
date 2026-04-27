@@ -7,6 +7,7 @@ import {
   type ColumnDef,
   type ColumnSizingState,
   type Header,
+  type OnChangeFn,
   type Row,
   type RowSelectionState,
   type SortingState,
@@ -59,6 +60,13 @@ export type AtlasTableProps<TData extends object> = {
     onChangeStatus?: (rows: TData[]) => void;
     onExportCsv?: (rows: TData[]) => void;
   };
+  /** Controlled sort state (e.g. URL). Provide both `sorting` and `onSortingChange`. */
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
+  /** Parent pre-sorts `data` (e.g. pagination); keep header UI in sync without re-sorting rows. */
+  manualSorting?: boolean;
+  /** When set, scrolls row into view and highlights for ~2s (e.g. deep link). */
+  highlightRowId?: string | null;
 };
 
 const ROW_H = 48;
@@ -168,15 +176,43 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
     className,
     onCellCommit,
     bulkBar,
+    sorting: sortingControlled,
+    onSortingChange: onSortingChangeControlled,
+    manualSorting = false,
+    highlightRowId = null,
   } = props;
 
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [internalSorting, setInternalSorting] = useState<SortingState>([]);
+  const sorting = sortingControlled !== undefined ? sortingControlled : internalSorting;
+  const setSorting: OnChangeFn<SortingState> = onSortingChangeControlled ?? setInternalSorting;
+  const [flashRowId, setFlashRowId] = useState<string | null>(null);
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(() => loadColumnSizing(tableId) ?? {});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => loadColumnVisibility(tableId) ?? {});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const lastClickedIndex = useRef<number | null>(null);
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerSelectRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!highlightRowId) {
+      setFlashRowId(null);
+      return;
+    }
+    setFlashRowId(highlightRowId);
+    const scroll = () => {
+      const root = bodyScrollRef.current;
+      if (!root) return;
+      const safe = highlightRowId.replace(/["\\]/g, '');
+      const el = root.querySelector(`[data-row-id="${safe}"]`);
+      el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
+    const raf = window.requestAnimationFrame(scroll);
+    const t = window.setTimeout(() => setFlashRowId(null), 2000);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.clearTimeout(t);
+    };
+  }, [highlightRowId]);
 
   const selectionColumn = useMemo<ColumnDef<TData, unknown>>(
     () => ({
@@ -207,7 +243,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
               e.stopPropagation();
               const flat = table.getRowModel().flatRows;
               const idx = flat.findIndex((r) => r.id === row.id);
-              if (e.nativeEvent.shiftKey && lastClickedIndex.current !== null && idx >= 0) {
+              if ((e.nativeEvent as MouseEvent).shiftKey && lastClickedIndex.current !== null && idx >= 0) {
                 const a = Math.min(lastClickedIndex.current, idx);
                 const b = Math.max(lastClickedIndex.current, idx);
                 const next: RowSelectionState = { ...table.getState().rowSelection };
@@ -239,13 +275,14 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
     columns: tableColumns,
     state: { sorting, columnSizing, columnVisibility, rowSelection },
     onSortingChange: setSorting,
+    manualSorting,
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getRowId,
-    enableMultiSort,
+    enableMultiSort: manualSorting ? false : enableMultiSort,
     isMultiSortEvent: (e) => (e as MouseEvent).shiftKey,
     columnResizeMode: 'onChange',
     enableColumnResizing: enableColumnResize,
@@ -361,9 +398,11 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
     <div
       role="row"
       key={row.id}
+      data-row-id={row.id}
       className={cn(
         'grid items-center border-b border-gray-100/90 text-sm text-gray-800 transition-colors',
         row.getIsSelected() && 'bg-indigo-50/50',
+        flashRowId && row.id === flashRowId && 'bg-amber-50 ring-2 ring-amber-300/90 ring-inset',
         onRowClick && 'cursor-pointer hover:bg-gray-50/80',
       )}
       style={{ ...style, gridTemplateColumns: gridTemplate, minHeight: ROW_H }}

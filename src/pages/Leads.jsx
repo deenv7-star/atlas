@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { useLeads, useCreateLead, useUpdateLead, useDeleteLead, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,9 @@ import { GuestsTable } from '@/components/tables/GuestsTable';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { GuestForm } from '@/components/forms/GuestForm';
 import { emptyGuestFormValues } from '@/components/forms/atlasFormSchemas';
+import { useGuestsUrlState } from '@/hooks/url-state/useGuestsUrlState';
+import { sortGuestLeads } from '@/hooks/url-state/leadTableSort';
+import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 const STATUS_OPTIONS = [
   { value: 'NEW',        label: 'חדש',          color: 'bg-blue-100 text-blue-700 border-blue-200' },
@@ -25,6 +28,21 @@ const STATUS_OPTIONS = [
   { value: 'LOST',       label: 'לא רלוונטי',   color: 'bg-gray-100 text-gray-500 border-gray-200' },
 ];
 const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
+
+const STATUS_VALUE_SET = new Set(STATUS_OPTIONS.map((s) => s.value));
+
+function leadMatchesTags(tags, l) {
+  if (!tags.length) return true;
+  return tags.some((tag) => {
+    if (STATUS_VALUE_SET.has(tag)) return (l.status || '') === tag;
+    const q = tag.toLowerCase();
+    return (
+      (l.full_name || l.name || '').toLowerCase().includes(q) ||
+      (l.email || '').toLowerCase().includes(q) ||
+      (l.phone || '').includes(tag)
+    );
+  });
+}
 
 function leadEntityToGuestFormValues(lead) {
   if (!lead) return { ...emptyGuestFormValues };
@@ -45,13 +63,24 @@ function leadEntityToGuestFormValues(lead) {
   };
 }
 
-export default function LeadsPage({ user, selectedPropertyId }) {
+export default function LeadsPage({ user: _user, selectedPropertyId }) {
   const { toast } = useToast();
   const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
 
-  const [searchTerm, setSearchTerm]   = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [showDialog, setShowDialog]   = useState(false);
+  const url = useGuestsUrlState();
+  const {
+    search: searchTerm,
+    page,
+    pageSize,
+    sorting,
+    setSorting,
+    tags,
+    openGuestId,
+    setUrlState,
+    setOpenGuestId,
+  } = url;
+
+  const [showDialog, setShowDialog] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const guestDialogInterceptRef = useRef(null);
 
@@ -65,14 +94,35 @@ export default function LeadsPage({ user, selectedPropertyId }) {
   const updateMutation = useUpdateLead();
   const deleteMutation = useDeleteLead();
 
-  const filtered = useMemo(() => leads.filter(l => {
+  const filtered = useMemo(() => leads.filter((l) => {
     const matchSearch = !searchTerm ||
       (l.full_name || l.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (l.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (l.phone || '').includes(searchTerm);
-    const matchStatus = statusFilter === 'all' || l.status === statusFilter;
-    return matchSearch && matchStatus;
-  }), [leads, searchTerm, statusFilter]);
+    return matchSearch && leadMatchesTags(tags, l);
+  }), [leads, searchTerm, tags]);
+
+  const sorted = useMemo(() => sortGuestLeads(filtered, sorting), [filtered, sorting]);
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return sorted.slice(start, start + pageSize);
+  }, [sorted, page, pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize) || 1);
+
+  useEffect(() => {
+    if (page > totalPages) void setUrlState({ page: totalPages });
+  }, [page, totalPages, setUrlState]);
+
+  useEffect(() => {
+    if (!openGuestId || !leads.length) return;
+    const row = leads.find((x) => x.id === openGuestId);
+    if (row) {
+      setEditingLead(row);
+      setShowDialog(true);
+    }
+  }, [openGuestId, leads]);
 
   const counts = useMemo(() => ({
     total:     leads.length,
@@ -81,19 +131,21 @@ export default function LeadsPage({ user, selectedPropertyId }) {
     won:       leads.filter(l => l.status === 'CONFIRMED').length,
   }), [leads]);
 
-  // ── CRUD ─────────────────────────────────────────────────────────────────────
   const closeGuestDialog = () => {
     setShowDialog(false);
     setEditingLead(null);
+    setOpenGuestId(null);
   };
 
   const openNew = () => {
     setEditingLead(null);
     setShowDialog(true);
+    setOpenGuestId(null);
   };
-  const openEdit = lead => {
+  const openEdit = (lead) => {
     setEditingLead(lead);
     setShowDialog(true);
+    setOpenGuestId(lead.id);
   };
 
   const handleGuestSubmit = async (data) => {
@@ -127,14 +179,24 @@ export default function LeadsPage({ user, selectedPropertyId }) {
     rows.forEach((row) => deleteMutation.mutate(row.id));
   };
 
-  // ── CSV Export ───────────────────────────────────────────────────────────────
   const handleExport = () => {
-    const data = filtered.map(l => ({
+    const data = sorted.map(l => ({
       ...l, property_name: properties.find(p => p.id === l.property_id)?.name || '',
     }));
     exportToCSV(data, 'leads', LEAD_COLUMNS);
     toast({ title: `יוצאו ${data.length} לידים ל-CSV` });
   };
+
+  const setStatusTagFilter = (value) => {
+    if (value === 'all') {
+      void setUrlState({ tags: [], page: 1 });
+      return;
+    }
+    const isOnly = tags.length === 1 && tags[0] === value;
+    void setUrlState({ tags: isOnly ? [] : [value], page: 1 });
+  };
+
+  const activeStatusChip = tags.length === 1 && STATUS_VALUE_SET.has(tags[0]) ? tags[0] : 'all';
 
   return (
     <div className="atlas-page-shell max-w-5xl space-y-5" dir="rtl">
@@ -149,8 +211,7 @@ export default function LeadsPage({ user, selectedPropertyId }) {
         <p className="text-gray-600 text-sm leading-relaxed max-w-2xl">כל הפניות במקום אחד — מעקב סטטוס, פרטים מלאים, ודרך קצרה להפוך ליד להזמנה.</p>
       </div>
 
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-sm flex-shrink-0">
             <Users className="w-5 h-5 text-white" />
@@ -160,7 +221,8 @@ export default function LeadsPage({ user, selectedPropertyId }) {
             <p className="text-xs text-gray-400">{counts.total} לידים סה"כ</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <ShareViewButton className="h-11 rounded-xl text-sm" />
           <Button variant="outline" onClick={handleExport} className="gap-2 min-h-[44px] h-11 text-sm rounded-xl border-gray-200 hidden sm:flex">
             <Download className="w-4 h-4" /> ייצוא CSV
           </Button>
@@ -170,7 +232,6 @@ export default function LeadsPage({ user, selectedPropertyId }) {
         </div>
       </div>
 
-      {/* Stat pills */}
       <div className="flex flex-wrap gap-2">
         {[
           { label: 'סה"כ',   value: counts.total,    bg: 'bg-gray-100',   text: 'text-gray-700' },
@@ -185,44 +246,55 @@ export default function LeadsPage({ user, selectedPropertyId }) {
         ))}
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
         <div className="relative flex-1 w-full">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          <Input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="חפש לפי שם, אימייל או טלפון..." className="h-9 pr-9 text-sm rounded-xl border-gray-200 bg-white" />
+          <Input
+            value={searchTerm}
+            onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
+            placeholder="חפש לפי שם, אימייל או טלפון..."
+            className="h-9 pr-9 text-sm rounded-xl border-gray-200 bg-white"
+          />
         </div>
         <div className="flex gap-1.5 flex-wrap">
           {[{ value: 'all', label: 'הכל' }, ...STATUS_OPTIONS.slice(0, 3)].map(s => (
-            <button key={s.value} onClick={() => setStatusFilter(s.value)}
-              className={`min-h-[44px] h-11 px-4 rounded-full text-xs font-medium transition-all border touch-manipulation ${statusFilter === s.value ? 'bg-[#0B1220] text-white border-[#0B1220]' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}`}>
+            <button
+              key={s.value}
+              type="button"
+              onClick={() => setStatusTagFilter(s.value)}
+              className={`min-h-[44px] h-11 px-4 rounded-full text-xs font-medium transition-all border touch-manipulation ${
+                (s.value === 'all' && activeStatusChip === 'all') || (s.value !== 'all' && activeStatusChip === s.value)
+                  ? 'bg-[#0B1220] text-white border-[#0B1220]'
+                  : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+              }`}
+            >
               {s.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Guests / leads table */}
       <div className="atlas-card-surface overflow-hidden">
         {isError ? (
           <div className="p-4 text-center text-sm text-red-600">שגיאה בטעינת הלידים</div>
-        ) : filtered.length === 0 && !isLoading ? (
+        ) : sorted.length === 0 && !isLoading ? (
           <div className="text-center py-14 px-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 ring-1 ring-gray-100 flex items-center justify-center mx-auto mb-3">
               <Users className="w-7 h-7 text-gray-300" />
             </div>
             <p className="text-sm font-bold text-gray-600 mb-1">
-              {searchTerm || statusFilter !== 'all' ? 'לא נמצאו תוצאות' : 'עדיין אין לידים'}
+              {searchTerm || tags.length ? 'לא נמצאו תוצאות' : 'עדיין אין לידים'}
             </p>
-            {!searchTerm && statusFilter === 'all' && (
+            {!searchTerm && !tags.length && (
               <Button onClick={openNew} size="sm" className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl min-h-[44px] mt-3 touch-manipulation">
                 <Plus className="w-3.5 h-3.5" /> הוסף ליד ראשון
               </Button>
             )}
           </div>
         ) : (
-          <ErrorBoundary section="guests-table" variant="inline" resetKey={`${selectedPropertyId ?? 'all'}|${statusFilter}|${searchTerm}`}>
+          <ErrorBoundary section="guests-table" variant="inline" resetKey={`${selectedPropertyId ?? 'all'}|${searchTerm}|${tags.join(',')}|${page}`}>
             <GuestsTable
-              leads={filtered}
+              leads={paged}
               properties={properties}
               isLoading={isLoading}
               error={isError ? (leadsError instanceof Error ? leadsError : new Error('שגיאת טעינה')) : null}
@@ -230,12 +302,33 @@ export default function LeadsPage({ user, selectedPropertyId }) {
               onDelete={handleDelete}
               onBulkDelete={handleBulkDeleteRows}
               onBulkSetStatus={handleBulkSetStatus}
+              sorting={sorting}
+              onSortingChange={setSorting}
+              manualSorting
+              highlightRowId={openGuestId}
             />
+            {sorted.length > pageSize ? (
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 px-3 py-2 text-sm text-gray-600">
+                <span>עמוד {page} מתוך {totalPages} · {sorted.length} רשומות</span>
+                <div className="flex gap-2">
+                  <Button type="button" variant="outline" size="sm" className="h-9" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
+                  <Button type="button" variant="outline" size="sm" className="h-9" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
+                  <select
+                    className="h-9 rounded-lg border border-gray-200 px-2 text-sm"
+                    value={String(pageSize)}
+                    onChange={(e) => void setUrlState({ pageSize: Number(e.target.value), page: 1 })}
+                  >
+                    <option value="10">10 לעמוד</option>
+                    <option value="25">25 לעמוד</option>
+                    <option value="50">50 לעמוד</option>
+                  </select>
+                </div>
+              </div>
+            ) : null}
           </ErrorBoundary>
         )}
       </div>
 
-      {/* Dialog */}
       <Dialog
         open={showDialog}
         onOpenChange={(open) => {
@@ -245,6 +338,7 @@ export default function LeadsPage({ user, selectedPropertyId }) {
             return;
           }
           setShowDialog(open);
+          if (!open) setOpenGuestId(null);
         }}
       >
         <DialogContent className="max-w-lg rounded-2xl">

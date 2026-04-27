@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -20,11 +20,19 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import PullToRefresh from '@/components/common/PullToRefresh';
 import { MaintenanceTable } from '@/components/tables/MaintenanceTable';
+import { useMaintenanceUrlState } from '@/hooks/url-state/useMaintenanceUrlState';
+import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 export default function ServiceRequests({ orgId, selectedPropertyId }) {
+  const {
+    openMaintenanceId,
+    filterStatus,
+    filterUrgency,
+    setUrlState,
+    setOpenMaintenanceId,
+  } = useMaintenanceUrlState();
+
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [filterUrgency, setFilterUrgency] = useState('all');
   const queryClient = useQueryClient();
 
   const { data: requests = [], isLoading, isError, error: requestsError, refetch } = useQuery({
@@ -48,6 +56,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['guestRequests'] });
       setSelectedRequest(null);
+      setOpenMaintenanceId(null);
     }
   });
 
@@ -73,6 +82,12 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
     RESOLVED: { label: 'טופל', color: 'bg-green-100 text-green-800' },
     CLOSED: { label: 'סגור', color: 'bg-gray-100 text-gray-800' }
   };
+
+  useEffect(() => {
+    if (!openMaintenanceId || !requests.length) return;
+    const row = requests.find((r) => r.id === openMaintenanceId);
+    if (row) setSelectedRequest(row);
+  }, [openMaintenanceId, requests]);
 
   const filteredRequests = requests.filter(req => {
     if (filterStatus !== 'all' && req.status !== filterStatus) return false;
@@ -154,9 +169,10 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <ShareViewButton className="h-9 rounded-lg text-xs" />
               <Filter className="h-4 w-4 text-[#64748B]" />
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <Select value={filterStatus} onValueChange={(v) => void setUrlState({ filterStatus: v })}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
@@ -169,7 +185,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
               </Select>
             </div>
 
-            <Select value={filterUrgency} onValueChange={setFilterUrgency}>
+            <Select value={filterUrgency} onValueChange={(v) => void setUrlState({ filterUrgency: v })}>
               <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
@@ -190,7 +206,11 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
             properties={properties}
             isLoading={isLoading}
             error={isError ? (requestsError instanceof Error ? requestsError : new Error('שגיאת טעינה')) : null}
-            onOpen={setSelectedRequest}
+            onOpen={(row) => {
+              setSelectedRequest(row);
+              setOpenMaintenanceId(row.id);
+            }}
+            highlightRowId={openMaintenanceId}
           />
         </div>
 
@@ -198,7 +218,10 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
         <Sheet
           open={!!selectedRequest}
           onOpenChange={(open) => {
-            if (!open) setSelectedRequest(null);
+            if (!open) {
+              setSelectedRequest(null);
+              setOpenMaintenanceId(null);
+            }
           }}
         >
           <SheetContent side="left" className="w-full sm:max-w-lg overflow-y-auto">

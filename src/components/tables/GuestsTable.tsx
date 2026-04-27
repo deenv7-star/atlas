@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, OnChangeFn, SortingState } from '@tanstack/react-table';
 import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { AtlasTable, type AtlasCsvColumn, actionsColumn, bookingStatusColumn, guestLeadNameColumn } from '@/components/ui/AtlasTable';
@@ -36,6 +36,10 @@ export type GuestsTableProps = {
   onDelete: (id: string) => void;
   onBulkDelete: (rows: GuestLeadRow[]) => void;
   onBulkSetStatus: (rows: GuestLeadRow[], status: string) => void | Promise<void>;
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
+  manualSorting?: boolean;
+  highlightRowId?: string | null;
 };
 
 function formatJoined(iso: string | null | undefined): string {
@@ -48,7 +52,20 @@ function formatJoined(iso: string | null | undefined): string {
 }
 
 export function GuestsTable(props: GuestsTableProps): React.ReactElement {
-  const { leads, properties, isLoading, error, onEdit, onDelete, onBulkDelete, onBulkSetStatus } = props;
+  const {
+    leads,
+    properties,
+    isLoading,
+    error,
+    onEdit,
+    onDelete,
+    onBulkDelete,
+    onBulkSetStatus,
+    sorting,
+    onSortingChange,
+    manualSorting,
+    highlightRowId,
+  } = props;
   const [statusMenuRows, setStatusMenuRows] = useState<GuestLeadRow[] | null>(null);
 
   const propertyName = useCallback(
@@ -117,9 +134,13 @@ export function GuestsTable(props: GuestsTableProps): React.ReactElement {
         isLoading={isLoading}
         error={error}
         onRowClick={onEdit}
+        sorting={sorting}
+        onSortingChange={onSortingChange}
+        manualSorting={manualSorting}
+        highlightRowId={highlightRowId}
         enableSelection
         enableColumnResize
-        enableMultiSort
+        enableMultiSort={!(sorting !== undefined && onSortingChange !== undefined)}
         stickyHeader
         virtualScroll={leads.length >= 400}
         emptyMessage="אין אורחים/לידים להצגה"

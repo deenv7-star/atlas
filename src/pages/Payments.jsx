@@ -16,6 +16,7 @@ import {
 import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
 import { PaymentForm } from '@/components/forms/PaymentForm';
 import { emptyPaymentFormValues } from '@/components/forms/atlasFormSchemas';
+import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 const PAYMENT_STATUSES = [
   { value: 'PENDING',  label: 'ממתין', color: 'bg-amber-100 text-amber-700 border-amber-200' },
@@ -172,6 +173,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <ShareViewButton className="h-11 rounded-xl text-sm" />
           {/* CSV Export button */}
           <Button
             variant="outline"

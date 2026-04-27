@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { addDays, subDays, startOfDay } from 'date-fns';
 import { Link } from 'react-router-dom';
 import {
   AlertCircle,
@@ -21,6 +22,8 @@ import { Button } from '@/components/ui/button';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
+import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#FF5A5F', bg: 'bg-[#FF5A5F]', text: 'text-[#FF5A5F]', light: 'bg-red-50' },
@@ -89,14 +92,22 @@ function ChannelDot({ channel, size = 8 }) {
 }
 
 export default function MultiCalendar({ selectedPropertyId }) {
-  const [viewMode, setViewMode] = useState('week');
-  const [dateOffset, setDateOffset] = useState(0);
+  const { view: viewMode, date: urlDate, propertyId: urlPropertyId, setUrlState } = useCalendarUrlState();
   const [channelFilter, setChannelFilter] = useState('all');
   const [hoveredBooking, setHoveredBooking] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [syncing, setSyncing] = useState(false);
 
-  const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
+  const effectivePropertyId = urlPropertyId ?? selectedPropertyId ?? null;
+  const filters = useMemo(
+    () => (effectivePropertyId ? { property_id: effectivePropertyId } : {}),
+    [effectivePropertyId],
+  );
+
+  const anchorDate = useMemo(
+    () => (urlDate ? startOfDay(urlDate) : startOfDay(new Date())),
+    [urlDate],
+  );
   const { data: rawBookings = [], isLoading: bookingsLoading, isError: bookingsError } = useBookings(
     filters,
     '-created_at',
@@ -112,13 +123,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
     beds: p.beds || 2,
   })), [rawProperties]);
 
-  const totalDays = viewMode === 'week' ? 14 : 30;
+  const totalDays = viewMode === 'week' ? 14 : viewMode === 'day' ? 7 : 30;
 
-  const baseDate = useMemo(() => {
-    const today = new Date();
-    today.setDate(today.getDate() + dateOffset * (viewMode === 'week' ? 7 : 30));
-    return new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  }, [dateOffset, viewMode]);
+  const baseDate = useMemo(() => new Date(anchorDate), [anchorDate]);
 
   const days = useMemo(() => {
     return Array.from({ length: totalDays }, (_, i) => {
@@ -135,9 +142,15 @@ export default function MultiCalendar({ selectedPropertyId }) {
     return bookings.filter(b => b.channel === channelFilter);
   }, [bookings, channelFilter]);
 
-  const goToday = useCallback(() => setDateOffset(0), []);
-  const goPrev = useCallback(() => setDateOffset(p => p - 1), []);
-  const goNext = useCallback(() => setDateOffset(p => p + 1), []);
+  const goToday = useCallback(() => {
+    void setUrlState({ date: null });
+  }, [setUrlState]);
+  const goPrev = useCallback(() => {
+    void setUrlState({ date: subDays(anchorDate, totalDays) });
+  }, [anchorDate, setUrlState, totalDays]);
+  const goNext = useCallback(() => {
+    void setUrlState({ date: addDays(anchorDate, totalDays) });
+  }, [anchorDate, setUrlState, totalDays]);
 
   const handleSync = useCallback(() => {
     setSyncing(true);
@@ -207,7 +220,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
     ];
   }, [bookings]);
 
-  const COL_W = viewMode === 'week' ? 'minmax(72px, 1fr)' : 'minmax(36px, 1fr)';
+  const COL_W = viewMode === 'month' ? 'minmax(36px, 1fr)' : 'minmax(72px, 1fr)';
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto" dir="rtl">
@@ -272,19 +285,42 @@ export default function MultiCalendar({ selectedPropertyId }) {
         </div>
 
         <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
-          {[{ key: 'week', label: 'שבועיים' }, { key: 'month', label: 'חודש' }].map(v => (
+          {[
+            { key: 'week', label: 'שבועיים' },
+            { key: 'month', label: 'חודש' },
+            { key: 'day', label: 'שבוע' },
+          ].map((v) => (
             <button
               key={v.key}
-              onClick={() => { setViewMode(v.key); setDateOffset(0); }}
+              type="button"
+              onClick={() => {
+                void setUrlState({ view: v.key, date: null });
+              }}
               className={cn(
                 'min-h-[44px] px-3 py-2 rounded-md text-xs font-medium transition-all touch-manipulation',
-                viewMode === v.key ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                viewMode === v.key ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700',
               )}
             >
               {v.label}
             </button>
           ))}
         </div>
+
+        <ShareViewButton className="min-h-[44px] rounded-xl text-xs" />
+
+        {rawProperties.length > 0 ? (
+          <select
+            className="min-h-[44px] rounded-xl border border-gray-200 bg-white px-2 text-xs min-w-[140px]"
+            value={urlPropertyId ?? ''}
+            onChange={(e) => void setUrlState({ propertyId: e.target.value || null })}
+            aria-label="סינון לפי נכס"
+          >
+            <option value="">כל הנכסים</option>
+            {rawProperties.map((p) => (
+              <option key={p.id} value={p.id}>{p.name || p.id}</option>
+            ))}
+          </select>
+        ) : null}
 
         <div className="flex items-center gap-1.5 flex-wrap">
           <Filter className="w-3.5 h-3.5 text-gray-400 hidden sm:block" />
@@ -331,14 +367,14 @@ export default function MultiCalendar({ selectedPropertyId }) {
         <SkeletonCalendar
           className="mb-6 shadow-sm"
           totalDays={totalDays}
-          viewMode={viewMode === 'week' ? 'week' : 'month'}
+          viewMode={viewMode === 'month' ? 'month' : 'week'}
           propertyRowCount={Math.max(properties.length, 3)}
         />
       ) : (
         <ErrorBoundary
           section="calendar-view"
           variant="inline"
-          resetKey={`${viewMode}-${dateOffset}-${totalDays}-${selectedPropertyId ?? 'all'}`}
+          resetKey={`${viewMode}-${anchorDate.toISOString()}-${totalDays}-${effectivePropertyId ?? 'all'}`}
         >
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
         <p className="sm:hidden text-xs text-gray-500 px-4 py-2 bg-gray-50 border-b">גלול לצדדים כדי לראות את כל התאריכים</p>

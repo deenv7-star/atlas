@@ -9,6 +9,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, Navigate, useParams } from 'react-router-dom';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import PageNotFound from './lib/PageNotFound';
 import SeoManager from '@/components/seo/SeoManager';
 import ScrollToTop from '@/lib/ScrollToTop';
@@ -274,10 +275,12 @@ function App() {
       <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
           <Router>
-            <ScrollToTop />
-            <SeoManager />
-            <NavigationTracker />
-            <AuthenticatedApp />
+            <NuqsAdapter>
+              <ScrollToTop />
+              <SeoManager />
+              <NavigationTracker />
+              <AuthenticatedApp />
+            </NuqsAdapter>
           </Router>
           <Toaster />
           <OptimisticConflictModal />
