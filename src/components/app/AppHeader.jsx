@@ -10,6 +10,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 import { useAuth } from '@/lib/AuthContext';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -59,10 +60,21 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
   const { logout } = useAuth();
   const [isDark, setIsDark] = useDarkMode();
 
+  const orgId = user?.organization_id ?? user?.org_id ?? null;
+
   const { data: properties = [] } = useQuery({
-    queryKey: ['properties-header'],
-    queryFn: () => base44.entities.Property.list(),
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['properties-header', orgId],
+    queryFn: () =>
+      orgId
+        ? base44.entities.Property.filter(
+            { org_id: orgId },
+            'name',
+            200,
+            { select: 'id,name,org_id' },
+          )
+        : Promise.resolve([]),
+    enabled: !!orgId,
+    staleTime: STALE_REFERENCE_MS,
   });
 
   const getUserInitials = () => {

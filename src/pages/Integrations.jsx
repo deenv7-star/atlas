@@ -93,46 +93,48 @@ export default function IntegrationsPage() {
     return () => { cancelled = true; };
   }, []);
 
+  const orgId = user?.organization_id ?? user?.org_id ?? null;
+
   const { data: properties = [] } = useQuery({
-    queryKey: ['properties', user?.org_id],
-    queryFn: () => base44.entities.Property.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id
+    queryKey: ['properties', orgId],
+    queryFn: () => base44.entities.Property.filter({ org_id: orgId }, '-created_at', 200),
+    enabled: !!orgId,
   });
 
   const { data: calendarSyncs = [], isLoading } = useQuery({
-    queryKey: ['calendar-syncs', user?.org_id],
-    queryFn: () => base44.entities.CalendarSync.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id
+    queryKey: ['calendar-syncs', orgId],
+    queryFn: () => base44.entities.CalendarSync.filter({ org_id: orgId }, '-created_at', 200),
+    enabled: !!orgId,
   });
 
   const { data: messagingIntegrations = [] } = useQuery({
-    queryKey: ['messaging-integrations', user?.org_id],
-    queryFn: () => base44.entities.MessagingIntegration.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id
+    queryKey: ['messaging-integrations', orgId],
+    queryFn: () => base44.entities.MessagingIntegration.filter({ org_id: orgId }, '-created_at', 200),
+    enabled: !!orgId,
   });
 
   const { data: paymentGateways = [] } = useQuery({
-    queryKey: ['payment-gateways', user?.org_id],
-    queryFn: () => base44.entities.PaymentGateway.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id
+    queryKey: ['payment-gateways', orgId],
+    queryFn: () => base44.entities.PaymentGateway.filter({ org_id: orgId }, '-created_at', 200),
+    enabled: !!orgId,
   });
 
   const { data: accountingIntegrations = [] } = useQuery({
-    queryKey: ['accounting-integrations', user?.org_id],
-    queryFn: () => base44.entities.AccountingIntegration.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id
+    queryKey: ['accounting-integrations', orgId],
+    queryFn: () => base44.entities.AccountingIntegration.filter({ org_id: orgId }, '-created_at', 200),
+    enabled: !!orgId,
   });
 
   const { data: pmsIntegrations = [] } = useQuery({
-    queryKey: ['pms-integrations', user?.org_id],
-    queryFn: () => base44.entities.PMSIntegration.filter({ org_id: user?.org_id }),
-    enabled: !!user?.org_id
+    queryKey: ['pms-integrations', orgId],
+    queryFn: () => base44.entities.PMSIntegration.filter({ org_id: orgId }, '-created_at', 200),
+    enabled: !!orgId,
   });
 
   const createSyncMutation = useMutation({
     mutationFn: (data) => base44.entities.CalendarSync.create({
       ...data,
-      org_id: user?.org_id,
+      org_id: orgId,
       property_id: selectedPropertyId,
       sync_status: 'ACTIVE'
     }),
@@ -175,7 +177,7 @@ export default function IntegrationsPage() {
   const createMessagingMutation = useMutation({
     mutationFn: (data) => base44.entities.MessagingIntegration.create({
       ...data,
-      org_id: user?.org_id
+      org_id: orgId
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messaging-integrations'] });
@@ -209,7 +211,7 @@ export default function IntegrationsPage() {
   const createPaymentMutation = useMutation({
     mutationFn: (data) => base44.entities.PaymentGateway.create({
       ...data,
-      org_id: user?.org_id
+      org_id: orgId
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
@@ -241,7 +243,7 @@ export default function IntegrationsPage() {
   };
 
   const createAccountingMutation = useMutation({
-    mutationFn: (data) => base44.entities.AccountingIntegration.create({ ...data, org_id: user?.org_id }),
+    mutationFn: (data) => base44.entities.AccountingIntegration.create({ ...data, org_id: orgId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['accounting-integrations'] });
       setShowAccountingDialog(false);
@@ -270,7 +272,7 @@ export default function IntegrationsPage() {
   };
 
   const createPMSMutation = useMutation({
-    mutationFn: (data) => base44.entities.PMSIntegration.create({ ...data, org_id: user?.org_id }),
+    mutationFn: (data) => base44.entities.PMSIntegration.create({ ...data, org_id: orgId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pms-integrations'] });
       setShowPMSDialog(false);

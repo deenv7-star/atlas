@@ -4,8 +4,7 @@
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-
-const STALE = 60 * 1000; // 1 min
+import { STALE_LIVE_MS, STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 const CACHE_KEYS = {
   bookings: 'bookings',
   leads: 'leads',
@@ -23,7 +22,7 @@ export function useBookings(filters = {}, sort = '-created_at', limit = 200) {
   return useQuery({
     queryKey: [CACHE_KEYS.bookings, filters, sort, limit],
     queryFn: () => base44.entities.Booking.filter(filters, sort, limit),
-    staleTime: STALE,
+    staleTime: STALE_LIVE_MS,
   });
 }
 
@@ -32,6 +31,7 @@ export function useBooking(id) {
     queryKey: [CACHE_KEYS.bookings, id],
     queryFn: () => base44.entities.Booking.get(id),
     enabled: !!id,
+    staleTime: STALE_LIVE_MS,
   });
 }
 
@@ -64,7 +64,7 @@ export function useProperties() {
   return useQuery({
     queryKey: [CACHE_KEYS.properties],
     queryFn: () => base44.entities.Property.list(),
-    staleTime: STALE,
+    staleTime: STALE_REFERENCE_MS,
   });
 }
 
@@ -89,7 +89,7 @@ export function useLeads(filters = {}, sort = '-created_at', limit = 200) {
   return useQuery({
     queryKey: [CACHE_KEYS.leads, filters, sort, limit],
     queryFn: () => base44.entities.Lead.filter(filters, sort, limit),
-    staleTime: STALE,
+    staleTime: STALE_LIVE_MS,
   });
 }
 
@@ -98,6 +98,7 @@ export function useLead(id) {
     queryKey: [CACHE_KEYS.leads, id],
     queryFn: () => base44.entities.Lead.get(id),
     enabled: !!id,
+    staleTime: STALE_LIVE_MS,
   });
 }
 
@@ -130,7 +131,7 @@ export function usePayments(filters = {}, sort = '-created_at', limit = 100) {
   return useQuery({
     queryKey: [CACHE_KEYS.payments, filters, sort, limit],
     queryFn: () => base44.entities.Payment.filter(filters, sort, limit),
-    staleTime: STALE,
+    staleTime: STALE_LIVE_MS,
   });
 }
 
@@ -172,7 +173,7 @@ export function useInvoices(filters = {}, sort = '-created_at', limit = 100) {
         return [];
       }
     },
-    staleTime: STALE,
+    staleTime: STALE_REFERENCE_MS,
   });
 }
 
@@ -211,7 +212,7 @@ export function useCleaningTasks(filters = {}, sort = '-created_at', limit = 100
         return [];
       }
     },
-    staleTime: STALE,
+    staleTime: STALE_LIVE_MS,
   });
 }
 
@@ -245,7 +246,7 @@ export function useMessageLogs(filters = {}, sort = '-created_at', limit = 100) 
         return [];
       }
     },
-    staleTime: STALE,
+    staleTime: STALE_REFERENCE_MS,
   });
 }
 
@@ -268,7 +269,7 @@ export function useReviewRequests(filters = {}, sort = '-created_at', limit = 50
         return [];
       }
     },
-    staleTime: STALE,
+    staleTime: STALE_REFERENCE_MS,
   });
 }
 
@@ -291,6 +292,6 @@ export function useAutomationRules(filters = {}, sort = '-created_at', limit = 5
         return [];
       }
     },
-    staleTime: STALE,
+    staleTime: STALE_REFERENCE_MS,
   });
 }

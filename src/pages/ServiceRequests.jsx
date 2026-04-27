@@ -32,14 +32,14 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
     queryFn: () => {
       const filters = { org_id: orgId };
       if (selectedPropertyId) filters.property_id = selectedPropertyId;
-      return base44.entities.GuestRequest.filter(filters, '-created_date');
+      return base44.entities.GuestRequest.filter(filters, '-created_date', 300);
     },
     enabled: !!orgId
   });
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties', orgId],
-    queryFn: () => base44.entities.Property.filter({ org_id: orgId }),
+    queryFn: () => base44.entities.Property.filter({ org_id: orgId }, '-created_at', 200),
     enabled: !!orgId
   });
 

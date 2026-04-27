@@ -54,11 +54,8 @@ export default function LeadDetail({ orgId }) {
 
   const { data: lead, isLoading } = useQuery({
     queryKey: ['lead', id],
-    queryFn: async () => {
-      const leads = await base44.entities.Lead.filter({ id });
-      return leads[0];
-    },
-    enabled: !!id
+    queryFn: () => base44.entities.Lead.get(id),
+    enabled: !!id,
   });
 
   const updateMutation = useMutation({

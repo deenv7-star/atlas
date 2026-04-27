@@ -24,6 +24,17 @@ import {
   parseISO, isSameDay, subMonths, startOfMonth, endOfMonth,
 } from 'date-fns';
 import { he } from 'date-fns/locale';
+import { STALE_LIVE_MS, STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
+
+/** Dashboard widgets only need a thin slice of each row (smaller JSON over the wire). */
+const DASH_BOOKING_SELECT =
+  'id,guest_name,nights,property_name,check_in_date,check_out_date,status,property_id,created_at,created_date';
+const DASH_LEAD_SELECT =
+  'id,full_name,check_in_date,nights,status,created_at,created_date';
+const DASH_PAYMENT_SELECT =
+  'id,amount,status,paid_date,created_at,created_date,currency';
+const DASH_REVIEW_SELECT =
+  'id,rating,status,property_id,created_at,created_date,guest_name';
 
 // ── Simple widget-level ErrorBoundary ────────────────────────────────────────
 class WidgetErrorBoundary extends React.Component {
@@ -328,33 +339,42 @@ export default function Dashboard({ user, selectedPropertyId }) {
   const weekStart = startOfWeek(now, { weekStartsOn: 0 });
   const weekEnd = endOfWeek(now, { weekStartsOn: 0 });
 
-  const qOpts = { staleTime: 2 * 60 * 1000, retry: 1 };
+  const orgId = user?.organization_id ?? null;
   const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
 
   const { data: bookings = [], isLoading: bookingsLoading, isError: bookingsError } = useQuery({
     queryKey: ['dashboard-bookings', selectedPropertyId],
-    queryFn: () => base44.entities.Booking.filter(filters, '-created_at', 100),
-    ...qOpts,
+    queryFn: () => base44.entities.Booking.filter(filters, '-created_at', 100, { select: DASH_BOOKING_SELECT }),
+    staleTime: STALE_LIVE_MS,
+    retry: 1,
   });
   const { data: leads = [], isLoading: leadsLoading, isError: leadsError } = useQuery({
     queryKey: ['dashboard-leads', selectedPropertyId],
-    queryFn: () => base44.entities.Lead.filter(filters, '-created_at', 100),
-    ...qOpts,
+    queryFn: () => base44.entities.Lead.filter(filters, '-created_at', 100, { select: DASH_LEAD_SELECT }),
+    staleTime: STALE_LIVE_MS,
+    retry: 1,
   });
   const { data: payments = [], isLoading: paymentsLoading, isError: paymentsError } = useQuery({
-    queryKey: ['dashboard-payments'],
-    queryFn: () => base44.entities.Payment.filter({}, '-created_at', 200),
-    ...qOpts,
+    queryKey: ['dashboard-payments', orgId],
+    queryFn: () =>
+      orgId
+        ? base44.entities.Payment.filter({ org_id: orgId }, '-created_at', 200, { select: DASH_PAYMENT_SELECT })
+        : Promise.resolve([]),
+    enabled: !!orgId,
+    staleTime: STALE_LIVE_MS,
+    retry: 1,
   });
   const { data: reviews = [], isError: reviewsError } = useQuery({
     queryKey: ['dashboard-reviews', selectedPropertyId],
-    queryFn: () => base44.entities.ReviewRequest.filter(filters, '-created_at', 50),
-    ...qOpts,
+    queryFn: () => base44.entities.ReviewRequest.filter(filters, '-created_at', 50, { select: DASH_REVIEW_SELECT }),
+    staleTime: STALE_REFERENCE_MS,
+    retry: 1,
   });
   const { data: properties = [], isError: propertiesError } = useQuery({
     queryKey: ['dashboard-properties'],
-    queryFn: () => base44.entities.Property.list(),
-    ...qOpts,
+    queryFn: () => base44.entities.Property.list({}, { select: 'id,name', limit: 500 }),
+    staleTime: STALE_REFERENCE_MS,
+    retry: 1,
   });
 
   const dataFetchError = bookingsError || leadsError || paymentsError || reviewsError || propertiesError;

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתין', color: 'bg-amber-100 text-amber-700', icon: Clock },
@@ -48,10 +49,10 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
       const filters = {};
       if (orgId) filters.org_id = orgId;
       if (selectedPropertyId) filters.property_id = selectedPropertyId;
-      return base44.entities.ReviewRequest.filter(filters, '-created_date');
+      return base44.entities.ReviewRequest.filter(filters, '-created_date', 200);
     },
     enabled: !!orgId,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_REFERENCE_MS,
   });
 
   const sendReminderMutation = useMutation({

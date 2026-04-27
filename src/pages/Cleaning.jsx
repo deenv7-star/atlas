@@ -81,7 +81,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
     queryFn: async () => {
       const filters = { org_id: orgId };
       if (selectedPropertyId) filters.property_id = selectedPropertyId;
-      return base44.entities.CleaningTask.filter(filters, 'scheduled_for');
+      return base44.entities.CleaningTask.filter(filters, 'scheduled_for', 500);
     },
     enabled: !!orgId,
   });

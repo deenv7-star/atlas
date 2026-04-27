@@ -13,6 +13,7 @@ import {
 import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { STALE_LIVE_MS } from '@/lib/queryStaleTimes';
 
 const CHANNEL_ICONS = {
   whatsapp: '💬',
@@ -44,10 +45,10 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
       const filters = {};
       if (orgId) filters.org_id = orgId;
       if (selectedPropertyId) filters.property_id = selectedPropertyId;
-      return base44.entities.MessageLog.filter(filters, '-created_date');
+      return base44.entities.MessageLog.filter(filters, '-created_date', 250);
     },
     enabled: !!orgId,
-    staleTime: 60 * 1000,
+    staleTime: STALE_LIVE_MS,
     refetchInterval: 30 * 1000,
   });
 

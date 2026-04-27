@@ -64,17 +64,28 @@ class RestEntityCollection {
     return p.toString() ? '?' + p.toString() : '';
   }
 
-  async list(filters = {}) {
-    return apiFetch(`/api/entities/${this._name}${this._qs(filters)}`);
-  }
-
-  async filter(filters = {}, sort = '-created_at', limit = null) {
+  async list(filters = {}, options = {}) {
     const qs = new URLSearchParams();
     for (const [k, v] of Object.entries(filters)) {
       if (v !== undefined && v !== null && v !== '') qs.set(k, v);
     }
-    if (sort)  qs.set('_sort',  sort);
-    if (limit) qs.set('_limit', limit);
+    const lim = Math.min(Math.max(1, options.limit != null ? options.limit : 500), 500);
+    qs.set('_limit', String(lim));
+    if (options.select) qs.set('_select', options.select);
+    const q = qs.toString();
+    return apiFetch(`/api/entities/${this._name}?${q}`);
+  }
+
+  async filter(filters = {}, sort = '-created_at', limit = null, options = {}) {
+    const qs = new URLSearchParams();
+    for (const [k, v] of Object.entries(filters)) {
+      if (v !== undefined && v !== null && v !== '') qs.set(k, v);
+    }
+    if (sort) qs.set('_sort', sort);
+    const eff = limit != null ? limit : DEFAULT_FILTER_LIMIT;
+    const capped = Math.min(Math.max(1, eff), 500);
+    qs.set('_limit', String(capped));
+    if (options.select) qs.set('_select', options.select);
     return apiFetch(`/api/entities/${this._name}?${qs.toString()}`);
   }
 
@@ -230,6 +241,27 @@ function resolveTable(entityName) {
   return TABLE_MAP[entityName] || entityName.toLowerCase() + 's';
 }
 
+/** When `filter` is called without `limit`, cap rows to avoid accidental full-table reads. */
+const DEFAULT_FILTER_LIMIT = 500;
+
+/** When `list` is called without an explicit limit option, cap by table. */
+const DEFAULT_LIST_LIMIT_BY_TABLE = {
+  bookings: 2000,
+  leads: 2000,
+  payments: 2000,
+  message_logs: 1000,
+  guest_requests: 1000,
+  cleaning_tasks: 2000,
+  invoices: 2000,
+  messages: 1000,
+  properties: 5000,
+  organizations: 1000,
+  units: 3000,
+  review_requests: 2000,
+  automation_rules: 2000,
+  users: 5000,
+};
+
 // =============================================================================
 // Supabase EntityCollection
 // =============================================================================
@@ -240,19 +272,37 @@ class SupabaseEntityCollection {
     this._table = resolveTable(name);
   }
 
-  async list(filters = {}) {
-    let q = supabase.from(this._table).select('*');
+  /**
+   * @param {Record<string, unknown>} filters
+   * @param {{ select?: string; limit?: number }} [options] select: PostgREST column list; limit overrides table default
+   */
+  async list(filters = {}, options = {}) {
+    const selectCols = options.select ?? '*';
+    const cap =
+      options.limit ??
+      DEFAULT_LIST_LIMIT_BY_TABLE[this._table] ??
+      2500;
+    let q = supabase.from(this._table).select(selectCols);
     q = this._applyFilters(q, filters);
+    if (cap != null && cap > 0) q = q.limit(cap);
     const { data, error } = await q;
     if (error) throw this._wrapError(error);
     return this._normaliseRows(data || []);
   }
 
-  async filter(filters = {}, sortField = '-created_at', limit = null) {
-    let q = supabase.from(this._table).select('*');
+  /**
+   * @param {Record<string, unknown>} filters
+   * @param {string} sortField
+   * @param {number | null} limit pass null to use DEFAULT_FILTER_LIMIT; pass a large number when you need an export
+   * @param {{ select?: string }} [options] narrow columns to reduce payload (Supabase only)
+   */
+  async filter(filters = {}, sortField = '-created_at', limit = null, options = {}) {
+    const selectCols = options.select ?? '*';
+    const effectiveLimit = limit != null ? limit : DEFAULT_FILTER_LIMIT;
+    let q = supabase.from(this._table).select(selectCols);
     q = this._applyFilters(q, filters);
     q = this._applySort(q, sortField);
-    if (limit) q = q.limit(limit);
+    if (effectiveLimit != null && effectiveLimit > 0) q = q.limit(effectiveLimit);
     const { data, error } = await q;
     if (error) throw this._wrapError(error);
     return this._normaliseRows(data || []);
@@ -369,10 +419,14 @@ const supabaseAuth = {
       throw err;
     }
 
-    // Fetch profile (has full_name, organization_id, etc.)
+    // Narrow columns + org embed (avoids pulling unused profile / org JSON)
     const { data: profile } = await supabase
       .from('profiles')
-      .select('*, organizations(*)')
+      .select(`
+        id, email, full_name, phone, profile_image, organization_id,
+        onboarding_completed, onboarding_step, selected_plan, trial_ends_at, subscription_status,
+        organizations ( name, subscription_plan )
+      `)
       .eq('id', user.id)
       .single();
 
@@ -547,12 +601,15 @@ function applySortAndLimit(items, sortField, limit) {
 class LocalEntityCollection {
   constructor(name) { this._name = name; }
 
-  async list(filters = {}) {
-    return this._filter(readCollection(this._name), filters);
+  async list(filters = {}, options = {}) {
+    const items = this._filter(readCollection(this._name), filters);
+    const cap = options.limit ?? 2500;
+    return cap > 0 ? items.slice(0, cap) : items;
   }
 
-  async filter(filters = {}, sortField = '-created_date', limit = null) {
-    return applySortAndLimit(this._filter(readCollection(this._name), filters), sortField, limit);
+  async filter(filters = {}, sortField = '-created_date', limit = null, _options = {}) {
+    const eff = limit != null ? limit : DEFAULT_FILTER_LIMIT;
+    return applySortAndLimit(this._filter(readCollection(this._name), filters), sortField, eff);
   }
 
   async get(id) {

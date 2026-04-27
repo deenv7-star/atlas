@@ -29,7 +29,7 @@ export function useSubscriptionGuard() {
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties', user?.organization_id],
-    queryFn: () => base44.entities.Property.filter({ org_id: user?.organization_id }),
+    queryFn: () => base44.entities.Property.filter({ org_id: user?.organization_id }, 'name', 100),
     enabled: !!user?.organization_id
   });
 
