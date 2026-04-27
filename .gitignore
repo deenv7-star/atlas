@@ -29,3 +29,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# Agent tooling (local state)
+.agents/invariant-monitor.state.json

@@ -3,7 +3,12 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorFallback } from '@/components/common/ErrorFallback';
+import {
+  SkeletonStatCard,
+  SkeletonDashboardBookingRow,
+  SkeletonDashboardLeadRow,
+} from '@/components/skeletons/atlas-skeletons';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { LiquidGlassCard } from '@/components/ui/LiquidGlass';
 import {
@@ -72,16 +77,17 @@ const tapTween = { type: 'tween', duration: 0.14, ease: [0.23, 1, 0.32, 1] };
 
 const TINT_MAP = { 'icon-blue': 'blue', 'icon-purple': 'purple', 'icon-teal': 'teal', 'icon-amber': 'neutral', 'icon-green': 'teal', 'icon-rose': 'neutral' };
 
-function StatCard({ title, value, subtitle, icon: Icon, iconClass, trend, loading }) {
+function StatCard({ title, value, subtitle, icon: Icon, iconClass, trend, loading, error }) {
   const tint = TINT_MAP[iconClass] || 'neutral';
-  if (loading) {
+  if (error) {
     return (
-      <div className="rounded-2xl p-5 bg-white/60 border border-gray-100/60" style={{ backdropFilter: 'blur(12px)' }}>
-        <Skeleton className="h-3.5 w-20 mb-4" />
-        <Skeleton className="h-9 w-24 mb-2" />
-        <Skeleton className="h-3 w-28" />
+      <div className="rounded-2xl p-3 border border-red-100 bg-red-50/40 min-h-[120px] flex items-center">
+        <ErrorFallback compact className="border-0 bg-transparent p-0 w-full" />
       </div>
     );
+  }
+  if (loading) {
+    return <SkeletonStatCard iconClass={iconClass} />;
   }
   return (
     <div className="atlas-dash-stat-lift h-full rounded-2xl">
@@ -153,7 +159,18 @@ function LeadRow({ lead }) {
   );
 }
 
-function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyIcon: EmptyIcon, emptyText, addLink }) {
+function SectionCard({
+  title,
+  icon: Icon,
+  viewAllLink,
+  children,
+  loading,
+  error,
+  listVariant = 'booking',
+  emptyIcon: EmptyIcon,
+  emptyText,
+  addLink,
+}) {
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
       <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
@@ -168,8 +185,20 @@ function SectionCard({ title, icon: Icon, viewAllLink, children, loading, emptyI
         </Link>
       </div>
       <div className="p-3">
-        {loading ? (
-          <div className="space-y-2 p-1">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
+        {error ? (
+          <div className="p-1">
+            <ErrorFallback compact />
+          </div>
+        ) : loading ? (
+          <div className="space-y-2 p-1">
+            {[0, 1, 2].map((i) =>
+              listVariant === 'lead' ? (
+                <SkeletonDashboardLeadRow key={i} />
+              ) : (
+                <SkeletonDashboardBookingRow key={i} />
+              ),
+            )}
+          </div>
         ) : React.Children.count(children) === 0 ? (
           <div className="py-10 text-center px-2">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 flex items-center justify-center mx-auto mb-3 ring-1 ring-gray-100/80">
@@ -364,7 +393,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
     staleTime: STALE_LIVE_MS,
     retry: 1,
   });
-  const { data: reviews = [], isError: reviewsError } = useQuery({
+  const { data: reviews = [], isLoading: reviewsLoading, isError: reviewsError } = useQuery({
     queryKey: ['dashboard-reviews', selectedPropertyId],
     queryFn: () => base44.entities.ReviewRequest.filter(filters, '-created_at', 50, { select: DASH_REVIEW_SELECT }),
     staleTime: STALE_REFERENCE_MS,
@@ -532,28 +561,28 @@ export default function Dashboard({ user, selectedPropertyId }) {
       {/* KPI Stats */}
       <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-3" variants={kpiParentVariants} initial={reduceMotion ? false : 'hidden'} animate="show">
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard title="הזמנות השבוע" value={bookingsLoading ? '—' : stats.thisWeekBookings.length} subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`} icon={CalendarDays} iconClass="icon-blue" loading={bookingsLoading} />
+          <StatCard title="הזמנות השבוע" value={bookingsLoading ? '—' : stats.thisWeekBookings.length} subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`} icon={CalendarDays} iconClass="icon-blue" loading={bookingsLoading} error={bookingsError} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard title="לידים חדשים" value={leadsLoading ? '—' : stats.newLeads.length} subtitle={`${leads.length} לידים סה"כ`} icon={Users} iconClass="icon-purple" loading={leadsLoading} />
+          <StatCard title="לידים חדשים" value={leadsLoading ? '—' : stats.newLeads.length} subtitle={`${leads.length} לידים סה"כ`} icon={Users} iconClass="icon-purple" loading={leadsLoading} error={leadsError} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard title="הכנסות" value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')} subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'} icon={Wallet} iconClass="icon-teal" loading={paymentsLoading} />
+          <StatCard title="הכנסות" value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')} subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'} icon={Wallet} iconClass="icon-teal" loading={paymentsLoading} error={paymentsError} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard title="דירוג ממוצע" value={stats.avgRating ? `★ ${stats.avgRating}` : '—'} subtitle={`${reviews.length} ביקורות`} icon={Star} iconClass="icon-amber" />
+          <StatCard title="דירוג ממוצע" value={stats.avgRating ? `★ ${stats.avgRating}` : '—'} subtitle={`${reviews.length} ביקורות`} icon={Star} iconClass="icon-amber" loading={reviewsLoading} error={reviewsError} />
         </motion.div>
       </motion.div>
 
       {/* Main Content Grid */}
       <div className="grid md:grid-cols-2 gap-4">
         <WidgetErrorBoundary>
-          <SectionCard title="הזמנות קרובות" icon={CalendarDays} viewAllLink={createPageUrl('Bookings')} loading={bookingsLoading} emptyIcon={CalendarDays} emptyText="אין עדיין הזמנות קרובות" addLink={createPageUrl('Bookings')}>
+          <SectionCard title="הזמנות קרובות" icon={CalendarDays} viewAllLink={createPageUrl('Bookings')} loading={bookingsLoading} error={bookingsError} listVariant="booking" emptyIcon={CalendarDays} emptyText="אין עדיין הזמנות קרובות" addLink={createPageUrl('Bookings')}>
             {upcomingBookings.map(b => <BookingRow key={b.id} booking={b} />)}
           </SectionCard>
         </WidgetErrorBoundary>
         <WidgetErrorBoundary>
-          <SectionCard title="לידים אחרונים" icon={Users} viewAllLink={createPageUrl('Leads')} loading={leadsLoading} emptyIcon={Users} emptyText="עדיין אין לידים" addLink={createPageUrl('Leads')}>
+          <SectionCard title="לידים אחרונים" icon={Users} viewAllLink={createPageUrl('Leads')} loading={leadsLoading} error={leadsError} listVariant="lead" emptyIcon={Users} emptyText="עדיין אין לידים" addLink={createPageUrl('Leads')}>
             {recentLeads.map(l => <LeadRow key={l.id} lead={l} />)}
           </SectionCard>
         </WidgetErrorBoundary>

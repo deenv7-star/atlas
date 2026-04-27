@@ -5,13 +5,14 @@ import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
 import BookingDetails from '@/components/bookings/BookingDetails';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorFallback } from '@/components/common/ErrorFallback';
+import { SkeletonBookingDetailSheet } from '@/components/skeletons/atlas-skeletons';
 
 export default function BookingDetail({ orgId }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: booking, isLoading } = useQuery({
+  const { data: booking, isLoading, isError } = useQuery({
     queryKey: ['booking', id],
     queryFn: () => base44.entities.Booking.get(id),
     enabled: !!id,
@@ -19,9 +20,16 @@ export default function BookingDetail({ orgId }) {
 
   if (isLoading) {
     return (
-      <div className="space-y-4 p-6">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-64 w-full" />
+      <div className="flex justify-end w-full min-h-[40vh]">
+        <SkeletonBookingDetailSheet />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-6 max-w-md mx-auto">
+        <ErrorFallback />
       </div>
     );
   }

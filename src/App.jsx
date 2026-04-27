@@ -1,4 +1,6 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
+import { Skeleton } from '@/components/ui/skeleton';
 import { Toaster as SonnerToaster } from 'sonner';
 import { QueryClientProvider } from '@tanstack/react-query'
 import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary';
@@ -19,6 +21,8 @@ import VerifyEmail from '@/pages/VerifyEmail';
 import ResetPassword from '@/pages/ResetPassword';
 import UpdatePassword from '@/pages/UpdatePassword';
 import Onboarding from '@/pages/Onboarding';
+
+const DevSkeletonsPage = import.meta.env.DEV ? lazy(() => import('@/pages/DevSkeletons')) : null;
 
 const { Pages, Layout } = pagesConfig;
 
@@ -171,6 +175,27 @@ const AuthenticatedApp = () => {
           </ProtectedRoute>
         }
       />
+      {import.meta.env.DEV && DevSkeletonsPage && (
+        <Route
+          path="/dev/skeletons"
+          element={
+            <ProtectedRoute>
+              <LayoutWrapper currentPageName="Dashboard">
+                <Suspense
+                  fallback={
+                    <div className="p-6 max-w-6xl mx-auto space-y-4" dir="rtl">
+                      <Skeleton height={32} width={220} borderRadius={8} />
+                      <Skeleton height={280} className="w-full max-w-3xl" borderRadius={16} />
+                    </div>
+                  }
+                >
+                  <DevSkeletonsPage />
+                </Suspense>
+              </LayoutWrapper>
+            </ProtectedRoute>
+          }
+        />
+      )}
       {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
       <Route path="/billing" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
       <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />

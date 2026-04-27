@@ -17,6 +17,8 @@ import { createPageUrl } from '@/utils';
 import { useBookings } from '@/data/entities';
 import { useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
+import { ErrorFallback } from '@/components/common/ErrorFallback';
+import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#FF5A5F', bg: 'bg-[#FF5A5F]', text: 'text-[#FF5A5F]', light: 'bg-red-50' },
@@ -93,8 +95,12 @@ export default function MultiCalendar({ selectedPropertyId }) {
   const [syncing, setSyncing] = useState(false);
 
   const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
-  const { data: rawBookings = [], isLoading } = useBookings(filters, '-created_at', 300);
-  const { data: rawProperties = [] } = useProperties();
+  const { data: rawBookings = [], isLoading: bookingsLoading, isError: bookingsError } = useBookings(
+    filters,
+    '-created_at',
+    300,
+  );
+  const { data: rawProperties = [], isLoading: propertiesLoading } = useProperties();
 
   const properties = useMemo(() => rawProperties.map((p, i) => ({
     id: p.id,
@@ -219,7 +225,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
         </p>
       </div>
 
-      {(properties.length === 0 || bookings.length === 0) && (
+      {!bookingsLoading &&
+        !propertiesLoading &&
+        (properties.length === 0 || bookings.length === 0) && (
         <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between flex-wrap gap-3">
           <p className="text-sm text-amber-800">
             {properties.length === 0
@@ -313,7 +321,19 @@ export default function MultiCalendar({ selectedPropertyId }) {
       </div>
 
       {/* Calendar Grid - horizontal scroll on mobile is intentional */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+      {bookingsError ? (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm p-4">
+          <ErrorFallback />
+        </div>
+      ) : bookingsLoading || propertiesLoading ? (
+        <SkeletonCalendar
+          className="mb-6 shadow-sm"
+          totalDays={totalDays}
+          viewMode={viewMode === 'week' ? 'week' : 'month'}
+          propertyRowCount={Math.max(properties.length, 3)}
+        />
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
         <p className="sm:hidden text-xs text-gray-500 px-4 py-2 bg-gray-50 border-b">גלול לצדדים כדי לראות את כל התאריכים</p>
         <div className="overflow-x-auto overflow-y-hidden scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
           <div
@@ -458,7 +478,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
             </div>
           ))}
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Tooltip */}
       {hoveredBooking && (

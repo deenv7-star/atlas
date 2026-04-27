@@ -3,7 +3,8 @@ import { useBookings, useCreateBooking, useUpdateBooking, useDeleteBooking } fro
 import { useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorFallback } from '@/components/common/ErrorFallback';
+import { SkeletonTableFull } from '@/components/skeletons/atlas-skeletons';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -57,7 +58,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
   const [showBulkMenu, setShowBulkMenu] = useState(false);
 
   const { data: bookings = [], isLoading, isError } = useBookings(filters, '-created_at', 200);
-  const { data: properties = [] }  = useProperties();
+  const { data: properties = [], isLoading: propertiesLoading } = useProperties();
   const createMutation  = useCreateBooking();
   const updateMutation  = useUpdateBooking();
   const deleteMutation  = useDeleteBooking();
@@ -329,8 +330,12 @@ export default function BookingsPage({ user, selectedPropertyId }) {
 
       {/* Bookings list */}
       <div className="atlas-card-surface overflow-hidden">
-        {isLoading ? (
-          <div className="p-4 space-y-3">{[...Array(5)].map((_, i) => <Skeleton key={i} className="atlas-list-skeleton" />)}</div>
+        {isError ? (
+          <div className="p-4">
+            <ErrorFallback />
+          </div>
+        ) : isLoading || propertiesLoading ? (
+          <SkeletonTableFull />
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center px-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 ring-1 ring-gray-100 flex items-center justify-center mx-auto mb-4">
