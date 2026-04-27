@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -54,6 +56,16 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   useEffect(() => {
     if (!showDialog) paymentDialogInterceptRef.current = null;
   }, [showDialog]);
+
+  useEffect(() => {
+    if (!readCommandPaletteFlag(location.state, 'newPayment')) return;
+    setEditingPayment(null);
+    setShowDialog(true);
+    navigate(
+      { pathname: location.pathname, search: location.search, hash: location.hash },
+      { replace: true, state: null },
+    );
+  }, [location.state, location.pathname, location.search, location.hash, navigate]);
 
   const { data: payments = [], isLoading, isError, error: paymentsError } = useQuery({
     queryKey: ['payments', orgId],

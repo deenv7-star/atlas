@@ -1,4 +1,6 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { useBookings, useCreateBooking, useUpdateBooking, useDeleteBooking } from '@/data/entities';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast, deleteBookingWithUndo } from '@/components/ui/AtlasToast';
@@ -97,6 +99,8 @@ function bookingEntityToFormValues(b) {
 export default function BookingsPage({ selectedPropertyId }) {
   const { success } = useToast();
   const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigate = useNavigate();
   const url = useBookingsUrlState();
 
   const {
@@ -172,6 +176,17 @@ export default function BookingsPage({ selectedPropertyId }) {
       setShowDialog(true);
     }
   }, [openBookingId, bookings]);
+
+  useEffect(() => {
+    if (!readCommandPaletteFlag(location.state, 'newBooking')) return;
+    setEditingBooking(null);
+    setShowDialog(true);
+    setOpenBookingId(null);
+    navigate(
+      { pathname: location.pathname, search: location.search, hash: location.hash },
+      { replace: true, state: null },
+    );
+  }, [location.state, location.pathname, location.search, location.hash, navigate, setOpenBookingId]);
 
   const closeBookingDialog = () => {
     setShowDialog(false);

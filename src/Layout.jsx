@@ -11,6 +11,7 @@ import IOSInstallBanner from '@/components/app/IOSInstallBanner';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import { CommandPalette } from '@/components/ui/CommandPalette';
 
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans'];
 
@@ -35,7 +36,9 @@ function LayoutContent({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const queryClient = useQueryClient();
+  const orgId = user?.organization_id ?? user?.org_id ?? null;
 
   const isPublicPage = publicPages.includes(currentPageName);
 
@@ -117,7 +120,9 @@ function LayoutContent({ children, currentPageName }) {
           onMenuClick={() => setSidebarOpen(prev => !prev)}
           selectedPropertyId={selectedPropertyId}
           onPropertyChange={setSelectedPropertyId}
+          onOpenCommandPalette={() => setCommandPaletteOpen(true)}
         />
+        <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} orgId={orgId} />
         <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0">
           <ErrorBoundary section="layout-outlet" variant="page">
             <Suspense fallback={<PageLoader />}>

@@ -1,4 +1,6 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { useLeads, useCreateLead, useUpdateLead, useDeleteLead, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -65,6 +67,8 @@ function leadEntityToGuestFormValues(lead) {
 
 export default function LeadsPage({ user: _user, selectedPropertyId }) {
   const { toast } = useToast();
+  const location = useLocation();
+  const navigate = useNavigate();
   const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
 
   const url = useGuestsUrlState();
@@ -123,6 +127,17 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       setShowDialog(true);
     }
   }, [openGuestId, leads]);
+
+  useEffect(() => {
+    if (!readCommandPaletteFlag(location.state, 'newGuest')) return;
+    setEditingLead(null);
+    setShowDialog(true);
+    setOpenGuestId(null);
+    navigate(
+      { pathname: location.pathname, search: location.search, hash: location.hash },
+      { replace: true, state: null },
+    );
+  }, [location.state, location.pathname, location.search, location.hash, navigate, setOpenGuestId]);
 
   const counts = useMemo(() => ({
     total:     leads.length,

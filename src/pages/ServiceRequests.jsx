@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Clock,
   Phone,
@@ -24,6 +31,8 @@ import { useMaintenanceUrlState } from '@/hooks/url-state/useMaintenanceUrlState
 import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 export default function ServiceRequests({ orgId, selectedPropertyId }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     openMaintenanceId,
     filterStatus,
@@ -33,6 +42,15 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
   } = useMaintenanceUrlState();
 
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const [newRequestForm, setNewRequestForm] = useState({
+    guest_name: '',
+    title: '',
+    description: '',
+    urgency: 'MEDIUM',
+    property_id: '',
+    request_type: 'MAINTENANCE',
+  });
   const queryClient = useQueryClient();
 
   const { data: requests = [], isLoading, isError, error: requestsError, refetch } = useQuery({
@@ -58,6 +76,22 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
       setSelectedRequest(null);
       setOpenMaintenanceId(null);
     }
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (payload) => base44.entities.GuestRequest.create(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['guestRequests'] });
+      setNewRequestOpen(false);
+      setNewRequestForm({
+        guest_name: '',
+        title: '',
+        description: '',
+        urgency: 'MEDIUM',
+        property_id: '',
+        request_type: 'MAINTENANCE',
+      });
+    },
   });
 
   const requestTypes = {
@@ -88,6 +122,19 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
     const row = requests.find((r) => r.id === openMaintenanceId);
     if (row) setSelectedRequest(row);
   }, [openMaintenanceId, requests]);
+
+  useEffect(() => {
+    if (!readCommandPaletteFlag(location.state, 'newMaintenance')) return;
+    setNewRequestForm((f) => ({
+      ...f,
+      property_id: selectedPropertyId || f.property_id || '',
+    }));
+    setNewRequestOpen(true);
+    navigate(
+      { pathname: location.pathname, search: location.search, hash: location.hash },
+      { replace: true, state: null },
+    );
+  }, [location.state, location.pathname, location.search, location.hash, navigate, selectedPropertyId]);
 
   const filteredRequests = requests.filter(req => {
     if (filterStatus !== 'all' && req.status !== filterStatus) return false;
@@ -213,6 +260,121 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
             highlightRowId={openMaintenanceId}
           />
         </div>
+
+        <Dialog open={newRequestOpen} onOpenChange={setNewRequestOpen}>
+          <DialogContent className="max-w-md" dir="rtl">
+            <DialogHeader>
+              <DialogTitle>בקשת תחזוקה חדשה</DialogTitle>
+            </DialogHeader>
+            <form
+              className="space-y-4 pt-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!orgId) return;
+                const propertyId =
+                  newRequestForm.property_id || selectedPropertyId || properties[0]?.id || '';
+                if (!propertyId) return;
+                createMutation.mutate({
+                  org_id: orgId,
+                  property_id: propertyId,
+                  guest_name: newRequestForm.guest_name.trim() || 'צוות',
+                  title: newRequestForm.title.trim() || 'בקשת תחזוקה',
+                  description: newRequestForm.description.trim() || '—',
+                  urgency: newRequestForm.urgency,
+                  request_type: newRequestForm.request_type,
+                  status: 'NEW',
+                });
+              }}
+            >
+              <div className="space-y-2">
+                <Label htmlFor="cp-maint-guest">שם פונה</Label>
+                <Input
+                  id="cp-maint-guest"
+                  value={newRequestForm.guest_name}
+                  onChange={(e) => setNewRequestForm((f) => ({ ...f, guest_name: e.target.value }))}
+                  placeholder="צוות / שם אורח"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cp-maint-title">כותרת</Label>
+                <Input
+                  id="cp-maint-title"
+                  value={newRequestForm.title}
+                  onChange={(e) => setNewRequestForm((f) => ({ ...f, title: e.target.value }))}
+                  placeholder="תיאור קצר"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cp-maint-desc">תיאור</Label>
+                <Textarea
+                  id="cp-maint-desc"
+                  value={newRequestForm.description}
+                  onChange={(e) => setNewRequestForm((f) => ({ ...f, description: e.target.value }))}
+                  placeholder="פרטים"
+                  className="min-h-[88px]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label>דחיפות</Label>
+                  <Select
+                    value={newRequestForm.urgency}
+                    onValueChange={(v) => setNewRequestForm((f) => ({ ...f, urgency: v }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(urgencyConfig).map(([key, { label }]) => (
+                        <SelectItem key={key} value={key}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>נכס</Label>
+                  {properties.length > 0 ? (
+                    <Select
+                      value={
+                        newRequestForm.property_id
+                        || selectedPropertyId
+                        || properties[0]?.id
+                        || undefined
+                      }
+                      onValueChange={(v) => setNewRequestForm((f) => ({ ...f, property_id: v }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="בחר נכס" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {properties.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p className="text-xs text-amber-700">אין נכסים — הוסף נכס בהגדרות.</p>
+                  )}
+                </div>
+              </div>
+              <Button
+                type="submit"
+                className="w-full bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A]"
+                disabled={
+                  createMutation.isPending
+                  || !orgId
+                  || !(
+                    newRequestForm.property_id
+                    || selectedPropertyId
+                    || properties[0]?.id
+                  )
+                }
+              >
+                {createMutation.isPending ? 'שולח…' : 'צור בקשה'}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
 
         {/* Request Details Sheet */}
         <Sheet

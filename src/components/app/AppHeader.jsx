@@ -16,7 +16,7 @@ import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import {
   Menu, Bell, Settings, LogOut, User, ChevronDown,
-  Building2, Home, Moon, Sun,
+  Building2, Home, Moon, Sun, Search,
 } from 'lucide-react';
 
 const pageNames = {
@@ -56,11 +56,19 @@ function useDarkMode() {
   return [isDark, setIsDark];
 }
 
-export default function AppHeader({ user, currentPageName, onMenuClick, selectedPropertyId, onPropertyChange }) {
+export default function AppHeader({
+  user,
+  currentPageName,
+  onMenuClick,
+  selectedPropertyId,
+  onPropertyChange,
+  onOpenCommandPalette,
+}) {
   const { logout } = useAuth();
   const [isDark, setIsDark] = useDarkMode();
 
   const orgId = user?.organization_id ?? user?.org_id ?? null;
+  const isApple = typeof navigator !== 'undefined' && /Mac|iPhone|iPad|iPod/i.test(navigator.platform || '');
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties-header', orgId],
@@ -124,6 +132,24 @@ export default function AppHeader({ user, currentPageName, onMenuClick, selected
           {pageTitle}
         </h1>
       </div>
+
+      {typeof onOpenCommandPalette === 'function' && (
+        <button
+          type="button"
+          onClick={() => onOpenCommandPalette()}
+          className="hidden md:flex min-h-[40px] flex-1 max-w-[min(420px,40vw)] items-center gap-2 rounded-xl border border-black/[0.06] bg-black/[0.03] px-3 py-2 text-sm text-gray-500 transition-[background-color,box-shadow] duration-150 hover:bg-black/[0.05] hover:border-black/[0.08] touch-manipulation"
+          aria-label="פתח פלטת פקודות"
+        >
+          <Search className="h-4 w-4 shrink-0 text-gray-400" aria-hidden />
+          <span className="flex-1 truncate text-right text-gray-500">חפש, נווט, פעל…</span>
+          <kbd
+            className="hidden shrink-0 rounded border border-gray-200 bg-gray-50 px-1.5 py-0.5 font-mono text-[10px] text-gray-500 sm:inline"
+            dir="ltr"
+          >
+            {isApple ? '⌘' : 'Ctrl'}+K
+          </kbd>
+        </button>
+      )}
 
       {/* Property selector */}
       {properties.length > 0 && (
