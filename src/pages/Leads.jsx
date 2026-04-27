@@ -1,24 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLeads, useCreateLead, useUpdateLead, useDeleteLead, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  Users, Plus, Search, Check, Edit, Trash2,
+  Users, Plus, Search, Edit, Trash2,
   Phone, Mail, CalendarDays, Building2,
   Download, CheckSquare, Square, X, ChevronDown,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { exportToCSV, LEAD_COLUMNS } from '@/lib/csvExport';
+import { GuestForm } from '@/components/forms/GuestForm';
+import { emptyGuestFormValues } from '@/components/forms/atlasFormSchemas';
 
 const STATUS_OPTIONS = [
   { value: 'NEW',        label: 'חדש',          color: 'bg-blue-100 text-blue-700 border-blue-200' },
@@ -35,11 +32,24 @@ const AVATAR_COLORS = [
   'from-teal-400 to-teal-600', 'from-amber-400 to-amber-600', 'from-rose-400 to-rose-600',
 ];
 
-const emptyLead = {
-  full_name: '', email: '', phone: '', property_id: '',
-  check_in_date: '', check_out_date: '', adults: 2, children: 0,
-  status: 'NEW', source: '', notes: '', budget: '',
-};
+function leadEntityToGuestFormValues(lead) {
+  if (!lead) return { ...emptyGuestFormValues };
+  return {
+    ...emptyGuestFormValues,
+    full_name: lead.full_name || lead.name || '',
+    email: lead.email || '',
+    phone: lead.phone || '',
+    property_id: lead.property_id || '',
+    check_in_date: lead.check_in_date || '',
+    check_out_date: lead.check_out_date || '',
+    adults: lead.adults || 2,
+    children: lead.children || 0,
+    status: lead.status || 'NEW',
+    source: lead.source || '',
+    notes: lead.notes || '',
+    budget: lead.budget != null && lead.budget !== '' ? String(lead.budget) : '',
+  };
+}
 
 export default function LeadsPage({ user, selectedPropertyId }) {
   const { toast } = useToast();
@@ -49,7 +59,11 @@ export default function LeadsPage({ user, selectedPropertyId }) {
   const [statusFilter, setStatusFilter] = useState('all');
   const [showDialog, setShowDialog]   = useState(false);
   const [editingLead, setEditingLead] = useState(null);
-  const [form, setForm]               = useState(emptyLead);
+  const guestDialogInterceptRef = useRef(null);
+
+  useEffect(() => {
+    if (!showDialog) guestDialogInterceptRef.current = null;
+  }, [showDialog]);
 
   // ── Bulk selection ──────────────────────────────────────────────────────────
   const [selected, setSelected]       = useState(new Set());
@@ -78,33 +92,27 @@ export default function LeadsPage({ user, selectedPropertyId }) {
   }), [leads]);
 
   // ── CRUD ─────────────────────────────────────────────────────────────────────
-  const openNew = () => { setEditingLead(null); setForm(emptyLead); setShowDialog(true); };
+  const closeGuestDialog = () => {
+    setShowDialog(false);
+    setEditingLead(null);
+  };
+
+  const openNew = () => {
+    setEditingLead(null);
+    setShowDialog(true);
+  };
   const openEdit = lead => {
     setEditingLead(lead);
-    setForm({
-      full_name: lead.full_name || lead.name || '',
-      email: lead.email || '', phone: lead.phone || '',
-      property_id: lead.property_id || '',
-      check_in_date: lead.check_in_date || '', check_out_date: lead.check_out_date || '',
-      adults: lead.adults || 2, children: lead.children || 0,
-      status: lead.status || 'NEW', source: lead.source || '',
-      notes: lead.notes || '', budget: lead.budget || '',
-    });
     setShowDialog(true);
   };
 
-  const handleSave = () => {
-    if (!form.full_name) { toast({ title: 'נא למלא שם', variant: 'destructive' }); return; }
+  const handleGuestSubmit = async (data) => {
     if (editingLead) {
-      updateMutation.mutate({ id: editingLead.id, data: form }, {
-        onSuccess: () => { toast({ title: 'הליד עודכן' }); setShowDialog(false); },
-        onError: () => toast({ title: 'שגיאה בעדכון הליד', variant: 'destructive' }),
-      });
+      await updateMutation.mutateAsync({ id: editingLead.id, data });
+      toast({ title: 'הליד עודכן' });
     } else {
-      createMutation.mutate(form, {
-        onSuccess: () => { toast({ title: 'ליד נוצר בהצלחה' }); setShowDialog(false); setForm(emptyLead); },
-        onError: () => toast({ title: 'שגיאה ביצירת הליד', variant: 'destructive' }),
-      });
+      await createMutation.mutateAsync(data);
+      toast({ title: 'ליד נוצר בהצלחה' });
     }
   };
 
@@ -351,67 +359,37 @@ export default function LeadsPage({ user, selectedPropertyId }) {
       </div>
 
       {/* Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      <Dialog
+        open={showDialog}
+        onOpenChange={(open) => {
+          const h = guestDialogInterceptRef.current;
+          if (h) {
+            h(open);
+            return;
+          }
+          setShowDialog(open);
+        }}
+      >
         <DialogContent className="max-w-lg rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold">{editingLead ? 'עריכת ליד' : 'ליד חדש'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-3 py-2">
-            <div className="col-span-2 space-y-1">
-              <Label className="text-xs text-gray-500">שם מלא *</Label>
-              <Input value={form.full_name} onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))} placeholder="שם מלא" className="h-9 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">טלפון</Label>
-              <Input value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="050-0000000" className="h-9 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">אימייל</Label>
-              <Input value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="email@example.com" className="h-9 text-sm rounded-xl" />
-            </div>
-            {properties.length > 0 && (
-              <div className="col-span-2 space-y-1">
-                <Label className="text-xs text-gray-500">נכס</Label>
-                <Select value={form.property_id} onValueChange={val => setForm(p => ({ ...p, property_id: val }))}>
-                  <SelectTrigger className="h-9 text-sm rounded-xl"><SelectValue placeholder="בחר נכס" /></SelectTrigger>
-                  <SelectContent>{properties.map(prop => <SelectItem key={prop.id} value={prop.id}>{prop.name}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-            )}
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">תאריך כניסה</Label>
-              <Input type="date" value={form.check_in_date} onChange={e => setForm(p => ({ ...p, check_in_date: e.target.value }))} className="h-9 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">תאריך יציאה</Label>
-              <Input type="date" value={form.check_out_date} onChange={e => setForm(p => ({ ...p, check_out_date: e.target.value }))} className="h-9 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">תקציב (₪)</Label>
-              <Input type="number" value={form.budget} onChange={e => setForm(p => ({ ...p, budget: e.target.value }))} placeholder="0" className="h-9 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">סטטוס</Label>
-              <Select value={form.status} onValueChange={val => setForm(p => ({ ...p, status: val }))}>
-                <SelectTrigger className="h-9 text-sm rounded-xl"><SelectValue /></SelectTrigger>
-                <SelectContent>{STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="col-span-2 space-y-1">
-              <Label className="text-xs text-gray-500">הערות</Label>
-              <Textarea value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} placeholder="הערות נוספות..." rows={2} className="text-sm resize-none rounded-xl" />
-            </div>
-          </div>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowDialog(false)} className="h-9 rounded-xl">ביטול</Button>
-            <Button size="sm" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}
-              className="h-9 gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl">
-              {(createMutation.isPending || updateMutation.isPending)
-                ? <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
-                : <Check className="w-4 h-4" />}
-              {editingLead ? 'שמור' : 'צור ליד'}
-            </Button>
-          </DialogFooter>
+          <GuestForm
+            key={editingLead?.id ?? 'new'}
+            storageSuffix={editingLead?.id ?? 'new'}
+            defaultValues={leadEntityToGuestFormValues(editingLead)}
+            properties={properties.map((p) => ({ id: p.id, name: p.name }))}
+            onSubmit={handleGuestSubmit}
+            onCancel={closeGuestDialog}
+            setDialogOpen={setShowDialog}
+            onRegisterDialogInterceptor={(fn) => {
+              guestDialogInterceptRef.current = fn;
+            }}
+            onAfterSubmitSuccess={() => {
+              window.setTimeout(closeGuestDialog, 2000);
+            }}
+            submitLabel={editingLead ? 'שמור' : 'צור ליד'}
+          />
         </DialogContent>
       </Dialog>
     </div>

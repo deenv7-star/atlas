@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -6,19 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  Wallet, Plus, Search, Check, Edit, Trash2,
+  Wallet, Plus, Search, Edit, Trash2,
   TrendingUp, Clock, AlertCircle, CheckCircle2, Download,
 } from 'lucide-react';
 import { formatIsoSafe } from '@/lib/formatIsoSafe';
 import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
+import { PaymentForm } from '@/components/forms/PaymentForm';
+import { emptyPaymentFormValues } from '@/components/forms/atlasFormSchemas';
 
 const PAYMENT_STATUSES = [
   { value: 'PENDING',  label: 'ממתין', color: 'bg-amber-100 text-amber-700 border-amber-200' },
@@ -29,26 +27,26 @@ const PAYMENT_STATUSES = [
   { value: 'OVERDUE',  label: 'באיחור', color: 'bg-orange-100 text-orange-700 border-orange-200' },
 ];
 
-const PAYMENT_METHODS = [
-  { value: 'credit_card',   label: 'כרטיס אשראי' },
-  { value: 'bank_transfer', label: 'העברה בנקאית' },
-  { value: 'cash',          label: 'מזומן' },
-  { value: 'paypal',        label: 'PayPal' },
-  { value: 'bit',           label: 'Bit' },
-  { value: 'other',         label: 'אחר' },
-];
-
 const STATUS_MAP = Object.fromEntries(PAYMENT_STATUSES.map(s => [s.value, s]));
 const METHOD_ICONS = {
   credit_card: '💳', bank_transfer: '🏦', cash: '💵',
   paypal: '🅿️', bit: '📱', other: '💰',
 };
 
-const emptyPayment = {
-  booking_id: '', amount: '', currency: 'ILS',
-  status: 'PENDING', method: 'credit_card',
-  description: '', due_date: '', paid_date: '',
-};
+function paymentEntityToFormValues(p) {
+  if (!p) return { ...emptyPaymentFormValues };
+  return {
+    ...emptyPaymentFormValues,
+    booking_id: p.booking_id || '',
+    amount: p.amount != null && p.amount !== '' ? String(p.amount) : '',
+    currency: p.currency || 'ILS',
+    status: p.status || 'PENDING',
+    method: p.method || 'credit_card',
+    description: p.description || '',
+    due_date: p.due_date || '',
+    paid_date: p.paid_date || '',
+  };
+}
 
 export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   const { toast } = useToast();
@@ -57,7 +55,11 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   const [statusFilter, setStatusFilter] = useState('all');
   const [showDialog, setShowDialog]     = useState(false);
   const [editingPayment, setEditingPayment] = useState(null);
-  const [form, setForm] = useState(emptyPayment);
+  const paymentDialogInterceptRef = useRef(null);
+
+  useEffect(() => {
+    if (!showDialog) paymentDialogInterceptRef.current = null;
+  }, [showDialog]);
 
   const { data: payments = [], isLoading } = useQuery({
     queryKey: ['payments', orgId],
@@ -73,29 +75,19 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
-      toast({ title: 'תשלום נוצר בהצלחה' });
-      setShowDialog(false);
-      setForm(emptyPayment);
     },
-    onError: (e) => toast({
-      title: e?.message === 'missing_org' ? 'חסר ארגון — השלם הגדרה' : 'שגיאה ביצירת התשלום',
-      variant: 'destructive',
-    }),
   });
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data: payload }) => {
       const next = { ...payload };
       if (next.amount !== undefined && next.amount !== null && next.amount !== '')
-        next.amount = parseFloat(next.amount) || 0;
+        next.amount = parseFloat(String(next.amount).replace(',', '.')) || 0;
       return base44.entities.Payment.update(id, next);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
-      toast({ title: 'התשלום עודכן' });
-      setShowDialog(false);
     },
-    onError: () => toast({ title: 'שגיאה בעדכון התשלום', variant: 'destructive' }),
   });
 
   const deleteMutation = useMutation({
@@ -122,23 +114,31 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
     .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)),
   [payments, searchTerm, statusFilter]);
 
-  const openNew = () => { setEditingPayment(null); setForm(emptyPayment); setShowDialog(true); };
+  const closePaymentDialog = () => {
+    setShowDialog(false);
+    setEditingPayment(null);
+  };
+
+  const openNew = () => {
+    setEditingPayment(null);
+    setShowDialog(true);
+  };
   const openEdit = payment => {
     setEditingPayment(payment);
-    setForm({
-      booking_id: payment.booking_id || '', amount: payment.amount || '',
-      currency: payment.currency || 'ILS', status: payment.status || 'PENDING',
-      method: payment.method || 'credit_card', description: payment.description || '',
-      due_date: payment.due_date || '', paid_date: payment.paid_date || '',
-    });
     setShowDialog(true);
   };
 
-  const handleSave = () => {
-    if (!orgId) { toast({ title: 'לא ניתן לשמור לפני קישור ארגון', variant: 'destructive' }); return; }
-    if (!form.amount) { toast({ title: 'נא להזין סכום', variant: 'destructive' }); return; }
-    if (editingPayment) updateMutation.mutate({ id: editingPayment.id, data: form });
-    else createMutation.mutate(form);
+  const handlePaymentSubmit = async (data) => {
+    if (!orgId) {
+      throw new Error('חסר ארגון — השלם הגדרה');
+    }
+    if (editingPayment) {
+      await updateMutation.mutateAsync({ id: editingPayment.id, data: { ...data } });
+      toast({ title: 'התשלום עודכן' });
+    } else {
+      await createMutation.mutateAsync({ ...data, org_id: orgId });
+      toast({ title: 'תשלום נוצר בהצלחה' });
+    }
   };
 
   // ── CSV Export ───────────────────────────────────────────────────────────────
@@ -288,53 +288,36 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       </div>
 
       {/* Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      <Dialog
+        open={showDialog}
+        onOpenChange={(open) => {
+          const h = paymentDialogInterceptRef.current;
+          if (h) {
+            h(open);
+            return;
+          }
+          setShowDialog(open);
+        }}
+      >
         <DialogContent className="max-w-md rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold">{editingPayment ? 'עריכת תשלום' : 'תשלום חדש'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-3 py-2">
-            <div className="col-span-2 space-y-1">
-              <Label className="text-xs text-gray-500">תיאור</Label>
-              <Input value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="תיאור התשלום" className="h-9 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">סכום (₪) *</Label>
-              <Input type="number" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} placeholder="0" className="h-9 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">אמצעי תשלום</Label>
-              <Select value={form.method} onValueChange={val => setForm(p => ({ ...p, method: val }))}>
-                <SelectTrigger className="h-9 text-sm rounded-xl"><SelectValue /></SelectTrigger>
-                <SelectContent>{PAYMENT_METHODS.map(m => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">סטטוס</Label>
-              <Select value={form.status} onValueChange={val => setForm(p => ({ ...p, status: val }))}>
-                <SelectTrigger className="h-9 text-sm rounded-xl"><SelectValue /></SelectTrigger>
-                <SelectContent>{PAYMENT_STATUSES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">תאריך תשלום</Label>
-              <Input type="date" value={form.paid_date} onChange={e => setForm(p => ({ ...p, paid_date: e.target.value }))} className="h-9 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">תאריך יעד</Label>
-              <Input type="date" value={form.due_date} onChange={e => setForm(p => ({ ...p, due_date: e.target.value }))} className="h-9 text-sm rounded-xl" />
-            </div>
-          </div>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowDialog(false)} className="h-9 rounded-xl">ביטול</Button>
-            <Button size="sm" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}
-              className="h-9 gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl">
-              {(createMutation.isPending || updateMutation.isPending)
-                ? <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
-                : <Check className="w-4 h-4" />}
-              שמור
-            </Button>
-          </DialogFooter>
+          <PaymentForm
+            key={editingPayment?.id ?? 'new'}
+            storageSuffix={editingPayment?.id ?? 'new'}
+            defaultValues={paymentEntityToFormValues(editingPayment)}
+            onSubmit={handlePaymentSubmit}
+            onCancel={closePaymentDialog}
+            setDialogOpen={setShowDialog}
+            onRegisterDialogInterceptor={(fn) => {
+              paymentDialogInterceptRef.current = fn;
+            }}
+            onAfterSubmitSuccess={() => {
+              window.setTimeout(closePaymentDialog, 2000);
+            }}
+            submitLabel="שמור"
+          />
         </DialogContent>
       </Dialog>
     </div>

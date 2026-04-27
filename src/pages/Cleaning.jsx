@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
@@ -20,7 +17,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import {
   Sheet,
@@ -41,6 +37,8 @@ import {
 } from 'lucide-react';
 import { format, parseISO, isToday, isTomorrow, isPast } from 'date-fns';
 import { he } from 'date-fns/locale';
+import { MaintenanceRequestForm } from '@/components/forms/MaintenanceRequestForm';
+import { emptyMaintenanceRequestFormValues } from '@/components/forms/atlasFormSchemas';
 
 const statusColors = {
   OPEN: 'bg-blue-100 text-blue-700 border-blue-200',
@@ -54,28 +52,18 @@ const statusLabels = {
   DONE: 'הושלם'
 };
 
-const defaultChecklist = [
-  { item: 'החלפת מצעים', done: false },
-  { item: 'ניקוי חדר אמבטיה', done: false },
-  { item: 'שאיבת אבק', done: false },
-  { item: 'ניגוב רצפות', done: false },
-  { item: 'ניקוי מטבח', done: false },
-  { item: 'מילוי ציוד (סבון, נייר)', done: false },
-  { item: 'הוצאת אשפה', done: false }
-];
-
 export default function Cleaning({ user, selectedPropertyId, orgId, properties }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const queryClient = useQueryClient();
+  const maintenanceDialogInterceptRef = useRef(null);
 
-  const [newTask, setNewTask] = useState({
-    scheduled_for: '',
-    assigned_to_name: '',
-    notes: '',
-    checklist: defaultChecklist
-  });
+  useEffect(() => {
+    if (!isCreateOpen) maintenanceDialogInterceptRef.current = null;
+  }, [isCreateOpen]);
+
+  const maintenanceFormDefaults = useMemo(() => emptyMaintenanceRequestFormValues(), [isCreateOpen]);
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['cleaningTasks', orgId, selectedPropertyId],
@@ -104,8 +92,6 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cleaningTasks'] });
-      setIsCreateOpen(false);
-      setNewTask({ scheduled_for: '', assigned_to_name: '', notes: '', checklist: defaultChecklist });
     },
   });
 
@@ -123,6 +109,19 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
     if (selectedTask?.id === taskId) {
       setSelectedTask({ ...selectedTask, status: newStatus });
     }
+  };
+
+  const closeMaintenanceDialog = () => {
+    setIsCreateOpen(false);
+  };
+
+  const handleMaintenanceSubmit = async (data) => {
+    await createMutation.mutateAsync({
+      ...data,
+      org_id: orgId,
+      property_id: selectedPropertyId,
+      status: 'OPEN',
+    });
   };
 
   const handleChecklistToggle = (taskId, index, currentChecklist) => {
@@ -440,73 +439,36 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
       </Sheet>
 
       {/* Create Task Dialog */}
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+      <Dialog
+        open={isCreateOpen}
+        onOpenChange={(open) => {
+          const h = maintenanceDialogInterceptRef.current;
+          if (h) {
+            h(open);
+            return;
+          }
+          setIsCreateOpen(open);
+        }}
+      >
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>משימת ניקיון חדשה</DialogTitle>
           </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div>
-              <Label>תאריך ושעה</Label>
-              <Input 
-                type="datetime-local"
-                value={newTask.scheduled_for}
-                onChange={(e) => setNewTask({ ...newTask, scheduled_for: e.target.value })}
-                className="mt-1 rounded-xl"
-              />
-            </div>
-            <div>
-              <Label>הקצה ל</Label>
-              <Input 
-                value={newTask.assigned_to_name}
-                onChange={(e) => setNewTask({ ...newTask, assigned_to_name: e.target.value })}
-                className="mt-1 rounded-xl"
-                placeholder="שם העובד"
-              />
-            </div>
-            <div>
-              <Label>הערות</Label>
-              <Textarea 
-                value={newTask.notes}
-                onChange={(e) => setNewTask({ ...newTask, notes: e.target.value })}
-                className="mt-1 rounded-xl"
-                rows={3}
-                placeholder="הערות נוספות..."
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>רשימת בדיקה</Label>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {newTask.checklist.map((item, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                    <Checkbox 
-                      checked={item.done}
-                      onCheckedChange={(checked) => {
-                        const updated = [...newTask.checklist];
-                        updated[index] = { ...updated[index], done: checked };
-                        setNewTask({ ...newTask, checklist: updated });
-                      }}
-                    />
-                    <span className="text-sm">{item.item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateOpen(false)} className="rounded-xl">
-              ביטול
-            </Button>
-            <Button 
-              onClick={() => createMutation.mutate(newTask)}
-              disabled={!newTask.scheduled_for || createMutation.isPending}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
-            >
-              {createMutation.isPending ? 'שומר...' : 'צור משימה'}
-            </Button>
-          </DialogFooter>
+          <MaintenanceRequestForm
+            key={`${orgId}-${selectedPropertyId || 'all'}-${isCreateOpen}`}
+            storageSuffix={`${orgId}-${selectedPropertyId || 'all'}`}
+            defaultValues={maintenanceFormDefaults}
+            onSubmit={handleMaintenanceSubmit}
+            onCancel={closeMaintenanceDialog}
+            setDialogOpen={setIsCreateOpen}
+            onRegisterDialogInterceptor={(fn) => {
+              maintenanceDialogInterceptRef.current = fn;
+            }}
+            onAfterSubmitSuccess={() => {
+              window.setTimeout(closeMaintenanceDialog, 2000);
+            }}
+            submitLabel="צור משימה"
+          />
         </DialogContent>
       </Dialog>
     </div>

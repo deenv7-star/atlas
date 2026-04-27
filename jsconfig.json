@@ -20,6 +20,8 @@
     "src/components/**/*.js",
     "src/components/**/*.jsx",
     "src/components/**/*.tsx",
+    "src/components/**/*.ts",
+    "src/hooks/**/*.ts",
     "src/pages/**/*.jsx",
     "src/pages/**/*.tsx",
     "src/Layout.jsx"

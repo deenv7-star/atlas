@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useBookings, useCreateBooking, useUpdateBooking, useDeleteBooking } from '@/data/entities';
 import { useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
@@ -7,22 +7,20 @@ import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { SkeletonTableFull } from '@/components/skeletons/atlas-skeletons';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  CalendarDays, Plus, Search, Building2, Edit, Trash2, Check,
+  CalendarDays, Plus, Search, Building2, Edit, Trash2,
   Clock, CheckCircle2, XCircle, Phone, MessageCircle,
   Download, CheckSquare, Square, X, ChevronDown,
 } from 'lucide-react';
-import { format, parseISO, differenceInDays } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
+import { BookingForm } from '@/components/forms/BookingForm';
+import { emptyBookingFormValues } from '@/components/forms/atlasFormSchemas';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING',     label: 'ממתין',        color: 'bg-amber-100 text-amber-700',     dot: 'bg-amber-400' },
@@ -35,13 +33,27 @@ const STATUS_OPTIONS = [
 ];
 const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
 
-const emptyBooking = {
-  guest_name: '', guest_email: '', guest_phone: '',
-  property_id: '', check_in_date: '', check_out_date: '',
-  nights: 1, adults: 2, children: 0,
-  total_price: '', status: 'PENDING', notes: '',
-  guest_count: 2, booking_source: 'direct', payment_status: 'pending',
-};
+function bookingEntityToFormValues(b) {
+  if (!b) return { ...emptyBookingFormValues };
+  return {
+    ...emptyBookingFormValues,
+    guest_name: b.guest_name || '',
+    guest_email: b.guest_email || '',
+    guest_phone: b.guest_phone || '',
+    property_id: b.property_id || '',
+    check_in_date: b.check_in_date || '',
+    check_out_date: b.check_out_date || '',
+    nights: b.nights || 1,
+    adults: b.adults || 2,
+    children: b.children || 0,
+    total_price: b.total_price != null && b.total_price !== '' ? String(b.total_price) : '',
+    status: b.status || 'PENDING',
+    notes: b.notes || '',
+    guest_count: (b.adults || 0) + (b.children || 0) || 2,
+    booking_source: b.booking_source || 'direct',
+    payment_status: b.payment_status || 'pending',
+  };
+}
 
 export default function BookingsPage({ user, selectedPropertyId }) {
   const { toast } = useToast();
@@ -51,7 +63,11 @@ export default function BookingsPage({ user, selectedPropertyId }) {
   const [statusFilter, setStatusFilter]     = useState('all');
   const [showDialog, setShowDialog]         = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
-  const [form, setForm]                     = useState(emptyBooking);
+  const bookingDialogInterceptRef = useRef(null);
+
+  useEffect(() => {
+    if (!showDialog) bookingDialogInterceptRef.current = null;
+  }, [showDialog]);
 
   // ── Bulk selection ──────────────────────────────────────────────────────────
   const [selected, setSelected]       = useState(new Set());
@@ -71,36 +87,28 @@ export default function BookingsPage({ user, selectedPropertyId }) {
   }), [bookings, searchTerm, statusFilter]);
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
-  const openNew = () => { setEditingBooking(null); setForm(emptyBooking); setShowDialog(true); };
+  const closeBookingDialog = () => {
+    setShowDialog(false);
+    setEditingBooking(null);
+  };
+
+  const openNew = () => {
+    setEditingBooking(null);
+    setShowDialog(true);
+  };
   const openEdit = b => {
     setEditingBooking(b);
-    setForm({
-      guest_name: b.guest_name || '', guest_email: b.guest_email || '', guest_phone: b.guest_phone || '',
-      property_id: b.property_id || '', check_in_date: b.check_in_date || '', check_out_date: b.check_out_date || '',
-      nights: b.nights || 1, adults: b.adults || 2, children: b.children || 0,
-      total_price: b.total_price || '', status: b.status || 'PENDING', notes: b.notes || '',
-      guest_count: (b.adults || 0) + (b.children || 0) || 2, booking_source: b.booking_source || 'direct',
-      payment_status: b.payment_status || 'pending',
-    });
     setShowDialog(true);
   };
 
-  const handleSave = () => {
-    if (!form.guest_name || !form.check_in_date) {
-      toast({ title: 'נא למלא שם אורח ותאריך כניסה', variant: 'destructive' });
-      return;
-    }
-    const payload = { ...form };
+  const handleBookingSubmit = async (data) => {
+    const payload = { ...data };
     if (editingBooking) {
-      updateMutation.mutate({ id: editingBooking.id, data: payload }, {
-        onSuccess: () => { toast({ title: 'ההזמנה עודכנה' }); setShowDialog(false); },
-        onError: () => toast({ title: 'שגיאה בעדכון ההזמנה', variant: 'destructive' }),
-      });
+      await updateMutation.mutateAsync({ id: editingBooking.id, data: payload });
+      toast({ title: 'ההזמנה עודכנה' });
     } else {
-      createMutation.mutate(payload, {
-        onSuccess: () => { toast({ title: 'הזמנה נוצרה בהצלחה' }); setShowDialog(false); setForm(emptyBooking); },
-        onError: () => toast({ title: 'שגיאה ביצירת ההזמנה', variant: 'destructive' }),
-      });
+      await createMutation.mutateAsync(payload);
+      toast({ title: 'הזמנה נוצרה בהצלחה' });
     }
   };
 
@@ -110,14 +118,6 @@ export default function BookingsPage({ user, selectedPropertyId }) {
       onSuccess: () => toast({ title: 'ההזמנה נמחקה' }),
       onError: () => toast({ title: 'שגיאה במחיקת ההזמנה', variant: 'destructive' }),
     });
-  };
-
-  const getNights = () => {
-    try {
-      if (form.check_in_date && form.check_out_date)
-        return differenceInDays(parseISO(form.check_out_date), parseISO(form.check_in_date));
-    } catch {}
-    return 0;
   };
 
   const counts = useMemo(() => ({
@@ -461,77 +461,37 @@ export default function BookingsPage({ user, selectedPropertyId }) {
       </button>
 
       {/* Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      <Dialog
+        open={showDialog}
+        onOpenChange={(open) => {
+          const h = bookingDialogInterceptRef.current;
+          if (h) {
+            h(open);
+            return;
+          }
+          setShowDialog(open);
+        }}
+      >
         <DialogContent className="w-[calc(100vw-2rem)] max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base font-bold">{editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-3 py-2">
-            <div className="col-span-2 space-y-1.5">
-              <Label className="text-xs font-semibold">שם אורח *</Label>
-              <Input value={form.guest_name} onChange={e => setForm(p => ({ ...p, guest_name: e.target.value }))} placeholder="שם מלא" className="h-11 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">אימייל</Label>
-              <Input value={form.guest_email} onChange={e => setForm(p => ({ ...p, guest_email: e.target.value }))} placeholder="email@example.com" className="h-11 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">טלפון</Label>
-              <Input value={form.guest_phone} onChange={e => setForm(p => ({ ...p, guest_phone: e.target.value }))} placeholder="050-0000000" className="h-11 text-sm rounded-xl" />
-            </div>
-            {properties.length > 0 && (
-              <div className="col-span-2 space-y-1.5">
-                <Label className="text-xs font-semibold">נכס</Label>
-                <Select value={form.property_id} onValueChange={val => setForm(p => ({ ...p, property_id: val }))}>
-                  <SelectTrigger className="h-11 text-sm rounded-xl"><SelectValue placeholder="בחר נכס" /></SelectTrigger>
-                  <SelectContent>{properties.map(prop => <SelectItem key={prop.id} value={prop.id}>{prop.name}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-            )}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">תאריך כניסה *</Label>
-              <Input type="date" value={form.check_in_date} onChange={e => setForm(p => ({ ...p, check_in_date: e.target.value }))} className="h-11 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">תאריך יציאה</Label>
-              <Input type="date" value={form.check_out_date} onChange={e => setForm(p => ({ ...p, check_out_date: e.target.value }))} className="h-11 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">מחיר כולל (₪)</Label>
-              <Input type="number" value={form.total_price} onChange={e => setForm(p => ({ ...p, total_price: e.target.value }))} placeholder="0" className="h-11 text-sm rounded-xl" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">סטטוס</Label>
-              <Select value={form.status} onValueChange={val => setForm(p => ({ ...p, status: val }))}>
-                <SelectTrigger className="h-11 text-sm rounded-xl"><SelectValue /></SelectTrigger>
-                <SelectContent>{STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="col-span-2 space-y-1.5">
-              <Label className="text-xs font-semibold">הערות</Label>
-              <Input value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} placeholder="הערות פנימיות" className="h-11 text-sm rounded-xl" />
-            </div>
-            {getNights() > 0 && (
-              <div className="col-span-2">
-                <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> {getNights()} לילות
-                </div>
-              </div>
-            )}
-          </div>
-          <DialogFooter className="gap-2 flex-col sm:flex-row">
-            <Button variant="outline" onClick={() => setShowDialog(false)} className="min-h-[44px] h-11 rounded-xl w-full sm:w-auto">ביטול</Button>
-            <Button
-              onClick={handleSave}
-              disabled={createMutation.isPending || updateMutation.isPending}
-              className="min-h-[44px] h-11 gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl w-full sm:w-auto"
-            >
-              {(createMutation.isPending || updateMutation.isPending)
-                ? <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
-                : <Check className="w-4 h-4" />}
-              {editingBooking ? 'שמור שינויים' : 'צור הזמנה'}
-            </Button>
-          </DialogFooter>
+          <BookingForm
+            key={editingBooking?.id ?? 'new'}
+            storageSuffix={editingBooking?.id ?? 'new'}
+            defaultValues={bookingEntityToFormValues(editingBooking)}
+            properties={properties.map((p) => ({ id: p.id, name: p.name }))}
+            onSubmit={handleBookingSubmit}
+            onCancel={closeBookingDialog}
+            setDialogOpen={setShowDialog}
+            onRegisterDialogInterceptor={(fn) => {
+              bookingDialogInterceptRef.current = fn;
+            }}
+            onAfterSubmitSuccess={() => {
+              window.setTimeout(closeBookingDialog, 2000);
+            }}
+            submitLabel={editingBooking ? 'שמור שינויים' : 'צור הזמנה'}
+          />
         </DialogContent>
       </Dialog>
     </div>
