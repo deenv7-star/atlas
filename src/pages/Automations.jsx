@@ -87,7 +87,7 @@ export default function AutomationsPage({ user, orgId }) {
     queryKey: ['automations', orgId],
     queryFn: () =>
       orgId
-        ? base44.entities.AutomationRule.filter({ org_id: orgId }, '-created_date')
+        ? base44.entities.AutomationRule.filter({ org_id: orgId }, '-created_date', 200)
         : Promise.resolve([]),
     enabled: !!orgId,
   });
