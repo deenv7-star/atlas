@@ -4,6 +4,7 @@ import { useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { SkeletonTableFull } from '@/components/skeletons/atlas-skeletons';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
@@ -354,6 +355,11 @@ export default function BookingsPage({ user, selectedPropertyId }) {
             )}
           </div>
         ) : (
+          <ErrorBoundary
+            section="bookings-table"
+            variant="inline"
+            resetKey={`${selectedPropertyId ?? 'all'}|${statusFilter}|${searchTerm}`}
+          >
           <>
             {/* Select all header */}
             <div className="flex items-center gap-3 px-4 py-2 border-b border-gray-50 bg-gray-50/50">
@@ -443,6 +449,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
               })}
             </div>
           </>
+          </ErrorBoundary>
         )}
       </div>
 

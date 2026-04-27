@@ -19,6 +19,7 @@ import { useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#FF5A5F', bg: 'bg-[#FF5A5F]', text: 'text-[#FF5A5F]', light: 'bg-red-50' },
@@ -333,6 +334,11 @@ export default function MultiCalendar({ selectedPropertyId }) {
           propertyRowCount={Math.max(properties.length, 3)}
         />
       ) : (
+        <ErrorBoundary
+          section="calendar-view"
+          variant="inline"
+          resetKey={`${viewMode}-${dateOffset}-${totalDays}-${selectedPropertyId ?? 'all'}`}
+        >
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
         <p className="sm:hidden text-xs text-gray-500 px-4 py-2 bg-gray-50 border-b">גלול לצדדים כדי לראות את כל התאריכים</p>
         <div className="overflow-x-auto overflow-y-hidden scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
@@ -479,6 +485,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
           ))}
         </div>
         </div>
+        </ErrorBoundary>
       )}
 
       {/* Tooltip */}

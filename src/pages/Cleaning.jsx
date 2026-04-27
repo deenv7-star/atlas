@@ -28,8 +28,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { 
-  Plus, 
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import {
+  Plus,
   Sparkles,
   ClipboardList,
   Clock,
@@ -299,6 +300,11 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
           </CardContent>
         </Card>
       ) : (
+        <ErrorBoundary
+          section="maintenance-board"
+          variant="inline"
+          resetKey={`${orgId ?? 'no-org'}|${selectedPropertyId ?? 'all'}`}
+        >
         <div className="space-y-8">
           <TaskGroup 
             title="באיחור" 
@@ -325,6 +331,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             color="text-gray-500" 
           />
         </div>
+        </ErrorBoundary>
       )}
 
       {/* Task Details Sheet */}

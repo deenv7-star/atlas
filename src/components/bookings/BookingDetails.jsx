@@ -25,7 +25,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { 
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import {
   Phone,
   Mail,
   Calendar,
@@ -238,6 +239,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
           
           <div className="p-6 space-y-6">
             {/* Guest Info */}
+            <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
             <div className="bg-gray-50 rounded-xl p-4 space-y-3">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center">
@@ -263,6 +265,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
                 )}
               </div>
             </div>
+            </ErrorBoundary>
 
             {/* Dates & Amount */}
             <div className="grid grid-cols-2 gap-4">

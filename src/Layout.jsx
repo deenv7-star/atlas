@@ -8,7 +8,7 @@ import BottomTabs from '@/components/app/BottomTabs';
 import AIChatBubble from '@/components/app/AIChatBubble';
 import TrialBanner from '@/components/TrialBanner';
 import IOSInstallBanner from '@/components/app/IOSInstallBanner';
-import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
@@ -119,7 +119,7 @@ function LayoutContent({ children, currentPageName }) {
           onPropertyChange={setSelectedPropertyId}
         />
         <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0">
-          <ErrorBoundary>
+          <ErrorBoundary section="layout-outlet" variant="page">
             <Suspense fallback={<PageLoader />}>
               {React.isValidElement(children)
                 ? React.cloneElement(children, {

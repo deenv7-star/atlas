@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -199,6 +200,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       </div>
 
       {/* Stats */}
+      <ErrorBoundary section="financial-summary" variant="inline" resetKey={orgId ?? 'no-org'}>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: 'סה"כ הכנסות', value: `₪${stats.total.toLocaleString()}`, icon: TrendingUp, iconClass: 'icon-teal',  bg: 'stat-teal' },
@@ -217,6 +219,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
           </div>
         ))}
       </div>
+      </ErrorBoundary>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">

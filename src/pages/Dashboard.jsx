@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import {
   SkeletonStatCard,
   SkeletonDashboardBookingRow,
@@ -41,23 +42,6 @@ const DASH_PAYMENT_SELECT =
 const DASH_REVIEW_SELECT =
   'id,rating,status,property_id,created_at,created_date,guest_name';
 
-// ── Simple widget-level ErrorBoundary ────────────────────────────────────────
-class WidgetErrorBoundary extends React.Component {
-  constructor(props) { super(props); this.state = { error: false }; }
-  static getDerivedStateFromError() { return { error: true }; }
-  render() {
-    if (this.state.error) {
-      return (
-        <div className="rounded-2xl p-5 bg-red-50/60 border border-red-100 text-center">
-          <AlertCircle className="w-5 h-5 text-red-400 mx-auto mb-1" />
-          <p className="text-xs text-red-500 font-medium">לא ניתן לטעון את הווידג'ט</p>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
 const STATUS_COLORS = {
   NEW: 'bg-blue-100 text-blue-700', CONTACTED: 'bg-yellow-100 text-yellow-700',
   OFFER_SENT: 'bg-purple-100 text-purple-700', CONFIRMED: 'bg-emerald-100 text-emerald-700',
@@ -77,8 +61,21 @@ const tapTween = { type: 'tween', duration: 0.14, ease: [0.23, 1, 0.32, 1] };
 
 const TINT_MAP = { 'icon-blue': 'blue', 'icon-purple': 'purple', 'icon-teal': 'teal', 'icon-amber': 'neutral', 'icon-green': 'teal', 'icon-rose': 'neutral' };
 
-function StatCard({ title, value, subtitle, icon: Icon, iconClass, trend, loading, error }) {
+function StatCard({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  iconClass,
+  trend,
+  loading,
+  error,
+  statKey,
+}) {
   const tint = TINT_MAP[iconClass] || 'neutral';
+  const boundarySection = statKey ?? `dashboard-stat:${title}`;
+  const boundaryResetKey = `${String(value)}|${subtitle ?? ''}`;
+
   if (error) {
     return (
       <div className="rounded-2xl p-3 border border-red-100 bg-red-50/40 min-h-[120px] flex items-center">
@@ -90,24 +87,26 @@ function StatCard({ title, value, subtitle, icon: Icon, iconClass, trend, loadin
     return <SkeletonStatCard iconClass={iconClass} />;
   }
   return (
-    <div className="atlas-dash-stat-lift h-full rounded-2xl">
-      <LiquidGlassCard tint={tint} size="sm" className="h-full">
-        <div className="flex items-start justify-between mb-3">
-          <p className="text-xs font-semibold text-gray-500 leading-snug">{title}</p>
-          <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0', iconClass)}>
-            <Icon style={{ width: '16px', height: '16px' }} />
+    <ErrorBoundary section={boundarySection} variant="inline" resetKey={boundaryResetKey}>
+      <div className="atlas-dash-stat-lift h-full rounded-2xl">
+        <LiquidGlassCard tint={tint} size="sm" className="h-full">
+          <div className="flex items-start justify-between mb-3">
+            <p className="text-xs font-semibold text-gray-500 leading-snug">{title}</p>
+            <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0', iconClass)}>
+              <Icon style={{ width: '16px', height: '16px' }} />
+            </div>
           </div>
-        </div>
-        <p className="text-3xl font-bold text-zinc-900 mb-1 tracking-tight atlas-tabular">{value}</p>
-        {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
-        {trend !== undefined && (
-          <div className={cn('flex items-center gap-1 text-xs font-semibold mt-2', trend >= 0 ? 'text-emerald-600' : 'text-red-500')}>
-            {trend >= 0 ? <ArrowUpLeft className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-            <span>{Math.abs(trend)}% מהחודש הקודם</span>
-          </div>
-        )}
-      </LiquidGlassCard>
-    </div>
+          <p className="text-3xl font-bold text-zinc-900 mb-1 tracking-tight atlas-tabular">{value}</p>
+          {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+          {trend !== undefined && (
+            <div className={cn('flex items-center gap-1 text-xs font-semibold mt-2', trend >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+              {trend >= 0 ? <ArrowUpLeft className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+              <span>{Math.abs(trend)}% מהחודש הקודם</span>
+            </div>
+          )}
+        </LiquidGlassCard>
+      </div>
+    </ErrorBoundary>
   );
 }
 
@@ -509,7 +508,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
 
       {/* Today Section */}
       {(todayCheckIns.length > 0 || todayCheckOuts.length > 0) && (
-        <WidgetErrorBoundary>
+        <ErrorBoundary section="dashboard-today" variant="inline" resetKey={format(now, 'yyyy-MM-dd')}>
           <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
             <div className="flex items-center gap-2 px-5 py-3.5 border-b border-gray-50">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -555,37 +554,37 @@ export default function Dashboard({ user, selectedPropertyId }) {
               </div>
             </div>
           </div>
-        </WidgetErrorBoundary>
+        </ErrorBoundary>
       )}
 
       {/* KPI Stats */}
       <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-3" variants={kpiParentVariants} initial={reduceMotion ? false : 'hidden'} animate="show">
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard title="הזמנות השבוע" value={bookingsLoading ? '—' : stats.thisWeekBookings.length} subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`} icon={CalendarDays} iconClass="icon-blue" loading={bookingsLoading} error={bookingsError} />
+          <StatCard statKey="dashboard-kpi-bookings-week" title="הזמנות השבוע" value={bookingsLoading ? '—' : stats.thisWeekBookings.length} subtitle={`${stats.confirmedBookings.length} מאושרות סה"כ`} icon={CalendarDays} iconClass="icon-blue" loading={bookingsLoading} error={bookingsError} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard title="לידים חדשים" value={leadsLoading ? '—' : stats.newLeads.length} subtitle={`${leads.length} לידים סה"כ`} icon={Users} iconClass="icon-purple" loading={leadsLoading} error={leadsError} />
+          <StatCard statKey="dashboard-kpi-leads-new" title="לידים חדשים" value={leadsLoading ? '—' : stats.newLeads.length} subtitle={`${leads.length} לידים סה"כ`} icon={Users} iconClass="icon-purple" loading={leadsLoading} error={leadsError} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard title="הכנסות" value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')} subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'} icon={Wallet} iconClass="icon-teal" loading={paymentsLoading} error={paymentsError} />
+          <StatCard statKey="dashboard-kpi-revenue" title="הכנסות" value={paymentsLoading ? '—' : (stats.totalRevenue > 0 ? `₪${stats.totalRevenue.toLocaleString('he-IL')}` : 'התחל לגבות')} subtitle={stats.totalRevenue > 0 ? 'סה״כ תשלומים שהתקבלו' : 'הוסף הזמנות ותשלומים'} icon={Wallet} iconClass="icon-teal" loading={paymentsLoading} error={paymentsError} />
         </motion.div>
         <motion.div variants={kpiItemVariants} className="min-w-0">
-          <StatCard title="דירוג ממוצע" value={stats.avgRating ? `★ ${stats.avgRating}` : '—'} subtitle={`${reviews.length} ביקורות`} icon={Star} iconClass="icon-amber" loading={reviewsLoading} error={reviewsError} />
+          <StatCard statKey="dashboard-kpi-avg-rating" title="דירוג ממוצע" value={stats.avgRating ? `★ ${stats.avgRating}` : '—'} subtitle={`${reviews.length} ביקורות`} icon={Star} iconClass="icon-amber" loading={reviewsLoading} error={reviewsError} />
         </motion.div>
       </motion.div>
 
       {/* Main Content Grid */}
       <div className="grid md:grid-cols-2 gap-4">
-        <WidgetErrorBoundary>
+        <ErrorBoundary section="dashboard-section-upcoming-bookings" variant="inline" resetKey={selectedPropertyId ?? 'all'}>
           <SectionCard title="הזמנות קרובות" icon={CalendarDays} viewAllLink={createPageUrl('Bookings')} loading={bookingsLoading} error={bookingsError} listVariant="booking" emptyIcon={CalendarDays} emptyText="אין עדיין הזמנות קרובות" addLink={createPageUrl('Bookings')}>
             {upcomingBookings.map(b => <BookingRow key={b.id} booking={b} />)}
           </SectionCard>
-        </WidgetErrorBoundary>
-        <WidgetErrorBoundary>
+        </ErrorBoundary>
+        <ErrorBoundary section="dashboard-section-recent-leads" variant="inline" resetKey={selectedPropertyId ?? 'all'}>
           <SectionCard title="לידים אחרונים" icon={Users} viewAllLink={createPageUrl('Leads')} loading={leadsLoading} error={leadsError} listVariant="lead" emptyIcon={Users} emptyText="עדיין אין לידים" addLink={createPageUrl('Leads')}>
             {recentLeads.map(l => <LeadRow key={l.id} lead={l} />)}
           </SectionCard>
-        </WidgetErrorBoundary>
+        </ErrorBoundary>
       </div>
 
       {/* Quick Actions */}
@@ -621,7 +620,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
         const pct = Math.round((doneCount / steps.length) * 100);
         if (pct === 100) return null;
         return (
-          <WidgetErrorBoundary>
+          <ErrorBoundary section="dashboard-getting-started" variant="inline" resetKey={String(doneCount)}>
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
               <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                 <div className="flex items-center justify-between mb-2">
@@ -652,20 +651,20 @@ export default function Dashboard({ user, selectedPropertyId }) {
                 ))}
               </div>
             </div>
-          </WidgetErrorBoundary>
+          </ErrorBoundary>
         );
       })()}
 
       {/* Insights */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-        <WidgetErrorBoundary>
+        <ErrorBoundary section="dashboard-occupancy-gauge" variant="silent" resetKey={selectedPropertyId ?? 'all'}>
           <OccupancyGauge bookings={bookings} properties={properties} />
-        </WidgetErrorBoundary>
-        <WidgetErrorBoundary>
+        </ErrorBoundary>
+        <ErrorBoundary section="dashboard-revenue-chart" variant="silent" resetKey={selectedPropertyId ?? 'all'}>
           <RevenueChart payments={payments} />
-        </WidgetErrorBoundary>
+        </ErrorBoundary>
         {/* Activity Timeline */}
-        <WidgetErrorBoundary>
+        <ErrorBoundary section="dashboard-activity-feed" variant="inline" resetKey={selectedPropertyId ?? 'all'}>
           <div className="md:col-span-3 rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.90)', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><Activity className="w-3.5 h-3.5 text-blue-600" /></div>
@@ -696,7 +695,7 @@ export default function Dashboard({ user, selectedPropertyId }) {
               </div>
             )}
           </div>
-        </WidgetErrorBoundary>
+        </ErrorBoundary>
       </div>
 
       {/* Quick Links */}
