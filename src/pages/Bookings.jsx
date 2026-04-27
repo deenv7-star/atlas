@@ -18,6 +18,7 @@ import {
 import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
 import { BookingForm } from '@/components/forms/BookingForm';
 import { emptyBookingFormValues } from '@/components/forms/atlasFormSchemas';
@@ -114,10 +115,11 @@ export default function BookingsPage({ user, selectedPropertyId }) {
 
   const handleDelete = id => {
     if (!confirm('למחוק הזמנה זו?')) return;
-    deleteMutation.mutate(id, {
-      onSuccess: () => toast({ title: 'ההזמנה נמחקה' }),
-      onError: () => toast({ title: 'שגיאה במחיקת ההזמנה', variant: 'destructive' }),
-    });
+    deleteMutation.mutate({ id });
+  };
+
+  const setBookingStatus = (id, status) => {
+    updateMutation.mutate({ id, data: { status } });
   };
 
   const counts = useMemo(() => ({
@@ -165,7 +167,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
 
   const handleBulkDelete = () => {
     if (!confirm(`למחוק ${selected.size} הזמנות?`)) return;
-    [...selected].forEach(id => deleteMutation.mutate(id));
+    [...selected].forEach(id => deleteMutation.mutate({ id, skipUndoToast: true }));
     clearSelection();
   };
 
@@ -378,7 +380,11 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                 return (
                   <div
                     key={booking.id}
-                    className={cn('flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50/60 transition-colors group', isChecked && 'bg-indigo-50/40')}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50/60 transition-colors group',
+                      isChecked && 'bg-indigo-50/40',
+                      optimisticEntityClassName(booking.id),
+                    )}
                   >
                     {/* Checkbox */}
                     <button
@@ -421,6 +427,24 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                       {booking.total_price ? (
                         <p className="text-sm font-bold text-gray-800">₪{parseFloat(booking.total_price).toLocaleString('he-IL')}</p>
                       ) : null}
+                      <div className="flex flex-wrap items-center justify-end gap-1 max-w-[200px] sm:max-w-none">
+                        {[
+                          { status: 'APPROVED', label: 'אשר' },
+                          { status: 'CONFIRMED', label: 'סופי' },
+                          { status: 'CHECKED_IN', label: 'צ׳ק-אין' },
+                          { status: 'CHECKED_OUT', label: 'צ׳ק-אאוט' },
+                          { status: 'CANCELLED', label: 'בטל' },
+                        ].map((a) => (
+                          <button
+                            key={a.status}
+                            type="button"
+                            onClick={() => setBookingStatus(booking.id, a.status)}
+                            className="text-[10px] font-semibold px-2 py-1 rounded-lg bg-gray-100 text-gray-600 hover:bg-[#00D1C1]/20 hover:text-[#0B1220] transition-colors touch-manipulation"
+                          >
+                            {a.label}
+                          </button>
+                        ))}
+                      </div>
                       <div className="flex items-center gap-1">
                         {booking.guest_phone && (
                           <a href={`tel:${booking.guest_phone}`} onClick={e => e.stopPropagation()}

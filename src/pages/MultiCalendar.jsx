@@ -13,6 +13,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 import { createPageUrl } from '@/utils';
 import { useBookings } from '@/data/entities';
 import { useProperties } from '@/data/entities';
@@ -437,7 +438,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                       return (
                         <div
                           key={booking.id}
-                          className="absolute top-2 z-10 cursor-pointer group"
+                          className={cn('absolute top-2 z-10 cursor-pointer group', optimisticEntityClassName(booking.id))}
                           style={{
                             right: `calc(${(pos.start / totalDays) * 100}%)`,
                             width: `calc(${(pos.span / totalDays) * 100}% - 4px)`,

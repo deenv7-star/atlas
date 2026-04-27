@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { useUpdateBooking } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -108,35 +109,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
     enabled: !!booking.id
   });
 
-  // Update booking mutation
-  const updateBookingMutation = useMutation({
-    mutationFn: (data) => base44.entities.Booking.update(booking.id, data),
-    onMutate: async (data) => {
-      await queryClient.cancelQueries({ queryKey: ['bookings'] });
-      await queryClient.cancelQueries({ queryKey: ['booking', booking.id] });
-      
-      const previousBookings = queryClient.getQueryData(['bookings']);
-      const previousBooking = queryClient.getQueryData(['booking', booking.id]);
-      
-      // Optimistically update booking in list
-      queryClient.setQueryData(['bookings'], (old) =>
-        old?.map(b => b.id === booking.id ? { ...b, ...data } : b)
-      );
-      
-      // Optimistically update single booking
-      queryClient.setQueryData(['booking', booking.id], (old) => ({ ...old, ...data }));
-      
-      return { previousBookings, previousBooking };
-    },
-    onError: (err, data, context) => {
-      queryClient.setQueryData(['bookings'], context.previousBookings);
-      queryClient.setQueryData(['booking', booking.id], context.previousBooking);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['booking', booking.id] });
-    }
-  });
+  const updateBookingMutation = useUpdateBooking();
 
   // Create payment mutation
   const createPaymentMutation = useMutation({
@@ -287,7 +260,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               <Label>שנה סטטוס</Label>
               <Select 
                 value={booking.status} 
-                onValueChange={(value) => updateBookingMutation.mutate({ status: value })}
+                onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}
               >
                 <SelectTrigger className="rounded-xl">
                   <SelectValue />

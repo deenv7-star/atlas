@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { useLead, useUpdateLead } from '@/data/entities';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -13,28 +15,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { 
+import {
   Phone,
   Mail,
   Calendar,
   Users,
-  ArrowLeftRight
+  ArrowLeftRight,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { createPageUrl } from '@/utils';
-
-const statusColors = {
-  NEW: 'bg-blue-100 text-blue-700 border-blue-200',
-  CONTACTED: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  OFFER_SENT: 'bg-purple-100 text-purple-700 border-purple-200',
-  WON: 'bg-green-100 text-green-700 border-green-200',
-  LOST: 'bg-gray-100 text-gray-700 border-gray-200'
-};
+import { cn } from '@/lib/utils';
+import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 
 const statusLabels = {
   NEW: 'חדש',
   CONTACTED: 'נוצר קשר',
   OFFER_SENT: 'הצעה נשלחה',
+  CONFIRMED: 'מאושר',
   WON: 'נסגר',
   LOST: 'לא רלוונטי',
 };
@@ -44,54 +41,57 @@ const sourceLabels = {
   WHATSAPP: 'וואטסאפ',
   WEBSITE: 'אתר',
   PHONE: 'טלפון',
-  OTHER: 'אחר'
+  OTHER: 'אחר',
 };
 
 export default function LeadDetail({ orgId }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { data: lead, isLoading } = useLead(id);
+  const updateMutation = useUpdateLead();
+  const [notesDraft, setNotesDraft] = useState('');
+  const [notesInvalid, setNotesInvalid] = useState(false);
 
-  const { data: lead, isLoading } = useQuery({
-    queryKey: ['lead', id],
-    queryFn: () => base44.entities.Lead.get(id),
-    enabled: !!id,
-  });
+  useEffect(() => {
+    if (lead?.notes != null) setNotesDraft(String(lead.notes));
+  }, [lead?.notes, lead?.id]);
 
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
-    onMutate: async ({ id, data }) => {
-      await queryClient.cancelQueries({ queryKey: ['lead', id] });
-      const previousLead = queryClient.getQueryData(['lead', id]);
-      queryClient.setQueryData(['lead', id], (old) => ({ ...old, ...data }));
-      return { previousLead };
-    },
-    onError: (err, variables, context) => {
-      queryClient.setQueryData(['lead', variables.id], context.previousLead);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['leads'] });
-      queryClient.invalidateQueries({ queryKey: ['lead', id] });
-    }
-  });
+  useEffect(() => {
+    const onValidation = (e) => {
+      const d = e.detail;
+      if (d?.entity === 'lead' && d?.id === id) {
+        setNotesInvalid(true);
+        window.setTimeout(() => setNotesInvalid(false), 4000);
+      }
+    };
+    window.addEventListener('atlas:entity-validation-error', onValidation);
+    return () => window.removeEventListener('atlas:entity-validation-error', onValidation);
+  }, [id]);
 
-  const handleConvertToBooking = async (lead) => {
+  const handleConvertToBooking = async (leadRow) => {
     const booking = await base44.entities.Booking.create({
-      org_id: lead.org_id,
-      property_id: lead.property_id,
-      lead_id: lead.id,
-      guest_name: lead.full_name,
-      guest_phone: lead.phone,
-      guest_email: lead.email,
-      check_in_date: lead.check_in_date,
-      check_out_date: lead.check_out_date,
-      adults: lead.adults,
-      notes: lead.notes,
+      org_id: leadRow.org_id,
+      property_id: leadRow.property_id,
+      lead_id: leadRow.id,
+      guest_name: leadRow.full_name,
+      guest_phone: leadRow.phone,
+      guest_email: leadRow.email,
+      check_in_date: leadRow.check_in_date,
+      check_out_date: leadRow.check_out_date,
+      adults: leadRow.adults,
+      notes: leadRow.notes,
       status: 'PENDING',
     });
-    
-    await updateMutation.mutateAsync({ id: lead.id, data: { status: 'WON' } });
+
+    await updateMutation.mutateAsync({ id: leadRow.id, data: { status: 'WON' } });
     navigate(`${createPageUrl('BookingDetail')}/${booking.id}`);
+  };
+
+  const saveNotes = () => {
+    if (!lead) return;
+    const next = notesDraft.trim();
+    if (next === (lead.notes || '').trim()) return;
+    updateMutation.mutate({ id: lead.id, data: { notes: next } });
   };
 
   if (isLoading) {
@@ -117,7 +117,7 @@ export default function LeadDetail({ orgId }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.2 }}
-      className="p-6 space-y-6 max-w-2xl mx-auto"
+      className={cn('p-6 space-y-6 max-w-2xl mx-auto', optimisticEntityClassName(lead.id))}
     >
       <div className="space-y-4">
         <h3 className="font-semibold text-[#0B1220] select-none">פרטי קשר</h3>
@@ -175,21 +175,36 @@ export default function LeadDetail({ orgId }) {
         </Card>
       )}
 
-      {lead.notes && (
-        <div className="space-y-2">
-          <h3 className="font-semibold text-[#0B1220] select-none">הערות</h3>
-          <Card className="border-0 shadow-sm rounded-2xl">
-            <CardContent className="p-4">
-              <p className="text-sm text-gray-600 whitespace-pre-wrap">{lead.notes}</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      <div className="space-y-2">
+        <h3 className="font-semibold text-[#0B1220] select-none">הערות</h3>
+        <Card
+          className={cn(
+            'border-0 shadow-sm rounded-2xl',
+            notesInvalid && 'ring-2 ring-red-500/70 ring-offset-2',
+          )}
+        >
+          <CardContent className="p-4 space-y-2">
+            <Label htmlFor="lead-notes" className="text-xs text-gray-500">
+              נשמר אוטומטית בעת יציאה מהשדה
+            </Label>
+            <Textarea
+              id="lead-notes"
+              dir="rtl"
+              rows={4}
+              value={notesDraft}
+              onChange={(e) => setNotesDraft(e.target.value)}
+              onBlur={saveNotes}
+              placeholder="הערות פנימיות על הליד…"
+              className="rounded-xl text-sm resize-y min-h-[100px]"
+            />
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="space-y-2">
         <h3 className="font-semibold text-[#0B1220] select-none">סטטוס</h3>
-        <Select 
-          value={lead.status} 
+        <Select
+          value={lead.status}
           onValueChange={(value) => updateMutation.mutate({ id: lead.id, data: { status: value } })}
         >
           <SelectTrigger className="rounded-xl">
@@ -197,13 +212,15 @@ export default function LeadDetail({ orgId }) {
           </SelectTrigger>
           <SelectContent>
             {Object.entries(statusLabels).map(([key, label]) => (
-              <SelectItem key={key} value={key}>{label}</SelectItem>
+              <SelectItem key={key} value={key}>
+                {label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      <Button 
+      <Button
         className="w-full bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
         onClick={() => handleConvertToBooking(lead)}
       >

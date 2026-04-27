@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import {
+  useCleaningTasks,
+  useCreateCleaningTask,
+  useUpdateCleaningTask,
+} from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +42,8 @@ import { format, parseISO, isToday, isTomorrow, isPast } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { MaintenanceRequestForm } from '@/components/forms/MaintenanceRequestForm';
 import { emptyMaintenanceRequestFormValues } from '@/components/forms/atlasFormSchemas';
+import { cn } from '@/lib/utils';
+import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 
 const statusColors = {
   OPEN: 'bg-blue-100 text-blue-700 border-blue-200',
@@ -56,7 +61,6 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
-  const queryClient = useQueryClient();
   const maintenanceDialogInterceptRef = useRef(null);
 
   useEffect(() => {
@@ -65,44 +69,18 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
 
   const maintenanceFormDefaults = useMemo(() => emptyMaintenanceRequestFormValues(), [isCreateOpen]);
 
-  const { data: tasks = [], isLoading } = useQuery({
-    queryKey: ['cleaningTasks', orgId, selectedPropertyId],
-    queryFn: async () => {
-      const filters = { org_id: orgId };
-      if (selectedPropertyId) filters.property_id = selectedPropertyId;
-      return base44.entities.CleaningTask.filter(filters, 'scheduled_for', 500);
-    },
-    enabled: !!orgId,
-  });
+  const taskFilters = useMemo(
+    () => ({
+      org_id: orgId,
+      ...(selectedPropertyId ? { property_id: selectedPropertyId } : {}),
+    }),
+    [orgId, selectedPropertyId],
+  );
 
-  const { data: bookings = [] } = useQuery({
-    queryKey: ['bookings', orgId],
-    queryFn: () => base44.entities.Booking.filter({ org_id: orgId }, '-check_out_date', 50),
-    enabled: !!orgId,
-  });
+  const { data: tasks = [], isLoading } = useCleaningTasks(taskFilters, 'scheduled_for', 500);
 
-  const createMutation = useMutation({
-    mutationFn: async (payload) => {
-      return base44.entities.CleaningTask.create({
-        ...payload,
-        org_id: orgId,
-        property_id: selectedPropertyId,
-        status: 'OPEN',
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cleaningTasks'] });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, data: payload }) => {
-      return base44.entities.CleaningTask.update(id, payload);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cleaningTasks'] });
-    },
-  });
+  const createMutation = useCreateCleaningTask();
+  const updateMutation = useUpdateCleaningTask();
 
   const handleStatusChange = (taskId, newStatus) => {
     updateMutation.mutate({ id: taskId, data: { status: newStatus } });
@@ -156,8 +134,11 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
     const progress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
     return (
-      <Card 
-        className="border-0 shadow-sm rounded-2xl hover:shadow-md transition-shadow cursor-pointer"
+      <Card
+        className={cn(
+          'border-0 shadow-sm rounded-2xl hover:shadow-md transition-shadow cursor-pointer',
+          optimisticEntityClassName(task.id),
+        )}
         onClick={() => setSelectedTask(task)}
       >
         <CardContent className="p-4">
@@ -408,9 +389,14 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                     </div>
                     <div className="space-y-2">
                       {selectedTask.checklist.map((item, index) => (
-                        <div 
+                        <div
                           key={index}
-                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors"
+                          className={cn(
+                            'flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors',
+                            updateMutation.isPending &&
+                              updateMutation.variables?.id === selectedTask.id &&
+                              'motion-safe:animate-pulse ring-[0.5px] ring-amber-400/80',
+                          )}
                           onClick={() => handleChecklistToggle(selectedTask.id, index, selectedTask.checklist)}
                         >
                           <Checkbox checked={item.done} />
