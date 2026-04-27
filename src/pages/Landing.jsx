@@ -410,7 +410,11 @@ export default function Landing() {
     { bg: 'linear-gradient(135deg,#8B5CF6,#C4B5FD)', letter: 'ה' },
   ];
 
-  const MARQUEE_TEXT = 'מתחם הגליל · צימר בגולן · וילות כרמל · ריזורט ים המלח · צימרים בצפון · מתחם הנגב · נאות מדבר · בקתות גולן ·\u00A0\u00A0\u00A0';
+  /** דוגמאות לשמות מתחמים — מוצגות כתגיות (במקום מרקיז צפוף) */
+  const ISRAEL_VENUE_EXAMPLES = [
+    'מתחם הגליל', 'צימר בגולן', 'וילות כרמל', 'ריזורט ים המלח',
+    'צימרים בצפון', 'מתחם הנגב', 'נאות מדבר', 'בקתות גולן',
+  ];
 
   const PAIN_POINTS = [
     'הזמנות מפוזרות ב-WhatsApp, אימייל ו-Booking.com',
@@ -774,16 +778,6 @@ export default function Landing() {
           top: 50% !important;
           transform: translate(-50%, -50%) scale(0.12) rotate(0deg) !important;
           opacity: 0.3;
-        }
-
-        /* ─ Marquee ─ */
-        @keyframes atlasMarquee {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
-        }
-        .atlas-marquee { animation: atlasMarquee 40s linear infinite; }
-        @media (prefers-reduced-motion: reduce) {
-          .atlas-marquee { animation: none !important; }
         }
 
         /* ─ Feature / bento cards ─ */
@@ -1909,32 +1903,48 @@ export default function Landing() {
             background: '#F9FAFB',
             borderTop: '1px solid #F3F4F6',
             borderBottom: '1px solid #F3F4F6',
-            padding: '18px 0',
-            overflow: 'hidden',
+            padding: '28px 0 30px',
             position: 'relative',
             zIndex: 1,
           }}
         >
-          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 10px' }}>
-            <span style={{ fontSize: 14, color: '#6B7280', fontWeight: 500 }}>
+          <div style={{ maxWidth: 920, margin: '0 auto', padding: '0 clamp(16px, 4vw, 28px)' }}>
+            <p style={{ fontSize: 15, color: '#4B5563', fontWeight: 600, margin: '0 0 12px', lineHeight: 1.55, textAlign: 'center' }}>
               עסקי אירוח בישראל שעוברים לניהול מרוכז וחכם יותר:
-            </span>
-          </div>
-          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 8px' }}>
-            <span style={{ fontSize: 13, color: '#9CA3AF', fontWeight: 500, display: 'block' }}>
+            </p>
+            <p style={{ fontSize: 14, color: '#9CA3AF', fontWeight: 500, margin: '0 0 22px', lineHeight: 1.6, textAlign: 'center' }}>
               דוגמאות לסוגי מתחמים ונכסים שאפשר לנהל עם ATLAS בישראל (שמות לדוגמה בלבד):
-            </span>
-          </div>
-          <div style={{ overflow: 'hidden' }}>
-            <div className="atlas-marquee" style={{ display: 'flex', whiteSpace: 'nowrap' }}>
-              {[MARQUEE_TEXT, MARQUEE_TEXT].map((t, i) => (
-                <span key={i} style={{ color: '#374151', fontWeight: 600, fontSize: 15, paddingRight: 24, flexShrink: 0 }}>
-                  {t}
-                </span>
-              ))}
-              {[MARQUEE_TEXT, MARQUEE_TEXT].map((t, i) => (
-                <span key={`b${i}`} aria-hidden style={{ color: '#374151', fontWeight: 600, fontSize: 15, paddingRight: 24, flexShrink: 0 }}>
-                  {t}
+            </p>
+            <div
+              role="list"
+              aria-label="דוגמאות שמות מתחמים"
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '12px 14px',
+              }}
+            >
+              {ISRAEL_VENUE_EXAMPLES.map((name) => (
+                <span
+                  key={name}
+                  role="listitem"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '9px 16px',
+                    borderRadius: 999,
+                    background: '#FFFFFF',
+                    border: '1px solid #E5E7EB',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: '#374151',
+                    boxShadow: '0 1px 2px rgba(15, 23, 42, 0.04)',
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {name}
                 </span>
               ))}
             </div>
