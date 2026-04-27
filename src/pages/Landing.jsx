@@ -1087,13 +1087,15 @@ export default function Landing() {
         .atlas-nav-link {
           color: #374151;
           font-weight: 500;
-          font-size: 16px;
+          font-size: 15px;
           text-decoration: none;
           transition: color 0.2s;
           display: inline-flex;
           align-items: center;
           white-space: nowrap;
           flex-shrink: 0;
+          padding-inline: 10px;
+          margin-inline: 2px;
         }
         .atlas-nav-link:hover { color: #111827; }
 
@@ -1386,7 +1388,7 @@ export default function Landing() {
         /* Desktop nav row: never wrap — drawer handles narrow widths */
         .atlas-nav-inner {
           flex-wrap: nowrap !important;
-          gap: 12px;
+          gap: clamp(16px, 2.2vw, 32px);
         }
         .atlas-nav-brand,
         .atlas-nav-actions {
@@ -1406,8 +1408,8 @@ export default function Landing() {
           min-width: 0;
           justify-content: center;
           flex-wrap: nowrap !important;
-          gap: 14px !important;
-          padding: 4px 0;
+          gap: clamp(6px, 0.9vw, 14px) !important;
+          padding: 8px clamp(4px, 1.2vw, 16px);
         }
 
         /* Integrations marquee — minimal vertical padding (overrides global section padding on mobile) */
@@ -1449,7 +1451,7 @@ export default function Landing() {
         >
           <div
             className="atlas-nav-inner"
-            style={{ maxWidth: 1320, margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64, height: 80 }}
+            style={{ maxWidth: 1360, margin: '0 auto', padding: '0 clamp(16px, 3.5vw, 32px)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 68, height: 84 }}
           >
             <div className="atlas-nav-brand" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <Link to="/" aria-label="דף הבית ATLAS">
@@ -1505,7 +1507,7 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="atlas-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="atlas-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
               <button
                 type="button"
                 className="atlas-nav-cta"
