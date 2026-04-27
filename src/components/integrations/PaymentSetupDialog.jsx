@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
 const PROVIDER_CONFIGS = {
   STRIPE: {
@@ -111,7 +111,7 @@ export default function PaymentSetupDialog({ open, onOpenChange, provider, onSav
 
   const handleSave = () => {
     if (!integrationName.trim()) {
-      toast.error('יש למלא שם לאינטגרציה');
+      atlasToastApi.error('יש למלא שם לאינטגרציה');
       return;
     }
 
@@ -120,7 +120,7 @@ export default function PaymentSetupDialog({ open, onOpenChange, provider, onSav
       .map(f => f.label);
 
     if (missingFields.length > 0) {
-      toast.error(`חסרים שדות: ${missingFields.join(', ')}`);
+      atlasToastApi.error(`חסרים שדות: ${missingFields.join(', ')}`);
       return;
     }
 

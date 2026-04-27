@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import CalendarSetupWizard from '@/components/integrations/CalendarSetupWizard';
 import MessagingSetupDialog from '@/components/integrations/MessagingSetupDialog';
 import PaymentSetupDialog from '@/components/integrations/PaymentSetupDialog';
@@ -141,9 +141,9 @@ export default function IntegrationsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
       setShowWizard(false);
-      toast.success('יומן נוסף בהצלחה!');
+      atlasToastApi.success('יומן נוסף בהצלחה!');
     },
-    onError: () => toast.error('שגיאה בהוספת היומן')
+    onError: () => atlasToastApi.error('שגיאה בהוספת היומן')
   });
 
   const deleteSyncMutation = useMutation({
@@ -151,27 +151,27 @@ export default function IntegrationsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
       setDeleteConfirmId(null);
-      toast.success('סנכרון הוסר בהצלחה');
+      atlasToastApi.success('סנכרון הוסר בהצלחה');
     },
-    onError: () => toast.error('שגיאה בהסרת הסנכרון')
+    onError: () => atlasToastApi.error('שגיאה בהסרת הסנכרון')
   });
 
   const toggleSyncMutation = useMutation({
     mutationFn: ({ id, status }) => base44.entities.CalendarSync.update(id, { sync_status: status }),
     onSuccess: (_, { status }) => {
       queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
-      toast.success(status === 'ACTIVE' ? 'סנכרון הופעל' : 'סנכרון הושהה');
+      atlasToastApi.success(status === 'ACTIVE' ? 'סנכרון הופעל' : 'סנכרון הושהה');
     },
-    onError: () => toast.error('שגיאה בעדכון הסנכרון')
+    onError: () => atlasToastApi.error('שגיאה בעדכון הסנכרון')
   });
 
   const manualSyncMutation = useMutation({
     mutationFn: (id) => base44.entities.CalendarSync.update(id, { last_sync_at: new Date().toISOString() }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
-      toast.success('סנכרון הופעל כעת...');
+      atlasToastApi.success('סנכרון הופעל כעת...');
     },
-    onError: () => toast.error('שגיאה בסנכרון')
+    onError: () => atlasToastApi.error('שגיאה בסנכרון')
   });
 
   const createMessagingMutation = useMutation({
@@ -183,18 +183,18 @@ export default function IntegrationsPage() {
       queryClient.invalidateQueries({ queryKey: ['messaging-integrations'] });
       setShowMessagingDialog(false);
       setSelectedMessagingProvider(null);
-      toast.success('אינטגרציה נוספה בהצלחה!');
+      atlasToastApi.success('אינטגרציה נוספה בהצלחה!');
     },
-    onError: () => toast.error('שגיאה בהוספת האינטגרציה')
+    onError: () => atlasToastApi.error('שגיאה בהוספת האינטגרציה')
   });
 
   const deleteMessagingMutation = useMutation({
     mutationFn: (id) => base44.entities.MessagingIntegration.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messaging-integrations'] });
-      toast.success('אינטגרציה הוסרה');
+      atlasToastApi.success('אינטגרציה הוסרה');
     },
-    onError: () => toast.error('שגיאה בהסרת האינטגרציה')
+    onError: () => atlasToastApi.error('שגיאה בהסרת האינטגרציה')
   });
 
   const handleDeleteMessaging = (id) => {
@@ -217,18 +217,18 @@ export default function IntegrationsPage() {
       queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
       setShowPaymentDialog(false);
       setSelectedPaymentProvider(null);
-      toast.success('שער תשלומים נוסף בהצלחה!');
+      atlasToastApi.success('שער תשלומים נוסף בהצלחה!');
     },
-    onError: () => toast.error('שגיאה בהוספת שער התשלומים')
+    onError: () => atlasToastApi.error('שגיאה בהוספת שער התשלומים')
   });
 
   const deletePaymentMutation = useMutation({
     mutationFn: (id) => base44.entities.PaymentGateway.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
-      toast.success('שער תשלומים הוסר');
+      atlasToastApi.success('שער תשלומים הוסר');
     },
-    onError: () => toast.error('שגיאה בהסרת שער התשלומים')
+    onError: () => atlasToastApi.error('שגיאה בהסרת שער התשלומים')
   });
 
   const handleDeletePayment = (id) => {
@@ -248,18 +248,18 @@ export default function IntegrationsPage() {
       queryClient.invalidateQueries({ queryKey: ['accounting-integrations'] });
       setShowAccountingDialog(false);
       setSelectedAccountingProvider(null);
-      toast.success('אינטגרציית חשבונאות נוספה!');
+      atlasToastApi.success('אינטגרציית חשבונאות נוספה!');
     },
-    onError: () => toast.error('שגיאה בהוספת אינטגרציה')
+    onError: () => atlasToastApi.error('שגיאה בהוספת אינטגרציה')
   });
 
   const deleteAccountingMutation = useMutation({
     mutationFn: (id) => base44.entities.AccountingIntegration.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['accounting-integrations'] });
-      toast.success('אינטגרציה הוסרה');
+      atlasToastApi.success('אינטגרציה הוסרה');
     },
-    onError: () => toast.error('שגיאה')
+    onError: () => atlasToastApi.error('שגיאה')
   });
 
   const handleDeleteAccounting = (id) => {
@@ -277,18 +277,18 @@ export default function IntegrationsPage() {
       queryClient.invalidateQueries({ queryKey: ['pms-integrations'] });
       setShowPMSDialog(false);
       setSelectedPMSProvider(null);
-      toast.success('אינטגרציית PMS נוספה!');
+      atlasToastApi.success('אינטגרציית PMS נוספה!');
     },
-    onError: () => toast.error('שגיאה')
+    onError: () => atlasToastApi.error('שגיאה')
   });
 
   const deletePMSMutation = useMutation({
     mutationFn: (id) => base44.entities.PMSIntegration.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pms-integrations'] });
-      toast.success('אינטגרציה הוסרה');
+      atlasToastApi.success('אינטגרציה הוסרה');
     },
-    onError: () => toast.error('שגיאה')
+    onError: () => atlasToastApi.error('שגיאה')
   });
 
   const handleDeletePMS = (id) => {

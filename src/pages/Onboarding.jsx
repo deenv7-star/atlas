@@ -21,7 +21,7 @@ import {
   validatePropertyName, validateRooms, validatePricePerNight,
   validateCardNumber, validateExpiry, validateCvv, validateNameOnCard,
 } from '@/lib/validation';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import confetti from 'canvas-confetti';
 import { PRICING_PLANS } from '@/config/pricing';
 
@@ -54,15 +54,15 @@ function handleOnboardingError(err, context) {
   const msg = String(err?.message || '');
   const code = err?.code || '';
   if ((msg.includes('column') && msg.includes('does not exist')) || code === '42703') {
-    toast.error('המסד נתונים לא מעודכן. הרץ את supabase/migrations/002_trial_system.sql ב-Supabase SQL Editor.');
+    atlasToastApi.error('המסד נתונים לא מעודכן. הרץ את supabase/migrations/002_trial_system.sql ב-Supabase SQL Editor.');
   } else if (msg.includes('JWT') || msg.includes('session')) {
-    toast.error('ההתחברות פגה. נא להתחבר מחדש.');
+    atlasToastApi.error('ההתחברות פגה. נא להתחבר מחדש.');
   } else if (msg.includes('row-level security') || msg.includes('RLS')) {
-    toast.error('אין הרשאה לשמור נתונים. בדוק את מדיניות ה-RLS ב-Supabase או פנה לתמיכה.');
+    atlasToastApi.error('אין הרשאה לשמור נתונים. בדוק את מדיניות ה-RLS ב-Supabase או פנה לתמיכה.');
   } else if (msg && msg.length < 280) {
-    toast.error(msg);
+    atlasToastApi.error(msg);
   } else {
-    toast.error('שגיאה בשמירת הנתונים, נסה שוב.');
+    atlasToastApi.error('שגיאה בשמירת הנתונים, נסה שוב.');
   }
 }
 
@@ -180,7 +180,7 @@ export default function Onboarding() {
       const fullName = `${personalForm.first_name.trim()} ${personalForm.last_name.trim()}`;
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) {
-        toast.error('ההתחברות פגה. נא להתחבר מחדש.');
+        atlasToastApi.error('ההתחברות פגה. נא להתחבר מחדש.');
         return;
       }
       const { error: baseError } = await supabase.from('profiles').update({
@@ -236,7 +236,7 @@ export default function Onboarding() {
       await goNext();
     } catch (err) {
       if (!user?.organization_id) {
-        toast.error('חשבון לא מוגדר במלואו. נא להתחבר מחדש או ליצור חשבון חדש.');
+        atlasToastApi.error('חשבון לא מוגדר במלואו. נא להתחבר מחדש או ליצור חשבון חדש.');
       } else {
         handleOnboardingError(err, 'handleSaveOrg');
       }
@@ -279,7 +279,7 @@ export default function Onboarding() {
       await goNext();
     } catch (err) {
       if (!user?.organization_id) {
-        toast.error('חשבון לא מוגדר במלואו. נא להתחבר מחדש.');
+        atlasToastApi.error('חשבון לא מוגדר במלואו. נא להתחבר מחדש.');
       } else {
         handleOnboardingError(err, 'handleSaveProperty');
       }
@@ -394,7 +394,7 @@ export default function Onboarding() {
           }).eq('id', authUser.id);
           if (error) {
             console.warn('[Onboarding] handleFinish update failed:', error);
-            toast.error('שגיאה בשמירת הנתונים. הרץ את החלק האחרון של 001_initial.sql ב-Supabase SQL Editor.');
+            atlasToastApi.error('שגיאה בשמירת הנתונים. הרץ את החלק האחרון של 001_initial.sql ב-Supabase SQL Editor.');
           }
         }
       } else {
@@ -409,9 +409,9 @@ export default function Onboarding() {
     } catch (err) {
       console.warn('[Onboarding] handleFinish:', err);
       if (isSupabaseConfigured) {
-        toast.error('שגיאה בשמירת הנתונים. הרץ את החלק האחרון של 001_initial.sql ב-Supabase SQL Editor.');
+        atlasToastApi.error('שגיאה בשמירת הנתונים. הרץ את החלק האחרון של 001_initial.sql ב-Supabase SQL Editor.');
       } else {
-        toast.error('שגיאה בשמירת הנתונים. נסה שוב.');
+        atlasToastApi.error('שגיאה בשמירת הנתונים. נסה שוב.');
       }
     } finally {
       setSaving(false);
@@ -616,7 +616,7 @@ export default function Onboarding() {
                   await checkAppState();
                   window.location.replace(createPageUrl('Dashboard') || '/dashboard');
                 } catch (err) {
-                  toast.error('שגיאה. נסה שוב.');
+                  atlasToastApi.error('שגיאה. נסה שוב.');
                   setSaving(false);
                 }
               }}

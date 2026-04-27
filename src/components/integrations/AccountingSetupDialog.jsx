@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
 const PROVIDER_CONFIGS = {
   MORNING: {
@@ -105,12 +105,12 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
 
   const handleSave = () => {
     if (!integrationName.trim()) {
-      toast.error('יש למלא שם לאינטגרציה');
+      atlasToastApi.error('יש למלא שם לאינטגרציה');
       return;
     }
     const missingFields = config.fields.filter(f => f.required && !formData[f.key]?.trim()).map(f => f.label);
     if (missingFields.length > 0) {
-      toast.error(`חסרים שדות: ${missingFields.join(', ')}`);
+      atlasToastApi.error(`חסרים שדות: ${missingFields.join(', ')}`);
       return;
     }
     onSave({

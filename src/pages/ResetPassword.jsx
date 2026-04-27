@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { validateEmail } from '@/lib/validation';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
 
 export default function ResetPassword() {
@@ -35,15 +35,15 @@ export default function ResetPassword() {
       });
       if (err) throw err;
       setSent(true);
-      toast.success('שלחנו לך מייל עם קישור לאיפוס הסיסמה');
+      atlasToastApi.success('שלחנו לך מייל עם קישור לאיפוס הסיסמה');
     } catch (err) {
       const msg = (err.message || '').toLowerCase();
       if (msg.includes('rate limit')) {
-        toast.error('יותר מדי ניסיונות. נסה שוב מאוחר יותר.');
+        atlasToastApi.error('יותר מדי ניסיונות. נסה שוב מאוחר יותר.');
       } else if (msg.includes('invalid') || msg.includes('not found')) {
         setError('כתובת אימייל לא רשומה במערכת');
       } else {
-        toast.error(err.message || 'אירעה שגיאה. נסה שוב.');
+        atlasToastApi.error(err.message || 'אירעה שגיאה. נסה שוב.');
       }
     } finally {
       setIsLoading(false);

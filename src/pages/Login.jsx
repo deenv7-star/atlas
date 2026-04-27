@@ -10,7 +10,7 @@ import { validateEmail } from '@/lib/validation';
 import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
 import { getSafeReturnUrl } from '@/config/routes';
 import { mapAuthErrorToHebrew } from '@/lib/authErrors';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
 import { ShimmerButton } from '@/components/ui/AnimatedButton';
 
@@ -32,7 +32,7 @@ export default function Login() {
   }, [prefilledEmail]);
 
   useEffect(() => {
-    if (successMsg) toast.success(decodeURIComponent(successMsg));
+    if (successMsg) atlasToastApi.success(decodeURIComponent(successMsg));
   }, [successMsg]);
 
   const set = (field) => (e) => {
@@ -56,7 +56,7 @@ export default function Login() {
 
     const rl = checkRateLimit(form.email);
     if (!rl.allowed) {
-      toast.error(`נסה שוב בעוד ${rl.retryAfter} שניות`);
+      atlasToastApi.error(`נסה שוב בעוד ${rl.retryAfter} שניות`);
       return;
     }
 
@@ -75,19 +75,19 @@ export default function Login() {
       if (mapped?.kind === 'fields') {
         setErrors(mapped.fields || { email: mapped.message, password: mapped.message });
       } else if (mapped?.kind === 'toast') {
-        toast.error(mapped.message);
+        atlasToastApi.error(mapped.message);
       } else {
         const msg = String(err?.message || '').toLowerCase();
         if (msg.includes('invalid') || msg.includes('credentials')) {
           setErrors({ email: 'אימייל או סיסמה שגויים', password: 'אימייל או סיסמה שגויים' });
         } else if (msg.includes('email not confirmed')) {
-          toast.error('יש לאמת את כתובת האימייל תחילה. בדוק את תיבת הדואר.');
+          atlasToastApi.error('יש לאמת את כתובת האימייל תחילה. בדוק את תיבת הדואר.');
         } else if (err?.status === 404 || msg.includes('http 404')) {
-          toast.error(
+          atlasToastApi.error(
             'שרת ה-API לא נמצא. הגדר Supabase או שרת Express עם הפניה ל-/api.'
           );
         } else {
-          toast.error(err.message || 'אירעה שגיאה. נסה שוב.');
+          atlasToastApi.error(err.message || 'אירעה שגיאה. נסה שוב.');
         }
       }
     } finally {

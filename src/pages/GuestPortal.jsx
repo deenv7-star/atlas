@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Globe, Copy, Share2, Wifi, Clock, Home, MapPin, QrCode, Eye, ExternalLink, Plus } from 'lucide-react';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
 const DEFAULT_HOUSE_RULES = `• אין עישון בתוך הדירה
 • שקט אחרי 22:00
@@ -36,7 +36,7 @@ export default function GuestPortal() {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(portalLink);
-    toast.success('הלינק הועתק ללוח');
+    atlasToastApi.success('הלינק הועתק ללוח');
   };
 
   const handleWhatsAppShare = () => {

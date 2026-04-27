@@ -2,18 +2,15 @@
  * UNIFIED DATA LAYER — Single source of truth for all entities
  * All modules MUST use these hooks/services. No direct supabase.from() calls.
  */
-import * as React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { STALE_LIVE_MS, STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
-import { toast } from '@/components/ui/use-toast';
-import { ToastAction } from '@/components/ui/toast';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import {
   patchBookingInAllBookingQueries,
   removeBookingFromAllBookingQueries,
   restoreBookingQueriesSnapshot,
   snapshotBookingQueries,
-  findBookingInSnapshot,
 } from '@/lib/optimistic/bookingCache';
 import {
   patchLeadDetail,
@@ -30,14 +27,6 @@ import { getErrorHttpStatus, getErrorMessage } from '@/lib/optimistic/httpError'
 import { openOptimisticConflictModal } from '@/lib/optimistic/conflictModalState';
 import { setOptimisticEntityPhase } from '@/lib/optimistic/entityVisualState';
 
-function stripBookingForCreate(row) {
-  if (!row || typeof row !== 'object') return {};
-  const next = { ...row };
-  delete next.id;
-  delete next.created_at;
-  delete next.updated_at;
-  return next;
-}
 const CACHE_KEYS = {
   bookings: 'bookings',
   leads: 'leads',
@@ -86,7 +75,7 @@ export function useUpdateBooking() {
       patchBookingInAllBookingQueries(qc, id, data);
       setOptimisticEntityPhase(id, 'pending');
       const rollbackToastTimer = window.setTimeout(() => {
-        toast({ title: 'הפעולה נכשלה — השינויים בוטלו', variant: 'destructive' });
+        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
       }, 200);
       return { previousBookings, rollbackToastTimer, bookingId: id };
     },
@@ -110,7 +99,7 @@ export function useUpdateBooking() {
         );
       }
       if (status !== 409) {
-        toast({ title: 'הפעולה נכשלה — השינויים בוטלו', variant: 'destructive' });
+        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
       }
     },
     onSettled: (_d, err, _v, context) => {
@@ -126,16 +115,15 @@ export function useDeleteBooking() {
   return useMutation({
     mutationFn: ({ id }) => base44.entities.Booking.delete(id),
     onMutate: async (variables) => {
-      const { id, skipUndoToast } = variables;
+      const { id } = variables;
       await qc.cancelQueries({ queryKey: [CACHE_KEYS.bookings] });
       const previousBookings = snapshotBookingQueries(qc);
-      const removed = findBookingInSnapshot(previousBookings, id);
       removeBookingFromAllBookingQueries(qc, id);
       setOptimisticEntityPhase(id, 'pending');
       const rollbackToastTimer = window.setTimeout(() => {
-        toast({ title: 'הפעולה נכשלה — השינויים בוטלו', variant: 'destructive' });
+        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
       }, 200);
-      return { previousBookings, removed, rollbackToastTimer, bookingId: id, skipUndoToast };
+      return { previousBookings, rollbackToastTimer, bookingId: id };
     },
     onError: (err, variables, context) => {
       if (context?.rollbackToastTimer) window.clearTimeout(context.rollbackToastTimer);
@@ -148,37 +136,13 @@ export function useDeleteBooking() {
         return;
       }
       if (status !== 409) {
-        toast({ title: 'הפעולה נכשלה — השינויים בוטלו', variant: 'destructive' });
+        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
       }
     },
     onSuccess: (_void, variables, context) => {
       if (context?.rollbackToastTimer) window.clearTimeout(context.rollbackToastTimer);
       const id = variables?.id;
       if (id) setOptimisticEntityPhase(id, 'idle');
-      const removed = context?.removed;
-      if (context?.skipUndoToast || !removed) return;
-      const t = toast({
-        title: 'ההזמנה נמחקה',
-        description: 'ניתן לשחזר מיד מהשרת',
-        action: React.createElement(
-          ToastAction,
-          {
-            altText: 'בטל מחיקה',
-            onClick: async () => {
-              t.dismiss();
-              try {
-                await base44.entities.Booking.create(stripBookingForCreate(removed));
-                toast({ title: 'ההזמנה שוחזרה' });
-              } catch (e) {
-                toast({ title: 'שחזור נכשל', description: getErrorMessage(e), variant: 'destructive' });
-              } finally {
-                qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings] });
-              }
-            },
-          },
-          'בטל מחיקה',
-        ),
-      });
     },
     onSettled: (_d, err, variables, context) => {
       if (context?.rollbackToastTimer) window.clearTimeout(context.rollbackToastTimer);
@@ -253,7 +217,7 @@ export function useUpdateLead() {
       patchLeadDetail(qc, id, data);
       setOptimisticEntityPhase(id, 'pending');
       const rollbackToastTimer = window.setTimeout(() => {
-        toast({ title: 'הפעולה נכשלה — השינויים בוטלו', variant: 'destructive' });
+        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
       }, 200);
       return { previousLeads, rollbackToastTimer, leadId: id };
     },
@@ -275,7 +239,7 @@ export function useUpdateLead() {
         );
       }
       if (status !== 409) {
-        toast({ title: 'הפעולה נכשלה — השינויים בוטלו', variant: 'destructive' });
+        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
       }
     },
     onSettled: (_d, err, _v, context) => {
@@ -406,7 +370,7 @@ export function useUpdateCleaningTask() {
       patchCleaningTaskEverywhere(qc, id, data);
       setOptimisticEntityPhase(id, 'pending');
       const rollbackToastTimer = window.setTimeout(() => {
-        toast({ title: 'הפעולה נכשלה — השינויים בוטלו', variant: 'destructive' });
+        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
       }, 200);
       return { previous, rollbackToastTimer, taskId: id };
     },
@@ -421,7 +385,7 @@ export function useUpdateCleaningTask() {
         return;
       }
       if (status !== 409) {
-        toast({ title: 'הפעולה נכשלה — השינויים בוטלו', variant: 'destructive' });
+        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
       }
     },
     onSettled: (_d, err, _v, context) => {

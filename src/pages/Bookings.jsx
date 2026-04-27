@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useBookings, useCreateBooking, useUpdateBooking, useDeleteBooking } from '@/data/entities';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast, deleteBookingWithUndo } from '@/components/ui/AtlasToast';
 import { useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +11,6 @@ import { SkeletonTableFull } from '@/components/skeletons/atlas-skeletons';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
 import {
   CalendarDays, Plus, Search, Building2, Edit, Trash2,
   Clock, CheckCircle2, XCircle, Phone, MessageCircle,
@@ -57,7 +58,8 @@ function bookingEntityToFormValues(b) {
 }
 
 export default function BookingsPage({ user, selectedPropertyId }) {
-  const { toast } = useToast();
+  const { success } = useToast();
+  const queryClient = useQueryClient();
   const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
 
   const [searchTerm, setSearchTerm]         = useState('');
@@ -106,16 +108,16 @@ export default function BookingsPage({ user, selectedPropertyId }) {
     const payload = { ...data };
     if (editingBooking) {
       await updateMutation.mutateAsync({ id: editingBooking.id, data: payload });
-      toast({ title: 'ההזמנה עודכנה' });
+      success('ההזמנה עודכנה');
     } else {
       await createMutation.mutateAsync(payload);
-      toast({ title: 'הזמנה נוצרה בהצלחה' });
+      success('הזמנה נוצרה בהצלחה');
     }
   };
 
   const handleDelete = id => {
     if (!confirm('למחוק הזמנה זו?')) return;
-    deleteMutation.mutate({ id });
+    deleteBookingWithUndo(queryClient, id);
   };
 
   const setBookingStatus = (id, status) => {
@@ -160,14 +162,14 @@ export default function BookingsPage({ user, selectedPropertyId }) {
       await updateMutation.mutateAsync({ id, data: { status } }).catch(() => {});
       done++;
     }
-    toast({ title: `עודכנו ${done} הזמנות ל-${STATUS_MAP[status]?.label || status}` });
+    success(`עודכנו ${done} הזמנות ל-${STATUS_MAP[status]?.label || status}`);
     clearSelection();
     setShowBulkMenu(false);
   };
 
   const handleBulkDelete = () => {
     if (!confirm(`למחוק ${selected.size} הזמנות?`)) return;
-    [...selected].forEach(id => deleteMutation.mutate({ id, skipUndoToast: true }));
+    [...selected].forEach(id => deleteMutation.mutate({ id }));
     clearSelection();
   };
 
@@ -178,7 +180,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
       property_name: properties.find(p => p.id === b.property_id)?.name || '',
     }));
     exportToCSV(data, 'bookings', BOOKING_COLUMNS);
-    toast({ title: `יוצאו ${data.length} הזמנות ל-CSV` });
+    success(`יוצאו ${data.length} הזמנות ל-CSV`);
   };
 
   return (
@@ -320,7 +322,7 @@ export default function BookingsPage({ user, selectedPropertyId }) {
                   ...b, property_name: properties.find(p => p.id === b.property_id)?.name || '',
                 }));
                 exportToCSV(data, 'bookings_selected', BOOKING_COLUMNS);
-                toast({ title: `יוצאו ${data.length} הזמנות` });
+                success(`יוצאו ${data.length} הזמנות`);
               }}
               className="flex items-center gap-1.5 min-h-[36px] px-3 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
             >

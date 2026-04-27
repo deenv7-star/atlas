@@ -9,7 +9,7 @@ import { Eye, EyeOff, Shield, ArrowLeft, Check, X } from 'lucide-react';
 import { validateEmail, validatePassword, getPasswordStrength } from '@/lib/validation';
 import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
 import { mapAuthErrorToHebrew } from '@/lib/authErrors';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
 
 export default function Register() {
@@ -64,7 +64,7 @@ export default function Register() {
 
     const rl = checkRateLimit(form.email);
     if (!rl.allowed) {
-      toast.error(`נסה שוב בעוד ${rl.retryAfter} שניות`);
+      atlasToastApi.error(`נסה שוב בעוד ${rl.retryAfter} שניות`);
       return;
     }
 
@@ -80,7 +80,7 @@ export default function Register() {
       clearAttempts(form.email);
 
       if (data?.user && !data?.session) {
-        toast.success('נשלח מייל לאימות');
+        atlasToastApi.success('נשלח מייל לאימות');
         navigate('/verify-email', { state: { email: form.email.trim() }, replace: true });
       } else if (data?.session) {
         await loginUser(null);
@@ -100,16 +100,16 @@ export default function Register() {
         recordAttempt(form.email);
         const mapped = mapAuthErrorToHebrew(err);
         if (mapped?.kind === 'toast') {
-          toast.error(mapped.message);
+          atlasToastApi.error(mapped.message);
         } else {
           const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err?.name === 'TypeError';
           const isApiMissing = err?.status === 404 || msg.includes('http 404');
           if (isApiMissing) {
-            toast.error(
+            atlasToastApi.error(
               'שרת ה-API לא נמצא. אם האתר מוצג כקבצים סטטיים בלבד, הגדר Supabase (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY) או פרוס את שרת Express והפנה את הנתיב /api אליו.'
             );
           } else {
-            toast.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err?.message || 'אירעה שגיאה. נסה שוב.'));
+            atlasToastApi.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err?.message || 'אירעה שגיאה. נסה שוב.'));
           }
         }
       }

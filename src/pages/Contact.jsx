@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import Logo from '@/components/common/Logo';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Mail, Phone, Clock, MapPin, MessageCircle, Send, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { submitPublicContact, buildContactMailto } from '@/lib/submitPublicContact';
 
 const SUBJECT_OPTIONS = [
@@ -43,7 +43,7 @@ export default function Contact() {
       }
       if (ok) {
         setSent(true);
-        toast.success('הפנייה נשלחה בהצלחה');
+        atlasToastApi.success('הפנייה נשלחה בהצלחה');
         return;
       }
       if (status === 503 && data?.code === 'EMAIL_NOT_CONFIGURED') {
@@ -55,10 +55,10 @@ export default function Contact() {
           message: form.message.trim(),
         });
         setSent(true);
-        toast.message('נפתח לכם מייל — שלחו את ההודעה מתוך תיבת הדואר שלכם');
+        atlasToastApi.info('נפתח לכם מייל — שלחו את ההודעה מתוך תיבת הדואר שלכם');
         return;
       }
-      toast.error(typeof data?.error === 'string' ? data.error : 'לא הצלחנו לשלוח. נסו שוב או כתבו ל־support@atlas-app.co.il');
+      atlasToastApi.error(typeof data?.error === 'string' ? data.error : 'לא הצלחנו לשלוח. נסו שוב או כתבו ל־support@atlas-app.co.il');
     } catch {
       window.location.href = buildContactMailto({
         name: form.name.trim(),
@@ -68,7 +68,7 @@ export default function Contact() {
         message: form.message.trim(),
       });
       setSent(true);
-      toast.message('נפתח מייל — שלחו את ההודעה ידנית');
+      atlasToastApi.info('נפתח מייל — שלחו את ההודעה ידנית');
     } finally {
       setSubmitting(false);
     }

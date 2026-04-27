@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
 const PROVIDER_CONFIGS = {
   WHATSAPP: {
@@ -101,7 +101,7 @@ export default function MessagingSetupDialog({ open, onOpenChange, provider, onS
 
   const handleSave = () => {
     if (!integrationName.trim()) {
-      toast.error('יש למלא שם לאינטגרציה');
+      atlasToastApi.error('יש למלא שם לאינטגרציה');
       return;
     }
 
@@ -110,7 +110,7 @@ export default function MessagingSetupDialog({ open, onOpenChange, provider, onS
       .map(f => f.label);
 
     if (missingFields.length > 0) {
-      toast.error(`חסרים שדות: ${missingFields.join(', ')}`);
+      atlasToastApi.error(`חסרים שדות: ${missingFields.join(', ')}`);
       return;
     }
 

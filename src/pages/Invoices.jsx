@@ -29,7 +29,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import InvoiceForm from '@/components/invoices/InvoiceForm';
 import InvoicePreview from '@/components/invoices/InvoicePreview';
 import { format } from 'date-fns';
-import { toast } from 'sonner';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
 const statusConfig = {
   DRAFT: { label: 'טיוטה', color: 'bg-gray-100 text-gray-700', icon: Clock },
@@ -128,9 +128,9 @@ export default function InvoicesPage({ orgId }) {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
-      toast.success('החשבונית נשמרה בהצלחה');
+      atlasToastApi.success('החשבונית נשמרה בהצלחה');
     },
-    onError: () => toast.error('שגיאה בשמירת החשבונית')
+    onError: () => atlasToastApi.error('שגיאה בשמירת החשבונית')
   });
 
   const updateMutation = useMutation({
@@ -139,18 +139,18 @@ export default function InvoicesPage({ orgId }) {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
-      toast.success('החשבונית עודכנה בהצלחה');
+      atlasToastApi.success('החשבונית עודכנה בהצלחה');
     },
-    onError: () => toast.error('שגיאה בעדכון החשבונית')
+    onError: () => atlasToastApi.error('שגיאה בעדכון החשבונית')
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Invoice.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      toast.success('החשבונית נמחקה');
+      atlasToastApi.success('החשבונית נמחקה');
     },
-    onError: () => toast.error('שגיאה במחיקת החשבונית')
+    onError: () => atlasToastApi.error('שגיאה במחיקת החשבונית')
   });
 
   const sendEmailMutation = useMutation({
@@ -164,9 +164,9 @@ export default function InvoicesPage({ orgId }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      toast.success('החשבונית סומנה כנשלחה');
+      atlasToastApi.success('החשבונית סומנה כנשלחה');
     },
-    onError: () => toast.error('שגיאה בשליחת החשבונית')
+    onError: () => atlasToastApi.error('שגיאה בשליחת החשבונית')
   });
 
   const handleSave = (data) => {
@@ -191,7 +191,7 @@ export default function InvoicesPage({ orgId }) {
   const handleSendEmail = (invoice) => {
     const to = invoice.guest_email || invoice.customer_email;
     if (!to) {
-      toast.error('אין כתובת אימייל ללקוח');
+      atlasToastApi.error('אין כתובת אימייל ללקוח');
       return;
     }
     sendEmailMutation.mutate(invoice);
