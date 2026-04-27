@@ -431,13 +431,21 @@ const supabaseAuth = {
         data: { full_name, organization_name },
       },
     });
-    if (error) throw new Error(error.message);
+    if (error) {
+      const e = new Error(error.message);
+      e.code = error.code;
+      throw e;
+    }
     return data;
   },
 
   async signIn({ email, password }) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw new Error(error.message);
+    if (error) {
+      const e = new Error(error.message);
+      e.code = error.code;
+      throw e;
+    }
     return data;
   },
 

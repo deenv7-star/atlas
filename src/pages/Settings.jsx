@@ -14,6 +14,7 @@ import {
   Save, AlertCircle, Settings,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/lib/AuthContext';
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -26,6 +27,7 @@ export default function SettingsPage({ user }) {
   const [activeTab, setActiveTab] = useState('profile');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { logout } = useAuth();
 
   const { data: org } = useQuery({
     queryKey: ['organization'],
@@ -371,7 +373,7 @@ export default function SettingsPage({ user }) {
                         } catch (e) {
                           // proceed to logout even if deleteAccount is unavailable
                         }
-                        base44.auth.logout();
+                        await logout(false);
                         window.location.href = '/';
                       }
                     }}

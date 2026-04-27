@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Shield, ArrowLeft, Check, X } from 'lucide-react';
 import { validateEmail, validatePassword, getPasswordStrength } from '@/lib/validation';
 import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
+import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -87,19 +88,29 @@ export default function Register() {
       }
     } catch (err) {
       const msg = String(err?.message || '').toLowerCase();
-      if (msg.includes('already registered') || msg.includes('already exists')) {
+      const code = String(err?.code || '').toLowerCase();
+      const duplicate =
+        msg.includes('already registered') ||
+        msg.includes('already exists') ||
+        code === 'user_already_exists';
+      if (duplicate) {
         setEmailExists(true);
         recordAttempt(form.email);
       } else {
         recordAttempt(form.email);
-        const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err?.name === 'TypeError';
-        const isApiMissing = err?.status === 404 || msg.includes('http 404');
-        if (isApiMissing) {
-          toast.error(
-            'שרת ה-API לא נמצא. אם האתר מוצג כקבצים סטטיים בלבד, הגדר Supabase (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY) או פרוס את שרת Express והפנה את הנתיב /api אליו.'
-          );
+        const mapped = mapAuthErrorToHebrew(err);
+        if (mapped?.kind === 'toast') {
+          toast.error(mapped.message);
         } else {
-          toast.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err?.message || 'אירעה שגיאה. נסה שוב.'));
+          const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err?.name === 'TypeError';
+          const isApiMissing = err?.status === 404 || msg.includes('http 404');
+          if (isApiMissing) {
+            toast.error(
+              'שרת ה-API לא נמצא. אם האתר מוצג כקבצים סטטיים בלבד, הגדר Supabase (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY) או פרוס את שרת Express והפנה את הנתיב /api אליו.'
+            );
+          } else {
+            toast.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err?.message || 'אירעה שגיאה. נסה שוב.'));
+          }
         }
       }
     } finally {

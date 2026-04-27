@@ -9,6 +9,7 @@ import { LogIn, Eye, EyeOff, Shield } from 'lucide-react';
 import { validateEmail } from '@/lib/validation';
 import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
 import { getSafeReturnUrl } from '@/config/routes';
+import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ShimmerButton } from '@/components/ui/AnimatedButton';
@@ -70,17 +71,24 @@ export default function Login() {
       navigate(safeReturn || '/dashboard', { replace: true });
     } catch (err) {
       recordAttempt(form.email);
-      const msg = String(err?.message || '').toLowerCase();
-      if (msg.includes('invalid') || msg.includes('credentials')) {
-        setErrors({ email: 'אימייל או סיסמה שגויים', password: 'אימייל או סיסמה שגויים' });
-      } else if (msg.includes('email not confirmed')) {
-        toast.error('יש לאמת את כתובת האימייל תחילה. בדוק את תיבת הדואר.');
-      } else if (err?.status === 404 || msg.includes('http 404')) {
-        toast.error(
-          'שרת ה-API לא נמצא. הגדר Supabase או שרת Express עם הפניה ל-/api.'
-        );
+      const mapped = mapAuthErrorToHebrew(err);
+      if (mapped?.kind === 'fields') {
+        setErrors(mapped.fields || { email: mapped.message, password: mapped.message });
+      } else if (mapped?.kind === 'toast') {
+        toast.error(mapped.message);
       } else {
-        toast.error(err.message || 'אירעה שגיאה. נסה שוב.');
+        const msg = String(err?.message || '').toLowerCase();
+        if (msg.includes('invalid') || msg.includes('credentials')) {
+          setErrors({ email: 'אימייל או סיסמה שגויים', password: 'אימייל או סיסמה שגויים' });
+        } else if (msg.includes('email not confirmed')) {
+          toast.error('יש לאמת את כתובת האימייל תחילה. בדוק את תיבת הדואר.');
+        } else if (err?.status === 404 || msg.includes('http 404')) {
+          toast.error(
+            'שרת ה-API לא נמצא. הגדר Supabase או שרת Express עם הפניה ל-/api.'
+          );
+        } else {
+          toast.error(err.message || 'אירעה שגיאה. נסה שוב.');
+        }
       }
     } finally {
       setIsLoading(false);
