@@ -29,6 +29,7 @@ export default function CookieConsent() {
 
   return (
     <div
+      className="atlas-cookie-consent-dialog"
       dir="rtl"
       role="dialog"
       aria-label="הסכמה לעוגיות"
@@ -55,6 +56,18 @@ export default function CookieConsent() {
         @keyframes cookieFadeUp {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cookieFadeDown {
+          from { opacity: 0; transform: translateY(-12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        /* Bottom-fixed cookie overlaps footer links on many viewports; top bar keeps footer usable. */
+        @media (max-width: 1200px) {
+          .atlas-cookie-consent-dialog {
+            top: max(16px, env(safe-area-inset-top));
+            bottom: auto !important;
+            animation: cookieFadeDown 0.4s ease !important;
+          }
         }
       `}</style>
 

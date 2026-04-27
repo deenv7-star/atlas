@@ -309,7 +309,12 @@ export default function Landing() {
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 50);
-      setShowStickyCta(y > 480 && !demoOpen);
+      const doc = document.documentElement;
+      const maxScroll = Math.max(0, doc.scrollHeight - window.innerHeight);
+      const distFromBottom = maxScroll - y;
+      // Hide sticky bar near page end so it does not cover the footer (and block link clicks).
+      const nearPageBottom = distFromBottom < 180;
+      setShowStickyCta(y > 480 && !demoOpen && !nearPageBottom);
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -3775,6 +3780,8 @@ export default function Landing() {
             justifyContent: 'space-between',
             gap: 12,
             flexWrap: 'wrap',
+            // Let clicks reach the footer when the bar still overlaps (e.g. layout rounding).
+            pointerEvents: 'none',
           }}
         >
           <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#374151', flex: '1 1 200px', fontFamily: 'Heebo, sans-serif' }}>
@@ -3784,7 +3791,7 @@ export default function Landing() {
             type="button"
             onClick={goToRegister}
             className="atlas-btn-primary"
-            style={{ minHeight: 48, fontSize: 17, flexShrink: 0 }}
+            style={{ minHeight: 48, fontSize: 17, flexShrink: 0, pointerEvents: 'auto' }}
           >
             התחילו בחינם
           </button>
