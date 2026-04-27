@@ -1549,27 +1549,6 @@ export default function Landing() {
               >
                 כניסה
               </button>
-              <Link
-                to="/contact"
-                className="atlas-nav-cta"
-                style={{
-                  background: 'none',
-                  border: '1.5px solid #E5E7EB',
-                  color: '#374151',
-                  borderRadius: 8,
-                  padding: '12px 16px',
-                  minHeight: 44,
-                  fontWeight: 600,
-                  fontSize: 16,
-                  fontFamily: 'Heebo, sans-serif',
-                  cursor: 'pointer',
-                  textDecoration: 'none',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                }}
-              >
-                מכירות
-              </Link>
 
               <button
                 className="atlas-hamburger"
@@ -1618,13 +1597,6 @@ export default function Landing() {
               >
                 כניסה
               </button>
-              <Link
-                to="/contact"
-                onClick={() => setMenuOpen(false)}
-                style={{ background: 'none', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 8, padding: '14px 24px', minHeight: 48, fontWeight: 700, fontSize: 17, fontFamily: 'Heebo, sans-serif', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'block' }}
-              >
-                מכירות
-              </Link>
             </div>
           )}
         </nav>
