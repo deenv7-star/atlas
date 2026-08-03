@@ -1,0 +1,72 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property ID"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "FACEBOOK",
+        "WHATSAPP",
+        "WEBSITE",
+        "PHONE",
+        "OTHER"
+      ],
+      "description": "Lead source"
+    },
+    "name": {
+      "type": "string",
+      "description": "Contact name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "desired_checkin_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Desired check-in date"
+    },
+    "desired_checkout_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Desired check-out date"
+    },
+    "guests_count": {
+      "type": "number",
+      "description": "Number of guests"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "NEW",
+        "CONTACTED",
+        "OFFER_SENT",
+        "WON",
+        "LOST"
+      ],
+      "default": "NEW",
+      "description": "Lead status"
+    }
+  },
+  "required": [
+    "org_id",
+    "name",
+    "phone"
+  ]
+}

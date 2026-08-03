@@ -1,0 +1,59 @@
+{
+  "name": "PaymentGateway",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "STRIPE",
+        "PAYPAL",
+        "BIT",
+        "TRANZILA",
+        "MESHULAM",
+        "CARDCOM"
+      ],
+      "description": "Payment gateway provider"
+    },
+    "name": {
+      "type": "string",
+      "description": "Integration name"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "INACTIVE",
+        "ERROR"
+      ],
+      "default": "INACTIVE",
+      "description": "Connection status"
+    },
+    "config": {
+      "type": "object",
+      "description": "Provider-specific configuration (encrypted)"
+    },
+    "currency": {
+      "type": "string",
+      "default": "ILS",
+      "description": "Default currency"
+    },
+    "last_test_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last connection test timestamp"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Last error message if any"
+    }
+  },
+  "required": [
+    "org_id",
+    "provider",
+    "name"
+  ]
+}

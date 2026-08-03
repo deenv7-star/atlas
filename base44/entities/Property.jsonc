@@ -1,0 +1,42 @@
+{
+  "name": "Property",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Property name"
+    },
+    "city": {
+      "type": "string",
+      "description": "City"
+    },
+    "address": {
+      "type": "string",
+      "description": "Full address"
+    },
+    "checkin_time": {
+      "type": "string",
+      "description": "Default check-in time (HH:MM)"
+    },
+    "checkout_time": {
+      "type": "string",
+      "description": "Default check-out time (HH:MM)"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "Timezone"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Property image"
+    }
+  },
+  "required": [
+    "org_id",
+    "name"
+  ]
+}

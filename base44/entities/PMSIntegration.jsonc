@@ -1,0 +1,66 @@
+{
+  "name": "PMSIntegration",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "GUESTY",
+        "HOSTAWAY",
+        "LODGIFY",
+        "CLOUDBEDS",
+        "OPERA",
+        "MEWS",
+        "APALEO",
+        "CHANNELMANAGER"
+      ],
+      "description": "PMS provider"
+    },
+    "name": {
+      "type": "string",
+      "description": "Integration name"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "INACTIVE",
+        "ERROR"
+      ],
+      "default": "INACTIVE",
+      "description": "Connection status"
+    },
+    "config": {
+      "type": "object",
+      "description": "Provider-specific configuration (encrypted)"
+    },
+    "sync_bookings": {
+      "type": "boolean",
+      "default": true,
+      "description": "Sync bookings from PMS"
+    },
+    "sync_guests": {
+      "type": "boolean",
+      "default": true,
+      "description": "Sync guest information"
+    },
+    "last_sync_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last sync timestamp"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Last error message if any"
+    }
+  },
+  "required": [
+    "org_id",
+    "provider",
+    "name"
+  ]
+}

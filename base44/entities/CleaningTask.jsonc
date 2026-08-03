@@ -1,0 +1,65 @@
+{
+  "name": "CleaningTask",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property ID"
+    },
+    "booking_id": {
+      "type": "string",
+      "description": "Booking ID"
+    },
+    "assigned_to_user_id": {
+      "type": "string",
+      "description": "Assigned user ID"
+    },
+    "assigned_to_name": {
+      "type": "string",
+      "description": "Assigned user name"
+    },
+    "scheduled_for": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled date/time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "OPEN",
+        "IN_PROGRESS",
+        "DONE"
+      ],
+      "default": "OPEN",
+      "description": "Task status"
+    },
+    "checklist": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "done": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Checklist items"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    }
+  },
+  "required": [
+    "org_id",
+    "property_id",
+    "scheduled_for"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "MessageTemplate",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property ID (optional)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Template name"
+    },
+    "trigger": {
+      "type": "string",
+      "enum": [
+        "MANUAL",
+        "BEFORE_CHECKIN_24H",
+        "CHECKIN_DAY",
+        "AFTER_CHECKOUT_2H",
+        "REVIEW_REQUEST_24H"
+      ],
+      "description": "Trigger type"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "WHATSAPP",
+        "SMS",
+        "EMAIL"
+      ],
+      "description": "Message channel"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Subject (for email)"
+    },
+    "body_text": {
+      "type": "string",
+      "description": "Message body"
+    }
+  },
+  "required": [
+    "org_id",
+    "name",
+    "trigger",
+    "channel",
+    "body_text"
+  ]
+}

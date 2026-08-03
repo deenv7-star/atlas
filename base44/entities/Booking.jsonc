@@ -1,0 +1,77 @@
+{
+  "name": "Booking",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property ID"
+    },
+    "lead_id": {
+      "type": "string",
+      "description": "Lead ID (optional)"
+    },
+    "guest_name": {
+      "type": "string",
+      "description": "Guest name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "checkin_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Check-in date"
+    },
+    "checkout_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Check-out date"
+    },
+    "guests_count": {
+      "type": "number",
+      "description": "Number of guests"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "CONFIRMED",
+        "CHECKED_IN",
+        "CHECKED_OUT",
+        "CANCELLED"
+      ],
+      "default": "PENDING",
+      "description": "Booking status"
+    },
+    "total_amount": {
+      "type": "number",
+      "description": "Total amount"
+    },
+    "currency": {
+      "type": "string",
+      "default": "ILS",
+      "description": "Currency"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    }
+  },
+  "required": [
+    "org_id",
+    "property_id",
+    "guest_name",
+    "phone",
+    "checkin_date",
+    "checkout_date"
+  ]
+}

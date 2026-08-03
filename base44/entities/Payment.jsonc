@@ -1,0 +1,68 @@
+{
+  "name": "Payment",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "booking_id": {
+      "type": "string",
+      "description": "Booking ID"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "DEPOSIT",
+        "BALANCE",
+        "FULL",
+        "OTHER"
+      ],
+      "description": "Payment type"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Amount"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DUE",
+        "PAID",
+        "REFUNDED"
+      ],
+      "default": "DUE",
+      "description": "Payment status"
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "CASH",
+        "TRANSFER",
+        "CARD",
+        "OTHER"
+      ],
+      "description": "Payment method"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Due date"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Paid at"
+    },
+    "reference": {
+      "type": "string",
+      "description": "Reference number"
+    }
+  },
+  "required": [
+    "org_id",
+    "booking_id",
+    "type",
+    "amount"
+  ]
+}

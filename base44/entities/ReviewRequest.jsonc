@@ -1,0 +1,53 @@
+{
+  "name": "ReviewRequest",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "booking_id": {
+      "type": "string",
+      "description": "Booking ID"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "GOOGLE",
+        "AIRBNB",
+        "BOOKING",
+        "FACEBOOK",
+        "OTHER"
+      ],
+      "description": "Review platform"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "NOT_SENT",
+        "SENT",
+        "RECEIVED"
+      ],
+      "default": "NOT_SENT",
+      "description": "Request status"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Sent timestamp"
+    },
+    "review_url": {
+      "type": "string",
+      "description": "Review URL"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    }
+  },
+  "required": [
+    "org_id",
+    "booking_id",
+    "platform"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "name": "GuestRequest",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "booking_id": {
+      "type": "string",
+      "description": "Booking ID"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property ID"
+    },
+    "guest_name": {
+      "type": "string",
+      "description": "Guest name"
+    },
+    "guest_phone": {
+      "type": "string",
+      "description": "Guest phone"
+    },
+    "request_type": {
+      "type": "string",
+      "enum": [
+        "MAINTENANCE",
+        "AMENITY",
+        "CLEANING",
+        "COMPLAINT",
+        "QUESTION",
+        "OTHER"
+      ],
+      "description": "Request type"
+    },
+    "title": {
+      "type": "string",
+      "description": "Request title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description"
+    },
+    "urgency": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "URGENT"
+      ],
+      "default": "MEDIUM",
+      "description": "Urgency level"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "NEW",
+        "IN_PROGRESS",
+        "RESOLVED",
+        "CLOSED"
+      ],
+      "default": "NEW",
+      "description": "Request status"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Resolution timestamp"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    }
+  },
+  "required": [
+    "org_id",
+    "property_id",
+    "title",
+    "description"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Organization",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Organization name"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Organization logo URL"
+    },
+    "settings": {
+      "type": "object",
+      "description": "Organization settings"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

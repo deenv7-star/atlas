@@ -1,0 +1,50 @@
+{
+  "name": "ContractInstance",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "booking_id": {
+      "type": "string",
+      "description": "Booking ID"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "Template ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "SENT",
+        "SIGNED"
+      ],
+      "default": "DRAFT",
+      "description": "Contract status"
+    },
+    "signed_name": {
+      "type": "string",
+      "description": "Signed by name"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Signed timestamp"
+    },
+    "signed_file_url": {
+      "type": "string",
+      "description": "Signed contract file URL"
+    },
+    "body_html": {
+      "type": "string",
+      "description": "Final contract HTML"
+    }
+  },
+  "required": [
+    "org_id",
+    "booking_id",
+    "template_id"
+  ]
+}

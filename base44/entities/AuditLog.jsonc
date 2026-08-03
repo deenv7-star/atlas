@@ -1,0 +1,51 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User who performed action"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User email"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "LOGIN",
+        "LOGOUT",
+        "EXPORT",
+        "INVITE"
+      ],
+      "description": "Action type"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Entity type affected"
+    },
+    "entity_id": {
+      "type": "string",
+      "description": "Entity ID affected"
+    },
+    "changes": {
+      "type": "object",
+      "description": "Change details"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "IP address"
+    }
+  },
+  "required": [
+    "org_id",
+    "action"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "name": "CalendarSync",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Property ID"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "GOOGLE",
+        "OUTLOOK",
+        "AIRBNB",
+        "BOOKING_COM",
+        "ICAL"
+      ],
+      "description": "Calendar provider"
+    },
+    "sync_direction": {
+      "type": "string",
+      "enum": [
+        "IMPORT",
+        "EXPORT",
+        "BIDIRECTIONAL"
+      ],
+      "description": "Sync direction"
+    },
+    "ical_url": {
+      "type": "string",
+      "description": "iCal URL for import"
+    },
+    "external_calendar_id": {
+      "type": "string",
+      "description": "External calendar ID"
+    },
+    "last_sync_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last sync timestamp"
+    },
+    "sync_status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "PAUSED",
+        "ERROR"
+      ],
+      "default": "ACTIVE",
+      "description": "Sync status"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Last error message"
+    }
+  },
+  "required": [
+    "org_id",
+    "property_id",
+    "provider",
+    "sync_direction"
+  ]
+}

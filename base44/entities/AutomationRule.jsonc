@@ -1,0 +1,88 @@
+{
+  "name": "AutomationRule",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Rule name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Rule description"
+    },
+    "trigger": {
+      "type": "string",
+      "enum": [
+        "LEAD_CREATED",
+        "BOOKING_CREATED",
+        "BOOKING_CONFIRMED",
+        "PAYMENT_RECEIVED",
+        "PAYMENT_OVERDUE",
+        "CHECKIN_DAY",
+        "CHECKOUT_DAY",
+        "CLEANING_COMPLETED",
+        "BOOKING_CANCELLED",
+        "REVIEW_RECEIVED"
+      ],
+      "description": "Trigger event"
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Conditions to check"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "config": {
+            "type": "object"
+          }
+        }
+      },
+      "description": "Actions to execute"
+    },
+    "timing_offset_hours": {
+      "type": "number",
+      "default": 0,
+      "description": "Hours before/after trigger"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Is rule active"
+    },
+    "execution_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Times executed"
+    }
+  },
+  "required": [
+    "org_id",
+    "name",
+    "trigger",
+    "actions"
+  ]
+}

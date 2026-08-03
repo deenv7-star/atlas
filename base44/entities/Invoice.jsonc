@@ -1,0 +1,144 @@
+{
+  "name": "Invoice",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "booking_id": {
+      "type": "string",
+      "description": "Booking ID"
+    },
+    "invoice_number": {
+      "type": "string",
+      "description": "Invoice number"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "INVOICE",
+        "RECEIPT",
+        "TAX_INVOICE",
+        "PROFORMA"
+      ],
+      "default": "INVOICE",
+      "description": "Document type"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Customer name"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Customer email"
+    },
+    "customer_phone": {
+      "type": "string",
+      "description": "Customer phone"
+    },
+    "customer_address": {
+      "type": "string",
+      "description": "Customer address"
+    },
+    "customer_tax_id": {
+      "type": "string",
+      "description": "Customer tax ID"
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Issue date"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Due date"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit_price": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Invoice items"
+    },
+    "subtotal": {
+      "type": "number",
+      "description": "Subtotal amount"
+    },
+    "tax_rate": {
+      "type": "number",
+      "default": 17,
+      "description": "Tax rate percentage"
+    },
+    "tax_amount": {
+      "type": "number",
+      "description": "Tax amount"
+    },
+    "total_amount": {
+      "type": "number",
+      "description": "Total amount including tax"
+    },
+    "currency": {
+      "type": "string",
+      "default": "ILS",
+      "description": "Currency"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "SENT",
+        "PAID",
+        "OVERDUE",
+        "CANCELLED"
+      ],
+      "default": "DRAFT",
+      "description": "Invoice status"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "CASH",
+        "TRANSFER",
+        "CARD",
+        "CHECK",
+        "OTHER"
+      ],
+      "description": "Payment method"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Payment date"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "pdf_url": {
+      "type": "string",
+      "description": "PDF file URL"
+    }
+  },
+  "required": [
+    "org_id",
+    "customer_name",
+    "issue_date",
+    "total_amount"
+  ]
+}

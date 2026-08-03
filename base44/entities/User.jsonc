@@ -1,0 +1,58 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "app_role": {
+      "type": "string",
+      "enum": [
+        "OWNER",
+        "MANAGER",
+        "CLEANER"
+      ],
+      "default": "OWNER",
+      "description": "Role in the app"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "selected_property_id": {
+      "type": "string",
+      "description": "Currently selected property"
+    },
+    "notification_preferences": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "boolean",
+          "default": true
+        },
+        "whatsapp": {
+          "type": "boolean",
+          "default": true
+        },
+        "push": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "description": "Notification preferences"
+    },
+    "last_login_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last login timestamp"
+    }
+  },
+  "required": [
+    "org_id",
+    "phone",
+    "selected_property_id",
+    "notification_preferences",
+    "last_login_at"
+  ]
+}
