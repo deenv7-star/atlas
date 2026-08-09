@@ -32,3 +32,4 @@ dist-ssr
 
 # Agent tooling (local state)
 .agents/invariant-monitor.state.json
+base44/.app.jsonc
