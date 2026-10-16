@@ -229,7 +229,7 @@ function Pricing() {
       <div className="wrap">
         <div className="trial-b">
           <p className="trial-b-big">14 ימי ניסיון בחינם וללא התחייבות</p>
-          <SignupButton className="btn-light" label="מתחילים עכשיו" />
+          <SignupButton className="btn-light" />
         </div>
         <h2 id="pricing-title" className="h2 center">מחיר לפי גודל המתחם.</h2>
         <div className="center-row">
