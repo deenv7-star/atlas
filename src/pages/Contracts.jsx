@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PageHeader } from '@/components/ds';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -46,8 +47,8 @@ import { he } from 'date-fns/locale';
 import ReactQuill from 'react-quill';
 
 const statusColors = {
-  DRAFT: 'bg-gray-100 text-gray-700 border-gray-200',
-  SENT: 'bg-blue-100 text-blue-700 border-blue-200',
+  DRAFT: 'bg-neutral-100 text-ink-600 border-line',
+  SENT: 'bg-brand-100 text-brand-700 border-brand-100',
   SIGNED: 'bg-green-100 text-green-700 border-green-200'
 };
 
@@ -216,16 +217,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 `;
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="atlas-page-hero">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-brand-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">חוזים</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל חוזי שכירות והסכמים עם אורחים. צור חוזים חדשים ועקוב אחר חתימות.</p>
-      </div>
+    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+      <PageHeader title="חוזים" subtitle="חוזים לאורחים ותבניות לחתימה דיגיטלית." className="!mb-0" />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="rounded-xl">
@@ -255,7 +248,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
           <Card className="border-0 shadow-sm rounded-2xl overflow-hidden hidden md:block">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-canvas">
                   <TableHead className="text-right">הזמנה</TableHead>
                   <TableHead className="text-right">תבנית</TableHead>
                   <TableHead className="text-right">סטטוס</TableHead>
@@ -276,7 +269,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                   ))
                 ) : contracts.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-gray-500">
+                    <TableCell colSpan={5} className="text-center py-12 text-ink-600">
                       אין חוזים עדיין
                     </TableCell>
                   </TableRow>
@@ -290,7 +283,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                           <div>
                             <p className="font-medium">{booking?.guest_name || '-'}</p>
                             {booking?.checkin_date && (
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-ink-600">
                                 {format(parseISO(booking.check_in_date), 'd/M/yy')}
                               </p>
                             )}
@@ -305,7 +298,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                             {statusLabels[contract.status]}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm text-gray-500">
+                        <TableCell className="text-sm text-ink-600">
                           {format(parseISO(contract.created_date), 'd/M/yy', { locale: he })}
                         </TableCell>
                         <TableCell>
@@ -357,7 +350,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 ))
                 ) : contracts.length === 0 ? (
                 <Card className="border-0 shadow-sm rounded-2xl">
-                  <CardContent className="p-8 text-center text-gray-500">
+                  <CardContent className="p-8 text-center text-ink-600">
                     אין חוזים עדיין
                   </CardContent>
                 </Card>
@@ -372,7 +365,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                           <div className="flex-1">
                             <h3 className="font-semibold text-[#1B2656] mb-0.5">{booking?.guest_name || '-'}</h3>
                             {booking?.checkin_date && (
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-ink-600">
                                 {format(parseISO(booking.check_in_date), 'd/M/yy')}
                               </p>
                             )}
@@ -384,7 +377,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                             {statusLabels[contract.status]}
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-600 mb-3">{template?.name || '-'}</p>
+                        <p className="text-sm text-ink-600 mb-3">{template?.name || '-'}</p>
                         <div className="flex gap-2">
                           <Button 
                             size="sm" 
@@ -481,12 +474,12 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 <Card key={i} className="border-0 shadow-sm rounded-2xl animate-pulse">
                   <CardContent className="p-6">
                     <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+                    <div className="h-3 bg-neutral-100 rounded w-1/2"></div>
                   </CardContent>
                 </Card>
               ))
             ) : templates.length === 0 ? (
-              <div className="col-span-full text-center py-12 text-gray-500">
+              <div className="col-span-full text-center py-12 text-ink-600">
                 אין תבניות חוזה עדיין. צור תבנית ראשונה!
               </div>
             ) : (
@@ -545,7 +538,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             </div>
             <div>
               <Label>תוכן החוזה</Label>
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-xs text-ink-600 mb-2">
                 משתנים: {'{guest_name}'}, {'{checkin_date}'}, {'{checkout_date}'}, {'{total_amount}'}, {'{guests_count}'}
               </p>
               <ReactQuill 

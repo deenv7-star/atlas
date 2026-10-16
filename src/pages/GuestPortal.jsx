@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { PageHeader } from '@/components/ds';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Globe, Copy, Share2, Wifi, Clock, Home, MapPin, QrCode, Eye, ExternalLink, Plus } from 'lucide-react';
+import { Copy, Share2, Wifi, Clock, Home, MapPin, QrCode, Eye, ExternalLink, Plus } from 'lucide-react';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
 const DEFAULT_HOUSE_RULES = `• אין עישון בתוך הדירה
@@ -60,18 +61,10 @@ export default function GuestPortal() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50" dir="rtl">
-      <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
+    <div dir="rtl">
+      <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7">
         {/* Header */}
-        <div className="atlas-page-hero">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
-              <Globe className="w-5 h-5 text-brand-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">פורטל אורחים</h1>
-          </div>
-          <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">צור פורטל דיגיטלי ממותג לאורחים שלך. הוראות כניסה, חוקי בית, המלצות מקומיות וקוד WiFi, הכל במקום אחד שהאורח מקבל בלינק.</p>
-        </div>
+        <PageHeader title="פורטל אורחים" subtitle="דף אחד לאורח: הוראות הגעה, חוקי בית והמלצות." className="!mb-0" />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Preview mockup - phone frame */}
@@ -79,40 +72,40 @@ export default function GuestPortal() {
             <div className="relative">
               <div className="w-full max-w-[280px] min-w-[220px] mx-auto rounded-[2.5rem] border-[8px] sm:border-[10px] border-gray-800 bg-gray-800 p-2 shadow-2xl">
                 <div className="rounded-[1.5rem] overflow-hidden bg-white aspect-[9/19]">
-                  <div className="p-4 h-full overflow-y-auto bg-gray-50">
+                  <div className="p-4 h-full overflow-y-auto bg-canvas">
                     <div className="text-center mb-4">
-                      <h2 className="font-bold text-lg text-gray-900">{propertyName}</h2>
-                      <p className="text-xs text-gray-500 mt-1">פורטל אורחים</p>
+                      <h2 className="font-bold text-lg text-navy-900">{propertyName}</h2>
+                      <p className="text-xs text-ink-600 mt-1">פורטל אורחים</p>
                     </div>
                     <div className="space-y-3 text-sm">
-                      <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
-                        <div className="flex items-center gap-2 text-gray-600 mb-1">
+                      <div className="bg-white rounded-lg p-3 shadow-sm border border-line">
+                        <div className="flex items-center gap-2 text-ink-600 mb-1">
                           <Clock className="w-4 h-4" />
                           <span className="font-medium">כניסה / יציאה</span>
                         </div>
-                        <p className="text-gray-800">{checkIn} – {checkOut}</p>
+                        <p className="text-navy-900">{checkIn} – {checkOut}</p>
                       </div>
-                      <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
-                        <div className="flex items-center gap-2 text-gray-600 mb-1">
+                      <div className="bg-white rounded-lg p-3 shadow-sm border border-line">
+                        <div className="flex items-center gap-2 text-ink-600 mb-1">
                           <Wifi className="w-4 h-4" />
                           <span className="font-medium">WiFi</span>
                         </div>
-                        <p className="text-gray-800 font-mono text-xs">{wifiName}</p>
-                        <p className="text-gray-600 text-xs">••••••••</p>
+                        <p className="text-navy-900 font-mono text-xs">{wifiName}</p>
+                        <p className="text-ink-600 text-xs">••••••••</p>
                       </div>
-                      <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
-                        <div className="flex items-center gap-2 text-gray-600 mb-1">
+                      <div className="bg-white rounded-lg p-3 shadow-sm border border-line">
+                        <div className="flex items-center gap-2 text-ink-600 mb-1">
                           <Home className="w-4 h-4" />
                           <span className="font-medium">חוקי בית</span>
                         </div>
-                        <p className="text-gray-700 text-xs whitespace-pre-line line-clamp-3">{houseRules}</p>
+                        <p className="text-ink-600 text-xs whitespace-pre-line line-clamp-3">{houseRules}</p>
                       </div>
-                      <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
-                        <div className="flex items-center gap-2 text-gray-600 mb-1">
+                      <div className="bg-white rounded-lg p-3 shadow-sm border border-line">
+                        <div className="flex items-center gap-2 text-ink-600 mb-1">
                           <MapPin className="w-4 h-4" />
                           <span className="font-medium">המלצות מקומיות</span>
                         </div>
-                        <ul className="text-xs text-gray-700 space-y-1">
+                        <ul className="text-xs text-ink-600 space-y-1">
                           {recommendations.slice(0, 2).map(r => (
                             <li key={r.id}>• {r.name}</li>
                           ))}
@@ -134,7 +127,7 @@ export default function GuestPortal() {
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-4">
                     <Clock className="w-5 h-5 text-brand-600" />
-                    <h3 className="font-semibold text-gray-900">כניסה / יציאה</h3>
+                    <h3 className="font-semibold text-navy-900">כניסה / יציאה</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -166,7 +159,7 @@ export default function GuestPortal() {
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-4">
                     <Wifi className="w-5 h-5 text-brand-600" />
-                    <h3 className="font-semibold text-gray-900">קוד WiFi</h3>
+                    <h3 className="font-semibold text-navy-900">קוד WiFi</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -200,7 +193,7 @@ export default function GuestPortal() {
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Home className="w-5 h-5 text-brand-600" />
-                  <h3 className="font-semibold text-gray-900">חוקי בית</h3>
+                  <h3 className="font-semibold text-navy-900">חוקי בית</h3>
                 </div>
                 <Textarea
                   value={houseRules}
@@ -218,7 +211,7 @@ export default function GuestPortal() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-brand-600" />
-                    <h3 className="font-semibold text-gray-900">המלצות מקומיות</h3>
+                    <h3 className="font-semibold text-navy-900">המלצות מקומיות</h3>
                   </div>
                   <Button variant="outline" size="sm" onClick={addRecommendation}>
                     <Plus className="w-4 h-4 ml-1" />
@@ -265,7 +258,7 @@ export default function GuestPortal() {
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 mb-4">
                   <ExternalLink className="w-5 h-5 text-brand-600" />
-                  <h3 className="font-semibold text-gray-900">הוראות הגעה</h3>
+                  <h3 className="font-semibold text-navy-900">הוראות הגעה</h3>
                 </div>
                 <Textarea
                   value={arrivalInstructions}
@@ -282,7 +275,7 @@ export default function GuestPortal() {
         {/* Share section */}
         <Card className="border-brand-100 bg-brand-50/30">
           <CardContent className="pt-6">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="font-semibold text-navy-900 mb-4 flex items-center gap-2">
               <Share2 className="w-5 h-5 text-brand-600" />
               שתף את הפורטל
             </h3>
@@ -299,8 +292,8 @@ export default function GuestPortal() {
                 </Button>
               </div>
               <div className="flex gap-2">
-                <div className="w-16 h-16 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
-                  <QrCode className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 rounded-lg bg-white border border-line flex items-center justify-center">
+                  <QrCode className="w-8 h-8 text-ink-400" />
                 </div>
                 <Button onClick={handleWhatsAppShare} className="bg-[#25D366] hover:bg-[#20bd5a] text-white">
                   <Share2 className="w-4 h-4 ml-1" />
@@ -312,7 +305,7 @@ export default function GuestPortal() {
         </Card>
 
         {/* Stats */}
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+        <div className="flex items-center gap-4 text-sm text-ink-600">
           <span className="flex items-center gap-1.5">
             <Eye className="w-4 h-4" />
             צפיות בפורטל: 47

@@ -23,7 +23,7 @@ const PROVIDER_CONFIGS = {
   HOSTAWAY: {
     title: 'Hostaway',
     icon: 'H',
-    color: 'bg-blue-600',
+    color: 'bg-brand-600',
     fields: [
       { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'xxxxx...', required: true },
       { key: 'account_id', label: 'Account ID', type: 'text', placeholder: '12345', required: true }
@@ -69,7 +69,7 @@ const PROVIDER_CONFIGS = {
   MEWS: {
     title: 'Mews',
     icon: 'M',
-    color: 'bg-cyan-600',
+    color: 'bg-brand-600',
     fields: [
       { key: 'client_token', label: 'Client Token', type: 'password', placeholder: 'xxxxx...', required: true },
       { key: 'access_token', label: 'Access Token', type: 'password', placeholder: 'xxxxx...', required: true }
@@ -163,10 +163,10 @@ export default function PMSSetupDialog({ open, onOpenChange, provider, onSave })
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="text-sm text-blue-900 flex items-start gap-2">
+          <Alert className="bg-brand-50 border-brand-100">
+            <AlertDescription className="text-sm text-navy-900 flex items-start gap-2">
               <span>{config.helpText}</span>
-              <a href={config.helpUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 flex-shrink-0">
+              <a href={config.helpUrl} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-700 flex-shrink-0">
                 <ExternalLink className="h-4 w-4" />
               </a>
             </AlertDescription>
@@ -184,18 +184,18 @@ export default function PMSSetupDialog({ open, onOpenChange, provider, onSave })
             </div>
           ))}
 
-          <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+          <div className="space-y-3 p-3 bg-canvas rounded-lg">
             <div className="flex items-center justify-between">
               <div>
                 <Label className="font-medium">סנכרן הזמנות</Label>
-                <p className="text-xs text-gray-500">ייבא הזמנות מה-PMS</p>
+                <p className="text-xs text-ink-600">ייבא הזמנות מה-PMS</p>
               </div>
               <Switch checked={syncBookings} onCheckedChange={setSyncBookings} />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <Label className="font-medium">סנכרן פרטי אורחים</Label>
-                <p className="text-xs text-gray-500">ייבא מידע על האורחים</p>
+                <p className="text-xs text-ink-600">ייבא מידע על האורחים</p>
               </div>
               <Switch checked={syncGuests} onCheckedChange={setSyncGuests} />
             </div>

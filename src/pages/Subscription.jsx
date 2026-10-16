@@ -39,7 +39,7 @@ export default function SubscriptionPage({ user }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8" dir="rtl">
+    <div className="min-h-screen bg-canvas p-4 md:p-8" dir="rtl">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -50,7 +50,7 @@ export default function SubscriptionPage({ user }) {
           <h1 className="text-4xl md:text-5xl font-bold text-[#1B2656] mb-4">
             בחר את התוכנית המתאימה לך
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-ink-600">
             התחל עם ניסיון חינם ל-14 יום • ביטול בכל עת
           </p>
         </motion.div>
@@ -78,13 +78,13 @@ export default function SubscriptionPage({ user }) {
                   )}
                   
                   <CardHeader className="text-center pb-4">
-                    <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl ${plan.popular ? 'bg-[#3E2BF1]' : 'bg-gray-100'} flex items-center justify-center`}>
-                      <Icon className={`h-7 w-7 ${plan.popular ? 'text-white' : 'text-gray-600'}`} />
+                    <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl ${plan.popular ? 'bg-[#3E2BF1]' : 'bg-neutral-100'} flex items-center justify-center`}>
+                      <Icon className={`h-7 w-7 ${plan.popular ? 'text-white' : 'text-ink-600'}`} />
                     </div>
                     <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
                     <div className="mb-4">
                       <span className="text-5xl font-bold text-[#1B2656]">₪{plan.price}</span>
-                      <span className="text-gray-500">/חודש</span>
+                      <span className="text-ink-600">/חודש</span>
                     </div>
                     {isCurrent && (
                       <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
@@ -96,7 +96,7 @@ export default function SubscriptionPage({ user }) {
                   <CardContent>
                     <ul className="space-y-3 mb-6">
                       {plan.features.map((feature, j) => (
-                        <li key={j} className="flex items-start gap-2 text-gray-600">
+                        <li key={j} className="flex items-start gap-2 text-ink-600">
                           <Check className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
                           <span className="text-sm">{feature}</span>
                         </li>
@@ -127,7 +127,7 @@ export default function SubscriptionPage({ user }) {
           transition={{ delay: 0.5 }}
           className="text-center space-y-4"
         >
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-500">
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-ink-600">
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4 text-green-500" />
               ניסיון חינם 14 יום
@@ -146,7 +146,7 @@ export default function SubscriptionPage({ user }) {
             </div>
           </div>
           
-          <p className="text-gray-400 text-sm">
+          <p className="text-ink-400 text-sm">
             יש שאלות? <a href="mailto:support@atlas-app.co.il" className="text-brand-600 hover:underline">צור קשר עם התמיכה</a>
           </p>
         </motion.div>

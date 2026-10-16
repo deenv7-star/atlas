@@ -297,7 +297,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
                 <Input
                   value={`₪${item.total.toFixed(2)}`}
                   disabled
-                  className="bg-gray-50"
+                  className="bg-canvas"
                 />
               </div>
               <div className="col-span-1">

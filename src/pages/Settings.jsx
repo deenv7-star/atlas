@@ -163,8 +163,8 @@ export default function SettingsPage({ user }) {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{user?.full_name || 'משתמש'}</p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
+                    <p className="text-sm font-medium text-navy-900">{user?.full_name || 'משתמש'}</p>
+                    <p className="text-xs text-ink-600">{user?.email}</p>
                   </div>
                 </div>
                 <Separator />
@@ -195,9 +195,9 @@ export default function SettingsPage({ user }) {
                       id="email"
                       value={profileForm.email}
                       disabled
-                      className="h-9 text-sm bg-gray-50"
+                      className="h-9 text-sm bg-canvas"
                     />
-                    <p className="text-[11px] text-gray-400">לא ניתן לשנות כתובת אימייל</p>
+                    <p className="text-[12px] text-ink-400">לא ניתן לשנות כתובת אימייל</p>
                   </div>
                 </div>
                 <div className="flex justify-end pt-2">
@@ -306,10 +306,10 @@ export default function SettingsPage({ user }) {
                   { key: 'new_review', label: 'ביקורת חדשה', desc: 'קבל התראה על ביקורות חדשות' },
                   { key: 'system_updates', label: 'עדכוני מערכת', desc: 'קבל עדכונים על שיפורים ותכונות' },
                 ].map(item => (
-                  <div key={item.key} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                  <div key={item.key} className="flex items-center justify-between py-3 border-b border-line last:border-0">
                     <div>
-                      <p className="text-sm font-medium text-gray-800">{item.label}</p>
-                      <p className="text-xs text-gray-400">{item.desc}</p>
+                      <p className="text-sm font-medium text-navy-900">{item.label}</p>
+                      <p className="text-xs text-ink-400">{item.desc}</p>
                     </div>
                     <Switch
                       checked={notifSettings[item.key]}
@@ -350,9 +350,9 @@ export default function SettingsPage({ user }) {
                 </div>
                 <Separator />
                 <div className="space-y-3">
-                  <p className="text-sm font-medium text-gray-700">פעולות אבטחה</p>
+                  <p className="text-sm font-medium text-ink-600">פעולות אבטחה</p>
                   <Button variant="outline" className="w-full justify-start text-sm h-9 gap-2">
-                    <Shield className="w-4 h-4 text-gray-400" />
+                    <Shield className="w-4 h-4 text-ink-400" />
                     אפשר אימות דו-שלבי
                   </Button>
                   <Button

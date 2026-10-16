@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PageHeader } from '@/components/ds';
 import { Card, CardContent } from '@/components/ui/card';
 import DemoDataBanner from '@/components/common/DemoDataBanner';
 import { Button } from '@/components/ui/button';
@@ -12,12 +13,12 @@ import { cn } from '@/lib/utils';
 const CATEGORIES = [
   { value: 'ניקיון', label: 'ניקיון', color: 'bg-emerald-100 text-emerald-700', barColor: 'bg-emerald-500' },
   { value: 'תחזוקה', label: 'תחזוקה', color: 'bg-amber-100 text-amber-700', barColor: 'bg-amber-500' },
-  { value: 'ארנונה', label: 'ארנונה', color: 'bg-blue-100 text-blue-700', barColor: 'bg-blue-500' },
+  { value: 'ארנונה', label: 'ארנונה', color: 'bg-brand-100 text-brand-700', barColor: 'bg-brand-500' },
   { value: 'חשמל', label: 'חשמל', color: 'bg-yellow-100 text-yellow-700', barColor: 'bg-yellow-500' },
-  { value: 'מים', label: 'מים', color: 'bg-cyan-100 text-cyan-700', barColor: 'bg-cyan-500' },
+  { value: 'מים', label: 'מים', color: 'bg-brand-100 text-brand-700', barColor: 'bg-brand-500' },
   { value: 'ציוד', label: 'ציוד', color: 'bg-brand-100 text-brand-700', barColor: 'bg-brand-500' },
   { value: 'שיווק', label: 'שיווק', color: 'bg-pink-100 text-pink-700', barColor: 'bg-pink-500' },
-  { value: 'אחר', label: 'אחר', color: 'bg-gray-100 text-gray-700', barColor: 'bg-gray-500' },
+  { value: 'אחר', label: 'אחר', color: 'bg-neutral-100 text-ink-600', barColor: 'bg-gray-500' },
 ];
 
 const DEMO_PROPERTIES = ['דירה תל אביב', 'וילה צפון', 'סטודיו אילת', 'דירת גן הרצליה'];
@@ -37,7 +38,7 @@ function formatDate(dateStr) {
 }
 
 function getCategoryColor(category) {
-  return CATEGORIES.find(c => c.value === category)?.color || 'bg-gray-100 text-gray-700';
+  return CATEGORIES.find(c => c.value === category)?.color || 'bg-neutral-100 text-ink-600';
 }
 
 export default function ExpenseTracker() {
@@ -85,17 +86,9 @@ export default function ExpenseTracker() {
   };
 
   return (
-    <div className="min-h-full p-4 md:p-6 space-y-6 max-w-6xl mx-auto" dir="rtl" style={{ fontFamily: 'Heebo, sans-serif' }}>
+    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
       {/* Header */}
-      <div className="atlas-page-hero">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
-            <Receipt className="w-5 h-5 text-brand-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">הוצאות</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">עקוב אחר כל ההוצאות לפי נכס, ניקיון, תחזוקה, ארנונה, ציוד ועוד. ראה את הרווח הנקי האמיתי שלך.</p>
-      </div>
+      <PageHeader title="הוצאות" subtitle="כל ההוצאות לפי נכס, כדי לדעת כמה באמת נשאר." className="!mb-0" />
 
       <DemoDataBanner message="נתוני דוגמה, ההוצאות המוצגות הן לצורך המחשה. הוסף הוצאות אמיתיות כדי לעקוב אחר הרווח הנקי שלך." />
 
@@ -104,43 +97,43 @@ export default function ExpenseTracker() {
         <Card className="bg-rose-50 border-rose-100/60">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">סה״כ הוצאות</p>
+              <p className="text-sm font-medium text-ink-600">סה״כ הוצאות</p>
               <div className="w-9 h-9 rounded-xl bg-rose-100 flex items-center justify-center">
                 <TrendingDown className="w-4 h-4 text-rose-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">₪{totalExpenses.toLocaleString('he-IL')}</p>
-            <p className="text-xs text-gray-500 mt-1">כל ההוצאות שנרשמו</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-blue-50 border-blue-100/60">
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">החודש</p>
-              <div className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center">
-                <Calendar className="w-4 h-4 text-blue-600" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">₪{thisMonthTotal.toLocaleString('he-IL')}</p>
-            <p className="text-xs text-gray-500 mt-1">{thisMonth.length} הוצאות החודש</p>
+            <p className="text-2xl font-bold text-navy-900">₪{totalExpenses.toLocaleString('he-IL')}</p>
+            <p className="text-xs text-ink-600 mt-1">כל ההוצאות שנרשמו</p>
           </CardContent>
         </Card>
         <Card className="bg-brand-50 border-brand-100/60">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">ממוצע לנכס</p>
+              <p className="text-sm font-medium text-ink-600">החודש</p>
+              <div className="w-9 h-9 rounded-xl bg-brand-100 flex items-center justify-center">
+                <Calendar className="w-4 h-4 text-brand-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-navy-900">₪{thisMonthTotal.toLocaleString('he-IL')}</p>
+            <p className="text-xs text-ink-600 mt-1">{thisMonth.length} הוצאות החודש</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-brand-50 border-brand-100/60">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between mb-2">
+              <p className="text-sm font-medium text-ink-600">ממוצע לנכס</p>
               <div className="w-9 h-9 rounded-xl bg-brand-100 flex items-center justify-center">
                 <Building2 className="w-4 h-4 text-brand-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">₪{avgPerProperty.toLocaleString('he-IL')}</p>
-            <p className="text-xs text-gray-500 mt-1">{uniqueProperties.length} נכסים</p>
+            <p className="text-2xl font-bold text-navy-900">₪{avgPerProperty.toLocaleString('he-IL')}</p>
+            <p className="text-xs text-ink-600 mt-1">{uniqueProperties.length} נכסים</p>
           </CardContent>
         </Card>
         <Card className="bg-emerald-50 border-emerald-100/60">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">רווח נקי משוער</p>
+              <p className="text-sm font-medium text-ink-600">רווח נקי משוער</p>
               <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
                 <Wallet className="w-4 h-4 text-emerald-600" />
               </div>
@@ -151,7 +144,7 @@ export default function ExpenseTracker() {
             )}>
               ₪{netProfitEstimate.toLocaleString('he-IL')}
             </p>
-            <p className="text-xs text-gray-500 mt-1">הכנסות פחות הוצאות</p>
+            <p className="text-xs text-ink-600 mt-1">הכנסות פחות הוצאות</p>
           </CardContent>
         </Card>
       </div>
@@ -170,16 +163,16 @@ export default function ExpenseTracker() {
       {/* Expenses Table */}
       <Card>
         <CardContent className="p-0">
-          <div className="px-5 py-4 border-b border-gray-100">
-            <h2 className="text-base font-semibold text-gray-800">הוצאות אחרונות</h2>
+          <div className="px-5 py-4 border-b border-line">
+            <h2 className="text-base font-semibold text-navy-900">הוצאות אחרונות</h2>
           </div>
           {expenses.length === 0 ? (
             <div className="py-16 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <Receipt className="w-8 h-8 text-gray-300" />
+              <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
+                <Receipt className="w-8 h-8 text-neutral-300" />
               </div>
-              <p className="text-gray-600 font-medium mb-1">אין הוצאות עדיין</p>
-              <p className="text-sm text-gray-400 mb-4">התחל להוסיף הוצאות כדי לעקוב אחרי הנכסים שלך</p>
+              <p className="text-ink-600 font-medium mb-1">אין הוצאות עדיין</p>
+              <p className="text-sm text-ink-400 mb-4">התחל להוסיף הוצאות כדי לעקוב אחרי הנכסים שלך</p>
               <Button onClick={() => setDialogOpen(true)} className="bg-brand-600 hover:bg-brand-700">
                 <Plus className="w-4 h-4 ml-2" />
                 הוסף הוצאה ראשונה
@@ -189,19 +182,19 @@ export default function ExpenseTracker() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/50">
-                    <th className="text-right py-3 px-4 text-xs font-semibold text-gray-500">תאריך</th>
-                    <th className="text-right py-3 px-4 text-xs font-semibold text-gray-500">נכס</th>
-                    <th className="text-right py-3 px-4 text-xs font-semibold text-gray-500">קטגוריה</th>
-                    <th className="text-right py-3 px-4 text-xs font-semibold text-gray-500">סכום</th>
-                    <th className="text-right py-3 px-4 text-xs font-semibold text-gray-500">תיאור</th>
+                  <tr className="border-b border-line bg-canvas">
+                    <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">תאריך</th>
+                    <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">נכס</th>
+                    <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">קטגוריה</th>
+                    <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">סכום</th>
+                    <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">תיאור</th>
                   </tr>
                 </thead>
                 <tbody>
                   {expenses.map((exp) => (
-                    <tr key={exp.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                      <td className="py-3 px-4 text-sm text-gray-600">{formatDate(exp.date)}</td>
-                      <td className="py-3 px-4 text-sm font-medium text-gray-800">{exp.property}</td>
+                    <tr key={exp.id} className="border-b border-line hover:bg-canvas transition-colors">
+                      <td className="py-3 px-4 text-sm text-ink-600">{formatDate(exp.date)}</td>
+                      <td className="py-3 px-4 text-sm font-medium text-navy-900">{exp.property}</td>
                       <td className="py-3 px-4">
                         <span className={cn(
                           "inline-flex text-xs font-medium px-2.5 py-1 rounded-full",
@@ -211,7 +204,7 @@ export default function ExpenseTracker() {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-sm font-semibold text-rose-600">₪{exp.amount.toLocaleString('he-IL')}</td>
-                      <td className="py-3 px-4 text-sm text-gray-500 max-w-[200px] truncate">{exp.description || '—'}</td>
+                      <td className="py-3 px-4 text-sm text-ink-600 max-w-[200px] truncate">{exp.description || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -228,25 +221,25 @@ export default function ExpenseTracker() {
             <div className="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center">
               <DollarSign className="w-4 h-4 text-brand-600" />
             </div>
-            <h2 className="text-base font-semibold text-gray-800">פירוט לפי קטגוריה</h2>
+            <h2 className="text-base font-semibold text-navy-900">פירוט לפי קטגוריה</h2>
           </div>
           <div className="space-y-4">
             {CATEGORIES.filter(c => categoryTotals[c.value] > 0).map((cat) => (
               <div key={cat.value}>
                 <div className="flex justify-between text-sm mb-1.5">
-                  <span className="font-medium text-gray-700">{cat.label}</span>
-                  <span className="text-gray-600">₪{categoryTotals[cat.value].toLocaleString('he-IL')}</span>
+                  <span className="font-medium text-ink-600">{cat.label}</span>
+                  <span className="text-ink-600">₪{categoryTotals[cat.value].toLocaleString('he-IL')}</span>
                 </div>
-                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2.5 bg-neutral-100 rounded-full overflow-hidden">
                   <div
-                    className={cn("h-full rounded-full transition-all duration-500", cat.barColor)}
+                    className={cn("h-full rounded-full transition-[background-color,border-color,color,box-shadow,transform] duration-500", cat.barColor)}
                     style={{ width: `${(categoryTotals[cat.value] / maxCategoryAmount) * 100}%` }}
                   />
                 </div>
               </div>
             ))}
             {Object.values(categoryTotals).every(v => v === 0) && (
-              <p className="text-sm text-gray-400 text-center py-4">אין הוצאות לפירוט</p>
+              <p className="text-sm text-ink-400 text-center py-4">אין הוצאות לפירוט</p>
             )}
           </div>
         </CardContent>
@@ -312,10 +305,10 @@ export default function ExpenseTracker() {
             </div>
             <div>
               <Label>קבלה (אופציונלי)</Label>
-              <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-brand-300 transition-colors cursor-pointer">
-                <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-500">גרור קובץ לכאן או לחץ להעלאה</p>
-                <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG, עד 5MB</p>
+              <div className="border-2 border-dashed border-line rounded-xl p-6 text-center hover:border-brand-100 transition-colors cursor-pointer">
+                <Upload className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
+                <p className="text-sm text-ink-600">גרור קובץ לכאן או לחץ להעלאה</p>
+                <p className="text-xs text-ink-400 mt-1">PDF, JPG, PNG, עד 5MB</p>
               </div>
             </div>
             <div className="flex gap-2 pt-2">

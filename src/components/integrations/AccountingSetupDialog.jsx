@@ -58,7 +58,7 @@ const PROVIDER_CONFIGS = {
   XERO: {
     title: 'Xero',
     icon: 'X',
-    color: 'bg-blue-700',
+    color: 'bg-brand-700',
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'xxxxx', required: true },
       { key: 'client_secret', label: 'Client Secret', type: 'password', placeholder: 'xxxxx...', required: true }
@@ -138,10 +138,10 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="text-sm text-blue-900 flex items-start gap-2">
+          <Alert className="bg-brand-50 border-brand-100">
+            <AlertDescription className="text-sm text-navy-900 flex items-start gap-2">
               <span>{config.helpText}</span>
-              <a href={config.helpUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 flex-shrink-0">
+              <a href={config.helpUrl} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-700 flex-shrink-0">
                 <ExternalLink className="h-4 w-4" />
               </a>
             </AlertDescription>
@@ -159,10 +159,10 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
             </div>
           ))}
 
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-canvas rounded-lg">
             <div>
               <Label className="font-medium">סנכרון אוטומטי</Label>
-              <p className="text-xs text-gray-500">סנכרן חשבוניות וקבלות אוטומטית</p>
+              <p className="text-xs text-ink-600">סנכרן חשבוניות וקבלות אוטומטית</p>
             </div>
             <Switch checked={autoSync} onCheckedChange={setAutoSync} />
           </div>

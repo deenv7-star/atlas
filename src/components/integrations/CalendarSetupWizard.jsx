@@ -12,13 +12,13 @@ const CALENDAR_PROVIDERS = {
     name: 'Google Calendar', 
     icon: 'G',
     instructions: 'זה קל מאוד! עבור ל-Google Calendar → הגדרות → שיתוף יומן → עתק את כתובת iCal',
-    color: 'bg-blue-500'
+    color: 'bg-brand-500'
   },
   OUTLOOK: { 
     name: 'Outlook', 
     icon: 'O',
     instructions: 'בעמוד הבית של Outlook → הפעולות → שתף יומן זה → הצג עמודי קישור → עתק את כתובת iCal',
-    color: 'bg-cyan-600'
+    color: 'bg-brand-600'
   },
   AIRBNB: { 
     name: 'Airbnb', 
@@ -32,7 +32,7 @@ const CALENDAR_PROVIDERS = {
     icon: 'B',
     instructions: 'היכנס ל-Extranet של Booking.com → Properties → בחר נכס → Calendar → Calendar import/export → העתק את קישור ה-"Export" (iCal URL)',
     helpUrl: 'https://partner.booking.com/en-gb/help/rates-availability/how-can-i-synchronise-my-booking-com-calendar-other-platforms',
-    color: 'bg-blue-700'
+    color: 'bg-brand-700'
   },
   ICAL: { 
     name: 'iCal (כללי)', 
@@ -89,7 +89,7 @@ export default function CalendarSetupWizard({ open, onOpenChange, onSelect, prop
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <span>אשף חיבור יומן</span>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700">{step}/3</Badge>
+            <Badge variant="outline" className="bg-brand-50 text-brand-700">{step}/3</Badge>
           </DialogTitle>
         </DialogHeader>
 
@@ -97,9 +97,9 @@ export default function CalendarSetupWizard({ open, onOpenChange, onSelect, prop
           {/* Step 1: Select Property */}
           {step === 1 && (
             <div className="space-y-3">
-              <div className="bg-blue-50 p-3 rounded-lg flex gap-2">
-                <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-blue-800">בחר את הנכס שברצונך לסנכרן את היומן שלו</p>
+              <div className="bg-brand-50 p-3 rounded-lg flex gap-2">
+                <Info className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-brand-700">בחר את הנכס שברצונך לסנכרן את היומן שלו</p>
               </div>
               <div>
                 <Label className="text-sm font-medium mb-2 block">בחר נכס</Label>
@@ -129,16 +129,16 @@ export default function CalendarSetupWizard({ open, onOpenChange, onSelect, prop
                   <button
                     key={key}
                     onClick={() => setSelectedProvider(key)}
-                    className={`w-full p-3 rounded-lg border-2 transition-all text-right ${
+                    className={`w-full p-3 rounded-lg border-2 transition-[background-color,border-color,color,box-shadow,transform] text-right ${
                       selectedProvider === key 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-brand-500 bg-brand-50' 
+                        : 'border-line hover:border-neutral-300'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{provider.icon}</span>
-                      <span className="font-medium text-gray-900">{provider.name}</span>
-                      {selectedProvider === key && <CheckCircle2 className="h-5 w-5 text-blue-500 mr-auto" />}
+                      <span className="font-medium text-navy-900">{provider.name}</span>
+                      {selectedProvider === key && <CheckCircle2 className="h-5 w-5 text-brand-500 mr-auto" />}
                     </div>
                   </button>
                 ))}
@@ -178,7 +178,7 @@ export default function CalendarSetupWizard({ open, onOpenChange, onSelect, prop
                   dir="ltr"
                   className="text-xs"
                 />
-                <p className="text-xs text-gray-500 mt-1">הכתובת חייבת להתחיל ב-https://</p>
+                <p className="text-xs text-ink-600 mt-1">הכתובת חייבת להתחיל ב-https://</p>
               </div>
             </div>
           )}

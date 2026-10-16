@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PageHeader } from '@/components/ds';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -16,12 +17,12 @@ import {
 } from 'lucide-react';
 
 const TRIGGERS = {
-  LEAD_CREATED: { label: 'ליד חדש נוצר', icon: Users, color: 'bg-blue-500' },
+  LEAD_CREATED: { label: 'ליד חדש נוצר', icon: Users, color: 'bg-brand-500' },
   BOOKING_CREATED: { label: 'הזמנה נוצרה', icon: Calendar, color: 'bg-green-500' },
   BOOKING_CONFIRMED: { label: 'הזמנה אושרה', icon: CheckCircle, color: 'bg-emerald-500' },
   PAYMENT_RECEIVED: { label: 'תשלום התקבל', icon: CreditCard, color: 'bg-brand-500' },
   PAYMENT_OVERDUE: { label: 'תשלום באיחור', icon: AlertTriangle, color: 'bg-red-500' },
-  CHECKIN_DAY: { label: 'יום כניסה', icon: Calendar, color: 'bg-cyan-500' },
+  CHECKIN_DAY: { label: 'יום כניסה', icon: Calendar, color: 'bg-brand-500' },
   CHECKOUT_DAY: { label: 'יום יציאה', icon: Calendar, color: 'bg-orange-500' },
   CLEANING_COMPLETED: { label: 'ניקיון הושלם', icon: Sparkles, color: 'bg-pink-500' },
   BOOKING_CANCELLED: { label: 'הזמנה בוטלה', icon: AlertTriangle, color: 'bg-gray-500' },
@@ -124,24 +125,16 @@ export default function AutomationsPage({ user, orgId }) {
   };
 
   if (isLoading) {
-    return <div className="p-6 text-center text-gray-500">טוען...</div>;
+    return <div className="p-6 text-center text-ink-600">טוען...</div>;
   }
 
   return (
-    <div className="p-6 space-y-6" dir="rtl">
-      <div className="atlas-page-hero">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
-            <Zap className="w-5 h-5 text-brand-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">אוטומציות</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">הגדר תהליכים אוטומטיים שיחסכו לך זמן, שליחת הודעות, תזכורות, עדכוני סטטוס ועוד.</p>
-      </div>
+    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+      <PageHeader title="אוטומציות" subtitle="הודעות ומשימות שיוצאות לבד, בזמן הנכון." className="!mb-0" />
       <div className="flex justify-end">
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
-            <Button className="bg-[#0A2540] hover:bg-[#0A2540]/90">
+            <Button >
               <Plus className="h-4 w-4 ml-2" />
               אוטומציה חדשה
             </Button>
@@ -179,7 +172,7 @@ export default function AutomationsPage({ user, orgId }) {
                   value={newRule.timing_offset_hours}
                   onChange={(e) => setNewRule({ ...newRule, timing_offset_hours: parseInt(e.target.value) || 0 })}
                 />
-                <p className="text-xs text-gray-500 mt-1">שלילי = לפני, חיובי = אחרי</p>
+                <p className="text-xs text-ink-600 mt-1">שלילי = לפני, חיובי = אחרי</p>
               </div>
               <div>
                 <Label>פעולות</Label>
@@ -208,7 +201,7 @@ export default function AutomationsPage({ user, orgId }) {
                 </div>
               </div>
               <Button 
-                className="w-full bg-[#0A2540]"
+                className="w-full "
                 onClick={() => createMutation.mutate(newRule)}
                 disabled={!newRule.name || !newRule.trigger || newRule.actions.length === 0}
               >
@@ -235,10 +228,10 @@ export default function AutomationsPage({ user, orgId }) {
                 <button
                   key={i}
                   onClick={() => handleCreateFromTemplate(template)}
-                  className="p-4 border rounded-lg text-right hover:border-[#00D4AA] hover:bg-[#00D4AA]/5 transition-all"
+                  className="p-4 border rounded-lg text-right hover:border-[#00D4AA] hover:bg-[#00D4AA]/5 transition-[background-color,border-color,color,box-shadow,transform]"
                 >
                   <div className="font-medium">{template.name}</div>
-                  <div className="text-sm text-gray-500 mt-1">{template.description}</div>
+                  <div className="text-sm text-ink-600 mt-1">{template.description}</div>
                 </button>
               ))}
             </div>
@@ -253,7 +246,7 @@ export default function AutomationsPage({ user, orgId }) {
           const TriggerIcon = trigger.icon || Zap;
           
           return (
-            <Card key={rule.id} className={`transition-all ${!rule.is_active ? 'opacity-60' : ''}`}>
+            <Card key={rule.id} className={`transition-[background-color,border-color,color,box-shadow,transform] ${!rule.is_active ? 'opacity-60' : ''}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -269,7 +262,7 @@ export default function AutomationsPage({ user, orgId }) {
                           </Badge>
                         )}
                       </div>
-                      <div className="text-sm text-gray-500 flex items-center gap-2 mt-1">
+                      <div className="text-sm text-ink-600 flex items-center gap-2 mt-1">
                         <span>{trigger.label}</span>
                         <ChevronRight className="h-3 w-3" />
                         <span>{rule.actions?.map(a => ACTIONS[a.type]?.label).join(', ')}</span>
@@ -277,7 +270,7 @@ export default function AutomationsPage({ user, orgId }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-ink-600">
                       {rule.execution_count || 0} הפעלות
                     </div>
                     <Switch
@@ -289,7 +282,7 @@ export default function AutomationsPage({ user, orgId }) {
                       size="icon"
                       onClick={() => deleteMutation.mutate(rule.id)}
                     >
-                      <Trash2 className="h-4 w-4 text-gray-400" />
+                      <Trash2 className="h-4 w-4 text-ink-400" />
                     </Button>
                   </div>
                 </div>

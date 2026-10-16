@@ -50,7 +50,7 @@ const PROVIDER_CONFIGS = {
   SENDGRID: {
     title: 'SendGrid',
     icon: 'S',
-    color: 'bg-blue-500',
+    color: 'bg-brand-500',
     fields: [
       { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'SG.xxxxx...', required: true },
       { key: 'from_name', label: 'From Name', type: 'text', placeholder: 'ATLAS', required: true },
@@ -141,14 +141,14 @@ export default function MessagingSetupDialog({ open, onOpenChange, provider, onS
 
         <div className="space-y-4 py-4">
           {/* Help Banner */}
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="text-sm text-blue-900 flex items-start gap-2">
+          <Alert className="bg-brand-50 border-brand-100">
+            <AlertDescription className="text-sm text-navy-900 flex items-start gap-2">
               <span>{config.helpText}</span>
               <a 
                 href={config.helpUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 flex-shrink-0"
+                className="text-brand-600 hover:text-brand-700 flex-shrink-0"
               >
                 <ExternalLink className="h-4 w-4" />
               </a>

@@ -96,7 +96,7 @@ export default function BillingPage({ user }) {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-[#1B2656]">מנוי וחיוב</h1>
-        <p className="text-gray-500 mt-1">נהל את המנוי ופרטי התשלום שלך</p>
+        <p className="text-ink-600 mt-1">נהל את המנוי ופרטי התשלום שלך</p>
       </div>
 
       {/* Current Plan */}
@@ -114,14 +114,14 @@ export default function BillingPage({ user }) {
             </div>
             <div className="text-left">
               <div className="text-3xl font-bold text-[#1B2656]">₪{PLANS[currentPlan].price}</div>
-              <div className="text-sm text-gray-500">לחודש</div>
+              <div className="text-sm text-ink-600">לחודש</div>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-gray-600 mb-1">
+            <div className="bg-canvas rounded-xl p-4">
+              <div className="flex items-center gap-2 text-ink-600 mb-1">
                 <Calendar className="h-4 w-4" />
                 <span className="text-sm">תאריך חיוב הבא</span>
               </div>
@@ -129,8 +129,8 @@ export default function BillingPage({ user }) {
                 {new Date(nextBillingDate).toLocaleDateString('he-IL')}
               </p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-gray-600 mb-1">
+            <div className="bg-canvas rounded-xl p-4">
+              <div className="flex items-center gap-2 text-ink-600 mb-1">
                 <CreditCard className="h-4 w-4" />
                 <span className="text-sm">אמצעי תשלום</span>
               </div>
@@ -204,12 +204,12 @@ export default function BillingPage({ user }) {
                       )}
                       <CardHeader className="text-center">
                         <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${plan.popular ? 'from-[#3E2BF1] to-[#00B8A9]' : 'from-gray-100 to-gray-200'} flex items-center justify-center`}>
-                          <Icon className={`h-7 w-7 ${plan.popular ? 'text-white' : 'text-gray-600'}`} />
+                          <Icon className={`h-7 w-7 ${plan.popular ? 'text-white' : 'text-ink-600'}`} />
                         </div>
                         <CardTitle className="text-2xl">{plan.name}</CardTitle>
                         <div className="text-4xl font-bold text-[#1B2656] mt-2">
                           ₪{plan.price}
-                          <span className="text-lg text-gray-500 font-normal">/חודש</span>
+                          <span className="text-lg text-ink-600 font-normal">/חודש</span>
                         </div>
                       </CardHeader>
                       <CardContent>
@@ -247,7 +247,7 @@ export default function BillingPage({ user }) {
           <CardDescription>תשלומי מנוי חודשיים</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="py-8 text-center text-gray-500">
+          <div className="py-8 text-center text-ink-600">
             <Receipt className="h-10 w-10 mx-auto mb-2 opacity-50" />
             <p className="text-sm">אין חיובים עדיין</p>
             <p className="text-xs mt-1">היסטוריית התשלומים תופיע כאן לאחר החיוב הראשון</p>

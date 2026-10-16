@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PageHeader } from '@/components/ds';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -22,7 +23,6 @@ import {
   Filter,
   ArrowUpCircle,
   Bell,
-  Wrench,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PullToRefresh from '@/components/common/PullToRefresh';
@@ -104,17 +104,17 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
   };
 
   const urgencyConfig = {
-    LOW: { label: 'נמוך', color: 'bg-blue-100 text-blue-800', icon: Clock },
+    LOW: { label: 'נמוך', color: 'bg-brand-100 text-brand-700', icon: Clock },
     MEDIUM: { label: 'בינוני', color: 'bg-yellow-100 text-yellow-800', icon: Clock },
     HIGH: { label: 'גבוה', color: 'bg-orange-100 text-orange-800', icon: ArrowUpCircle },
     URGENT: { label: 'דחוף', color: 'bg-red-100 text-red-800', icon: Bell }
   };
 
   const statusConfig = {
-    NEW: { label: 'חדש', color: 'bg-brand-100 text-brand-800' },
-    IN_PROGRESS: { label: 'בטיפול', color: 'bg-blue-100 text-blue-800' },
+    NEW: { label: 'חדש', color: 'bg-brand-100 text-brand-700' },
+    IN_PROGRESS: { label: 'בטיפול', color: 'bg-brand-100 text-brand-700' },
     RESOLVED: { label: 'טופל', color: 'bg-green-100 text-green-800' },
-    CLOSED: { label: 'סגור', color: 'bg-gray-100 text-gray-800' }
+    CLOSED: { label: 'סגור', color: 'bg-neutral-100 text-navy-900' }
   };
 
   useEffect(() => {
@@ -163,18 +163,10 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
       >
         {/* Header & Stats */}
         <div className="mb-6">
-          <div className="atlas-page-hero" dir="rtl">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
-                <Wrench className="w-5 h-5 text-brand-600" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900">בקשות שירות</h1>
-            </div>
-            <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל בקשות תחזוקה ושירות מאורחים ומנהלי נכסים. עקוב אחר סטטוס הטיפול.</p>
-          </div>
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-            <h3 className="font-semibold text-[#0F172A] mb-2">קישור לטופס אורחים</h3>
-            <p className="text-sm text-gray-600 mb-3">שתף את הקישור הזה עם האורחים שלך (בהודעת כניסה, בנכס וכו'):</p>
+          <PageHeader title="בקשות שירות" subtitle="בקשות תחזוקה מאורחים ומהצוות." className="!mb-0" />
+          <div className="bg-brand-50 border border-brand-100 rounded-xl p-4 mb-6">
+            <h3 className="font-semibold text-navy-900 mb-2">קישור לטופס אורחים</h3>
+            <p className="text-sm text-ink-600 mb-3">שתף את הקישור הזה עם האורחים שלך (בהודעת כניסה, בנכס וכו'):</p>
             <div className="flex gap-2">
               <input 
                 type="text" 
@@ -246,7 +238,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
         </div>
 
         {/* Requests table */}
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+        <div className="rounded-2xl border border-line bg-white shadow-sm overflow-hidden">
           <MaintenanceTable
             requests={filteredRequests}
             properties={properties}
@@ -358,7 +350,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-brand-600 hover:bg-[#00B8AA] text-[#0F172A]"
+                className="w-full bg-brand-600 hover:bg-[#00B8AA] text-navy-900"
                 disabled={
                   createMutation.isPending
                   || !orgId
@@ -403,7 +395,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-[#0F172A] mb-2">פרטי האורח</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">פרטי האורח</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-[#64748B]" />
@@ -421,14 +413,14 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-[#0F172A] mb-2">תיאור הבקשה</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">תיאור הבקשה</h4>
                     <p className="text-sm text-[#64748B] leading-relaxed whitespace-pre-wrap">
                       {selectedRequest.description}
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-[#0F172A] mb-2">עדכן סטטוס</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">עדכן סטטוס</h4>
                     <Select
                       value={selectedRequest.status}
                       onValueChange={(value) => {
@@ -453,7 +445,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-[#0F172A] mb-2">הערות פנימיות</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">הערות פנימיות</h4>
                     <Textarea
                       value={selectedRequest.notes || ''}
                       onChange={(e) => {
@@ -470,7 +462,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                         });
                       }}
                       disabled={updateMutation.isPending}
-                      className="mt-2 w-full bg-brand-600 hover:bg-[#00B8AA] text-[#0F172A]"
+                      className="mt-2 w-full bg-brand-600 hover:bg-[#00B8AA] text-navy-900"
                     >
                       שמור הערות
                     </Button>

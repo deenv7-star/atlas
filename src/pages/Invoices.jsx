@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
+import { PageHeader } from '@/components/ds';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import {
-  FileText, Plus, Send, Eye, Pencil, Trash2,
+import { Plus, Send, Eye, Pencil, Trash2,
   Search, Clock, CheckCircle2, XCircle, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,11 +32,11 @@ import { format } from 'date-fns';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
 const statusConfig = {
-  DRAFT: { label: 'טיוטה', color: 'bg-gray-100 text-gray-700', icon: Clock },
-  SENT: { label: 'נשלח', color: 'bg-blue-100 text-blue-700', icon: Send },
+  DRAFT: { label: 'טיוטה', color: 'bg-neutral-100 text-ink-600', icon: Clock },
+  SENT: { label: 'נשלח', color: 'bg-brand-100 text-brand-700', icon: Send },
   PAID: { label: 'שולם', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   OVERDUE: { label: 'באיחור', color: 'bg-red-100 text-red-700', icon: AlertCircle },
-  CANCELLED: { label: 'בוטל', color: 'bg-gray-100 text-gray-700', icon: XCircle }
+  CANCELLED: { label: 'בוטל', color: 'bg-neutral-100 text-ink-600', icon: XCircle }
 };
 
 const typeConfig = {
@@ -206,16 +206,8 @@ export default function InvoicesPage({ orgId }) {
   });
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="atlas-page-hero">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-brand-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">חשבוניות</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">צור, נהל ושלח חשבוניות ללקוחות. כל החשבוניות מרוכזות כאן עם סטטוס תשלום.</p>
-      </div>
+    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+      <PageHeader title="חשבוניות" subtitle="חשבוניות וקבלות ללקוחות, במקום אחד." className="!mb-0" />
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -237,7 +229,7 @@ export default function InvoicesPage({ orgId }) {
       <Card className="p-4 sm:p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
           <div className="relative">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-400" />
             <Input
               placeholder="חיפוש לפי שם או מספר..."
               value={searchTerm}
@@ -288,13 +280,13 @@ export default function InvoicesPage({ orgId }) {
               {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8">
-                    <div className="text-gray-400">טוען...</div>
+                    <div className="text-ink-400">טוען...</div>
                   </TableCell>
                 </TableRow>
               ) : filteredInvoices.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8">
-                    <div className="text-gray-400">אין חשבוניות</div>
+                    <div className="text-ink-400">אין חשבוניות</div>
                   </TableCell>
                 </TableRow>
               ) : (
