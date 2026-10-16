@@ -46,6 +46,8 @@ function paymentEntityToFormValues(p) {
 
 export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   const { toast } = useToast();
+  const location = useLocation();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm]     = useState('');
   const [statusFilter, setStatusFilter] = useState('all');

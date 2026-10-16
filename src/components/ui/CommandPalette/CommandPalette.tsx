@@ -116,7 +116,9 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
   const [remoteLoading, setRemoteLoading] = React.useState(false);
   const [recents, setRecents] = React.useState<RecentVisit[]>([]);
 
-  const search = useCommandState((s) => s.search);
+  // Controlled search: useCommandState only works INSIDE <Command>; calling it here crashed every app page.
+  const [search, setSearch] = React.useState('');
+  React.useEffect(() => { if (!open) setSearch(''); }, [open]);
 
   React.useEffect(() => {
     if (open) setRecents(getCommandPaletteRecents());
@@ -231,6 +233,8 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
       <div dir="rtl" className="flex flex-col">
         <div className="border-b border-gray-100/90 px-3 py-2">
           <CommandInput
+            value={search}
+            onValueChange={setSearch}
             placeholder="חפש, נווט, פעל..."
             className={cn(
               'flex h-12 w-full rounded-none border-0 bg-transparent py-3 text-base text-gray-900 outline-none',

@@ -214,12 +214,14 @@ const AuthenticatedApp = () => {
         }
       />
       {/* Legacy routes — redirect to canonical lowercase paths */}
-      {LEGACY_REDIRECTS.map(({ from, to }) => (
-        <Route key={from} path={from} element={<Navigate to={to} replace />} />
+      {/* caseSensitive is required: React Router matches case-insensitively by default,
+          so "/Bookings" -> "/bookings" also matched "/bookings" itself and rendered a blank page. */}
+      {LEGACY_REDIRECTS.filter(({ from, to }) => from !== to).map(({ from, to }) => (
+        <Route key={from} path={from} caseSensitive element={<Navigate to={to} replace />} />
       ))}
 
-      <Route path="/BookingDetail/:id" element={<LegacyBookingDetailRedirect />} />
-      <Route path="/LeadDetail/:id" element={<LegacyLeadDetailRedirect />} />
+      <Route path="/BookingDetail/:id" caseSensitive element={<LegacyBookingDetailRedirect />} />
+      <Route path="/LeadDetail/:id" caseSensitive element={<LegacyLeadDetailRedirect />} />
 
       {/* Protected detail pages with :id param */}
       <Route

@@ -22,11 +22,15 @@ export function useSubscription() {
     enabled: Boolean(isAuthenticated && user?.id),
   });
 
-  const trialEndsAt = data?.trial_ends_at ? new Date(data.trial_ends_at) : null;
+  // Fallback: 14-day trial from signup when trial_ends_at is missing (previously showed a red "0 days left" to brand-new users).
+  const createdAt = user?.created_date || user?.created_at;
+  const trialEndsAt = data?.trial_ends_at
+    ? new Date(data.trial_ends_at)
+    : createdAt ? new Date(new Date(createdAt).getTime() + 14 * 24 * 60 * 60 * 1000) : null;
   const now = new Date();
   const daysLeft = trialEndsAt ? Math.max(0, Math.ceil((trialEndsAt - now) / (1000 * 60 * 60 * 24))) : 0;
   const isExpired = trialEndsAt && trialEndsAt <= now;
-  const isTrialing = data?.subscription_status === 'trialing' && !isExpired;
+  const isTrialing = data?.subscription_status === 'trialing' && Boolean(trialEndsAt) && !isExpired;
   const isPaid = data?.subscription_status === 'active' || data?.subscription_status === 'paid';
 
   return {
