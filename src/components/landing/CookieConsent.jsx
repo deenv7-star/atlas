@@ -16,11 +16,27 @@ function readChoice() {
  * visitor has scrolled a little (or after a short delay on short pages) and sits
  * at the very bottom edge of the viewport. Styles live in landing.css (.lp-cookie).
  */
-export default function CookieConsent() {
+export default function CookieConsent({ revealAfter = null }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (readChoice()) return undefined;
+    // revealAfter: CSS selector (e.g. the hero). The bar appears only once that
+    // element has been scrolled fully out of view, so it can never cover it.
+    if (revealAfter) {
+      const el = document.querySelector(revealAfter);
+      if (el) {
+        const check = () => {
+          if (el.getBoundingClientRect().bottom <= 0) {
+            setVisible(true);
+            window.removeEventListener('scroll', check);
+          }
+        };
+        window.addEventListener('scroll', check, { passive: true });
+        check();
+        return () => window.removeEventListener('scroll', check);
+      }
+    }
     let shown = false;
     const show = () => {
       if (shown) return;
@@ -35,7 +51,7 @@ export default function CookieConsent() {
       clearTimeout(timer);
       window.removeEventListener('scroll', onScroll);
     };
-  }, []);
+  }, [revealAfter]);
 
   const choose = (value) => {
     try { localStorage.setItem(STORAGE_KEY, value); } catch { /* storage blocked: just hide */ }
