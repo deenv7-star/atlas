@@ -1,7 +1,7 @@
 /**
- * Small warm building blocks shared by every screen (v4): unit cover photos, soft guest initials,
- * a time-of-day icon, count-up numbers and the staggered rise-in wrapper. All motion respects
- * prefers-reduced-motion (the CSS fallback in warm.css + the hook below).
+ * Small building blocks shared by every screen (v5, cool palette): unit thumbnails (neutral filter) and
+ * indigo-tint unit tiles, cool guest initials, a time-of-day greeting, count-up numbers and the staggered
+ * rise-in wrapper. All motion respects prefers-reduced-motion (premium.css + the hook below).
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { Sunrise, Sun, Sunset, Moon } from 'lucide-react';
@@ -9,34 +9,47 @@ import { unitPhoto } from '@/lib/stay/unitPhoto';
 import { cn } from '@/lib/utils';
 
 /* ── Unit photo ────────────────────────────────────────────────────────────── */
-export function UnitPhoto({ property, src, alt = '', className, rounded = 'rounded-[18px]', eager = false }) {
+/** Small rounded thumbnail, always neutral/cool (warm wood tones are desaturated, faint indigo cast). */
+export function UnitPhoto({ property, src, alt = '', className, rounded = 'rounded-[10px]', eager = false }) {
   const [failed, setFailed] = useState(false);
   const url = src || unitPhoto(property);
+  if (failed || !url) return <UnitTile property={property} className={className} rounded={rounded} />;
   return (
-    <span className={cn('relative block shrink-0 overflow-hidden bg-[#EFE9E1]', rounded, className)}>
-      {!failed && url ? (
-        <img
-          src={url}
-          alt={alt}
-          loading={eager ? 'eager' : 'lazy'}
-          decoding="async"
-          draggable={false}
-          onError={() => setFailed(true)}
-          className="v4-photo h-full w-full object-cover"
-        />
-      ) : null}
+    <span className={cn('v5-cool-wrap relative block shrink-0 overflow-hidden bg-[#EEF0F5] ring-1 ring-inset ring-[rgba(16,24,64,0.06)]', rounded, className)}>
+      <img
+        src={url}
+        alt={alt}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        draggable={false}
+        onError={() => setFailed(true)}
+        className="v5-cool h-full w-full object-cover"
+      />
     </span>
   );
 }
 
-/* ── Guest initials: six soft tints, stable per name ───────────────────────── */
+/** Indigo-tint tile with the unit's first letter: the calm default where a photo would be noise. */
+export function UnitTile({ property, name, className, rounded = 'rounded-[10px]' }) {
+  const label = String(name || property?.name || '').trim();
+  const core = label.replace(/^(צימר|וילה|בקתת?)\s+/, '');
+  // Hebrew unit names usually carry the definite article (הגפן, הזית): show the word's own first letter
+  const ch = (core.length >= 3 && core[0] === 'ה' ? core[1] : core[0]) || 'י';
+  return (
+    <span
+      aria-hidden
+      className={cn('inline-flex shrink-0 select-none items-center justify-center bg-[#EEF0FF] font-bold leading-none text-brand-700 ring-1 ring-inset ring-[rgba(62,43,241,0.08)]', rounded, className)}
+    >
+      <span style={{ fontSize: '0.95em' }}>{ch}</span>
+    </span>
+  );
+}
+
+/* ── Guest initials: three cool tints only (indigo, slate, periwinkle), stable per name ── */
 const TINTS = [
-  { bg: '#FDEBDD', fg: '#9A4A12' }, // peach
-  { bg: '#E3F1E8', fg: '#2C6B47' }, // sage
-  { bg: '#E6E9FB', fg: '#3B33A8' }, // periwinkle
-  { bg: '#FBE6EC', fg: '#9B3355' }, // rose
-  { bg: '#FDF1D6', fg: '#8A5F0B' }, // butter
-  { bg: '#E1F0F4', fg: '#2B6475' }, // sky
+  { bg: '#EEF0FF', fg: '#3E2BF1' }, // indigo
+  { bg: '#EEF1F6', fg: '#3A4469' }, // slate
+  { bg: '#E9EEFB', fg: '#2B3F9E' }, // periwinkle
 ];
 function tintFor(name) {
   let h = 0;

@@ -50,7 +50,7 @@ export default function SubscriptionPage({ user }) {
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <span className="ds-icon-square"><Icon className="h-5 w-5" strokeWidth={1.75} /></span>
-                  <h2 className="text-[18px] font-extrabold text-navy-900">{plan.name}</h2>
+                  <h2 className="text-[18px] font-bold text-navy-900">{plan.name}</h2>
                 </div>
                 {isCurrent ? (
                   <span className="inline-flex h-6 items-center rounded-full bg-success-50 px-2.5 text-[13px] font-bold text-success-600">התוכנית שלכם</span>
@@ -59,7 +59,7 @@ export default function SubscriptionPage({ user }) {
                 ) : null}
               </div>
               <p className="mt-4 text-navy-900">
-                <span className="tabular text-[36px] font-extrabold tracking-[-0.02em]">{fmtMoney(plan.price)}</span>
+                <span className="tabular text-[36px] font-bold tracking-[-0.02em]">{fmtMoney(plan.price)}</span>
                 <span className="text-[15px] text-ink-400"> לחודש</span>
               </p>
               <p className="text-[13px] text-ink-400">{plan.propertyLimit === Infinity ? 'נכסים ללא הגבלה' : `עד ${plan.propertyLimit} נכסים`}</p>

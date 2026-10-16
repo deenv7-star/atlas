@@ -549,8 +549,8 @@ export default function Onboarding() {
       case 0:
         return (
           <div className="text-center py-4">
-            <span className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-50 text-brand-600"><Home className="h-7 w-7" strokeWidth={1.75} /></span>
-            <h2 className="mb-2 text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900">ברוכים הבאים ל-ATLAS</h2>
+            <span className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-50 text-brand-600"><Home className="h-7 w-7" strokeWidth={1.5} /></span>
+            <h2 className="mb-2 text-[26px] font-bold leading-tight tracking-[-0.02em] text-navy-900">ברוכים הבאים ל-ATLAS</h2>
             <p className="mb-6 text-[15px] leading-relaxed text-ink-600">שתי דקות, והמתחם שלכם מוכן לקבל הזמנות.</p>
 
             <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
@@ -649,7 +649,7 @@ export default function Onboarding() {
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-brand-50 border border-brand-100">
                 <Building2 className="w-6 h-6 text-brand-600" strokeWidth={2} />
               </div>
-              <h2 className="text-xl font-extrabold text-navy-900 tracking-tight">הגדרת המתחם והנכס הראשון</h2>
+              <h2 className="text-xl font-bold text-navy-900 tracking-tight">הגדרת המתחם והנכס הראשון</h2>
               <p className="text-sm text-ink-600 mt-1 leading-relaxed">פרטי הארגון והנכס הראשון</p>
             </div>
             <div className="space-y-1.5">
@@ -763,7 +763,7 @@ export default function Onboarding() {
               <Button
                 onClick={handleSaveOrgAndProperty}
                 disabled={!combinedValid || saving}
-                className="flex-1 h-12 text-base font-bold rounded-[10px] gap-2 bg-zinc-900 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
+                className="flex-1 h-12 text-base font-bold rounded-[10px] gap-2 bg-brand-600 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
               >
                 {saving ? <Loader2 className="w-5 h-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden /> : <ArrowLeft className="w-5 h-5" />}
                 {saving ? 'שומר...' : 'הבא'}
@@ -781,7 +781,7 @@ export default function Onboarding() {
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-brand-50 border border-brand-100">
                 <Crown className="w-6 h-6 text-brand-600" strokeWidth={2} />
               </div>
-              <h2 className="text-xl font-extrabold text-navy-900 tracking-tight">בחר את התוכנית שמתאימה לך</h2>
+              <h2 className="text-xl font-bold text-navy-900 tracking-tight">בחר את התוכנית שמתאימה לך</h2>
               <p className="text-sm text-ink-600 mt-1 leading-relaxed">כל התוכניות כוללות 14 יום ניסיון חינם</p>
             </div>
             <div className="space-y-3">
@@ -804,7 +804,7 @@ export default function Onboarding() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-extrabold text-navy-900">{plan.name}</span>
+                        <span className="font-bold text-navy-900">{plan.name}</span>
                         {plan.recommended && (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-500/10 border border-teal-600/20 text-brand-700">מומלץ</span>
                         )}
@@ -817,7 +817,7 @@ export default function Onboarding() {
                       </div>
                     </div>
                     <div className="text-left flex-shrink-0 mr-2">
-                      <div className="text-lg font-extrabold text-navy-900 atlas-tabular">₪{plan.price}</div>
+                      <div className="text-lg font-bold text-navy-900 atlas-tabular">₪{plan.price}</div>
                       <div className="text-[10px] text-ink-600">לחודש</div>
                     </div>
                   </div>
@@ -857,7 +857,7 @@ export default function Onboarding() {
                 <path d="M38 60 L52 74 L82 44" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               </svg>
             </div>
-            <h2 className="text-2xl font-extrabold text-navy-900 tracking-tight mb-2">המתחם שלך מוכן!</h2>
+            <h2 className="text-2xl font-bold text-navy-900 tracking-tight mb-2">המתחם שלך מוכן!</h2>
             <p className="text-sm text-ink-600 mb-6 leading-relaxed">הכל מוגדר ומוכן לשימוש</p>
 
             {(createdOrgName || createdPropertyName) && (
@@ -890,7 +890,7 @@ export default function Onboarding() {
             <Button
               onClick={handleFinish}
               disabled={saving}
-              className="w-full h-12 text-base font-bold rounded-[10px] gap-2 bg-zinc-900 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
+              className="w-full h-12 text-base font-bold rounded-[10px] gap-2 bg-brand-600 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
             >
               {saving ? <Loader2 className="w-5 h-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden /> : <ArrowLeft className="w-5 h-5" />}
               {saving ? 'מעביר...' : 'כניסה ללוח הבקרה'}

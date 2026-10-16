@@ -4,8 +4,8 @@
  */
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { isPlayful } from '@/ui-direction/flag';
-import { CountUp } from '@/components/app/warm';
+import { isStripe } from '@/ui-direction/flag';
+import { CountUp } from '@/components/app/atoms';
 import { Button } from '@/components/ui/button';
 import { format, parseISO, isValid } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -72,12 +72,13 @@ export function ChannelBadge({ source, className }) {
 }
 
 /* ── Status pills ──────────────────────────────────────────────────────────── */
-const TONES = {
-  success: 'bg-success-50 text-success-700',
-  warning: 'bg-warning-50 text-warning-700',
-  danger: 'bg-danger-50 text-danger-700',
-  brand: 'bg-brand-50 text-brand-700',
-  neutral: 'bg-neutral-100 text-ink-600',
+/* v5: Linear-style tags. White pill, hairline, colour lives only in a 6px dot. Amber = the attention dot. */
+const DOTS = {
+  success: '#22B07D',
+  warning: 'var(--attention)',
+  danger: '#EF5B5B',
+  brand: '#3E2BF1',
+  neutral: '#A3A9BA',
 };
 export const STATUS_META = {
   // bookings
@@ -105,8 +106,10 @@ export const STATUS_META = {
 };
 export function StatusPill({ status, label, tone, className }) {
   const meta = STATUS_META[String(status || '').toUpperCase()] || { label: label || status || '', tone: 'neutral' };
+  const t = tone || meta.tone;
   return (
-    <span className={cn(isPlayful ? 'inline-flex h-7 shrink-0 items-center rounded-full px-3 text-[13px] font-bold' : 'inline-flex h-7 shrink-0 items-center rounded-full px-3 text-[13px] font-medium', TONES[tone || meta.tone], className)}>
+    <span className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border border-line bg-white px-2.5 text-[13px] font-medium text-ink-600', className)}>
+      <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: DOTS[t] || DOTS.neutral }} />
       {label || meta.label}
     </span>
   );
@@ -115,7 +118,7 @@ export function StatusPill({ status, label, tone, className }) {
 /* ── Layout primitives ─────────────────────────────────────────────────────── */
 export function Page({ children, className, wide = false }) {
   return (
-    <div className={cn('mx-auto w-full px-5 pb-16 pt-6 md:px-10 md:pt-10', wide ? 'max-w-[1400px]' : 'max-w-[1200px]', className)} dir="rtl">
+    <div className={cn('mx-auto w-full px-5 pb-16 pt-6 md:px-10 md:pt-9', wide ? 'max-w-[1400px]' : 'max-w-[1200px]', className)} dir="rtl">
       {children}
     </div>
   );
@@ -123,10 +126,10 @@ export function Page({ children, className, wide = false }) {
 
 export function PageHeader({ title, subtitle, actions, children, className }) {
   return (
-    <header className={cn('mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between', className)}>
+    <header className={cn('v5-rise mb-7 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between', isStripe && 'v5-band pb-7 md:pb-8', className)}>
       <div className="min-w-0">
-        <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[34px]">{title}</h1>
-        {subtitle ? <p className="mt-2 text-[16px] text-ink-600">{subtitle}</p> : null}
+        <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">{title}</h1>
+        {subtitle ? <p className="mt-1.5 text-[15px] text-ink-400">{subtitle}</p> : null}
         {children}
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
@@ -136,7 +139,7 @@ export function PageHeader({ title, subtitle, actions, children, className }) {
 
 export function Card({ as: Comp = 'div', className, children, ...rest }) {
   return (
-    <Comp className={cn('rounded-[18px] border border-line/70 bg-white shadow-card', className)} {...rest}>
+    <Comp className={cn('rounded-[14px] border border-line bg-white shadow-card', className)} {...rest}>
       {children}
     </Comp>
   );
@@ -146,18 +149,18 @@ export function Section({ title, subtitle, action, children, className, bodyClas
   return (
     <Card className={cn('overflow-hidden', className)}>
       {(title || action) && (
-        <div className="flex min-h-[56px] items-center justify-between gap-3 px-5 pt-4">
+        <div className="flex min-h-[56px] items-center justify-between gap-3 px-5 pt-4 md:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
-            {Icon ? <span className="ds-icon-square"><Icon className="h-5 w-5" strokeWidth={1.75} /></span> : null}
+            {Icon && isStripe ? <span className="ds-icon-square h-8 w-8"><Icon className="h-[18px] w-[18px]" strokeWidth={1.5} /></span> : null}
             <div className="min-w-0">
-              <h2 className="truncate text-[17px] font-bold text-navy-900">{title}</h2>
+              <h2 className="truncate text-[15px] font-semibold text-navy-900">{title}</h2>
               {subtitle ? <p className="truncate text-[13px] text-ink-400">{subtitle}</p> : null}
             </div>
           </div>
           {action}
         </div>
       )}
-      <div className={cn('p-5 pt-3', bodyClassName)}>{children}</div>
+      <div className={cn('p-5 pt-3 md:px-6', bodyClassName)}>{children}</div>
     </Card>
   );
 }
@@ -172,15 +175,19 @@ function AnimatedValue({ value }) {
   return <CountUp value={n} format={(x) => `${m[1]}${x.toLocaleString('en-US')}${m[3]}`} />;
 }
 
-export function StatTile({ label, value, hint, tone = 'brand', className, loading }) {
+export function StatTile({ label, value, hint, tone = 'brand', className, loading, icon: Icon, attention }) {
   const valueCls = tone === 'danger' ? 'text-danger-600' : 'text-navy-900';
   return (
-    <Card className={cn('v4-rise flex min-w-0 flex-col gap-1.5 px-5 py-4 md:px-6 md:py-5', isPlayful && 'border-transparent', className)}>
-      <span className="truncate text-[14px] text-ink-600 md:text-[15px]">{label}</span>
+    <Card className={cn('v5-rise flex min-w-0 flex-col gap-1 px-5 py-4 md:px-6 md:py-5', className)}>
+      <span className="flex items-center gap-2 truncate text-[13px] font-medium text-ink-400">
+        {Icon && isStripe ? <span className="ds-icon-square h-7 w-7 rounded-[8px]"><Icon className="h-4 w-4" strokeWidth={1.5} /></span> : null}
+        {label}
+        {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
+      </span>
       {loading ? (
-        <SkelLine className="h-8 w-24" />
+        <SkelLine className="mt-1 h-8 w-24" />
       ) : (
-        <span className={cn('whitespace-nowrap text-[22px] font-extrabold leading-tight tracking-[-0.02em] tabular md:text-[28px]', valueCls)}><AnimatedValue value={value} /></span>
+        <span className={cn('v5-num whitespace-nowrap text-[22px] font-bold leading-tight md:text-[26px]', valueCls)}><AnimatedValue value={value} /></span>
       )}
       {hint ? <span className="hidden truncate text-[13px] text-ink-400 md:block">{hint}</span> : null}
     </Card>
@@ -189,7 +196,7 @@ export function StatTile({ label, value, hint, tone = 'brand', className, loadin
 
 export function SegmentedControl({ options, value, onChange, className, ariaLabel }) {
   return (
-    <div role="tablist" aria-label={ariaLabel} className={cn('inline-flex max-w-full gap-1 overflow-x-auto p-1', isPlayful ? 'rounded-full bg-white shadow-card' : 'rounded-[18px] bg-neutral-100', className)}>
+    <div role="tablist" aria-label={ariaLabel} className={cn('inline-flex max-w-full gap-0.5 overflow-x-auto rounded-[12px] border border-line bg-[#F3F4F8] p-[3px]', className)}>
       {options.map((o) => {
         const active = o.value === value;
         return (
@@ -200,14 +207,13 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
             aria-selected={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              'press inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap px-4 text-[15px] font-medium',
-              isPlayful ? 'rounded-full' : 'rounded-[11px]',
-              active && isPlayful ? 'bg-brand-50 font-bold text-brand-700' : active ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.08),0_2px_8px_rgba(27,38,86,0.06)]' : 'text-ink-600 hover:text-navy-900',
+              'press inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[9px] px-4 text-[14px] font-medium',
+              active ? 'bg-white text-navy-900 shadow-[0_0_0_1px_rgba(16,24,64,0.06),0_1px_3px_rgba(16,24,64,0.08)]' : 'text-ink-400 hover:text-navy-900',
             )}
           >
             {o.label}
             {o.count != null ? (
-              <span className={cn('tabular rounded-full px-1.5 text-[12px]', active ? 'bg-brand-50 text-brand-700' : 'text-ink-400')}>{o.count}</span>
+              <span className="tabular text-[12px] text-ink-300">{o.count}</span>
             ) : null}
           </button>
         );
@@ -218,23 +224,15 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
 
 export function EmptyState({ icon: Icon, title, description, actionLabel, onAction, action, className, compact = false, photo }) {
   return (
-    <div className={cn('v4-rise flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
-      {photo ? (
-        <span className="mb-5 block h-[120px] w-[180px] overflow-hidden rounded-[20px] shadow-card">
-          <img src={photo} alt="" className="h-full w-full object-cover" loading="lazy" />
-        </span>
-      ) : Icon ? (
-        <span className="relative mb-5 inline-flex h-[76px] w-[76px] items-center justify-center" aria-hidden>
-          <svg viewBox="0 0 76 76" className="absolute inset-0 h-full w-full" fill="none">
-            <circle cx="38" cy="38" r="37" fill="var(--today-50, #FEF5E6)" />
-            <path d="M14 50c7-6 14-6 21 0s14 6 27-2" stroke="#F8B040" strokeWidth="1.75" strokeLinecap="round" opacity=".55" />
-            <circle cx="56" cy="20" r="5" stroke="#F8B040" strokeWidth="1.75" opacity=".7" />
-          </svg>
-          <Icon className="relative h-8 w-8 text-navy-900" strokeWidth={1.5} />
+    <div className={cn('v5-rise flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
+      {Icon || photo ? (
+        <span className="relative mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] border border-line bg-white shadow-card" aria-hidden>
+          <span className="absolute inset-[5px] rounded-[11px] bg-[#F4F3FF]" />
+          {Icon ? <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.5} /> : null}
         </span>
       ) : null}
-      <p className="text-[19px] font-extrabold text-navy-900">{title}</p>
-      {description ? <p className="mt-1.5 max-w-sm text-[16px] text-ink-600">{description}</p> : null}
+      <p className="text-[17px] font-semibold text-navy-900">{title}</p>
+      {description ? <p className="mt-1.5 max-w-sm text-[15px] text-ink-400">{description}</p> : null}
       {action ? <div className="mt-6">{action}</div> : actionLabel && onAction ? (
         <Button onClick={onAction} className="mt-6">{actionLabel}</Button>
       ) : null}
@@ -278,7 +276,7 @@ export function useLoadingGuard(isLoading, ms = 12000) {
 
 export function SlowLoadNotice({ onRetry, className }) {
   return (
-    <div role="status" className={cn('flex flex-col items-start gap-3 rounded-[18px] border border-line bg-white p-4 sm:flex-row sm:items-center sm:justify-between', className)}>
+    <div role="status" className={cn('flex flex-col items-start gap-3 rounded-[14px] border border-line bg-white p-4 sm:flex-row sm:items-center sm:justify-between', className)}>
       <div>
         <p className="font-bold text-navy-900">הטעינה לוקחת יותר מהרגיל</p>
         <p className="text-[14px] text-ink-600">ייתכן שהחיבור איטי. אפשר לנסות שוב, הנתונים שכבר נטענו נשמרים.</p>
@@ -290,7 +288,7 @@ export function SlowLoadNotice({ onRetry, className }) {
 
 export function Avatar({ name, className, tone = 'brand' }) {
   const ch = (String(name || '').trim()[0] || 'א').toUpperCase();
-  const toneCls = tone === 'amber' ? 'bg-warning-50 text-warning-700' : tone === 'neutral' ? 'bg-neutral-100 text-ink-600' : 'bg-brand-50 text-brand-700';
+  const toneCls = tone === 'neutral' || tone === 'amber' ? 'bg-[#EEF1F6] text-ink-600' : 'bg-[#EEF0FF] text-brand-700';
   return (
     <span aria-hidden className={cn('inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[15px] font-bold', toneCls, className)}>
       {ch}
@@ -302,12 +300,12 @@ export function Avatar({ name, className, tone = 'brand' }) {
 export function ListRow({ as: Comp = 'div', leading, title, meta, trailing, className, ...rest }) {
   return (
     <Comp
-      className={cn('press flex min-h-[64px] items-center gap-3 rounded-[12px] px-3 py-2.5 text-start hover:bg-neutral-50', className)}
+      className={cn('press v5-row flex min-h-[64px] items-center gap-3 rounded-[10px] px-3 py-2.5 text-start', className)}
       {...rest}
     >
       {leading}
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[15px] font-semibold text-navy-900">{title}</p>
+        <p className="truncate text-[15px] font-medium text-navy-900">{title}</p>
         {meta ? <div className="mt-0.5 truncate text-[13px] text-ink-400">{meta}</div> : null}
       </div>
       {trailing}

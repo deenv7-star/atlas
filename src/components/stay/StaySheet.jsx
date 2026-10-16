@@ -11,7 +11,7 @@ export function StaySheet({ open, onOpenChange, title, description, children, fo
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-[rgba(27,38,86,.42)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
         <DialogPrimitive.Content
           dir="rtl"
-          className="ab-root fixed z-50 inset-x-0 bottom-0 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full sm:w-[min(560px,calc(100vw-2rem))] max-h-[92dvh] flex flex-col rounded-t-[20px] sm:rounded-[20px] outline-none data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-4 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[.97] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 duration-200"
+          className="ab-root fixed z-50 inset-x-0 bottom-0 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full sm:w-[min(560px,calc(100vw-2rem))] max-h-[92dvh] flex flex-col rounded-t-[20px] sm:rounded-[14px] outline-none data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-4 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[.97] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 duration-200"
           style={{ background: 'var(--surface)', boxShadow: '0 -8px 40px rgba(20,23,26,.18)', paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
           <div className="sm:hidden flex justify-center pt-2.5" aria-hidden>

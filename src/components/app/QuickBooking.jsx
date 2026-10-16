@@ -46,7 +46,7 @@ export function QuickBookingProvider({ children }) {
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-extrabold text-navy-900">הזמנה חדשה</DialogTitle>
+            <DialogTitle className="text-[22px] font-bold text-navy-900">הזמנה חדשה</DialogTitle>
             <DialogDescription className="text-[15px] text-ink-600">
               {preset.property_name ? `${preset.property_name} · ` : ''}שם, תאריכים וערוץ. אפשר להשלים את השאר אחר כך.
             </DialogDescription>

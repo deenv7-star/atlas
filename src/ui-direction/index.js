@@ -1,6 +1,6 @@
 /**
- * Layout direction switch. Branch feat/app-ui-v4-a ships direction A ("Airbnb warm"),
- * feat/app-ui-v4-b ships direction B ("playful light"). Both are light; brand, type and copy are shared.
+ * Layout direction switch. Branch feat/app-ui-v5-a ships direction A ("Mercury"),
+ * feat/app-ui-v5-b ships direction B ("Stripe"). Both are light; brand, type and copy are shared.
  */
 import * as A from './a';
 import * as B from './b';

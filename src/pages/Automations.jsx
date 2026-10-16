@@ -23,10 +23,10 @@ const TRIGGERS = {
   PAYMENT_RECEIVED: { label: 'תשלום התקבל', icon: CreditCard, color: 'bg-brand-500' },
   PAYMENT_OVERDUE: { label: 'תשלום באיחור', icon: AlertTriangle, color: 'bg-red-500' },
   CHECKIN_DAY: { label: 'יום כניסה', icon: Calendar, color: 'bg-brand-500' },
-  CHECKOUT_DAY: { label: 'יום יציאה', icon: Calendar, color: 'bg-orange-500' },
+  CHECKOUT_DAY: { label: 'יום יציאה', icon: Calendar, color: 'bg-brand-300' },
   CLEANING_COMPLETED: { label: 'ניקיון הושלם', icon: Sparkles, color: 'bg-pink-500' },
   BOOKING_CANCELLED: { label: 'הזמנה בוטלה', icon: AlertTriangle, color: 'bg-gray-500' },
-  REVIEW_RECEIVED: { label: 'ביקורת התקבלה', icon: MessageSquare, color: 'bg-yellow-500' }
+  REVIEW_RECEIVED: { label: 'ביקורת התקבלה', icon: MessageSquare, color: 'bg-brand-400' }
 };
 
 const ACTIONS = {
@@ -128,7 +128,7 @@ export default function AutomationsPage({ user, orgId }) {
     return (
       <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" aria-busy="true" aria-label="טוען">
         <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
-        <div className="mt-6 grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-24 rounded-[18px]" />)}</div>
+        <div className="mt-6 grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-24 rounded-[14px]" />)}</div>
       </div>
     );
   }

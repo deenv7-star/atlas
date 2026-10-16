@@ -17,7 +17,7 @@ import { CalendarDays, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
-  Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, monthShort, dayNum,
+  Page, PageHeader, ChannelDot, fmtMoney, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, monthShort, dayNum,
 } from '@/components/ds';
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
@@ -27,7 +27,7 @@ import { bookingFormToPayload } from '@/lib/entityPayloads';
 import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
-import { UnitPhoto, GuestAvatar, Rise } from '@/components/app/warm';
+import { Rise } from '@/components/app/atoms';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -319,7 +319,7 @@ export default function BookingsPage({ selectedPropertyId }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[18px] border border-line bg-white shadow-card">
+      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
         {isError ? (
           <div className="p-4"><ErrorFallback /></div>
         ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
@@ -341,17 +341,20 @@ export default function BookingsPage({ selectedPropertyId }) {
                 <li className="p-4"><SkelRows rows={5} /></li>
               ) : paged.map((b, idx) => (
                 <Rise as="li" i={Math.min(idx, 8)} key={b.id}>
-                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press flex min-h-[84px] items-center gap-4 px-4 py-3 hover:bg-neutral-50 active:bg-neutral-50 md:px-5">
-                    <span className="relative shrink-0">
-                      <UnitPhoto property={properties.find((p) => p.id === b.property_id) || { id: b.property_id }} className="h-14 w-14" rounded="rounded-[16px]" />
-                      <GuestAvatar name={b.guest_name || 'אורח'} size={26} ring className="absolute -bottom-1.5 -left-1.5" />
+                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press v5-row flex min-h-[72px] items-center gap-3.5 px-4 py-3 md:gap-4 md:px-5">
+                    {/* date block: day + month, the row's anchor */}
+                    <span className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-[10px] border border-line bg-[#FAFBFC] leading-none">
+                      <span className="v5-num text-[17px] font-bold text-navy-900">{dayNum(b.check_in_date)}</span>
+                      <span className="mt-1 text-[12px] font-medium text-ink-400">{monthShort(b.check_in_date)}</span>
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[16px] font-bold text-navy-900">{b.guest_name || 'אורח'}</span>
-                      <span className="mt-0.5 block truncate text-[14px] text-ink-600">
-                        <span className="font-medium text-navy-900 tabular">{dayNum(b.check_in_date)} {monthShort(b.check_in_date)}</span> · {propName(b.property_id) || b.property_name} · {b.nights || 1} לילות
+                      <span className="block truncate text-[15px] font-medium text-navy-900">{b.guest_name || 'אורח'}</span>
+                      <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
+                        <ChannelDot source={b.booking_source || b.source} className="h-1.5 w-1.5" />
+                        <span className="truncate">{propName(b.property_id) || b.property_name} · {b.nights || 1} לילות</span>
                       </span>
                     </span>
+                    <span className="hidden w-[96px] shrink-0 text-left text-[15px] font-semibold tabular text-navy-900 md:block">{fmtMoney(b.total_price)}</span>
                     <StatusPill status={b.status} />
                   </Link>
                 </Rise>
@@ -399,7 +402,7 @@ export default function BookingsPage({ selectedPropertyId }) {
       <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-extrabold text-navy-900">סינון הזמנות</DialogTitle>
+            <DialogTitle className="text-[22px] font-bold text-navy-900">סינון הזמנות</DialogTitle>
           </DialogHeader>
           <div className="space-y-5">
             <div>
@@ -467,7 +470,7 @@ export default function BookingsPage({ selectedPropertyId }) {
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-extrabold text-navy-900">{editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}</DialogTitle>
+            <DialogTitle className="text-[22px] font-bold text-navy-900">{editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}</DialogTitle>
           </DialogHeader>
           <BookingForm
             key={editingBooking?.id ?? 'new'}

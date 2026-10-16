@@ -268,7 +268,7 @@ export default function OwnerReports() {
             </div>
             <div className="border-t-2 border-emerald-200 pt-4 flex flex-col items-center">
               <span className="text-sm text-emerald-700 font-medium mb-1">סכום נטו לתשלום</span>
-              <p className="text-4xl font-extrabold text-emerald-600 tracking-tight">{formatCurrency(netPayout)}</p>
+              <p className="text-4xl font-bold text-emerald-600 tracking-tight">{formatCurrency(netPayout)}</p>
             </div>
           </div>
 

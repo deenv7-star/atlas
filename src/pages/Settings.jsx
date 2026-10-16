@@ -133,11 +133,11 @@ export default function SettingsPage({ user }) {
                 className={cn(
                   "press flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-[10px] px-3.5 text-[15px] text-right min-h-[44px]",
                   activeTab === tab.id
-                    ? "bg-brand-50 font-bold text-brand-700"
-                    : "font-medium text-navy-900 hover:bg-neutral-100"
+                    ? "bg-[#EEF0FF] font-medium text-brand-700"
+                    : "font-medium text-ink-600 hover:bg-[#F5F6F9] hover:text-navy-900"
                 )}
               >
-                <Icon className="h-5 w-5 flex-shrink-0 text-brand-600" strokeWidth={1.75} />
+                <Icon className={cn("h-[18px] w-[18px] flex-shrink-0", activeTab === tab.id ? "text-brand-600" : "text-ink-300")} strokeWidth={1.5} />
                 {tab.label}
               </button>
             );

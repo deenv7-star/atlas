@@ -143,7 +143,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
         <PageHeader title="הודעות" subtitle="WhatsApp, SMS ומייל לאורחים וללידים, במקום אחד." className="!mb-4 md:!mb-5" />
       </div>
       <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col overflow-hidden md:mb-6 md:px-8">
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[18px] md:border md:shadow-card">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[14px] md:border md:shadow-card">
       {/* Threads list */}
       <div className={cn(
         'flex w-full flex-shrink-0 flex-col border-line bg-white md:w-80 md:border-l lg:w-96',
@@ -151,7 +151,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
       )}>
         <div className="border-b border-line px-4 pb-3 pt-1 md:pt-4">
           <div className="relative">
-            <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" strokeWidth={1.75} aria-hidden />
+            <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" strokeWidth={1.5} aria-hidden />
             <Input
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
@@ -216,7 +216,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
               aria-label="חזרה לרשימת השיחות"
               className="press -mr-2 inline-flex h-11 w-11 items-center justify-center rounded-[10px] text-ink-600 hover:bg-neutral-100 md:hidden"
             >
-              <ChevronRight className="h-5 w-5" strokeWidth={1.75} />
+              <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
             </button>
             <Avatar name={currentThread?.guest_name} className="h-10 w-10" />
             <div className="min-w-0">
@@ -236,7 +236,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                 return (
                   <div key={i} className={cn('flex', isOutbound ? 'justify-start' : 'justify-end')}>
                     <div className={cn(
-                      'max-w-[80%] rounded-[18px] px-3.5 py-2.5 text-[15px] lg:max-w-md',
+                      'max-w-[80%] rounded-[14px] px-3.5 py-2.5 text-[15px] lg:max-w-md',
                       isOutbound
                         ? 'rounded-tr-[6px] bg-brand-600 text-white'
                         : 'rounded-tl-[6px] border border-line bg-white text-navy-900'
@@ -270,7 +270,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                 aria-label="שליחה"
                 className="shrink-0"
               >
-                <Send className="h-[18px] w-[18px] -scale-x-100" strokeWidth={1.75} />
+                <Send className="h-[18px] w-[18px] -scale-x-100" strokeWidth={1.5} />
               </Button>
             </div>
           </div>

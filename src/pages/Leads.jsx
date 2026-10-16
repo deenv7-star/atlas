@@ -1,5 +1,5 @@
 import { createPageUrl } from '@/utils';
-import { GuestAvatar, Rise } from '@/components/app/warm';
+import { GuestAvatar, Rise } from '@/components/app/atoms';
 import { Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtShort } from '@/components/ds';
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -253,7 +253,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[18px] border border-line bg-white">
+      <div className="overflow-hidden rounded-[14px] border border-line bg-white">
         {isLoading ? <div className="p-4"><SkelRows rows={5} /></div> : sorted.length ? (
           <ul className="divide-y divide-line">
             {paged.map((l, idx) => (
@@ -283,7 +283,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         ) : null}
       </div>
 
-      <div className={cn("overflow-hidden rounded-[18px] border border-line bg-white shadow-card", sorted.length || isLoading ? "hidden" : "")}>
+      <div className={cn("overflow-hidden rounded-[14px] border border-line bg-white shadow-card", sorted.length || isLoading ? "hidden" : "")}>
         {isError ? (
           <div className="p-4 text-center text-sm text-red-600">שגיאה בטעינת הלידים</div>
         ) : sorted.length === 0 && !isLoading ? (
@@ -345,7 +345,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-extrabold text-navy-900">{editingLead ? 'עריכת ליד' : 'ליד חדש'}</DialogTitle>
+            <DialogTitle className="text-[22px] font-bold text-navy-900">{editingLead ? 'עריכת ליד' : 'ליד חדש'}</DialogTitle>
           </DialogHeader>
           <GuestForm
             key={editingLead?.id ?? 'new'}

@@ -209,12 +209,12 @@ export default function BookingDetails({ booking, onClose, orgId }) {
 
         {/* Guest + stay */}
         <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
-          <section className="rounded-[20px] border border-line bg-white p-5 shadow-card md:p-6">
+          <section className="rounded-[14px] border border-line bg-white p-5 shadow-card md:p-6">
             <div className="flex items-start gap-4">
-              <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[22px] font-extrabold text-brand-700">{booking.guest_name?.charAt(0)}</span>
+              <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[22px] font-bold text-brand-700">{booking.guest_name?.charAt(0)}</span>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="truncate text-[26px] font-extrabold leading-tight text-navy-900">{booking.guest_name}</h1>
+                  <h1 className="truncate text-[26px] font-bold leading-tight text-navy-900">{booking.guest_name}</h1>
                   <StatusPill status={booking.status} />
                 </div>
                 <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[15px] text-ink-600">
@@ -227,7 +227,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-3 gap-2 rounded-[18px] bg-neutral-50 p-3 text-center md:gap-4 md:p-4">
+            <div className="mt-5 grid grid-cols-3 gap-2 rounded-[14px] bg-neutral-50 p-3 text-center md:gap-4 md:p-4">
               <div>
                 <p className="text-[13px] text-ink-400">כניסה</p>
                 <p className="mt-0.5 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_in_date)}</span><span className="sm:hidden">{fmtShort(booking.check_in_date)}</span></p>
@@ -267,7 +267,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
 
         <div className="mt-4 grid gap-4 md:grid-cols-[1.3fr_1fr]">
           {/* Money */}
-          <section className="rounded-[18px] border border-line bg-white p-5 shadow-card">
+          <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-[18px] font-bold text-navy-900">תשלומים</h2>
               <div className="flex gap-2">
@@ -284,15 +284,15 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             <div className="mt-4 grid grid-cols-3 gap-2">
               <div className="rounded-[12px] bg-neutral-50 p-3">
                 <p className="text-[13px] text-ink-400">סך ההזמנה</p>
-                <p className="mt-0.5 text-[18px] font-extrabold tabular text-navy-900">{fmtMoney(booking.total_price)}</p>
+                <p className="mt-0.5 text-[18px] font-bold tabular text-navy-900">{fmtMoney(booking.total_price)}</p>
               </div>
               <div className="rounded-[12px] bg-success-50 p-3">
                 <p className="text-[13px] text-success-700">שולם</p>
-                <p className="mt-0.5 text-[18px] font-extrabold tabular text-success-700">{fmtMoney(totalPaid)}</p>
+                <p className="mt-0.5 text-[18px] font-bold tabular text-success-700">{fmtMoney(totalPaid)}</p>
               </div>
               <div className="rounded-[12px] bg-warning-50 p-3">
                 <p className="text-[13px] text-warning-700">יתרה</p>
-                <p className="mt-0.5 text-[18px] font-extrabold tabular text-warning-700">{fmtMoney(totalDue || outstanding)}</p>
+                <p className="mt-0.5 text-[18px] font-bold tabular text-warning-700">{fmtMoney(totalDue || outstanding)}</p>
               </div>
             </div>
             {payments.length > 0 ? (
@@ -325,7 +325,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
           </section>
 
           <div className="grid content-start gap-4">
-            <section className="rounded-[18px] border border-line bg-white p-5 shadow-card">
+            <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
               <Label className="text-[14px] font-medium text-ink-600">מצב ההזמנה</Label>
               <Select value={booking.status} onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}>
                 <SelectTrigger className="mt-2">
@@ -339,13 +339,13 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               </Select>
             </section>
 
-            <section className="rounded-[18px] border border-line bg-white p-5 shadow-card">
+            <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
               <h2 className="text-[18px] font-bold text-navy-900">התקדמות</h2>
               <ol className="mt-3 space-y-1">
                 {timelineItems.map((item, i) => (
                   <li key={i} className="flex min-h-[40px] items-center gap-3">
                     <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${item.done ? 'bg-success-50 text-success-600' : 'bg-neutral-100 text-ink-400'}`}>
-                      {item.done ? <CheckCircle2 className="h-[18px] w-[18px]" /> : <item.icon className="h-[18px] w-[18px]" strokeWidth={1.75} />}
+                      {item.done ? <CheckCircle2 className="h-[18px] w-[18px]" /> : <item.icon className="h-[18px] w-[18px]" strokeWidth={1.5} />}
                     </span>
                     <span className={`text-[15px] ${item.done ? 'font-semibold text-navy-900' : 'text-ink-600'}`}>{item.label}</span>
                   </li>
@@ -354,7 +354,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             </section>
 
             {booking.notes ? (
-              <section className="rounded-[18px] border border-line bg-white p-5 shadow-card">
+              <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
                 <h2 className="text-[18px] font-bold text-navy-900">הערות</h2>
                 <p className="mt-2 whitespace-pre-wrap text-[15px] text-ink-600">{booking.notes}</p>
               </section>
@@ -367,7 +367,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
       <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle className="text-[22px] font-extrabold text-navy-900">תשלום חדש</DialogTitle>
+            <DialogTitle className="text-[22px] font-bold text-navy-900">תשלום חדש</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">

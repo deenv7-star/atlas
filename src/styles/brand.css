@@ -26,12 +26,12 @@
   /* Ink — navy family */
   --navy-900: #1b2656;
   --ink-600: #4a5578;
-  --ink-400: #8c93ab;
+  --ink-400: #6b7280;
 
   /* Surfaces */
   --surface: #ffffff;
   --canvas: #f7f8fb;
-  --line: #e7e9f1;
+  --line: #e6e8f0;
   --line-strong: #d7dbe8;
   --fill-soft: #f1f3f8;
 
@@ -223,7 +223,7 @@ h1, h2, h3, h4 { color: var(--navy-900); line-height: 1.15; letter-spacing: -0.0
   border: 1px solid var(--line);
 }
 .icon-blue, .icon-purple, .icon-teal, .icon-green { background: var(--brand-50) !important; color: var(--brand-600) !important; }
-.icon-amber { background: var(--amber-50) !important; color: #b4740f !important; }
+.icon-amber { background: #f3f4f8 !important; color: var(--ink-600) !important; }
 .icon-rose { background: var(--danger-50) !important; color: #c83b3b !important; }
 .btn-teal {
   background: var(--brand-600) !important; color: #fff !important; box-shadow: none !important;
@@ -303,4 +303,4 @@ h1, h2, h3, h4 { color: var(--navy-900); line-height: 1.15; letter-spacing: -0.0
 
 .atlas-page-hero p { margin-right: 0 !important; margin-left: 0 !important; max-width: 65ch; }
 .atlas-page-hero p + p { font-size: 13px !important; color: var(--ink-400) !important; }
-.atlas-page-hero span[class*='bg-amber-500'] { background: var(--amber-50) !important; color: #8f5e0f !important; }
+.atlas-page-hero span[class*='bg-amber-500'] { background: #f3f4f8 !important; color: var(--ink-600) !important; }

@@ -41,7 +41,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md" dir="rtl">
         <DialogHeader>
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-orange-500 flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-600 flex items-center justify-center">
             <AlertCircle className="h-7 w-7 text-white" />
           </div>
           <DialogTitle className="text-center text-2xl">

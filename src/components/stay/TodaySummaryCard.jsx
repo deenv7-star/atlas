@@ -44,7 +44,7 @@ export default function TodaySummaryCard() {
             style={{ borderColor: 'var(--line)' }}
           >
             <p className="ab-meta truncate">{it.label}</p>
-            <p className="ab-num text-[22px] font-extrabold leading-tight" style={{ color: it.alert ? 'var(--status-danger)' : 'var(--ink-900)' }}>{it.value}</p>
+            <p className="ab-num text-[22px] font-bold leading-tight" style={{ color: it.alert ? 'var(--status-danger)' : 'var(--ink-900)' }}>{it.value}</p>
           </Link>
         ))}
       </div>

@@ -108,14 +108,14 @@ export default function Login() {
   }
 
   const field = (bad) => cn(
-    'h-12 rounded-[14px] border bg-[#F7F8FB] text-base text-navy-900 placeholder:text-ink-400 focus:bg-white',
+    'h-12 rounded-[10px] border bg-white text-base text-navy-900 shadow-[0_1px_2px_rgba(16,24,64,0.04)] placeholder:text-ink-300 focus-visible:border-brand-500 focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.14)] focus-visible:ring-offset-0',
     bad ? 'border-danger-500' : 'border-line',
   );
 
   return (
     <AuthShell>
-      <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[36px]">ברוכים השבים</h1>
-      <p className="mt-2 text-[16px] text-ink-600">נכנסים, ורואים מה קורה היום בצימר.</p>
+      <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">ברוכים השבים</h1>
+      <p className="mt-1.5 text-[15px] text-ink-400">נכנסים, ורואים מה קורה היום בצימר.</p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
         <div className="space-y-2">
@@ -164,7 +164,7 @@ export default function Login() {
           {touched.password && errors.password && <p className="text-[14px] text-danger-600">{errors.password}</p>}
         </div>
 
-        <Button type="submit" size="lg" disabled={isLoading} className="h-12 w-full text-[16px] font-bold">
+        <Button type="submit" size="lg" disabled={isLoading} className="h-12 w-full text-[15px] font-semibold">
           {isLoading ? 'מתחברים…' : 'כניסה'}
         </Button>
       </form>

@@ -1,6 +1,6 @@
 /**
- * Direction A — "calm light". White sidebar with navy labels and indigo icons,
- * quiet material header, iOS tab bar with a centre "new booking" button.
+ * v5 shell (both directions): white sidebar with hairline, indigo active state, quiet header with a
+ * search field, iOS tab bar with a centre "new booking" button. No dark surfaces anywhere.
  */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -14,10 +14,9 @@ import { useQuickBooking } from '@/components/app/QuickBooking';
 import {
   Wordmark, useShellProperties, useNavGroups, useIsActive, UserMenu, MoreSheet, navItem,
 } from '@/components/app/shell/shared';
-import { GuestAvatar } from '@/components/app/warm';
-import { isPlayful } from '@/ui-direction/flag';
+import { GuestAvatar } from '@/components/app/atoms';
 
-export const shellClass = 'bg-white';
+export const shellClass = 'bg-canvas';
 
 export function Sidebar({ onLogout, user }) {
   const groups = useNavGroups(user);
@@ -26,26 +25,25 @@ export function Sidebar({ onLogout, user }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const moreActive = groups.slice(1).some((g) => g.items.some((i) => isActive(i.page)));
   const linkCls = (active) => cn(
-    'press flex h-12 items-center gap-3.5 px-3.5 text-[16px]',
-    isPlayful ? 'rounded-full' : 'rounded-[14px]',
-    active ? 'bg-brand-50 font-bold text-brand-700' : 'font-medium text-navy-900 hover:bg-neutral-100',
+    'press flex h-11 items-center gap-3 rounded-[10px] px-3 text-[15px] font-medium',
+    active ? 'bg-[#EEF0FF] text-brand-700' : 'text-ink-600 hover:bg-[#F5F6F9] hover:text-navy-900',
   );
   return (
-    <aside className={cn('flex h-full w-[248px] flex-col border-l', isPlayful ? 'border-transparent bg-white/70' : 'border-line bg-white')} aria-label="ניווט ראשי">
-      <div className="flex h-[80px] shrink-0 items-center px-7">
+    <aside className="flex h-full w-[244px] flex-col border-l border-line bg-white" aria-label="ניווט ראשי">
+      <div className="flex h-[72px] shrink-0 items-center px-6">
         <Link to={createPageUrl('Dashboard')} aria-label="ATLAS, מסך היום" className="rounded-lg">
-          <Wordmark size={24} />
+          <Wordmark size={21} />
         </Link>
       </div>
-      <nav className="flex-1 overflow-y-auto px-4 pb-4">
-        <ul className="space-y-1">
+      <nav className="flex-1 overflow-y-auto px-3 pb-4 pt-1">
+        <ul className="space-y-0.5">
           {primary.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.page);
             return (
               <li key={item.page}>
                 <Link to={createPageUrl(item.page)} aria-current={active ? 'page' : undefined} className={linkCls(active)}>
-                  <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.75} />
+                  <Icon className={cn('h-[18px] w-[18px] shrink-0', active ? 'text-brand-600' : 'text-ink-300')} strokeWidth={1.5} />
                   <span className="truncate">{item.label}</span>
                 </Link>
               </li>
@@ -53,17 +51,20 @@ export function Sidebar({ onLogout, user }) {
           })}
           <li>
             <button type="button" onClick={() => setMoreOpen(true)} className={cn(linkCls(moreActive), 'w-full')}>
-              <MoreHorizontal className={cn('h-5 w-5 shrink-0', moreActive ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.75} />
+              <MoreHorizontal className={cn('h-[18px] w-[18px] shrink-0', moreActive ? 'text-brand-600' : 'text-ink-300')} strokeWidth={1.5} />
               <span className="truncate">עוד</span>
             </button>
           </li>
         </ul>
       </nav>
-      <div className="border-t border-line p-4">
+      <div className="border-t border-line p-3">
         <UserMenu user={user} onLogout={onLogout} align="start" side="top">
-          <button type="button" className="press flex min-h-[52px] w-full items-center gap-3 rounded-[12px] px-2.5 text-start hover:bg-neutral-100">
-            <GuestAvatar name={user?.full_name || user?.email || ''} size={36} />
-            <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-navy-900">{user?.full_name || 'החשבון שלי'}</span>
+          <button type="button" className="press flex min-h-[52px] w-full items-center gap-3 rounded-[10px] px-2.5 text-start hover:bg-[#F5F6F9]">
+            <GuestAvatar name={user?.full_name || user?.email || ''} size={32} />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[14px] font-medium text-navy-900">{user?.full_name || 'החשבון שלי'}</span>
+              {user?.organization_name ? <span className="block truncate text-[12px] text-ink-400">{user.organization_name}</span> : null}
+            </span>
           </button>
         </UserMenu>
       </div>
@@ -81,12 +82,12 @@ function PropertySwitcher({ properties, selectedPropertyId, onPropertyChange, co
         <button
           type="button"
           className={cn(
-            'press inline-flex h-11 max-w-[220px] items-center gap-2 rounded-[10px] border border-line bg-white px-3 text-[15px] font-medium text-navy-900 hover:bg-neutral-50',
+            'press inline-flex h-11 max-w-[220px] items-center gap-2 rounded-[10px] border border-line bg-white px-3 text-[14px] font-medium text-navy-900 shadow-[0_1px_2px_rgba(16,24,64,0.04)] hover:bg-[#F9FAFC]',
             compact && 'h-10 px-2.5 text-[14px]',
           )}
           aria-label="בחירת יחידה"
         >
-          <Building2 className="h-[18px] w-[18px] shrink-0 text-brand-600" strokeWidth={1.75} />
+          <Building2 className="h-[18px] w-[18px] shrink-0 text-ink-400" strokeWidth={1.5} />
           <span className="truncate">{current?.name || 'כל היחידות'}</span>
           <ChevronsUpDown className="h-4 w-4 shrink-0 text-ink-400" />
         </button>
@@ -106,20 +107,29 @@ function PropertySwitcher({ properties, selectedPropertyId, onPropertyChange, co
 export function Header({ user, currentPageName, selectedPropertyId, onPropertyChange, onOpenCommandPalette, onLogout }) {
   const properties = useShellProperties(user);
   return (
-    <header className="ds-material sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b border-line px-4 lg:h-[72px] lg:border-transparent lg:bg-transparent lg:px-10">
+    <header className="ds-material sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b border-line px-4 lg:h-[64px] lg:border-line lg:bg-white/80 lg:px-10">
       {/* phone: compact title row; the page itself shows the large title */}
       <div className="flex min-w-0 flex-1 items-center gap-2 lg:hidden">
         <Wordmark size={19} />
       </div>
+      {/* desktop: a quiet search field (Mercury-style), no shortcut hint */}
+      <button
+        type="button"
+        onClick={onOpenCommandPalette}
+        className="press hidden h-10 w-[300px] items-center gap-2.5 rounded-[10px] border border-line bg-[#F7F8FB] px-3 text-[14px] text-ink-400 hover:border-[#D9DCE6] hover:bg-white lg:inline-flex"
+      >
+        <Search className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+        חיפוש אורח, הזמנה או יחידה
+      </button>
       <div className="hidden flex-1 lg:block" />
       <PropertySwitcher properties={properties} selectedPropertyId={selectedPropertyId} onPropertyChange={onPropertyChange} compact />
       <button
         type="button"
         onClick={onOpenCommandPalette}
-        className="press inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-600 hover:bg-neutral-100"
+        className="press inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-600 hover:bg-[#F3F4F8] lg:hidden"
         aria-label="חיפוש"
       >
-        <Search className="h-5 w-5" strokeWidth={1.75} />
+        <Search className="h-5 w-5" strokeWidth={1.5} />
       </button>
       <div className="lg:hidden">
         <UserMenu user={user} onLogout={onLogout}>
@@ -154,7 +164,7 @@ export function TabBar({ user, onLogout }) {
                     type="button"
                     onClick={() => quick.open()}
                     aria-label="הזמנה חדשה"
-                    className="press inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-white shadow-[0_6px_16px_rgba(62,43,241,0.32)] active:bg-brand-700"
+                    className="press inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-white shadow-[0_1px_2px_rgba(42,26,201,0.3),0_6px_14px_rgba(62,43,241,0.22)] active:bg-brand-700"
                   >
                     <Plus className="h-6 w-6" strokeWidth={2.25} />
                   </button>
@@ -167,9 +177,9 @@ export function TabBar({ user, onLogout }) {
                   <button
                     type="button"
                     onClick={() => setMoreOpen(true)}
-                    className={cn('press flex h-full w-full flex-col items-center justify-center gap-1 text-[12px]', moreActive ? 'font-bold text-brand-600' : 'font-medium text-ink-600')}
+                    className={cn('press flex h-full w-full flex-col items-center justify-center gap-1 text-[12px]', moreActive ? 'font-semibold text-brand-600' : 'font-medium text-ink-400')}
                   >
-                    <MoreHorizontal className="h-6 w-6" strokeWidth={1.75} />
+                    <MoreHorizontal className="h-6 w-6" strokeWidth={1.5} />
                     עוד
                   </button>
                 </li>
@@ -183,9 +193,9 @@ export function TabBar({ user, onLogout }) {
                 <Link
                   to={createPageUrl(slot)}
                   aria-current={active ? 'page' : undefined}
-                  className={cn('press flex h-full flex-col items-center justify-center gap-1 text-[12px]', active ? 'font-bold text-brand-600' : 'font-medium text-ink-600')}
+                  className={cn('press flex h-full flex-col items-center justify-center gap-1 text-[12px]', active ? 'font-semibold text-brand-600' : 'font-medium text-ink-400')}
                 >
-                  <Icon className="h-6 w-6" strokeWidth={active ? 2 : 1.75} />
+                  <Icon className="h-6 w-6" strokeWidth={active ? 1.75 : 1.5} />
                   {item.label}
                 </Link>
               </li>

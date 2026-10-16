@@ -204,7 +204,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       </div>
 
       {/* Financial / payments table */}
-      <div className="overflow-hidden rounded-[18px] border border-line bg-white shadow-card">
+      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
         {!orgId ? (
           <div className="p-6 text-center text-sm text-gray-500">התחבר לארגון כדי לראות תשלומים</div>
         ) : filtered.length === 0 && !isLoading ? (
@@ -221,16 +221,17 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
               const st = PAYMENT_STATUSES.find((x) => x.value === p.status);
               return (
                 <li key={p.id}>
-                  <button type="button" onClick={() => openEdit(p)} className="press flex min-h-[72px] w-full items-center gap-4 px-5 py-3 hover:bg-neutral-50 text-start active:bg-neutral-50">
+                  <button type="button" onClick={() => openEdit(p)} className="press v5-row flex min-h-[68px] w-full items-center gap-4 px-5 py-3 text-start">
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[16px] font-semibold text-navy-900">{p.description || 'תשלום'}</span>
+                      <span className="block truncate text-[15px] font-medium text-navy-900">{p.description || 'תשלום'}</span>
                       <span className="block truncate text-[13px] text-ink-400">
                         {METHOD_LABEL[String(p.method || '').toLowerCase()] || 'תשלום'} · {p.status === 'PAID' ? `שולם ${fmtShort(p.paid_date || p.created_date)}` : `עד ${fmtShort(p.due_date || p.created_date)}`}
                       </span>
                     </span>
-                    <span className="flex flex-col items-end gap-1">
-                      <span className="text-[16px] font-bold tabular text-navy-900">{fmtMoney(p.amount)}</span>
-                      <StatusPill status={p.status} label={st?.label} />
+                    <StatusPill status={p.status} label={st?.label} className="hidden sm:inline-flex" />
+                    <span className="flex flex-col items-end gap-1 sm:w-[104px]">
+                      <span className="v5-num text-[15px] font-semibold text-navy-900">{fmtMoney(p.amount)}</span>
+                      <StatusPill status={p.status} label={st?.label} className="sm:hidden" />
                     </span>
                   </button>
                 </li>
@@ -270,7 +271,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-extrabold text-navy-900">{editingPayment ? 'עריכת תשלום' : 'תשלום חדש'}</DialogTitle>
+            <DialogTitle className="text-[22px] font-bold text-navy-900">{editingPayment ? 'עריכת תשלום' : 'תשלום חדש'}</DialogTitle>
           </DialogHeader>
           <PaymentForm
             key={editingPayment?.id ?? 'new'}

@@ -25,7 +25,7 @@ function Table({ head, rows, foot, align }) {
         </tbody>
         {foot ? (
           <tfoot>
-            <tr>{foot.map((c, i) => <td key={i} className="px-4 sm:px-3 py-2.5 font-extrabold" style={{ textAlign: align?.[i] || 'right' }}>{c}</td>)}</tr>
+            <tr>{foot.map((c, i) => <td key={i} className="px-4 sm:px-3 py-2.5 font-bold" style={{ textAlign: align?.[i] || 'right' }}>{c}</td>)}</tr>
           </tfoot>
         ) : null}
       </table>
@@ -92,7 +92,7 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
                   <Money value={x.amount} />
                 </li>
               ))}
-              <li className="flex items-center justify-between pt-2.5 text-[14px] font-extrabold">
+              <li className="flex items-center justify-between pt-2.5 text-[14px] font-bold">
                 <span>סה״כ הוצאות</span>
                 <Money value={r.expenseTotal} />
               </li>

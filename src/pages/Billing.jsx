@@ -108,11 +108,11 @@ export default function BillingPage({ user }) {
             <span className="ds-icon-square">{React.createElement(plan.icon, { className: 'h-5 w-5', strokeWidth: 1.75 })}</span>
             <div className="min-w-0">
               <p className="text-[13px] font-medium text-ink-400">התוכנית הנוכחית</p>
-              <h2 className="truncate text-[20px] font-extrabold text-navy-900">{plan.name}</h2>
+              <h2 className="truncate text-[20px] font-bold text-navy-900">{plan.name}</h2>
             </div>
           </div>
           <div className="shrink-0 text-left">
-            <p className="tabular text-[28px] font-extrabold leading-none text-navy-900">{fmtMoney(plan.price)}</p>
+            <p className="tabular text-[28px] font-bold leading-none text-navy-900">{fmtMoney(plan.price)}</p>
             <p className="mt-1 text-[13px] text-ink-400">לחודש</p>
           </div>
         </div>
@@ -154,18 +154,18 @@ export default function BillingPage({ user }) {
 
       {upgrades.length > 0 && (
         <section>
-          <h2 className="mb-3 text-[20px] font-extrabold text-navy-900">שדרוג</h2>
+          <h2 className="mb-3 text-[20px] font-bold text-navy-900">שדרוג</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {upgrades.map(([key, p]) => (
               <Card key={key} className={cn('flex h-full flex-col p-5 md:p-6', p.popular && 'border-brand-600 ring-1 ring-brand-600')}>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="ds-icon-square">{React.createElement(p.icon, { className: 'h-5 w-5', strokeWidth: 1.75 })}</span>
-                    <h3 className="text-[18px] font-extrabold text-navy-900">{p.name}</h3>
+                    <h3 className="text-[18px] font-bold text-navy-900">{p.name}</h3>
                   </div>
                   {p.popular ? <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">הכי נבחרת</span> : null}
                 </div>
-                <p className="mt-4 text-navy-900"><span className="tabular text-[32px] font-extrabold">{fmtMoney(p.price)}</span><span className="text-[15px] text-ink-400"> לחודש</span></p>
+                <p className="mt-4 text-navy-900"><span className="tabular text-[32px] font-bold">{fmtMoney(p.price)}</span><span className="text-[15px] text-ink-400"> לחודש</span></p>
                 <ul className="mb-6 mt-4 flex-1 space-y-2">
                   {p.features.map((feature, j) => (
                     <li key={j} className="flex items-start gap-2 text-[15px] text-ink-600">

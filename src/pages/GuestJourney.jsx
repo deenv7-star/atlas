@@ -13,7 +13,7 @@ const STAGE_THEMES = [
   { gradient: 'from-blue-500 to-cyan-500', bg: 'bg-brand-50', border: 'border-brand-100', ring: 'ring-brand-400/30', dot: 'bg-brand-500' },
   { gradient: 'from-brand-500 to-brand-500', bg: 'bg-brand-50', border: 'border-brand-100', ring: 'ring-brand-400/30', dot: 'bg-brand-500' },
   { gradient: 'from-emerald-500 to-teal-500', bg: 'bg-emerald-50', border: 'border-emerald-200', ring: 'ring-emerald-400/30', dot: 'bg-emerald-500' },
-  { gradient: 'from-amber-500 to-orange-500', bg: 'bg-amber-50', border: 'border-amber-200', ring: 'ring-amber-400/30', dot: 'bg-amber-500' },
+  { gradient: 'from-brand-300 to-brand-300', bg: 'bg-amber-50', border: 'border-amber-200', ring: 'ring-amber-400/30', dot: 'bg-brand-300' },
   { gradient: 'from-rose-500 to-pink-500', bg: 'bg-rose-50', border: 'border-rose-200', ring: 'ring-rose-400/30', dot: 'bg-rose-500' },
   { gradient: 'from-brand-500 to-blue-500', bg: 'bg-brand-50', border: 'border-brand-100', ring: 'ring-brand-400/30', dot: 'bg-brand-500' },
   { gradient: 'from-brand-500 to-brand-500', bg: 'bg-brand-50', border: 'border-brand-100', ring: 'ring-brand-400/30', dot: 'bg-brand-500' },

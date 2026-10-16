@@ -295,7 +295,7 @@ export default function RevenueIntelligence() {
                             <div
                               className={cn(
                                 'h-full rounded-full transition-[background-color,border-color,color,box-shadow,transform]',
-                                p.occupancy >= 85 ? 'bg-emerald-400' : p.occupancy >= 70 ? 'bg-amber-400' : 'bg-red-400'
+                                p.occupancy >= 85 ? 'bg-emerald-400' : p.occupancy >= 70 ? 'bg-brand-300' : 'bg-red-400'
                               )}
                               style={{ width: `${p.occupancy}%` }}
                             />
@@ -344,7 +344,7 @@ export default function RevenueIntelligence() {
 
           {/* Warning */}
           <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-            <div className="h-1 bg-amber-400" />
+            <div className="h-1 bg-brand-200" />
             <div className="p-5">
               <div className="flex items-center gap-2.5 mb-3">
                 <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">

@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Globe, Copy, ExternalLink, Save, Link2, MessageCircle, Home, ImagePlus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { UnitPhoto } from '@/components/app/warm';
+import { UnitPhoto } from '@/components/app/atoms';
 import { uploadedPhoto } from '@/lib/stay/unitPhoto';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { useEnsureGuestToken } from '@/hooks/useGuestToken';
@@ -195,7 +195,7 @@ export default function GuestPagesPage({ user, orgId }) {
         title="דף אורח והזמנה ישירה"
         subtitle="דף אישי לכל אורח עם כל פרטי השהייה, ודף הזמנה ישירה לכל יחידה."
       />
-      {data.isLoading ? <Skeleton className="h-64 rounded-[18px]" /> : properties.length === 0 ? (
+      {data.isLoading ? <Skeleton className="h-64 rounded-[14px]" /> : properties.length === 0 ? (
         <div className="ab-card p-6 text-center">
           <p className="font-bold">עוד אין יחידות במערכת.</p>
           <p className="ab-meta mt-1">הוסיפו נכס בהגדרות כדי ליצור דפים לאורחים.</p>

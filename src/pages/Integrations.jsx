@@ -305,7 +305,7 @@ export default function IntegrationsPage() {
     return (
       <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" aria-busy="true" aria-label="טוען">
         <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
-        <SkelLine className="mt-6 h-[52px] w-full max-w-lg rounded-[12px]" /><SkelLine className="mt-6 h-48 rounded-[18px]" />
+        <SkelLine className="mt-6 h-[52px] w-full max-w-lg rounded-[12px]" /><SkelLine className="mt-6 h-48 rounded-[14px]" />
       </div>
     );
   }

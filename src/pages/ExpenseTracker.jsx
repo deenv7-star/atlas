@@ -14,9 +14,9 @@ import { cn } from '@/lib/utils';
 
 const CATEGORIES = [
   { value: 'ניקיון', label: 'ניקיון', color: 'bg-emerald-100 text-emerald-700', barColor: 'bg-emerald-500' },
-  { value: 'תחזוקה', label: 'תחזוקה', color: 'bg-amber-100 text-amber-700', barColor: 'bg-amber-500' },
+  { value: 'תחזוקה', label: 'תחזוקה', color: 'bg-amber-100 text-amber-700', barColor: 'bg-brand-300' },
   { value: 'ארנונה', label: 'ארנונה', color: 'bg-brand-100 text-brand-700', barColor: 'bg-brand-500' },
-  { value: 'חשמל', label: 'חשמל', color: 'bg-yellow-100 text-yellow-700', barColor: 'bg-yellow-500' },
+  { value: 'חשמל', label: 'חשמל', color: 'bg-yellow-100 text-yellow-700', barColor: 'bg-navy-900' },
   { value: 'מים', label: 'מים', color: 'bg-brand-100 text-brand-700', barColor: 'bg-brand-500' },
   { value: 'ציוד', label: 'ציוד', color: 'bg-brand-100 text-brand-700', barColor: 'bg-brand-500' },
   { value: 'שיווק', label: 'שיווק', color: 'bg-pink-100 text-pink-700', barColor: 'bg-pink-500' },

@@ -100,12 +100,12 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85dvh] gap-3 overflow-y-auto bg-canvas sm:max-w-md">
-        <DialogTitle className="px-1 text-[22px] font-extrabold text-navy-900">עוד</DialogTitle>
+        <DialogTitle className="px-1 text-[20px] font-bold text-navy-900">עוד</DialogTitle>
         <div className="space-y-4">
           {groups.map((g) => (
             <div key={g.id}>
               {g.label ? <p className="mb-1.5 px-3 text-[13px] font-medium text-ink-400">{g.label}</p> : null}
-              <div className="overflow-hidden rounded-[18px] border border-line bg-white">
+              <div className="overflow-hidden rounded-[14px] border border-line bg-white">
                 {g.items.map((item, i) => {
                   const Icon = item.icon;
                   const active = isActive(item.page);
@@ -119,7 +119,7 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) 
                         i > 0 && 'border-t border-line',
                       )}
                     >
-                      <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.75} />
+                      <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.5} />
                       <span className={cn('flex-1 text-[16px]', active ? 'font-bold text-brand-700' : 'font-medium text-navy-900')}>{item.label}</span>
                       <ChevronLeft className="h-4 w-4 text-ink-400" />
                     </Link>
@@ -131,7 +131,7 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) 
           <button
             type="button"
             onClick={onLogout}
-            className="press flex min-h-[52px] w-full items-center justify-center rounded-[18px] border border-line bg-white text-[16px] font-medium text-danger-600"
+            className="press flex min-h-[52px] w-full items-center justify-center rounded-[14px] border border-line bg-white text-[16px] font-medium text-danger-600"
           >
             יציאה מהחשבון
           </button>
