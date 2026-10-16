@@ -163,8 +163,8 @@ export function TabBar({ user, onLogout }) {
   const isActive = useIsActive();
   const quick = useQuickBooking();
   const [moreOpen, setMoreOpen] = useState(false);
-  const slots = ['Dashboard', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
-  const primaryPages = ['Dashboard', 'MultiCalendar', 'Bookings'];
+  const slots = ['Today', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
+  const primaryPages = ['Today', 'MultiCalendar', 'Bookings'];
   const moreActive = !primaryPages.some((p) => isActive(p));
   return (
     <>

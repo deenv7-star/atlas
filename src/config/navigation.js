@@ -72,7 +72,7 @@ export const NAV_GROUPS = [
 export const PLATFORM_ITEM = { page: 'PlatformAdmin', label: 'פלטפורמה', icon: Shield };
 
 /** Mobile tab bar: four destinations around a central "new booking" action. */
-export const TAB_BAR = ['Dashboard', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
+export const TAB_BAR = ['Today', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
 
 export const PAGE_TITLES = Object.fromEntries(
   NAV_GROUPS.flatMap((g) => g.items).concat([PLATFORM_ITEM]).map((i) => [i.page, i.label]),

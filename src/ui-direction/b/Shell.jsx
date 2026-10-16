@@ -145,8 +145,8 @@ export function TabBar({ user, onLogout }) {
   const isActive = useIsActive();
   const quick = useQuickBooking();
   const [moreOpen, setMoreOpen] = useState(false);
-  const slots = ['Dashboard', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
-  const moreActive = !['Dashboard', 'MultiCalendar', 'Bookings'].some((p) => isActive(p));
+  const slots = ['Today', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
+  const moreActive = !['Today', 'MultiCalendar', 'Bookings'].some((p) => isActive(p));
   return (
     <>
       <nav aria-label="ניווט תחתון" className="fixed inset-x-3 bottom-[max(12px,env(safe-area-inset-bottom))] z-30 lg:hidden">

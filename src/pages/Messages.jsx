@@ -117,6 +117,12 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
     });
   };
 
+  // Desktop shows list + conversation side by side: open the newest thread instead of an empty pane.
+  useEffect(() => {
+    if (selectedThread || typeof window === 'undefined' || window.innerWidth < 768) return;
+    if (filteredThreads?.length) setSelectedThread(filteredThreads[0].key);
+  }, [filteredThreads, selectedThread]);
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
