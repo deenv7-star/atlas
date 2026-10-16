@@ -9,7 +9,8 @@ export const queryClientInstance = new QueryClient({
 	defaultOptions: {
 		queries: {
 			refetchOnWindowFocus: false,
-			retry: 1,
+			// A timed-out request is not retried silently; the shell shows a retry state instead.
+			retry: (count, err) => !err?.isTimeout && count < 1,
 			staleTime: STALE_REFERENCE_MS,
 		},
 	},

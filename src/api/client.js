@@ -21,7 +21,7 @@
  *   client.auth.updateMe(data)
  */
 
-import { supabase, isSupabaseConfigured, LOCAL_API_URL } from './supabaseClient';
+import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
 
 // =============================================================================
 // Local REST API client (talks to server/index.js)
@@ -36,7 +36,7 @@ async function apiFetch(path, options = {}) {
   const token = getStoredToken();
   const base = LOCAL_API_URL || '';
   const url = path.startsWith('/') ? `${base}${path}` : `${base}/${path}`;
-  const res = await fetch(url, {
+  const res = await fetchWithTimeout(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',

@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { CommandPalette } from '@/components/ui/CommandPalette';
 import { QuickBookingProvider } from '@/components/app/QuickBooking';
 import { SkelLine } from '@/components/ds';
+import ConnectionNotice from '@/components/app/shell/ConnectionNotice';
 import { Sidebar, Header, TabBar, shellClass } from '@/ui-direction';
 
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans'];
@@ -87,6 +88,7 @@ function LayoutContent({ children, currentPageName }) {
             />
             <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} orgId={orgId} />
             <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(92px+env(safe-area-inset-bottom))] lg:pb-0">
+              <ConnectionNotice />
               <ErrorBoundary section="layout-outlet" variant="page">
                 <Suspense fallback={<PageLoader />}>
                   {React.isValidElement(children)
