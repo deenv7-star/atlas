@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageHeader } from '@/components/ds';
+import { PageHeader, StatTile, fmtMoney } from '@/components/ds';
 import { Card, CardContent } from '@/components/ui/card';
 import DemoDataBanner from '@/components/common/DemoDataBanner';
 import { Button } from '@/components/ui/button';
@@ -88,76 +88,20 @@ export default function ExpenseTracker() {
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
       {/* Header */}
-      <PageHeader title="הוצאות" subtitle="כל ההוצאות לפי נכס, כדי לדעת כמה באמת נשאר." className="!mb-0" />
+      <PageHeader
+        title="הוצאות"
+        subtitle="כל ההוצאות לפי נכס, כדי לדעת כמה באמת נשאר."
+        className="!mb-0"
+        actions={<Button onClick={() => setDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />הוצאה חדשה</Button>}
+      />
 
-      <DemoDataBanner message="נתוני דוגמה, ההוצאות המוצגות הן לצורך המחשה. הוסף הוצאות אמיתיות כדי לעקוב אחר הרווח הנקי שלך." />
+      <DemoDataBanner message="נתוני דוגמה, ההוצאות המוצגות הן לצורך המחשה. הוסיפו הוצאות אמיתיות כדי לראות את הרווח הנקי." />
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-rose-50 border-rose-100/60">
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-sm font-medium text-ink-600">סה״כ הוצאות</p>
-              <div className="w-9 h-9 rounded-xl bg-rose-100 flex items-center justify-center">
-                <TrendingDown className="w-4 h-4 text-rose-600" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-navy-900">₪{totalExpenses.toLocaleString('he-IL')}</p>
-            <p className="text-xs text-ink-600 mt-1">כל ההוצאות שנרשמו</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-brand-50 border-brand-100/60">
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-sm font-medium text-ink-600">החודש</p>
-              <div className="w-9 h-9 rounded-xl bg-brand-100 flex items-center justify-center">
-                <Calendar className="w-4 h-4 text-brand-600" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-navy-900">₪{thisMonthTotal.toLocaleString('he-IL')}</p>
-            <p className="text-xs text-ink-600 mt-1">{thisMonth.length} הוצאות החודש</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-brand-50 border-brand-100/60">
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-sm font-medium text-ink-600">ממוצע לנכס</p>
-              <div className="w-9 h-9 rounded-xl bg-brand-100 flex items-center justify-center">
-                <Building2 className="w-4 h-4 text-brand-600" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold text-navy-900">₪{avgPerProperty.toLocaleString('he-IL')}</p>
-            <p className="text-xs text-ink-600 mt-1">{uniqueProperties.length} נכסים</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-emerald-50 border-emerald-100/60">
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-sm font-medium text-ink-600">רווח נקי משוער</p>
-              <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
-                <Wallet className="w-4 h-4 text-emerald-600" />
-              </div>
-            </div>
-            <p className={cn(
-              "text-2xl font-bold",
-              netProfitEstimate >= 0 ? "text-emerald-700" : "text-rose-600"
-            )}>
-              ₪{netProfitEstimate.toLocaleString('he-IL')}
-            </p>
-            <p className="text-xs text-ink-600 mt-1">הכנסות פחות הוצאות</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Add Expense Button */}
-      <div className="flex justify-end">
-        <Button
-          onClick={() => setDialogOpen(true)}
-          className="bg-brand-600 hover:bg-brand-700 text-white shadow-md"
-        >
-          <Plus className="w-4 h-4 ml-2" />
-          הוסף הוצאה
-        </Button>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} tone="danger" />
+        <StatTile label="החודש" value={fmtMoney(thisMonthTotal)} hint={`${thisMonth.length} הוצאות החודש`} icon={Calendar} />
+        <StatTile label="ממוצע לנכס" value={fmtMoney(avgPerProperty)} hint={`${uniqueProperties.length} נכסים`} icon={Building2} />
+        <StatTile label="רווח נקי משוער" value={fmtMoney(netProfitEstimate)} hint="הכנסות פחות הוצאות" icon={Wallet} tone="success" />
       </div>
 
       {/* Expenses Table */}
@@ -171,11 +115,11 @@ export default function ExpenseTracker() {
               <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-4">
                 <Receipt className="w-8 h-8 text-neutral-300" />
               </div>
-              <p className="text-ink-600 font-medium mb-1">אין הוצאות עדיין</p>
-              <p className="text-sm text-ink-400 mb-4">התחל להוסיף הוצאות כדי לעקוב אחרי הנכסים שלך</p>
+              <p className="text-[17px] font-bold text-navy-900 mb-1">אין עדיין הוצאות</p>
+              <p className="text-[15px] text-ink-600 mb-4">רשמו הוצאה כדי לראות כמה נשאר מכל נכס.</p>
               <Button onClick={() => setDialogOpen(true)} className="bg-brand-600 hover:bg-brand-700">
                 <Plus className="w-4 h-4 ml-2" />
-                הוסף הוצאה ראשונה
+                הוצאה חדשה
               </Button>
             </div>
           ) : (

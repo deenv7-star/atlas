@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { PageHeader } from '@/components/ds';
+import { PageHeader, EmptyState, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Plus, Send, Eye, Pencil, Trash2,
   Search, Clock, CheckCircle2, XCircle, AlertCircle
 } from 'lucide-react';
@@ -207,27 +208,20 @@ export default function InvoicesPage({ orgId }) {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
-      <PageHeader title="חשבוניות" subtitle="חשבוניות וקבלות ללקוחות, במקום אחד." className="!mb-0" />
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-      >
-        <div className="flex-1" />
-        <Button
-          onClick={() => {
-            setEditingInvoice(null);
-            setShowCreateDialog(true);
-          }}
-          className="bg-brand-600 hover:bg-brand-600/90 text-white w-full sm:w-auto"
-        >
-          <Plus className="w-4 h-4 ml-2" />
-          חשבונית חדשה
-        </Button>
-      </motion.div>
+      <PageHeader
+        title="חשבוניות"
+        subtitle="חשבוניות וקבלות ללקוחות, במקום אחד."
+        className="!mb-0"
+        actions={
+          <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
+            <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            חשבונית חדשה
+          </Button>
+        }
+      />
 
-      <Card className="p-4 sm:p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <Card className="p-4 sm:p-5">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="relative">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-400" />
             <Input
@@ -263,7 +257,40 @@ export default function InvoicesPage({ orgId }) {
           </Select>
         </div>
 
-        <div className="overflow-x-auto">
+        {isLoading ? (
+          <div className="mt-5"><SkelRows rows={4} avatar={false} /></div>
+        ) : filteredInvoices.length === 0 ? (
+          <EmptyState
+            compact
+            icon={FileText}
+            title={rawInvoices.length === 0 ? 'אין עדיין חשבוניות' : 'לא נמצאו חשבוניות'}
+            description={rawInvoices.length === 0 ? 'חשבונית שנוצרת להזמנה תופיע כאן, מוכנה לשליחה.' : 'נסו חיפוש או סינון אחר.'}
+            action={rawInvoices.length === 0 ? (
+              <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
+                <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                חשבונית חדשה
+              </Button>
+            ) : null}
+          />
+        ) : (
+        <>
+        <ul className="mt-4 divide-y divide-line md:hidden">
+          {filteredInvoices.map((invoice) => (
+            <li key={invoice.id}>
+              <button type="button" onClick={() => handlePreview(invoice)} className="flex min-h-[64px] w-full items-center justify-between gap-3 py-3 text-right">
+                <div className="min-w-0">
+                  <p className="truncate text-[15px] font-bold text-navy-900">{invoice.guest_name || 'לקוח'}</p>
+                  <p className="truncate text-[13px] text-ink-400">{typeConfig[invoice.type] || 'חשבונית'} · {invoice.invoice_number}{invoice.issue_date ? ` · ${fmtShort(invoice.issue_date)}` : ''}</p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="tabular text-[15px] font-bold text-navy-900">{fmtMoney(invoice.total_amount || 0)}</span>
+                  <span className={cn('inline-flex h-6 items-center rounded-full px-2.5 text-[13px] font-medium', statusConfig[invoice.status]?.color)}>{statusConfig[invoice.status]?.label}</span>
+                </div>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4 hidden overflow-x-auto md:block">
           <Table>
             <TableHeader>
               <TableRow>
@@ -277,19 +304,7 @@ export default function InvoicesPage({ orgId }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
-                    <div className="text-ink-400">טוען...</div>
-                  </TableCell>
-                </TableRow>
-              ) : filteredInvoices.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
-                    <div className="text-ink-400">אין חשבוניות</div>
-                  </TableCell>
-                </TableRow>
-              ) : (
+              {(
                 filteredInvoices.map((invoice) => {
                   const StatusIcon = statusConfig[invoice.status]?.icon || Clock;
                   const issueDate = invoice.issue_date
@@ -311,21 +326,21 @@ export default function InvoicesPage({ orgId }) {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
                             onClick={() => handlePreview(invoice)}
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
                             onClick={() => handleEdit(invoice)}
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
                             onClick={() => handleSendEmail(invoice)}
                             disabled={!(invoice.guest_email || invoice.customer_email)}
@@ -333,7 +348,7 @@ export default function InvoicesPage({ orgId }) {
                             <Send className="w-4 h-4" />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
                             onClick={() => {
                               if (confirm('למחוק את החשבונית?')) {
@@ -352,6 +367,8 @@ export default function InvoicesPage({ orgId }) {
             </TableBody>
           </Table>
         </div>
+        </>
+        )}
       </Card>
 
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>

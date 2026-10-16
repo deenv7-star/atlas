@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageHeader } from '@/components/ds';
+import { PageHeader, StatTile } from '@/components/ds';
 import { FileBarChart, Send, Download, Users, Home, DollarSign, Percent, Mail, Calendar, CheckCircle, Clock, ChevronDown, Settings, Building2, Phone, CreditCard, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -102,30 +102,17 @@ export default function OwnerReports() {
       {/* ── Header ───────────────────────────────── */}
       <PageHeader title="דוחות בעלים" subtitle="דוח חודשי לכל בעל נכס: הכנסות, הוצאות וסכום לתשלום." className="!mb-0" />
 
-      {/* ── Quick Stats ──────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          { label: 'סה״כ שולם לבעלים השנה', value: formatCurrency(142300), icon: CreditCard, gradient: 'from-emerald-500 to-teal-500', bg: 'bg-emerald-50' },
-          { label: 'עמלות ניהול שנצברו', value: formatCurrency(25100), icon: DollarSign, gradient: 'from-brand-500 to-brand-500', bg: 'bg-brand-50' },
-          { label: 'מספר נכסים בניהול', value: '8', icon: Building2, gradient: 'from-amber-500 to-orange-500', bg: 'bg-amber-50' },
-        ].map((s) => (
-          <div key={s.label} className={cn('rounded-2xl border border-line p-4', s.bg)}>
-            <div className="flex items-center gap-3 mb-2">
-              <div className={cn('w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center', s.gradient)}>
-                <s.icon className="w-4.5 h-4.5 text-white" />
-              </div>
-              <span className="text-xs text-ink-600 font-medium">{s.label}</span>
-            </div>
-            <p className="text-2xl font-bold text-navy-900 mr-12">{s.value}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <StatTile label="שולם לבעלים השנה" value={formatCurrency(142300)} icon={CreditCard} tone="success" />
+        <StatTile label="עמלות ניהול שנצברו" value={formatCurrency(25100)} icon={DollarSign} />
+        <StatTile label="נכסים בניהול" value="8" icon={Building2} tone="amber" />
       </div>
 
       {/* ── Owner Selector ───────────────────────── */}
       <div>
         <h2 className="text-lg font-bold text-navy-900 mb-3 flex items-center gap-2">
           <Users className="w-5 h-5 text-brand-500" />
-          בחר בעל נכס
+          בעל הנכס
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {OWNERS.map((owner) => (
@@ -170,16 +157,16 @@ export default function OwnerReports() {
       <div>
         <h2 className="text-lg font-bold text-navy-900 mb-3 flex items-center gap-2">
           <FileBarChart className="w-5 h-5 text-brand-500" />
-          תצוגה מקדימה, דוח חודשי
+          תצוגה מקדימה של הדוח
         </h2>
         <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
 
           {/* Statement Header */}
-          <div className="bg-brand-600 text-white p-6">
+          <div className="bg-navy-900 text-white p-6">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-xl font-bold mb-1">דוח חודשי, מרץ 2026</h3>
-                <p className="text-brand-500 text-sm">תאריך הפקה: 17 במרץ 2026</p>
+                <p className="text-white/70 text-sm">תאריך הפקה: 17 במרץ 2026</p>
               </div>
               <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2">
                 <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
