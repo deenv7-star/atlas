@@ -3,7 +3,10 @@
  * and the direct-booking page link. Replaces the old static "פורטל אורחים" mock at /guest-portal.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Globe, Copy, ExternalLink, Save, Link2, MessageCircle, Home } from 'lucide-react';
+import { Globe, Copy, ExternalLink, Save, Link2, MessageCircle, Home, ImagePlus } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { UnitPhoto } from '@/components/app/warm';
+import { uploadedPhoto } from '@/lib/stay/unitPhoto';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { useEnsureGuestToken } from '@/hooks/useGuestToken';
 import { guestInfoOf, makeSlug, bookingPageUrl, guestPageUrl, GUEST_INFO_DEFAULTS } from '@/lib/stay/guestInfo';
@@ -65,9 +68,40 @@ function PropertyEditor({ property, onSaved }) {
   };
 
   const link = property.public_slug ? bookingPageUrl(property) : '';
+  const [uploading, setUploading] = useState(false);
+  const onPhoto = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!/^image\//.test(file.type)) { atlasToastApi.error('צריך לבחור קובץ תמונה'); return; }
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      await updateProperty.mutateAsync({ id: property.id, data: { images: [file_url, ...(Array.isArray(property.images) ? property.images.slice(1) : [])] } });
+      atlasToastApi.success('התמונה עודכנה');
+    } catch {
+      atlasToastApi.error('לא הצלחנו להעלות את התמונה');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
+      <section className="ab-card overflow-hidden">
+        <UnitPhoto property={property} className="aspect-[16/7] w-full" rounded="rounded-none" />
+        <div className="flex items-center gap-3 p-4 sm:p-5">
+          <div className="min-w-0 flex-1">
+            <h2 className="ab-h3">תמונת היחידה</h2>
+            <p className="ab-meta mt-0.5">{uploadedPhoto(property) ? 'מופיעה במסך היום, בהזמנות ובלוח השנה.' : 'תמונה לדוגמה. העלו תמונה של {property.name} והיא תופיע בכל מקום.'.replace('{property.name}', property.name || 'היחידה')}</p>
+          </div>
+          <label className="ab-btn ab-btn-secondary shrink-0 cursor-pointer">
+            <ImagePlus size={18} strokeWidth={1.75} />
+            {uploading ? 'מעלה…' : 'החלפת תמונה'}
+            <input type="file" accept="image/*" className="sr-only" onChange={onPhoto} disabled={uploading} />
+          </label>
+        </div>
+      </section>
       <section className="ab-card p-4 sm:p-5">
         <div className="flex items-start gap-3">
           <span className="ab-icon-tile"><Globe size={20} strokeWidth={1.75} /></span>
@@ -161,7 +195,7 @@ export default function GuestPagesPage({ user, orgId }) {
         title="דף אורח והזמנה ישירה"
         subtitle="דף אישי לכל אורח עם כל פרטי השהייה, ודף הזמנה ישירה לכל יחידה."
       />
-      {data.isLoading ? <Skeleton className="h-64 rounded-[14px]" /> : properties.length === 0 ? (
+      {data.isLoading ? <Skeleton className="h-64 rounded-[18px]" /> : properties.length === 0 ? (
         <div className="ab-card p-6 text-center">
           <p className="font-bold">עוד אין יחידות במערכת.</p>
           <p className="ab-meta mt-1">הוסיפו נכס בהגדרות כדי ליצור דפים לאורחים.</p>

@@ -30,7 +30,7 @@ export default function MonthlyReportPrint() {
   return (
     <div dir="rtl" className="ab-root min-h-screen" style={{ background: 'var(--canvas)' }}>
       <style>{'@page { size: A4; margin: 14mm; } @media print { html, body { background: #fff !important; } .ab-sheet { box-shadow: none !important; padding: 0 !important; max-width: none !important; } }'}</style>
-      <div className="ab-sheet mx-auto max-w-[900px] bg-white px-5 sm:px-10 py-8 sm:my-6 sm:rounded-[14px]" style={{ boxShadow: 'var(--ab-shadow)' }}>
+      <div className="ab-sheet mx-auto max-w-[900px] bg-white px-5 sm:px-10 py-8 sm:my-6 sm:rounded-[18px]" style={{ boxShadow: 'var(--ab-shadow)' }}>
         <header className="flex items-start justify-between gap-4 pb-5 mb-5" style={{ borderBottom: '2px solid var(--navy-900)' }}>
           <div className="min-w-0">
             <p className="ab-meta font-bold">דוח חודשי לרואה החשבון</p>

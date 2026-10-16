@@ -1,4 +1,5 @@
-import { Wordmark } from '@/components/app/shell/shared';
+import AuthShell from '@/components/app/AuthShell';
+import { WELCOME_PHOTO_2 } from '@/lib/stay/unitPhoto';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
@@ -903,13 +904,8 @@ export default function Onboarding() {
   };
 
   return (
-    <div
-      className="flex min-h-[100dvh] items-start justify-center bg-canvas px-4 pb-10 pt-[max(24px,env(safe-area-inset-top))] md:items-center md:py-12"
-      dir="rtl"
-      onKeyDown={handleKeyDown}
-    >
-      <div className="w-full max-w-[520px]">
-        <div className="mb-6 flex justify-center md:mb-8"><Wordmark size={26} /></div>
+    <AuthShell wide onKeyDown={handleKeyDown} photo={WELCOME_PHOTO_2} caption="עוד דקה והצימר שלכם מוכן לקבל הזמנות.">
+      <div className="w-full">
 
         <div className="mb-4" role="group" aria-label={`התקדמות בהגדרה, שלב ${step + 1} מתוך ${TOTAL_STEPS}`}>
           <div className="flex items-center justify-between gap-3 text-[13px]">
@@ -931,10 +927,8 @@ export default function Onboarding() {
           </div>
         </div>
 
-        {/* Card — app style */}
-        <div
-          className="overflow-hidden rounded-[20px] border border-line bg-white p-6 shadow-card md:p-8"
-        >
+        {/* Step body sits straight on the warm frame */}
+        <div className="pt-2">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={step}
@@ -962,7 +956,6 @@ export default function Onboarding() {
           </AnimatePresence>
         </div>
       </div>
-
-    </div>
+    </AuthShell>
   );
 }

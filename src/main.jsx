@@ -4,6 +4,7 @@ import App from '@/App.jsx'
 import BackendNotConfigured from '@/components/common/BackendNotConfigured'
 import { isProductionBackendConfigured } from '@/lib/backendConfig'
 import '@/index.css'
+import '@/ui-direction/flag'
 
 // Minimal fallback when app crashes (no external deps)
 function CrashFallback({ error }) {

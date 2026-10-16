@@ -164,7 +164,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
         {/* Header & Stats */}
         <div className="space-y-5">
           <PageHeader title="בקשות שירות" subtitle="בקשות תחזוקה מאורחים ומהצוות." className="!mb-0" />
-          <div className="rounded-[14px] border border-line bg-white p-4 shadow-card">
+          <div className="rounded-[18px] border border-line bg-white p-4 shadow-card">
             <h3 className="mb-1 text-[15px] font-bold text-navy-900">קישור לטופס אורחים</h3>
             <p className="mb-3 text-[14px] text-ink-600">שלחו לאורחים בהודעת הכניסה, או תלו בנכס.</p>
             <div className="flex gap-2">

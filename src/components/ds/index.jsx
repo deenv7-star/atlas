@@ -4,6 +4,8 @@
  */
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { isPlayful } from '@/ui-direction/flag';
+import { CountUp } from '@/components/app/warm';
 import { Button } from '@/components/ui/button';
 import { format, parseISO, isValid } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -104,7 +106,7 @@ export const STATUS_META = {
 export function StatusPill({ status, label, tone, className }) {
   const meta = STATUS_META[String(status || '').toUpperCase()] || { label: label || status || '', tone: 'neutral' };
   return (
-    <span className={cn('inline-flex h-6 shrink-0 items-center rounded-full px-2.5 text-[13px] font-medium', TONES[tone || meta.tone], className)}>
+    <span className={cn(isPlayful ? 'inline-flex h-7 shrink-0 items-center rounded-full px-3 text-[13px] font-bold' : 'inline-flex h-7 shrink-0 items-center rounded-full px-3 text-[13px] font-medium', TONES[tone || meta.tone], className)}>
       {label || meta.label}
     </span>
   );
@@ -134,7 +136,7 @@ export function PageHeader({ title, subtitle, actions, children, className }) {
 
 export function Card({ as: Comp = 'div', className, children, ...rest }) {
   return (
-    <Comp className={cn('rounded-[14px] border border-line bg-white shadow-card', className)} {...rest}>
+    <Comp className={cn('rounded-[18px] border border-line/70 bg-white shadow-card', className)} {...rest}>
       {children}
     </Comp>
   );
@@ -161,15 +163,24 @@ export function Section({ title, subtitle, action, children, className, bodyClas
 }
 
 /** A quiet number. No icon squares (simplicity rules); amber/danger tone only tints the value. */
+/** "₪12,300" / "84%" / 7 count up from zero; anything else renders as is. */
+function AnimatedValue({ value }) {
+  if (typeof value === 'number') return <CountUp value={value} format={(n) => n.toLocaleString('he-IL')} />;
+  const m = typeof value === 'string' ? value.match(/^([^\d-]*)(\d[\d,]*)([^\d]*)$/) : null;
+  if (!m) return value ?? null;
+  const n = Number(m[2].replace(/,/g, ''));
+  return <CountUp value={n} format={(x) => `${m[1]}${x.toLocaleString('en-US')}${m[3]}`} />;
+}
+
 export function StatTile({ label, value, hint, tone = 'brand', className, loading }) {
   const valueCls = tone === 'danger' ? 'text-danger-600' : 'text-navy-900';
   return (
-    <Card className={cn('flex min-w-0 flex-col gap-1.5 px-5 py-4 shadow-none md:px-6 md:py-5', className)}>
+    <Card className={cn('v4-rise flex min-w-0 flex-col gap-1.5 px-5 py-4 md:px-6 md:py-5', isPlayful && 'border-transparent', className)}>
       <span className="truncate text-[14px] text-ink-600 md:text-[15px]">{label}</span>
       {loading ? (
         <SkelLine className="h-8 w-24" />
       ) : (
-        <span className={cn('whitespace-nowrap text-[20px] font-semibold leading-tight tracking-[-0.01em] tabular md:text-[26px]', valueCls)}>{value}</span>
+        <span className={cn('whitespace-nowrap text-[22px] font-extrabold leading-tight tracking-[-0.02em] tabular md:text-[28px]', valueCls)}><AnimatedValue value={value} /></span>
       )}
       {hint ? <span className="hidden truncate text-[13px] text-ink-400 md:block">{hint}</span> : null}
     </Card>
@@ -178,7 +189,7 @@ export function StatTile({ label, value, hint, tone = 'brand', className, loadin
 
 export function SegmentedControl({ options, value, onChange, className, ariaLabel }) {
   return (
-    <div role="tablist" aria-label={ariaLabel} className={cn('inline-flex max-w-full gap-1 overflow-x-auto rounded-[12px] bg-neutral-100 p-1', className)}>
+    <div role="tablist" aria-label={ariaLabel} className={cn('inline-flex max-w-full gap-1 overflow-x-auto p-1', isPlayful ? 'rounded-full bg-white shadow-card' : 'rounded-[18px] bg-neutral-100', className)}>
       {options.map((o) => {
         const active = o.value === value;
         return (
@@ -189,8 +200,9 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
             aria-selected={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              'press inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[9px] px-4 text-[15px] font-medium',
-              active ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.08),0_2px_8px_rgba(27,38,86,0.06)]' : 'text-ink-600 hover:text-navy-900',
+              'press inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap px-4 text-[15px] font-medium',
+              isPlayful ? 'rounded-full' : 'rounded-[11px]',
+              active && isPlayful ? 'bg-brand-50 font-bold text-brand-700' : active ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.08),0_2px_8px_rgba(27,38,86,0.06)]' : 'text-ink-600 hover:text-navy-900',
             )}
           >
             {o.label}
@@ -204,18 +216,27 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
   );
 }
 
-export function EmptyState({ icon: Icon, title, description, actionLabel, onAction, action, className, compact = false }) {
+export function EmptyState({ icon: Icon, title, description, actionLabel, onAction, action, className, compact = false, photo }) {
   return (
-    <div className={cn('flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
-      {Icon ? (
-        <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-50 text-brand-600">
-          <Icon className="h-7 w-7" strokeWidth={1.75} />
+    <div className={cn('v4-rise flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
+      {photo ? (
+        <span className="mb-5 block h-[120px] w-[180px] overflow-hidden rounded-[20px] shadow-card">
+          <img src={photo} alt="" className="h-full w-full object-cover" loading="lazy" />
+        </span>
+      ) : Icon ? (
+        <span className="relative mb-5 inline-flex h-[76px] w-[76px] items-center justify-center" aria-hidden>
+          <svg viewBox="0 0 76 76" className="absolute inset-0 h-full w-full" fill="none">
+            <circle cx="38" cy="38" r="37" fill="var(--today-50, #FEF5E6)" />
+            <path d="M14 50c7-6 14-6 21 0s14 6 27-2" stroke="#F8B040" strokeWidth="1.75" strokeLinecap="round" opacity=".55" />
+            <circle cx="56" cy="20" r="5" stroke="#F8B040" strokeWidth="1.75" opacity=".7" />
+          </svg>
+          <Icon className="relative h-8 w-8 text-navy-900" strokeWidth={1.5} />
         </span>
       ) : null}
-      <p className="text-[17px] font-bold text-navy-900">{title}</p>
-      {description ? <p className="mt-1.5 max-w-sm text-[15px] text-ink-600">{description}</p> : null}
-      {action ? <div className="mt-5">{action}</div> : actionLabel && onAction ? (
-        <Button onClick={onAction} className="mt-5">{actionLabel}</Button>
+      <p className="text-[19px] font-extrabold text-navy-900">{title}</p>
+      {description ? <p className="mt-1.5 max-w-sm text-[16px] text-ink-600">{description}</p> : null}
+      {action ? <div className="mt-6">{action}</div> : actionLabel && onAction ? (
+        <Button onClick={onAction} className="mt-6">{actionLabel}</Button>
       ) : null}
     </div>
   );
@@ -257,7 +278,7 @@ export function useLoadingGuard(isLoading, ms = 12000) {
 
 export function SlowLoadNotice({ onRetry, className }) {
   return (
-    <div role="status" className={cn('flex flex-col items-start gap-3 rounded-[14px] border border-line bg-white p-4 sm:flex-row sm:items-center sm:justify-between', className)}>
+    <div role="status" className={cn('flex flex-col items-start gap-3 rounded-[18px] border border-line bg-white p-4 sm:flex-row sm:items-center sm:justify-between', className)}>
       <div>
         <p className="font-bold text-navy-900">הטעינה לוקחת יותר מהרגיל</p>
         <p className="text-[14px] text-ink-600">ייתכן שהחיבור איטי. אפשר לנסות שוב, הנתונים שכבר נטענו נשמרים.</p>

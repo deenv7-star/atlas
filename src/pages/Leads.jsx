@@ -1,4 +1,5 @@
 import { createPageUrl } from '@/utils';
+import { GuestAvatar, Rise } from '@/components/app/warm';
 import { Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtShort } from '@/components/ds';
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -252,27 +253,37 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[14px] border border-line bg-white">
+      <div className="overflow-hidden rounded-[18px] border border-line bg-white">
         {isLoading ? <div className="p-4"><SkelRows rows={5} /></div> : sorted.length ? (
           <ul className="divide-y divide-line">
-            {paged.map((l) => (
-              <li key={l.id}>
-                <Link to={`${createPageUrl('LeadDetail')}/${l.id}`} className="press flex min-h-[72px] items-center gap-3 px-5 py-3 active:bg-neutral-50">
+            {paged.map((l, idx) => (
+              <Rise as="li" i={Math.min(idx, 8)} key={l.id}>
+                <Link to={`${createPageUrl('LeadDetail')}/${l.id}`} className="press flex min-h-[76px] items-center gap-4 px-5 py-3 hover:bg-neutral-50 active:bg-neutral-50">
+                  <GuestAvatar name={l.full_name || 'ליד'} size={44} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[16px] font-semibold text-navy-900">{l.full_name || 'ללא שם'}</span>
+                    <span className="block truncate text-[16px] font-bold text-navy-900">{l.full_name || 'ללא שם'}</span>
                     <span className="block truncate text-[13px] text-ink-400">
                       {l.check_in_date ? `מבקש ${fmtShort(l.check_in_date)}` : 'בלי תאריכים'}{l.nights ? ` · ${l.nights} לילות` : ''}
                     </span>
                   </span>
                   <StatusPill status={l.status} label={STATUS_MAP[l.status]?.label} />
                 </Link>
-              </li>
+              </Rise>
             ))}
           </ul>
         ) : null}
+        {!isLoading && sorted.length > pageSize ? (
+          <nav aria-label="עמודים" className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
+            <span className="text-[14px] text-ink-600 tabular">עמוד {page} מתוך {totalPages} · {sorted.length} לידים</span>
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
+              <Button type="button" variant="outline" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
+            </div>
+          </nav>
+        ) : null}
       </div>
 
-      <div className={cn("overflow-hidden rounded-[14px] border border-line bg-white shadow-card", sorted.length || isLoading ? "hidden" : "")}>
+      <div className={cn("overflow-hidden rounded-[18px] border border-line bg-white shadow-card", sorted.length || isLoading ? "hidden" : "")}>
         {isError ? (
           <div className="p-4 text-center text-sm text-red-600">שגיאה בטעינת הלידים</div>
         ) : sorted.length === 0 && !isLoading ? (

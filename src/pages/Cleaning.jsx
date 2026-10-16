@@ -243,7 +243,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
       {isLoading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <SkelLine key={i} className="h-[132px] rounded-[14px]" />
+            <SkelLine key={i} className="h-[132px] rounded-[18px]" />
           ))}
         </div>
       ) : filteredTasks.length === 0 ? (

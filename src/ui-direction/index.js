@@ -1,14 +1,14 @@
 /**
- * Layout direction switch. Branch feat/app-ui-a ships direction A ("calm light"),
- * feat/app-ui-b ships direction B ("rich hospitality"). Brand, type and copy are shared.
+ * Layout direction switch. Branch feat/app-ui-v4-a ships direction A ("Airbnb warm"),
+ * feat/app-ui-v4-b ships direction B ("playful light"). Both are light; brand, type and copy are shared.
  */
 import * as A from './a';
 import * as B from './b';
+import { DIRECTION } from './flag';
 
-// This branch ships direction A by default; set VITE_UI_DIRECTION to compare the other.
-const DIRECTION = import.meta.env.VITE_UI_DIRECTION || 'a';
 const D = DIRECTION === 'b' ? B : A;
 
+export { DIRECTION };
 export const Sidebar = D.Sidebar;
 export const Header = D.Header;
 export const TabBar = D.TabBar;

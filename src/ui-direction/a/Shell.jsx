@@ -12,10 +12,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import {
-  Wordmark, useShellProperties, useNavGroups, useIsActive, initialsOf, UserMenu, MoreSheet, navItem,
+  Wordmark, useShellProperties, useNavGroups, useIsActive, UserMenu, MoreSheet, navItem,
 } from '@/components/app/shell/shared';
+import { GuestAvatar } from '@/components/app/warm';
+import { isPlayful } from '@/ui-direction/flag';
 
-export const shellClass = 'bg-canvas';
+export const shellClass = 'bg-white';
 
 export function Sidebar({ onLogout, user }) {
   const groups = useNavGroups(user);
@@ -24,11 +26,12 @@ export function Sidebar({ onLogout, user }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const moreActive = groups.slice(1).some((g) => g.items.some((i) => isActive(i.page)));
   const linkCls = (active) => cn(
-    'press flex h-12 items-center gap-3.5 rounded-[12px] px-3.5 text-[16px]',
+    'press flex h-12 items-center gap-3.5 px-3.5 text-[16px]',
+    isPlayful ? 'rounded-full' : 'rounded-[14px]',
     active ? 'bg-brand-50 font-bold text-brand-700' : 'font-medium text-navy-900 hover:bg-neutral-100',
   );
   return (
-    <aside className="flex h-full w-[248px] flex-col border-l border-line bg-white" aria-label="ניווט ראשי">
+    <aside className={cn('flex h-full w-[248px] flex-col border-l', isPlayful ? 'border-transparent bg-white/70' : 'border-line bg-white')} aria-label="ניווט ראשי">
       <div className="flex h-[80px] shrink-0 items-center px-7">
         <Link to={createPageUrl('Dashboard')} aria-label="ATLAS, מסך היום" className="rounded-lg">
           <Wordmark size={24} />
@@ -59,7 +62,7 @@ export function Sidebar({ onLogout, user }) {
       <div className="border-t border-line p-4">
         <UserMenu user={user} onLogout={onLogout} align="start" side="top">
           <button type="button" className="press flex min-h-[52px] w-full items-center gap-3 rounded-[12px] px-2.5 text-start hover:bg-neutral-100">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-[13px] font-bold text-navy-900">{initialsOf(user)}</span>
+            <GuestAvatar name={user?.full_name || user?.email || ''} size={36} />
             <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-navy-900">{user?.full_name || 'החשבון שלי'}</span>
           </button>
         </UserMenu>
@@ -121,7 +124,7 @@ export function Header({ user, currentPageName, selectedPropertyId, onPropertyCh
       <div className="lg:hidden">
         <UserMenu user={user} onLogout={onLogout}>
           <button type="button" aria-label="החשבון שלי" className="press inline-flex h-11 w-11 items-center justify-center rounded-full">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-[12px] font-bold text-navy-900">{initialsOf(user)}</span>
+            <GuestAvatar name={user?.full_name || user?.email || ''} size={32} />
           </button>
         </UserMenu>
       </div>

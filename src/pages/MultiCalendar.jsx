@@ -14,6 +14,7 @@ import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
+import { UnitPhoto, GuestAvatar, guestInitials } from '@/components/app/warm';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#EF5B5B' },
@@ -111,6 +112,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
     dot: DOTS[i % DOTS.length],
     type: p.type || 'דירה',
     beds: p.beds || 2,
+    raw: p,
   })), [rawProperties]);
 
   const totalDays = viewMode === 'week' ? 14 : viewMode === 'day' ? 7 : 30;
@@ -182,6 +184,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
         const gapStart = propBookings[i].endDate;
         const gapEnd = propBookings[i + 1].startDate;
         const nights = daysBetween(gapStart, gapEnd);
+        // Only windows that can still be sold: they end after today (the part from today on counts).
+        const today0 = startOfDay(new Date());
+        if (gapEnd <= today0) continue;
         if (nights > 0 && nights <= 5) {
           result.push({
             id: `${prop.id}-${i}`,
@@ -194,7 +199,15 @@ export default function MultiCalendar({ selectedPropertyId }) {
         }
       }
     });
-    return result;
+    return result
+      .map((g) => {
+        const today0 = startOfDay(new Date());
+        if (g.startDate >= today0) return g;
+        const n = daysBetween(today0, g.endDate);
+        return { ...g, startDate: today0, nights: n, potentialRevenue: n * 450 };
+      })
+      .filter((g) => g.nights > 0)
+      .sort((a, b) => a.startDate - b.startDate);
   }, [bookings, properties]);
 
   const totalGapRevenue = gaps.reduce((s, g) => s + g.potentialRevenue, 0);
@@ -238,8 +251,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
       </header>
 
       {!bookingsLoading && !propertiesLoading && properties.length === 0 ? (
-        <div className="rounded-[14px] border border-line bg-white">
+        <div className="rounded-[18px] border border-line bg-white">
           <DsEmptyState
+            photo="/demo/units/unit-2.webp"
             icon={CalendarRange}
             title="הוסיפו את הנכס הראשון"
             description="אחרי שתוסיפו יחידות, כל הזמנה מכל ערוץ תופיע כאן על ציר אחד."
@@ -277,22 +291,22 @@ export default function MultiCalendar({ selectedPropertyId }) {
       </div>
 
       {bookingsError ? (
-        <div className="mb-6 rounded-[14px] border border-line bg-white p-4"><ErrorFallback /></div>
+        <div className="mb-6 rounded-[18px] border border-line bg-white p-4"><ErrorFallback /></div>
       ) : bookingsLoading || propertiesLoading ? (
         <SkeletonCalendar className="mb-6" totalDays={totalDays} viewMode={viewMode === 'month' ? 'month' : 'week'} propertyRowCount={Math.max(properties.length, 3)} />
       ) : properties.length ? (
         <ErrorBoundary section="calendar-view" variant="inline" resetKey={`${viewMode}-${anchorDate.toISOString()}-${totalDays}-${effectivePropertyId ?? 'all'}`}>
-          <div className="mb-6 overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+          <div className="v4-rise mb-6 overflow-hidden rounded-[22px] border border-line/70 bg-white shadow-card">
             <div className="overflow-x-auto overscroll-x-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
               <div style={{ minWidth: minW, display: 'grid', gridTemplateColumns: `${UNIT_W} repeat(${totalDays}, ${COL_W})` }}>
-                <div className="sticky right-0 z-20 flex items-end border-b border-l border-line bg-white px-3 pb-2 pt-3 text-[13px] font-medium text-ink-400">יחידה</div>
+                <div className="sticky right-0 z-20 flex items-end border-b border-l border-line bg-white px-4 pb-2.5 pt-3 text-[13px] font-medium text-ink-400">יחידה</div>
                 {days.map((d, i) => {
                   const today = isToday(d);
                   const weekend = d.getDay() === 5 || d.getDay() === 6;
                   return (
-                    <div key={i} className={cn('flex flex-col items-center border-b border-l border-line pb-2 pt-3', weekend && 'bg-neutral-50')}>
-                      <span className={cn('text-[12px]', today ? 'font-bold text-brand-600' : 'text-ink-400')}>{HEB_DAYS[d.getDay()]}</span>
-                      <span className={cn('mt-1 inline-flex h-7 min-w-7 items-center justify-center rounded-full px-1 text-[14px] font-bold tabular', today ? 'bg-brand-600 text-white' : 'text-navy-900')}>
+                    <div key={i} className={cn('flex flex-col items-center border-b border-line pb-2.5 pt-3', weekend && !today && 'bg-[#FAFAFC]', today && 'v4-today-col')}>
+                      <span className={cn('text-[12px]', today ? 'font-bold text-[color:var(--today-ink)]' : 'text-ink-400')}>{today ? 'היום' : HEB_DAYS[d.getDay()]}</span>
+                      <span className={cn('mt-1 inline-flex h-8 min-w-8 items-center justify-center rounded-full px-1 text-[14px] font-bold tabular', today ? 'bg-[color:var(--today)] text-white shadow-[0_4px_12px_rgba(248,176,64,0.4)]' : 'text-navy-900')}>
                         {d.getDate()}
                       </span>
                     </div>
@@ -303,14 +317,16 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   const propBookings = getBookingsForProperty(prop.id);
                   return (
                     <React.Fragment key={prop.id}>
-                      <div className="sticky right-0 z-10 flex min-h-[60px] items-center border-b border-l border-line bg-white px-3">
+                      <div className="sticky right-0 z-10 flex min-h-[68px] items-center gap-3 border-b border-l border-line bg-white px-2.5 md:px-3">
+                        <UnitPhoto property={prop.raw} className="hidden h-11 w-11 md:block" rounded="rounded-[12px]" />
                         <div className="min-w-0">
                           <div className="truncate text-[15px] font-bold text-navy-900">{prop.name}</div>
+                          <div className="hidden truncate text-[12px] text-ink-400 md:block">{prop.raw?.max_guests ? `עד ${prop.raw.max_guests} אורחים` : prop.type}</div>
                         </div>
                       </div>
                       <div
                         className="relative border-b border-line"
-                        style={{ gridColumn: '2 / -1', display: 'grid', gridTemplateColumns: `repeat(${totalDays}, ${COL_W})`, minHeight: 60 }}
+                        style={{ gridColumn: '2 / -1', display: 'grid', gridTemplateColumns: `repeat(${totalDays}, ${COL_W})`, minHeight: 68 }}
                       >
                         {days.map((d, i) => (
                           <button
@@ -319,9 +335,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
                             onClick={() => openNewAt(prop, d)}
                             aria-label={`הזמנה חדשה ב${prop.name}, ${formatHebrewDate(d)}`}
                             className={cn(
-                              'group/cell relative h-full border-l border-line/70 hover:bg-brand-50 focus-visible:bg-brand-50',
-                              (d.getDay() === 5 || d.getDay() === 6) && 'bg-neutral-50',
-                              isToday(d) && 'bg-brand-50/60',
+                              'group/cell relative h-full border-l border-line/50 hover:bg-brand-50 focus-visible:bg-brand-50',
+                              (d.getDay() === 5 || d.getDay() === 6) && !isToday(d) && 'bg-[#FAFAFC]',
+                              isToday(d) && 'v4-today-col',
                             )}
                           >
                             <Plus aria-hidden className="absolute inset-0 m-auto h-4 w-4 text-brand-600 opacity-0 group-hover/cell:opacity-100" />
@@ -337,17 +353,21 @@ export default function MultiCalendar({ selectedPropertyId }) {
                             <Link
                               key={booking.id}
                               to={`${createPageUrl('BookingDetail')}/${booking.id}`}
-                              className={cn('press absolute top-2 z-10 block', optimisticEntityClassName(booking.id))}
+                              className={cn('press absolute top-[10px] z-10 block', optimisticEntityClassName(booking.id))}
                               style={{ right: `calc(${(pos.start / totalDays) * 100}% + 2px)`, width: `calc(${(pos.span / totalDays) * 100}% - 4px)` }}
                               onMouseEnter={(e) => handleBookingHover(e, booking)}
                               onMouseLeave={() => setHoveredBooking(null)}
                               aria-label={`${booking.guest || 'הזמנה'}, ${ch.label}, ${booking.nights} לילות`}
                             >
                               <span
-                                className={cn('flex h-11 items-center gap-1.5 overflow-hidden rounded-[8px] px-2 text-[13px] font-medium', pending ? 'border-2 border-dashed bg-white' : 'text-white')}
-                                style={isBlocked ? { background: '#D7DBE8', color: '#4A5578' } : pending ? { borderColor: ch.color, color: ch.color } : { background: ch.color }}
+                                className={cn(
+                                  'flex h-[48px] items-center gap-2 overflow-hidden rounded-full pe-3 ps-1.5 text-[13px] font-bold shadow-[0_1px_2px_rgba(27,38,86,0.06),0_4px_12px_rgba(27,38,86,0.06)]',
+                                  isBlocked ? 'bg-[#EEF0F5] text-ink-600' : pending ? 'border-2 border-dashed border-line-strong bg-white text-ink-600' : 'border border-line/80 bg-white text-navy-900',
+                                )}
                               >
-                                <span className="truncate">{isBlocked ? 'חסום' : booking.guest}</span>
+                                {isBlocked ? null : pos.span > 1 || viewMode !== 'month' ? <GuestAvatar name={booking.guest} size={34} /> : null}
+                                <span className="min-w-0 flex-1 truncate">{isBlocked ? 'חסום' : pos.span > 1 || viewMode !== 'month' ? booking.guest : guestInitials(booking.guest)}</span>
+                                {isBlocked ? null : <ChannelDot channel={booking.channel} size={7} />}
                               </span>
                             </Link>
                           );
@@ -366,7 +386,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                 </span>
               ))}
               <span className="inline-flex items-center gap-1.5 text-[13px] text-ink-600">
-                <span className="h-3 w-4 rounded-[4px] border-2 border-dashed border-ink-400" />
+                <span className="h-3.5 w-6 rounded-full border-2 border-dashed border-ink-400" />
                 ממתינה לאישור
               </span>
             </div>
@@ -392,8 +412,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
       {properties.length ? (
         <div>
-          <section className="overflow-hidden rounded-[14px] border border-line bg-white">
-            <div className="flex items-center justify-between px-5 pt-4">
+          <section className="v4-rise overflow-hidden rounded-[22px] border border-line/70 bg-white shadow-card">
+            <div className="flex items-center justify-between px-5 pt-5">
               <div>
                 <h2 className="text-[17px] font-bold text-navy-900">לילות פנויים בין הזמנות</h2>
                 <p className="text-[13px] text-ink-400">{gaps.length ? 'הקרובים שאפשר עוד למלא' : 'אין חלונות קצרים'}</p>
@@ -406,7 +426,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
                 {gaps.slice(0, 3).map((gap) => {
                   const prop = properties.find((p) => p.name === gap.property);
                   return (
-                    <li key={gap.id} className="flex min-h-[60px] items-center gap-3 rounded-[10px] px-3 hover:bg-neutral-50">
+                    <li key={gap.id} className="flex min-h-[68px] items-center gap-3 rounded-[14px] px-3 hover:bg-neutral-50">
+                      <UnitPhoto property={prop?.raw} className="h-12 w-12" rounded="rounded-[14px]" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-semibold text-navy-900">{gap.property}</div>
                         <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {gap.nights} לילות</div>

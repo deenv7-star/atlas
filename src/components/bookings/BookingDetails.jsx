@@ -227,7 +227,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-3 gap-2 rounded-[14px] bg-neutral-50 p-3 text-center md:gap-4 md:p-4">
+            <div className="mt-5 grid grid-cols-3 gap-2 rounded-[18px] bg-neutral-50 p-3 text-center md:gap-4 md:p-4">
               <div>
                 <p className="text-[13px] text-ink-400">כניסה</p>
                 <p className="mt-0.5 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_in_date)}</span><span className="sm:hidden">{fmtShort(booking.check_in_date)}</span></p>
@@ -267,7 +267,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
 
         <div className="mt-4 grid gap-4 md:grid-cols-[1.3fr_1fr]">
           {/* Money */}
-          <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
+          <section className="rounded-[18px] border border-line bg-white p-5 shadow-card">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-[18px] font-bold text-navy-900">תשלומים</h2>
               <div className="flex gap-2">
@@ -325,7 +325,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
           </section>
 
           <div className="grid content-start gap-4">
-            <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
+            <section className="rounded-[18px] border border-line bg-white p-5 shadow-card">
               <Label className="text-[14px] font-medium text-ink-600">מצב ההזמנה</Label>
               <Select value={booking.status} onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}>
                 <SelectTrigger className="mt-2">
@@ -339,7 +339,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               </Select>
             </section>
 
-            <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
+            <section className="rounded-[18px] border border-line bg-white p-5 shadow-card">
               <h2 className="text-[18px] font-bold text-navy-900">התקדמות</h2>
               <ol className="mt-3 space-y-1">
                 {timelineItems.map((item, i) => (
@@ -354,7 +354,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             </section>
 
             {booking.notes ? (
-              <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
+              <section className="rounded-[18px] border border-line bg-white p-5 shadow-card">
                 <h2 className="text-[18px] font-bold text-navy-900">הערות</h2>
                 <p className="mt-2 whitespace-pre-wrap text-[15px] text-ink-600">{booking.notes}</p>
               </section>

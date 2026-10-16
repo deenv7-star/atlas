@@ -204,7 +204,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       </div>
 
       {/* Financial / payments table */}
-      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+      <div className="overflow-hidden rounded-[18px] border border-line bg-white shadow-card">
         {!orgId ? (
           <div className="p-6 text-center text-sm text-gray-500">התחבר לארגון כדי לראות תשלומים</div>
         ) : filtered.length === 0 && !isLoading ? (

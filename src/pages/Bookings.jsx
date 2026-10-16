@@ -17,7 +17,7 @@ import { CalendarDays, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
-  Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtMoney, monthShort, dayNum,
+  Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, monthShort, dayNum,
 } from '@/components/ds';
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
@@ -27,6 +27,7 @@ import { bookingFormToPayload } from '@/lib/entityPayloads';
 import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
+import { UnitPhoto, GuestAvatar, Rise } from '@/components/app/warm';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -318,7 +319,7 @@ export default function BookingsPage({ selectedPropertyId }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+      <div className="overflow-hidden rounded-[18px] border border-line bg-white shadow-card">
         {isError ? (
           <div className="p-4"><ErrorFallback /></div>
         ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
@@ -338,22 +339,22 @@ export default function BookingsPage({ selectedPropertyId }) {
             <ul className="divide-y divide-line">
               {isLoading ? (
                 <li className="p-4"><SkelRows rows={5} /></li>
-              ) : paged.map((b) => (
-                <li key={b.id}>
-                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press flex min-h-[76px] items-center gap-4 px-5 py-3 hover:bg-neutral-50 active:bg-neutral-50">
-                    <span className="flex w-12 shrink-0 flex-col items-center rounded-[10px] bg-neutral-100 py-1.5">
-                      <span className="text-[12px] text-ink-600">{monthShort(b.check_in_date)}</span>
-                      <span className="text-[18px] font-extrabold leading-tight tabular text-navy-900">{dayNum(b.check_in_date)}</span>
+              ) : paged.map((b, idx) => (
+                <Rise as="li" i={Math.min(idx, 8)} key={b.id}>
+                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press flex min-h-[84px] items-center gap-4 px-4 py-3 hover:bg-neutral-50 active:bg-neutral-50 md:px-5">
+                    <span className="relative shrink-0">
+                      <UnitPhoto property={properties.find((p) => p.id === b.property_id) || { id: b.property_id }} className="h-14 w-14" rounded="rounded-[16px]" />
+                      <GuestAvatar name={b.guest_name || 'אורח'} size={26} ring className="absolute -bottom-1.5 -left-1.5" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[16px] font-semibold text-navy-900">{b.guest_name || 'אורח'}</span>
-                      <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
-                        {propName(b.property_id) || b.property_name} · {b.nights || 1} לילות{b.total_price ? ` · ${fmtMoney(b.total_price)}` : ''}
+                      <span className="block truncate text-[16px] font-bold text-navy-900">{b.guest_name || 'אורח'}</span>
+                      <span className="mt-0.5 block truncate text-[14px] text-ink-600">
+                        <span className="font-medium text-navy-900 tabular">{dayNum(b.check_in_date)} {monthShort(b.check_in_date)}</span> · {propName(b.property_id) || b.property_name} · {b.nights || 1} לילות
                       </span>
                     </span>
                     <StatusPill status={b.status} />
                   </Link>
-                </li>
+                </Rise>
               ))}
             </ul>
             <div className="hidden">

@@ -1,4 +1,5 @@
-import { Wordmark } from '@/components/app/shell/shared';
+import AuthShell from '@/components/app/AuthShell';
+import { WELCOME_PHOTO_2 } from '@/lib/stay/unitPhoto';
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
@@ -135,22 +136,21 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>
-      <div className="w-full max-w-[440px]">
-        <div className="text-center mb-10">
-          <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">התחל לנהל חכם יותר</h1>
-          <p className="text-gray-500 text-sm mt-2">צור חשבון חינמי ותתחיל לנהל את המתחם שלך</p>
+    <AuthShell photo={WELCOME_PHOTO_2} caption="כל ההזמנות מכל הערוצים, בלוח אחד ופשוט.">
+      <div>
+        <div className="mb-8">
+          <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[36px]">פותחים חשבון</h1>
+          <p className="mt-2 text-[16px] text-ink-600">14 ימים חינם, אחר כך מחליטים.</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 p-8">
+        <div>
           {emailExists ? (
             <div className="space-y-4">
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
                 <p className="text-amber-800 font-semibold">כתובת המייל הזו כבר רשומה במערכת</p>
               </div>
               <Link to={`/login?email=${encodeURIComponent(form.email)}`}>
-                <Button className="w-full h-12 bg-[#111827] hover:bg-black text-white font-bold rounded-xl gap-2">
+                <Button className="w-full h-12 text-[16px] font-bold gap-2">
                   התחבר עם מייל זה
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
@@ -242,9 +242,9 @@ export default function Register() {
                 {touched.confirmPassword && errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
               </div>
 
-              <Button type="submit" disabled={!canSubmit || isLoading} className="w-full h-12 bg-[#111827] hover:bg-black text-white font-bold rounded-xl gap-2">
+              <Button type="submit" disabled={!canSubmit || isLoading} className="w-full h-12 text-[16px] font-bold gap-2">
                 {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
-                {isLoading ? 'יוצר חשבון...' : 'צור חשבון חינמי'}
+                {isLoading ? 'יוצר חשבון...' : 'פתיחת חשבון'}
               </Button>
             </form>
           )}
@@ -255,11 +255,11 @@ export default function Register() {
           </div>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          יש לך חשבון?{' '}
-          <Link to="/login" className="text-brand-600 hover:text-brand-700 font-semibold">התחבר</Link>
+        <p className="mt-8 text-center text-[15px] text-ink-600">
+          כבר יש לכם חשבון?{' '}
+          <Link to="/login" className="font-bold text-brand-600 hover:underline">כניסה</Link>
         </p>
       </div>
-    </div>
+    </AuthShell>
   );
 }

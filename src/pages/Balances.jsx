@@ -83,7 +83,7 @@ export default function BalancesPage({ user, orgId }) {
       />
 
       {data.isLoading ? (
-        <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[14px]" />)}</div>
+        <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[18px]" />)}</div>
       ) : (
         <>
           <div className="stat-row mb-4">

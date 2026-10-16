@@ -63,7 +63,7 @@ export default function MonthlyReportPage({ user }) {
         )}
       />
       {data.isLoading ? (
-        <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-32 rounded-[14px]" />)}</div>
+        <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-32 rounded-[18px]" />)}</div>
       ) : (
         <MonthlyReportBody
           report={report}

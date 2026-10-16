@@ -24,8 +24,8 @@ export default function BookingDetail({ orgId }) {
         <SkelLine className="h-6 w-24" />
         <SkelLine className="mt-4 h-[260px] rounded-[20px]" />
         <div className="mt-4 grid gap-4 md:grid-cols-[1.3fr_1fr]">
-          <SkelLine className="h-[220px] rounded-[14px]" />
-          <SkelLine className="h-[220px] rounded-[14px]" />
+          <SkelLine className="h-[220px] rounded-[18px]" />
+          <SkelLine className="h-[220px] rounded-[18px]" />
         </div>
       </div>
     );

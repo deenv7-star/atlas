@@ -88,7 +88,7 @@ export default function DynamicPricing() {
         <DemoDataBanner message="נתוני דוגמה, המחירים וההמלצות המוצגים הם לצורך המחשה. חבר את הנכסים שלך כדי לראות המלצות אמיתיות." />
 
         {/* Revenue Impact Card */}
-        <div className="mb-6 rounded-[14px] bg-navy-900 p-5 text-white md:p-6">
+        <div className="mb-6 rounded-[18px] bg-navy-900 p-5 text-white md:p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] bg-white/10 text-[#F8B040]">
               <DollarSign className="w-6 h-6" />

@@ -128,7 +128,7 @@ export default function AutomationsPage({ user, orgId }) {
     return (
       <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" aria-busy="true" aria-label="טוען">
         <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
-        <div className="mt-6 grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-24 rounded-[14px]" />)}</div>
+        <div className="mt-6 grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-24 rounded-[18px]" />)}</div>
       </div>
     );
   }

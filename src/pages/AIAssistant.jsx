@@ -177,19 +177,19 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
         
         {/* Quick Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-[14px] border border-line bg-white p-3 shadow-card">
+          <div className="rounded-[18px] border border-line bg-white p-3 shadow-card">
             <div className="mb-1 text-[13px] font-medium text-ink-600">הזמנות החודש</div>
             <div className="tabular text-[22px] font-extrabold text-navy-900">{bookings.filter(b => (b.check_in_date || b.checkin_date)?.startsWith(new Date().toISOString().substring(0, 7))).length}</div>
           </div>
-          <div className="rounded-[14px] border border-line bg-white p-3 shadow-card">
+          <div className="rounded-[18px] border border-line bg-white p-3 shadow-card">
             <div className="mb-1 text-[13px] font-medium text-ink-600">לידים פעילים</div>
             <div className="tabular text-[22px] font-extrabold text-navy-900">{leads.filter(l => ['NEW', 'CONTACTED', 'OFFER_SENT'].includes(l.status)).length}</div>
           </div>
-          <div className="rounded-[14px] border border-line bg-white p-3 shadow-card">
+          <div className="rounded-[18px] border border-line bg-white p-3 shadow-card">
             <div className="mb-1 text-[13px] font-medium text-ink-600">תשלומים ממתינים</div>
             <div className="tabular text-[22px] font-extrabold text-navy-900">{payments.filter(p => p.status === 'DUE').length}</div>
           </div>
-          <div className="rounded-[14px] border border-line bg-white p-3 shadow-card">
+          <div className="rounded-[18px] border border-line bg-white p-3 shadow-card">
             <div className="mb-1 text-[13px] font-medium text-ink-600">משימות פתוחות</div>
             <div className="tabular text-[22px] font-extrabold text-navy-900">{cleaningTasks.filter(t => t.status === 'OPEN').length}</div>
           </div>

@@ -1,19 +1,18 @@
-import { Wordmark } from '@/components/app/shell/shared';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { base44 } from '@/api/base44Client';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { motion } from 'framer-motion';
-import { LogIn, Eye, EyeOff, Shield } from 'lucide-react';
+import { Eye, EyeOff, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import AuthShell from '@/components/app/AuthShell';
 import { validateEmail } from '@/lib/validation';
 import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
 import { getSafeReturnUrl } from '@/config/routes';
 import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
-import { ShimmerButton } from '@/components/ui/AnimatedButton';
 
 export default function Login() {
   const { loginUser, isLoadingAuth } = useAuth();
@@ -108,175 +107,75 @@ export default function Login() {
     );
   }
 
+  const field = (bad) => cn(
+    'h-12 rounded-[14px] border bg-[#F7F8FB] text-base text-navy-900 placeholder:text-ink-400 focus:bg-white',
+    bad ? 'border-danger-500' : 'border-line',
+  );
+
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{ background: '#F7F8FB', fontFamily: "'Heebo', sans-serif" }}
-      dir="rtl"
-    >
-      <motion.div
-        className="w-full max-w-[440px]"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {/* Logo & heading */}
-        <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.4 }}
-        >
-          <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
-          <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: '#1B2656' }}>
-            ברוכים השבים
-          </h1>
-          <p className="text-sm mt-2" style={{ color: '#6B7280' }}>
-            הזן את הפרטים שלך כדי להתחבר
-          </p>
-        </motion.div>
+    <AuthShell>
+      <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[36px]">ברוכים השבים</h1>
+      <p className="mt-2 text-[16px] text-ink-600">נכנסים, ורואים מה קורה היום בצימר.</p>
 
-        {/* Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.18, duration: 0.45 }}
-          style={{
-            background: '#fff',
-            border: '1px solid #E5E7EB',
-            borderRadius: '24px',
-            padding: '32px',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04)',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <form onSubmit={handleSubmit} className="space-y-5" style={{ position: 'relative', zIndex: 1 }}>
-            {/* Email */}
-            <div className="space-y-1.5">
-              <Label htmlFor="email" style={{ color: '#374151', fontSize: '13px', fontWeight: 500 }}>
-                כתובת אימייל
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="הזן כתובת מייל"
-                value={form.email}
-                onChange={set('email')}
-                onBlur={handleBlur('email')}
-                className={cn("h-12 rounded-xl text-base", touched.email && errors.email && "border-red-500")}
-                style={{
-                  background: '#F9FAFB',
-                  border: touched.email && errors.email ? '1px solid rgba(239,68,68,0.6)' : '1px solid #E5E7EB',
-                  color: '#1B2656',
-                }}
-                autoComplete="email"
-                autoFocus={!prefilledEmail}
-                maxLength={255}
-              />
-              {touched.email && errors.email && (
-                <p className="text-sm" style={{ color: '#ef4444' }}>{errors.email}</p>
-              )}
-            </div>
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">אימייל</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@example.com"
+            value={form.email}
+            onChange={set('email')}
+            onBlur={handleBlur('email')}
+            className={field(touched.email && errors.email)}
+            dir="ltr"
+            autoComplete="email"
+            autoFocus={!prefilledEmail}
+            maxLength={255}
+          />
+          {touched.email && errors.email && <p className="text-[14px] text-danger-600">{errors.email}</p>}
+        </div>
 
-            {/* Password */}
-            <div className="space-y-1.5">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="password" style={{ color: '#374151', fontSize: '13px', fontWeight: 500 }}>
-                  סיסמה
-                </Label>
-                <Link
-                  to="/reset-password"
-                  className="text-sm font-medium transition-colors hover:underline"
-                  style={{ color: '#2A1AC9' }}
-                >
-                  שכחתי סיסמה
-                </Link>
-              </div>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={set('password')}
-                  className={cn("h-12 rounded-xl text-base pl-10", touched.password && errors.password && "border-red-500")}
-                  style={{
-                    background: '#F9FAFB',
-                    border: touched.password && errors.password ? '1px solid rgba(239,68,68,0.6)' : '1px solid #E5E7EB',
-                    color: '#1B2656',
-                  }}
-                  autoComplete="current-password"
-                  maxLength={128}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(v => !v)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 transition-colors"
-                  style={{ color: '#9CA3AF' }}
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {touched.password && errors.password && (
-                <p className="text-sm" style={{ color: '#ef4444' }}>{errors.password}</p>
-              )}
-            </div>
-
-            {/* Submit */}
-            <ShimmerButton
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="w-full h-12 flex items-center justify-center gap-2 text-base"
-              style={{
-                background: isLoading
-                  ? '#E5E7EB'
-                  : '#3E2BF1',
-                color: isLoading ? '#9CA3AF' : '#fff',
-                boxShadow: isLoading ? 'none' : '0 4px 16px rgba(62, 43, 241,0.25)',
-              }}
-            >
-              {isLoading
-                ? <div className="w-5 h-5 border-2 border-gray-400 border-t-gray-600 rounded-full animate-spin" />
-                : <LogIn className="w-5 h-5" />
-              }
-              {isLoading ? 'מתחבר...' : 'כניסה'}
-            </ShimmerButton>
-          </form>
-
-          <div className="flex items-center justify-center gap-1.5 mt-6" style={{ color: '#9CA3AF' }}>
-            <Shield className="w-3.5 h-3.5" />
-            <p className="text-xs">המידע שלך מאובטח ומוגן בהצפנה מתקדמת</p>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password" className="text-[14px] font-medium text-navy-900">סיסמה</Label>
+            <Link to="/reset-password" className="text-[14px] font-medium text-brand-600 hover:underline">שכחתי סיסמה</Link>
           </div>
-        </motion.div>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={form.password}
+              onChange={set('password')}
+              className={cn(field(touched.password && errors.password), 'pl-12')}
+              autoComplete="current-password"
+              maxLength={128}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}
+              className="press absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-ink-400 hover:text-navy-900"
+            >
+              {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+            </button>
+          </div>
+          {touched.password && errors.password && <p className="text-[14px] text-danger-600">{errors.password}</p>}
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.4 }}
-        >
-          <p className="text-center text-sm mt-6" style={{ color: '#6B7280' }}>
-            אין לך חשבון?{' '}
-            <Link
-              to="/register"
-              className="font-semibold transition-colors hover:underline"
-              style={{ color: '#2A1AC9' }}
-            >
-              צור חשבון חינמי
-            </Link>
-          </p>
-          <p className="text-center text-xs mt-3">
-            <Link
-              to="/"
-              className="transition-colors hover:underline"
-              style={{ color: '#9CA3AF' }}
-            >
-              חזרה לדף הבית
-            </Link>
-          </p>
-        </motion.div>
-      </motion.div>
-    </div>
+        <Button type="submit" size="lg" disabled={isLoading} className="h-12 w-full text-[16px] font-bold">
+          {isLoading ? 'מתחברים…' : 'כניסה'}
+        </Button>
+      </form>
+
+      <p className="mt-8 text-center text-[15px] text-ink-600">
+        עוד אין לכם חשבון?{' '}
+        <Link to="/register" className="font-bold text-brand-600 hover:underline">פתיחת חשבון</Link>
+      </p>
+      <p className="mt-6 flex items-center justify-center gap-1.5 text-[13px] text-ink-400">
+        <Shield className="h-3.5 w-3.5" />החיבור מוצפן ומאובטח
+      </p>
+    </AuthShell>
   );
 }
