@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { isUuid } from '@/lib/entityPayloads';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -110,9 +111,14 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
 
   const handleSend = () => {
     if (!replyText.trim() || !currentThread) return;
+    const lastMsg = currentThread.messages?.[currentThread.messages.length - 1] || {};
     sendMutation.mutate({
       guest_name: currentThread.guest_name,
-      booking_id: currentThread.key,
+      // thread key falls back to guest name when there is no booking — only send real ids
+      booking_id: isUuid(currentThread.key) ? currentThread.key : (lastMsg.booking_id || null),
+      lead_id: lastMsg.lead_id || null,
+      property_id: lastMsg.property_id || null,
+      recipient: lastMsg.recipient || null,
       body: replyText.trim(),
       channel: currentThread.channel,
       direction: 'outbound',

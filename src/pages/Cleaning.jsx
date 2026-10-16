@@ -94,8 +94,15 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
   };
 
   const handleMaintenanceSubmit = async (data) => {
+    const { assigned_to_name, ...rest } = data;
+    const assignee = (assigned_to_name || '').trim() || null;
     await createMutation.mutateAsync({
-      ...data,
+      ...rest,
+      // cleaning_tasks has assigned_to / cleaner_name, not assigned_to_name
+      assigned_to: assignee,
+      cleaner_name: assignee,
+      scheduled_date: rest.scheduled_for ? String(rest.scheduled_for).slice(0, 10) : null,
+      scheduled_for: rest.scheduled_for ? new Date(rest.scheduled_for).toISOString() : null,
       org_id: orgId,
       property_id: selectedPropertyId,
       status: 'OPEN',
@@ -159,10 +166,10 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             </Badge>
           </div>
 
-          {task.assigned_to_name && (
+          {(task.assigned_to_name || task.cleaner_name || task.assigned_to) && (
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
               <User className="h-4 w-4" />
-              <span>{task.assigned_to_name}</span>
+              <span>{task.assigned_to_name || task.cleaner_name || task.assigned_to}</span>
             </div>
           )}
 
@@ -340,10 +347,10 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                       {statusLabels[selectedTask.status]}
                     </Badge>
                   </div>
-                  {selectedTask.assigned_to_name && (
+                  {(selectedTask.assigned_to_name || selectedTask.cleaner_name || selectedTask.assigned_to) && (
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-gray-400" />
-                      <span>{selectedTask.assigned_to_name}</span>
+                      <span>{selectedTask.assigned_to_name || selectedTask.cleaner_name || selectedTask.assigned_to}</span>
                     </div>
                   )}
                 </div>

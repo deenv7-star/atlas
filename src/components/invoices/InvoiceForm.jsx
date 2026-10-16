@@ -13,6 +13,9 @@ import {
 import { Plus, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 
+/** Radix Select forbids empty-string item values (throws and crashes the page). */
+const NO_BOOKING = '__none__';
+
 export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     org_id: orgId,
@@ -122,12 +125,15 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label>בחר הזמנה (אופציונלי)</Label>
-          <Select value={formData.booking_id || ''} onValueChange={handleBookingSelect}>
+          <Select
+            value={formData.booking_id || NO_BOOKING}
+            onValueChange={(v) => handleBookingSelect(v === NO_BOOKING ? '' : v)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="בחר הזמנה" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">ללא הזמנה</SelectItem>
+              <SelectItem value={NO_BOOKING}>ללא הזמנה</SelectItem>
               {bookings.map(booking => (
                 <SelectItem key={booking.id} value={booking.id}>
                   {booking.guest_name} - {format(new Date(booking.check_in_date), 'dd/MM/yyyy')}

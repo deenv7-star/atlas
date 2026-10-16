@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { integrationToPayload } from '@/lib/entityPayloads';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -176,7 +177,7 @@ export default function IntegrationsPage() {
 
   const createMessagingMutation = useMutation({
     mutationFn: (data) => base44.entities.MessagingIntegration.create({
-      ...data,
+      ...integrationToPayload(data),
       org_id: orgId
     }),
     onSuccess: () => {
@@ -210,7 +211,7 @@ export default function IntegrationsPage() {
 
   const createPaymentMutation = useMutation({
     mutationFn: (data) => base44.entities.PaymentGateway.create({
-      ...data,
+      ...integrationToPayload(data),
       org_id: orgId
     }),
     onSuccess: () => {
@@ -243,7 +244,7 @@ export default function IntegrationsPage() {
   };
 
   const createAccountingMutation = useMutation({
-    mutationFn: (data) => base44.entities.AccountingIntegration.create({ ...data, org_id: orgId }),
+    mutationFn: (data) => base44.entities.AccountingIntegration.create({ ...integrationToPayload(data), org_id: orgId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['accounting-integrations'] });
       setShowAccountingDialog(false);
@@ -272,7 +273,7 @@ export default function IntegrationsPage() {
   };
 
   const createPMSMutation = useMutation({
-    mutationFn: (data) => base44.entities.PMSIntegration.create({ ...data, org_id: orgId }),
+    mutationFn: (data) => base44.entities.PMSIntegration.create({ ...integrationToPayload(data), org_id: orgId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pms-integrations'] });
       setShowPMSDialog(false);

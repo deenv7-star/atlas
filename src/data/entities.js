@@ -74,9 +74,9 @@ export function useUpdateBooking() {
       const previousBookings = snapshotBookingQueries(qc);
       patchBookingInAllBookingQueries(qc, id, data);
       setOptimisticEntityPhase(id, 'pending');
-      const rollbackToastTimer = window.setTimeout(() => {
-        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
-      }, 200);
+      // Failure toast is raised in onError only. (A 200ms timer here fired on every
+      // request slower than 200ms, showing "operation failed" after successful saves.)
+      const rollbackToastTimer = null;
       return { previousBookings, rollbackToastTimer, bookingId: id };
     },
     onError: (err, variables, context) => {
@@ -120,9 +120,9 @@ export function useDeleteBooking() {
       const previousBookings = snapshotBookingQueries(qc);
       removeBookingFromAllBookingQueries(qc, id);
       setOptimisticEntityPhase(id, 'pending');
-      const rollbackToastTimer = window.setTimeout(() => {
-        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
-      }, 200);
+      // Failure toast is raised in onError only. (A 200ms timer here fired on every
+      // request slower than 200ms, showing "operation failed" after successful saves.)
+      const rollbackToastTimer = null;
       return { previousBookings, rollbackToastTimer, bookingId: id };
     },
     onError: (err, variables, context) => {
@@ -216,9 +216,9 @@ export function useUpdateLead() {
       patchLeadInListQueries(qc, id, data);
       patchLeadDetail(qc, id, data);
       setOptimisticEntityPhase(id, 'pending');
-      const rollbackToastTimer = window.setTimeout(() => {
-        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
-      }, 200);
+      // Failure toast is raised in onError only. (A 200ms timer here fired on every
+      // request slower than 200ms, showing "operation failed" after successful saves.)
+      const rollbackToastTimer = null;
       return { previousLeads, rollbackToastTimer, leadId: id };
     },
     onError: (err, variables, context) => {
@@ -369,9 +369,9 @@ export function useUpdateCleaningTask() {
       const previous = snapshotCleaningTaskQueries(qc);
       patchCleaningTaskEverywhere(qc, id, data);
       setOptimisticEntityPhase(id, 'pending');
-      const rollbackToastTimer = window.setTimeout(() => {
-        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
-      }, 200);
+      // Failure toast is raised in onError only. (A 200ms timer here fired on every
+      // request slower than 200ms, showing "operation failed" after successful saves.)
+      const rollbackToastTimer = null;
       return { previous, rollbackToastTimer, taskId: id };
     },
     onError: (err, variables, context) => {

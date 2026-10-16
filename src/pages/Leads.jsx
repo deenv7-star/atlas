@@ -17,6 +17,7 @@ import { GuestsTable } from '@/components/tables/GuestsTable';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { GuestForm } from '@/components/forms/GuestForm';
 import { emptyGuestFormValues } from '@/components/forms/atlasFormSchemas';
+import { leadFormToPayload } from '@/lib/entityPayloads';
 import { useGuestsUrlState } from '@/hooks/url-state/useGuestsUrlState';
 import { sortGuestLeads } from '@/hooks/url-state/leadTableSort';
 import { ShareViewButton } from '@/components/ui/ShareViewButton';
@@ -163,7 +164,8 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
     setOpenGuestId(lead.id);
   };
 
-  const handleGuestSubmit = async (data) => {
+  const handleGuestSubmit = async (formData) => {
+    const data = leadFormToPayload(formData);
     if (editingLead) {
       await updateMutation.mutateAsync({ id: editingLead.id, data });
       toast({ title: 'הליד עודכן' });

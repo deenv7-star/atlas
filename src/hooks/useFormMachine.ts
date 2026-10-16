@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent, type ChangeEvent } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState, type FocusEvent, type ChangeEvent } from 'react';
 import {
   useForm,
   type DefaultValues,
@@ -9,11 +9,26 @@ import {
   type SubmitHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useBlocker } from 'react-router-dom';
+import { useBlocker, UNSAFE_DataRouterContext, type Blocker, type BlockerFunction } from 'react-router-dom';
 import type { z } from 'zod';
 import type { FormState } from '@/hooks/formMachineTypes';
 
 export type { FormState } from '@/hooks/formMachineTypes';
+
+const UNBLOCKED: Blocker = { state: 'unblocked', proceed: undefined, reset: undefined, location: undefined };
+
+/**
+ * `useBlocker` throws ("must be used within a data router") under the app's
+ * `<BrowserRouter>`, which crashed every form using this hook. Only call it when a
+ * data router is present; that never changes during a component's lifetime, so the
+ * conditional hook call is stable. Without a data router, the beforeunload guard
+ * below still protects against tab close / reload.
+ */
+function useOptionalBlocker(shouldBlock: BlockerFunction): Blocker {
+  const dataRouter = useContext(UNSAFE_DataRouterContext);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return dataRouter ? useBlocker(shouldBlock) : UNBLOCKED;
+}
 
 export type UseFormMachineOptions<TFieldValues extends FieldValues> = {
   schema: z.ZodType<TFieldValues, z.ZodTypeDef, unknown>;
@@ -133,7 +148,7 @@ export function useFormMachine<TFieldValues extends FieldValues>({
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
   }, []);
 
-  const blocker = useBlocker(
+  const blocker = useOptionalBlocker(
     useCallback(
       ({ currentLocation, nextLocation }) => {
         if (!enableRouteGuard) return false;
