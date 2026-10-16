@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {
   CommandDialog,
   CommandEmpty,
@@ -229,6 +230,9 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       )}
     >
+      {/* cmdk's dialog renders no Radix Title/Description; Radix logs a console error without them */}
+      <DialogPrimitive.Title className="sr-only">פלטת פקודות</DialogPrimitive.Title>
+      <DialogPrimitive.Description className="sr-only">חפש, נווט ובצע פעולות מהירות</DialogPrimitive.Description>
       <CommandPaletteAnnouncer />
       <div dir="rtl" className="flex flex-col">
         <div className="border-b border-gray-100/90 px-3 py-2">

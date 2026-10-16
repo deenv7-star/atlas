@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { nightsBetween } from '@/lib/entityPayloads';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useLead, useUpdateLead } from '@/data/entities';
@@ -78,7 +79,10 @@ export default function LeadDetail({ orgId }) {
       guest_email: leadRow.email,
       check_in_date: leadRow.check_in_date,
       check_out_date: leadRow.check_out_date,
+      nights: leadRow.nights ?? nightsBetween(leadRow.check_in_date, leadRow.check_out_date),
       adults: leadRow.adults,
+      children: leadRow.children,
+      source: leadRow.source || null,
       notes: leadRow.notes,
       status: 'PENDING',
     });

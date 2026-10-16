@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
 import { BookingForm } from '@/components/forms/BookingForm';
 import { emptyBookingFormValues } from '@/components/forms/atlasFormSchemas';
+import { bookingFormToPayload } from '@/lib/entityPayloads';
 import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
@@ -92,7 +93,7 @@ function bookingEntityToFormValues(b) {
     status: b.status || 'PENDING',
     notes: b.notes || '',
     guest_count: (b.adults || 0) + (b.children || 0) || 2,
-    booking_source: b.booking_source || 'direct',
+    booking_source: b.source || b.booking_source || 'direct',
     payment_status: b.payment_status || 'pending',
   };
 }
@@ -208,7 +209,7 @@ export default function BookingsPage({ selectedPropertyId }) {
   };
 
   const handleBookingSubmit = async (data) => {
-    const payload = { ...data };
+    const payload = bookingFormToPayload(data);
     if (editingBooking) {
       await updateMutation.mutateAsync({ id: editingBooking.id, data: payload });
       success('ההזמנה עודכנה');

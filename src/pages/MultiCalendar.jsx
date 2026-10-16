@@ -44,7 +44,7 @@ function transformBookings(rawBookings, properties) {
         id: b.id,
         propertyId: b.property_id,
         guest: b.guest_name || '',
-        channel: mapSourceToChannel(b.booking_source),
+        channel: mapSourceToChannel(b.source || b.booking_source),
         startDate,
         endDate,
         nights,

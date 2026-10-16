@@ -262,6 +262,30 @@ const DEFAULT_LIST_LIMIT_BY_TABLE = {
   users: 5000,
 };
 
+/** Tables without an org_id column (or where org_id must not be auto-filled). */
+const ORG_LESS_TABLES = new Set(['organizations', 'profiles', 'audit_log']);
+
+/** Columns that are uuid / date / timestamptz / numeric across the schema. */
+const NUMERIC_COLUMNS = new Set([
+  'total_price', 'amount', 'budget', 'base_price', 'tax', 'tax_amount', 'total_amount',
+  'subtotal', 'tax_rate', 'rating', 'nights', 'adults', 'children', 'bedrooms',
+  'bathrooms', 'max_guests', 'floor', 'onboarding_step',
+]);
+function isNonTextColumn(key) {
+  return /(_id|_date|_at|_for)$/.test(key) || NUMERIC_COLUMNS.has(key);
+}
+
+let _orgIdCache = { userId: null, orgId: null };
+async function getCurrentOrgId() {
+  const { data: { session } = {} } = await supabase.auth.getSession();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+  if (_orgIdCache.userId === userId && _orgIdCache.orgId) return _orgIdCache.orgId;
+  const { data } = await supabase.from('profiles').select('organization_id').eq('id', userId).maybeSingle();
+  _orgIdCache = { userId, orgId: data?.organization_id || null };
+  return _orgIdCache.orgId;
+}
+
 // =============================================================================
 // Supabase EntityCollection
 // =============================================================================
@@ -321,6 +345,12 @@ class SupabaseEntityCollection {
   async create(payload) {
     // Strip generated / read-only columns the UI might pass through
     const clean = this._cleanPayload(payload);
+    // org_id is NOT NULL with no default, and RLS only accepts the caller's org.
+    // Many forms don't send it, so fill it from the signed-in user's profile.
+    if (!ORG_LESS_TABLES.has(this._table) && !clean.org_id) {
+      const orgId = await getCurrentOrgId();
+      if (orgId) clean.org_id = orgId;
+    }
     const { data, error } = await supabase
       .from(this._table)
       .insert(clean)
@@ -373,10 +403,14 @@ class SupabaseEntityCollection {
   }
 
   _cleanPayload(data) {
-    // Remove generated columns and undefined values
+    // Remove generated columns and undefined values. Empty strings from form
+    // inputs are invalid for uuid / date / timestamp / numeric columns in
+    // Postgres ("invalid input syntax"), so send them as null instead.
     const GENERATED = new Set(['created_date', 'updated_date', 'created_at', 'updated_at', 'id']);
     return Object.fromEntries(
-      Object.entries(data).filter(([k, v]) => !GENERATED.has(k) && v !== undefined)
+      Object.entries(data || {})
+        .filter(([k, v]) => !GENERATED.has(k) && v !== undefined)
+        .map(([k, v]) => [k, v === '' && isNonTextColumn(k) ? null : v])
     );
   }
 

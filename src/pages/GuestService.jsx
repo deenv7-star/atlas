@@ -43,9 +43,10 @@ export default function GuestService() {
     e.preventDefault();
     submitMutation.mutate({
       ...formData,
-      booking_id: bookingId,
-      property_id: propertyId,
-      org_id: 'demo_org' // This would come from the booking/property lookup
+      booking_id: bookingId || null,
+      property_id: propertyId || null,
+      // org_id is filled from the signed-in user's profile by the data client;
+      // the old hardcoded 'demo_org' was not a uuid and always failed.
     });
   };
 

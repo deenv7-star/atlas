@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { paymentFormToPayload } from '@/lib/entityPayloads';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -144,10 +145,10 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       throw new Error('חסר ארגון — השלם הגדרה');
     }
     if (editingPayment) {
-      await updateMutation.mutateAsync({ id: editingPayment.id, data: { ...data } });
+      await updateMutation.mutateAsync({ id: editingPayment.id, data: paymentFormToPayload(data) });
       toast({ title: 'התשלום עודכן' });
     } else {
-      await createMutation.mutateAsync({ ...data, org_id: orgId });
+      await createMutation.mutateAsync({ ...paymentFormToPayload(data), org_id: orgId });
       toast({ title: 'התשלום נשמר' });
     }
   };
