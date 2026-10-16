@@ -141,12 +141,12 @@ export function Wordmark({ size = 22 }) {
 }
 
 export function StatTile({ label, value, hint, tone }) {
-  const color = tone === 'danger' ? 'var(--status-danger)' : tone === 'brand' ? 'var(--brand-700)' : 'var(--ink-900)';
+  const color = tone === 'danger' ? 'var(--status-danger)' : 'var(--ink-900)';
   return (
-    <div className="ab-card px-4 py-3.5 min-w-0">
-      <p className="ab-meta truncate">{label}</p>
-      <p className="ab-num mt-1 text-[22px] font-extrabold leading-tight truncate" style={{ color }}>{value}</p>
-      {hint ? <p className="ab-faint mt-0.5 truncate">{hint}</p> : null}
+    <div className="min-w-0 rounded-[16px] bg-white px-5 py-4" style={{ border: '1px solid var(--line, #E8EAF0)' }}>
+      <p className="text-[14px] text-[color:var(--ink-600)] truncate">{label}</p>
+      <p className="ab-num mt-1.5 whitespace-nowrap text-[20px] font-semibold leading-tight tracking-[-0.01em] sm:text-[24px]" style={{ color }}>{value}</p>
+      {hint ? <p className="ab-faint mt-1 truncate">{hint}</p> : null}
     </div>
   );
 }

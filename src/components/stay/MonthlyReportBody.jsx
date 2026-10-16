@@ -47,13 +47,12 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
   const maxChannel = Math.max(1, ...r.channels.map((c) => c.income));
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="stat-row">
         <StatTile label="הכנסות" value={formatMoney(r.income)} hint={`${r.lines.length} הזמנות`} />
         <StatTile label="הוצאות" value={formatMoney(r.expenseTotal)} hint={`${r.expenseRows.length} רשומות`} />
         <StatTile label="נטו" value={formatMoney(r.net)} tone={r.net < 0 ? 'danger' : 'brand'} />
-        <StatTile label="תפוסה" value={pct(r.occupancy)} hint={`${r.nights} מתוך ${r.capacity} לילות`} />
-        <StatTile label="מחיר ממוצע ללילה" value={formatMoney(r.adr)} hint="ADR" />
       </div>
+      <p className="ab-meta px-1">תפוסה {pct(r.occupancy)} · {r.nights} מתוך {r.capacity} לילות · ממוצע ללילה {formatMoney(r.adr)}</p>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Block title="הכנסות לפי ערוץ" note="הכנסה משויכת לחודש לפי הלילות שבו. שהייה שחוצה חודשים מתחלקת באופן יחסי.">

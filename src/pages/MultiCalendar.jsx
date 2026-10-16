@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { addDays, subDays, startOfDay } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { CalendarRange, ChevronLeft, ChevronRight, Home, Plus, RefreshCw } from 'lucide-react';
+import { CalendarRange, ChevronLeft, ChevronRight, Plus, RefreshCw } from 'lucide-react';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { SegmentedControl, EmptyState as DsEmptyState, fmtMoney } from '@/components/ds';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,6 @@ import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
-import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#EF5B5B' },
@@ -228,11 +227,10 @@ export default function MultiCalendar({ selectedPropertyId }) {
       <header className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-[28px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[32px]">לוח שנה</h1>
-          <p className="mt-1.5 text-[15px] text-ink-600">כל היחידות וכל הערוצים בתצוגה אחת. נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
+          <p className="mt-1.5 text-[15px] text-ink-600">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <ShareViewButton className="h-11 rounded-[10px]" />
-          <Button variant="outline" onClick={handleSync}>
+          <Button variant="ghost" onClick={handleSync}>
             <RefreshCw className={cn(syncing && 'animate-spin')} />
             סנכרון ערוצים
           </Button>
@@ -273,17 +271,6 @@ export default function MultiCalendar({ selectedPropertyId }) {
               { value: 'day', label: 'שבוע' },
               { value: 'week', label: 'שבועיים' },
               { value: 'month', label: 'חודש' },
-            ]}
-          />
-          <SegmentedControl
-            ariaLabel="ערוץ"
-            value={channelFilter}
-            onChange={setChannelFilter}
-            options={[
-              { value: 'all', label: 'כל הערוצים' },
-              { value: 'booking', label: <span className="inline-flex items-center gap-1.5"><ChannelDot channel="booking" size={8} />Booking</span> },
-              { value: 'airbnb', label: <span className="inline-flex items-center gap-1.5"><ChannelDot channel="airbnb" size={8} />Airbnb</span> },
-              { value: 'direct', label: <span className="inline-flex items-center gap-1.5"><ChannelDot channel="direct" size={8} />ישיר</span> },
             ]}
           />
         </div>
@@ -405,8 +392,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
       )}
 
       {properties.length ? (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <section className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card lg:col-span-2">
+        <div>
+          <section className="overflow-hidden rounded-[14px] border border-line bg-white">
             <div className="flex items-center justify-between px-5 pt-4">
               <div>
                 <h2 className="text-[17px] font-bold text-navy-900">לילות פנויים בין הזמנות</h2>
@@ -421,7 +408,6 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   const prop = properties.find((p) => p.name === gap.property);
                   return (
                     <li key={gap.id} className="flex min-h-[60px] items-center gap-3 rounded-[10px] px-3 hover:bg-neutral-50">
-                      <span className="ds-icon-square bg-warning-50 text-warning-600"><Home className="h-5 w-5" strokeWidth={1.75} /></span>
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-semibold text-navy-900">{gap.property}</div>
                         <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {gap.nights} לילות</div>
@@ -439,24 +425,6 @@ export default function MultiCalendar({ selectedPropertyId }) {
             )}
           </section>
 
-          <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
-            <h2 className="text-[17px] font-bold text-navy-900">התפלגות ערוצים</h2>
-            <p className="text-[13px] text-ink-400">{bookings.filter((b) => b.channel !== 'blocked').length} הזמנות</p>
-            <div className="mt-4 flex h-3 overflow-hidden rounded-full bg-neutral-100">
-              {channelMix.map(({ key, pct }) => (
-                <span key={key} style={{ width: `${pct}%`, background: CHANNELS[key].color }} />
-              ))}
-            </div>
-            <ul className="mt-4 space-y-3">
-              {channelMix.map(({ key, pct }) => (
-                <li key={key} className="flex items-center gap-2.5 text-[15px]">
-                  <ChannelDot channel={key} size={10} />
-                  <span className="flex-1 text-navy-900">{CHANNELS[key].label}</span>
-                  <span className="font-bold tabular text-navy-900">{pct}%</span>
-                </li>
-              ))}
-            </ul>
-          </section>
         </div>
       ) : null}
     </div>

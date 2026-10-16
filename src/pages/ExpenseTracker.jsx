@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Receipt, Plus, TrendingDown, Building2, Calendar, DollarSign, Wallet, Upload } from 'lucide-react';
+import { Receipt, Plus, TrendingDown, Calendar, DollarSign, Wallet, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const CATEGORIES = [
@@ -86,7 +86,7 @@ export default function ExpenseTracker({ orgId }) {
         actions={<Button onClick={() => setDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />הוצאה חדשה</Button>}
       />
 
-      <div className="grid grid-cols-3 gap-3 lg:grid-cols-3">
+      <div className="stat-row">
         <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} tone="danger" />
         <StatTile label="החודש" value={fmtMoney(thisMonthTotal)} hint={`${thisMonth.length} הוצאות החודש`} icon={Calendar} />
         <StatTile label="רווח נקי משוער" value={fmtMoney(netProfitEstimate)} hint="הכנסות פחות הוצאות" icon={Wallet} tone="success" />

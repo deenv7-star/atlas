@@ -27,7 +27,6 @@ import { bookingFormToPayload } from '@/lib/entityPayloads';
 import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
-import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -281,7 +280,6 @@ export default function BookingsPage({ selectedPropertyId }) {
         subtitle={`${counts.total} הזמנות · ${counts.confirmed} פעילות · ${counts.pending} ממתינות לאישור`}
         actions={
           <>
-            <ShareViewButton className="hidden h-11 rounded-[10px] md:inline-flex" />
             <Button onClick={openNew} className="hidden md:inline-flex">
               <Plus strokeWidth={2.25} />
               הזמנה חדשה
@@ -338,12 +336,12 @@ export default function BookingsPage({ selectedPropertyId }) {
         ) : (
           <ErrorBoundary section="bookings-table" variant="inline" resetKey={`${effectivePropertyId ?? 'all'}|${tab}|${search}|${page}|${pageSize}`}>
             {/* Phones: cards. Desktop: the full table with bulk actions. */}
-            <ul className="divide-y divide-line md:hidden">
+            <ul className="divide-y divide-line">
               {isLoading ? (
                 <li className="p-4"><SkelRows rows={5} /></li>
               ) : paged.map((b) => (
                 <li key={b.id}>
-                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press flex min-h-[76px] items-center gap-3 px-4 py-3 active:bg-neutral-50">
+                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press flex min-h-[76px] items-center gap-4 px-5 py-3 hover:bg-neutral-50 active:bg-neutral-50">
                     <span className="flex w-12 shrink-0 flex-col items-center rounded-[10px] bg-neutral-100 py-1.5">
                       <span className="text-[12px] text-ink-600">{monthShort(b.check_in_date)}</span>
                       <span className="text-[18px] font-extrabold leading-tight tabular text-navy-900">{dayNum(b.check_in_date)}</span>
@@ -360,7 +358,7 @@ export default function BookingsPage({ selectedPropertyId }) {
                 </li>
               ))}
             </ul>
-            <div className="hidden md:block">
+            <div className="hidden">
               <BookingsTable
                 bookings={paged}
                 properties={properties}

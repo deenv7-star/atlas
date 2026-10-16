@@ -114,3 +114,11 @@ textarea.ab-input { padding: 10px 12px; min-height: 96px; line-height: 1.5; }
   .ab-no-print { display: none !important; }
   .ab-print-page { box-shadow: none !important; border: 0 !important; }
 }
+
+/* Quiet stat row: 3 tiles become 2+1 on narrow phones so money never gets cut. */
+.stat-row { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.stat-row > :nth-child(3):last-child { grid-column: 1 / -1; }
+@media (min-width: 640px) {
+  .stat-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .stat-row > :nth-child(3):last-child { grid-column: auto; }
+}

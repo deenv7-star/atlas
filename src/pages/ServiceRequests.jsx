@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PageHeader, StatTile } from '@/components/ds';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
-import { Inbox, Sparkles, AlertTriangle, CheckCircle2 as CheckDone } from 'lucide-react';
+import { Sparkles, AlertTriangle, CheckCircle2 as CheckDone } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -187,7 +187,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
             </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-3 md:grid-cols-3">
+          <div className="stat-row">
             <StatTile label="חדשות" value={stats.new} icon={Sparkles} />
             <StatTile label="דחופות" value={stats.urgent} icon={AlertTriangle} tone="danger" />
             <StatTile label="טופלו" value={stats.resolved} icon={CheckDone} tone="success" />

@@ -2,12 +2,13 @@
 import FinanceTabs from '@/components/app/FinanceTabs';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, Search, Wallet } from 'lucide-react';
+import { MessageCircle, MoreHorizontal, Search, Wallet } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useStayData } from '@/hooks/useStayData';
 import { balanceOf, checkOutOf, isActiveBooking } from '@/lib/stay/bookings';
 import { formatMoney, formatRangeHe, formatDayHe, todayISO, addDays } from '@/lib/stay/format';
 import {
-  StayPage, PageHeader, Btn, Pill, Segmented, StatTile, Money, ChannelTag,
+  StayPage, PageHeader, Pill, Segmented, StatTile, Money,
 } from '@/components/stay/StayUI';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { RecordPaymentSheet } from '@/components/stay/RecordPaymentSheet';
@@ -85,7 +86,7 @@ export default function BalancesPage({ user, orgId }) {
         <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[14px]" />)}</div>
       ) : (
         <>
-          <div className="grid grid-cols-3 lg:grid-cols-3 gap-3 mb-4">
+          <div className="stat-row mb-4">
             <StatTile label="יתרות פתוחות" value={formatMoney(totals.open)} hint={`${rows.filter((r) => r.balance.balance > 0).length} הזמנות`} />
             <StatTile label="באיחור" value={formatMoney(totals.overdue)} hint={`${totals.overdueCount} הזמנות`} tone={totals.overdueCount ? 'danger' : undefined} />
             <StatTile label="מקדמות שהתקבלו" value={formatMoney(totals.deposits)} hint="בהזמנות פעילות" />
@@ -107,39 +108,32 @@ export default function BalancesPage({ user, orgId }) {
                 <p className="ab-meta mt-1">יתרות מחושבות מהמחיר הכולל פחות התשלומים שנרשמו.</p>
               </div>
             ) : visible.map(({ booking, balance, unit }, i) => (
-              <div key={booking.id} className={`px-4 sm:px-5 py-4 ${i ? 'border-t' : ''}`} style={{ borderColor: 'var(--line)' }}>
-                <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+              <div key={booking.id} className={`px-5 py-3 ${i ? 'border-t' : ''}`} style={{ borderColor: 'var(--line)' }}>
+                <div className="flex min-h-[64px] items-center gap-4">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Link to={`/booking/${booking.id}`} className="font-bold hover:underline underline-offset-4">{booking.guest_name || 'אורח'}</Link>
-                      <StatusPill b={balance} />
-                    </div>
-                    <p className="ab-meta mt-0.5 flex flex-wrap gap-x-2">
-                      <span className="font-semibold" style={{ color: 'var(--ink-900)' }}>{unit}</span>
-                      <span aria-hidden>·</span>
-                      <span>{formatRangeHe(booking.check_in_date, checkOutOf(booking))}</span>
-                      <span aria-hidden>·</span>
-                      <ChannelTag booking={booking} />
+                    <Link to={`/booking/${booking.id}`} className="block truncate text-[16px] font-semibold hover:underline underline-offset-4" style={{ color: 'var(--ink-900)' }}>{booking.guest_name || 'אורח'}</Link>
+                    <p className="ab-meta mt-0.5 truncate">
+                      {unit} · {formatRangeHe(booking.check_in_date, checkOutOf(booking))}
+                      {balance.balance > 0 && balance.dueDate ? ` · עד ${formatDayHe(balance.dueDate, { weekday: false })}` : ''}
                     </p>
                   </div>
-                  <div className="grid grid-cols-3 gap-3 lg:w-[360px] text-[13px]">
-                    <div><p className="ab-faint">מקדמה</p><Money value={balance.deposit} className="font-bold text-[15px]" /></div>
-                    <div><p className="ab-faint">שולם</p><Money value={balance.paid} className="font-bold text-[15px]" /></div>
-                    <div><p className="ab-faint">יתרה</p><Money value={balance.balance} className="font-extrabold text-[15px]" style={{ color: balance.overdue ? 'var(--status-danger)' : 'var(--ink-900)' }} /></div>
-                    <div className="col-span-3">
-                      <ProgressBar paid={balance.paid} total={balance.total} />
-                      <p className="ab-faint mt-1.5">
-                        מחיר כולל {formatMoney(balance.total)}
-                        {balance.balance > 0 && balance.dueDate ? ` · לתשלום עד ${formatDayHe(balance.dueDate, { weekday: false })}` : ''}
-                      </p>
-                    </div>
+                  <div className="shrink-0 text-left">
+                    <Money value={balance.balance} className="block whitespace-nowrap text-[16px] font-semibold" style={{ color: balance.overdue ? 'var(--status-danger)' : 'var(--ink-900)' }} />
+                    <span className="ab-faint">{balance.balance > 0 ? (balance.overdue ? 'באיחור' : 'יתרה') : 'שולם'}</span>
                   </div>
                   {balance.balance > 0 ? (
-                    <div className="flex gap-2 lg:w-[250px] lg:justify-end">
-                      <Btn size="sm" variant="secondary" icon={MessageCircle} className="flex-1 lg:flex-none" onClick={() => setComposer({ booking, balance })}>תזכורת</Btn>
-                      <Btn size="sm" variant="primary" className="flex-1 lg:flex-none" onClick={() => setPayment({ booking, balance })}>תשלום התקבל</Btn>
-                    </div>
-                  ) : <div className="lg:w-[250px]" />}
+                    <DropdownMenu dir="rtl">
+                      <DropdownMenuTrigger asChild>
+                        <button type="button" aria-label="פעולות" className="press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] hover:bg-neutral-100" style={{ color: 'var(--ink-600)' }}>
+                          <MoreHorizontal className="h-5 w-5" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => setPayment({ booking, balance })}>תשלום התקבל</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => setComposer({ booking, balance })}><MessageCircle className="h-4 w-4" />תזכורת בוואטסאפ</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : <div className="w-11 shrink-0" />}
                 </div>
               </div>
             ))}

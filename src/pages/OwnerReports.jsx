@@ -102,7 +102,7 @@ export default function OwnerReports() {
       {/* ── Header ───────────────────────────────── */}
       <PageHeader title="דוחות בעלים" subtitle="דוח חודשי לכל בעל נכס: הכנסות, הוצאות וסכום לתשלום." className="!mb-0" />
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="stat-row">
         <StatTile label="שולם לבעלים השנה" value={formatCurrency(142300)} icon={CreditCard} tone="success" />
         <StatTile label="עמלות ניהול שנצברו" value={formatCurrency(25100)} icon={DollarSign} />
         <StatTile label="נכסים בניהול" value="8" icon={Building2} tone="amber" />

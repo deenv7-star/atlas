@@ -14,13 +14,11 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  Wallet, Plus, Search,
-  TrendingUp, Clock, AlertCircle, CheckCircle2, Download,
+  Wallet, Plus, Search, Clock, AlertCircle, CheckCircle2,
 } from 'lucide-react';
 import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
 import { PaymentForm } from '@/components/forms/PaymentForm';
 import { emptyPaymentFormValues } from '@/components/forms/atlasFormSchemas';
-import { ShareViewButton } from '@/components/ui/ShareViewButton';
 import { Page, PageHeader, StatTile, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
 
 const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer: 'העברה', card: 'כרטיס', credit_card: 'כרטיס אשראי', bit: 'ביט', paybox: 'פייבוקס' };
@@ -176,11 +174,6 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         subtitle="מקדמות, יתרות ותשלומים שהתקבלו."
         actions={
           <>
-            <ShareViewButton className="hidden h-11 rounded-[10px] md:inline-flex" />
-            <Button variant="outline" onClick={handleExport} className="hidden md:inline-flex" disabled={filtered.length === 0}>
-              <Download />
-              ייצוא לאקסל
-            </Button>
             <Button onClick={openNew} disabled={!orgId}>
               <Plus strokeWidth={2.25} />
               תשלום חדש
@@ -190,7 +183,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       />
 
       <ErrorBoundary section="financial-summary" variant="inline" resetKey={orgId ?? 'no-org'}>
-        <div className="mb-5 grid grid-cols-3 gap-3 lg:grid-cols-3">
+        <div className="stat-row mb-5">
           <StatTile label="התקבל" value={fmtMoney(stats.paid, { compact: true })} icon={CheckCircle2} tone="success" />
           <StatTile label="ממתין לגבייה" value={fmtMoney(stats.pending, { compact: true })} icon={Clock} tone="amber" />
           <StatTile label="באיחור" value={stats.overdue} icon={AlertCircle} tone="danger" />
@@ -223,12 +216,12 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
           />
         ) : (
           <>
-          <ul className="divide-y divide-line md:hidden">
+          <ul className="divide-y divide-line">
             {isLoading ? <li className="p-4"><SkelRows rows={5} /></li> : filtered.map((p) => {
               const st = PAYMENT_STATUSES.find((x) => x.value === p.status);
               return (
                 <li key={p.id}>
-                  <button type="button" onClick={() => openEdit(p)} className="press flex min-h-[72px] w-full items-center gap-3 px-4 py-3 text-start active:bg-neutral-50">
+                  <button type="button" onClick={() => openEdit(p)} className="press flex min-h-[72px] w-full items-center gap-4 px-5 py-3 hover:bg-neutral-50 text-start active:bg-neutral-50">
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[16px] font-semibold text-navy-900">{p.description || 'תשלום'}</span>
                       <span className="block truncate text-[13px] text-ink-400">
@@ -244,7 +237,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
               );
             })}
           </ul>
-          <div className="hidden md:block">
+          <div className="hidden">
           <FinancialTable
             payments={filtered}
             isLoading={isLoading}

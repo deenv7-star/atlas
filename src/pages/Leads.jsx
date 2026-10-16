@@ -1,5 +1,5 @@
 import { createPageUrl } from '@/utils';
-import { Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, Avatar, SkelRows, fmtShort } from '@/components/ds';
+import { Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtShort } from '@/components/ds';
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -20,7 +20,6 @@ import { emptyGuestFormValues } from '@/components/forms/atlasFormSchemas';
 import { leadFormToPayload } from '@/lib/entityPayloads';
 import { useGuestsUrlState } from '@/hooks/url-state/useGuestsUrlState';
 import { sortGuestLeads } from '@/hooks/url-state/leadTableSort';
-import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 const STATUS_OPTIONS = [
   { value: 'NEW',        label: 'חדש',          color: 'bg-blue-100 text-blue-700 border-blue-200' },
@@ -222,7 +221,6 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         subtitle={`${counts.new} חדשים · ${counts.contacted} בטיפול · ${counts.won} נסגרו להזמנה`}
         actions={
           <>
-            <ShareViewButton className="hidden h-11 rounded-[10px] md:inline-flex" />
             <Button onClick={openNew}>
               <Plus strokeWidth={2.25} />
               ליד חדש
@@ -254,13 +252,12 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card md:hidden">
+      <div className="overflow-hidden rounded-[14px] border border-line bg-white">
         {isLoading ? <div className="p-4"><SkelRows rows={5} /></div> : sorted.length ? (
           <ul className="divide-y divide-line">
             {paged.map((l) => (
               <li key={l.id}>
-                <Link to={`${createPageUrl('LeadDetail')}/${l.id}`} className="press flex min-h-[72px] items-center gap-3 px-4 py-3 active:bg-neutral-50">
-                  <Avatar name={l.full_name} />
+                <Link to={`${createPageUrl('LeadDetail')}/${l.id}`} className="press flex min-h-[72px] items-center gap-3 px-5 py-3 active:bg-neutral-50">
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[16px] font-semibold text-navy-900">{l.full_name || 'ללא שם'}</span>
                     <span className="block truncate text-[13px] text-ink-400">
@@ -275,7 +272,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         ) : null}
       </div>
 
-      <div className={cn("overflow-hidden rounded-[14px] border border-line bg-white shadow-card", sorted.length && !isLoading ? "hidden md:block" : "")}>
+      <div className={cn("overflow-hidden rounded-[14px] border border-line bg-white shadow-card", sorted.length || isLoading ? "hidden" : "")}>
         {isError ? (
           <div className="p-4 text-center text-sm text-red-600">שגיאה בטעינת הלידים</div>
         ) : sorted.length === 0 && !isLoading ? (

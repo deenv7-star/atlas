@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { PageHeader, StatTile, SegmentedControl, EmptyState } from '@/components/ds';
-import { MessageSquareText, CheckCircle2, Clock3 } from 'lucide-react';
+import { CheckCircle2, Clock3 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -97,7 +97,7 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader title="ביקורות" subtitle="מה האורחים כתבו, ולמי עוד כדאי לשלוח בקשה." className="!mb-0" />
 
-      <div className="grid grid-cols-3 gap-3 md:grid-cols-3">
+      <div className="stat-row">
         <StatTile label="דירוג ממוצע" value={stats.avg} icon={Star} tone="amber" />
         <StatTile label="התקבלו" value={stats.reviewed} icon={CheckCircle2} tone="success" />
         <StatTile label="ממתינות" value={stats.pending} icon={Clock3} tone="amber" />

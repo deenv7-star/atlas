@@ -164,12 +164,12 @@ export function Section({ title, subtitle, action, children, className, bodyClas
 export function StatTile({ label, value, hint, tone = 'brand', className, loading }) {
   const valueCls = tone === 'danger' ? 'text-danger-600' : 'text-navy-900';
   return (
-    <Card className={cn('flex min-w-0 flex-col gap-2 p-4 md:p-6', className)}>
+    <Card className={cn('flex min-w-0 flex-col gap-1.5 px-5 py-4 shadow-none md:px-6 md:py-5', className)}>
       <span className="truncate text-[14px] text-ink-600 md:text-[15px]">{label}</span>
       {loading ? (
         <SkelLine className="h-8 w-24" />
       ) : (
-        <span className={cn('truncate text-[22px] font-extrabold leading-none tracking-[-0.02em] tabular md:text-[30px]', valueCls)}>{value}</span>
+        <span className={cn('whitespace-nowrap text-[20px] font-semibold leading-tight tracking-[-0.01em] tabular md:text-[26px]', valueCls)}>{value}</span>
       )}
       {hint ? <span className="hidden truncate text-[13px] text-ink-400 md:block">{hint}</span> : null}
     </Card>
