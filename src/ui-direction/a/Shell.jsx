@@ -11,7 +11,6 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useQuickBooking } from '@/components/app/QuickBooking';
-import { PAGE_TITLES } from '@/config/navigation';
 import {
   Wordmark, useShellProperties, useNavGroups, useIsActive, initialsOf, UserMenu, MoreSheet, navItem,
 } from '@/components/app/shell/shared';
@@ -20,71 +19,58 @@ export const shellClass = 'bg-canvas';
 
 export function Sidebar({ onLogout, user }) {
   const groups = useNavGroups(user);
+  const primary = groups[0].items;
   const isActive = useIsActive();
-  const quick = useQuickBooking();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreActive = groups.slice(1).some((g) => g.items.some((i) => isActive(i.page)));
+  const linkCls = (active) => cn(
+    'press flex h-12 items-center gap-3.5 rounded-[12px] px-3.5 text-[16px]',
+    active ? 'bg-brand-50 font-bold text-brand-700' : 'font-medium text-navy-900 hover:bg-neutral-100',
+  );
   return (
-    <aside className="flex h-full w-[264px] flex-col border-l border-line bg-white" aria-label="ניווט ראשי">
-      <div className="flex h-[72px] shrink-0 items-center px-6">
+    <aside className="flex h-full w-[248px] flex-col border-l border-line bg-white" aria-label="ניווט ראשי">
+      <div className="flex h-[80px] shrink-0 items-center px-7">
         <Link to={createPageUrl('Dashboard')} aria-label="ATLAS, מסך היום" className="rounded-lg">
           <Wordmark size={24} />
         </Link>
       </div>
-      <div className="px-4 pb-3">
-        <button
-          type="button"
-          onClick={() => quick.open()}
-          className="press flex h-11 w-full items-center justify-center gap-2 rounded-[10px] bg-brand-600 text-[15px] font-bold text-white hover:bg-brand-500"
-        >
-          <Plus className="h-[18px] w-[18px]" strokeWidth={2.25} />
-          הזמנה חדשה
-        </button>
-      </div>
-      <nav className="flex-1 overflow-y-auto px-3 pb-4">
-        {groups.map((g) => (
-          <div key={g.id} className="mt-3 first:mt-1">
-            {g.label ? <p className="px-3 pb-1 pt-2 text-[13px] font-medium text-ink-400">{g.label}</p> : null}
-            <ul className="space-y-0.5">
-              {g.items.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.page);
-                return (
-                  <li key={item.page}>
-                    <Link
-                      to={createPageUrl(item.page)}
-                      aria-current={active ? 'page' : undefined}
-                      className={cn(
-                        'press flex h-11 items-center gap-3 rounded-[10px] px-3 text-[15px]',
-                        active ? 'bg-brand-50 font-bold text-brand-700' : 'font-medium text-navy-900 hover:bg-neutral-100',
-                      )}
-                    >
-                      <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-brand-600/80')} strokeWidth={1.75} />
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+      <nav className="flex-1 overflow-y-auto px-4 pb-4">
+        <ul className="space-y-1">
+          {primary.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.page);
+            return (
+              <li key={item.page}>
+                <Link to={createPageUrl(item.page)} aria-current={active ? 'page' : undefined} className={linkCls(active)}>
+                  <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.75} />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+          <li>
+            <button type="button" onClick={() => setMoreOpen(true)} className={cn(linkCls(moreActive), 'w-full')}>
+              <MoreHorizontal className={cn('h-5 w-5 shrink-0', moreActive ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.75} />
+              <span className="truncate">עוד</span>
+            </button>
+          </li>
+        </ul>
       </nav>
-      <div className="border-t border-line p-3">
+      <div className="border-t border-line p-4">
         <UserMenu user={user} onLogout={onLogout} align="start" side="top">
           <button type="button" className="press flex min-h-[52px] w-full items-center gap-3 rounded-[12px] px-2.5 text-start hover:bg-neutral-100">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-navy-900 text-[13px] font-bold text-white">{initialsOf(user)}</span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-[14px] font-bold text-navy-900">{user?.full_name || 'החשבון שלי'}</span>
-              <span className="block truncate text-[13px] text-ink-400">{user?.organization_name || user?.email}</span>
-            </span>
-            <ChevronsUpDown className="h-4 w-4 text-ink-400" />
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-[13px] font-bold text-navy-900">{initialsOf(user)}</span>
+            <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-navy-900">{user?.full_name || 'החשבון שלי'}</span>
           </button>
         </UserMenu>
       </div>
+      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={primary.map((i) => i.page)} />
     </aside>
   );
 }
 
 function PropertySwitcher({ properties, selectedPropertyId, onPropertyChange, compact }) {
-  if (!properties.length) return null;
+  if (properties.length < 2) return null;
   const current = properties.find((p) => p.id === selectedPropertyId);
   return (
     <DropdownMenu>
@@ -116,34 +102,18 @@ function PropertySwitcher({ properties, selectedPropertyId, onPropertyChange, co
 
 export function Header({ user, currentPageName, selectedPropertyId, onPropertyChange, onOpenCommandPalette, onLogout }) {
   const properties = useShellProperties(user);
-  const title = PAGE_TITLES[currentPageName] || '';
   return (
-    <header className="ds-material sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b border-line px-4 lg:h-[72px] lg:px-8">
+    <header className="ds-material sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b border-line px-4 lg:h-[72px] lg:border-transparent lg:bg-transparent lg:px-10">
       {/* phone: compact title row; the page itself shows the large title */}
       <div className="flex min-w-0 flex-1 items-center gap-2 lg:hidden">
         <Wordmark size={19} />
       </div>
-      <div className="hidden min-w-0 flex-1 lg:block">
-        <p className="truncate text-[13px] text-ink-400">{user?.organization_name || 'ATLAS'}</p>
-        <p className="truncate text-[17px] font-bold text-navy-900">{title}</p>
-      </div>
-      {typeof onOpenCommandPalette === 'function' ? (
-        <button
-          type="button"
-          onClick={onOpenCommandPalette}
-          className="press hidden h-11 w-[300px] items-center gap-2 rounded-[10px] border border-line bg-white px-3 text-[15px] text-ink-400 hover:border-neutral-300 lg:flex"
-          aria-label="חיפוש"
-        >
-          <Search className="h-[18px] w-[18px]" strokeWidth={1.75} />
-          <span className="flex-1 text-start">חיפוש אורח, הזמנה או מסך</span>
-          <kbd className="rounded-md border border-line px-1.5 text-[12px] text-ink-400" dir="ltr">Ctrl K</kbd>
-        </button>
-      ) : null}
+      <div className="hidden flex-1 lg:block" />
       <PropertySwitcher properties={properties} selectedPropertyId={selectedPropertyId} onPropertyChange={onPropertyChange} compact />
       <button
         type="button"
         onClick={onOpenCommandPalette}
-        className="press inline-flex h-11 w-11 items-center justify-center rounded-full text-navy-900 hover:bg-neutral-100 lg:hidden"
+        className="press inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-600 hover:bg-neutral-100"
         aria-label="חיפוש"
       >
         <Search className="h-5 w-5" strokeWidth={1.75} />
@@ -151,7 +121,7 @@ export function Header({ user, currentPageName, selectedPropertyId, onPropertyCh
       <div className="lg:hidden">
         <UserMenu user={user} onLogout={onLogout}>
           <button type="button" aria-label="החשבון שלי" className="press inline-flex h-11 w-11 items-center justify-center rounded-full">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-navy-900 text-[12px] font-bold text-white">{initialsOf(user)}</span>
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-[12px] font-bold text-navy-900">{initialsOf(user)}</span>
           </button>
         </UserMenu>
       </div>
@@ -163,8 +133,8 @@ export function TabBar({ user, onLogout }) {
   const isActive = useIsActive();
   const quick = useQuickBooking();
   const [moreOpen, setMoreOpen] = useState(false);
-  const slots = ['Today', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
-  const primaryPages = ['Today', 'MultiCalendar', 'Bookings'];
+  const slots = ['Dashboard', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
+  const primaryPages = ['Dashboard', 'MultiCalendar', 'Bookings'];
   const moreActive = !primaryPages.some((p) => isActive(p));
   return (
     <>
@@ -220,7 +190,7 @@ export function TabBar({ user, onLogout }) {
           })}
         </ul>
       </nav>
-      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} />
+      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={['Dashboard', 'MultiCalendar', 'Bookings']} />
     </>
   );
 }

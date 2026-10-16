@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 import { STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { NAV_GROUPS, PLATFORM_ITEM } from '@/config/navigation';
+import { NAV_GROUPS, PLATFORM_ITEM, NAV_PARENT } from '@/config/navigation';
 import { isPlatformAdminViewer } from '@/lib/platformAdmin';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -45,16 +45,19 @@ export function useShellProperties(user) {
 export function useNavGroups(user) {
   const showPlatform = isPlatformAdminViewer(user);
   if (!showPlatform) return NAV_GROUPS;
-  return [{ ...NAV_GROUPS[0], items: [...NAV_GROUPS[0].items, PLATFORM_ITEM] }, ...NAV_GROUPS.slice(1)];
+  const last = NAV_GROUPS[NAV_GROUPS.length - 1];
+  return [...NAV_GROUPS.slice(0, -1), { ...last, items: [...last.items, PLATFORM_ITEM] }];
 }
 
 export function useIsActive() {
   const location = useLocation();
-  return (page) => {
+  const matches = (page) => {
     const url = createPageUrl(page);
-    if (page === 'Bookings' && location.pathname.startsWith(createPageUrl('BookingDetail') + '/')) return true;
-    if (page === 'Leads' && location.pathname.startsWith(createPageUrl('LeadDetail') + '/')) return true;
     return location.pathname === url || location.pathname.startsWith(url + '/');
+  };
+  return (page) => {
+    if (matches(page)) return true;
+    return Object.entries(NAV_PARENT).some(([child, parent]) => parent === page && matches(child));
   };
 }
 
@@ -89,13 +92,15 @@ export function UserMenu({ user, onLogout, children, align = 'end', side }) {
 }
 
 /** iOS-style grouped list of every destination — the mobile "עוד" sheet. */
-export function MoreSheet({ open, onOpenChange, user, onLogout }) {
-  const groups = useNavGroups(user);
+export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) {
+  const groups = useNavGroups(user)
+    .map((g) => ({ ...g, items: g.items.filter((i) => !exclude.includes(i.page)) }))
+    .filter((g) => g.items.length);
   const isActive = useIsActive();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-3 bg-canvas sm:max-w-md">
-        <DialogTitle className="px-1 text-[22px] font-extrabold text-navy-900">כל המסכים</DialogTitle>
+      <DialogContent className="max-h-[85dvh] gap-3 overflow-y-auto bg-canvas sm:max-w-md">
+        <DialogTitle className="px-1 text-[22px] font-extrabold text-navy-900">עוד</DialogTitle>
         <div className="space-y-4">
           {groups.map((g) => (
             <div key={g.id}>
@@ -110,13 +115,11 @@ export function MoreSheet({ open, onOpenChange, user, onLogout }) {
                       to={createPageUrl(item.page)}
                       onClick={() => onOpenChange(false)}
                       className={cn(
-                        'press flex min-h-[52px] items-center gap-3 px-3.5 active:bg-neutral-100',
+                        'press flex min-h-[56px] items-center gap-3.5 px-4 active:bg-neutral-100',
                         i > 0 && 'border-t border-line',
                       )}
                     >
-                      <span className={cn('inline-flex h-8 w-8 items-center justify-center rounded-[9px]', active ? 'bg-brand-600 text-white' : 'bg-brand-50 text-brand-600')}>
-                        <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
-                      </span>
+                      <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.75} />
                       <span className={cn('flex-1 text-[16px]', active ? 'font-bold text-brand-700' : 'font-medium text-navy-900')}>{item.label}</span>
                       <ChevronLeft className="h-4 w-4 text-ink-400" />
                     </Link>

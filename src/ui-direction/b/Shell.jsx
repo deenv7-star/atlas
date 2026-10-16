@@ -6,9 +6,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { Plus, Search, MoreHorizontal, ChevronsUpDown } from 'lucide-react';
+import { Plus, Search, MoreHorizontal } from 'lucide-react';
 import { useQuickBooking } from '@/components/app/QuickBooking';
-import { PAGE_TITLES } from '@/config/navigation';
 import {
   Wordmark, useShellProperties, useNavGroups, useIsActive, initialsOf, UserMenu, MoreSheet, navItem,
 } from '@/components/app/shell/shared';
@@ -17,7 +16,14 @@ export const shellClass = 'bg-canvas';
 
 export function Sidebar({ onLogout, user }) {
   const groups = useNavGroups(user);
+  const primary = groups[0].items;
   const isActive = useIsActive();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreActive = groups.slice(1).some((g) => g.items.some((i) => isActive(i.page)));
+  const linkCls = (active) => cn(
+    'press flex h-12 items-center gap-3.5 rounded-[12px] px-3.5 text-[16px]',
+    active ? 'bg-white/[0.12] font-bold text-white' : 'font-medium text-white/75 hover:bg-white/[0.07] hover:text-white',
+  );
   return (
     <aside className="flex h-full w-[248px] flex-col bg-navy-900 text-white" aria-label="ניווט ראשי">
       <div className="flex h-[76px] shrink-0 items-center px-6">
@@ -25,52 +31,43 @@ export function Sidebar({ onLogout, user }) {
           <Wordmark size={24} inverted />
         </Link>
       </div>
-      <nav className="flex-1 overflow-y-auto px-3 pb-4 [scrollbar-color:rgba(255,255,255,.2)_transparent]">
-        {groups.map((g) => (
-          <div key={g.id} className="mt-4 first:mt-0">
-            {g.label ? <p className="px-3 pb-1.5 text-[13px] font-medium text-white/50">{g.label}</p> : null}
-            <ul className="space-y-0.5">
-              {g.items.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.page);
-                return (
-                  <li key={item.page}>
-                    <Link
-                      to={createPageUrl(item.page)}
-                      aria-current={active ? 'page' : undefined}
-                      className={cn(
-                        'press flex h-11 items-center gap-3 rounded-[10px] px-3 text-[15px]',
-                        active ? 'bg-brand-600 font-bold text-white' : 'font-medium text-white/80 hover:bg-white/[0.07] hover:text-white',
-                      )}
-                    >
-                      <Icon className="h-5 w-5 shrink-0" strokeWidth={1.75} />
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+      <nav className="flex-1 overflow-y-auto px-4 pb-4">
+        <ul className="space-y-1">
+          {primary.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.page);
+            return (
+              <li key={item.page}>
+                <Link to={createPageUrl(item.page)} aria-current={active ? 'page' : undefined} className={linkCls(active)}>
+                  <Icon className="h-5 w-5 shrink-0" strokeWidth={1.75} />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+          <li>
+            <button type="button" onClick={() => setMoreOpen(true)} className={cn(linkCls(moreActive), 'w-full')}>
+              <MoreHorizontal className="h-5 w-5 shrink-0" strokeWidth={1.75} />
+              <span className="truncate">עוד</span>
+            </button>
+          </li>
+        </ul>
       </nav>
       <div className="border-t border-white/10 p-3">
         <UserMenu user={user} onLogout={onLogout} align="start" side="top">
           <button type="button" className="press flex min-h-[52px] w-full items-center gap-3 rounded-[12px] px-2.5 text-start hover:bg-white/[0.07]">
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-amber text-[13px] font-bold text-navy-900" style={{ background: 'var(--accent-amber)' }}>{initialsOf(user)}</span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-[14px] font-bold text-white">{user?.full_name || 'החשבון שלי'}</span>
-              <span className="block truncate text-[13px] text-white/55">{user?.organization_name || user?.email}</span>
-            </span>
-            <ChevronsUpDown className="h-4 w-4 text-white/50" />
+            <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-white">{user?.full_name || 'החשבון שלי'}</span>
           </button>
         </UserMenu>
       </div>
+      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={primary.map((i) => i.page)} />
     </aside>
   );
 }
 
 function UnitChips({ properties, selectedPropertyId, onPropertyChange }) {
-  if (!properties.length) return null;
+  if (properties.length < 2) return null;
   const all = [{ id: null, name: 'כל המתחם' }, ...properties];
   return (
     <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-3 lg:mx-0 lg:px-0 lg:pb-0 [scrollbar-width:none]" role="tablist" aria-label="בחירת יחידה">
@@ -98,14 +95,11 @@ function UnitChips({ properties, selectedPropertyId, onPropertyChange }) {
 
 export function Header({ user, currentPageName, selectedPropertyId, onPropertyChange, onOpenCommandPalette, onLogout }) {
   const properties = useShellProperties(user);
-  const quick = useQuickBooking();
-  const title = PAGE_TITLES[currentPageName] || '';
   return (
-    <header className="ds-material sticky top-0 z-20 shrink-0 border-b border-line px-4 lg:px-8">
+    <header className="ds-material sticky top-0 z-20 shrink-0 border-b border-line px-4 lg:border-transparent lg:bg-transparent lg:px-10">
       <div className="flex h-14 items-center gap-3 lg:h-[68px]">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[13px] font-medium text-ink-400 lg:hidden">{user?.organization_name || 'ATLAS'}</p>
-          <p className="truncate text-[17px] font-extrabold text-navy-900 lg:text-[20px]">{title}</p>
+          <span className="lg:hidden"><Wordmark size={19} /></span>
         </div>
         <div className="hidden lg:block">
           <UnitChips properties={properties} selectedPropertyId={selectedPropertyId} onPropertyChange={onPropertyChange} />
@@ -118,14 +112,6 @@ export function Header({ user, currentPageName, selectedPropertyId, onPropertyCh
         >
           <Search className="h-5 w-5" strokeWidth={1.75} />
         </button>
-        <button
-          type="button"
-          onClick={() => quick.open()}
-          className="press hidden h-11 items-center gap-2 rounded-full bg-brand-600 px-5 text-[15px] font-bold text-white hover:bg-brand-500 lg:inline-flex"
-        >
-          <Plus className="h-[18px] w-[18px]" strokeWidth={2.25} />
-          הזמנה חדשה
-        </button>
         <div className="lg:hidden">
           <UserMenu user={user} onLogout={onLogout}>
             <button type="button" aria-label="החשבון שלי" className="press inline-flex h-11 w-11 items-center justify-center rounded-full">
@@ -133,9 +119,6 @@ export function Header({ user, currentPageName, selectedPropertyId, onPropertyCh
             </button>
           </UserMenu>
         </div>
-      </div>
-      <div className="lg:hidden">
-        <UnitChips properties={properties} selectedPropertyId={selectedPropertyId} onPropertyChange={onPropertyChange} />
       </div>
     </header>
   );
@@ -145,8 +128,8 @@ export function TabBar({ user, onLogout }) {
   const isActive = useIsActive();
   const quick = useQuickBooking();
   const [moreOpen, setMoreOpen] = useState(false);
-  const slots = ['Today', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
-  const moreActive = !['Today', 'MultiCalendar', 'Bookings'].some((p) => isActive(p));
+  const slots = ['Dashboard', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
+  const moreActive = !['Dashboard', 'MultiCalendar', 'Bookings'].some((p) => isActive(p));
   return (
     <>
       <nav aria-label="ניווט תחתון" className="fixed inset-x-3 bottom-[max(12px,env(safe-area-inset-bottom))] z-30 lg:hidden">
@@ -193,7 +176,7 @@ export function TabBar({ user, onLogout }) {
           })}
         </ul>
       </nav>
-      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} />
+      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={['Dashboard', 'MultiCalendar', 'Bookings']} />
     </>
   );
 }
