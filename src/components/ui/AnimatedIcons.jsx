@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 ──────────────────────────────────────────────────────────────── */
 
 /* ── Draw Icon (stroke animation) ────────────────────────────── */
-export function DrawIcon({ size = 32, color = '#00D1C1', strokeWidth = 2, delay = 0, children }) {
+export function DrawIcon({ size = 32, color = '#3E2BF1', strokeWidth = 2, delay = 0, children }) {
   return (
     <motion.svg
       width={size}
@@ -46,7 +46,7 @@ export function DrawIcon({ size = 32, color = '#00D1C1', strokeWidth = 2, delay 
 }
 
 /* ── Orbit Icon (decorative rings) ──────────────────────────── */
-export function OrbitIcon({ icon: Icon, size = 56, color = '#00D1C1', bg = 'rgba(0,209,193,0.12)' }) {
+export function OrbitIcon({ icon: Icon, size = 56, color = '#3E2BF1', bg = 'rgba(62, 43, 241,0.12)' }) {
   return (
     <div style={{ width: size, height: size, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {/* Outer orbit ring */}
@@ -106,7 +106,7 @@ export function OrbitIcon({ icon: Icon, size = 56, color = '#00D1C1', bg = 'rgba
 }
 
 /* ── Pulse Icon ──────────────────────────────────────────────── */
-export function PulseIcon({ icon: Icon, size = 48, color = '#00D1C1' }) {
+export function PulseIcon({ icon: Icon, size = 48, color = '#3E2BF1' }) {
   return (
     <div style={{ position: 'relative', width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {/* Pulse rings */}
@@ -137,14 +137,14 @@ export function PulseIcon({ icon: Icon, size = 48, color = '#00D1C1' }) {
           boxShadow: `0 0 16px ${color}77`,
         }}
       >
-        <Icon size={size * 0.28} style={{ color: '#0B1220' }} />
+        <Icon size={size * 0.28} style={{ color: '#1B2656' }} />
       </motion.div>
     </div>
   );
 }
 
 /* ── Animated Check ──────────────────────────────────────────── */
-export function AnimatedCheck({ size = 40, color = '#00D1C1', bgColor = 'rgba(0,209,193,0.12)', visible = true }) {
+export function AnimatedCheck({ size = 40, color = '#3E2BF1', bgColor = 'rgba(62, 43, 241,0.12)', visible = true }) {
   return (
     <motion.div
       initial={{ scale: 0 }}
@@ -176,7 +176,7 @@ export function AnimatedCheck({ size = 40, color = '#00D1C1', bgColor = 'rgba(0,
 }
 
 /* ── Sparkle Icon ────────────────────────────────────────────── */
-export function SparkleIcon({ size = 32, color = '#00D1C1', active = true }) {
+export function SparkleIcon({ size = 32, color = '#3E2BF1', active = true }) {
   const sparks = [
     { angle: 0,   dist: 12, delay: 0    },
     { angle: 45,  dist: 10, delay: 0.1  },
@@ -261,7 +261,7 @@ export function StatusDot({ status = 'online', size = 10, showLabel = false }) {
 }
 
 /* ── Counter Badge ───────────────────────────────────────────── */
-export function CounterBadge({ count, color = '#00D1C1', bg = 'rgba(0,209,193,0.15)', size = 20 }) {
+export function CounterBadge({ count, color = '#3E2BF1', bg = 'rgba(62, 43, 241,0.15)', size = 20 }) {
   return (
     <AnimatePresence mode="popLayout">
       <motion.div
@@ -290,7 +290,7 @@ export function CounterBadge({ count, color = '#00D1C1', bg = 'rgba(0,209,193,0.
 }
 
 /* ── Animated Feature Icon (large, for landing page) ─────────── */
-export function FeatureIcon({ icon: Icon, color = '#00D1C1', bg, size = 64 }) {
+export function FeatureIcon({ icon: Icon, color = '#3E2BF1', bg, size = 64 }) {
   const [hovered, setHovered] = useState(false);
   const resolvedBg = bg || `${color}18`;
 
@@ -319,7 +319,7 @@ export function FeatureIcon({ icon: Icon, color = '#00D1C1', bg, size = 64 }) {
 }
 
 /* ── Wiggle Icon (CTA attention) ─────────────────────────────── */
-export function WiggleIcon({ icon: Icon, size = 24, color = '#00D1C1', trigger = true }) {
+export function WiggleIcon({ icon: Icon, size = 24, color = '#3E2BF1', trigger = true }) {
   return (
     <motion.div
       animate={trigger ? { rotate: [0, -12, 12, -8, 8, -4, 4, 0] } : {}}

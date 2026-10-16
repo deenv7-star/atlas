@@ -19,11 +19,11 @@ import {
 } from 'lucide-react';
 
 const CALENDAR_PROVIDERS = {
-  GOOGLE: { name: 'Google Calendar', color: 'bg-blue-500', icon: '📅', infoUrl: 'https://support.google.com/calendar' },
-  OUTLOOK: { name: 'Outlook', color: 'bg-cyan-600', icon: '📆', infoUrl: 'https://support.microsoft.com/en-us/outlook' },
-  AIRBNB: { name: 'Airbnb', color: 'bg-[#FF5A5F]', icon: '🏠', infoUrl: 'https://www.airbnb.com/help' },
-  BOOKING_COM: { name: 'Booking.com', color: 'bg-blue-700', icon: '🏨', infoUrl: 'https://www.booking.com/help' },
-  ICAL: { name: 'iCal (כללי)', color: 'bg-gray-600', icon: '📋', infoUrl: 'https://en.wikipedia.org/wiki/ICalendar' }
+  GOOGLE: { name: 'Google Calendar', color: 'bg-blue-500', icon: 'G', infoUrl: 'https://support.google.com/calendar' },
+  OUTLOOK: { name: 'Outlook', color: 'bg-cyan-600', icon: 'O', infoUrl: 'https://support.microsoft.com/en-us/outlook' },
+  AIRBNB: { name: 'Airbnb', color: 'bg-[#EF5B5B]', icon: 'A', infoUrl: 'https://www.airbnb.com/help' },
+  BOOKING_COM: { name: 'Booking.com', color: 'bg-blue-700', icon: 'B', infoUrl: 'https://www.booking.com/help' },
+  ICAL: { name: 'iCal (כללי)', color: 'bg-gray-600', icon: 'i', infoUrl: 'https://en.wikipedia.org/wiki/ICalendar' }
 };
 
 const SYNC_STATUS = {
@@ -33,29 +33,29 @@ const SYNC_STATUS = {
 };
 
 const MESSAGING_PROVIDERS = {
-  WHATSAPP: { name: 'WhatsApp Business', color: 'bg-[#25D366]', icon: '💬' },
-  EMAIL_SMTP: { name: 'Email (SMTP)', color: 'bg-gray-600', icon: '📧' },
-  SMS_TWILIO: { name: 'SMS (Twilio)', color: 'bg-[#F22F46]', icon: '📱' },
-  SENDGRID: { name: 'SendGrid', color: 'bg-blue-500', icon: '📬' },
-  TELEGRAM: { name: 'Telegram Bot', color: 'bg-[#0088cc]', icon: '✈️' }
+  WHATSAPP: { name: 'WhatsApp Business', color: 'bg-[#25D366]', icon: 'W' },
+  EMAIL_SMTP: { name: 'Email (SMTP)', color: 'bg-gray-600', icon: 'E' },
+  SMS_TWILIO: { name: 'SMS (Twilio)', color: 'bg-[#F22F46]', icon: 'S' },
+  SENDGRID: { name: 'SendGrid', color: 'bg-blue-500', icon: 'S' },
+  TELEGRAM: { name: 'Telegram Bot', color: 'bg-[#0088cc]', icon: 'T' }
 };
 
 const PAYMENT_PROVIDERS = {
   STRIPE: { name: 'Stripe', color: 'bg-[#635BFF]', icon: 'S' },
   PAYPAL: { name: 'PayPal', color: 'bg-[#003087]', icon: 'P' },
-  BIT: { name: 'Bit', color: 'bg-green-600', icon: '💳' },
-  TRANZILA: { name: 'Tranzila', color: 'bg-blue-600', icon: '💰' },
-  MESHULAM: { name: 'Meshulam', color: 'bg-orange-600', icon: '🏦' },
-  CARDCOM: { name: 'Cardcom', color: 'bg-purple-600', icon: '🔐' }
+  BIT: { name: 'Bit', color: 'bg-green-600', icon: 'B' },
+  TRANZILA: { name: 'Tranzila', color: 'bg-blue-600', icon: 'T' },
+  MESHULAM: { name: 'Meshulam', color: 'bg-orange-600', icon: 'M' },
+  CARDCOM: { name: 'Cardcom', color: 'bg-brand-600', icon: 'C' }
 };
 
 const ACCOUNTING_PROVIDERS = {
-  MORNING: { name: 'Morning', color: 'bg-[#00A6ED]', icon: '☀️' },
-  GREEN_INVOICE: { name: 'Green Invoice', color: 'bg-green-600', icon: '📊' },
-  QUICKBOOKS: { name: 'QuickBooks', color: 'bg-[#2CA01C]', icon: '💼' },
-  ZOHO_BOOKS: { name: 'Zoho Books', color: 'bg-orange-600', icon: '🧾' },
-  XERO: { name: 'Xero', color: 'bg-blue-700', icon: '📈' },
-  HASHAVSHEVET: { name: 'חשבשבת', color: 'bg-gray-700', icon: '🧮' }
+  MORNING: { name: 'Morning', color: 'bg-[#00A6ED]', icon: 'M' },
+  GREEN_INVOICE: { name: 'Green Invoice', color: 'bg-green-600', icon: 'G' },
+  QUICKBOOKS: { name: 'QuickBooks', color: 'bg-[#2CA01C]', icon: 'Q' },
+  ZOHO_BOOKS: { name: 'Zoho Books', color: 'bg-orange-600', icon: 'Z' },
+  XERO: { name: 'Xero', color: 'bg-blue-700', icon: 'X' },
+  HASHAVSHEVET: { name: 'חשבשבת', color: 'bg-gray-700', icon: 'ח' }
 };
 
 const PMS_PROVIDERS = {
@@ -65,8 +65,8 @@ const PMS_PROVIDERS = {
   CLOUDBEDS: { name: 'Cloudbeds', color: 'bg-green-600', icon: 'C' },
   OPERA: { name: 'Opera PMS', color: 'bg-red-600', icon: 'O' },
   MEWS: { name: 'Mews', color: 'bg-cyan-600', icon: 'M' },
-  APALEO: { name: 'Apaleo', color: 'bg-indigo-600', icon: '🏨' },
-  CHANNELMANAGER: { name: 'Channel Manager', color: 'bg-pink-600', icon: '🔗' }
+  APALEO: { name: 'Apaleo', color: 'bg-brand-600', icon: 'A' },
+  CHANNELMANAGER: { name: 'Channel Manager', color: 'bg-pink-600', icon: 'C' }
 };
 
 export default function IntegrationsPage() {
@@ -307,10 +307,10 @@ export default function IntegrationsPage() {
   return (
     <div className="p-6 space-y-6" dir="rtl">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-br from-indigo-50/80 to-violet-50/40 rounded-2xl border border-indigo-100/60 p-6 mb-2">
+      <div className="bg-brand-50/80 rounded-2xl border border-brand-100/60 p-6 mb-2">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
-            <Link2 className="w-6 h-6 text-indigo-600" />
+          <div className="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
+            <Link2 className="w-6 h-6 text-brand-600" />
           </div>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">מרכז אינטגרציות</h1>
@@ -326,13 +326,13 @@ export default function IntegrationsPage() {
                 <CreditCard className="w-3.5 h-3.5 text-green-500" /> תשלומים
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white rounded-full px-3 py-1.5 border border-gray-200 text-gray-600">
-                <MessageSquare className="w-3.5 h-3.5 text-purple-500" /> הודעות
+                <MessageSquare className="w-3.5 h-3.5 text-brand-500" /> הודעות
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white rounded-full px-3 py-1.5 border border-gray-200 text-gray-600">
                 <Settings2 className="w-3.5 h-3.5 text-orange-500" /> חשבונאות
               </span>
             </div>
-            <p className="text-indigo-500 text-xs mt-3">💡 טיפ: התחל מחיבור יומן — זה יאפשר סנכרון אוטומטי של הזמנות מ-Airbnb ו-Booking.com</p>
+            <p className="text-brand-500 text-xs mt-3">טיפ: התחל מחיבור יומן — זה יאפשר סנכרון אוטומטי של הזמנות מ-Airbnb ו-Booking.com</p>
           </div>
         </div>
       </div>
@@ -368,7 +368,7 @@ export default function IntegrationsPage() {
           <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 flex gap-3">
             <Info className="h-5 w-5 text-cyan-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-cyan-900">
-              <p className="font-medium mb-1">😌 סנכרוני יומנים אוטומטיים</p>
+              <p className="font-medium mb-1">סנכרוני יומנים אוטומטיים</p>
               <p>כשמחברים יומן, הוא מסונכרן אוטומטית כל 30 דקות. אפשר גם לסנכרן ידנית בכל רגע.</p>
             </div>
           </div>
@@ -515,10 +515,10 @@ export default function IntegrationsPage() {
 
         {/* Payments Tab */}
         <TabsContent value="payments" className="mt-6 space-y-6">
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 flex gap-3">
-            <Zap className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-purple-900">
-              <p className="font-medium mb-1">💳 קבל תשלומים בקלות</p>
+          <div className="bg-brand-50 border border-brand-200 rounded-lg p-4 flex gap-3">
+            <Zap className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-brand-900">
+              <p className="font-medium mb-1">קבל תשלומים בקלות</p>
               <p>חבר Stripe, PayPal, Bit או כל שער תשלומים - קבל כסף ישירות מאורחים בכרטיס, Bit והעברה בנקאית.</p>
             </div>
           </div>
@@ -615,7 +615,7 @@ export default function IntegrationsPage() {
             <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-green-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white">💳</div>
+                  <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white"></div>
                   Bit
                 </CardTitle>
                 <CardDescription>תשלומים מהירים בביט</CardDescription>
@@ -634,7 +634,7 @@ export default function IntegrationsPage() {
             <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-blue-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white">💰</div>
+                  <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white"></div>
                   Tranzila
                 </CardTitle>
                 <CardDescription>עיבוד תשלומים ישראלי מוביל</CardDescription>
@@ -653,7 +653,7 @@ export default function IntegrationsPage() {
             <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-orange-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white">🏦</div>
+                  <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white"></div>
                   Meshulam
                 </CardTitle>
                 <CardDescription>תשלומים מאובטחים ומהירים</CardDescription>
@@ -669,10 +669,10 @@ export default function IntegrationsPage() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-purple-600">
+            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-brand-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center text-white">🔐</div>
+                  <div className="w-10 h-10 rounded-lg bg-brand-600 flex items-center justify-center text-white"></div>
                   Cardcom
                 </CardTitle>
                 <CardDescription>שער תשלומים ישראלי מאובטח</CardDescription>
@@ -695,7 +695,7 @@ export default function IntegrationsPage() {
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex gap-3">
             <Zap className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-green-900">
-              <p className="font-medium mb-1">💬 שלח הודעות אוטומטיות</p>
+              <p className="font-medium mb-1">שלח הודעות אוטומטיות</p>
               <p>חבר WhatsApp Business, SMTP, Twilio או SendGrid - שלח הודעות אוטומטיות לאורחים בזמנים הנכונים.</p>
             </div>
           </div>
@@ -754,7 +754,7 @@ export default function IntegrationsPage() {
             <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#25D366]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#25D366] flex items-center justify-center text-white">💬</div>
+                  <div className="w-10 h-10 rounded-lg bg-[#25D366] flex items-center justify-center text-white"></div>
                   WhatsApp Business
                 </CardTitle>
                 <CardDescription>שלח הודעות אוטומטיות לאורחים דרך WhatsApp</CardDescription>
@@ -773,7 +773,7 @@ export default function IntegrationsPage() {
             <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-gray-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-600 flex items-center justify-center text-white">📧</div>
+                  <div className="w-10 h-10 rounded-lg bg-gray-600 flex items-center justify-center text-white"></div>
                   Email (SMTP)
                 </CardTitle>
                 <CardDescription>שלח אימיילים אוטומטיים דרך SMTP</CardDescription>
@@ -792,7 +792,7 @@ export default function IntegrationsPage() {
             <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#F22F46]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#F22F46] flex items-center justify-center text-white">📱</div>
+                  <div className="w-10 h-10 rounded-lg bg-[#F22F46] flex items-center justify-center text-white"></div>
                   SMS (Twilio)
                 </CardTitle>
                 <CardDescription>שלח הודעות SMS דרך Twilio</CardDescription>
@@ -811,7 +811,7 @@ export default function IntegrationsPage() {
             <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-blue-500">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center text-white">📬</div>
+                  <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center text-white"></div>
                   SendGrid
                 </CardTitle>
                 <CardDescription>שירות דיוור מתקדם עם אנליטיקס</CardDescription>
@@ -830,7 +830,7 @@ export default function IntegrationsPage() {
             <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#0088cc]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#0088cc] flex items-center justify-center text-white">✈️</div>
+                  <div className="w-10 h-10 rounded-lg bg-[#0088cc] flex items-center justify-center text-white"></div>
                   Telegram Bot
                 </CardTitle>
                 <CardDescription>שלח הודעות דרך בוט Telegram</CardDescription>
@@ -853,7 +853,7 @@ export default function IntegrationsPage() {
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex gap-3">
             <Zap className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-orange-900">
-              <p className="font-medium mb-1">📊 ניהול פיננסי משולב</p>
+              <p className="font-medium mb-1">ניהול פיננסי משולב</p>
               <p>חבר Morning, Green Invoice או כל מערכת חשבונאות - סנכרן חשבוניות וקבלות אוטומטית.</p>
             </div>
           </div>
@@ -919,10 +919,10 @@ export default function IntegrationsPage() {
 
         {/* PMS Tab */}
         <TabsContent value="pms" className="mt-6 space-y-6">
-          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex gap-3">
-            <Zap className="h-5 w-5 text-indigo-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-indigo-900">
-              <p className="font-medium mb-1">🏨 סנכרון עם מערכות PMS</p>
+          <div className="bg-brand-50 border border-brand-200 rounded-lg p-4 flex gap-3">
+            <Zap className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-brand-900">
+              <p className="font-medium mb-1">סנכרון עם מערכות PMS</p>
               <p>חבר Guesty, Hostaway, Cloudbeds או כל PMS - סנכרן הזמנות ואורחים אוטומטית.</p>
             </div>
           </div>

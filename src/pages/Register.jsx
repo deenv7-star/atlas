@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
@@ -123,7 +124,7 @@ export default function Register() {
 
   if (isLoadingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30" dir="rtl">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50" dir="rtl">
         <div
           className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"
           role="status"
@@ -134,10 +135,10 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>
       <div className="w-full max-w-[440px]">
         <div className="text-center mb-10">
-          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-6" style={{ height: 56, width: 'auto', objectFit: 'contain' }} />
+          <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">התחל לנהל חכם יותר</h1>
           <p className="text-gray-500 text-sm mt-2">צור חשבון חינמי ותתחיל לנהל את המתחם שלך</p>
         </div>
@@ -256,7 +257,7 @@ export default function Register() {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           יש לך חשבון?{' '}
-          <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">התחבר</Link>
+          <Link to="/login" className="text-brand-600 hover:text-brand-700 font-semibold">התחבר</Link>
         </p>
       </div>
     </div>

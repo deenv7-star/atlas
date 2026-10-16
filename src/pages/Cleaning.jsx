@@ -144,7 +144,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-[#00D1C1]" />
+              <Sparkles className="h-5 w-5 text-brand-600" />
               <div>
                 <p className="font-medium text-sm">
                   {task.scheduled_for && format(parseISO(task.scheduled_for), 'HH:mm')}
@@ -174,7 +174,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
-                  className="bg-[#00D1C1] h-2 rounded-full transition-all"
+                  className="bg-brand-600 h-2 rounded-full transition-all"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -192,7 +192,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Icon className={`h-5 w-5 ${color}`} />
-          <h3 className="font-semibold text-[#0B1220]">{title}</h3>
+          <h3 className="font-semibold text-[#1B2656]">{title}</h3>
           <Badge variant="outline" className="text-xs">{tasks.length}</Badge>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -206,21 +206,21 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
 
   return (
     <div className="space-y-6" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-indigo-600" />
+          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-brand-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">ניהול ניקיון</h1>
+          <h1 className="text-2xl font-bold text-gray-900">ניקיון</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-12">נהל משימות ניקיון לכל הנכסים. הקצה משימות לצוות, עקוב אחר סטטוס ותזמן ניקיונות.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-12">טיפ: משימות חדשות נוצרות אוטומטית לפי הזמנות צ'ק-אאוט</p>
+        <p className="text-brand-500 text-xs mt-1 mr-12">טיפ: משימות חדשות נוצרות אוטומטית לפי הזמנות צ'ק-אאוט</p>
       </div>
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#0B1220]">משימות ניקיון</h1>
+          <h1 className="text-2xl font-bold text-[#1B2656]">משימות ניקיון</h1>
           <p className="text-gray-500">צור משימות ניקיון והקצה אותן לצוות. צוות הניקיון יכול להתחבר ולראות רק את המשימות שלו, לסמן צ'קליסטים ולעדכן סטטוס.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -237,7 +237,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
           </Select>
           <Button 
             onClick={() => setIsCreateOpen(true)}
-            className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
+            className="bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl gap-2"
           >
             <Plus className="h-4 w-4" />
             משימה חדשה
@@ -271,7 +271,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
               <Button
                 onClick={() => setIsCreateOpen(true)}
                 size="lg"
-                className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl"
+                className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl"
               >
                 <Plus className="w-4 h-4" />
                 משימת ניקיון חדשה
@@ -302,7 +302,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             title="מחר" 
             tasks={groupedTasks.tomorrow} 
             icon={Calendar} 
-            color="text-purple-500" 
+            color="text-brand-500" 
           />
           <TaskGroup 
             title="קרוב" 
@@ -321,7 +321,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             <>
               <SheetHeader>
                 <SheetTitle className="text-right flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-[#00D1C1]" />
+                  <Sparkles className="h-5 w-5 text-brand-600" />
                   משימת ניקיון
                 </SheetTitle>
               </SheetHeader>

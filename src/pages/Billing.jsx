@@ -95,16 +95,16 @@ export default function BillingPage({ user }) {
     <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6" dir="rtl">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[#0B1220]">מנוי וחיוב</h1>
+        <h1 className="text-3xl font-bold text-[#1B2656]">מנוי וחיוב</h1>
         <p className="text-gray-500 mt-1">נהל את המנוי ופרטי התשלום שלך</p>
       </div>
 
       {/* Current Plan */}
-      <Card className="border-2 border-[#00D1C1] shadow-lg rounded-2xl">
+      <Card className="border-2 border-brand-600 shadow-lg rounded-2xl">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#3E2BF1] flex items-center justify-center">
                 {React.createElement(PLANS[currentPlan].icon, { className: "h-6 w-6 text-white" })}
               </div>
               <div>
@@ -113,7 +113,7 @@ export default function BillingPage({ user }) {
               </div>
             </div>
             <div className="text-left">
-              <div className="text-3xl font-bold text-[#0B1220]">₪{PLANS[currentPlan].price}</div>
+              <div className="text-3xl font-bold text-[#1B2656]">₪{PLANS[currentPlan].price}</div>
               <div className="text-sm text-gray-500">לחודש</div>
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function BillingPage({ user }) {
                 <Calendar className="h-4 w-4" />
                 <span className="text-sm">תאריך חיוב הבא</span>
               </div>
-              <p className="font-semibold text-[#0B1220]">
+              <p className="font-semibold text-[#1B2656]">
                 {new Date(nextBillingDate).toLocaleDateString('he-IL')}
               </p>
             </div>
@@ -134,7 +134,7 @@ export default function BillingPage({ user }) {
                 <CreditCard className="h-4 w-4" />
                 <span className="text-sm">אמצעי תשלום</span>
               </div>
-              <p className="font-semibold text-[#0B1220]">חבר כרטיס בהגדרות</p>
+              <p className="font-semibold text-[#1B2656]">חבר כרטיס בהגדרות</p>
             </div>
           </div>
 
@@ -143,7 +143,7 @@ export default function BillingPage({ user }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {PLANS[currentPlan].features.map((feature, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-[#00D1C1]" />
+                  <Check className="h-4 w-4 text-brand-600" />
                   <span>{feature}</span>
                 </div>
               ))}
@@ -153,7 +153,7 @@ export default function BillingPage({ user }) {
       </Card>
 
       {!isSupabaseConfigured && (
-        <Card className="border border-indigo-100 rounded-2xl bg-indigo-50/40">
+        <Card className="border border-brand-100 rounded-2xl bg-brand-50/40">
           <CardHeader>
             <CardTitle className="text-lg">חיוב מאובטח (Stripe)</CardTitle>
             <CardDescription>
@@ -180,7 +180,7 @@ export default function BillingPage({ user }) {
       {/* Upgrade Options */}
       {currentPlan !== 'business' && (
         <div>
-          <h2 className="text-xl font-bold text-[#0B1220] mb-4">שדרג את התוכנית שלך</h2>
+          <h2 className="text-xl font-bold text-[#1B2656] mb-4">שדרג את התוכנית שלך</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {Object.entries(PLANS)
               .filter(([key]) => {
@@ -196,18 +196,18 @@ export default function BillingPage({ user }) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                   >
-                    <Card className={`h-full ${plan.popular ? 'border-2 border-[#00D1C1]' : 'border'}`}>
+                    <Card className={`h-full ${plan.popular ? 'border-2 border-brand-600' : 'border'}`}>
                       {plan.popular && (
-                        <div className="bg-[#00D1C1] text-center text-[#0B1220] text-sm font-semibold py-2">
-                          🔥 הכי פופולרי
+                        <div className="bg-brand-600 text-center text-white text-sm font-semibold py-2">
+                          הכי פופולרי
                         </div>
                       )}
                       <CardHeader className="text-center">
-                        <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${plan.popular ? 'from-[#00D1C1] to-[#00B8A9]' : 'from-gray-100 to-gray-200'} flex items-center justify-center`}>
+                        <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${plan.popular ? 'from-[#3E2BF1] to-[#00B8A9]' : 'from-gray-100 to-gray-200'} flex items-center justify-center`}>
                           <Icon className={`h-7 w-7 ${plan.popular ? 'text-white' : 'text-gray-600'}`} />
                         </div>
                         <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                        <div className="text-4xl font-bold text-[#0B1220] mt-2">
+                        <div className="text-4xl font-bold text-[#1B2656] mt-2">
                           ₪{plan.price}
                           <span className="text-lg text-gray-500 font-normal">/חודש</span>
                         </div>
@@ -216,13 +216,13 @@ export default function BillingPage({ user }) {
                         <ul className="space-y-2 mb-6">
                           {plan.features.map((feature, j) => (
                             <li key={j} className="flex items-start gap-2 text-sm">
-                              <Check className="h-4 w-4 text-[#00D1C1] flex-shrink-0 mt-0.5" />
+                              <Check className="h-4 w-4 text-brand-600 flex-shrink-0 mt-0.5" />
                               <span>{feature}</span>
                             </li>
                           ))}
                         </ul>
                         <Button 
-                          className="w-full rounded-xl bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:opacity-90 text-white"
+                          className="w-full rounded-xl bg-[#3E2BF1] hover:opacity-90 text-white"
                           onClick={() => handleUpgrade(key)}
                           disabled={loading}
                         >

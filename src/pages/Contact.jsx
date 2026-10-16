@@ -118,13 +118,13 @@ export default function Contact() {
               { icon: MapPin, label: 'כתובת', value: 'תל אביב, ישראל' },
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                  <item.icon className="w-5 h-5 text-indigo-600" />
+                <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-5 h-5 text-brand-600" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-400 mb-0.5">{item.label}</p>
                   {item.href ? (
-                    <a href={item.href} className="text-gray-900 font-semibold hover:text-indigo-600 transition-colors">{item.value}</a>
+                    <a href={item.href} className="text-gray-900 font-semibold hover:text-brand-600 transition-colors">{item.value}</a>
                   ) : (
                     <p className="text-gray-900 font-semibold">{item.value}</p>
                   )}
@@ -146,7 +146,7 @@ export default function Contact() {
               <h3 className="text-sm font-semibold text-gray-400 mb-3">שאלות נפוצות</h3>
               <div className="space-y-2">
                 {['כמה זמן לוקח להתחיל?', 'האם יש ניסיון חינם?', 'האם המערכת בעברית?'].map((q, i) => (
-                  <Link key={i} to={createPageUrl('Landing')} className="block text-sm text-indigo-600 hover:text-indigo-800 transition-colors">
+                  <Link key={i} to={createPageUrl('Landing')} className="block text-sm text-brand-600 hover:text-brand-800 transition-colors">
                     {q} ←
                   </Link>
                 ))}
@@ -181,7 +181,7 @@ export default function Contact() {
                       style={inputStyle}
                       value={form.name}
                       onChange={e => setForm({ ...form, name: e.target.value })}
-                      onFocus={e => { e.target.style.borderColor = '#4F46E5'; }}
+                      onFocus={e => { e.target.style.borderColor = '#3E2BF1'; }}
                       onBlur={e => { e.target.style.borderColor = '#E5E7EB'; }}
                       placeholder="השם שלך"
                     />
@@ -193,7 +193,7 @@ export default function Contact() {
                       style={inputStyle}
                       value={form.phone}
                       onChange={e => setForm({ ...form, phone: e.target.value })}
-                      onFocus={e => { e.target.style.borderColor = '#4F46E5'; }}
+                      onFocus={e => { e.target.style.borderColor = '#3E2BF1'; }}
                       onBlur={e => { e.target.style.borderColor = '#E5E7EB'; }}
                       placeholder="050-1234567"
                     />
@@ -206,7 +206,7 @@ export default function Contact() {
                     style={inputStyle}
                     value={form.email}
                     onChange={e => setForm({ ...form, email: e.target.value })}
-                    onFocus={e => { e.target.style.borderColor = '#4F46E5'; }}
+                    onFocus={e => { e.target.style.borderColor = '#3E2BF1'; }}
                     onBlur={e => { e.target.style.borderColor = '#E5E7EB'; }}
                     placeholder="email@example.com"
                   />
@@ -230,7 +230,7 @@ export default function Contact() {
                     style={{ ...inputStyle, resize: 'vertical' }}
                     value={form.message}
                     onChange={e => setForm({ ...form, message: e.target.value })}
-                    onFocus={e => { e.target.style.borderColor = '#4F46E5'; }}
+                    onFocus={e => { e.target.style.borderColor = '#3E2BF1'; }}
                     onBlur={e => { e.target.style.borderColor = '#E5E7EB'; }}
                     placeholder="ספר לנו במה נוכל לעזור..."
                   />
@@ -239,22 +239,22 @@ export default function Contact() {
                   type="submit"
                   disabled={submitting}
                   style={{
-                    width: '100%', background: submitting ? '#9CA3AF' : '#4F46E5', color: 'white', border: 'none',
+                    width: '100%', background: submitting ? '#9CA3AF' : '#3E2BF1', color: 'white', border: 'none',
                     borderRadius: 12, padding: '14px 0', fontWeight: 700, fontSize: 16,
                     fontFamily: "'Heebo', sans-serif", cursor: submitting ? 'wait' : 'pointer', transition: 'all 0.25s ease',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   }}
                   onMouseEnter={e => { if (!submitting) e.currentTarget.style.background = '#4338CA'; }}
-                  onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = '#4F46E5'; }}
+                  onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = '#3E2BF1'; }}
                 >
                   {submitting ? <Loader2 className="w-5 h-5 animate-spin" aria-hidden /> : null}
                   {submitting ? 'שולח…' : 'שלח הודעה'}
                 </button>
                 <p className="text-xs text-gray-500 text-center leading-relaxed">
                   לחלופין:{' '}
-                  <a href="mailto:support@atlas-app.co.il" className="text-indigo-600 font-medium hover:underline">support@atlas-app.co.il</a>
+                  <a href="mailto:support@atlas-app.co.il" className="text-brand-600 font-medium hover:underline">support@atlas-app.co.il</a>
                   {' · '}
-                  <a href="https://wa.me/972545380085" className="text-indigo-600 font-medium hover:underline" target="_blank" rel="noopener noreferrer">וואטסאפ</a>
+                  <a href="https://wa.me/972545380085" className="text-brand-600 font-medium hover:underline" target="_blank" rel="noopener noreferrer">וואטסאפ</a>
                 </p>
               </form>
             )}

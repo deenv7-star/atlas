@@ -16,11 +16,11 @@ import { cn } from '@/lib/utils';
 import { STALE_LIVE_MS } from '@/lib/queryStaleTimes';
 
 const CHANNEL_ICONS = {
-  whatsapp: '💬',
-  email: '📧',
-  sms: '📱',
-  airbnb: '🏠',
-  booking: '🔵',
+  whatsapp: 'WA',
+  email: '@',
+  sms: 'SMS',
+  airbnb: 'A',
+  booking: 'B',
 };
 
 const CHANNEL_LABELS = {
@@ -129,15 +129,15 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
 
   return (
     <div className="h-full flex flex-col overflow-hidden animate-fade-in" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-4 mx-4 mt-4 flex-shrink-0">
+      <div className="atlas-page-hero mx-4 mt-4 flex-shrink-0">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <MessageSquare className="w-5 h-5 text-indigo-600" />
+          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+            <MessageSquare className="w-5 h-5 text-brand-600" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">הודעות</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">כל ההודעות לאורחים וללידים במקום אחד. שלח הודעות WhatsApp, מייל או SMS ישירות מכאן.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: תוכל לשלוח הודעות מוכנות מראש כדי לחסוך זמן</p>
+        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: תוכל לשלוח הודעות מוכנות מראש כדי לחסוך זמן</p>
       </div>
       <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
       {/* Threads list */}
@@ -150,10 +150,10 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
         <div className="p-3 border-b border-gray-100">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-base font-semibold text-gray-800 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-[#00D1C1]" />
+              <MessageSquare className="w-4 h-4 text-brand-600" />
               הודעות
             </h1>
-            <Badge className="bg-[#00D1C1]/10 text-[#00D1C1] text-xs border-0">
+            <Badge className="bg-brand-600/10 text-brand-600 text-xs border-0">
               {logs.length} הודעות
             </Badge>
           </div>
@@ -186,10 +186,10 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                 onClick={() => setSelectedThread(thread.key)}
                 className={cn(
                   "w-full flex items-start gap-2.5 px-3 py-2.5 border-b border-gray-50 hover:bg-gray-50 transition-colors text-right",
-                  selectedThread === thread.key && "bg-[#00D1C1]/5"
+                  selectedThread === thread.key && "bg-brand-600/5"
                 )}
               >
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-50 to-blue-100 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-teal-600">
+                <div className="w-9 h-9 rounded-full bg-teal-50 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-teal-600">
                   {(thread.guest_name || 'א')[0]}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -197,7 +197,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                     <p className="text-sm font-medium text-gray-800 truncate">{thread.guest_name}</p>
                     <div className="flex items-center gap-1">
                       {thread.unread > 0 && (
-                        <span className="w-4 h-4 bg-[#00D1C1] rounded-full text-[10px] text-white flex items-center justify-center flex-shrink-0">
+                        <span className="w-4 h-4 bg-brand-600 rounded-full text-[10px] text-white flex items-center justify-center flex-shrink-0">
                           {thread.unread}
                         </span>
                       )}
@@ -207,7 +207,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-xs">{CHANNEL_ICONS[thread.channel] || '💬'}</span>
+                    <span className="text-xs">{CHANNEL_ICONS[thread.channel] || '·'}</span>
                     <p className="text-xs text-gray-400 truncate">
                       {thread.messages[thread.messages.length - 1]?.body || 'הודעה'}
                     </p>
@@ -254,10 +254,10 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                       "max-w-xs lg:max-w-sm px-3 py-2 rounded-2xl text-sm",
                       isOutbound
                         ? "bg-white text-gray-800 shadow-sm rounded-tr-sm"
-                        : "bg-[#00D1C1] text-[#0B1220] rounded-tl-sm"
+                        : "bg-brand-600 text-white rounded-tl-sm"
                     )}>
                       <p className="leading-relaxed">{msg.body}</p>
-                      <p className={cn("text-[10px] mt-0.5", isOutbound ? "text-gray-400" : "text-[#0B1220]/50")}>
+                      <p className={cn("text-[10px] mt-0.5", isOutbound ? "text-gray-400" : "text-[#1B2656]/50")}>
                         {msg.created_at ? format(parseISO(msg.created_at), 'HH:mm') : ''}
                       </p>
                     </div>
@@ -281,10 +281,10 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
               <Button
                 onClick={handleSend}
                 disabled={!replyText.trim() || sendMutation.isPending}
-                className="flex-shrink-0 h-9 w-9 p-0 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220]"
+                className="flex-shrink-0 h-9 w-9 p-0 bg-brand-600 hover:bg-brand-500 text-white"
               >
                 {sendMutation.isPending ? (
-                  <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <Send className="w-4 h-4" />
                 )}

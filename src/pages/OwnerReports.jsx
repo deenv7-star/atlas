@@ -99,14 +99,14 @@ export default function OwnerReports() {
     <div dir="rtl" className="min-h-screen p-4 md:p-6 space-y-6 max-w-6xl mx-auto">
 
       {/* ── Header ───────────────────────────────── */}
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
             <FileBarChart className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">דוחות בעלים</h1>
-            <span className="text-xs font-medium bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full">PRO</span>
+            <span className="text-xs font-medium bg-amber-500 text-white px-2 py-0.5 rounded-full">PRO</span>
           </div>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">
@@ -118,7 +118,7 @@ export default function OwnerReports() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'סה״כ שולם לבעלים השנה', value: formatCurrency(142300), icon: CreditCard, gradient: 'from-emerald-500 to-teal-500', bg: 'bg-emerald-50' },
-          { label: 'עמלות ניהול שנצברו', value: formatCurrency(25100), icon: DollarSign, gradient: 'from-indigo-500 to-purple-500', bg: 'bg-indigo-50' },
+          { label: 'עמלות ניהול שנצברו', value: formatCurrency(25100), icon: DollarSign, gradient: 'from-brand-500 to-brand-500', bg: 'bg-brand-50' },
           { label: 'מספר נכסים בניהול', value: '8', icon: Building2, gradient: 'from-amber-500 to-orange-500', bg: 'bg-amber-50' },
         ].map((s) => (
           <div key={s.label} className={cn('rounded-2xl border border-gray-100 p-4', s.bg)}>
@@ -136,7 +136,7 @@ export default function OwnerReports() {
       {/* ── Owner Selector ───────────────────────── */}
       <div>
         <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-          <Users className="w-5 h-5 text-indigo-500" />
+          <Users className="w-5 h-5 text-brand-500" />
           בחר בעל נכס
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -147,7 +147,7 @@ export default function OwnerReports() {
               className={cn(
                 'text-right rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md',
                 selectedOwner.id === owner.id
-                  ? 'border-indigo-500 bg-indigo-50/60 shadow-md ring-2 ring-indigo-200'
+                  ? 'border-brand-500 bg-brand-50/60 shadow-md ring-2 ring-brand-200'
                   : 'border-gray-100 bg-white hover:border-gray-200'
               )}
             >
@@ -155,7 +155,7 @@ export default function OwnerReports() {
                 <div className={cn(
                   'w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold',
                   selectedOwner.id === owner.id
-                    ? 'bg-indigo-500 text-white'
+                    ? 'bg-brand-500 text-white'
                     : 'bg-gray-100 text-gray-600'
                 )}>
                   {owner.name.charAt(0)}
@@ -181,17 +181,17 @@ export default function OwnerReports() {
       {/* ── Statement Preview ────────────────────── */}
       <div>
         <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-          <FileBarChart className="w-5 h-5 text-indigo-500" />
+          <FileBarChart className="w-5 h-5 text-brand-500" />
           תצוגה מקדימה — דוח חודשי
         </h2>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
 
           {/* Statement Header */}
-          <div className="bg-gradient-to-l from-indigo-600 to-indigo-700 text-white p-6">
+          <div className="bg-brand-600 text-white p-6">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-xl font-bold mb-1">דוח חודשי — מרץ 2026</h3>
-                <p className="text-indigo-200 text-sm">תאריך הפקה: 17 במרץ 2026</p>
+                <p className="text-brand-200 text-sm">תאריך הפקה: 17 במרץ 2026</p>
               </div>
               <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2">
                 <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
@@ -248,7 +248,7 @@ export default function OwnerReports() {
                       <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
                         <td className="py-3 px-3 font-medium text-gray-900">
                           <div className="flex items-center gap-2">
-                            <Home className="w-4 h-4 text-indigo-400 shrink-0" />
+                            <Home className="w-4 h-4 text-brand-400 shrink-0" />
                             {p.name}
                           </div>
                         </td>
@@ -276,7 +276,7 @@ export default function OwnerReports() {
           </div>
 
           {/* Summary & Net Payout */}
-          <div className="mx-6 mb-6 rounded-2xl bg-gradient-to-l from-emerald-50 to-teal-50 border border-emerald-200 p-5">
+          <div className="mx-6 mb-6 rounded-2xl bg-emerald-50 border border-emerald-200 p-5">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
               <div className="text-center">
                 <span className="text-xs text-gray-500 block mb-1">הכנסות ברוטו</span>
@@ -299,11 +299,11 @@ export default function OwnerReports() {
 
           {/* Actions */}
           <div className="px-6 pb-6 flex flex-wrap gap-3">
-            <button className="flex items-center gap-2 bg-gradient-to-l from-indigo-600 to-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-indigo-200 transition-all duration-200">
+            <button className="flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-brand-200 transition-all duration-200">
               <Send className="w-4 h-4" />
               שלח דוח לבעלים
             </button>
-            <button className="flex items-center gap-2 bg-gradient-to-l from-emerald-600 to-teal-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-emerald-200 transition-all duration-200">
+            <button className="flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-emerald-200 transition-all duration-200">
               <MessageCircle className="w-4 h-4" />
               שלח ב-WhatsApp
             </button>
@@ -318,7 +318,7 @@ export default function OwnerReports() {
       {/* ── Payout History ───────────────────────── */}
       <div>
         <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-indigo-500" />
+          <Calendar className="w-5 h-5 text-brand-500" />
           היסטוריית תשלומים — {selectedOwner.name}
         </h2>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -367,9 +367,9 @@ export default function OwnerReports() {
       <div>
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="flex items-center gap-2 text-lg font-bold text-gray-800 mb-3 hover:text-indigo-600 transition-colors"
+          className="flex items-center gap-2 text-lg font-bold text-gray-800 mb-3 hover:text-brand-600 transition-colors"
         >
-          <Settings className="w-5 h-5 text-indigo-500" />
+          <Settings className="w-5 h-5 text-brand-500" />
           הגדרות דוחות
           <ChevronDown className={cn('w-4 h-4 text-gray-400 transition-transform duration-200', showSettings && 'rotate-180')} />
         </button>
@@ -381,10 +381,10 @@ export default function OwnerReports() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Percent className="w-4 h-4 text-indigo-500" />
+                  <Percent className="w-4 h-4 text-brand-500" />
                   אחוז עמלת ניהול
                 </label>
-                <span className="text-lg font-bold text-indigo-600">{feePercent}%</span>
+                <span className="text-lg font-bold text-brand-600">{feePercent}%</span>
               </div>
               <input
                 type="range"
@@ -393,7 +393,7 @@ export default function OwnerReports() {
                 step={1}
                 value={feePercent}
                 onChange={(e) => setFeePercent(Number(e.target.value))}
-                className="w-full h-2 bg-indigo-100 rounded-full appearance-none cursor-pointer accent-indigo-600"
+                className="w-full h-2 bg-brand-100 rounded-full appearance-none cursor-pointer accent-brand-600"
               />
               <div className="flex justify-between text-xs text-gray-400 mt-1">
                 <span>10%</span>
@@ -406,7 +406,7 @@ export default function OwnerReports() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-indigo-500" />
+                    <Calendar className="w-4 h-4 text-brand-500" />
                     שליחה אוטומטית ב-1 לחודש
                   </p>
                   <p className="text-xs text-gray-500 mr-6">הדוח ישלח אוטומטית לבעלי הנכסים מדי חודש</p>
@@ -415,7 +415,7 @@ export default function OwnerReports() {
                   onClick={() => setAutoSend(!autoSend)}
                   className={cn(
                     'relative w-12 h-7 rounded-full transition-colors duration-200 shrink-0',
-                    autoSend ? 'bg-indigo-500' : 'bg-gray-300'
+                    autoSend ? 'bg-brand-500' : 'bg-gray-300'
                   )}
                 >
                   <span className={cn(
@@ -428,7 +428,7 @@ export default function OwnerReports() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-indigo-500" />
+                    <DollarSign className="w-4 h-4 text-brand-500" />
                     כלול פירוט הוצאות
                   </p>
                   <p className="text-xs text-gray-500 mr-6">הצג פירוט מלא של כל ההוצאות בדוח</p>
@@ -437,7 +437,7 @@ export default function OwnerReports() {
                   onClick={() => setIncludeExpenses(!includeExpenses)}
                   className={cn(
                     'relative w-12 h-7 rounded-full transition-colors duration-200 shrink-0',
-                    includeExpenses ? 'bg-indigo-500' : 'bg-gray-300'
+                    includeExpenses ? 'bg-brand-500' : 'bg-gray-300'
                   )}
                 >
                   <span className={cn(
@@ -452,26 +452,26 @@ export default function OwnerReports() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-2">
-                  <Mail className="w-4 h-4 text-indigo-500" />
+                  <Mail className="w-4 h-4 text-brand-500" />
                   אימייל בעלים
                 </label>
                 <input
                   type="email"
                   value={selectedOwner.email}
                   readOnly
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-400 transition-all"
                 />
               </div>
               <div>
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-2">
-                  <Phone className="w-4 h-4 text-indigo-500" />
+                  <Phone className="w-4 h-4 text-brand-500" />
                   WhatsApp בעלים
                 </label>
                 <input
                   type="tel"
                   value={selectedOwner.phone}
                   readOnly
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-400 transition-all"
                 />
               </div>
             </div>

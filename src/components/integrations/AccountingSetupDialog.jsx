@@ -11,7 +11,7 @@ import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 const PROVIDER_CONFIGS = {
   MORNING: {
     title: 'Morning (מורנינג)',
-    icon: '☀️',
+    icon: 'M',
     color: 'bg-[#00A6ED]',
     fields: [
       { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'xxxxx...', required: true },
@@ -22,7 +22,7 @@ const PROVIDER_CONFIGS = {
   },
   GREEN_INVOICE: {
     title: 'Green Invoice',
-    icon: '📊',
+    icon: 'G',
     color: 'bg-green-600',
     fields: [
       { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'xxxxx...', required: true },
@@ -33,7 +33,7 @@ const PROVIDER_CONFIGS = {
   },
   QUICKBOOKS: {
     title: 'QuickBooks',
-    icon: '💼',
+    icon: 'Q',
     color: 'bg-[#2CA01C]',
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'ABxxxxx', required: true },
@@ -45,7 +45,7 @@ const PROVIDER_CONFIGS = {
   },
   ZOHO_BOOKS: {
     title: 'Zoho Books',
-    icon: '🧾',
+    icon: 'Z',
     color: 'bg-orange-600',
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'xxxxx', required: true },
@@ -57,7 +57,7 @@ const PROVIDER_CONFIGS = {
   },
   XERO: {
     title: 'Xero',
-    icon: '📈',
+    icon: 'X',
     color: 'bg-blue-700',
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'xxxxx', required: true },
@@ -68,7 +68,7 @@ const PROVIDER_CONFIGS = {
   },
   HASHAVSHEVET: {
     title: 'חשבשבת (HashavShevet)',
-    icon: '🧮',
+    icon: 'ח',
     color: 'bg-gray-700',
     fields: [
       { key: 'license_key', label: 'License Key', type: 'password', placeholder: 'xxxxx...', required: true },
@@ -97,7 +97,7 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
     setTestResult({
       success,
       message: success 
-        ? 'החיבור עבד בהצלחה! החשבונאות מסונכרנת ✓' 
+        ? 'החיבור עבד בהצלחה! החשבונאות מסונכרנת ' 
         : 'שגיאה בחיבור. בדוק את פרטי החשבון ונסה שוב.'
     });
     setTesting(false);
@@ -184,7 +184,7 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>ביטול</Button>
-          <Button onClick={handleSave} disabled={!testResult?.success} className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]">שמור והפעל</Button>
+          <Button onClick={handleSave} disabled={!testResult?.success} className="bg-brand-600 hover:bg-[#00B8A9] text-white">שמור והפעל</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

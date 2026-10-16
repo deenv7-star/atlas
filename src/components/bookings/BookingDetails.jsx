@@ -3,15 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useUpdateBooking } from '@/data/entities';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import {
   Select,
   SelectContent,
@@ -27,6 +20,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { Page, StatusPill, channelOf, fmtDay, fmtShort, fmtMoney } from '@/components/ds';
 import {
   Phone,
   Mail,
@@ -38,9 +32,12 @@ import {
   FileText,
   Plus,
   CheckCircle2,
-  Receipt
+  Receipt,
+  ChevronRight
 } from 'lucide-react';
-import { format, parseISO, differenceInDays } from 'date-fns';
+import { parseISO, differenceInDays } from 'date-fns';
+
+const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer: 'העברה', card: 'כרטיס', credit_card: 'כרטיס אשראי', bit: 'ביט', paybox: 'פייבוקס' };
 
 const statusColors = {
   PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
@@ -51,11 +48,11 @@ const statusColors = {
 };
 
 const statusLabels = {
-  PENDING: 'ממתין',
-  CONFIRMED: 'מאושר',
-  CHECKED_IN: 'צ׳ק-אין',
-  CHECKED_OUT: 'צ׳ק-אאוט',
-  CANCELLED: 'מבוטל'
+  PENDING: 'ממתינה',
+  CONFIRMED: 'מאושרת',
+  CHECKED_IN: 'בשהייה',
+  CHECKED_OUT: 'הסתיימה',
+  CANCELLED: 'בוטלה'
 };
 
 const paymentStatusColors = {
@@ -197,72 +194,141 @@ export default function BookingDetails({ booking, onClose, orgId }) {
     }
   ];
 
+  const outstanding = Math.max(0, (Number(booking.total_price) || 0) - totalPaid);
+  const phoneDigits = String(booking.guest_phone || '').replace(/[^0-9]/g, '');
+  const waNumber = phoneDigits.startsWith('0') ? `972${phoneDigits.slice(1)}` : phoneDigits;
+  const ch = channelOf(booking.booking_source);
+
   return (
     <>
-      <Sheet open={true} onOpenChange={onClose}>
-        <SheetContent side="left" className="w-full sm:w-[600px] overflow-y-auto p-0">
-          <SheetHeader className="p-6 pb-4 border-b">
-            <div className="flex items-center justify-between">
-              <SheetTitle className="text-right">פרטי הזמנה</SheetTitle>
-              <Badge className={`${statusColors[booking.status]} border`}>
-                {statusLabels[booking.status]}
-              </Badge>
-            </div>
-          </SheetHeader>
-          
-          <div className="p-6 space-y-6">
-            {/* Guest Info */}
-            <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
-            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center">
-                  <span className="text-xl font-bold text-[#00D1C1]">
-                    {booking.guest_name?.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  <p className="font-semibold text-lg">{booking.guest_name}</p>
-                  <p className="text-sm text-gray-500">{booking.adults} אורחים</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-gray-400" />
-                  <span dir="ltr">{booking.guest_phone}</span>
-                </div>
-                {booking.guest_email && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-gray-400" />
-                    <span>{booking.guest_email}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-            </ErrorBoundary>
+      <Page className="max-w-[880px]">
+        <button type="button" onClick={onClose} className="press -ms-2 mb-3 inline-flex h-11 items-center gap-1 rounded-[10px] px-2 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
+          <ChevronRight className="h-5 w-5" />
+          הזמנות
+        </button>
 
-            {/* Dates & Amount */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-500 mb-1">תאריכים</p>
-                <p className="font-medium">
-                  {booking.check_in_date && format(parseISO(booking.check_in_date), 'd/M/yyyy')} - {booking.check_out_date && format(parseISO(booking.check_out_date), 'd/M/yyyy')}
+        {/* Guest + stay */}
+        <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
+          <section className="rounded-[20px] border border-line bg-white p-5 shadow-card md:p-6">
+            <div className="flex items-start gap-4">
+              <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[22px] font-extrabold text-brand-700">{booking.guest_name?.charAt(0)}</span>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="truncate text-[26px] font-extrabold leading-tight text-navy-900">{booking.guest_name}</h1>
+                  <StatusPill status={booking.status} />
+                </div>
+                <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[15px] text-ink-600">
+                  <span>{booking.property_name || 'יחידה'}</span>
+                  <span aria-hidden>·</span>
+                  <span>{booking.adults || 2} אורחים</span>
+                  <span aria-hidden>·</span>
+                  <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full" style={{ background: ch.color }} />{ch.label}</span>
                 </p>
-                <p className="text-sm text-gray-500">{nights} לילות</p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-500 mb-1">סכום כולל</p>
-                <p className="font-semibold text-xl">₪{booking.total_price?.toLocaleString() || 0}</p>
               </div>
             </div>
 
-            {/* Status Change */}
-            <div className="space-y-2">
-              <Label>שנה סטטוס</Label>
-              <Select 
-                value={booking.status} 
-                onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}
-              >
-                <SelectTrigger className="rounded-xl">
+            <div className="mt-5 grid grid-cols-3 gap-2 rounded-[14px] bg-neutral-50 p-3 text-center md:gap-4 md:p-4">
+              <div>
+                <p className="text-[13px] text-ink-400">כניסה</p>
+                <p className="mt-0.5 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_in_date)}</span><span className="sm:hidden">{fmtShort(booking.check_in_date)}</span></p>
+              </div>
+              <div className="border-x border-line">
+                <p className="text-[13px] text-ink-400">לילות</p>
+                <p className="mt-0.5 text-[16px] font-bold tabular text-navy-900">{nights || booking.nights || 1}</p>
+              </div>
+              <div>
+                <p className="text-[13px] text-ink-400">יציאה</p>
+                <p className="mt-0.5 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_out_date)}</span><span className="sm:hidden">{fmtShort(booking.check_out_date)}</span></p>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {booking.guest_phone ? (
+                <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noreferrer" className="press inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-brand-600 text-[15px] font-bold text-white hover:bg-brand-500">
+                  <MessageSquare className="h-5 w-5" />
+                  וואטסאפ
+                </a>
+              ) : null}
+              {booking.guest_phone ? (
+                <a href={`tel:${booking.guest_phone}`} className="press inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-line bg-white text-[15px] font-bold text-navy-900 hover:bg-neutral-50">
+                  <Phone className="h-5 w-5" />
+                  <span dir="ltr">{booking.guest_phone}</span>
+                </a>
+              ) : null}
+              {booking.guest_email ? (
+                <a href={`mailto:${booking.guest_email}`} className="press col-span-2 inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-line bg-white text-[15px] font-medium text-navy-900 hover:bg-neutral-50 sm:col-span-1">
+                  <Mail className="h-5 w-5" />
+                  אימייל
+                </a>
+              ) : null}
+            </div>
+          </section>
+        </ErrorBoundary>
+
+        <div className="mt-4 grid gap-4 md:grid-cols-[1.3fr_1fr]">
+          {/* Money */}
+          <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-[18px] font-bold text-navy-900">תשלומים</h2>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => { window.location.href = `/Invoices?booking=${booking.id}`; }}>
+                  <Receipt />
+                  חשבונית
+                </Button>
+                <Button size="sm" variant="secondary" onClick={() => setIsPaymentDialogOpen(true)}>
+                  <Plus />
+                  תשלום
+                </Button>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              <div className="rounded-[12px] bg-neutral-50 p-3">
+                <p className="text-[13px] text-ink-400">סך ההזמנה</p>
+                <p className="mt-0.5 text-[18px] font-extrabold tabular text-navy-900">{fmtMoney(booking.total_price)}</p>
+              </div>
+              <div className="rounded-[12px] bg-success-50 p-3">
+                <p className="text-[13px] text-success-700">שולם</p>
+                <p className="mt-0.5 text-[18px] font-extrabold tabular text-success-700">{fmtMoney(totalPaid)}</p>
+              </div>
+              <div className="rounded-[12px] bg-warning-50 p-3">
+                <p className="text-[13px] text-warning-700">יתרה</p>
+                <p className="mt-0.5 text-[18px] font-extrabold tabular text-warning-700">{fmtMoney(totalDue || outstanding)}</p>
+              </div>
+            </div>
+            {payments.length > 0 ? (
+              <ul className="mt-3 divide-y divide-line">
+                {payments.map((payment) => (
+                  <li key={payment.id} className="flex min-h-[60px] items-center justify-between gap-3 py-2">
+                    <div className="min-w-0">
+                      <p className="text-[15px] font-semibold text-navy-900">
+                        {payment.type === 'DEPOSIT' ? 'מקדמה' : payment.type === 'BALANCE' ? 'יתרה' : payment.type === 'FULL' ? 'תשלום מלא' : 'תשלום'}
+                      </p>
+                      <p className="text-[13px] text-ink-400">
+                        {METHOD_LABEL[String(payment.method || '').toLowerCase()] || 'אחר'}
+                        {payment.due_date && ` · עד ${fmtShort(payment.due_date)}`}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[15px] font-bold tabular text-navy-900">{fmtMoney(payment.amount)}</span>
+                      {payment.status === 'DUE' ? (
+                        <Button size="sm" variant="outline" onClick={() => markPaidMutation.mutate(payment.id)}>סימון כשולם</Button>
+                      ) : (
+                        <StatusPill status={payment.status} label={paymentStatusLabels[payment.status]} />
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-4 text-[15px] text-ink-600">עדיין לא נרשם תשלום להזמנה הזו.</p>
+            )}
+          </section>
+
+          <div className="grid content-start gap-4">
+            <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
+              <Label className="text-[14px] font-medium text-ink-600">מצב ההזמנה</Label>
+              <Select value={booking.status} onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}>
+                <SelectTrigger className="mt-2">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -271,127 +337,37 @@ export default function BookingDetails({ booking, onClose, orgId }) {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </section>
 
-            {/* Timeline */}
-            <div className="space-y-2">
-              <h3 className="font-semibold">ציר זמן</h3>
-              <div className="flex items-center justify-between">
+            <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
+              <h2 className="text-[18px] font-bold text-navy-900">התקדמות</h2>
+              <ol className="mt-3 space-y-1">
                 {timelineItems.map((item, i) => (
-                  <div key={i} className="flex flex-col items-center gap-1">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      item.done ? 'bg-green-100' : 'bg-gray-100'
-                    }`}>
-                      {item.done ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <item.icon className="h-4 w-4 text-gray-400" />
-                      )}
-                    </div>
-                    <span className="text-xs text-gray-500">{item.label}</span>
-                  </div>
+                  <li key={i} className="flex min-h-[40px] items-center gap-3">
+                    <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${item.done ? 'bg-success-50 text-success-600' : 'bg-neutral-100 text-ink-400'}`}>
+                      {item.done ? <CheckCircle2 className="h-[18px] w-[18px]" /> : <item.icon className="h-[18px] w-[18px]" strokeWidth={1.75} />}
+                    </span>
+                    <span className={`text-[15px] ${item.done ? 'font-semibold text-navy-900' : 'text-ink-600'}`}>{item.label}</span>
+                  </li>
                 ))}
-              </div>
-            </div>
+              </ol>
+            </section>
 
-            {/* Payments Section */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold">תשלומים וחשבוניות</h3>
-                <div className="flex gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="rounded-lg gap-1"
-                    onClick={() => {
-                      // Navigate to create invoice with this booking
-                      window.location.href = `/Invoices?booking=${booking.id}`;
-                    }}
-                  >
-                    <Receipt className="h-3 w-3" />
-                    חשבונית
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="rounded-lg gap-1"
-                    onClick={() => setIsPaymentDialogOpen(true)}
-                  >
-                    <Plus className="h-3 w-3" />
-                    תשלום
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Payment Summary */}
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="bg-green-50 rounded-lg p-3">
-                  <p className="text-green-600">שולם</p>
-                  <p className="font-semibold text-green-700">₪{totalPaid.toLocaleString()}</p>
-                </div>
-                <div className="bg-orange-50 rounded-lg p-3">
-                  <p className="text-orange-600">נותר לתשלום</p>
-                  <p className="font-semibold text-orange-700">₪{totalDue.toLocaleString()}</p>
-                </div>
-              </div>
-
-              {/* Payment List */}
-              {payments.length > 0 ? (
-                <div className="space-y-2">
-                  {payments.map(payment => (
-                    <div key={payment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                      <div>
-                        <p className="font-medium text-sm">
-                          {payment.type === 'DEPOSIT' ? 'מקדמה' : payment.type === 'BALANCE' ? 'יתרה' : payment.type === 'FULL' ? 'תשלום מלא' : 'אחר'}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {payment.method === 'CASH' ? 'מזומן' : payment.method === 'TRANSFER' ? 'העברה' : payment.method === 'CARD' ? 'כרטיס' : 'אחר'}
-                          {payment.due_date && ` • יעד: ${format(parseISO(payment.due_date), 'd/M')}`}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">₪{payment.amount?.toLocaleString()}</span>
-                        {payment.status === 'DUE' ? (
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            className="rounded-lg text-xs"
-                            onClick={() => markPaidMutation.mutate(payment.id)}
-                          >
-                            סמן שולם
-                          </Button>
-                        ) : (
-                          <Badge className={paymentStatusColors[payment.status]}>
-                            {paymentStatusLabels[payment.status]}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 text-center py-4">אין תשלומים עדיין</p>
-              )}
-            </div>
-
-            {/* Notes */}
-            {booking.notes && (
-              <div className="space-y-2">
-                <h3 className="font-semibold">הערות</h3>
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="text-sm text-gray-600 whitespace-pre-wrap">{booking.notes}</p>
-                </div>
-              </div>
-            )}
+            {booking.notes ? (
+              <section className="rounded-[14px] border border-line bg-white p-5 shadow-card">
+                <h2 className="text-[18px] font-bold text-navy-900">הערות</h2>
+                <p className="mt-2 whitespace-pre-wrap text-[15px] text-ink-600">{booking.notes}</p>
+              </section>
+            ) : null}
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
+      </Page>
 
       {/* Add Payment Dialog */}
       <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>הוסף תשלום</DialogTitle>
+            <DialogTitle className="text-[22px] font-extrabold text-navy-900">תשלום חדש</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
@@ -472,7 +448,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             <Button 
               onClick={() => createPaymentMutation.mutate(newPayment)}
               disabled={newPayment.amount <= 0 || createPaymentMutation.isPending}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+              className="bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl"
             >
               {createPaymentMutation.isPending ? 'שומר...' : 'הוסף תשלום'}
             </Button>

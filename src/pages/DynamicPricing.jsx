@@ -15,7 +15,7 @@ const SAMPLE_PROPERTIES = [
 ];
 
 const SEASON_LABELS = {
-  high: { label: 'עונה גבוהה', color: 'bg-purple-100 text-purple-700', icon: Sun },
+  high: { label: 'עונה גבוהה', color: 'bg-brand-100 text-brand-700', icon: Sun },
   medium: { label: 'עונה בינונית', color: 'bg-blue-100 text-blue-700', icon: Moon },
   peak: { label: 'שיא עונה', color: 'bg-red-100 text-red-700', icon: Star },
   low: { label: 'עונה נמוכה', color: 'bg-green-100 text-green-700', icon: Moon },
@@ -25,7 +25,7 @@ const PRICE_LEVELS = ['low', 'medium', 'high', 'peak'];
 const PRICE_COLORS = {
   low: 'bg-green-400',
   medium: 'bg-blue-400',
-  high: 'bg-purple-400',
+  high: 'bg-brand-400',
   peak: 'bg-red-500',
 };
 
@@ -82,21 +82,21 @@ export default function DynamicPricing() {
     <div className="min-h-screen bg-gray-50/50" dir="rtl">
       <div className="max-w-5xl mx-auto px-4 py-6">
         {/* Header */}
-        <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+        <div className="atlas-page-hero">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-indigo-600" />
+            <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-brand-600" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">תמחור דינאמי</h1>
+            <h1 className="text-2xl font-bold text-gray-900">תמחור דינמי</h1>
           </div>
           <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">מקסם את ההכנסות שלך עם תמחור חכם. המערכת ממליצה על מחירים אופטימליים לפי עונה, ביקוש ותחרות.</p>
-          <p className="text-indigo-500 text-xs mt-1 sm:mr-12">💡 טיפ: הפעל תמחור אוטומטי כדי למקסם הכנסות בלי מאמץ</p>
+          <p className="text-brand-500 text-xs mt-1 sm:mr-12">טיפ: הפעל תמחור אוטומטי כדי למקסם הכנסות בלי מאמץ</p>
         </div>
 
         <DemoDataBanner message="נתוני דוגמה — המחירים וההמלצות המוצגים הם לצורך המחשה. חבר את הנכסים שלך כדי לראות המלצות אמיתיות." />
 
         {/* Revenue Impact Card */}
-        <div className="mb-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-6 text-white shadow-lg">
+        <div className="mb-6 rounded-2xl bg-emerald-500 p-6 text-white shadow-lg">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
               <DollarSign className="w-6 h-6" />
@@ -156,7 +156,7 @@ export default function DynamicPricing() {
         <Card className="mb-8">
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5 text-indigo-600" />
+              <Calendar className="w-5 h-5 text-brand-600" />
               <span className="text-sm text-gray-600">ירוק = נמוך | כחול = בינוני | סגול = גבוה | אדום = שיא</span>
             </div>
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
@@ -186,7 +186,7 @@ export default function DynamicPricing() {
 
         {/* Settings Section */}
         <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <Settings className="w-5 h-5 text-indigo-600" />
+          <Settings className="w-5 h-5 text-brand-600" />
           הגדרות
         </h3>
         <Card className="mb-8">

@@ -79,8 +79,8 @@ const PROVIDER_CONFIGS = {
   },
   APALEO: {
     title: 'Apaleo',
-    icon: '🏨',
-    color: 'bg-indigo-600',
+    icon: 'A',
+    color: 'bg-brand-600',
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'xxxxx', required: true },
       { key: 'client_secret', label: 'Client Secret', type: 'password', placeholder: 'xxxxx...', required: true }
@@ -90,7 +90,7 @@ const PROVIDER_CONFIGS = {
   },
   CHANNELMANAGER: {
     title: 'Channel Manager',
-    icon: '🔗',
+    icon: 'C',
     color: 'bg-pink-600',
     fields: [
       { key: 'api_endpoint', label: 'API Endpoint', type: 'text', placeholder: 'https://...', required: true },
@@ -121,7 +121,7 @@ export default function PMSSetupDialog({ open, onOpenChange, provider, onSave })
     setTestResult({
       success,
       message: success 
-        ? 'החיבור עבד בהצלחה! PMS מסונכרן ✓' 
+        ? 'החיבור עבד בהצלחה! PMS מסונכרן ' 
         : 'שגיאה בחיבור. בדוק את פרטי ההתחברות ונסה שוב.'
     });
     setTesting(false);
@@ -218,7 +218,7 @@ export default function PMSSetupDialog({ open, onOpenChange, provider, onSave })
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>ביטול</Button>
-          <Button onClick={handleSave} disabled={!testResult?.success} className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]">שמור והפעל</Button>
+          <Button onClick={handleSave} disabled={!testResult?.success} className="bg-brand-600 hover:bg-[#00B8A9] text-white">שמור והפעל</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

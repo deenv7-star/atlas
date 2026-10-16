@@ -10,33 +10,33 @@ import { Info, ChevronRight, CheckCircle2, ExternalLink } from 'lucide-react';
 const CALENDAR_PROVIDERS = {
   GOOGLE: { 
     name: 'Google Calendar', 
-    icon: '📅',
+    icon: 'G',
     instructions: 'זה קל מאוד! עבור ל-Google Calendar → הגדרות → שיתוף יומן → עתק את כתובת iCal',
     color: 'bg-blue-500'
   },
   OUTLOOK: { 
     name: 'Outlook', 
-    icon: '📆',
+    icon: 'O',
     instructions: 'בעמוד הבית של Outlook → הפעולות → שתף יומן זה → הצג עמודי קישור → עתק את כתובת iCal',
     color: 'bg-cyan-600'
   },
   AIRBNB: { 
     name: 'Airbnb', 
-    icon: '🏠',
+    icon: 'A',
     instructions: 'היכנס לאתר Airbnb → לחץ על "Calendar" למטה → בחר את הנכס → לחץ על "Availability Settings" → גלול ל-"Calendar Sync" → העתק את ה-URL שמתחת ל-"Export Calendar"',
     helpUrl: 'https://www.airbnb.com/help/article/99',
-    color: 'bg-[#FF5A5F]'
+    color: 'bg-[#EF5B5B]'
   },
   BOOKING_COM: { 
     name: 'Booking.com', 
-    icon: '🏨',
+    icon: 'B',
     instructions: 'היכנס ל-Extranet של Booking.com → Properties → בחר נכס → Calendar → Calendar import/export → העתק את קישור ה-"Export" (iCal URL)',
     helpUrl: 'https://partner.booking.com/en-gb/help/rates-availability/how-can-i-synchronise-my-booking-com-calendar-other-platforms',
     color: 'bg-blue-700'
   },
   ICAL: { 
     name: 'iCal (כללי)', 
-    icon: '📋',
+    icon: 'i',
     instructions: 'הדבק כתובת iCal כלשהי מכל מקור שתומך ב-iCal',
     color: 'bg-gray-600'
   }

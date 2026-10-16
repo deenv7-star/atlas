@@ -63,15 +63,15 @@ export default function GuestPortal() {
     <div className="min-h-screen bg-gray-50/50" dir="rtl">
       <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+        <div className="atlas-page-hero">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-              <Globe className="w-5 h-5 text-indigo-600" />
+            <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+              <Globe className="w-5 h-5 text-brand-600" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">פורטל אורחים</h1>
           </div>
           <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">צור פורטל דיגיטלי ממותג לאורחים שלך. הוראות צ׳ק-אין, חוקי בית, המלצות מקומיות וקוד WiFi — הכל במקום אחד שהאורח מקבל בלינק.</p>
-          <p className="text-indigo-500 text-xs mt-1 sm:mr-12">💡 טיפ: שלח את הלינק לאורח יום לפני הגעה — זה חוסך עשרות שאלות</p>
+          <p className="text-brand-500 text-xs mt-1 sm:mr-12">טיפ: שלח את הלינק לאורח יום לפני הגעה — זה חוסך עשרות שאלות</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -134,7 +134,7 @@ export default function GuestPortal() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-4">
-                    <Clock className="w-5 h-5 text-indigo-600" />
+                    <Clock className="w-5 h-5 text-brand-600" />
                     <h3 className="font-semibold text-gray-900">צ׳ק-אין / צ׳ק-אאוט</h3>
                   </div>
                   <div className="space-y-4">
@@ -166,7 +166,7 @@ export default function GuestPortal() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-4">
-                    <Wifi className="w-5 h-5 text-indigo-600" />
+                    <Wifi className="w-5 h-5 text-brand-600" />
                     <h3 className="font-semibold text-gray-900">קוד WiFi</h3>
                   </div>
                   <div className="space-y-4">
@@ -200,7 +200,7 @@ export default function GuestPortal() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Home className="w-5 h-5 text-indigo-600" />
+                  <Home className="w-5 h-5 text-brand-600" />
                   <h3 className="font-semibold text-gray-900">חוקי בית</h3>
                 </div>
                 <Textarea
@@ -218,7 +218,7 @@ export default function GuestPortal() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-indigo-600" />
+                    <MapPin className="w-5 h-5 text-brand-600" />
                     <h3 className="font-semibold text-gray-900">המלצות מקומיות</h3>
                   </div>
                   <Button variant="outline" size="sm" onClick={addRecommendation}>
@@ -265,7 +265,7 @@ export default function GuestPortal() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <ExternalLink className="w-5 h-5 text-indigo-600" />
+                  <ExternalLink className="w-5 h-5 text-brand-600" />
                   <h3 className="font-semibold text-gray-900">הוראות הגעה</h3>
                 </div>
                 <Textarea
@@ -281,10 +281,10 @@ export default function GuestPortal() {
         </div>
 
         {/* Share section */}
-        <Card className="border-indigo-100 bg-indigo-50/30">
+        <Card className="border-brand-100 bg-brand-50/30">
           <CardContent className="pt-6">
             <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Share2 className="w-5 h-5 text-indigo-600" />
+              <Share2 className="w-5 h-5 text-brand-600" />
               שתף את הפורטל
             </h3>
             <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">

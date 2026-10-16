@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -94,7 +95,7 @@ function PricingRoiCalculator() {
   }, [properties, hourlyRate]);
 
   return (
-    <section className="max-w-3xl mx-auto mt-14 mb-4 rounded-2xl border border-[#00D1C1]/25 bg-gradient-to-br from-teal-50/80 to-white p-6 md:p-8 text-right shadow-sm" aria-labelledby="roi-calculator-title">
+    <section className="max-w-3xl mx-auto mt-14 mb-4 rounded-2xl border border-brand-600/25 bg-teal-50/80 p-6 md:p-8 text-right shadow-sm" aria-labelledby="roi-calculator-title">
       <div className="flex items-center gap-2 mb-2 text-[#0a7c72]">
         <TrendingUp className="w-5 h-5 shrink-0" aria-hidden />
         <h2 id="roi-calculator-title" className="text-xl font-extrabold text-gray-900">
@@ -119,7 +120,7 @@ function PricingRoiCalculator() {
             max={25}
             value={Math.min(25, properties)}
             onChange={(e) => setProperties(Number(e.target.value))}
-            className="w-full mt-2 h-2 accent-[#00D1C1] cursor-pointer"
+            className="w-full mt-2 h-2 accent-[#3E2BF1] cursor-pointer"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>1</span>
@@ -178,11 +179,11 @@ export default function PricingPlans() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
           <Link to="/">
-            <img src="/atlas-logo-final.png" alt="ATLAS" className="h-9" />
+            <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           </Link>
           <div className="flex items-center gap-2 flex-wrap justify-end">
             <Link to="/register">
-              <Button size="sm" className="font-bold bg-[#00D1C1] text-[#0B1220] hover:bg-[#00c4b4] shadow-sm">
+              <Button size="sm" className="font-bold bg-brand-600 text-white hover:bg-[#00c4b4] shadow-sm">
                 14 יום חינם
               </Button>
             </Link>
@@ -202,7 +203,7 @@ export default function PricingPlans() {
           <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed text-base">
             השוואה מהירה בין חבילות, מחשבון חיסכון משוער, ושקיפות לגבי ניסיון ו-Enterprise.
             המחירים להמחשה — בפועל ייתכנו מבצעים, שנתיות ומותאם ארגון.{' '}
-            <Link to="/contact" className="text-[#00D1C1] font-semibold underline-offset-2 hover:underline">
+            <Link to="/contact" className="text-brand-600 font-semibold underline-offset-2 hover:underline">
               צרו קשר
             </Link>
             .
@@ -217,11 +218,11 @@ export default function PricingPlans() {
               key={plan.name}
               className={`rounded-2xl border p-6 flex flex-col ${
                 plan.highlight
-                  ? 'border-[#00D1C1] shadow-lg shadow-teal-900/10 ring-2 ring-[#00D1C1]/30 md:-translate-y-1'
+                  ? 'border-brand-600 shadow-lg shadow-teal-900/10 ring-2 ring-brand-600/30 md:-translate-y-1'
                   : 'border-gray-200 shadow-sm'
               }`}
             >
-              <p className="text-xs font-bold uppercase tracking-wide text-[#00a89a] mb-1">{plan.tag}</p>
+              <p className="text-xs font-bold uppercase tracking-wide text-[#2A1AC9] mb-1">{plan.tag}</p>
               <h2 className="text-2xl font-extrabold text-gray-900 mb-2">{plan.name}</h2>
               <p className="text-sm text-gray-600 mb-4 flex-1 leading-relaxed">{plan.blurb}</p>
               <div className="mb-6">
@@ -240,7 +241,7 @@ export default function PricingPlans() {
                       <p className="text-sm text-gray-600 mt-2 leading-relaxed">
                         ברוב הארגונים תוכניות Enterprise <strong className="text-gray-800">מתחילות מסביבות ₪{plan.enterpriseFromMonthly.toLocaleString('he-IL')} לחודש</strong>
                         {' '}(תלוי נפח נכסים, SLA ואינטגרציות). לאומדן מדויק —{' '}
-                        <Link to="/contact" className="text-[#00a89a] font-semibold underline-offset-2 hover:underline">
+                        <Link to="/contact" className="text-[#2A1AC9] font-semibold underline-offset-2 hover:underline">
                           דברו עם מכירות
                         </Link>
                         .
@@ -264,7 +265,7 @@ export default function PricingPlans() {
               <Link to={plan.priceMonthly == null ? '/contact' : '/register'} className="mt-auto">
                 <Button
                   className={`w-full font-bold min-h-[48px] text-base ${
-                    plan.highlight ? 'bg-[#00D1C1] text-[#0B1220] hover:bg-[#00c4b4]' : ''
+                    plan.highlight ? 'bg-brand-600 text-white hover:bg-[#00c4b4]' : ''
                   }`}
                   variant={plan.highlight ? 'default' : 'outline'}
                 >
@@ -286,16 +287,16 @@ export default function PricingPlans() {
             </li>
             <li>
               <strong className="text-gray-800">Enterprise:</strong> תמחור, SLA ואינטגרציות —{' '}
-              <Link to="/contact" className="text-[#00a89a] font-semibold underline-offset-2 hover:underline">בשיחה עם המכירות</Link>.
+              <Link to="/contact" className="text-[#2A1AC9] font-semibold underline-offset-2 hover:underline">בשיחה עם המכירות</Link>.
             </li>
             <li>
               <strong className="text-gray-800">תמיכה:</strong> ימים א–ה 09:00–18:00 — דף{' '}
-              <Link to="/contact" className="text-[#00a89a] font-semibold underline-offset-2 hover:underline">צור קשר</Link>
+              <Link to="/contact" className="text-[#2A1AC9] font-semibold underline-offset-2 hover:underline">צור קשר</Link>
               {' '}או וואטסאפ מהאתר.
             </li>
             <li>
               <strong className="text-gray-800">אבטחה ותקנים:</strong>{' '}
-              <Link to="/data-security#security-compliance" className="text-[#00a89a] font-semibold underline-offset-2 hover:underline">
+              <Link to="/data-security#security-compliance" className="text-[#2A1AC9] font-semibold underline-offset-2 hover:underline">
                 סיכום עמידה בתקנים ודוחות (כולל SOC 2 / ISO)
               </Link>
               .

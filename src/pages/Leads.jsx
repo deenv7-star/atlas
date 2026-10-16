@@ -1,5 +1,8 @@
+import { createPageUrl } from '@/utils';
+import { Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, Avatar, SkelRows, fmtShort } from '@/components/ds';
 import React, { useMemo, useRef, useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { useLeads, useCreateLead, useUpdateLead, useDeleteLead, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
@@ -8,10 +11,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  Users, Plus, Search,
-  Download,
-} from 'lucide-react';
+import { Users, Plus, Search } from 'lucide-react';
 import { exportToCSV, LEAD_COLUMNS } from '@/lib/csvExport';
 import { GuestsTable } from '@/components/tables/GuestsTable';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -23,10 +23,10 @@ import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 const STATUS_OPTIONS = [
   { value: 'NEW',        label: 'חדש',          color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { value: 'CONTACTED',  label: 'נוצר קשר',     color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  { value: 'OFFER_SENT', label: 'הצעה נשלחה',   color: 'bg-purple-100 text-purple-700 border-purple-200' },
-  { value: 'CONFIRMED',  label: 'מאושר',         color: 'bg-green-100 text-green-700 border-green-200' },
-  { value: 'REJECTED',   label: 'נדחה',          color: 'bg-red-100 text-red-700 border-red-200' },
+  { value: 'CONTACTED',  label: 'בטיפול',     color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
+  { value: 'OFFER_SENT', label: 'הצעה נשלחה',   color: 'bg-brand-100 text-brand-700 border-brand-200' },
+  { value: 'CONFIRMED',  label: 'נסגר',         color: 'bg-green-100 text-green-700 border-green-200' },
+  { value: 'REJECTED',   label: 'לא רלוונטי',          color: 'bg-red-100 text-red-700 border-red-200' },
   { value: 'LOST',       label: 'לא רלוונטי',   color: 'bg-gray-100 text-gray-500 border-gray-200' },
 ];
 const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
@@ -214,98 +214,75 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
   const activeStatusChip = tags.length === 1 && STATUS_VALUE_SET.has(tags[0]) ? tags[0] : 'all';
 
   return (
-    <div className="atlas-page-shell max-w-5xl space-y-5" dir="rtl">
-
-      <div className="atlas-page-hero">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shadow-sm">
-            <Users className="w-5 h-5 text-indigo-600" />
-          </div>
-          <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">ניהול לידים</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed max-w-2xl">כל הפניות במקום אחד — מעקב סטטוס, פרטים מלאים, ודרך קצרה להפוך ליד להזמנה.</p>
-      </div>
-
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-sm flex-shrink-0">
-            <Users className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-gray-900">לידים</h1>
-            <p className="text-xs text-gray-400">{counts.total} לידים סה"כ</p>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <ShareViewButton className="h-11 rounded-xl text-sm" />
-          <Button variant="outline" onClick={handleExport} className="gap-2 min-h-[44px] h-11 text-sm rounded-xl border-gray-200 hidden sm:flex">
-            <Download className="w-4 h-4" /> ייצוא CSV
-          </Button>
-          <Button onClick={openNew} className="gap-1.5 min-h-[44px] bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-11 text-sm rounded-xl shadow-sm px-5 touch-manipulation">
-            <Plus className="w-4 h-4" /> ליד חדש
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {[
-          { label: 'סה"כ',   value: counts.total,    bg: 'bg-gray-100',   text: 'text-gray-700' },
-          { label: 'חדשים',  value: counts.new,       bg: 'bg-blue-50',    text: 'text-blue-700' },
-          { label: 'בתהליך', value: counts.contacted, bg: 'bg-yellow-50',  text: 'text-yellow-700' },
-          { label: 'נסגרו',  value: counts.won,       bg: 'bg-green-50',   text: 'text-green-700' },
-        ].map(s => (
-          <div key={s.label} className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${s.bg} border border-transparent`}>
-            <span className={`text-sm font-bold ${s.text}`}>{s.value}</span>
-            <span className="text-xs text-gray-500">{s.label}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-        <div className="relative flex-1 w-full">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+    <Page>
+      <PageHeader
+        title="לידים"
+        subtitle={`${counts.new} חדשים · ${counts.contacted} בטיפול · ${counts.won} נסגרו להזמנה`}
+        actions={
+          <>
+            <ShareViewButton className="hidden h-11 rounded-[10px] md:inline-flex" />
+            <Button onClick={openNew}>
+              <Plus strokeWidth={2.25} />
+              ליד חדש
+            </Button>
+          </>
+        }
+      />
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <SegmentedControl
+          ariaLabel="סינון לפי מצב"
+          value={activeStatusChip}
+          onChange={(v) => setStatusTagFilter(v)}
+          options={[
+            { value: 'all', label: 'הכל', count: counts.total },
+            { value: 'NEW', label: 'חדשים', count: counts.new },
+            { value: 'CONTACTED', label: 'בטיפול' },
+            { value: 'OFFER_SENT', label: 'הצעה נשלחה' },
+          ]}
+        />
+        <div className="relative lg:w-[340px]">
+          <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
           <Input
             value={searchTerm}
             onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
-            placeholder="חפש לפי שם, אימייל או טלפון..."
-            className="h-9 pr-9 text-sm rounded-xl border-gray-200 bg-white"
+            placeholder="חיפוש לפי שם, טלפון או אימייל"
+            className="pr-10"
+            aria-label="חיפוש לידים"
           />
-        </div>
-        <div className="flex gap-1.5 flex-wrap">
-          {[{ value: 'all', label: 'הכל' }, ...STATUS_OPTIONS.slice(0, 3)].map(s => (
-            <button
-              key={s.value}
-              type="button"
-              onClick={() => setStatusTagFilter(s.value)}
-              className={`min-h-[44px] h-11 px-4 rounded-full text-xs font-medium transition-all border touch-manipulation ${
-                (s.value === 'all' && activeStatusChip === 'all') || (s.value !== 'all' && activeStatusChip === s.value)
-                  ? 'bg-[#0B1220] text-white border-[#0B1220]'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
         </div>
       </div>
 
-      <div className="atlas-card-surface overflow-hidden">
+      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card md:hidden">
+        {isLoading ? <div className="p-4"><SkelRows rows={5} /></div> : sorted.length ? (
+          <ul className="divide-y divide-line">
+            {paged.map((l) => (
+              <li key={l.id}>
+                <Link to={`${createPageUrl('LeadDetail')}/${l.id}`} className="press flex min-h-[72px] items-center gap-3 px-4 py-3 active:bg-neutral-50">
+                  <Avatar name={l.full_name} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[16px] font-semibold text-navy-900">{l.full_name || 'ללא שם'}</span>
+                    <span className="block truncate text-[13px] text-ink-400">
+                      {l.check_in_date ? `מבקש ${fmtShort(l.check_in_date)}` : 'בלי תאריכים'}{l.nights ? ` · ${l.nights} לילות` : ''}
+                    </span>
+                  </span>
+                  <StatusPill status={l.status} label={STATUS_MAP[l.status]?.label} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+
+      <div className={cn("overflow-hidden rounded-[14px] border border-line bg-white shadow-card", sorted.length && !isLoading ? "hidden md:block" : "")}>
         {isError ? (
           <div className="p-4 text-center text-sm text-red-600">שגיאה בטעינת הלידים</div>
         ) : sorted.length === 0 && !isLoading ? (
-          <div className="text-center py-14 px-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 ring-1 ring-gray-100 flex items-center justify-center mx-auto mb-3">
-              <Users className="w-7 h-7 text-gray-300" />
-            </div>
-            <p className="text-sm font-bold text-gray-600 mb-1">
-              {searchTerm || tags.length ? 'לא נמצאו תוצאות' : 'עדיין אין לידים'}
-            </p>
-            {!searchTerm && !tags.length && (
-              <Button onClick={openNew} size="sm" className="gap-1.5 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl min-h-[44px] mt-3 touch-manipulation">
-                <Plus className="w-3.5 h-3.5" /> הוסף ליד ראשון
-              </Button>
-            )}
-          </div>
+          <DsEmptyState
+            icon={Users}
+            title={searchTerm || tags.length ? 'לא נמצאו לידים' : 'עדיין אין לידים'}
+            description={searchTerm || tags.length ? 'נסו חיפוש אחר.' : 'כל פנייה מוואטסאפ, טלפון או מהאתר נכנסת לכאן, ומכאן הופכת להזמנה.'}
+            action={!searchTerm && !tags.length ? <Button onClick={openNew}><Plus strokeWidth={2.25} />ליד חדש</Button> : null}
+          />
         ) : (
           <ErrorBoundary section="guests-table" variant="inline" resetKey={`${selectedPropertyId ?? 'all'}|${searchTerm}|${tags.join(',')}|${page}`}>
             <GuestsTable
@@ -356,9 +333,9 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
           if (!open) setOpenGuestId(null);
         }}
       >
-        <DialogContent className="max-w-lg rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">{editingLead ? 'עריכת ליד' : 'ליד חדש'}</DialogTitle>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader className="text-right">
+            <DialogTitle className="text-[22px] font-extrabold text-navy-900">{editingLead ? 'עריכת ליד' : 'ליד חדש'}</DialogTitle>
           </DialogHeader>
           <GuestForm
             key={editingLead?.id ?? 'new'}
@@ -374,10 +351,10 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
             onAfterSubmitSuccess={() => {
               window.setTimeout(closeGuestDialog, 2000);
             }}
-            submitLabel={editingLead ? 'שמור' : 'צור ליד'}
+            submitLabel={editingLead ? 'שמירה' : 'שמירת ליד'}
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </Page>
   );
 }

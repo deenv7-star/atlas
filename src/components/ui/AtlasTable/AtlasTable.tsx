@@ -131,7 +131,7 @@ function EditableCell<TData extends object>({
       <input
         ref={inputRef}
         type={meta.atlasEditType === 'number' ? 'number' : 'text'}
-        className="h-8 w-full min-w-0 rounded-md border border-indigo-200 bg-white px-2 text-sm"
+        className="h-8 w-full min-w-0 rounded-md border border-brand-200 bg-white px-2 text-sm"
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
         onBlur={() => {
@@ -149,7 +149,7 @@ function EditableCell<TData extends object>({
   return (
     <button
       type="button"
-      className="w-full truncate rounded px-1 py-0.5 text-start hover:bg-indigo-50/60"
+      className="w-full truncate rounded px-1 py-0.5 text-start hover:bg-brand-50/60"
       onDoubleClick={() => setEditing(true)}
     >
       {String(value ?? '')}
@@ -226,7 +226,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
           <input
             ref={headerSelectRef}
             type="checkbox"
-            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
             checked={table.getIsAllRowsSelected()}
             onChange={() => table.toggleAllRowsSelected(!table.getIsAllRowsSelected())}
             aria-label="בחר הכל"
@@ -237,7 +237,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
         <div className="flex items-center justify-center pe-1">
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
             checked={row.getIsSelected()}
             onChange={(e) => {
               e.stopPropagation();
@@ -360,16 +360,16 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
     const multi = sorting.length > 1 && sortIdx >= 0;
     if (sorted === 'asc')
       return (
-        <span className="ms-1 inline-flex items-center gap-0.5 text-indigo-600">
+        <span className="ms-1 inline-flex items-center gap-0.5 text-brand-600">
           <ArrowUp className="h-3.5 w-3.5" aria-hidden />
-          {multi ? <span className="text-[10px] font-bold">{sortIdx + 1}</span> : null}
+          {multi ? <span className="text-[12px] font-bold">{sortIdx + 1}</span> : null}
         </span>
       );
     if (sorted === 'desc')
       return (
-        <span className="ms-1 inline-flex items-center gap-0.5 text-indigo-600">
+        <span className="ms-1 inline-flex items-center gap-0.5 text-brand-600">
           <ArrowDown className="h-3.5 w-3.5" aria-hidden />
-          {multi ? <span className="text-[10px] font-bold">{sortIdx + 1}</span> : null}
+          {multi ? <span className="text-[12px] font-bold">{sortIdx + 1}</span> : null}
         </span>
       );
     return <ArrowUpDown className="ms-1 inline h-3.5 w-3.5 text-gray-300 opacity-0 group-hover:opacity-100" aria-hidden />;
@@ -401,7 +401,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
       data-row-id={row.id}
       className={cn(
         'grid items-center border-b border-gray-100/90 text-sm text-gray-800 transition-colors',
-        row.getIsSelected() && 'bg-indigo-50/50',
+        row.getIsSelected() && 'bg-brand-50/50',
         flashRowId && row.id === flashRowId && 'bg-amber-50 ring-2 ring-amber-300/90 ring-inset',
         onRowClick && 'cursor-pointer hover:bg-gray-50/80',
       )}
@@ -427,7 +427,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
 
   return (
     <div className={cn('rounded-xl border border-gray-100 bg-white shadow-sm', className)} dir="rtl">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 bg-gray-50/80 px-3 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-white px-4 py-2.5">
         <div className="flex min-h-8 flex-1 flex-wrap items-center gap-2">
           {showBulk ? (
             <>
@@ -461,13 +461,13 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
         </div>
         <div className="flex items-center gap-2">
           {csvExport ? (
-            <Button type="button" variant="outline" size="sm" className="h-8 gap-1 text-xs" onClick={handleExportView}>
-              ייצא CSV
+            <Button type="button" variant="outline" size="sm" className="h-10 gap-1.5 text-[14px]" onClick={handleExportView}>
+              ייצוא לאקסל
             </Button>
           ) : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" size="icon" className="h-8 w-8 shrink-0" aria-label="עמודות">
+              <Button type="button" variant="outline" size="icon" className="h-10 w-10 shrink-0" aria-label="עמודות">
                 <Settings2 className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

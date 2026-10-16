@@ -151,7 +151,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-3">
           <motion.div 
-            className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center shadow-lg"
+            className="w-14 h-14 rounded-2xl bg-brand-500 flex items-center justify-center shadow-lg"
             animate={{ 
               boxShadow: [
                 "0 10px 30px rgba(79, 70, 229, 0.3)",
@@ -166,7 +166,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h1 className="text-3xl font-bold text-gray-900">עוזר AI חכם</h1>
-              <Badge className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white border-0 shadow-sm">
+              <Badge className="bg-brand-500 text-white border-0 shadow-sm">
                 <Sparkles className="h-3 w-3 ml-1" />
                 AI מופעל
               </Badge>
@@ -177,21 +177,21 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
         
         {/* Quick Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 border border-blue-200">
+          <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
             <div className="text-xs text-blue-600 mb-1">הזמנות החודש</div>
             <div className="text-xl font-bold text-blue-900">{bookings.filter(b => b.checkin_date?.startsWith(new Date().toISOString().substring(0, 7))).length}</div>
           </div>
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 border border-green-200">
+          <div className="bg-green-50 rounded-xl p-3 border border-green-200">
             <div className="text-xs text-green-600 mb-1">לידים פעילים</div>
             <div className="text-xl font-bold text-green-900">{leads.filter(l => ['NEW', 'CONTACTED', 'OFFER_SENT'].includes(l.status)).length}</div>
           </div>
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-3 border border-orange-200">
+          <div className="bg-orange-50 rounded-xl p-3 border border-orange-200">
             <div className="text-xs text-orange-600 mb-1">תשלומים ממתינים</div>
             <div className="text-xl font-bold text-orange-900">{payments.filter(p => p.status === 'DUE').length}</div>
           </div>
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-3 border border-purple-200">
-            <div className="text-xs text-purple-600 mb-1">משימות פתוחות</div>
-            <div className="text-xl font-bold text-purple-900">{cleaningTasks.filter(t => t.status === 'OPEN').length}</div>
+          <div className="bg-brand-50 rounded-xl p-3 border border-brand-200">
+            <div className="text-xs text-brand-600 mb-1">משימות פתוחות</div>
+            <div className="text-xl font-bold text-brand-900">{cleaningTasks.filter(t => t.status === 'OPEN').length}</div>
           </div>
         </div>
       </div>
@@ -207,25 +207,25 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <Bot className="h-20 w-20 text-indigo-500 mb-4" />
+                  <Bot className="h-20 w-20 text-brand-500 mb-4" />
                 </motion.div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">שלום! אני העוזר החכם של ATLAS 👋</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">שלום! אני העוזר החכם של ATLAS </h3>
                 <p className="text-gray-600 mb-3 leading-relaxed">אני מנתח את כל הנתונים שלך בזמן אמת ויכול לעזור לך עם:</p>
                 <div className="grid grid-cols-2 gap-2 mb-6 text-sm text-right">
                 <div className="flex items-start gap-2">
-                    <div className="text-indigo-500">✓</div>
+                    <div className="text-brand-500">✓</div>
                     <span className="text-gray-700">ניתוח ביצועים והמלצות</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <div className="text-indigo-500">✓</div>
+                    <div className="text-brand-500">✓</div>
                     <span className="text-gray-700">חיזוי הכנסות ותפוסה</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <div className="text-indigo-500">✓</div>
+                    <div className="text-brand-500">✓</div>
                     <span className="text-gray-700">אסטרטגיות תמחור</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <div className="text-indigo-500">✓</div>
+                    <div className="text-brand-500">✓</div>
                     <span className="text-gray-700">ניהול לידים אוטומטי</span>
                   </div>
                 </div>
@@ -239,9 +239,9 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
                       onClick={() => handleQuickQuestion(question)}
-                      className="flex items-center gap-3 p-4 min-h-[52px] bg-gradient-to-br from-gray-50 to-white hover:from-indigo-50/50 hover:to-violet-50/30 border border-gray-200 hover:border-indigo-200 rounded-xl transition-all text-right group shadow-sm hover:shadow-md touch-manipulation"
+                      className="flex items-center gap-3 p-4 min-h-[52px] bg-gray-50 hover:from-brand-50/50 hover:to-brand-50/30 border border-gray-200 hover:border-brand-200 rounded-xl transition-all text-right group shadow-sm hover:shadow-md touch-manipulation"
                     >
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+                      <div className="w-11 h-11 rounded-xl bg-brand-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                         <question.icon className="h-5 w-5 text-white" />
                       </div>
                       <span className="text-sm font-semibold text-gray-800">{question.text}</span>
@@ -260,13 +260,13 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
                     className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     {message.role === 'assistant' && (
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center flex-shrink-0">
                         <Bot className="h-4 w-4 text-white" />
                       </div>
                     )}
                     <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                       message.role === 'user' 
-                        ? 'bg-indigo-600 text-white' 
+                        ? 'bg-brand-600 text-white' 
                         : 'bg-gray-100 text-gray-900'
                     }`}>
                       {message.role === 'user' ? (
@@ -304,7 +304,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
                 animate={{ opacity: 1 }}
                 className="flex gap-3"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
                   <Bot className="h-4 w-4 text-white" />
                 </div>
                 <div className="bg-gray-100 rounded-2xl px-4 py-3">
@@ -346,7 +346,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
               <Button
                 onClick={() => handleSend()}
                 disabled={!inputValue.trim() || isLoading}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6"
+                className="bg-brand-600 hover:bg-brand-700 text-white px-6"
               >
                 {isLoading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />

@@ -15,7 +15,7 @@ const CATEGORIES = [
   { value: 'ארנונה', label: 'ארנונה', color: 'bg-blue-100 text-blue-700', barColor: 'bg-blue-500' },
   { value: 'חשמל', label: 'חשמל', color: 'bg-yellow-100 text-yellow-700', barColor: 'bg-yellow-500' },
   { value: 'מים', label: 'מים', color: 'bg-cyan-100 text-cyan-700', barColor: 'bg-cyan-500' },
-  { value: 'ציוד', label: 'ציוד', color: 'bg-purple-100 text-purple-700', barColor: 'bg-purple-500' },
+  { value: 'ציוד', label: 'ציוד', color: 'bg-brand-100 text-brand-700', barColor: 'bg-brand-500' },
   { value: 'שיווק', label: 'שיווק', color: 'bg-pink-100 text-pink-700', barColor: 'bg-pink-500' },
   { value: 'אחר', label: 'אחר', color: 'bg-gray-100 text-gray-700', barColor: 'bg-gray-500' },
 ];
@@ -87,22 +87,22 @@ export default function ExpenseTracker() {
   return (
     <div className="min-h-full p-4 md:p-6 space-y-6 max-w-6xl mx-auto" dir="rtl" style={{ fontFamily: 'Heebo, sans-serif' }}>
       {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Receipt className="w-5 h-5 text-indigo-600" />
+          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+            <Receipt className="w-5 h-5 text-brand-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">מעקב הוצאות</h1>
+          <h1 className="text-2xl font-bold text-gray-900">הוצאות</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">עקוב אחר כל ההוצאות לפי נכס — ניקיון, תחזוקה, ארנונה, ציוד ועוד. ראה את הרווח הנקי האמיתי שלך.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: הוסף הוצאות באופן שוטף כדי לדעת בדיוק כמה אתה מרוויח מכל נכס</p>
+        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: הוסף הוצאות באופן שוטף כדי לדעת בדיוק כמה אתה מרוויח מכל נכס</p>
       </div>
 
       <DemoDataBanner message="נתוני דוגמה — ההוצאות המוצגות הן לצורך המחשה. הוסף הוצאות אמיתיות כדי לעקוב אחר הרווח הנקי שלך." />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-rose-50 to-white border-rose-100/60">
+        <Card className="bg-rose-50 border-rose-100/60">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-2">
               <p className="text-sm font-medium text-gray-600">סה״כ הוצאות</p>
@@ -114,7 +114,7 @@ export default function ExpenseTracker() {
             <p className="text-xs text-gray-500 mt-1">כל ההוצאות שנרשמו</p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-100/60">
+        <Card className="bg-blue-50 border-blue-100/60">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-2">
               <p className="text-sm font-medium text-gray-600">החודש</p>
@@ -126,19 +126,19 @@ export default function ExpenseTracker() {
             <p className="text-xs text-gray-500 mt-1">{thisMonth.length} הוצאות החודש</p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-violet-50 to-white border-violet-100/60">
+        <Card className="bg-brand-50 border-brand-100/60">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-2">
               <p className="text-sm font-medium text-gray-600">ממוצע לנכס</p>
-              <div className="w-9 h-9 rounded-xl bg-violet-100 flex items-center justify-center">
-                <Building2 className="w-4 h-4 text-violet-600" />
+              <div className="w-9 h-9 rounded-xl bg-brand-100 flex items-center justify-center">
+                <Building2 className="w-4 h-4 text-brand-600" />
               </div>
             </div>
             <p className="text-2xl font-bold text-gray-900">₪{avgPerProperty.toLocaleString('he-IL')}</p>
             <p className="text-xs text-gray-500 mt-1">{uniqueProperties.length} נכסים</p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-emerald-50 to-white border-emerald-100/60">
+        <Card className="bg-emerald-50 border-emerald-100/60">
           <CardContent className="p-5">
             <div className="flex items-start justify-between mb-2">
               <p className="text-sm font-medium text-gray-600">רווח נקי משוער</p>
@@ -161,7 +161,7 @@ export default function ExpenseTracker() {
       <div className="flex justify-end">
         <Button
           onClick={() => setDialogOpen(true)}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md"
+          className="bg-brand-600 hover:bg-brand-700 text-white shadow-md"
         >
           <Plus className="w-4 h-4 ml-2" />
           הוסף הוצאה
@@ -181,7 +181,7 @@ export default function ExpenseTracker() {
               </div>
               <p className="text-gray-600 font-medium mb-1">אין הוצאות עדיין</p>
               <p className="text-sm text-gray-400 mb-4">התחל להוסיף הוצאות כדי לעקוב אחרי הנכסים שלך</p>
-              <Button onClick={() => setDialogOpen(true)} className="bg-indigo-600 hover:bg-indigo-700">
+              <Button onClick={() => setDialogOpen(true)} className="bg-brand-600 hover:bg-brand-700">
                 <Plus className="w-4 h-4 ml-2" />
                 הוסף הוצאה ראשונה
               </Button>
@@ -226,8 +226,8 @@ export default function ExpenseTracker() {
       <Card>
         <CardContent className="p-5">
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
-              <DollarSign className="w-4 h-4 text-indigo-600" />
+            <div className="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center">
+              <DollarSign className="w-4 h-4 text-brand-600" />
             </div>
             <h2 className="text-base font-semibold text-gray-800">פירוט לפי קטגוריה</h2>
           </div>
@@ -313,7 +313,7 @@ export default function ExpenseTracker() {
             </div>
             <div>
               <Label>קבלה (אופציונלי)</Label>
-              <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-indigo-300 transition-colors cursor-pointer">
+              <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-brand-300 transition-colors cursor-pointer">
                 <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
                 <p className="text-sm text-gray-500">גרור קובץ לכאן או לחץ להעלאה</p>
                 <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG — עד 5MB</p>
@@ -324,7 +324,7 @@ export default function ExpenseTracker() {
                 ביטול
               </Button>
               <Button
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                className="flex-1 bg-brand-600 hover:bg-brand-700"
                 onClick={handleAddExpense}
                 disabled={!form.property || !form.category || !form.amount}
               >

@@ -47,7 +47,7 @@ class GlobalErrorBoundary extends React.Component {
 
             {/* Content */}
             <div className="bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100">
-              <h1 className="text-2xl font-bold text-[#0B1220] mb-3">
+              <h1 className="text-2xl font-bold text-[#1B2656] mb-3">
                 אופס! משהו השתבש
               </h1>
               <p className="text-gray-600 mb-6 leading-relaxed">
@@ -75,7 +75,7 @@ class GlobalErrorBoundary extends React.Component {
               <div className="flex flex-col gap-3">
                 <Button
                   onClick={this.handleReload}
-                  className="w-full bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold gap-2"
+                  className="w-full bg-brand-600 hover:bg-[#00B8A9] text-white font-semibold gap-2"
                   size="lg"
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -84,7 +84,7 @@ class GlobalErrorBoundary extends React.Component {
                 <Button
                   onClick={this.handleGoHome}
                   variant="outline"
-                  className="w-full border-[#0B1220] text-[#0B1220] gap-2"
+                  className="w-full border-[#1B2656] text-[#1B2656] gap-2"
                   size="lg"
                 >
                   <Home className="w-4 h-4" />
@@ -98,7 +98,7 @@ class GlobalErrorBoundary extends React.Component {
                   אם הבעיה נמשכת,{' '}
                   <a 
                     href="mailto:support@atlas-app.co.il" 
-                    className="text-[#00D1C1] hover:text-[#00B8A9] font-medium underline"
+                    className="text-brand-600 hover:text-[#00B8A9] font-medium underline"
                   >
                     צור קשר עם התמיכה
                   </a>

@@ -1,3 +1,4 @@
+import { Page, PageHeader } from '@/components/ds';
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -11,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
 import {
   User, Building2, Bell, Shield,
-  Save, AlertCircle, Settings,
+  Save, AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
@@ -117,21 +118,12 @@ export default function SettingsPage({ user }) {
   };
 
   return (
-    <div className="atlas-page-shell max-w-4xl" dir="rtl">
-      <div className="atlas-page-hero">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shadow-sm">
-            <Settings className="w-5 h-5 text-indigo-600" />
-          </div>
-          <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">הגדרות</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed max-w-2xl">חשבון, ארגון, התראות ואבטחה — הכל במקום אחד, ברור ושקט.</p>
-        <p className="text-indigo-600/90 text-xs mt-2 font-medium">טיפ: פרטי ארגון מעודכנים = חשבוניות ומסמכים נכונים אוטומטית.</p>
-      </div>
+    <Page className="max-w-[1000px]">
+      <PageHeader title="הגדרות" subtitle="החשבון, המתחם, ההתראות והאבטחה." />
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Tab list */}
-        <div className="flex md:flex-col gap-1 flex-shrink-0 md:w-44">
+        <div className="-mx-4 flex gap-1 overflow-x-auto px-4 md:mx-0 md:w-52 md:flex-col md:px-0 flex-shrink-0 [scrollbar-width:none]">
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
@@ -139,13 +131,13 @@ export default function SettingsPage({ user }) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors text-right min-h-[44px] touch-manipulation",
+                  "press flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-[10px] px-3.5 text-[15px] text-right min-h-[44px]",
                   activeTab === tab.id
-                    ? "bg-[#00D1C1]/12 text-[#00a89a] ring-1 ring-[#00D1C1]/20"
-                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                    ? "bg-brand-50 font-bold text-brand-700"
+                    : "font-medium text-navy-900 hover:bg-neutral-100"
                 )}
               >
-                <Icon className="w-4 h-4 flex-shrink-0" />
+                <Icon className="h-5 w-5 flex-shrink-0 text-brand-600" strokeWidth={1.75} />
                 {tab.label}
               </button>
             );
@@ -156,17 +148,17 @@ export default function SettingsPage({ user }) {
         <div className="flex-1 min-w-0">
           {/* Profile Tab */}
           {activeTab === 'profile' && (
-            <Card className="border-0 shadow-sm">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-base">פרטים אישיים</CardTitle>
+                <CardTitle className="text-[18px] font-bold">פרטים אישיים</CardTitle>
                 <CardDescription>עדכן את פרטי הפרופיל שלך</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
                 {/* Avatar */}
                 <div className="flex items-center gap-4">
-                  <Avatar className="w-16 h-16 ring-2 ring-[#00D1C1]/20">
+                  <Avatar className="w-16 h-16 ring-2 ring-brand-600/20">
                     <AvatarImage src={user?.profile_image} />
-                    <AvatarFallback className="bg-[#00D1C1]/15 text-[#00D1C1] text-lg font-semibold">
+                    <AvatarFallback className="bg-brand-600/15 text-brand-600 text-lg font-semibold">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
@@ -212,10 +204,10 @@ export default function SettingsPage({ user }) {
                   <Button
                     onClick={() => saveProfileMutation.mutate()}
                     disabled={saveProfileMutation.isPending}
-                    className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm"
+                    className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold h-9 text-sm"
                   >
                     {saveProfileMutation.isPending ? (
-                      <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <Save className="w-4 h-4" />
                     )}
@@ -228,9 +220,9 @@ export default function SettingsPage({ user }) {
 
           {/* Organization Tab */}
           {activeTab === 'organization' && (
-            <Card className="border-0 shadow-sm">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-base">פרטי הארגון</CardTitle>
+                <CardTitle className="text-[18px] font-bold">פרטי הארגון</CardTitle>
                 <CardDescription>מידע על העסק שלך</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -285,10 +277,10 @@ export default function SettingsPage({ user }) {
                   <Button
                     onClick={() => saveOrgMutation.mutate()}
                     disabled={saveOrgMutation.isPending}
-                    className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm"
+                    className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold h-9 text-sm"
                   >
                     {saveOrgMutation.isPending ? (
-                      <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <Save className="w-4 h-4" />
                     )}
@@ -301,9 +293,9 @@ export default function SettingsPage({ user }) {
 
           {/* Notifications Tab */}
           {activeTab === 'notifications' && (
-            <Card className="border-0 shadow-sm">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-base">הגדרות התראות</CardTitle>
+                <CardTitle className="text-[18px] font-bold">הגדרות התראות</CardTitle>
                 <CardDescription>בחר אילו התראות תרצה לקבל</CardDescription>
               </CardHeader>
               <CardContent className="space-y-1">
@@ -322,14 +314,14 @@ export default function SettingsPage({ user }) {
                     <Switch
                       checked={notifSettings[item.key]}
                       onCheckedChange={val => setNotifSettings(prev => ({ ...prev, [item.key]: val }))}
-                      className="data-[state=checked]:bg-[#00D1C1]"
+                      className="data-[state=checked]:bg-brand-600"
                     />
                   </div>
                 ))}
                 <div className="pt-3 flex justify-end">
                   <Button
                     onClick={() => toast({ title: 'הגדרות ההתראות נשמרו' })}
-                    className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold h-9 text-sm"
+                    className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold h-9 text-sm"
                   >
                     <Save className="w-4 h-4" />
                     שמור
@@ -341,9 +333,9 @@ export default function SettingsPage({ user }) {
 
           {/* Security Tab */}
           {activeTab === 'security' && (
-            <Card className="border-0 shadow-sm">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-base">אבטחה</CardTitle>
+                <CardTitle className="text-[18px] font-bold">אבטחה</CardTitle>
                 <CardDescription>נהל את אבטחת החשבון שלך</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -387,6 +379,6 @@ export default function SettingsPage({ user }) {
           )}
         </div>
       </div>
-    </div>
+    </Page>
   );
 }

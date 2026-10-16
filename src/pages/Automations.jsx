@@ -19,7 +19,7 @@ const TRIGGERS = {
   LEAD_CREATED: { label: 'ליד חדש נוצר', icon: Users, color: 'bg-blue-500' },
   BOOKING_CREATED: { label: 'הזמנה נוצרה', icon: Calendar, color: 'bg-green-500' },
   BOOKING_CONFIRMED: { label: 'הזמנה אושרה', icon: CheckCircle, color: 'bg-emerald-500' },
-  PAYMENT_RECEIVED: { label: 'תשלום התקבל', icon: CreditCard, color: 'bg-violet-500' },
+  PAYMENT_RECEIVED: { label: 'תשלום התקבל', icon: CreditCard, color: 'bg-brand-500' },
   PAYMENT_OVERDUE: { label: 'תשלום באיחור', icon: AlertTriangle, color: 'bg-red-500' },
   CHECKIN_DAY: { label: 'יום כניסה', icon: Calendar, color: 'bg-cyan-500' },
   CHECKOUT_DAY: { label: 'יום יציאה', icon: Calendar, color: 'bg-orange-500' },
@@ -129,15 +129,15 @@ export default function AutomationsPage({ user, orgId }) {
 
   return (
     <div className="p-6 space-y-6" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Zap className="w-5 h-5 text-indigo-600" />
+          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+            <Zap className="w-5 h-5 text-brand-600" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">אוטומציות</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">הגדר תהליכים אוטומטיים שיחסכו לך זמן — שליחת הודעות, תזכורות, עדכוני סטטוס ועוד.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: התחל עם אוטומציית הודעת ברוכים הבאים לאורחים חדשים</p>
+        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: התחל עם אוטומציית הודעת ברוכים הבאים לאורחים חדשים</p>
       </div>
       <div className="flex justify-end">
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>

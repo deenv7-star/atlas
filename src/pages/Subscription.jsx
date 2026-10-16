@@ -39,7 +39,7 @@ export default function SubscriptionPage({ user }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8" dir="rtl">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8" dir="rtl">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -47,7 +47,7 @@ export default function SubscriptionPage({ user }) {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-[#0B1220] mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#1B2656] mb-4">
             בחר את התוכנית המתאימה לך
           </h1>
           <p className="text-xl text-gray-600">
@@ -68,22 +68,22 @@ export default function SubscriptionPage({ user }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className={`relative h-full ${plan.popular ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
+                <Card className={`relative h-full ${plan.popular ? 'border-2 border-brand-600 shadow-xl' : 'border'}`}>
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-[#00D1C1] text-[#0B1220] text-sm px-4 py-1">
-                        🔥 הכי פופולרי
+                      <Badge className="bg-brand-600 text-white text-sm px-4 py-1">
+                        הכי פופולרי
                       </Badge>
                     </div>
                   )}
                   
                   <CardHeader className="text-center pb-4">
-                    <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl ${plan.popular ? 'bg-gradient-to-br from-[#00D1C1] to-[#00B8A9]' : 'bg-gray-100'} flex items-center justify-center`}>
+                    <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl ${plan.popular ? 'bg-[#3E2BF1]' : 'bg-gray-100'} flex items-center justify-center`}>
                       <Icon className={`h-7 w-7 ${plan.popular ? 'text-white' : 'text-gray-600'}`} />
                     </div>
                     <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
                     <div className="mb-4">
-                      <span className="text-5xl font-bold text-[#0B1220]">₪{plan.price}</span>
+                      <span className="text-5xl font-bold text-[#1B2656]">₪{plan.price}</span>
                       <span className="text-gray-500">/חודש</span>
                     </div>
                     {isCurrent && (
@@ -97,7 +97,7 @@ export default function SubscriptionPage({ user }) {
                     <ul className="space-y-3 mb-6">
                       {plan.features.map((feature, j) => (
                         <li key={j} className="flex items-start gap-2 text-gray-600">
-                          <Check className="h-5 w-5 text-[#00D1C1] flex-shrink-0 mt-0.5" />
+                          <Check className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
                           <span className="text-sm">{feature}</span>
                         </li>
                       ))}
@@ -105,8 +105,8 @@ export default function SubscriptionPage({ user }) {
                     
                     <Button 
                       className={`w-full rounded-xl ${plan.popular 
-                        ? 'bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:opacity-90 text-white' 
-                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'} ${isCurrent ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        ? 'bg-[#3E2BF1] hover:opacity-90 text-white' 
+                        : 'bg-[#1B2656] hover:bg-[#1a2744] text-white'} ${isCurrent ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={() => !isCurrent && handleSelectPlan(plan.id)}
                       disabled={isCurrent}
                     >
@@ -147,7 +147,7 @@ export default function SubscriptionPage({ user }) {
           </div>
           
           <p className="text-gray-400 text-sm">
-            יש שאלות? <a href="mailto:support@atlas-app.co.il" className="text-[#00D1C1] hover:underline">צור קשר עם התמיכה</a>
+            יש שאלות? <a href="mailto:support@atlas-app.co.il" className="text-brand-600 hover:underline">צור קשר עם התמיכה</a>
           </p>
         </motion.div>
       </div>

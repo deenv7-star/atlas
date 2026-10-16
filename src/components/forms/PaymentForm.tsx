@@ -191,7 +191,7 @@ export function PaymentForm({
               'relative h-9 gap-1.5 rounded-xl font-semibold',
               fm.state === 'success'
                 ? 'bg-emerald-600 hover:bg-emerald-600 text-white'
-                : 'bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220]',
+                : 'bg-brand-600 hover:bg-brand-500 text-white',
             ].join(' ')}
           >
             {(fm.state === 'dirty' || fm.state === 'error') && (
@@ -203,7 +203,7 @@ export function PaymentForm({
             )}
             {fm.state === 'submitting' ? (
               <>
-                <span className="inline-block h-4 w-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
+                <span className="inline-block h-4 w-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
                 שומר…
               </>
             ) : fm.state === 'success' ? (

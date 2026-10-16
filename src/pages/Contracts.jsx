@@ -217,15 +217,15 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 
   return (
     <div className="space-y-6" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-indigo-600" />
+          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+            <FileText className="w-5 h-5 text-brand-600" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">חוזים</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל חוזי שכירות והסכמים עם אורחים. צור חוזים חדשים ועקוב אחר חתימות.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: שלח חוזה לחתימה דיגיטלית ישירות מהמערכת</p>
+        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: שלח חוזה לחתימה דיגיטלית ישירות מהמערכת</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -245,7 +245,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
           <div className="flex justify-end mb-4">
             <Button 
               onClick={() => setIsSendDialogOpen(true)}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
+              className="bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl gap-2"
             >
               <Plus className="h-4 w-4" />
               צור חוזה
@@ -371,7 +371,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <h3 className="font-semibold text-[#0B1220] mb-0.5">{booking?.guest_name || '-'}</h3>
+                            <h3 className="font-semibold text-[#1B2656] mb-0.5">{booking?.guest_name || '-'}</h3>
                             {booking?.checkin_date && (
                               <p className="text-xs text-gray-500">
                                 {format(parseISO(booking.check_in_date), 'd/M/yy')}
@@ -402,7 +402,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                           {contract.status === 'DRAFT' && (
                             <Button 
                               size="sm" 
-                              className="flex-1 bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+                              className="flex-1 bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl"
                               onClick={() => updateContractMutation.mutate({ id: contract.id, data: { status: 'SENT' } })}
                             >
                               <Send className="h-3 w-3 ml-1" />
@@ -469,7 +469,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 setNewTemplate({ ...newTemplate, content: defaultContractContent });
                 setIsTemplateDialogOpen(true);
               }}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
+              className="bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl gap-2"
             >
               <Plus className="h-4 w-4" />
               תבנית חדשה
@@ -496,8 +496,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-[#00D1C1]" />
-                        <h3 className="font-semibold text-[#0B1220]">{template.name}</h3>
+                        <FileText className="h-5 w-5 text-brand-600" />
+                        <h3 className="font-semibold text-[#1B2656]">{template.name}</h3>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-4">
@@ -565,7 +565,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             <Button 
               onClick={handleSaveTemplate}
               disabled={!newTemplate.name || !newTemplate.content || createTemplateMutation.isPending || updateTemplateMutation.isPending}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+              className="bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl"
             >
               {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? 'שומר...' : 'שמור'}
             </Button>
@@ -626,7 +626,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             <Button 
               onClick={() => createContractMutation.mutate(newContract)}
               disabled={!newContract.booking_id || !newContract.template_id || createContractMutation.isPending}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+              className="bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl"
             >
               {createContractMutation.isPending ? 'יוצר...' : 'צור חוזה'}
             </Button>

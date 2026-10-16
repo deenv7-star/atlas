@@ -93,15 +93,15 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
 
   return (
     <div className="p-4 md:p-6 space-y-5 max-w-5xl mx-auto animate-fade-in" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Star className="w-5 h-5 text-indigo-600" />
+          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+            <Star className="w-5 h-5 text-brand-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">ביקורות אורחים</h1>
+          <h1 className="text-2xl font-bold text-gray-900">ביקורות</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">צפה בביקורות שהשאירו אורחים, עקוב אחר דירוגים ושפר את חוויית האירוח.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: מענה מהיר לביקורות משפר את הדירוג שלך</p>
+        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: מענה מהיר לביקורות משפר את הדירוג שלך</p>
       </div>
 
       {/* Stats */}
@@ -151,7 +151,7 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
             size="sm"
             variant={statusFilter === 'all' ? 'default' : 'outline'}
             onClick={() => setStatusFilter('all')}
-            className={cn("h-9 text-xs", statusFilter === 'all' && "bg-[#00D1C1] text-[#0B1220] hover:bg-[#00b8aa]")}
+            className={cn("h-9 text-xs", statusFilter === 'all' && "bg-brand-600 text-white hover:bg-brand-500")}
           >
             הכל
           </Button>
@@ -161,7 +161,7 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
               size="sm"
               variant={statusFilter === s.value ? 'default' : 'outline'}
               onClick={() => setStatusFilter(s.value)}
-              className={cn("h-9 text-xs", statusFilter === s.value && "bg-[#00D1C1] text-[#0B1220] hover:bg-[#00b8aa]")}
+              className={cn("h-9 text-xs", statusFilter === s.value && "bg-brand-600 text-white hover:bg-brand-500")}
             >
               {s.label}
             </Button>

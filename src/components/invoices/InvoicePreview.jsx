@@ -28,11 +28,11 @@ export default function InvoicePreview({ invoice }) {
         {/* Header */}
         <div className="flex justify-between items-start mb-8 pb-4 border-b-2">
           <div>
-            <h1 className="text-3xl font-bold text-[#0B1220] mb-2">STAYFLOW</h1>
+            <h1 className="text-3xl font-bold text-[#1B2656] mb-2">STAYFLOW</h1>
             <p className="text-sm text-gray-600">מערכת ניהול נכסים</p>
           </div>
           <div className="text-left">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-2">
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-2">
               {typeLabels[invoice.type] || 'חשבונית'}
             </h2>
             <p className="text-sm text-gray-600">מספר: {invoice.invoice_number}</p>
@@ -42,7 +42,7 @@ export default function InvoicePreview({ invoice }) {
 
         {/* Customer Details */}
         <div className="mb-8">
-          <h3 className="font-semibold text-lg mb-3 text-[#0B1220]">ללקוח:</h3>
+          <h3 className="font-semibold text-lg mb-3 text-[#1B2656]">ללקוח:</h3>
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="font-semibold text-lg mb-1">{invoice.customer_name}</p>
             {invoice.customer_tax_id && (
@@ -97,7 +97,7 @@ export default function InvoicePreview({ invoice }) {
             </div>
             <div className="flex justify-between text-xl font-bold pt-2 border-t-2 border-gray-300">
               <span>סה"כ לתשלום:</span>
-              <span className="text-[#00D1C1]">₪{invoice.total_amount?.toFixed(2)}</span>
+              <span className="text-brand-600">₪{invoice.total_amount?.toFixed(2)}</span>
             </div>
           </div>
         </div>

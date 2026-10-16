@@ -13,11 +13,12 @@ import { BookingsTable } from '@/components/tables/BookingsTable';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
+import { CalendarDays, Plus, Search, SlidersHorizontal } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import {
-  CalendarDays, Plus, Search,
-  Clock, CheckCircle2, XCircle,
-  Download,
-} from 'lucide-react';
+  Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, ChannelDot, SkelRows, fmtMoney, monthShort, dayNum,
+} from '@/components/ds';
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
 import { BookingForm } from '@/components/forms/BookingForm';
@@ -28,13 +29,13 @@ import { sortBookings } from '@/hooks/url-state/bookingTableSort';
 import { ShareViewButton } from '@/components/ui/ShareViewButton';
 
 const STATUS_OPTIONS = [
-  { value: 'PENDING',     label: 'ממתין',        color: 'bg-amber-100 text-amber-700',     dot: 'bg-amber-400' },
-  { value: 'APPROVED',    label: 'מאושר',         color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-400' },
-  { value: 'CONFIRMED',   label: 'מאושר סופית',   color: 'bg-green-100 text-green-700',     dot: 'bg-green-400' },
-  { value: 'CHECKED_IN',  label: 'נכנס',          color: 'bg-blue-100 text-blue-700',       dot: 'bg-blue-400' },
-  { value: 'CHECKED_OUT', label: 'יצא',           color: 'bg-gray-100 text-gray-600',       dot: 'bg-gray-400' },
-  { value: 'CANCELLED',   label: 'בוטל',          color: 'bg-red-100 text-red-600',         dot: 'bg-red-400' },
-  { value: 'WAITLIST',    label: 'המתנה',         color: 'bg-purple-100 text-purple-700',   dot: 'bg-purple-400' },
+  { value: 'PENDING', label: 'ממתינה' },
+  { value: 'APPROVED', label: 'מאושרת' },
+  { value: 'CONFIRMED', label: 'מאושרת סופית' },
+  { value: 'CHECKED_IN', label: 'בשהייה' },
+  { value: 'CHECKED_OUT', label: 'הסתיימה' },
+  { value: 'CANCELLED', label: 'בוטלה' },
+  { value: 'WAITLIST', label: 'המתנה' },
 ];
 const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
 
@@ -126,6 +127,7 @@ export default function BookingsPage({ selectedPropertyId }) {
   );
 
   const [showDialog, setShowDialog] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
   const bookingDialogInterceptRef = useRef(null);
 
@@ -212,7 +214,7 @@ export default function BookingsPage({ selectedPropertyId }) {
       success('ההזמנה עודכנה');
     } else {
       await createMutation.mutateAsync(payload);
-      success('הזמנה נוצרה בהצלחה');
+      success('ההזמנה נשמרה');
     }
   };
 
@@ -267,223 +269,127 @@ export default function BookingsPage({ selectedPropertyId }) {
     });
   };
 
+  const filtersActive = statusFilterArr.length > 0 || !!dateFrom || !!dateTo || !!urlPropertyId;
+  const propName = (id) => properties.find((p) => p.id === id)?.name || '';
+  const hasQuery = !!search || tab !== 'all' || filtersActive;
+
   return (
-    <div className="atlas-page-shell max-w-6xl space-y-5" dir="rtl">
+    <Page>
+      <PageHeader
+        title="הזמנות"
+        subtitle={`${counts.total} הזמנות · ${counts.confirmed} פעילות · ${counts.pending} ממתינות לאישור`}
+        actions={
+          <>
+            <ShareViewButton className="hidden h-11 rounded-[10px] md:inline-flex" />
+            <Button onClick={openNew} className="hidden md:inline-flex">
+              <Plus strokeWidth={2.25} />
+              הזמנה חדשה
+            </Button>
+          </>
+        }
+      />
 
-      <div className="atlas-page-hero">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shadow-sm">
-            <CalendarDays className="w-5 h-5 text-indigo-600" />
-          </div>
-          <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">ניהול הזמנות</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed max-w-2xl">כל ההזמנות במקום אחד — צ'ק-אין, צ'ק-אאוט וסטטוס, בלי לקפוץ בין מסכים.</p>
-      </div>
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2.5">
-            <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
-              <CalendarDays className="w-4 h-4 text-white" />
-            </span>
-            הזמנות
-          </h1>
-          <p className="text-sm text-gray-400 mt-0.5 mr-10">{counts.total} הזמנות סה"כ</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <ShareViewButton className="h-11 rounded-xl text-sm" />
-          <Button
-            variant="outline"
-            onClick={handleExport}
-            className="gap-2 min-h-[44px] h-11 text-sm rounded-xl border-gray-200 hidden sm:flex"
-            title="ייצא ל-CSV"
-          >
-            <Download className="w-4 h-4" />
-            ייצוא CSV
-          </Button>
-          <Button
-            onClick={openNew}
-            className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold min-h-[44px] h-11 text-sm self-start sm:self-auto shadow-sm shadow-[#00D1C1]/20 px-5 rounded-xl"
-          >
-            <Plus className="w-4 h-4" />
-            הזמנה חדשה
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { label: 'סה"כ',    value: counts.total,     icon: CalendarDays, bg: 'bg-slate-50',   text: 'text-slate-700' },
-          { label: 'פעילות',  value: counts.confirmed,  icon: CheckCircle2, bg: 'bg-emerald-50', text: 'text-emerald-700' },
-          { label: 'ממתינות', value: counts.pending,    icon: Clock,        bg: 'bg-amber-50',   text: 'text-amber-700' },
-          { label: 'בוטלו',   value: counts.cancelled,  icon: XCircle,      bg: 'bg-red-50',     text: 'text-red-600' },
-        ].map(s => (
-          <div key={s.label} className={cn('rounded-2xl px-4 py-3 flex items-center gap-3 border border-white shadow-sm', s.bg)}>
-            <s.icon className={cn('w-5 h-5 flex-shrink-0', s.text)} />
-            <div>
-              <p className={cn('text-xl font-bold leading-none', s.text)}>{s.value}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="bg-white rounded-2xl border border-gray-100/80 shadow-sm p-3 flex flex-col gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input
-            value={search}
-            onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
-            placeholder="חפש לפי שם אורח..."
-            className="h-9 pr-9 text-sm bg-gray-50/50 border-gray-200 focus:bg-white rounded-xl"
-          />
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {TAB_OPTIONS.map((t) => (
-            <button
-              key={t.key}
-              type="button"
-              onClick={() => void setUrlState({ tab: t.key, page: 1 })}
-              className={cn(
-                'min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-semibold transition-all touch-manipulation',
-                tab === t.key ? 'bg-[#00D1C1] text-[#0B1220]' : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
-              )}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-1.5 items-center">
-          <span className="text-[11px] font-medium text-gray-500 w-full sm:w-auto">סטטוסים ספציפיים (בנוסף לטאב):</span>
-          {STATUS_OPTIONS.map((s) => {
-            const on = statusFilterArr.includes(s.value);
-            return (
-              <button
-                key={s.value}
-                type="button"
-                onClick={() => {
-                  const next = on ? statusFilterArr.filter((x) => x !== s.value) : [...statusFilterArr, s.value];
-                  void setUrlState({ status: next, page: 1 });
-                }}
-                className={cn(
-                  'rounded-lg px-2 py-1 text-[11px] font-semibold border transition-colors',
-                  on ? s.color + ' ring-1 ring-current/20' : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-50',
-                )}
-              >
-                {s.label}
-              </button>
-            );
-          })}
-          {statusFilterArr.length > 0 ? (
-            <button
-              type="button"
-              className="text-[11px] text-indigo-600 underline"
-              onClick={() => void setUrlState({ status: [], page: 1 })}
-            >
-              נקה סטטוסים
-            </button>
-          ) : null}
-        </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
-          <span className="font-medium text-gray-500">צ׳ק-אין מתאריך:</span>
-          <Input type="date" value={dateInputValue(dateFrom)} onChange={onDateFromInput} className="h-9 w-[150px] rounded-xl text-sm" dir="ltr" />
-          <span>עד</span>
-          <Input type="date" value={dateInputValue(dateTo)} onChange={onDateToInput} className="h-9 w-[150px] rounded-xl text-sm" dir="ltr" />
-        </div>
-        {properties.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-medium text-gray-500">נכס:</span>
-            <select
-              className="h-9 rounded-xl border border-gray-200 bg-white px-2 text-sm min-w-[160px]"
-              value={urlPropertyId ?? ''}
-              onChange={(e) => {
-                const v = e.target.value;
-                void setUrlState({ propertyId: v || null, page: 1 });
-              }}
-            >
-              <option value="">כל הנכסים{selectedPropertyId && !urlPropertyId ? ' (ברירת מחדל מהתפריט)' : ''}</option>
-              {properties.map((p) => (
-                <option key={p.id} value={p.id}>{p.name || p.id}</option>
-              ))}
-            </select>
-          </div>
-        ) : null}
-      </div>
-
-      <div className="atlas-card-surface overflow-hidden">
-        {isError ? (
-          <div className="p-4">
-            <ErrorFallback />
-          </div>
-        ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
-          <div className="py-16 text-center px-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 ring-1 ring-gray-100 flex items-center justify-center mx-auto mb-4">
-              <CalendarDays className="w-7 h-7 text-gray-300" />
-            </div>
-            <p className="text-sm font-bold text-gray-600 mb-1">
-              {search || tab !== 'all' || statusFilterArr.length || dateFrom || dateTo ? 'לא נמצאו תוצאות' : 'עדיין אין הזמנות'}
-            </p>
-            <p className="text-xs text-gray-400 mb-4 max-w-xs mx-auto leading-relaxed">
-              {search || tab !== 'all' || statusFilterArr.length || dateFrom || dateTo ? 'נסה חיפוש אחר.' : 'הוסף הזמנה ראשונה.'}
-            </p>
-            {!search && tab === 'all' && !statusFilterArr.length && !dateFrom && !dateTo && (
-              <Button onClick={openNew} size="sm" className="gap-1.5 min-h-[44px] bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl px-5 touch-manipulation">
-                <Plus className="w-3.5 h-3.5" /> הוסף הזמנה ראשונה
-              </Button>
-            )}
-          </div>
-        ) : (
-          <ErrorBoundary
-            section="bookings-table"
-            variant="inline"
-            resetKey={`${effectivePropertyId ?? 'all'}|${tab}|${search}|${page}|${pageSize}`}
-          >
-            <BookingsTable
-              bookings={paged}
-              properties={properties}
-              isLoading={isLoading || propertiesLoading}
-              error={isError ? (bookingsError instanceof Error ? bookingsError : new Error('שגיאת טעינה')) : null}
-              onEdit={openEdit}
-              onDelete={handleDelete}
-              onBulkDelete={handleBulkDeleteRows}
-              onBulkSetStatus={handleBulkSetStatus}
-              sorting={sorting}
-              onSortingChange={setSorting}
-              manualSorting
-              highlightRowId={openBookingId}
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <SegmentedControl
+          ariaLabel="סינון לפי מצב"
+          value={tab}
+          onChange={(v) => void setUrlState({ tab: v, page: 1 })}
+          options={[
+            { value: 'all', label: 'הכל', count: counts.total },
+            { value: 'active', label: 'פעילות', count: counts.confirmed },
+            { value: 'pending', label: 'ממתינות', count: counts.pending },
+            { value: 'cancelled', label: 'בוטלו', count: counts.cancelled },
+          ]}
+        />
+        <div className="flex gap-2">
+          <div className="relative flex-1 lg:w-[320px] lg:flex-none">
+            <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
+            <Input
+              value={search}
+              onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
+              placeholder="חיפוש לפי שם אורח"
+              className="pr-10"
+              aria-label="חיפוש לפי שם אורח"
             />
+          </div>
+          <Button variant={filtersActive ? 'secondary' : 'outline'} onClick={() => setFiltersOpen(true)} aria-label="סינון">
+            <SlidersHorizontal />
+            <span className="hidden sm:inline">סינון</span>
+            {filtersActive ? <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1 text-[12px] text-white">{statusFilterArr.length + (dateFrom || dateTo ? 1 : 0) + (urlPropertyId ? 1 : 0)}</span> : null}
+          </Button>
+        </div>
+      </div>
+
+      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+        {isError ? (
+          <div className="p-4"><ErrorFallback /></div>
+        ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
+          <DsEmptyState
+            icon={CalendarDays}
+            title={hasQuery ? 'לא נמצאו הזמנות' : 'עדיין אין הזמנות'}
+            description={hasQuery ? 'נסו חיפוש אחר או נקו את הסינון.' : 'הזמנה ראשונה לוקחת פחות מדקה: שם, תאריכים וערוץ.'}
+            action={hasQuery ? (
+              <Button variant="outline" onClick={() => void setUrlState({ search: '', tab: 'all', status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי הסינון</Button>
+            ) : (
+              <Button onClick={openNew}><Plus strokeWidth={2.25} />הזמנה חדשה</Button>
+            )}
+          />
+        ) : (
+          <ErrorBoundary section="bookings-table" variant="inline" resetKey={`${effectivePropertyId ?? 'all'}|${tab}|${search}|${page}|${pageSize}`}>
+            {/* Phones: cards. Desktop: the full table with bulk actions. */}
+            <ul className="divide-y divide-line md:hidden">
+              {isLoading ? (
+                <li className="p-4"><SkelRows rows={5} /></li>
+              ) : paged.map((b) => (
+                <li key={b.id}>
+                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press flex min-h-[76px] items-center gap-3 px-4 py-3 active:bg-neutral-50">
+                    <span className="flex w-12 shrink-0 flex-col items-center rounded-[10px] bg-neutral-100 py-1.5">
+                      <span className="text-[12px] text-ink-600">{monthShort(b.check_in_date)}</span>
+                      <span className="text-[18px] font-extrabold leading-tight tabular text-navy-900">{dayNum(b.check_in_date)}</span>
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[16px] font-semibold text-navy-900">{b.guest_name || 'אורח'}</span>
+                      <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
+                        <ChannelDot source={b.booking_source} />
+                        {propName(b.property_id) || b.property_name} · {b.nights || 1} לילות{b.total_price ? ` · ${fmtMoney(b.total_price)}` : ''}
+                      </span>
+                    </span>
+                    <StatusPill status={b.status} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="hidden md:block">
+              <BookingsTable
+                bookings={paged}
+                properties={properties}
+                isLoading={isLoading || propertiesLoading}
+                error={isError ? (bookingsError instanceof Error ? bookingsError : new Error('שגיאת טעינה')) : null}
+                onEdit={openEdit}
+                onDelete={handleDelete}
+                onBulkDelete={handleBulkDeleteRows}
+                onBulkSetStatus={handleBulkSetStatus}
+                sorting={sorting}
+                onSortingChange={setSorting}
+                manualSorting
+                highlightRowId={openBookingId}
+              />
+            </div>
             {sorted.length > pageSize ? (
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 px-3 py-2 text-sm text-gray-600">
-                <span>עמוד {page} מתוך {totalPages} · {sorted.length} רשומות</span>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-3 text-[14px] text-ink-600">
+                <span>עמוד {page} מתוך {totalPages} · {sorted.length} הזמנות</span>
                 <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-9"
-                    disabled={page <= 1}
-                    onClick={() => void setUrlState({ page: page - 1 })}
-                  >
-                    הקודם
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-9"
-                    disabled={page >= totalPages}
-                    onClick={() => void setUrlState({ page: page + 1 })}
-                  >
-                    הבא
-                  </Button>
+                  <Button type="button" variant="outline" size="sm" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
+                  <Button type="button" variant="outline" size="sm" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
                   <select
-                    className="h-9 rounded-lg border border-gray-200 px-2 text-sm"
+                    className="h-10 rounded-[10px] border border-line bg-white px-2 text-[14px]"
                     value={String(pageSize)}
                     onChange={(e) => void setUrlState({ pageSize: Number(e.target.value), page: 1 })}
+                    aria-label="הזמנות בעמוד"
                   >
-                    <option value="10">10 לעמוד</option>
-                    <option value="25">25 לעמוד</option>
-                    <option value="50">50 לעמוד</option>
+                    <option value="10">10 בעמוד</option>
+                    <option value="25">25 בעמוד</option>
+                    <option value="50">50 בעמוד</option>
                   </select>
                 </div>
               </div>
@@ -492,11 +398,62 @@ export default function BookingsPage({ selectedPropertyId }) {
         )}
       </div>
 
-      <button onClick={openNew}
-        className="fixed bottom-20 left-4 z-30 lg:hidden w-14 h-14 rounded-full bg-[#4F46E5] shadow-xl flex items-center justify-center text-white touch-manipulation active:scale-95 transition-transform"
-        style={{ boxShadow: '0 4px 24px rgba(79,70,229,0.4)' }}>
-        <Plus className="w-6 h-6" />
-      </button>
+      <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="text-right">
+            <DialogTitle className="text-[22px] font-extrabold text-navy-900">סינון הזמנות</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-5">
+            <div>
+              <p className="mb-2 text-[14px] font-medium text-ink-600">מצב ההזמנה</p>
+              <div className="flex flex-wrap gap-2">
+                {STATUS_OPTIONS.map((s) => {
+                  const on = statusFilterArr.includes(s.value);
+                  return (
+                    <button
+                      key={s.value}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => {
+                        const next = on ? statusFilterArr.filter((x) => x !== s.value) : [...statusFilterArr, s.value];
+                        void setUrlState({ status: next, page: 1 });
+                      }}
+                      className={cn('press h-10 rounded-full border px-4 text-[14px] font-medium', on ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-line bg-white text-navy-900')}
+                    >
+                      {s.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <p className="mb-2 text-[14px] font-medium text-ink-600">תאריך כניסה</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Input type="date" value={dateInputValue(dateFrom)} onChange={onDateFromInput} aria-label="מתאריך" dir="ltr" />
+                <Input type="date" value={dateInputValue(dateTo)} onChange={onDateToInput} aria-label="עד תאריך" dir="ltr" />
+              </div>
+            </div>
+            {properties.length > 0 ? (
+              <div>
+                <p className="mb-2 text-[14px] font-medium text-ink-600">יחידה</p>
+                <select
+                  className="h-11 w-full rounded-[10px] border border-line bg-white px-3 text-[15px]"
+                  value={urlPropertyId ?? ''}
+                  onChange={(e) => void setUrlState({ propertyId: e.target.value || null, page: 1 })}
+                  aria-label="יחידה"
+                >
+                  <option value="">כל היחידות</option>
+                  {properties.map((p) => <option key={p.id} value={p.id}>{p.name || p.id}</option>)}
+                </select>
+              </div>
+            ) : null}
+            <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row">
+              <Button variant="outline" onClick={() => void setUrlState({ status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי</Button>
+              <Button onClick={() => setFiltersOpen(false)}>הצגת {sorted.length} הזמנות</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog
         open={showDialog}
@@ -510,9 +467,9 @@ export default function BookingsPage({ selectedPropertyId }) {
           if (!open) setOpenBookingId(null);
         }}
       >
-        <DialogContent className="w-[calc(100vw-2rem)] max-w-lg rounded-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-base font-bold">{editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}</DialogTitle>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader className="text-right">
+            <DialogTitle className="text-[22px] font-extrabold text-navy-900">{editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}</DialogTitle>
           </DialogHeader>
           <BookingForm
             key={editingBooking?.id ?? 'new'}
@@ -528,10 +485,10 @@ export default function BookingsPage({ selectedPropertyId }) {
             onAfterSubmitSuccess={() => {
               window.setTimeout(closeBookingDialog, 2000);
             }}
-            submitLabel={editingBooking ? 'שמור שינויים' : 'צור הזמנה'}
+            submitLabel={editingBooking ? 'שמירת שינויים' : 'שמירת הזמנה'}
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </Page>
   );
 }

@@ -1,39 +1,31 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
-import { useLocation } from 'react-router-dom';
-import AppSidebar from '@/components/app/AppSidebar';
-import AppHeader from '@/components/app/AppHeader';
-import BottomTabs from '@/components/app/BottomTabs';
-import AIChatBubble from '@/components/app/AIChatBubble';
 import TrialBanner from '@/components/TrialBanner';
 import IOSInstallBanner from '@/components/app/IOSInstallBanner';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
 import { CommandPalette } from '@/components/ui/CommandPalette';
+import { QuickBookingProvider } from '@/components/app/QuickBooking';
+import { SkelLine } from '@/components/ds';
+import { Sidebar, Header, TabBar, shellClass } from '@/ui-direction';
 
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans'];
 
 function PageLoader() {
   return (
-    <div className="flex-1 flex items-center justify-center" style={{ background: 'var(--page-bg)' }}>
-      <div className="flex flex-col items-center gap-3">
-        <Loader2
-          className="w-10 h-10 text-[var(--brand-teal,#00D1C1)] opacity-90"
-          strokeWidth={2}
-          aria-hidden
-        />
-        <p className="text-sm font-semibold" style={{ color: 'var(--atlas-ink-muted, rgba(0,0,0,0.4))' }}>טוען את המסך…</p>
+    <div className="mx-auto w-full max-w-[1200px] px-4 pt-6 md:px-8" aria-busy="true" aria-label="טוען את המסך">
+      <SkelLine className="h-8 w-48" />
+      <SkelLine className="mt-3 h-4 w-72 max-w-full" />
+      <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-[112px] rounded-[14px]" />)}
       </div>
+      <SkelLine className="mt-4 h-64 rounded-[14px]" />
     </div>
   );
 }
 
 function LayoutContent({ children, currentPageName }) {
-  const location = useLocation();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -53,10 +45,12 @@ function LayoutContent({ children, currentPageName }) {
     link.href = '/favicon.svg';
   }, []);
 
-  // Mobile: close sidebar on route change
+  // The app is light-only. An old theme toggle (or OS dark mode) used to add `.dark`
+  // and paint skeletons near-black; clear it once.
   useEffect(() => {
-    setSidebarOpen(false);
-  }, [location.pathname]);
+    document.documentElement.classList.remove('dark');
+    try { localStorage.removeItem('atlas-dark-mode'); } catch { /* ignore */ }
+  }, []);
 
   const handleLogout = async () => {
     queryClient.clear();
@@ -75,74 +69,42 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="atlas-app-shell flex flex-col min-h-[100dvh] h-[100dvh] max-h-[100dvh] overflow-hidden safe-top safe-left safe-right" style={{ background: 'linear-gradient(165deg, #f0fdf9 0%, #f4f6fb 42%, #eef6f4 100%)' }} dir="rtl">
-      <TrialBanner />
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/50 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar - desktop */}
-      <div className={cn(
-        "hidden md:flex flex-shrink-0 transition-all duration-300",
-        sidebarCollapsed ? "w-[64px]" : "w-[240px]"
-      )}>
-        <AppSidebar
-          collapsed={sidebarCollapsed}
-          onCollapse={() => setSidebarCollapsed(prev => !prev)}
-          onLogout={handleLogout}
-          user={user}
-        />
+    <QuickBookingProvider>
+      <div className={cn('atlas-app-shell flex h-[100dvh] max-h-[100dvh] min-h-[100dvh] flex-col overflow-hidden safe-top safe-left safe-right', shellClass)} dir="rtl">
+        <TrialBanner />
+        <div className="flex min-h-0 flex-1 overflow-hidden">
+          <div className="hidden shrink-0 lg:flex">
+            <Sidebar onLogout={handleLogout} user={user} />
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+            <Header
+              user={user}
+              currentPageName={currentPageName}
+              selectedPropertyId={selectedPropertyId}
+              onPropertyChange={setSelectedPropertyId}
+              onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+              onLogout={handleLogout}
+            />
+            <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} orgId={orgId} />
+            <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(92px+env(safe-area-inset-bottom))] lg:pb-0">
+              <ErrorBoundary section="layout-outlet" variant="page">
+                <Suspense fallback={<PageLoader />}>
+                  {React.isValidElement(children)
+                    ? React.cloneElement(children, {
+                        user,
+                        selectedPropertyId,
+                        orgId: user?.organization_id ?? user?.org_id ?? null,
+                      })
+                    : children}
+                </Suspense>
+              </ErrorBoundary>
+            </main>
+            <TabBar user={user} onLogout={handleLogout} />
+          </div>
+          <IOSInstallBanner />
+        </div>
       </div>
-
-      {/* Sidebar - mobile drawer */}
-      <div className={cn(
-        "fixed inset-y-0 right-0 z-40 w-[240px] md:hidden transition-transform duration-300",
-        sidebarOpen ? "translate-x-0 pointer-events-auto" : "translate-x-full pointer-events-none"
-      )}>
-        <AppSidebar
-          collapsed={false}
-          onCollapse={() => setSidebarOpen(false)}
-          onLogout={handleLogout}
-          user={user}
-        />
-      </div>
-
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <AppHeader
-          user={user}
-          currentPageName={currentPageName}
-          onMenuClick={() => setSidebarOpen(prev => !prev)}
-          selectedPropertyId={selectedPropertyId}
-          onPropertyChange={setSelectedPropertyId}
-          onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-        />
-        <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} orgId={orgId} />
-        <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0">
-          <ErrorBoundary section="layout-outlet" variant="page">
-            <Suspense fallback={<PageLoader />}>
-              {React.isValidElement(children)
-                ? React.cloneElement(children, {
-                    user,
-                    selectedPropertyId,
-                    orgId: user?.organization_id ?? user?.org_id ?? null,
-                  })
-                : children}
-            </Suspense>
-          </ErrorBoundary>
-        </main>
-        {/* Mobile bottom tabs — fixed, self-manages visibility via lg:hidden */}
-        <BottomTabs />
-      </div>
-      {!isPublicPage && <AIChatBubble />}
-      <IOSInstallBanner />
-      </div>
-    </div>
+    </QuickBookingProvider>
   );
 }
 

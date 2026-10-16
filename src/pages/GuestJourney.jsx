@@ -5,17 +5,17 @@ import { cn } from '@/lib/utils';
 const CHANNELS = {
   whatsapp: { icon: MessageCircle, label: 'WhatsApp', color: 'text-green-600 bg-green-50' },
   email: { icon: Mail, label: 'אימייל', color: 'text-blue-600 bg-blue-50' },
-  sms: { icon: Phone, label: 'SMS', color: 'text-purple-600 bg-purple-50' },
+  sms: { icon: Phone, label: 'SMS', color: 'text-brand-600 bg-brand-50' },
 };
 
 const STAGE_THEMES = [
   { gradient: 'from-blue-500 to-cyan-500', bg: 'bg-blue-50', border: 'border-blue-200', ring: 'ring-blue-400/30', dot: 'bg-blue-500' },
-  { gradient: 'from-violet-500 to-purple-500', bg: 'bg-violet-50', border: 'border-violet-200', ring: 'ring-violet-400/30', dot: 'bg-violet-500' },
+  { gradient: 'from-brand-500 to-brand-500', bg: 'bg-brand-50', border: 'border-brand-200', ring: 'ring-brand-400/30', dot: 'bg-brand-500' },
   { gradient: 'from-emerald-500 to-teal-500', bg: 'bg-emerald-50', border: 'border-emerald-200', ring: 'ring-emerald-400/30', dot: 'bg-emerald-500' },
   { gradient: 'from-amber-500 to-orange-500', bg: 'bg-amber-50', border: 'border-amber-200', ring: 'ring-amber-400/30', dot: 'bg-amber-500' },
   { gradient: 'from-rose-500 to-pink-500', bg: 'bg-rose-50', border: 'border-rose-200', ring: 'ring-rose-400/30', dot: 'bg-rose-500' },
-  { gradient: 'from-indigo-500 to-blue-500', bg: 'bg-indigo-50', border: 'border-indigo-200', ring: 'ring-indigo-400/30', dot: 'bg-indigo-500' },
-  { gradient: 'from-fuchsia-500 to-purple-500', bg: 'bg-fuchsia-50', border: 'border-fuchsia-200', ring: 'ring-fuchsia-400/30', dot: 'bg-fuchsia-500' },
+  { gradient: 'from-brand-500 to-blue-500', bg: 'bg-brand-50', border: 'border-brand-200', ring: 'ring-brand-400/30', dot: 'bg-brand-500' },
+  { gradient: 'from-brand-500 to-brand-500', bg: 'bg-brand-50', border: 'border-brand-200', ring: 'ring-brand-400/30', dot: 'bg-brand-500' },
 ];
 
 const INITIAL_STAGES = [
@@ -134,7 +134,7 @@ function StageCard({ stage, theme, index, total, onToggle }) {
     <div className="relative flex flex-col items-center">
       {/* Connector line from previous */}
       {index > 0 && (
-        <div className="w-0.5 h-8 bg-gradient-to-b from-gray-200 to-gray-300 -mt-0" />
+        <div className="w-0.5 h-8 bg-gray-200 -mt-0" />
       )}
 
       {/* Step number circle */}
@@ -243,7 +243,7 @@ function StageCard({ stage, theme, index, total, onToggle }) {
       {/* Arrow to next */}
       {index < total - 1 && (
         <div className="flex flex-col items-center mt-1">
-          <div className="w-0.5 h-6 bg-gradient-to-b from-gray-300 to-gray-200" />
+          <div className="w-0.5 h-6 bg-gray-300" />
           <ArrowDown className="w-4 h-4 text-gray-300 -mt-1" />
         </div>
       )}
@@ -267,7 +267,7 @@ function StatCard({ icon: Icon, value, label, color }) {
 
 function TemplateCard({ template, onUse }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-all hover:border-violet-200 group">
+    <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-all hover:border-brand-200 group">
       <div className="flex items-center gap-2 mb-2">
         <h3 className="font-bold text-sm text-gray-900">{template.name}</h3>
         <span className={cn('text-[10px] font-semibold px-2 py-0.5 rounded-full', template.badgeColor)}>
@@ -279,7 +279,7 @@ function TemplateCard({ template, onUse }) {
         <span className="text-[11px] text-gray-400">{template.stages} שלבים</span>
         <button
           onClick={() => onUse(template.id)}
-          className="text-xs font-semibold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg transition-colors"
+          className="text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-colors"
         >
           השתמש בתבנית
         </button>
@@ -299,18 +299,18 @@ export default function GuestJourney() {
   const activeCount = stages.filter(s => s.active).length;
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white p-4 md:p-6 max-w-4xl mx-auto">
+    <div dir="rtl" className="min-h-screen bg-gray-50/50 p-4 md:p-6 max-w-4xl mx-auto">
 
       {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
+      <div className="atlas-page-hero">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center">
             <Workflow className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-gray-900">מסע אורח</h1>
-              <span className="text-xs font-medium bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full">PRO</span>
+              <span className="text-xs font-medium bg-amber-500 text-white px-2 py-0.5 rounded-full">PRO</span>
             </div>
           </div>
         </div>
@@ -324,7 +324,7 @@ export default function GuestJourney() {
         <StatCard icon={Send} value="234" label="הודעות שנשלחו החודש" color="bg-blue-50 text-blue-600" />
         <StatCard icon={Sparkles} value="89%" label="שיעור פתיחה" color="bg-emerald-50 text-emerald-600" />
         <StatCard icon={Star} value="12" label="ביקורות שהתקבלו" color="bg-amber-50 text-amber-600" />
-        <StatCard icon={Gift} value="8" label="הזמנות חוזרות" color="bg-violet-50 text-violet-600" />
+        <StatCard icon={Gift} value="8" label="הזמנות חוזרות" color="bg-brand-50 text-brand-600" />
       </div>
 
       {/* Journey Info Bar */}
@@ -337,7 +337,7 @@ export default function GuestJourney() {
         </div>
         <button
           onClick={() => setShowTemplates(!showTemplates)}
-          className="flex items-center gap-1.5 text-sm font-medium text-violet-600 hover:text-violet-700 transition-colors"
+          className="flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
         >
           <Sparkles className="w-4 h-4" />
           תבניות מוכנות
@@ -360,17 +360,17 @@ export default function GuestJourney() {
       <div className="relative bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8">
         {/* Decorative bg elements */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-          <div className="absolute -top-20 -left-20 w-60 h-60 bg-violet-100/20 rounded-full blur-3xl" />
+          <div className="absolute -top-20 -left-20 w-60 h-60 bg-brand-100/20 rounded-full blur-3xl" />
           <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-blue-100/20 rounded-full blur-3xl" />
         </div>
 
         <div className="relative flex flex-col items-center gap-0 py-4">
           {/* Start marker */}
-          <div className="flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs font-bold shadow-lg">
+          <div className="flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-brand-500 text-white text-xs font-bold shadow-lg">
             <Zap className="w-3.5 h-3.5" />
             התחלת המסע
           </div>
-          <div className="w-0.5 h-6 bg-gradient-to-b from-violet-300 to-gray-200" />
+          <div className="w-0.5 h-6 bg-brand-300" />
 
           {stages.map((stage, index) => (
             <StageCard
@@ -385,8 +385,8 @@ export default function GuestJourney() {
 
           {/* End marker */}
           <div className="mt-2">
-            <div className="w-0.5 h-6 bg-gradient-to-b from-gray-200 to-gray-300 mx-auto" />
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold shadow-lg mt-1">
+            <div className="w-0.5 h-6 bg-gray-200 mx-auto" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500 text-white text-xs font-bold shadow-lg mt-1">
               <CheckCircle className="w-3.5 h-3.5" />
               סיום המסע
             </div>

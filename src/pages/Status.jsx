@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -22,7 +23,7 @@ export default function Status() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/"><img src="/atlas-logo-final.png" alt="ATLAS" className="h-10" /></Link>
+            <Link to="/"><div className="mb-6 flex justify-center"><Wordmark size={30} /></div></Link>
             <Link to={createPageUrl('Landing')}>
               <Button variant="ghost">חזרה</Button>
             </Link>
@@ -54,7 +55,7 @@ export default function Status() {
               <code className="text-xs bg-white px-1 py-0.5 rounded border">/api/ready</code>
               {' (דורשות גישה לשרת ה־API).'}
             </p>
-            <Link to={createPageUrl('ApiDocs')} className="inline-flex items-center gap-1 text-sm font-medium text-[#4F46E5] mt-3 hover:underline">
+            <Link to={createPageUrl('ApiDocs')} className="inline-flex items-center gap-1 text-sm font-medium text-brand-600 mt-3 hover:underline">
               תיעוד API
               <ExternalLink className="w-3.5 h-3.5" />
             </Link>

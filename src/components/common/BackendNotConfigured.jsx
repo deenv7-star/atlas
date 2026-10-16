@@ -12,13 +12,13 @@ export default function BackendNotConfigured() {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: "'Heebo', sans-serif",
-        background: '#F4F6FB',
+        background: '#F7F8FB',
         textAlign: 'center',
         maxWidth: 560,
         margin: '0 auto'
       }}
     >
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0B1220', marginBottom: 12 }}>
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1B2656', marginBottom: 12 }}>
         נדרשת הגדרת שרת
       </h1>
       <p style={{ color: '#6B7280', lineHeight: 1.7, marginBottom: 16 }}>
@@ -37,8 +37,8 @@ export default function BackendNotConfigured() {
         href="/"
         style={{
           padding: '12px 24px',
-          background: '#00D1C1',
-          color: '#0B1220',
+          background: '#3E2BF1',
+          color: '#1B2656',
           borderRadius: 8,
           fontWeight: 600,
           textDecoration: 'none'

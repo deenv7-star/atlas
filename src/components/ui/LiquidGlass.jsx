@@ -12,11 +12,11 @@ export function LiquidGlassCard({
   style = {},
 }) {
   const tints = {
-    teal:    { from: 'rgba(0,209,193,0.22)', to: 'rgba(0,168,160,0.10)', glow: 'rgba(0,209,193,0.35)', border: 'rgba(0,209,193,0.40)' },
+    teal:    { from: 'rgba(62, 43, 241,0.22)', to: 'rgba(0,168,160,0.10)', glow: 'rgba(62, 43, 241,0.35)', border: 'rgba(62, 43, 241,0.40)' },
     purple:  { from: 'rgba(139,92,246,0.22)', to: 'rgba(109,40,217,0.10)', glow: 'rgba(139,92,246,0.35)', border: 'rgba(139,92,246,0.40)' },
     blue:    { from: 'rgba(59,130,246,0.22)', to: 'rgba(37,99,235,0.10)', glow: 'rgba(59,130,246,0.35)', border: 'rgba(59,130,246,0.40)' },
     neutral: { from: 'rgba(255,255,255,0.25)', to: 'rgba(255,255,255,0.08)', glow: 'rgba(255,255,255,0.20)', border: 'rgba(255,255,255,0.30)' },
-    dark:    { from: 'rgba(11,18,32,0.70)', to: 'rgba(11,18,32,0.40)', glow: 'rgba(0,209,193,0.20)', border: 'rgba(0,209,193,0.25)' },
+    dark:    { from: 'rgba(11,18,32,0.70)', to: 'rgba(11,18,32,0.40)', glow: 'rgba(62, 43, 241,0.20)', border: 'rgba(62, 43, 241,0.25)' },
   };
   const t = tints[tint] || tints.teal;
 
@@ -96,7 +96,7 @@ export function LiquidGlassPanel({ children, className = '', style = {}, blur = 
         className="pointer-events-none absolute inset-x-0 top-0"
         style={{
           height: '2px',
-          background: 'linear-gradient(90deg, rgba(0,209,193,0.6) 0%, rgba(255,255,255,0.8) 50%, rgba(139,92,246,0.6) 100%)',
+          background: 'linear-gradient(90deg, rgba(62, 43, 241,0.6) 0%, rgba(255,255,255,0.8) 50%, rgba(139,92,246,0.6) 100%)',
         }}
       />
       {children}
@@ -108,16 +108,16 @@ export function LiquidGlassPanel({ children, className = '', style = {}, blur = 
 export function LiquidGlassButton({ children, onClick, className = '', variant = 'teal' }) {
   const variants = {
     teal: {
-      bg: 'rgba(0,209,193,0.20)',
-      hover: 'rgba(0,209,193,0.32)',
-      border: 'rgba(0,209,193,0.45)',
-      shadow: '0 4px 16px rgba(0,209,193,0.30)',
-      text: '#0B1220',
+      bg: 'rgba(62, 43, 241,0.20)',
+      hover: 'rgba(62, 43, 241,0.32)',
+      border: 'rgba(62, 43, 241,0.45)',
+      shadow: '0 4px 16px rgba(62, 43, 241,0.30)',
+      text: '#1B2656',
     },
     dark: {
       bg: 'rgba(11,18,32,0.70)',
       hover: 'rgba(11,18,32,0.85)',
-      border: 'rgba(0,209,193,0.30)',
+      border: 'rgba(62, 43, 241,0.30)',
       shadow: '0 4px 20px rgba(11,18,32,0.40)',
       text: 'white',
     },
@@ -126,7 +126,7 @@ export function LiquidGlassButton({ children, onClick, className = '', variant =
       hover: 'rgba(255,255,255,0.48)',
       border: 'rgba(255,255,255,0.50)',
       shadow: '0 4px 16px rgba(0,0,0,0.10)',
-      text: '#0B1220',
+      text: '#1B2656',
     },
   };
   const v = variants[variant] || variants.teal;
@@ -166,8 +166,8 @@ export function LiquidGlassButton({ children, onClick, className = '', variant =
 /* ── Liquid Orb (decorative animated sphere) ──────────────── */
 export function LiquidOrb({ size = 200, tint = 'teal', className = '', style = {} }) {
   const colors = {
-    teal:   ['#00D1C1', '#00a8a0', '#0097a7'],
-    purple: ['#a855f7', '#9333ea', '#7c3aed'],
+    teal:   ['#3E2BF1', '#00a8a0', '#0097a7'],
+    purple: ['#a855f7', '#9333ea', '#3E2BF1'],
     blue:   ['#3b82f6', '#2563eb', '#1d4ed8'],
     amber:  ['#f59e0b', '#d97706', '#b45309'],
   };
@@ -199,7 +199,7 @@ export function LiquidBackground({ children, className = '', style = {} }) {
           top: '-15%', left: '-10%',
           width: '60%', height: '60%',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(0,209,193,0.25) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(62, 43, 241,0.25) 0%, transparent 65%)',
           filter: 'blur(60px)',
         }}
       />

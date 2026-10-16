@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
@@ -97,7 +98,7 @@ export default function Login() {
 
   if (isLoadingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F4F6FB' }} dir="rtl">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F7F8FB' }} dir="rtl">
         <div
           className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"
           role="status"
@@ -110,7 +111,7 @@ export default function Login() {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{ background: '#F4F6FB', fontFamily: "'Heebo', sans-serif" }}
+      style={{ background: '#F7F8FB', fontFamily: "'Heebo', sans-serif" }}
       dir="rtl"
     >
       <motion.div
@@ -126,13 +127,8 @@ export default function Login() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.4 }}
         >
-          <img
-            src="/atlas-logo-final.png"
-            alt="ATLAS"
-            className="mx-auto mb-6"
-            style={{ height: 52, width: 'auto', objectFit: 'contain' }}
-          />
-          <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: '#0B1220' }}>
+          <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
+          <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: '#1B2656' }}>
             ברוכים השבים
           </h1>
           <p className="text-sm mt-2" style={{ color: '#6B7280' }}>
@@ -172,7 +168,7 @@ export default function Login() {
                 style={{
                   background: '#F9FAFB',
                   border: touched.email && errors.email ? '1px solid rgba(239,68,68,0.6)' : '1px solid #E5E7EB',
-                  color: '#0B1220',
+                  color: '#1B2656',
                 }}
                 autoComplete="email"
                 autoFocus={!prefilledEmail}
@@ -192,7 +188,7 @@ export default function Login() {
                 <Link
                   to="/reset-password"
                   className="text-sm font-medium transition-colors hover:underline"
-                  style={{ color: '#00a89a' }}
+                  style={{ color: '#2A1AC9' }}
                 >
                   שכחתי סיסמה
                 </Link>
@@ -208,7 +204,7 @@ export default function Login() {
                   style={{
                     background: '#F9FAFB',
                     border: touched.password && errors.password ? '1px solid rgba(239,68,68,0.6)' : '1px solid #E5E7EB',
-                    color: '#0B1220',
+                    color: '#1B2656',
                   }}
                   autoComplete="current-password"
                   maxLength={128}
@@ -236,9 +232,9 @@ export default function Login() {
               style={{
                 background: isLoading
                   ? '#E5E7EB'
-                  : 'linear-gradient(135deg, #00D1C1 0%, #00a89a 100%)',
+                  : '#3E2BF1',
                 color: isLoading ? '#9CA3AF' : '#fff',
-                boxShadow: isLoading ? 'none' : '0 4px 16px rgba(0,209,193,0.25)',
+                boxShadow: isLoading ? 'none' : '0 4px 16px rgba(62, 43, 241,0.25)',
               }}
             >
               {isLoading
@@ -265,7 +261,7 @@ export default function Login() {
             <Link
               to="/register"
               className="font-semibold transition-colors hover:underline"
-              style={{ color: '#00a89a' }}
+              style={{ color: '#2A1AC9' }}
             >
               צור חשבון חינמי
             </Link>

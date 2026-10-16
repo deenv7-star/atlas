@@ -23,12 +23,12 @@ import {
 } from '@/components/forms/formMachineUi';
 
 const STATUS_OPTIONS = [
-  { value: 'PENDING', label: 'ממתין' },
-  { value: 'APPROVED', label: 'מאושר' },
-  { value: 'CONFIRMED', label: 'מאושר סופית' },
-  { value: 'CHECKED_IN', label: 'נכנס' },
-  { value: 'CHECKED_OUT', label: 'יצא' },
-  { value: 'CANCELLED', label: 'בוטל' },
+  { value: 'PENDING', label: 'ממתינה' },
+  { value: 'APPROVED', label: 'מאושרת' },
+  { value: 'CONFIRMED', label: 'מאושרת סופית' },
+  { value: 'CHECKED_IN', label: 'בשהייה' },
+  { value: 'CHECKED_OUT', label: 'הסתיימה' },
+  { value: 'CANCELLED', label: 'בוטלה' },
   { value: 'WAITLIST', label: 'המתנה' },
 ];
 
@@ -95,11 +95,11 @@ export function BookingForm({
       <div className={formMachineFormClassName(fm.state)} dir="rtl">
         <div className="grid grid-cols-2 gap-3 py-2">
           <div className="col-span-2 space-y-1.5">
-            <Label className="text-xs font-semibold">שם אורח *</Label>
+            <Label className="text-[14px] font-medium text-ink-600">שם אורח *</Label>
             <Input
               {...fm.register('guest_name')}
               placeholder="שם מלא"
-              className="h-11 text-sm rounded-xl"
+              className="h-12 md:h-11 rounded-[10px]"
               autoComplete="name"
             />
             <FormMachineFieldHint
@@ -108,11 +108,11 @@ export function BookingForm({
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">אימייל</Label>
+            <Label className="text-[14px] font-medium text-ink-600">אימייל</Label>
             <Input
               {...fm.register('guest_email')}
               placeholder="email@example.com"
-              className="h-11 text-sm rounded-xl"
+              className="h-12 md:h-11 rounded-[10px]"
               autoComplete="email"
             />
             <FormMachineFieldHint
@@ -121,11 +121,11 @@ export function BookingForm({
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">טלפון</Label>
+            <Label className="text-[14px] font-medium text-ink-600">טלפון</Label>
             <Input
               {...fm.register('guest_phone')}
               placeholder="050-0000000"
-              className="h-11 text-sm rounded-xl"
+              className="h-12 md:h-11 rounded-[10px]"
               autoComplete="tel"
             />
             <FormMachineFieldHint
@@ -135,7 +135,7 @@ export function BookingForm({
           </div>
           {properties.length > 0 && (
             <div className="col-span-2 space-y-1.5">
-              <Label className="text-xs font-semibold">נכס</Label>
+              <Label className="text-[14px] font-medium text-ink-600">נכס</Label>
               <Controller
                 control={fm.control}
                 name="property_id"
@@ -147,7 +147,7 @@ export function BookingForm({
                       field.onChange(v);
                     }}
                   >
-                    <SelectTrigger className="h-11 text-sm rounded-xl">
+                    <SelectTrigger className="h-12 md:h-11 rounded-[10px]">
                       <SelectValue placeholder="בחר נכס" />
                     </SelectTrigger>
                     <SelectContent>
@@ -163,29 +163,66 @@ export function BookingForm({
               <FormMachineFieldHint error={fm.errors.property_id} />
             </div>
           )}
+          <div className="col-span-2 space-y-1.5">
+            <Label className="text-[14px] font-medium text-ink-600">ערוץ</Label>
+            <Controller
+              control={fm.control}
+              name="booking_source"
+              render={({ field }) => (
+                <div role="radiogroup" aria-label="ערוץ" className="grid grid-cols-3 gap-1 rounded-[12px] bg-neutral-100 p-1">
+                  {[
+                    { v: 'direct', l: 'ישיר', c: '#3E2BF1' },
+                    { v: 'booking', l: 'Booking.com', c: '#1B2656' },
+                    { v: 'airbnb', l: 'Airbnb', c: '#EF5B5B' },
+                  ].map((o) => {
+                    const on = (field.value || 'direct') === o.v;
+                    return (
+                      <button
+                        key={o.v}
+                        type="button"
+                        role="radio"
+                        aria-checked={on}
+                        onClick={() => {
+                          fm.handleChange('booking_source', o.v);
+                          field.onChange(o.v);
+                        }}
+                        className={
+                          'press inline-flex h-10 items-center justify-center gap-1.5 rounded-[9px] text-[14px] font-medium ' +
+                          (on ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.1)]' : 'text-ink-600')
+                        }
+                      >
+                        <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: o.c }} />
+                        {o.l}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            />
+          </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">תאריך כניסה *</Label>
-            <Input type="date" {...fm.register('check_in_date')} className="h-11 text-sm rounded-xl" />
+            <Label className="text-[14px] font-medium text-ink-600">תאריך כניסה *</Label>
+            <Input type="date" {...fm.register('check_in_date')} className="h-12 md:h-11 rounded-[10px]" />
             <FormMachineFieldHint
               error={fm.errors.check_in_date}
               validating={fm.isFieldValidating('check_in_date')}
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">תאריך יציאה</Label>
-            <Input type="date" {...fm.register('check_out_date')} className="h-11 text-sm rounded-xl" />
+            <Label className="text-[14px] font-medium text-ink-600">תאריך יציאה</Label>
+            <Input type="date" {...fm.register('check_out_date')} className="h-12 md:h-11 rounded-[10px]" />
             <FormMachineFieldHint
               error={fm.errors.check_out_date}
               validating={fm.isFieldValidating('check_out_date')}
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">מחיר כולל (₪)</Label>
-            <Input type="number" {...fm.register('total_price')} placeholder="0" className="h-11 text-sm rounded-xl" />
+            <Label className="text-[14px] font-medium text-ink-600">מחיר כולל (₪)</Label>
+            <Input type="number" {...fm.register('total_price')} placeholder="0" className="h-12 md:h-11 rounded-[10px]" />
             <FormMachineFieldHint error={fm.errors.total_price} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">סטטוס</Label>
+            <Label className="text-[14px] font-medium text-ink-600">סטטוס</Label>
             <Controller
               control={fm.control}
               name="status"
@@ -197,7 +234,7 @@ export function BookingForm({
                     field.onChange(v);
                   }}
                 >
-                  <SelectTrigger className="h-11 text-sm rounded-xl">
+                  <SelectTrigger className="h-12 md:h-11 rounded-[10px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -213,19 +250,19 @@ export function BookingForm({
             <FormMachineFieldHint error={fm.errors.status} />
           </div>
           <div className="col-span-2 space-y-1.5">
-            <Label className="text-xs font-semibold">הערות</Label>
-            <Input {...fm.register('notes')} placeholder="הערות פנימיות" className="h-11 text-sm rounded-xl" />
+            <Label className="text-[14px] font-medium text-ink-600">הערות</Label>
+            <Input {...fm.register('notes')} placeholder="הערות פנימיות" className="h-12 md:h-11 rounded-[10px]" />
             <FormMachineFieldHint error={fm.errors.notes} />
           </div>
           {nights > 0 && (
             <div className="col-span-2">
-              <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl">
+              <div className="flex items-center gap-2 text-[14px] font-medium text-brand-700 bg-brand-50 px-3 py-2.5 rounded-[10px]">
                 <CheckCircle2 className="w-3.5 h-3.5" /> {nights} לילות
               </div>
             </div>
           )}
         </div>
-        <div className="flex gap-2 flex-col sm:flex-row pt-2">
+        <div className="flex gap-2 flex-col-reverse sm:flex-row sm:justify-start pt-3">
           <Button
             variant="outline"
             type="button"
@@ -245,7 +282,7 @@ export function BookingForm({
               'relative min-h-[44px] h-11 gap-1.5 rounded-xl w-full sm:w-auto font-semibold',
               fm.state === 'success'
                 ? 'bg-emerald-600 hover:bg-emerald-600 text-white'
-                : 'bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220]',
+                : 'bg-brand-600 hover:bg-brand-500 text-white',
             ].join(' ')}
           >
             {(fm.state === 'dirty' || fm.state === 'error') && (
@@ -257,7 +294,7 @@ export function BookingForm({
             )}
             {fm.state === 'submitting' ? (
               <>
-                <span className="inline-block h-4 w-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
+                <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 שומר…
               </>
             ) : fm.state === 'success' ? (

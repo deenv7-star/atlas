@@ -41,7 +41,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md" dir="rtl">
         <DialogHeader>
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-orange-500 flex items-center justify-center">
             <AlertCircle className="h-7 w-7 text-white" />
           </div>
           <DialogTitle className="text-center text-2xl">
@@ -52,7 +52,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <CurrentIcon className="h-5 w-5 text-gray-600" />
-                  <span className="font-semibold text-[#0B1220]">תוכנית {PLAN_NAMES[currentPlan]}</span>
+                  <span className="font-semibold text-[#1B2656]">תוכנית {PLAN_NAMES[currentPlan]}</span>
                 </div>
                 <p className="text-sm text-gray-600">
                   התוכנית הנוכחית שלך תומכת בעד <span className="font-bold">{limit}</span> {entityName.plural}
@@ -70,19 +70,19 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
                   {availableUpgrades.map(upgrade => {
                     const UpgradeIcon = upgrade.icon;
                     return (
-                      <div key={upgrade.id} className="bg-gradient-to-r from-[#00D1C1]/10 to-[#00B8A9]/10 border border-[#00D1C1]/20 rounded-xl p-3 flex items-center justify-between">
+                      <div key={upgrade.id} className="bg-[#3E2BF1]/10 to-[#00B8A9]/10 border border-brand-600/20 rounded-xl p-3 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-lg bg-[#3E2BF1] flex items-center justify-center">
                             <UpgradeIcon className="h-5 w-5 text-white" />
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold text-[#0B1220]">{upgrade.name}</p>
+                            <p className="font-semibold text-[#1B2656]">{upgrade.name}</p>
                             <p className="text-xs text-gray-600">{upgrade.limit} {entityName.plural}</p>
                           </div>
                         </div>
                         <Button
                           size="sm"
-                          className="bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] text-white hover:opacity-90"
+                          className="bg-[#3E2BF1] text-white hover:opacity-90"
                           onClick={() => {
                             navigate(createPageUrl('Billing'));
                             onClose();
@@ -109,7 +109,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
             ביטול
           </Button>
           <Button
-            className="flex-1 bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] text-white hover:opacity-90"
+            className="flex-1 bg-[#3E2BF1] text-white hover:opacity-90"
             onClick={() => {
               navigate(createPageUrl('Billing'));
               onClose();

@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
@@ -548,7 +549,7 @@ export default function Onboarding() {
         return (
           <div className="text-center py-4">
             <div className="flex items-center justify-center gap-2 mb-5">
-              <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 56, width: 'auto', objectFit: 'contain' }} />
+              <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
             </div>
             <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight mb-2">ברוך הבא ל-ATLAS!</h2>
             <p className="text-sm text-zinc-600 mb-6 leading-relaxed">בואו נגדיר את המתחם שלך תוך 2 דקות</p>
@@ -845,11 +846,11 @@ export default function Onboarding() {
                 <defs>
                   <linearGradient id="successCircleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#34D399" stopOpacity="1" />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#22B07D" stopOpacity="1" />
                   </linearGradient>
                   <linearGradient id="successGlow" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#34D399" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity="0.05" />
+                    <stop offset="100%" stopColor="#22B07D" stopOpacity="0.05" />
                   </linearGradient>
                 </defs>
                 <circle cx="60" cy="60" r="54" fill="url(#successGlow)" />
@@ -920,11 +921,7 @@ export default function Onboarding() {
       <div className="w-full max-w-[520px] relative z-10">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-6">
-          <img
-            src="/atlas-logo-final.png"
-            alt="ATLAS"
-            style={{ height: 56, width: 'auto', objectFit: 'contain' }}
-          />
+          <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
         </div>
 
         {/* Progress — spring-driven fill + step chips (vertical step motion = RTL-safe) */}
@@ -948,7 +945,7 @@ export default function Onboarding() {
               transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 100, damping: 24, mass: 0.82 }}
               style={{
                 transformOrigin: '100% 50%',
-                background: 'linear-gradient(90deg, #00D1C1 0%, #089b8e 100%)',
+                background: 'linear-gradient(90deg, #3E2BF1 0%, #089b8e 100%)',
               }}
               aria-hidden
             />

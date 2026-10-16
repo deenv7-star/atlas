@@ -24,7 +24,7 @@ import {
   Bell,
   Wrench,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import PullToRefresh from '@/components/common/PullToRefresh';
 import { MaintenanceTable } from '@/components/tables/MaintenanceTable';
 import { useMaintenanceUrlState } from '@/hooks/url-state/useMaintenanceUrlState';
@@ -111,7 +111,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
   };
 
   const statusConfig = {
-    NEW: { label: 'חדש', color: 'bg-purple-100 text-purple-800' },
+    NEW: { label: 'חדש', color: 'bg-brand-100 text-brand-800' },
     IN_PROGRESS: { label: 'בטיפול', color: 'bg-blue-100 text-blue-800' },
     RESOLVED: { label: 'טופל', color: 'bg-green-100 text-green-800' },
     CLOSED: { label: 'סגור', color: 'bg-gray-100 text-gray-800' }
@@ -163,18 +163,18 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
       >
         {/* Header & Stats */}
         <div className="mb-6">
-          <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6" dir="rtl">
+          <div className="atlas-page-hero" dir="rtl">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-                <Wrench className="w-5 h-5 text-indigo-600" />
+              <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+                <Wrench className="w-5 h-5 text-brand-600" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900">בקשות שירות</h1>
             </div>
             <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל בקשות תחזוקה ושירות מאורחים ומנהלי נכסים. עקוב אחר סטטוס הטיפול.</p>
-            <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: בקשות דחופות מסומנות באדום — טפל בהן קודם</p>
+            <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: בקשות דחופות מסומנות באדום — טפל בהן קודם</p>
           </div>
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-            <h3 className="font-semibold text-[#0F172A] mb-2">📋 קישור לטופס אורחים</h3>
+            <h3 className="font-semibold text-[#0F172A] mb-2">קישור לטופס אורחים</h3>
             <p className="text-sm text-gray-600 mb-3">שתף את הקישור הזה עם האורחים שלך (בהודעת כניסה, בנכס וכו'):</p>
             <div className="flex gap-2">
               <input 
@@ -189,7 +189,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   navigator.clipboard.writeText(`${window.location.origin}${createPageUrl('GuestService')}`);
                   alert('הקישור הועתק!');
                 }}
-                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]"
+                className="bg-brand-600 hover:bg-[#00B8A9] text-white"
               >
                 העתק
               </Button>
@@ -199,7 +199,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {[
               { label: 'סה"כ בקשות', value: stats.total, color: 'from-blue-500 to-blue-600' },
-              { label: 'חדשות', value: stats.new, color: 'from-purple-500 to-purple-600' },
+              { label: 'חדשות', value: stats.new, color: 'from-brand-500 to-brand-600' },
               { label: 'דחופות', value: stats.urgent, color: 'from-red-500 to-red-600' },
               { label: 'טופלו', value: stats.resolved, color: 'from-green-500 to-green-600' }
             ].map((stat, i) => (
@@ -359,7 +359,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A]"
+                className="w-full bg-brand-600 hover:bg-[#00B8AA] text-[#0F172A]"
                 disabled={
                   createMutation.isPending
                   || !orgId
@@ -413,7 +413,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       {selectedRequest.guest_phone && (
                         <div className="flex items-center gap-2">
                           <Phone className="h-4 w-4 text-[#64748B]" />
-                          <a href={`tel:${selectedRequest.guest_phone}`} className="text-[#00D1C1] hover:underline">
+                          <a href={`tel:${selectedRequest.guest_phone}`} className="text-brand-600 hover:underline">
                             {selectedRequest.guest_phone}
                           </a>
                         </div>
@@ -471,7 +471,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                         });
                       }}
                       disabled={updateMutation.isPending}
-                      className="mt-2 w-full bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A]"
+                      className="mt-2 w-full bg-brand-600 hover:bg-[#00B8AA] text-[#0F172A]"
                     >
                       שמור הערות
                     </Button>

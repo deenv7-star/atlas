@@ -349,7 +349,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
         <Button type="button" variant="outline" onClick={onCancel}>
           ביטול
         </Button>
-        <Button type="submit" className="bg-[#00D1C1] hover:bg-[#00D1C1]/90">
+        <Button type="submit" className="bg-brand-600 hover:bg-brand-600/90">
           שמור חשבונית
         </Button>
       </div>
