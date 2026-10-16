@@ -235,7 +235,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
         <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-[color:var(--today)] px-2 text-[14px] font-bold text-white tabular">{board.arrivals.length}</span>
       </Rise>
       <div className={cn(
-        playful ? 'grid gap-3 md:grid-cols-2'
+        playful ? 'grid grid-cols-1 gap-3 md:grid-cols-2'
           : 'v4-rail -mx-5 flex scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0',
       )}
       >
