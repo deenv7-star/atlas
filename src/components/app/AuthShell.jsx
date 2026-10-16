@@ -8,7 +8,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, LogIn, LogOut, Sparkles, ArrowUpRight } from 'lucide-react';
 import { Wordmark } from '@/components/app/shell/shared';
-import { Sparkline } from '@/components/today/RevenueChart';
+import { Sparkline } from '@/components/today/Sparkline';
 import { cn } from '@/lib/utils';
 
 const SPARK = [26260, 31010, 42400, 51820, 54410, 35830, 61540];
