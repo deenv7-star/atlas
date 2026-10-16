@@ -306,7 +306,6 @@ export default function MultiCalendar({ selectedPropertyId }) {
                       <div className="sticky right-0 z-10 flex min-h-[60px] items-center border-b border-l border-line bg-white px-3">
                         <div className="min-w-0">
                           <div className="truncate text-[15px] font-bold text-navy-900">{prop.name}</div>
-                          <div className="hidden truncate text-[13px] text-ink-400 md:block">{getBookingsForProperty(prop.id).length} הזמנות</div>
                         </div>
                       </div>
                       <div
@@ -397,14 +396,14 @@ export default function MultiCalendar({ selectedPropertyId }) {
             <div className="flex items-center justify-between px-5 pt-4">
               <div>
                 <h2 className="text-[17px] font-bold text-navy-900">לילות פנויים בין הזמנות</h2>
-                <p className="text-[13px] text-ink-400">{gaps.length ? `${gaps.length} חלונות של עד 5 לילות` : 'אין חלונות קצרים'}</p>
+                <p className="text-[13px] text-ink-400">{gaps.length ? 'הקרובים שאפשר עוד למלא' : 'אין חלונות קצרים'}</p>
               </div>
             </div>
             {gaps.length === 0 ? (
               <p className="px-5 pb-5 pt-3 text-[15px] text-ink-600">כל היחידות רצופות. אין לילות בודדים שנשארו באמצע.</p>
             ) : (
               <ul className="px-2 pb-2 pt-2">
-                {gaps.map((gap) => {
+                {gaps.slice(0, 3).map((gap) => {
                   const prop = properties.find((p) => p.name === gap.property);
                   return (
                     <li key={gap.id} className="flex min-h-[60px] items-center gap-3 rounded-[10px] px-3 hover:bg-neutral-50">
@@ -413,7 +412,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                         <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {gap.nights} לילות</div>
                       </div>
                       {prop ? (
-                        <Button variant="secondary" size="sm" onClick={() => openNewAt(prop, gap.startDate)}>
+                        <Button variant="ghost" size="sm" onClick={() => openNewAt(prop, gap.startDate)}>
                           <Plus />
                           הזמנה
                         </Button>

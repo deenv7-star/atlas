@@ -17,7 +17,7 @@ import { CalendarDays, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
-  Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, ChannelDot, SkelRows, fmtMoney, monthShort, dayNum,
+  Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtMoney, monthShort, dayNum,
 } from '@/components/ds';
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
@@ -294,10 +294,9 @@ export default function BookingsPage({ selectedPropertyId }) {
           value={tab}
           onChange={(v) => void setUrlState({ tab: v, page: 1 })}
           options={[
-            { value: 'all', label: 'הכל', count: counts.total },
-            { value: 'active', label: 'פעילות', count: counts.confirmed },
-            { value: 'pending', label: 'ממתינות', count: counts.pending },
-            { value: 'cancelled', label: 'בוטלו', count: counts.cancelled },
+            { value: 'all', label: 'הכל' },
+            { value: 'active', label: 'פעילות' },
+            { value: 'pending', label: 'ממתינות' },
           ]}
         />
         <div className="flex gap-2">
@@ -349,7 +348,6 @@ export default function BookingsPage({ selectedPropertyId }) {
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[16px] font-semibold text-navy-900">{b.guest_name || 'אורח'}</span>
                       <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
-                        <ChannelDot source={b.booking_source} />
                         {propName(b.property_id) || b.property_name} · {b.nights || 1} לילות{b.total_price ? ` · ${fmtMoney(b.total_price)}` : ''}
                       </span>
                     </span>
