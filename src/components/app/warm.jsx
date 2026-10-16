@@ -38,7 +38,7 @@ const TINTS = [
   { bg: '#FDF1D6', fg: '#8A5F0B' }, // butter
   { bg: '#E1F0F4', fg: '#2B6475' }, // sky
 ];
-function tintFor(name) {
+export function tintFor(name) {
   let h = 0;
   for (let i = 0; i < name.length; i += 1) h = (h * 33 + name.charCodeAt(i)) | 0;
   return TINTS[Math.abs(h) % TINTS.length];

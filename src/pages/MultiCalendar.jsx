@@ -14,7 +14,8 @@ import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
-import { UnitPhoto, GuestAvatar, guestInitials } from '@/components/app/warm';
+import { UnitPhoto, GuestAvatar, guestInitials, tintFor } from '@/components/app/warm';
+import { isPlayful } from '@/ui-direction/flag';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#EF5B5B' },
@@ -237,9 +238,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-6 md:px-10 md:pt-10 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
-      <header className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <header className={cn('mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between', isPlayful && 'v4-rise rounded-[28px] bg-[color:var(--tint-brand)] px-6 py-6 md:px-8')}>
         <div>
-          <h1 className="text-[28px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[32px]">לוח שנה</h1>
+          <h1 className={cn('font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900', isPlayful ? 'text-[32px] md:text-[38px]' : 'text-[28px] md:text-[32px]')}>לוח שנה</h1>
           <p className="mt-1.5 text-[15px] text-ink-600">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -362,10 +363,11 @@ export default function MultiCalendar({ selectedPropertyId }) {
                               <span
                                 className={cn(
                                   'flex h-[48px] items-center gap-2 overflow-hidden rounded-full pe-3 ps-1.5 text-[13px] font-bold shadow-[0_1px_2px_rgba(27,38,86,0.06),0_4px_12px_rgba(27,38,86,0.06)]',
-                                  isBlocked ? 'bg-[#EEF0F5] text-ink-600' : pending ? 'border-2 border-dashed border-line-strong bg-white text-ink-600' : 'border border-line/80 bg-white text-navy-900',
+                                  isBlocked ? 'bg-[#EEF0F5] text-ink-600' : pending ? 'border-2 border-dashed border-line-strong bg-white text-ink-600' : isPlayful ? 'text-navy-900' : 'border border-line/80 bg-white text-navy-900',
                                 )}
+                                style={isPlayful && !isBlocked && !pending ? { background: tintFor(booking.guest || '?').bg } : undefined}
                               >
-                                {isBlocked ? null : pos.span > 1 || viewMode !== 'month' ? <GuestAvatar name={booking.guest} size={34} /> : null}
+                                {isBlocked ? null : pos.span > 1 || viewMode !== 'month' ? <GuestAvatar name={booking.guest} size={34} ring={isPlayful} /> : null}
                                 <span className="min-w-0 flex-1 truncate">{isBlocked ? 'חסום' : pos.span > 1 || viewMode !== 'month' ? booking.guest : guestInitials(booking.guest)}</span>
                                 {isBlocked ? null : <ChannelDot channel={booking.channel} size={7} />}
                               </span>

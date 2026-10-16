@@ -123,9 +123,9 @@ export function Page({ children, className, wide = false }) {
 
 export function PageHeader({ title, subtitle, actions, children, className }) {
   return (
-    <header className={cn('mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between', className)}>
+    <header className={cn('mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between', isPlayful && 'v4-rise rounded-[28px] bg-[color:var(--tint-brand)] px-6 py-6 md:px-8 md:py-7', className)}>
       <div className="min-w-0">
-        <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[34px]">{title}</h1>
+        <h1 className={cn('font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900', isPlayful ? 'text-[32px] md:text-[38px]' : 'text-[30px] md:text-[34px]')}>{title}</h1>
         {subtitle ? <p className="mt-2 text-[16px] text-ink-600">{subtitle}</p> : null}
         {children}
       </div>
