@@ -246,7 +246,7 @@ export default function RevenueIntelligence() {
             <h2 className="text-lg font-bold text-navy-900">ביצועי נכסים</h2>
             <p className="text-xs text-ink-400 mt-0.5">השוואת ביצועים בין כל הנכסים</p>
           </div>
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div tabIndex={0} role="region" aria-label="טבלה" className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
             <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="bg-canvas">

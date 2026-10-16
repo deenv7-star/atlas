@@ -151,7 +151,7 @@ export default function DynamicPricing() {
               <Calendar className="w-5 h-5 text-brand-600" />
               <span className="text-sm text-ink-600">ירוק = נמוך | כחול = בינוני | סגול = גבוה | אדום = שיא</span>
             </div>
-            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div tabIndex={0} role="region" aria-label="טבלה" className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
               <table className="w-full min-w-[280px] border-collapse">
                 <thead>
                   <tr>

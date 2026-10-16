@@ -254,7 +254,7 @@ export default function AutomationsPage({ user, orgId }) {
           const TriggerIcon = trigger.icon || Zap;
           
           return (
-            <Card key={rule.id} className={`transition-[background-color,border-color,color,box-shadow,transform] ${!rule.is_active ? 'opacity-60' : ''}`}>
+            <Card key={rule.id} className={`transition-[background-color,border-color,color,box-shadow,transform] ${!rule.is_active ? 'bg-canvas' : ''}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -282,6 +282,7 @@ export default function AutomationsPage({ user, orgId }) {
                       {rule.execution_count || 0} הפעלות
                     </div>
                     <Switch
+                      aria-label={rule.is_active ? `כיבוי ${rule.name || 'אוטומציה'}` : `הפעלת ${rule.name || 'אוטומציה'}`}
                       checked={rule.is_active}
                       onCheckedChange={(checked) => toggleMutation.mutate({ id: rule.id, is_active: checked })}
                     />

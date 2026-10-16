@@ -5,7 +5,7 @@ import { Money, StatTile } from './StayUI';
 
 function Table({ head, rows, foot, align }) {
   return (
-    <div className="overflow-x-auto -mx-4 sm:mx-0">
+    <div tabIndex={0} role="region" aria-label="טבלה" className="overflow-x-auto -mx-4 sm:mx-0">
       <table className="w-full text-[14px] ab-num min-w-[480px]" style={{ borderCollapse: 'collapse' }}>
         <thead>
           <tr>

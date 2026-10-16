@@ -203,7 +203,7 @@ export default function OwnerReports() {
           {/* Property Breakdown Table */}
           <div className="p-6">
             <h4 className="text-sm font-bold text-ink-600 mb-4">פירוט לפי נכס</h4>
-            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div tabIndex={0} role="region" aria-label="טבלה" className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
               <table className="w-full min-w-[500px] text-sm">
                 <thead>
                   <tr className="border-b-2 border-line">
@@ -297,7 +297,7 @@ export default function OwnerReports() {
           היסטוריית תשלומים, {selectedOwner.name}
         </h2>
         <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div tabIndex={0} role="region" aria-label="טבלה" className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
             <table className="w-full min-w-[500px] text-sm">
               <thead>
                 <tr className="bg-canvas border-b border-line">

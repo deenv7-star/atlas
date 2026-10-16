@@ -1,6 +1,7 @@
 import AuthShell from '@/components/app/AuthShell';
 import { WELCOME_PHOTO_2 } from '@/lib/stay/unitPhoto';
 import React, { useState, useEffect, useCallback } from 'react';
+import { Navigate } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
@@ -126,10 +127,7 @@ export default function Onboarding() {
   }, []);
 
   useEffect(() => {
-    if (user?.onboarding_completed) {
-      window.location.replace('/dashboard');
-      return;
-    }
+    if (user?.onboarding_completed) return;
     if (user?.onboarding_step && !loaded) {
       const s = Math.min(Math.max(0, user.onboarding_step - 1), TOTAL_STEPS - 1);
       setStep(s);
@@ -902,6 +900,8 @@ export default function Onboarding() {
         return null;
     }
   };
+
+  if (user?.onboarding_completed) return <Navigate to="/dashboard" replace />;
 
   return (
     <AuthShell wide onKeyDown={handleKeyDown} photo={WELCOME_PHOTO_2} caption="עוד דקה והצימר שלכם מוכן לקבל הזמנות.">

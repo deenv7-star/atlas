@@ -219,7 +219,7 @@ function StageCard({ stage, theme, index, total, onToggle }) {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <button className={cn(
+            <button type="button" className={cn(
               'text-[12px] font-medium px-2 py-1 rounded-lg transition-colors',
               stage.active
                 ? 'text-ink-600 hover:text-ink-600 hover:bg-white/80'
@@ -228,8 +228,11 @@ function StageCard({ stage, theme, index, total, onToggle }) {
               ערוך
             </button>
             <button
+              type="button"
               onClick={() => onToggle(stage.id)}
-              className="transition-colors"
+              aria-label={stage.active ? 'כיבוי שלב' : 'הפעלת שלב'}
+              aria-pressed={!!stage.active}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
             >
               {stage.active ? (
                 <ToggleRight className="w-7 h-7 text-emerald-500" />

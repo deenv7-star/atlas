@@ -355,7 +355,7 @@ export default function IntegrationsPage() {
               <h2 className="text-lg font-medium mb-3">סנכרון יומנים</h2>
               {calendarSyncs.length > 0 && (
                 <Select value={filterPropertyId} onValueChange={setFilterPropertyId}>
-                  <SelectTrigger className="w-full sm:w-48">
+                  <SelectTrigger aria-label="סינון לפי נכס" className="w-full sm:w-48">
                     <SelectValue placeholder="סנן לפי נכס" />
                   </SelectTrigger>
                   <SelectContent>
@@ -443,12 +443,13 @@ export default function IntegrationsPage() {
                             >
                               <RefreshCw className={`h-4 w-4 text-ink-400 ${manualSyncMutation.isPending ? 'animate-spin' : ''}`} />
                             </Button>
-                            <a href={provider.infoUrl} target="_blank" rel="noopener noreferrer">
-                              <Button variant="ghost" size="icon" title="למידע נוסף">
+                            <Button asChild variant="ghost" size="icon" title="למידע נוסף">
+                              <a href={provider.infoUrl} target="_blank" rel="noopener noreferrer" aria-label="למידע נוסף">
                                 <ExternalLink className="h-4 w-4 text-ink-400" />
-                              </Button>
-                            </a>
+                              </a>
+                            </Button>
                             <Switch
+                              aria-label={sync.sync_status === 'ACTIVE' ? 'השהיית סנכרון' : 'הפעלת סנכרון'}
                               checked={sync.sync_status === 'ACTIVE'}
                               onCheckedChange={(checked) => 
                                 toggleSyncMutation.mutate({ id: sync.id, status: checked ? 'ACTIVE' : 'PAUSED' })

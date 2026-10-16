@@ -142,7 +142,7 @@ export default function GuestService() {
                     value={formData.request_type}
                     onValueChange={(value) => setFormData({ ...formData, request_type: value })}
                   >
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger id="request_type" aria-label="סוג הבקשה" className="mt-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -159,7 +159,7 @@ export default function GuestService() {
                     value={formData.urgency}
                     onValueChange={(value) => setFormData({ ...formData, urgency: value })}
                   >
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger id="urgency" aria-label="רמת דחיפות" className="mt-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

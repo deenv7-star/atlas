@@ -340,6 +340,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
               />
               <Button
                 onClick={() => handleSend()}
+                aria-label="שליחה"
                 disabled={!inputValue.trim() || isLoading}
                 className="bg-brand-600 hover:bg-brand-700 text-white px-6"
               >

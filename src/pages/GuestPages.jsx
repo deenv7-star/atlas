@@ -220,7 +220,7 @@ function GuestPagesScreen({ user, orgId }) {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="overflow-x-auto -mx-4 px-4">
+          <div tabIndex={0} role="region" aria-label="טבלה" className="overflow-x-auto -mx-4 px-4">
             <Segmented label="בחירת יחידה" value={selected} onChange={setSelected} options={properties.map((p) => ({ value: p.id, label: p.name }))} />
           </div>
           <div className="grid gap-4 lg:grid-cols-[1fr_340px] items-start">

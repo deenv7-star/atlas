@@ -30,6 +30,7 @@ export default function VerifyEmail() {
   }, [isAuthenticated, user?.onboarding_completed, navigate]);
 
   useEffect(() => {
+    if (!supabase) return undefined;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         navigate('/onboarding', { replace: true });
@@ -42,6 +43,7 @@ export default function VerifyEmail() {
     if (!email || countdown > 0) return;
     setResending(true);
     try {
+      if (!supabase) throw new Error('no backend');
       await supabase.auth.resend({ type: 'signup', email });
       setResent(true);
       setCountdown(60);

@@ -20,6 +20,7 @@ export default function UpdatePassword() {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    if (!supabase) return undefined;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         // User clicked reset link
@@ -52,6 +53,7 @@ export default function UpdatePassword() {
 
     setIsLoading(true);
     try {
+      if (!supabase) throw new Error('אין חיבור לשרת כרגע. נסו שוב מאוחר יותר.');
       const { error } = await supabase.auth.updateUser({ password: form.password });
       if (error) throw error;
       atlasToastApi.success('הסיסמה עודכנה בהצלחה');
