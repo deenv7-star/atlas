@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { Home, ArrowRight } from 'lucide-react';
+import { ArrowRight, Compass } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function PageNotFound() {
+  const { isAuthenticated } = useAuth();
   useEffect(() => {
     // Signal to crawlers this is a real 404, not indexable content
-    document.title = '404 — הדף לא נמצא | ATLAS';
+    document.title = 'הדף לא נמצא | ATLAS';
     const meta = document.createElement('meta');
     meta.name = 'robots';
     meta.content = 'noindex, nofollow';
@@ -14,40 +15,41 @@ export default function PageNotFound() {
     return () => { document.head.removeChild(meta); };
   }, []);
 
+  const home = isAuthenticated ? { to: '/dashboard', label: 'למסך היום' } : { to: '/', label: 'לעמוד הראשי' };
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50" dir="rtl">
-      <div className="max-w-md w-full text-center space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-8xl font-bold text-gray-200">404</h1>
-          <div className="h-0.5 w-16 bg-brand-600/30 mx-auto" />
+    <div className="flex min-h-[100dvh] flex-col bg-canvas" dir="rtl">
+      <header className="flex h-16 items-center px-5 md:px-10">
+        <Link to="/" className="inline-flex min-h-[44px] items-center gap-1 text-[20px] font-extrabold tracking-[0.02em] text-navy-900" aria-label="ATLAS, לעמוד הראשי">
+          ATLAS<span aria-hidden className="mb-1 h-1.5 w-1.5 self-end rounded-full bg-brand-600" />
+        </Link>
+      </header>
+      <main className="flex flex-1 items-center justify-center px-6 pb-24">
+        <div className="v5-rise w-full max-w-md text-center">
+          <span className="relative mx-auto mb-6 inline-flex h-14 w-14 items-center justify-center rounded-[16px] border border-line bg-white shadow-card" aria-hidden>
+            <span className="absolute inset-[5px] rounded-[11px] bg-[#F4F3FF]" />
+            <Compass className="relative h-6 w-6 text-brand-600" strokeWidth={1.5} />
+          </span>
+          <p className="text-[13px] font-semibold tabular text-ink-400" dir="ltr">404</p>
+          <h1 className="mt-2 text-[28px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900">הדף לא נמצא</h1>
+          <p className="mt-3 text-[16px] leading-relaxed text-ink-600">ייתכן שהקישור השתנה או שהדף הוסר.</p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link
+              to={home.to}
+              className="press inline-flex h-12 items-center justify-center rounded-[10px] bg-brand-600 px-6 text-[15px] font-semibold text-white hover:bg-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+            >
+              {home.label}
+            </Link>
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              className="press inline-flex h-12 items-center justify-center gap-2 rounded-[10px] border border-line bg-white px-6 text-[15px] font-medium text-navy-900 hover:bg-[#F7F8FB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+            >
+              <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
+              חזרה
+            </button>
+          </div>
         </div>
-
-        <div className="space-y-3">
-          <h2 className="text-2xl font-semibold text-gray-800">הדף לא נמצא</h2>
-          <p className="text-gray-500 leading-relaxed">
-            הדף שחיפשת אינו קיים או הוסר.
-            <br />
-            אפשר לחזור לדשבורד ולהמשיך משם.
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-          <Link
-            to={createPageUrl('Dashboard')}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-lg transition-colors"
-          >
-            <Home className="w-4 h-4" />
-            חזור לדשבורד
-          </Link>
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg transition-colors"
-          >
-            <ArrowRight className="w-4 h-4" />
-            חזור אחורה
-          </button>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }

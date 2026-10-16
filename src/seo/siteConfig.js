@@ -1,8 +1,8 @@
 /** Canonical site origin (no trailing slash). Must match production. */
-export const SITE_ORIGIN = 'https://atlas-app.co.il';
+export const SITE_ORIGIN = 'https://atlas-il.com';
 
 export const DEFAULT_PAGE_TITLE =
-  'ATLAS | מערכת לניהול נכסי אירוח ומתחמי נופש בישראל';
+  'ATLAS | מערכת ניהול לצימרים ומתחמי נופש';
 
 export const DEFAULT_DESCRIPTION =
-  'הפסק לנהל. תתחיל להרוויח. ניהול הזמנות, תשלומים וצוות במערכת אחת בעברית. הפלטפורמה הראשונה לניהול מתחמי נופש בישראל.';
+  'לוח אחד לכל הערוצים, הודעות וואטסאפ לאורחים שיוצאות לבד ומקדמות שנגבות בזמן. מערכת ניהול לצימרים ומתחמי נופש, בעברית.';
