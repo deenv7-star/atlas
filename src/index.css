@@ -13,8 +13,8 @@
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 222 47% 11%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 247 88% 56%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 220 14% 96%;
     --secondary-foreground: 222 47% 11%;
     --muted: 220 14% 95%;
@@ -25,7 +25,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 178 100% 41%;
+    --ring: 247 88% 56%;
     --radius: 0.75rem;
 
     /* Chart colors */
@@ -95,7 +95,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 217 33% 17%;
     --input: 217 33% 17%;
-    --ring: 178 100% 41%;
+    --ring: 247 88% 56%;
     --color-background-secondary: #374151;
     --atlas-skeleton-shimmer-highlight: rgba(255, 255, 255, 0.12);
   }
