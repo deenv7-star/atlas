@@ -4,28 +4,39 @@
  *   2. three numbers max: הכנסות החודש (mini indigo sparkline), תפוסה, יתרות פתוחות
  *   3. one elegant revenue chart (indigo line + soft area) beside the "היום" list
  *      (arrivals / departures / cleaning, one action per row)
- * variant "a" = Mercury: flat white cards, initials tiles, no icons.
- * variant "b" = Stripe: indigo header band, icon squares on KPIs, cool unit thumbnails, card header rules.
+ * Check-in / check-out times come from the booking, then the unit's guest info, then 15:00 / 11:00.
  */
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ChevronLeft, Plus, Wallet, BedDouble, Receipt, LogIn, LogOut, Sparkles, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Check, ChevronLeft, Plus, LogIn, LogOut, Sparkles, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
-import { todayISO, addDays, formatDayHe, formatMoney, firstName } from '@/lib/stay/format';
+import { todayISO, addDays, formatDayHe, firstName } from '@/lib/stay/format';
 import { isActiveBooking, checkOutOf, balanceOf } from '@/lib/stay/bookings';
 import { templateByKey } from '@/lib/stay/whatsapp';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useQuickBooking } from '@/components/app/QuickBooking';
-import { UnitPhoto, UnitTile, CountUp, Rise, dayPart } from '@/components/app/atoms';
+import { UnitTile, CountUp, Rise, dayPart } from '@/components/app/atoms';
+import { guestInfoOf } from '@/lib/stay/guestInfo';
 import RevenueChart, { Sparkline, monthlyRevenue } from '@/components/today/RevenueChart';
 import { Button } from '@/components/ui/button';
 import { SegmentedControl, SkelLine } from '@/components/ds';
 import { cn } from '@/lib/utils';
 
-const CHECK_IN = '15:00';
-const CHECK_OUT = '11:00';
+const HHMM = /^([01]?\d|2[0-3]):([0-5]\d)/;
+/** "15:00" from a booking/property time field ("15:00", "15:00:00", "1500"); '' when unusable. */
+function hhmm(v) {
+  const s = String(v || '').trim();
+  const m = s.match(HHMM) || s.match(/^([01]\d|2[0-3])([0-5]\d)$/);
+  return m ? `${m[1].padStart(2, '0')}:${m[2]}` : '';
+}
+export function checkInTime(booking, property) {
+  return hhmm(booking?.check_in_time) || hhmm(property?.check_in_time) || hhmm(guestInfoOf(property).check_in_time) || '15:00';
+}
+export function checkOutTime(booking, property) {
+  return hhmm(booking?.check_out_time) || hhmm(property?.check_out_time) || hhmm(guestInfoOf(property).check_out_time) || '11:00';
+}
 
 function Done({ children = 'בוצע' }) {
   return (
@@ -39,23 +50,14 @@ function Done({ children = 'בוצע' }) {
 }
 
 /* ── KPI cards ─────────────────────────────────────────────────────────────── */
-function Kpi({ i, label, icon: Icon, stripe, attention, to, children, className, footer }) {
+function Kpi({ i, label, attention, to, children, className }) {
   const body = (
     <>
       <p className="flex items-center gap-2 text-[13px] font-medium text-ink-400">
-        {stripe && Icon ? (
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#EEF0FF] text-brand-600">
-            <Icon className="h-4 w-4" strokeWidth={1.5} />
-          </span>
-        ) : null}
         <span>{label}</span>
         {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
-        {to && stripe ? <ChevronLeft className="ms-auto h-4 w-4 text-ink-300 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.5} /> : null}
       </p>
       {children}
-      {stripe && footer ? (
-        <p className="-mx-5 mt-4 flex items-center justify-between gap-2 border-t border-line px-5 pt-3 text-[13px] text-ink-400 md:-mx-6 md:px-6">{footer}</p>
-      ) : null}
     </>
   );
   const cls = cn(
@@ -90,13 +92,11 @@ function Delta({ pct }) {
 }
 
 /* ── Today list ────────────────────────────────────────────────────────────── */
-function DayRow({ stripe, property, time, title, detail, attention, action, i }) {
+function DayRow({ property, time, title, detail, attention, action, i }) {
   return (
     <Rise as="li" i={i} className="v5-row flex min-h-[68px] items-center gap-3 px-4 py-3 md:px-5">
       <span className="w-11 shrink-0 text-[13px] font-medium tabular text-ink-400">{time}</span>
-      {stripe
-        ? <UnitPhoto property={property} className="h-10 w-10" rounded="rounded-[10px]" />
-        : <UnitTile property={property} className="h-10 w-10 text-[15px]" rounded="rounded-[10px]" />}
+      <UnitTile property={property} className="h-10 w-10 text-[15px]" rounded="rounded-[10px]" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-medium text-navy-900">{title}</p>
         <p className="flex items-center gap-1.5 truncate text-[13px] text-ink-400">
@@ -130,7 +130,7 @@ function FoldLine({ label, to, onClick, open }) {
   return to ? <Link to={to} className={cls}>{inner}</Link> : <button type="button" onClick={onClick} aria-expanded={open} className={cls}>{inner}</button>;
 }
 
-export default function TodayBoard({ user, orgId, variant = 'a' }) {
+export default function TodayBoard({ user, orgId }) {
   const day = todayISO();
   const tomorrow = addDays(day, 1);
   const data = useStayData();
@@ -141,7 +141,6 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
   const [range, setRange] = useState('6');
   const name = firstName(user?.full_name || '') || '';
   const part = dayPart();
-  const stripe = variant === 'b';
 
   const board = useMemo(() => buildDayBoard({
     day, bookings: data.bookings, paymentsByBooking: data.paymentsByBooking, sentByBooking: data.sentByBooking,
@@ -194,10 +193,6 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
   const chartData = useMemo(() => (range === '12' ? kpi.months : kpi.months.slice(-6)), [range, kpi.months]);
   const chartTotal = chartData.reduce((s, x) => s + x.value, 0);
   const hasHistory = chartData.filter((x) => x.value > 0).length >= 2;
-  const chartBookings = useMemo(() => {
-    const keys = new Set(chartData.map((m) => m.key));
-    return (data.bookings || []).filter((b) => isActiveBooking(b) && keys.has(String(b.check_in_date).slice(0, 7))).length;
-  }, [chartData, data.bookings]);
 
   const setStatus = async (booking, status, msg) => {
     try { await updateBooking.mutateAsync({ id: booking.id, data: { status } }); atlasToastApi.success(msg); }
@@ -229,7 +224,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
     {
       key: 'in', label: 'כניסות', icon: LogIn,
       rows: board.arrivals.map(({ booking, unit }) => ({
-        key: `in-${booking.id}`, property: prop(booking.property_id), time: CHECK_IN,
+        key: `in-${booking.id}`, property: prop(booking.property_id), time: checkInTime(booking, prop(booking.property_id)),
         title: booking.guest_name || 'אורח', detail: [unit, booking.nights ? `${booking.nights} לילות` : null].filter(Boolean).join(' · '),
         action: booking.status === 'CHECKED_IN'
           ? <Done>נכנסו</Done>
@@ -239,7 +234,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
     {
       key: 'out', label: 'יציאות', icon: LogOut,
       rows: board.departures.map(({ booking, unit }) => ({
-        key: `out-${booking.id}`, property: prop(booking.property_id), time: CHECK_OUT,
+        key: `out-${booking.id}`, property: prop(booking.property_id), time: checkOutTime(booking, prop(booking.property_id)),
         title: booking.guest_name || 'אורח', detail: unit,
         action: booking.status === 'CHECKED_OUT'
           ? <Done>יצאו</Done>
@@ -249,7 +244,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
     {
       key: 'clean', label: 'ניקיון', icon: Sparkles,
       rows: board.cleanings.map((c) => ({
-        key: `clean-${c.key}`, property: prop(c.departure.property_id), time: c.sameDayTurnover ? 'עד 15' : '—',
+        key: `clean-${c.key}`, property: prop(c.departure.property_id), time: c.sameDayTurnover ? `עד ${checkInTime(c.nextArrival, prop(c.departure.property_id)).replace(/:00$/, '')}` : '—',
         title: c.unit, attention: c.sameDayTurnover && !c.done,
         detail: c.sameDayTurnover ? 'אורחים חדשים נכנסים היום' : c.nextArrival ? `הכניסה הבאה ${formatDayHe(c.nextArrival.check_in_date, { weekday: false })}` : 'אין כניסה קרובה',
         action: c.done ? <Done /> : <Button variant="outline" className={sm} onClick={() => markCleaned(c)}>בוצע</Button>,
@@ -263,7 +258,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
 
   /* ── blocks ── */
   const header = (
-    <section className={cn('v5-rise flex items-end justify-between gap-4', stripe && 'v5-band pb-7')}>
+    <section className="v5-rise flex items-end justify-between gap-4">
       <div className="min-w-0">
         <p className="text-[13px] font-medium text-ink-400">
           {formatDayHe(day)}{user?.organization_name ? ` · ${user.organization_name}` : ''}
@@ -293,11 +288,8 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
       <Kpi
         i={1}
         label="הכנסות החודש"
-        icon={Wallet}
-        stripe={stripe}
         to="/payments"
         className="col-span-2 md:col-span-1"
-        footer={<><span>{kpi.months[kpi.months.length - 2]?.long?.split(' ')[0]}</span><span className="tabular font-medium text-ink-600">{formatMoney(kpi.months[kpi.months.length - 2]?.value || 0)}</span></>}
       >
         <div className="mt-2 flex items-end justify-between gap-3">
           <div className="min-w-0">
@@ -307,16 +299,13 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
               {kpi.pct != null ? <span>מהחודש שעבר</span> : <span>החודש הראשון</span>}
             </p>
           </div>
-          <Sparkline values={kpi.spark} width={stripe ? 112 : 104} height={40} className="shrink-0" />
+          <Sparkline values={kpi.spark} width={104} height={40} className="shrink-0" />
         </div>
       </Kpi>
       <Kpi
         i={2}
         label="תפוסה"
-        icon={BedDouble}
-        stripe={stripe}
         to="/calendar"
-        footer={<><span>לילות שהוזמנו</span><span className="font-medium text-ink-600"><span className="tabular">{kpi.nights}</span> מתוך <span className="tabular">{kpi.units * kpi.daysInMonth}</span></span></>}
       >
         <span className="v5-num mt-2 text-[26px] font-bold leading-none text-navy-900 md:text-[28px]" dir="ltr">
           <CountUp value={kpi.occupancy} />
@@ -325,16 +314,13 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
         <span className="mt-3 block h-1.5 overflow-hidden rounded-full bg-[#EEF0FF]" aria-hidden>
           <span className="block h-full rounded-full bg-brand-600 transition-[width] duration-700 ease-out" style={{ width: `${kpi.occupancy}%` }} />
         </span>
-        {stripe ? null : <span className="mt-2 hidden text-[13px] text-ink-400 md:block">{kpi.nights} לילות החודש</span>}
+        <span className="mt-2 hidden text-[13px] text-ink-400 md:block">{kpi.nights} לילות החודש</span>
       </Kpi>
       <Kpi
         i={3}
         label="יתרות פתוחות"
-        icon={Receipt}
-        stripe={stripe}
         attention={kpi.overdue}
         to="/balances"
-        footer={<><span>התקבל החודש</span><span className="tabular font-medium text-ink-600">{formatMoney(kpi.paidThisMonth)}</span></>}
       >
         <Money value={kpi.openTotal} className="mt-2 text-[26px] leading-none md:text-[28px]" />
         <span className="mt-2 text-[13px] text-ink-400">{kpi.openCount ? `${kpi.openCount} הזמנות` : 'הכל שולם'}</span>
@@ -344,7 +330,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
 
   const chart = (
     <Rise i={4} as="section" aria-label="הכנסות" className="flex h-full min-w-0 flex-col overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
-      <div className={cn('flex flex-wrap items-start justify-between gap-3 px-5 pt-5 md:px-6', stripe && 'border-b border-line pb-4')}>
+      <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5 md:px-6">
         <div>
           <h2 className="text-[15px] font-semibold text-navy-900">הכנסות</h2>
           <p className="mt-1 flex items-baseline gap-2">
@@ -361,7 +347,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
       </div>
       <div className="flex min-h-[260px] flex-1 flex-col px-1 pb-3 pt-2 md:px-2">
         {hasHistory ? (
-          <div className="relative min-h-[240px] flex-1"><div className="absolute inset-0"><RevenueChart data={chartData} axis={stripe} /></div></div>
+          <div className="relative min-h-[240px] flex-1"><div className="absolute inset-0"><RevenueChart data={chartData} /></div></div>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
             <p className="text-[15px] font-medium text-navy-900">הגרף יתמלא עם ההזמנות הבאות</p>
@@ -369,26 +355,12 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
           </div>
         )}
       </div>
-      {stripe && hasHistory ? (
-        <dl className="grid grid-cols-3 divide-x divide-x-reverse divide-line border-t border-line">
-          {[
-            { k: 'ממוצע לחודש', v: formatMoney(Math.round(chartTotal / chartData.length)) },
-            { k: 'החודש החזק', v: (() => { const best = chartData.reduce((a, b) => (b.value > a.value ? b : a), chartData[0]); return best.long.split(' ')[0]; })() },
-            { k: 'הזמנות בתקופה', v: String(chartBookings) },
-          ].map((x) => (
-            <div key={x.k} className="px-5 py-3.5 md:px-6">
-              <dt className="text-[12px] text-ink-400">{x.k}</dt>
-              <dd className="mt-0.5 text-[15px] font-semibold tabular text-navy-900">{x.v}</dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
     </Rise>
   );
 
   const today = (
     <Rise i={5} as="section" aria-label="היום" className="flex h-full min-w-0 flex-col overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
-      <div className={cn('flex min-h-[60px] items-center justify-between gap-3 px-4 pt-1 md:px-5', stripe && 'min-h-[72px] border-b border-line')}>
+      <div className="flex min-h-[60px] items-center justify-between gap-3 px-4 pt-1 md:px-5">
         <h2 className="text-[15px] font-semibold text-navy-900">היום</h2>
         <Link to="/calendar" className="press inline-flex h-10 items-center gap-1 rounded-[8px] px-2 text-[13px] font-medium text-brand-600 hover:bg-[#F4F3FF]">
           ללוח השנה
@@ -410,7 +382,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
               <GroupLabel icon={g.icon} count={g.rows.length}>{g.label}</GroupLabel>
               {g.rows.map((r) => {
                 rowIdx += 1;
-                return <DayRow key={r.key} i={5 + rowIdx} stripe={stripe} {...r} />;
+                return <DayRow key={r.key} i={5 + rowIdx} {...r} />;
               })}
             </React.Fragment>
           ))}
@@ -426,7 +398,6 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
                   <DayRow
                     key={`msg-${booking.id}`}
                     i={idx}
-                    stripe={stripe}
                     property={prop(booking.property_id)}
                     time="—"
                     title={booking.guest_name || 'אורח'}
@@ -446,7 +417,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
   );
 
   const skeleton = (
-    <div aria-busy="true" aria-label="טוען">
+    <div role="status" aria-busy="true" aria-label="טוען">
       <div className="mt-6 grid grid-cols-2 gap-3 md:mt-7 md:grid-cols-3 md:gap-4">
         {[0, 1, 2].map((i) => (
           <div key={i} className={cn('rounded-[14px] border border-line bg-white px-5 py-5', i === 0 && 'col-span-2 md:col-span-1')}>

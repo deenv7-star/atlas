@@ -7,7 +7,6 @@
  * Suspense ב-Layout.jsx (דפים ציבוריים ומאובטחים) עם PageLoader — טעינת lazy().
  */
 import { lazy } from 'react';
-import __Layout from './Layout.jsx';
 
 const AIAssistant        = lazy(() => import('./pages/AIAssistant'));
 const ApiDocs            = lazy(() => import('./pages/ApiDocs'));
@@ -74,5 +73,4 @@ export const PAGES = {
 export const pagesConfig = {
   mainPage: 'Landing',
   Pages: PAGES,
-  Layout: __Layout,
 };
