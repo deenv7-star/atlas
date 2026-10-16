@@ -39,22 +39,22 @@ function Done({ children = 'בוצע' }) {
 }
 
 /* ── KPI cards ─────────────────────────────────────────────────────────────── */
-function Kpi({ i, label, icon: Icon, stripe, attention, to, children, className, footer }) {
+function Kpi({ i, label, icon: Icon, stripe, attention, to, children, className, footer, wideOnPhone = false }) {
   const body = (
     <>
       <p className="flex items-center gap-2 text-[13px] font-medium text-ink-400">
         {stripe && Icon ? (
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#EEF0FF] text-brand-600">
+          <span className={cn('h-7 w-7 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF0FF] text-brand-600', wideOnPhone ? 'inline-flex' : 'hidden md:inline-flex')}>
             <Icon className="h-4 w-4" strokeWidth={1.5} />
           </span>
         ) : null}
-        <span>{label}</span>
+        <span className="truncate">{label}</span>
         {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
-        {to && stripe ? <ChevronLeft className="ms-auto h-4 w-4 text-ink-300 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.5} /> : null}
+        {to && stripe ? <ChevronLeft className="ms-auto hidden h-4 w-4 md:block text-ink-300 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.5} /> : null}
       </p>
       {children}
       {stripe && footer ? (
-        <p className="-mx-5 mt-4 flex items-center justify-between gap-2 border-t border-line px-5 pt-3 text-[13px] text-ink-400 md:-mx-6 md:px-6">{footer}</p>
+        <p className={cn('-mx-5 mt-4 items-center justify-between gap-2 whitespace-nowrap border-t border-line px-5 pt-3 text-[13px] text-ink-400 md:-mx-6 md:flex md:px-6', wideOnPhone ? 'flex' : 'hidden')}>{footer}</p>
       ) : null}
     </>
   );
@@ -297,6 +297,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
         stripe={stripe}
         to="/payments"
         className="col-span-2 md:col-span-1"
+        wideOnPhone
         footer={<><span>{kpi.months[kpi.months.length - 2]?.long?.split(' ')[0]}</span><span className="tabular font-medium text-ink-600">{formatMoney(kpi.months[kpi.months.length - 2]?.value || 0)}</span></>}
       >
         <div className="mt-2 flex items-end justify-between gap-3">
