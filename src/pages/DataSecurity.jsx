@@ -204,20 +204,20 @@ export default function DataSecurity() {
           </div>
         </div>
 
-        <div className="bg-[#F2E9DB]/30 rounded-xl p-6">
+        <div className="bg-brand-50/60 rounded-xl p-6">
           <h3 className="text-lg font-bold text-[#1B2656] mb-2">עדכון אחרון</h3>
           <p className="text-gray-600">מסמך זה עודכן לאחרונה בתאריך: 10 בפברואר 2026</p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 bg-white border-t border-line border-t border-line">
+      <footer className="py-8 px-4 bg-white border-t border-line">
         <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
           <Logo  size="small" />
           <div className="flex gap-6 text-sm">
-            <Link to="/privacy" className="text-ink-400 hover:text-navy-900 transition-colors">פרטיות</Link>
-            <Link to="/terms" className="text-ink-400 hover:text-navy-900 transition-colors">תנאי שימוש</Link>
-            <Link to="/sla" className="text-ink-400 hover:text-navy-900 transition-colors">SLA</Link>
+            <Link to="/privacy" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">פרטיות</Link>
+            <Link to="/terms" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">תנאי שימוש</Link>
+            <Link to="/sla" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">SLA</Link>
           </div>
           <p className="text-ink-400 text-sm">© {new Date().getFullYear()} ATLAS. כל הזכויות שמורות</p>
         </div>

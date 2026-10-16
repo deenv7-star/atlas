@@ -144,7 +144,7 @@ export default function SLA() {
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />
-                <p className="text-gray-600">אימייל: support@atlas-pm.com (24/7)</p>
+                <p className="text-gray-600">אימייל: support@atlas-il.com (24/7)</p>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />
@@ -174,7 +174,7 @@ export default function SLA() {
             </div>
           </div>
 
-          <div className="bg-[#F2E9DB]/30 rounded-xl p-6 mt-8">
+          <div className="bg-brand-50/60 rounded-xl p-6 mt-8">
             <h3 className="text-lg font-bold text-[#1B2656] mb-2">עדכון אחרון</h3>
             <p className="text-gray-600">אמנת השירות עודכנה לאחרונה בתאריך: 10 בפברואר 2026</p>
           </div>
@@ -182,7 +182,7 @@ export default function SLA() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 bg-white border-t border-line border-t border-line">
+      <footer className="py-8 px-4 bg-white border-t border-line">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo  size="small" />
           <p className="text-ink-400 text-sm">© 2024 ATLAS. כל הזכויות שמורות</p>

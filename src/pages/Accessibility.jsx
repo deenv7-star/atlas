@@ -121,12 +121,9 @@ export default function Accessibility() {
               אם נתקלתם בבעיה או מכשול בנגישות, אנחנו מעוניינים לשמוע מכם ולסייע. 
               אנא פנו אלינו בכתובת:
             </p>
-            <div className="bg-[#F2E9DB]/30 rounded-xl p-4">
-              <p className="text-gray-700 mb-1">
-                <span className="font-semibold">אימייל:</span> accessibility@atlas-pm.com
-              </p>
+            <div className="bg-brand-50/60 rounded-xl p-4">
               <p className="text-gray-700">
-                <span className="font-semibold">טלפון:</span> 03-1234567
+                <span className="font-semibold">אימייל:</span> <a href="mailto:support@atlas-il.com" className="font-medium text-brand-600 underline-offset-2 hover:underline">support@atlas-il.com</a>
               </p>
             </div>
             <p className="text-sm text-gray-500 mt-3">
@@ -134,7 +131,7 @@ export default function Accessibility() {
             </p>
           </div>
 
-          <div className="bg-[#F2E9DB]/30 rounded-xl p-6 mt-8">
+          <div className="bg-brand-50/60 rounded-xl p-6 mt-8">
             <h3 className="text-lg font-bold text-[#1B2656] mb-2">מועד הכנת הצהרה זו</h3>
             <p className="text-gray-600 mb-3">הצהרת נגישות זו הוכנה בתאריך: 10 בפברואר 2026</p>
             <p className="text-gray-600">אחראי נגישות בארגון: מנהל המוצר של ATLAS</p>
@@ -143,7 +140,7 @@ export default function Accessibility() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 bg-white border-t border-line border-t border-line">
+      <footer className="py-8 px-4 bg-white border-t border-line">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo  size="small" />
           <p className="text-ink-400 text-sm">© 2024 ATLAS. כל הזכויות שמורות</p>

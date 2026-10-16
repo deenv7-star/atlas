@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { useUpdateBooking } from '@/data/entities';
+import { useUpdateBooking, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -83,6 +83,8 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { data: allProperties = [] } = useProperties();
+  const unitName = booking.property_name || allProperties.find((p) => p.id === booking.property_id)?.name || 'יחידה';
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   // Fetch payments for this booking
@@ -248,7 +250,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
                   <StatusPill status={booking.status} />
                 </div>
                 <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[15px] text-ink-600">
-                  <span>{booking.property_name || 'יחידה'}</span>
+                  <span>{unitName}</span>
                   <span aria-hidden>·</span>
                   <span>{booking.adults || 2} אורחים</span>
                   <span aria-hidden>·</span>

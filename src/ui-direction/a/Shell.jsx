@@ -31,7 +31,7 @@ export function Sidebar({ onLogout, user }) {
   return (
     <aside className="flex h-full w-[244px] flex-col border-l border-line bg-white" aria-label="ניווט ראשי">
       <div className="flex h-[72px] shrink-0 items-center px-6">
-        <Link to={createPageUrl('Dashboard')} aria-label="ATLAS, מסך היום" className="rounded-lg">
+        <Link to={createPageUrl('Dashboard')} aria-label="ATLAS, מסך היום" className="-mx-2 inline-flex h-11 items-center rounded-lg px-2">
           <Wordmark size={21} />
         </Link>
       </div>

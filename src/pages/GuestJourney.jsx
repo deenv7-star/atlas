@@ -219,14 +219,6 @@ function StageCard({ stage, theme, index, total, onToggle }) {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <button type="button" className={cn(
-              'text-[12px] font-medium px-2 py-1 rounded-lg transition-colors',
-              stage.active
-                ? 'text-ink-600 hover:text-ink-600 hover:bg-white/80'
-                : 'text-neutral-300'
-            )}>
-              ערוך
-            </button>
             <button
               type="button"
               onClick={() => onToggle(stage.id)}
@@ -326,7 +318,7 @@ export default function GuestJourney() {
         </div>
         <button
           onClick={() => setShowTemplates(!showTemplates)}
-          className="flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
+          className="flex min-h-[44px] items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors"
         >
           <Sparkles className="w-4 h-4" />
           תבניות מוכנות

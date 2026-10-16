@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import Logo from '@/components/common/Logo';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Mail, Phone, Clock, MapPin, MessageCircle, Send, Loader2 } from 'lucide-react';
+import { ArrowRight, Mail, Clock, MapPin, MessageCircle, Send, Loader2 } from 'lucide-react';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { submitPublicContact, buildContactMailto } from '@/lib/submitPublicContact';
 
@@ -113,7 +113,6 @@ export default function Contact() {
           <div className="md:col-span-2 space-y-6">
             {[
               { icon: Mail, label: 'אימייל', value: 'support@atlas-il.com', href: 'mailto:support@atlas-il.com' },
-              { icon: Phone, label: 'טלפון', value: '03-1234567', href: 'tel:031234567' },
               { icon: Clock, label: 'שעות פעילות', value: 'ימים א-ה 09:00-18:00' },
               { icon: MapPin, label: 'כתובת', value: 'תל אביב, ישראל' },
             ].map((item, i) => (
@@ -124,7 +123,7 @@ export default function Contact() {
                 <div>
                   <p className="text-sm text-gray-400 mb-0.5">{item.label}</p>
                   {item.href ? (
-                    <a href={item.href} className="text-gray-900 font-semibold hover:text-brand-600 transition-colors">{item.value}</a>
+                    <a href={item.href} className="inline-flex min-h-[44px] items-center text-gray-900 font-semibold hover:text-brand-600 transition-colors">{item.value}</a>
                   ) : (
                     <p className="text-gray-900 font-semibold">{item.value}</p>
                   )}
@@ -146,7 +145,7 @@ export default function Contact() {
               <h3 className="text-sm font-semibold text-gray-400 mb-3">שאלות נפוצות</h3>
               <div className="space-y-2">
                 {['כמה זמן לוקח להתחיל?', 'האם יש ניסיון חינם?', 'האם המערכת בעברית?'].map((q, i) => (
-                  <Link key={i} to={createPageUrl('Landing')} className="block text-sm text-brand-600 hover:text-brand-800 transition-colors">
+                  <Link key={i} to="/#faq" className="flex min-h-[44px] items-center text-sm text-brand-600 hover:text-brand-800 transition-colors">
                     {q} ←
                   </Link>
                 ))}

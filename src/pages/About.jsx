@@ -186,19 +186,18 @@ export default function About() {
           <p className="text-xl text-ink-600 mb-8">
             הצטרפו למנהלי מתחמים שכבר עובדים עם ATLAS
           </p>
-          <Link to="/register">
-            <Button
-              size="lg"
-              className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-10 py-6 text-lg rounded-xl"
-            >
-              התחילו עכשיו
-            </Button>
-          </Link>
+          <Button
+            asChild
+            size="lg"
+            className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-10 py-6 text-lg rounded-xl"
+          >
+            <Link to="/register">התחילו עכשיו</Link>
+          </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-white border-t border-line border-t border-line">
+      <footer className="py-12 px-4 bg-white border-t border-line">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Logo  />

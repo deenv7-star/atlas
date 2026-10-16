@@ -120,7 +120,7 @@ function PricingRoiCalculator() {
             max={25}
             value={Math.min(25, properties)}
             onChange={(e) => setProperties(Number(e.target.value))}
-            className="w-full mt-2 h-2 accent-[#3E2BF1] cursor-pointer"
+            className="w-full mt-2 h-11 accent-[#3E2BF1] cursor-pointer"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
             <span>1</span>

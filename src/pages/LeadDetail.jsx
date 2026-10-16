@@ -3,6 +3,7 @@ import { nightsBetween } from '@/lib/entityPayloads';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useLead, useUpdateLead, useDeleteLead } from '@/data/entities';
+import { atlasToastApi } from '@/components/ui/AtlasToast';
 import { ChevronRight, Pencil, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
@@ -152,7 +153,7 @@ export default function LeadDetail({ orgId }) {
           <p className="text-[15px] text-ink-600">{lead.full_name || 'הליד'} יוסר מרשימת הלידים.</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmDelete(false)}>ביטול</Button>
-            <Button variant="destructive" disabled={deleteLead.isPending} onClick={() => deleteLead.mutate(lead.id, { onSuccess: () => { setConfirmDelete(false); navigate(createPageUrl('Leads')); } })}>מחיקה</Button>
+            <Button variant="destructive" disabled={deleteLead.isPending} onClick={() => { const leadId = lead.id; setConfirmDelete(false); navigate(createPageUrl('Leads')); deleteLead.mutate(leadId, { onSuccess: () => atlasToastApi.success('הליד נמחק'), onError: () => atlasToastApi.error('לא הצלחנו למחוק את הליד. נסו שוב.') }); }}>מחיקה</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
