@@ -1,5 +1,5 @@
 import React from 'react';
-import { CROPS, CROPS_MOBILE } from './content';
+import { CROPS } from './content';
 
 const CHANNELS = [
   { key: 'booking', label: 'Booking.com', cls: 'ch-booking' },
@@ -26,10 +26,7 @@ export default function SyncDiagram({ className = '' }) {
         <path d="M500 0 C500 50, 300 40, 300 90" />
       </svg>
       <div className="sync-cal">
-        <picture>
-          <source media="(max-width: 559px)" srcSet={CROPS_MOBILE.calendarSync.src} width={780} height={720} />
-          <img src={c.src} width={c.w} height={c.h} alt={c.alt} loading="lazy" decoding="async" />
-        </picture>
+        <img src={c.src} width={c.w} height={c.h} alt={c.alt} loading="lazy" decoding="async" />
       </div>
       <figcaption className="sr-only">הזמנות מ-Booking.com, מ-Airbnb ומהזמנות ישירות נכנסות ללוח השנה של ATLAS</figcaption>
     </figure>

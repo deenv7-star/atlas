@@ -149,7 +149,10 @@ html:has(.lv2) { scroll-behavior: smooth; scroll-padding-top: 84px; }
 @keyframes sync-flow { to { stroke-dashoffset: -28; } }
 @media (prefers-reduced-motion: reduce) { .lv2 .sync-lines path { animation: none; } }
 .lv2 .sync-cal { background: var(--surface); border-radius: var(--r-sheet); padding: 10px; box-shadow: var(--shadow-lift); }
+.lv2 .sync-cal { overflow: hidden; }
 .lv2 .sync-cal img { width: 100%; height: auto; border-radius: 10px; }
+/* Small screens: zoom into the start of the real calendar (units + bookings) instead of shrinking it */
+@media (max-width: 640px) { .lv2 .sync-cal { display: flex; justify-content: flex-start; } .lv2 .sync-cal img { flex: none; width: 210%; max-width: none; } }
 
 /* Checks */
 .lv2 .checks { display: grid; gap: 10px; }

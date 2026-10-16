@@ -280,7 +280,7 @@ function Pricing() {
         </div>
         <div className="trial-band">
           <p>14 ימי ניסיון בחינם וללא התחייבות</p>
-          <SignupButton className="btn-light" label="מתחילים עכשיו" />
+          <SignupButton className="btn-light" />
         </div>
       </div>
     </section>
