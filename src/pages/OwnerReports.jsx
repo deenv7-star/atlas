@@ -162,15 +162,15 @@ export default function OwnerReports() {
         <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
 
           {/* Statement Header */}
-          <div className="bg-navy-900 text-white p-6">
+          <div className="border-b border-line bg-[#F4F3FF] p-6 text-navy-900">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-xl font-bold mb-1">דוח חודשי, מרץ 2026</h3>
-                <p className="text-white/70 text-sm">תאריך הפקה: 17 במרץ 2026</p>
+                <p className="text-sm text-ink-400">תאריך הפקה: 17 במרץ 2026</p>
               </div>
-              <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2">
-                <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-                  <Building2 className="w-4 h-4 text-white" />
+              <div className="flex items-center gap-2 rounded-xl border border-line bg-white px-4 py-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#EEF0FF]">
+                  <Building2 className="h-4 w-4 text-brand-600" strokeWidth={1.5} />
                 </div>
                 <span className="font-bold text-lg tracking-wide">ATLAS</span>
               </div>

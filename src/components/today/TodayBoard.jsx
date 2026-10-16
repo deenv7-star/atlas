@@ -50,7 +50,7 @@ function Kpi({ i, label, icon: Icon, stripe, attention, to, children, className,
         ) : null}
         <span>{label}</span>
         {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
-        {to ? <ChevronLeft className="ms-auto h-4 w-4 text-ink-300 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.5} /> : null}
+        {to && stripe ? <ChevronLeft className="ms-auto h-4 w-4 text-ink-300 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.5} /> : null}
       </p>
       {children}
       {stripe && footer ? (
@@ -219,8 +219,8 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
   const prop = (id) => data.propertyById.get(id) || null;
   const openCleanings = board.cleanings.filter((c) => !c.done).length;
   const counts = [
-    { label: 'כניסות', value: board.arrivals.length },
-    { label: 'יציאות', value: board.departures.length },
+    { label: board.arrivals.length === 1 ? 'כניסה' : 'כניסות', value: board.arrivals.length },
+    { label: board.departures.length === 1 ? 'יציאה' : 'יציאות', value: board.departures.length },
     { label: 'ניקיון', value: openCleanings },
   ];
   const sm = 'h-10 px-4 text-[14px]';
@@ -388,7 +388,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
 
   const today = (
     <Rise i={5} as="section" aria-label="היום" className="flex h-full min-w-0 flex-col overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
-      <div className={cn('flex items-center justify-between gap-3 px-4 pb-3 pt-5 md:px-5', stripe && 'border-b border-line pb-4')}>
+      <div className={cn('flex min-h-[60px] items-center justify-between gap-3 px-4 pt-1 md:px-5', stripe && 'min-h-[72px] border-b border-line')}>
         <h2 className="text-[15px] font-semibold text-navy-900">היום</h2>
         <Link to="/calendar" className="press inline-flex h-10 items-center gap-1 rounded-[8px] px-2 text-[13px] font-medium text-brand-600 hover:bg-[#F4F3FF]">
           ללוח השנה
