@@ -17,7 +17,7 @@ export const HERO_LAPTOP = {
 };
 
 export const HERO_PHONE = {
-  src: `${S}/mobile/messages.webp`, w: 780, h: 1688,
+  src: `${S}/mobile/messages-hero.webp`, w: 780, h: 1688,
   alt: 'שיחת WhatsApp עם אורח בתוך ATLAS בטלפון: אישור הזמנה ושעת הגעה',
 };
 

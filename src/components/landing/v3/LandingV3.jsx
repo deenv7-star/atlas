@@ -46,14 +46,17 @@ function Header() {
   );
 }
 
-const HERO_TITLE = 'כל המתחם שלכם. במקום אחד.';
-const HERO_SUB = 'הזמנות, לוח שנה, תשלומים והודעות לאורחים. בעברית, מכל מכשיר.';
+const HERO = {
+  a: { title: 'כל המתחם שלכם. במקום אחד.', sub: 'הזמנות, לוח שנה, תשלומים והודעות לאורחים. בעברית, מכל מכשיר.' },
+  b: { title: 'אתם מארחים. ATLAS מסדרת את השאר.', sub: 'לוח שנה, הזמנות, תשלומים והודעות לאורחים. הכל מהטלפון, בעברית.' },
+};
 
-function HeroCopy() {
+function HeroCopy({ variant }) {
+  const copy = HERO[variant] || HERO.a;
   return (
     <>
-      <h1 id="hero-title" className="l3-h1">{HERO_TITLE}</h1>
-      <p className="l3-lead">{HERO_SUB}</p>
+      <h1 id="hero-title" className="l3-h1">{copy.title}</h1>
+      <p className="l3-lead">{copy.sub}</p>
       <div className="l3-cta">
         <SignupButton />
         <WhatsAppLink />
@@ -66,7 +69,7 @@ function HeroCentered() {
   return (
     <section className="l3-hero l3-hero-c" aria-labelledby="hero-title">
       <div className="l3-wrap l3-hero-c-copy">
-        <HeroCopy />
+        <HeroCopy variant="a" />
       </div>
       <div className="l3-wrap l3-hero-c-stage">
         <Laptop shot={HERO_LAPTOP} />
@@ -79,7 +82,7 @@ function HeroSplit() {
   return (
     <section className="l3-hero l3-hero-s" aria-labelledby="hero-title">
       <div className="l3-wrap l3-hero-s-grid">
-        <div className="l3-hero-s-copy"><HeroCopy /></div>
+        <div className="l3-hero-s-copy"><HeroCopy variant="b" /></div>
         <div className="l3-hero-s-stage"><IPhone shot={HERO_PHONE} /></div>
       </div>
     </section>

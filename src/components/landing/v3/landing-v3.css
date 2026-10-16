@@ -113,7 +113,8 @@ html:has(.l3) { scroll-behavior: smooth; scroll-padding-top: 72px; }
 .l3-base { height: 12px; margin-inline: -4.5%; border-radius: 0 0 14px 14px; background: linear-gradient(#e6e8f0, #c9cdd9); box-shadow: 0 14px 26px -10px rgba(27, 38, 86, 0.25); }
 .l3-phone { width: 100%; padding: 3.4%; border-radius: 15% / 7%; background: #11152a; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.1), var(--shadow-device); }
 .l3-phone-screen { position: relative; overflow: hidden; aspect-ratio: 390 / 844; border-radius: 12% / 5.6%; background: #fff; }
-.l3-phone-screen img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+/* Screenshot starts under a quiet status-bar strip so the island never covers the app's own header */
+.l3-phone-screen img { position: absolute; top: 5.6%; inset-inline: 0; width: 100%; height: auto; }
 .l3-island { position: absolute; z-index: 2; top: 1.7%; left: 50%; width: 30%; height: 3.3%; transform: translateX(-50%); border-radius: 999px; background: #11152a; }
 
 /* Sections */
@@ -234,3 +235,24 @@ html:has(.l3) { scroll-behavior: smooth; scroll-padding-top: 72px; }
   .l3-a .l3-lead { max-width: 52ch; font-size: 21px; }
 }
 .l3-a .l3-benefits { padding-top: calc(var(--sec-y) + 8px); }
+
+/* ---------- Variant B: split hero (copy + one iPhone), soft canvas sections ---------- */
+.l3-b { --hdr-bg: rgba(247, 248, 251, 0.86); }
+.l3-b .l3-hero-s { padding: 32px 0 72px; background: var(--canvas); overflow: hidden; }
+.l3-b .l3-hero-s-grid { display: grid; gap: 40px; align-items: center; }
+.l3-b .l3-hero-s .l3-cta { flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 28px; }
+.l3-b .l3-hero-s-stage { display: flex; justify-content: center; }
+.l3-b .l3-hero-s-stage .l3-phone { width: min(58vw, 230px); }
+@media (min-width: 900px) {
+  .l3-b .l3-hero-s { padding: 72px 0 104px; }
+  .l3-b .l3-hero-s-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 64px; }
+  .l3-b .l3-hero-s .l3-cta { flex-direction: row; align-items: center; gap: 8px 24px; margin-top: 36px; }
+  .l3-b .l3-hero-s .l3-lead { font-size: 21px; max-width: 34ch; }
+  .l3-b .l3-hero-s-stage .l3-phone { width: 300px; }
+}
+.l3-b .l3-how, .l3-b .l3-pricing { background: var(--canvas); }
+.l3-b .l3-pricing .l3-plan { border-color: transparent; box-shadow: var(--shadow); }
+.l3-b .l3-pricing .l3-plan.is-pop { border-color: var(--brand-600); }
+.l3-b .l3-final { padding: 56px 24px; border-radius: 28px; background: var(--canvas); }
+@media (min-width: 960px) { .l3-b .l3-final { padding: 80px 40px; margin-top: 96px; } }
+.l3-b .l3-ftr { border-top: 0; }
