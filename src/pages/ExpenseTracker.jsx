@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import FinanceTabs from '@/components/app/FinanceTabs';
-import { PageHeader, StatTile, fmtMoney } from '@/components/ds';
+import { PageHeader, StatTile, fmtMoney, ComingSoon } from '@/components/ds';
+import { useStayData } from '@/hooks/useStayData';
 import { Card, CardContent } from '@/components/ui/card';
 import { useExpenses } from '@/hooks/useExpenses';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
@@ -33,7 +34,21 @@ function getCategoryColor(category) {
 }
 
 export default function ExpenseTracker({ orgId }) {
-  const { expenses, propertyNames, addExpense } = useExpenses({ orgId });
+  const { expenses, propertyNames, addExpense, available } = useExpenses({ orgId });
+  if (!available) {
+    return (
+      <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
+        <FinanceTabs className="!mb-0" />
+        <PageHeader title="הוצאות" subtitle="כל ההוצאות לפי נכס, כדי לדעת כמה באמת נשאר." className="!mb-0" />
+        <ComingSoon icon={Receipt} title="מעקב הוצאות יגיע בקרוב" description="נפתח לכם את המסך הזה ברגע שהוא מוכן. עד אז ההכנסות והתשלומים מחכים בכספים." />
+      </div>
+    );
+  }
+  return <ExpenseTrackerScreen expenses={expenses} propertyNames={propertyNames} addExpense={addExpense} />;
+}
+
+function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
+  const stay = useStayData({ withCleaning: false });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({
     property: '',
@@ -52,8 +67,10 @@ export default function ExpenseTracker({ orgId }) {
   const thisMonthTotal = thisMonth.reduce((sum, e) => sum + (e.amount || 0), 0);
   const uniqueProperties = [...new Set(expenses.map(e => e.property))];
   const avgPerProperty = uniqueProperties.length > 0 ? Math.round(totalExpenses / uniqueProperties.length) : 0;
-  const mockRevenue = 75000;
-  const netProfitEstimate = mockRevenue - totalExpenses;
+  const paidTotal = (stay.payments || [])
+    .filter((p) => String(p.status).toUpperCase() === 'PAID')
+    .reduce((s, p) => s + (Number(p.amount) || 0), 0);
+  const netProfitEstimate = paidTotal - totalExpenses;
 
   const categoryTotals = CATEGORIES.reduce((acc, c) => {
     acc[c.value] = expenses.filter(e => e.category === c.value).reduce((s, e) => s + (e.amount || 0), 0);
@@ -89,7 +106,7 @@ export default function ExpenseTracker({ orgId }) {
       <div className="stat-row">
         <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} tone="danger" />
         <StatTile label="החודש" value={fmtMoney(thisMonthTotal)} hint={`${thisMonth.length} הוצאות החודש`} icon={Calendar} />
-        <StatTile label="רווח נקי משוער" value={fmtMoney(netProfitEstimate)} hint="הכנסות פחות הוצאות" icon={Wallet} tone="success" />
+        <StatTile label="רווח נקי משוער" value={fmtMoney(netProfitEstimate)} hint="תשלומים שהתקבלו פחות הוצאות" icon={Wallet} tone="success" />
       </div>
 
       {/* Expenses Table */}

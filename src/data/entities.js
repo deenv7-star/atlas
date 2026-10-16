@@ -87,7 +87,7 @@ export function useUpdateBooking() {
       const status = getErrorHttpStatus(err);
       if (status === 409) {
         openOptimisticConflictModal({
-          message: getErrorMessage(err) || 'לא ניתן לשמור — ייתכן שהתאריכים תפוסים או שהנתונים השתנו בשרת.',
+          message: getErrorMessage(err) || 'לא ניתן לשמור: ייתכן שהתאריכים תפוסים או שהנתונים השתנו בשרת.',
         });
         return;
       }
@@ -99,7 +99,7 @@ export function useUpdateBooking() {
         );
       }
       if (status !== 409) {
-        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
+        atlasToastApi.error('הפעולה נכשלה: השינויים בוטלו');
       }
     },
     onSettled: (_d, err, _v, context) => {
@@ -136,7 +136,7 @@ export function useDeleteBooking() {
         return;
       }
       if (status !== 409) {
-        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
+        atlasToastApi.error('הפעולה נכשלה: השינויים בוטלו');
       }
     },
     onSuccess: (_void, variables, context) => {
@@ -239,7 +239,7 @@ export function useUpdateLead() {
         );
       }
       if (status !== 409) {
-        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
+        atlasToastApi.error('הפעולה נכשלה: השינויים בוטלו');
       }
     },
     onSettled: (_d, err, _v, context) => {
@@ -385,7 +385,7 @@ export function useUpdateCleaningTask() {
         return;
       }
       if (status !== 409) {
-        atlasToastApi.error('הפעולה נכשלה — השינויים בוטלו');
+        atlasToastApi.error('הפעולה נכשלה: השינויים בוטלו');
       }
     },
     onSettled: (_d, err, _v, context) => {

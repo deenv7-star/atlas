@@ -8,6 +8,7 @@ import {
   Brush, Headset, FileSignature, Zap, Wallet, FileText, TrendingDown, BarChart3,
   FileBarChart, Tags, Link2, Route, Globe, CreditCard, Receipt, Settings, Shield,
 } from 'lucide-react';
+import { DB_FEATURES } from '@/config/dbFeatures';
 
 /**
  * Simplicity rules (16.10.2026): the sidebar shows exactly seven places. Everything else
@@ -42,7 +43,7 @@ export const NAV_GROUPS = [
     id: 'guests',
     label: 'אורחים',
     items: [
-      { page: 'GuestPortal', label: 'דף אורח והזמנה ישירה', icon: Globe },
+      ...(DB_FEATURES.guestPages ? [{ page: 'GuestPortal', label: 'דף אורח והזמנה ישירה', icon: Globe }] : []),
       { page: 'GuestJourney', label: 'מסע אורח', icon: Route },
       { page: 'AIAssistant', label: 'עוזר AI', icon: SparklesIcon },
     ],
@@ -72,7 +73,7 @@ export const FINANCE_TABS = [
   { page: 'Payments', label: 'תשלומים' },
   { page: 'Balances', label: 'יתרות' },
   { page: 'Invoices', label: 'חשבוניות' },
-  { page: 'ExpenseTracker', label: 'הוצאות' },
+  ...(DB_FEATURES.expenses ? [{ page: 'ExpenseTracker', label: 'הוצאות' }] : []),
   { page: 'MonthlyReport', label: 'דוח חודשי' },
 ];
 

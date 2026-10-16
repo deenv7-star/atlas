@@ -39,7 +39,7 @@ export default function BookDirectPage() {
   }, [q.data]);
 
   if (q.isLoading) {
-    return <Shell><div className="h-56" style={{ background: 'var(--navy-900)' }} /><div className="max-w-3xl mx-auto px-4 -mt-10"><div className="ab-card h-80 animate-pulse" /></div></Shell>;
+    return <Shell><div className="h-56" style={{ background: 'linear-gradient(180deg, #EEF0FF 0%, #F7F8FB 100%)' }} /><div className="max-w-3xl mx-auto px-4 -mt-10"><div className="ab-card h-80 animate-pulse" /></div></Shell>;
   }
   if (q.isError || !q.data) {
     return (
@@ -78,14 +78,14 @@ export default function BookDirectPage() {
 
   return (
     <Shell>
-      <header className="relative overflow-hidden" style={{ background: 'var(--navy-900)' }}>
+      <header className="relative overflow-hidden" style={{ background: hero ? 'var(--navy-900)' : 'linear-gradient(180deg, #EEF0FF 0%, #F7F8FB 100%)' }}>
         {hero ? <img src={hero} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" /> : null}
         <div className="relative max-w-3xl mx-auto px-5 pt-10 pb-16">
-          {host?.name ? <p className="text-[15px] font-medium" style={{ color: '#C9CDF9' }}>{host.name}</p> : null}
-          <h1 className="mt-1 text-[32px] sm:text-[40px] leading-[1.15] font-extrabold text-white">{property.name}</h1>
-          {property.address ? <p className="mt-2 text-[15px]" style={{ color: '#DADDF6' }}>{property.address}</p> : null}
-          {property.description ? <p className="mt-3 text-[16px] max-w-[52ch]" style={{ color: '#FFFFFF' }}>{property.description}</p> : null}
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[14px]" style={{ color: '#DADDF6' }}>
+          {host?.name ? <p className="text-[15px] font-medium" style={{ color: hero ? '#C9CDF9' : 'var(--brand-600, #3E2BF1)' }}>{host.name}</p> : null}
+          <h1 className="mt-1 text-[32px] sm:text-[40px] leading-[1.15] font-extrabold" style={{ color: hero ? '#FFFFFF' : '#1B2656' }}>{property.name}</h1>
+          {property.address ? <p className="mt-2 text-[15px]" style={{ color: hero ? '#DADDF6' : '#4A5578' }}>{property.address}</p> : null}
+          {property.description ? <p className="mt-3 text-[16px] max-w-[52ch]" style={{ color: hero ? '#FFFFFF' : '#1B2656' }}>{property.description}</p> : null}
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[14px]" style={{ color: hero ? '#DADDF6' : '#4A5578' }}>
             {property.max_guests ? <span className="inline-flex items-center gap-1.5"><Users size={16} strokeWidth={1.75} /> עד {property.max_guests} אורחים</span> : null}
             {property.bedrooms ? <span className="inline-flex items-center gap-1.5"><BedDouble size={16} strokeWidth={1.75} /> {property.bedrooms} חדרי שינה</span> : null}
             <span className="inline-flex items-center gap-1.5"><Clock size={16} strokeWidth={1.75} /> כניסה {property.check_in_time || '15:00'} · יציאה {property.check_out_time || '11:00'}</span>

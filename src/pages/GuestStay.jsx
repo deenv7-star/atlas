@@ -75,7 +75,7 @@ export default function GuestStayPage() {
   if (q.isLoading) {
     return (
       <Shell>
-        <div className="h-48" style={{ background: 'var(--navy-900)' }} />
+        <div className="h-48" style={{ background: 'linear-gradient(180deg, #EEF0FF 0%, #F7F8FB 100%)' }} />
         <div className="max-w-xl mx-auto px-4 -mt-10 space-y-3">
           {[0, 1, 2].map((i) => <div key={i} className="ab-card h-28 animate-pulse" />)}
         </div>
@@ -105,12 +105,12 @@ export default function GuestStayPage() {
 
   return (
     <Shell>
-      <header className="relative overflow-hidden" style={{ background: 'var(--navy-900)' }}>
+      <header className="relative overflow-hidden" style={{ background: hero ? 'var(--navy-900)' : 'linear-gradient(180deg, #EEF0FF 0%, #F7F8FB 100%)' }}>
         {hero ? <img src={hero} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" /> : null}
         <div className="relative max-w-xl mx-auto px-5 pt-10 pb-16">
-          <p className="text-[15px] font-medium" style={{ color: '#C9CDF9' }}>{name ? `שלום ${name},` : 'שלום,'}</p>
-          <h1 className="mt-1 text-[30px] sm:text-[34px] leading-[1.15] font-extrabold text-white">השהייה שלכם {withPrefix('ב', property.name)}</h1>
-          <p className="mt-2 text-[15px]" style={{ color: '#DADDF6' }}>
+          <p className="text-[15px] font-medium" style={{ color: hero ? '#C9CDF9' : 'var(--brand-600, #3E2BF1)' }}>{name ? `שלום ${name},` : 'שלום,'}</p>
+          <h1 className="mt-1 text-[30px] sm:text-[34px] leading-[1.15] font-extrabold" style={{ color: hero ? '#FFFFFF' : '#1B2656' }}>השהייה שלכם {withPrefix('ב', property.name)}</h1>
+          <p className="mt-2 text-[15px]" style={{ color: hero ? '#DADDF6' : '#4A5578' }}>
             {booking.nights} לילות{guests ? ` · ${guests} אורחים` : ''}
           </p>
         </div>

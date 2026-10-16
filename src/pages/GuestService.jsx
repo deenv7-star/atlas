@@ -84,7 +84,7 @@ export default function GuestService() {
               >
                 <CheckCircle2 className="h-10 w-10 text-white" />
               </motion.div>
-              <h2 className="text-2xl font-bold text-[#0F172A] mb-3">הבקשה נשלחה בהצלחה!</h2>
+              <h2 className="text-2xl font-bold text-navy-900 mb-3">הבקשה נשלחה בהצלחה!</h2>
               <p className="text-[#64748B] leading-relaxed">
                 קיבלנו את הבקשה שלך ונטפל בה בהקדם.<br />
                 תקבל עדכון ברגע שהבעיה תטופל.
@@ -101,7 +101,7 @@ export default function GuestService() {
       <div className="max-w-3xl mx-auto p-6">
         <div className="mb-8 text-center">
           <Logo variant="dark" size="large" />
-          <h1 className="text-3xl font-bold text-[#0F172A] mt-6 mb-2">שירות חדרים</h1>
+          <h1 className="text-3xl font-bold text-navy-900 mt-6 mb-2">שירות חדרים</h1>
           <p className="text-[#64748B]">יש בעיה או צורך? נשמח לעזור</p>
         </div>
 
@@ -198,7 +198,7 @@ export default function GuestService() {
               <Button
                 type="submit"
                 disabled={submitMutation.isPending}
-                className="w-full bg-brand-600 hover:bg-[#00B8AA] text-[#0F172A] h-12 text-base font-semibold"
+                className="w-full bg-brand-600 hover:bg-brand-500 text-white h-12 text-base font-semibold"
               >
                 {submitMutation.isPending ? (
                   <>

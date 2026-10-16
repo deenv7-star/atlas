@@ -17,6 +17,8 @@ import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ComingSoon } from '@/components/ds';
+import { DB_FEATURES } from '@/config/dbFeatures';
 
 async function copy(text, msg = 'הקישור הועתק') {
   try {
@@ -162,7 +164,22 @@ function PropertyEditor({ property, onSaved }) {
   );
 }
 
-export default function GuestPagesPage({ user, orgId }) {
+export default function GuestPagesPage(props) {
+  if (!DB_FEATURES.guestPages) {
+    return (
+      <StayPage>
+        <PageHeader
+          title="דף אורח והזמנה ישירה"
+          subtitle="דף אישי לכל אורח עם כל פרטי השהייה, ודף הזמנה ישירה לכל יחידה."
+        />
+        <ComingSoon icon={Globe} title="דפי אורח והזמנה ישירה יגיעו בקרוב" description="ברגע שהם מוכנים תוכלו לשלוח לכל אורח קישור אישי ולקבל הזמנות ישירות, בלי עמלה." />
+      </StayPage>
+    );
+  }
+  return <GuestPagesScreen {...props} />;
+}
+
+function GuestPagesScreen({ user, orgId }) {
   const data = useStayData({ withCleaning: false });
   const ensureToken = useEnsureGuestToken();
   const [selected, setSelected] = useState('');
@@ -185,7 +202,7 @@ export default function GuestPagesPage({ user, orgId }) {
   const copyGuestLink = async (b) => {
     const withToken = await ensureToken(b);
     const url = guestPageUrl(withToken);
-    if (!url) { atlasToastApi.error('קישור אישי דורש עדכון מסד נתונים (מיגרציה 008).'); return; }
+    if (!url) { atlasToastApi.error('לא הצלחנו ליצור קישור אישי. נסו שוב בעוד רגע.'); return; }
     copy(url, 'הקישור לדף האורח הועתק');
   };
 

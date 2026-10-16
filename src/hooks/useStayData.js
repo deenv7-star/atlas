@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { STALE_LIVE_MS, STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 import { groupPaymentsByBooking } from '@/lib/stay/bookings';
+import { DB_FEATURES, isMissingSchemaError } from '@/config/dbFeatures';
 
 export const STAY_KEYS = {
   bookings: ['stay', 'bookings'],
@@ -18,8 +19,8 @@ export const STAY_KEYS = {
 };
 
 const safe = (p) => p.catch((e) => {
-  // Missing optional tables (e.g. expenses before migration 008) should not break the screen.
-  if (e?.code === '42P01' || e?.status === 404 || /does not exist|not find/i.test(e?.message || '')) return [];
+  // Missing optional tables should never break a screen.
+  if (isMissingSchemaError(e)) return [];
   throw e;
 });
 
@@ -54,7 +55,7 @@ export function useStayData({ withExpenses = false, withCleaning = true } = {}) 
     queryKey: STAY_KEYS.expenses,
     queryFn: () => safe(base44.entities.Expense.filter({}, '-expense_date', 3000)),
     staleTime: STALE_REFERENCE_MS,
-    enabled: withExpenses,
+    enabled: withExpenses && DB_FEATURES.expenses,
   });
 
   const bookings = bookingsQ.data || [];

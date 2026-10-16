@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { STAY_KEYS } from '@/hooks/useStayData';
 import { STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
+import { DB_FEATURES } from '@/config/dbFeatures';
 
 export function useExpenses({ orgId } = {}) {
   const qc = useQueryClient();
@@ -11,6 +12,7 @@ export function useExpenses({ orgId } = {}) {
     queryKey: STAY_KEYS.expenses,
     queryFn: () => base44.entities.Expense.filter({}, '-expense_date', 3000).catch(() => []),
     staleTime: STALE_REFERENCE_MS,
+    enabled: DB_FEATURES.expenses,
   });
   const propertiesQ = useQuery({
     queryKey: STAY_KEYS.properties,
@@ -50,6 +52,7 @@ export function useExpenses({ orgId } = {}) {
     expenses,
     propertyNames: properties.map((p) => p.name),
     addExpense: create.mutateAsync,
-    isLoading: expensesQ.isLoading,
+    isLoading: DB_FEATURES.expenses && expensesQ.isLoading,
+    available: DB_FEATURES.expenses,
   };
 }

@@ -10,6 +10,7 @@ import { base44 } from '@/api/base44Client';
 import { guestInfoOf } from './guestInfo';
 import { balanceOf, isActiveBooking, checkOutOf } from './bookings';
 import { todayISO, addDays, nightsBetween } from './format';
+import { DB_FEATURES } from '@/config/dbFeatures';
 
 export class PublicNotFoundError extends Error {
   constructor(msg = 'not_found') { super(msg); this.code = 'not_found'; }
@@ -34,7 +35,7 @@ async function orgForLocal(orgId) {
 
 /** Shape: { booking:{guest_name,check_in_date,check_out_date,nights,adults,children,status}, property:{name,address,guest_info}, host:{name,phone}, money:{total,paid,balance,dueDate} } */
 export async function fetchGuestStay(token) {
-  if (!token) throw new PublicNotFoundError();
+  if (!token || !DB_FEATURES.guestPages) throw new PublicNotFoundError();
   if (isSupabaseConfigured) {
     const data = await rpc('get_guest_stay', { p_token: token });
     if (!data) throw new PublicNotFoundError();
@@ -64,7 +65,7 @@ export async function fetchGuestStay(token) {
 
 /** Shape: { property:{id,name,address,description,max_guests,bedrooms,base_price,images,check_in_time,check_out_time}, host:{name}, busy:[{from,to}] } */
 export async function fetchPublicProperty(slug) {
-  if (!slug) throw new PublicNotFoundError();
+  if (!slug || !DB_FEATURES.directBooking) throw new PublicNotFoundError();
   if (isSupabaseConfigured) {
     const data = await rpc('get_public_property', { p_slug: slug });
     if (!data) throw new PublicNotFoundError();
@@ -106,6 +107,7 @@ export async function submitDirectInquiry(slug, form) {
     notes: String(form.notes || '').trim().slice(0, 1000),
   };
   if (!payload.full_name || !payload.phone) throw new Error('missing_fields');
+  if (!DB_FEATURES.directBooking) throw new PublicNotFoundError();
   if (isSupabaseConfigured) {
     await rpc('submit_direct_inquiry', {
       p_slug: slug, p_full_name: payload.full_name, p_phone: payload.phone, p_email: payload.email || null,

@@ -4,11 +4,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { makeToken } from '@/lib/stay/guestInfo';
 import { STAY_KEYS } from '@/hooks/useStayData';
+import { DB_FEATURES } from '@/config/dbFeatures';
 
 export function useEnsureGuestToken() {
   const qc = useQueryClient();
   return useCallback(async (booking) => {
-    if (!booking?.id || booking.guest_token) return booking;
+    if (!DB_FEATURES.guestPages || !booking?.id || booking.guest_token) return booking;
     const guest_token = makeToken();
     try {
       const updated = await base44.entities.Booking.update(booking.id, { guest_token });
