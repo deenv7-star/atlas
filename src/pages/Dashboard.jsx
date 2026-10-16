@@ -31,6 +31,7 @@ import {
 } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { STALE_LIVE_MS, STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
+import TodaySummaryCard from '@/components/stay/TodaySummaryCard';
 
 /** Dashboard widgets only need a thin slice of each row (smaller JSON over the wire). */
 const DASH_BOOKING_SELECT =
@@ -505,6 +506,8 @@ export default function Dashboard({ user, selectedPropertyId }) {
           </div>
         </motion.div>
       </div>
+
+      <TodaySummaryCard />
 
       {/* Today Section */}
       {(todayCheckIns.length > 0 || todayCheckOuts.length > 0) && (

@@ -9,7 +9,7 @@ import {
   ChevronLeft, ChevronRight, Zap, Brain, Link2,
   Wallet,   ClipboardList, Wrench, Receipt, TrendingDown,
   TrendingUp, Globe, BarChart3, CalendarRange, FileBarChart, Workflow, Shield,
-  Headset,
+  Headset, CalendarCheck,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { isPlatformAdminViewer } from '@/lib/platformAdmin';
@@ -19,6 +19,7 @@ const navGroups = [
     label: 'ניהול',
     items: [
       { icon: LayoutDashboard, label: 'דשבורד', page: 'Dashboard' },
+      { icon: CalendarCheck, label: 'היום', page: 'Today' },
       { icon: CalendarRange, label: 'לוח שנה', page: 'MultiCalendar' },
       { icon: CalendarDays, label: 'הזמנות', page: 'Bookings' },
     ],

@@ -24,7 +24,7 @@ import {
   Bell,
   Wrench,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import PullToRefresh from '@/components/common/PullToRefresh';
 import { MaintenanceTable } from '@/components/tables/MaintenanceTable';
 import { useMaintenanceUrlState } from '@/hooks/url-state/useMaintenanceUrlState';

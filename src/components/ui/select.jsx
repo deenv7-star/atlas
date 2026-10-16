@@ -3,7 +3,6 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 
 import { cn } from "@/lib/utils"
 
@@ -12,19 +11,6 @@ const Select = SelectPrimitive.Root
 const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
-
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = React.useState(false);
-  
-  React.useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-  
-  return isMobile;
-}
 
 const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
@@ -63,39 +49,11 @@ const SelectScrollDownButton = React.forwardRef(({ className, ...props }, ref) =
 SelectScrollDownButton.displayName =
   SelectPrimitive.ScrollDownButton.displayName
 
+// The old mobile branch rendered SelectItems inside a vaul Drawer, outside Radix's
+// SelectContent context, and opened whenever ANY element had data-state="open"
+// (e.g. a dialog). On phones that threw "SelectItem must be used within SelectContent"
+// and took down the whole app. Radix's own content works on touch, so use it everywhere.
 const SelectContent = React.forwardRef(({ className, children, position = "popper", ...props }, ref) => {
-  const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = React.useState(false);
-  
-  React.useEffect(() => {
-    const handleOpenChange = () => {
-      const trigger = document.querySelector('[data-state="open"]');
-      setIsOpen(!!trigger);
-    };
-    
-    const observer = new MutationObserver(handleOpenChange);
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-    
-    return () => observer.disconnect();
-  }, []);
-  
-  if (isMobile) {
-    return (
-      <SelectPrimitive.Portal>
-        <Drawer open={isOpen} onOpenChange={setIsOpen}>
-          <DrawerContent className="max-h-[60vh]">
-            <DrawerHeader>
-              <DrawerTitle>בחר אפשרות</DrawerTitle>
-            </DrawerHeader>
-            <div className="p-4 overflow-y-auto">
-              {children}
-            </div>
-          </DrawerContent>
-        </Drawer>
-      </SelectPrimitive.Portal>
-    );
-  }
-  
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content

@@ -31,6 +31,7 @@ const pageNames = {
   GuestPortal: 'פורטל אורחים', RevenueIntelligence: 'מודיעין הכנסות',
   MultiCalendar: 'לוח שנה מרכזי', OwnerReports: 'דוחות בעלים',
   GuestJourney: 'מסע אורח', PlatformAdmin: 'ניהול פלטפורמה',
+  Today: 'היום', Balances: 'מקדמות ויתרות', MonthlyReport: 'דוח חודשי',
 };
 
 // ── Dark Mode Hook ──────────────────────────────────────────────────────────

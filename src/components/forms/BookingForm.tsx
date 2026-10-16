@@ -21,6 +21,7 @@ import {
   FormMachineFieldHint,
   formMachineFormClassName,
 } from '@/components/forms/formMachineUi';
+import { BookingOverlapGuard } from '@/components/stay/BookingOverlapGuard';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתין' },
@@ -75,6 +76,8 @@ export function BookingForm({
     onRegisterDialogInterceptor?.(fn);
     return () => onRegisterDialogInterceptor?.(null);
   }, [fm.interceptDialogClose, setDialogOpen, onRegisterDialogInterceptor]);
+
+  const [overlapBlocked, setOverlapBlocked] = React.useState(false);
 
   const nights = React.useMemo(() => {
     try {
@@ -217,6 +220,13 @@ export function BookingForm({
             <Input {...fm.register('notes')} placeholder="הערות פנימיות" className="h-11 text-sm rounded-xl" />
             <FormMachineFieldHint error={fm.errors.notes} />
           </div>
+          <BookingOverlapGuard
+            propertyId={fm.values.property_id}
+            checkIn={fm.values.check_in_date}
+            checkOut={fm.values.check_out_date}
+            excludeId={storageSuffix !== 'new' ? storageSuffix : undefined}
+            onBlockingChange={setOverlapBlocked}
+          />
           {nights > 0 && (
             <div className="col-span-2">
               <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl">
@@ -240,7 +250,7 @@ export function BookingForm({
           <Button
             type="button"
             onClick={fm.handleSubmit}
-            disabled={fm.state === 'submitting'}
+            disabled={fm.state === 'submitting' || overlapBlocked}
             className={[
               'relative min-h-[44px] h-11 gap-1.5 rounded-xl w-full sm:w-auto font-semibold',
               fm.state === 'success'
