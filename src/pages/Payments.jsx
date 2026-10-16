@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  Wallet, Plus, Search, Clock, AlertCircle, CheckCircle2,
+  Wallet, Plus, Search, Clock, AlertCircle, CheckCircle2, Trash2,
 } from 'lucide-react';
 import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
 import { PaymentForm } from '@/components/forms/PaymentForm';
@@ -76,6 +76,15 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
     queryKey: ['payments', orgId],
     queryFn: () =>
       orgId ? base44.entities.Payment.filter({ org_id: orgId }, '-created_date') : Promise.resolve([]),
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const [confirmPaymentDelete, setConfirmPaymentDelete] = useState(false);
+  useEffect(() => { if (!showDialog) setConfirmPaymentDelete(false); }, [showDialog]);
+  const { data: bookingOptions = [] } = useQuery({
+    queryKey: ['bookings', orgId],
+    queryFn: () => base44.entities.Booking.filter({ org_id: orgId }, '-created_at', 300),
+    enabled: !!orgId,
     staleTime: 2 * 60 * 1000,
   });
 
@@ -277,6 +286,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
             key={editingPayment?.id ?? 'new'}
             storageSuffix={editingPayment?.id ?? 'new'}
             defaultValues={paymentEntityToFormValues(editingPayment)}
+            bookings={bookingOptions}
             onSubmit={handlePaymentSubmit}
             onCancel={closePaymentDialog}
             setDialogOpen={setShowDialog}
@@ -288,6 +298,22 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
             }}
             submitLabel="שמירה"
           />
+          {editingPayment ? (
+            <div className="-mt-1 flex justify-start border-t border-line pt-3">
+              <Button
+                variant="ghost"
+                className="h-11 text-danger-600 hover:bg-danger-50 hover:text-danger-700"
+                disabled={deleteMutation.isPending}
+                onClick={() => {
+                  if (!confirmPaymentDelete) { setConfirmPaymentDelete(true); return; }
+                  deleteMutation.mutate(editingPayment.id, { onSuccess: () => { setConfirmPaymentDelete(false); closePaymentDialog(); } });
+                }}
+              >
+                <Trash2 />
+                {confirmPaymentDelete ? 'ללחוץ שוב כדי למחוק' : 'מחיקת תשלום'}
+              </Button>
+            </div>
+          ) : null}
         </DialogContent>
       </Dialog>
     </Page>

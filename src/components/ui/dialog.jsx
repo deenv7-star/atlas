@@ -89,7 +89,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
           <DialogPrimitive.Close
             className="absolute left-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-600 hover:bg-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 disabled:pointer-events-none">
             <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">סגירה</span>
           </DialogPrimitive.Close>
         </motion.div>
       </DialogPrimitive.Content>
@@ -103,7 +103,7 @@ const DialogHeader = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)}
+    className={cn("flex flex-col space-y-1.5 text-start pe-12", className)}
     {...props} />
 )
 DialogHeader.displayName = "DialogHeader"
@@ -113,7 +113,7 @@ const DialogFooter = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end gap-2", className)}
     {...props} />
 )
 DialogFooter.displayName = "DialogFooter"

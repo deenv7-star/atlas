@@ -186,7 +186,7 @@ export default function RevenueIntelligence() {
               {/* Y-axis grid lines */}
               {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
                 <div key={i} className="absolute left-0 right-0 border-t border-line" style={{ bottom: `${pct * 100}%` }}>
-                  <span className="absolute -top-2.5 left-0 text-[12px] text-neutral-300 font-mono">
+                  <span className="absolute -top-2.5 left-0 text-[12px] text-ink-400 font-mono">
                     {Math.round(maxRevenue * pct / 1000)}K
                   </span>
                 </div>

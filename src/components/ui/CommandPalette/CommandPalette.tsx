@@ -295,6 +295,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
           >
             <CommandItem
               value="nav-dashboard"
+              keywords={['היום', 'דשבורד', 'בית', 'today']}
               data-announce={announce('היום')}
               onSelect={() => go(createPageUrl('Dashboard'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -305,6 +306,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-bookings"
+              keywords={['הזמנות', 'הזמנה']}
               data-announce={announce('הזמנות')}
               onSelect={() => go(createPageUrl('Bookings'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -315,6 +317,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-guests"
+              keywords={['לידים', 'ליד', 'אורחים']}
               data-announce={announce('לידים')}
               onSelect={() => go(createPageUrl('Leads'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -325,6 +328,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-calendar"
+              keywords={['לוח שנה', 'יומן', 'לוח']}
               data-announce={announce('לוח שנה')}
               onSelect={() => go(createPageUrl('MultiCalendar'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -335,6 +339,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-maintenance"
+              keywords={['בקשות שירות', 'תחזוקה', 'תקלות', 'בקשות']}
               data-announce={announce('בקשות שירות')}
               onSelect={() => go(createPageUrl('ServiceRequests'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -345,6 +350,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-financials"
+              keywords={['תשלומים', 'תשלומים', 'כספים', 'כסף']}
               data-announce={announce('תשלומים')}
               onSelect={() => go(createPageUrl('Payments'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -355,6 +361,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-settings"
+              keywords={['הגדרות', 'הגדרות']}
               data-announce={announce('הגדרות')}
               onSelect={() => go(createPageUrl('Settings'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -373,6 +380,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
           >
             <CommandItem
               value="act-new-booking"
+              keywords={['הזמנה חדשה', 'הזמנה חדשה']}
               data-announce={announce('הזמנה חדשה')}
               onSelect={() => go(createPageUrl('Bookings'), { commandPalette: { newBooking: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -382,6 +390,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="act-new-guest"
+              keywords={['ליד חדש', 'ליד חדש']}
               data-announce={announce('ליד חדש')}
               onSelect={() => go(createPageUrl('Leads'), { commandPalette: { newGuest: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -391,6 +400,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="act-new-maintenance"
+              keywords={['בקשת שירות חדשה']}
               data-announce={announce('בקשת שירות חדשה')}
               onSelect={() => go(createPageUrl('ServiceRequests'), { commandPalette: { newMaintenance: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
@@ -400,6 +410,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="act-new-payment"
+              keywords={['תשלום חדש', 'תשלום חדש']}
               data-announce={announce('תשלום חדש')}
               onSelect={() => go(createPageUrl('Payments'), { commandPalette: { newPayment: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"

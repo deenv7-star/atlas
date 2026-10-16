@@ -503,7 +503,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                         size="sm" 
                         variant="outline" 
                         className="rounded-lg text-red-600 hover:bg-red-50"
-                        onClick={() => deleteTemplateMutation.mutate(template.id)}
+                        aria-label={`מחיקת התבנית ${template.name || ''}`}
+                        onClick={() => { if (window.confirm('למחוק את התבנית?')) deleteTemplateMutation.mutate(template.id); }}
                       >
                         <Trash2 className="h-3 w-3" />
                       </Button>

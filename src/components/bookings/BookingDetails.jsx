@@ -20,6 +20,9 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { useNavigate } from 'react-router-dom';
+import { deleteBookingWithUndo } from '@/components/ui/AtlasToast';
+import { createPageUrl } from '@/utils';
 import { Page, StatusPill, channelOf, fmtDay, fmtShort, fmtMoney } from '@/components/ds';
 import {
   Phone,
@@ -33,7 +36,9 @@ import {
   Plus,
   CheckCircle2,
   Receipt,
-  ChevronRight
+  ChevronRight,
+  Pencil,
+  Trash2
 } from 'lucide-react';
 import { parseISO, differenceInDays } from 'date-fns';
 
@@ -77,6 +82,8 @@ export default function BookingDetails({ booking, onClose, orgId }) {
     status: 'DUE'
   });
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   // Fetch payments for this booking
   const { data: payments = [] } = useQuery({
@@ -202,10 +209,33 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   return (
     <>
       <Page className="max-w-[880px]">
-        <button type="button" onClick={onClose} className="press -ms-2 mb-3 inline-flex h-11 items-center gap-1 rounded-[10px] px-2 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
-          <ChevronRight className="h-5 w-5" />
-          הזמנות
-        </button>
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <button type="button" onClick={onClose} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-[10px] px-2 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
+            <ChevronRight className="h-5 w-5" />
+            הזמנות
+          </button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" className="h-11" onClick={() => navigate(`${createPageUrl('Bookings')}?openBookingId=${encodeURIComponent(booking.id)}`)}>
+              <Pencil />
+              עריכה
+            </Button>
+            <Button variant="ghost" size="icon" className="h-11 w-11 text-ink-600 hover:text-danger-600" aria-label="מחיקת הזמנה" onClick={() => setConfirmDelete(true)}>
+              <Trash2 />
+            </Button>
+          </div>
+        </div>
+        <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+          <DialogContent className="max-w-[420px]" dir="rtl">
+            <DialogHeader>
+              <DialogTitle className="text-[20px] font-bold text-navy-900">למחוק את ההזמנה?</DialogTitle>
+            </DialogHeader>
+            <p className="text-[15px] text-ink-600">ההזמנה של {booking.guest_name || 'האורח'} תוסר. אפשר לבטל מיד אחרי המחיקה.</p>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setConfirmDelete(false)}>ביטול</Button>
+              <Button variant="destructive" onClick={() => { setConfirmDelete(false); deleteBookingWithUndo(queryClient, booking.id); navigate(createPageUrl('Bookings')); }}>מחיקה</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Guest + stay */}
         <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
@@ -271,7 +301,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-[18px] font-bold text-navy-900">תשלומים</h2>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => { window.location.href = `/Invoices?booking=${booking.id}`; }}>
+                <Button size="sm" variant="outline" onClick={() => navigate(`/invoices?booking=${booking.id}`)}>
                   <Receipt />
                   חשבונית
                 </Button>

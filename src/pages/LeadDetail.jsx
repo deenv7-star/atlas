@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { nightsBetween } from '@/lib/entityPayloads';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { useLead, useUpdateLead } from '@/data/entities';
+import { useLead, useUpdateLead, useDeleteLead } from '@/data/entities';
+import { ChevronRight, Pencil, Trash2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -69,6 +71,9 @@ export default function LeadDetail({ orgId }) {
     return () => window.removeEventListener('atlas:entity-validation-error', onValidation);
   }, [id]);
 
+  const deleteLead = useDeleteLead();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
   const handleConvertToBooking = async (leadRow) => {
     const booking = await base44.entities.Booking.create({
       org_id: leadRow.org_id,
@@ -123,6 +128,34 @@ export default function LeadDetail({ orgId }) {
       transition={{ duration: 0.2 }}
       className={cn('p-6 space-y-6 max-w-2xl mx-auto', optimisticEntityClassName(lead.id))}
     >
+      <div className="flex items-center justify-between gap-2">
+        <button type="button" onClick={() => navigate(createPageUrl('Leads'))} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-[10px] px-2 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
+          <ChevronRight className="h-5 w-5" />
+          לידים
+        </button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" className="h-11" onClick={() => navigate(`${createPageUrl('Leads')}?openGuestId=${encodeURIComponent(lead.id)}`)}>
+            <Pencil />
+            עריכה
+          </Button>
+          <Button variant="ghost" size="icon" className="h-11 w-11 text-ink-600 hover:text-danger-600" aria-label="מחיקת ליד" onClick={() => setConfirmDelete(true)}>
+            <Trash2 />
+          </Button>
+        </div>
+      </div>
+      <h1 className="text-[26px] font-bold leading-tight text-navy-900">{lead.full_name || 'ליד'}</h1>
+      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <DialogContent className="max-w-[420px]" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-[20px] font-bold text-navy-900">למחוק את הליד?</DialogTitle>
+          </DialogHeader>
+          <p className="text-[15px] text-ink-600">{lead.full_name || 'הליד'} יוסר מרשימת הלידים.</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmDelete(false)}>ביטול</Button>
+            <Button variant="destructive" disabled={deleteLead.isPending} onClick={() => deleteLead.mutate(lead.id, { onSuccess: () => { setConfirmDelete(false); navigate(createPageUrl('Leads')); } })}>מחיקה</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <div className="space-y-4">
         <h3 className="font-semibold text-[#1B2656] select-none">פרטי קשר</h3>
         <Card className="border-0 shadow-sm rounded-2xl">

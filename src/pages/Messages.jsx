@@ -242,7 +242,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                         : 'rounded-tl-[6px] border border-line bg-white text-navy-900'
                     )}>
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.body}</p>
-                      <p className={cn('tabular mt-1 text-[12px]', isOutbound ? 'text-white/70' : 'text-ink-400')}>
+                      <p className={cn('tabular mt-1 text-[12px]', isOutbound ? 'text-white/85' : 'text-ink-400')}>
                         {msg.created_at ? format(parseISO(msg.created_at), 'HH:mm') : ''}
                       </p>
                     </div>

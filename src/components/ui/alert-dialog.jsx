@@ -94,7 +94,7 @@ const AlertDialogHeader = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col space-y-2 text-center sm:text-left", className)}
+    className={cn("flex flex-col space-y-2 text-start", className)}
     {...props} />
 )
 AlertDialogHeader.displayName = "AlertDialogHeader"
@@ -104,7 +104,7 @@ const AlertDialogFooter = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end gap-2", className)}
     {...props} />
 )
 AlertDialogFooter.displayName = "AlertDialogFooter"

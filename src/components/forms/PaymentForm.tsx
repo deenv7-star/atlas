@@ -49,6 +49,14 @@ export type PaymentFormProps = {
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onRegisterDialogInterceptor?: (fn: ((open: boolean) => void) | null) => void;
   onAfterSubmitSuccess?: () => void;
+  bookings?: Array<{ id: string; guest_name?: string | null; check_in_date?: string | null }>;
+};
+
+const NO_BOOKING = '__none__';
+const shortDate = (d?: string | null) => {
+  if (!d) return '';
+  const [y, m, dd] = String(d).slice(0, 10).split('-');
+  return y && m && dd ? `${Number(dd)}.${Number(m)}` : '';
 };
 
 export function PaymentForm({
@@ -61,6 +69,7 @@ export function PaymentForm({
   setDialogOpen,
   onRegisterDialogInterceptor,
   onAfterSubmitSuccess,
+  bookings,
 }: PaymentFormProps) {
   const storageKey = `atlas-form-payment-${storageSuffix}`;
 
@@ -88,18 +97,50 @@ export function PaymentForm({
       <div className={formMachineFormClassName(fm.state)} dir="rtl">
         <div className="grid grid-cols-2 gap-3 py-2">
           <div className="col-span-2 space-y-1.5">
-            <Label className="text-xs text-gray-500">מזהה הזמנה (אופציונלי)</Label>
-            <Input {...fm.register('booking_id')} placeholder="מזהה הזמנה" className="h-9 text-sm rounded-xl" dir="ltr" />
+            <Label className="text-xs text-gray-500">הזמנה (לא חובה)</Label>
+            {bookings ? (
+              <Controller
+                control={fm.control}
+                name="booking_id"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? String(field.value) : NO_BOOKING}
+                    onValueChange={(v) => {
+                      const val = v === NO_BOOKING ? '' : v;
+                      fm.handleChange('booking_id', val);
+                      field.onChange(val);
+                    }}
+                  >
+                    <SelectTrigger aria-label="הזמנה" className="h-11 text-sm rounded-xl">
+                      <SelectValue placeholder="בחירת הזמנה" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NO_BOOKING}>ללא הזמנה</SelectItem>
+                      {field.value && !bookings.some((b) => b.id === field.value) ? (
+                        <SelectItem value={String(field.value)}>הזמנה קיימת</SelectItem>
+                      ) : null}
+                      {bookings.map((b) => (
+                        <SelectItem key={b.id} value={b.id}>
+                          {(b.guest_name || 'אורח') + (b.check_in_date ? ` · ${shortDate(b.check_in_date)}` : '')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            ) : (
+              <Input {...fm.register('booking_id')} placeholder="מזהה הזמנה" className="h-11 text-sm rounded-xl" dir="ltr" />
+            )}
             <FormMachineFieldHint error={fm.errors.booking_id} />
           </div>
           <div className="col-span-2 space-y-1.5">
             <Label className="text-xs text-gray-500">תיאור</Label>
-            <Input {...fm.register('description')} placeholder="תיאור התשלום" className="h-9 text-sm rounded-xl" />
+            <Input {...fm.register('description')} placeholder="תיאור התשלום" className="h-11 text-sm rounded-xl" />
             <FormMachineFieldHint error={fm.errors.description} validating={fm.isFieldValidating('description')} />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-gray-500">סכום (₪) *</Label>
-            <Input type="text" inputMode="decimal" {...fm.register('amount')} placeholder="0" className="h-9 text-sm rounded-xl" />
+            <Input type="text" inputMode="decimal" {...fm.register('amount')} placeholder="0" className="h-11 text-sm rounded-xl" />
             <FormMachineFieldHint error={fm.errors.amount} validating={fm.isFieldValidating('amount')} />
           </div>
           <div className="space-y-1.5">
@@ -115,7 +156,7 @@ export function PaymentForm({
                     field.onChange(v);
                   }}
                 >
-                  <SelectTrigger className="h-9 text-sm rounded-xl">
+                  <SelectTrigger className="h-11 text-sm rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -143,7 +184,7 @@ export function PaymentForm({
                     field.onChange(v);
                   }}
                 >
-                  <SelectTrigger className="h-9 text-sm rounded-xl">
+                  <SelectTrigger className="h-11 text-sm rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -160,12 +201,12 @@ export function PaymentForm({
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-gray-500">תאריך תשלום</Label>
-            <Input type="date" {...fm.register('paid_date')} className="h-9 text-sm rounded-xl" />
+            <Input type="date" {...fm.register('paid_date')} className="h-11 text-sm rounded-xl" />
             <FormMachineFieldHint error={fm.errors.paid_date} validating={fm.isFieldValidating('paid_date')} />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-gray-500">תאריך יעד</Label>
-            <Input type="date" {...fm.register('due_date')} className="h-9 text-sm rounded-xl" />
+            <Input type="date" {...fm.register('due_date')} className="h-11 text-sm rounded-xl" />
             <FormMachineFieldHint error={fm.errors.due_date} validating={fm.isFieldValidating('due_date')} />
           </div>
         </div>
