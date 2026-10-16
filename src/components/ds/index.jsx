@@ -200,7 +200,7 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
             aria-selected={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              'press inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[9px] px-3.5 text-[14px] font-medium',
+              'press inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[9px] px-4 text-[15px] font-medium',
               active ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.08),0_2px_8px_rgba(27,38,86,0.06)]' : 'text-ink-600 hover:text-navy-900',
             )}
           >

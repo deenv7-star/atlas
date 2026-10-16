@@ -37,8 +37,8 @@ export const translations = {
     lost: 'הפסיד',
     pending: 'ממתין',
     confirmed: 'מאושר',
-    checkedIn: 'צ׳ק-אין',
-    checkedOut: 'צ׳ק-אאוט',
+    checkedIn: 'בשהייה',
+    checkedOut: 'הסתיימה',
     cancelled: 'מבוטל',
     open: 'פתוח',
     inProgress: 'בתהליך',
@@ -115,9 +115,9 @@ export const translations = {
     channel: 'ערוץ',
     messageBody: 'תוכן ההודעה',
     manual: 'ידני',
-    beforeCheckin24h: '24 שעות לפני צ׳ק-אין',
-    checkinDay: 'יום הצ׳ק-אין',
-    afterCheckout2h: 'שעתיים אחרי צ׳ק-אאוט',
+    beforeCheckin24h: '24 שעות לפני הכניסה',
+    checkinDay: 'יום הכניסה',
+    afterCheckout2h: 'שעתיים אחרי היציאה',
     reviewRequest24h: 'בקשת ביקורת 24 שעות',
     
     // Cleaning

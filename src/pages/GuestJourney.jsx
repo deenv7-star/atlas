@@ -56,7 +56,7 @@ const INITIAL_STAGES = [
     id: 4,
     name: 'לפני הגעה',
     subtitle: 'Pre-Arrival',
-    trigger: 'יום לפני צ׳ק-אין',
+    trigger: 'יום לפני הכניסה',
     action: 'שלח לינק לפורטל אורחים + הוראות הגעה + קוד WiFi',
     timing: '24 שעות לפני',
     channel: 'whatsapp',
@@ -67,7 +67,7 @@ const INITIAL_STAGES = [
     id: 5,
     name: 'במהלך השהייה',
     subtitle: 'During Stay',
-    trigger: 'יום אחרי צ׳ק-אין',
+    trigger: 'יום אחרי הכניסה',
     action: 'שלח הודעה: הכל בסדר? צריכים משהו?',
     timing: '24 שעות אחרי',
     channel: 'whatsapp',
@@ -76,9 +76,9 @@ const INITIAL_STAGES = [
   },
   {
     id: 6,
-    name: 'צ׳ק-אאוט',
+    name: 'יציאה',
     subtitle: 'Check-out',
-    trigger: 'יום הצ׳ק-אאוט',
+    trigger: 'יום היציאה',
     action: 'שלח תודה + בקשת ביקורת + הנפק חשבונית',
     timing: 'ביום',
     channel: 'email',
@@ -102,7 +102,7 @@ const TEMPLATES = [
   {
     id: 'standard',
     name: 'מסע סטנדרטי',
-    description: '7 שלבים — מכסה את כל מחזור החיים של האורח',
+    description: '7 שלבים, מכסה את כל מחזור החיים של האורח',
     badge: 'מומלץ',
     badgeColor: 'bg-emerald-100 text-emerald-700',
     stages: 7,
@@ -110,7 +110,7 @@ const TEMPLATES = [
   {
     id: 'vip',
     name: 'מסע VIP',
-    description: '10 שלבים — נקודות מגע נוספות ומתנות אישיות',
+    description: '10 שלבים, נקודות מגע נוספות ומתנות אישיות',
     badge: 'VIP',
     badgeColor: 'bg-amber-100 text-amber-700',
     stages: 10,
@@ -118,7 +118,7 @@ const TEMPLATES = [
   {
     id: 'minimal',
     name: 'מסע מינימלי',
-    description: '4 שלבים — רק ההודעות החיוניות',
+    description: '4 שלבים, רק ההודעות החיוניות',
     badge: 'בסיסי',
     badgeColor: 'bg-gray-100 text-gray-600',
     stages: 4,
@@ -315,7 +315,7 @@ export default function GuestJourney() {
           </div>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">
-          בנה את מסע האורח המושלם — מהפנייה הראשונה ועד הביקורת. כל שלב אוטומטי, כל הודעה בזמן הנכון.
+          בנה את מסע האורח המושלם, מהפנייה הראשונה ועד הביקורת. כל שלב אוטומטי, כל הודעה בזמן הנכון.
         </p>
       </div>
 

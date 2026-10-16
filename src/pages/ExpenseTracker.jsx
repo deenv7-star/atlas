@@ -94,11 +94,10 @@ export default function ExpenseTracker() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900">הוצאות</h1>
         </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">עקוב אחר כל ההוצאות לפי נכס — ניקיון, תחזוקה, ארנונה, ציוד ועוד. ראה את הרווח הנקי האמיתי שלך.</p>
-        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: הוסף הוצאות באופן שוטף כדי לדעת בדיוק כמה אתה מרוויח מכל נכס</p>
+        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">עקוב אחר כל ההוצאות לפי נכס, ניקיון, תחזוקה, ארנונה, ציוד ועוד. ראה את הרווח הנקי האמיתי שלך.</p>
       </div>
 
-      <DemoDataBanner message="נתוני דוגמה — ההוצאות המוצגות הן לצורך המחשה. הוסף הוצאות אמיתיות כדי לעקוב אחר הרווח הנקי שלך." />
+      <DemoDataBanner message="נתוני דוגמה, ההוצאות המוצגות הן לצורך המחשה. הוסף הוצאות אמיתיות כדי לעקוב אחר הרווח הנקי שלך." />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -316,7 +315,7 @@ export default function ExpenseTracker() {
               <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-brand-300 transition-colors cursor-pointer">
                 <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />
                 <p className="text-sm text-gray-500">גרור קובץ לכאן או לחץ להעלאה</p>
-                <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG — עד 5MB</p>
+                <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG, עד 5MB</p>
               </div>
             </div>
             <div className="flex gap-2 pt-2">

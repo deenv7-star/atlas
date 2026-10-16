@@ -137,7 +137,7 @@ export default function RevenueIntelligence() {
             </div>
           </div>
           <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">
-            תמונת מצב מלאה על ההכנסות שלך — ניתוח מגמות, חיזוי הכנסות, השוואת ביצועים בין נכסים ותובנות AI חכמות.
+            תמונת מצב מלאה על ההכנסות שלך, ניתוח מגמות, חיזוי הכנסות, השוואת ביצועים בין נכסים ותובנות AI חכמות.
           </p>
         </div>
 

@@ -171,7 +171,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
                 AI מופעל
               </Badge>
             </div>
-                    <p className="text-gray-500">העוזר האישי שלך לניהול הנכסים — ניתוח נתונים, המלצות והחלטות חכמות בזמן אמת</p>
+                    <p className="text-gray-500">העוזר האישי שלך לניהול הנכסים, ניתוח נתונים, המלצות והחלטות חכמות בזמן אמת</p>
           </div>
         </div>
         

@@ -215,7 +215,6 @@ export default function InvoicesPage({ orgId }) {
           <h1 className="text-2xl font-bold text-gray-900">חשבוניות</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">צור, נהל ושלח חשבוניות ללקוחות. כל החשבוניות מרוכזות כאן עם סטטוס תשלום.</p>
-        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: חשבוניות נוצרות אוטומטית כשהזמנה מאושרת</p>
       </div>
       <motion.div
         initial={{ opacity: 0, y: -20 }}

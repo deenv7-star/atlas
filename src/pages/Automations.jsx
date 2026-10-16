@@ -136,8 +136,7 @@ export default function AutomationsPage({ user, orgId }) {
           </div>
           <h1 className="text-2xl font-bold text-gray-900">אוטומציות</h1>
         </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">הגדר תהליכים אוטומטיים שיחסכו לך זמן — שליחת הודעות, תזכורות, עדכוני סטטוס ועוד.</p>
-        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: התחל עם אוטומציית הודעת ברוכים הבאים לאורחים חדשים</p>
+        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">הגדר תהליכים אוטומטיים שיחסכו לך זמן, שליחת הודעות, תזכורות, עדכוני סטטוס ועוד.</p>
       </div>
       <div className="flex justify-end">
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>

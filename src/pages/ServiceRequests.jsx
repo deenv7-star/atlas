@@ -171,7 +171,6 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
               <h1 className="text-2xl font-bold text-gray-900">בקשות שירות</h1>
             </div>
             <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל בקשות תחזוקה ושירות מאורחים ומנהלי נכסים. עקוב אחר סטטוס הטיפול.</p>
-            <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: בקשות דחופות מסומנות באדום — טפל בהן קודם</p>
           </div>
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
             <h3 className="font-semibold text-[#0F172A] mb-2">קישור לטופס אורחים</h3>
@@ -353,7 +352,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <p className="text-xs text-amber-700">אין נכסים — הוסף נכס בהגדרות.</p>
+                    <p className="text-xs text-amber-700">אין נכסים, הוסף נכס בהגדרות.</p>
                   )}
                 </div>
               </div>

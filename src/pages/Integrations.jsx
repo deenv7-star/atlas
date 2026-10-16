@@ -316,7 +316,7 @@ export default function IntegrationsPage() {
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">מרכז אינטגרציות</h1>
             <p className="text-gray-600 text-sm leading-relaxed mb-3">
-              כאן מחברים את כל הכלים שלך ל-ATLAS — יומנים, תשלומים, הודעות, חשבונאות ומערכות ניהול.
+              כאן מחברים את כל הכלים שלך ל-ATLAS, יומנים, תשלומים, הודעות, חשבונאות ומערכות ניהול.
               <br />ברגע שתחבר כלי, ATLAS ידע לסנכרן הזמנות, לשלוח הודעות ולנהל תשלומים אוטומטית.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -333,7 +333,6 @@ export default function IntegrationsPage() {
                 <Settings2 className="w-3.5 h-3.5 text-orange-500" /> חשבונאות
               </span>
             </div>
-            <p className="text-brand-500 text-xs mt-3">טיפ: התחל מחיבור יומן — זה יאפשר סנכרון אוטומטי של הזמנות מ-Airbnb ו-Booking.com</p>
           </div>
         </div>
       </div>

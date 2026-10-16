@@ -46,7 +46,7 @@ export default function BillingPage({ user }) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        window.alert(data.error || 'לא ניתן לפתוח דף תשלום — בדוק הגדרות Stripe בשרת');
+        window.alert(data.error || 'לא ניתן לפתוח דף תשלום, בדוק הגדרות Stripe בשרת');
       }
     } finally {
       setStripeLoading(false);

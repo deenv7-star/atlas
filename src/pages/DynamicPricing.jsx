@@ -90,10 +90,9 @@ export default function DynamicPricing() {
             <h1 className="text-2xl font-bold text-gray-900">תמחור דינמי</h1>
           </div>
           <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">מקסם את ההכנסות שלך עם תמחור חכם. המערכת ממליצה על מחירים אופטימליים לפי עונה, ביקוש ותחרות.</p>
-          <p className="text-brand-500 text-xs mt-1 sm:mr-12">טיפ: הפעל תמחור אוטומטי כדי למקסם הכנסות בלי מאמץ</p>
         </div>
 
-        <DemoDataBanner message="נתוני דוגמה — המחירים וההמלצות המוצגים הם לצורך המחשה. חבר את הנכסים שלך כדי לראות המלצות אמיתיות." />
+        <DemoDataBanner message="נתוני דוגמה, המחירים וההמלצות המוצגים הם לצורך המחשה. חבר את הנכסים שלך כדי לראות המלצות אמיתיות." />
 
         {/* Revenue Impact Card */}
         <div className="mb-6 rounded-2xl bg-emerald-500 p-6 text-white shadow-lg">

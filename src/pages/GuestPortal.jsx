@@ -19,7 +19,7 @@ const DEFAULT_RECOMMENDATIONS = [
 ];
 
 const DEFAULT_ARRIVAL_INSTRUCTIONS = `הגעה: נכנסים לחניון, עולים לקומה 2.
-המפתחות נמצאים בקופסת מפתחות ליד הדלת — הקוד נשלח בהודעה נפרדת.
+המפתחות נמצאים בקופסת מפתחות ליד הדלת, הקוד נשלח בהודעה נפרדת.
 במקרה חירום: 050-1234567`;
 
 export default function GuestPortal() {
@@ -70,8 +70,7 @@ export default function GuestPortal() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900">פורטל אורחים</h1>
           </div>
-          <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">צור פורטל דיגיטלי ממותג לאורחים שלך. הוראות צ׳ק-אין, חוקי בית, המלצות מקומיות וקוד WiFi — הכל במקום אחד שהאורח מקבל בלינק.</p>
-          <p className="text-brand-500 text-xs mt-1 sm:mr-12">טיפ: שלח את הלינק לאורח יום לפני הגעה — זה חוסך עשרות שאלות</p>
+          <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">צור פורטל דיגיטלי ממותג לאורחים שלך. הוראות כניסה, חוקי בית, המלצות מקומיות וקוד WiFi, הכל במקום אחד שהאורח מקבל בלינק.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -89,9 +88,9 @@ export default function GuestPortal() {
                       <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
                         <div className="flex items-center gap-2 text-gray-600 mb-1">
                           <Clock className="w-4 h-4" />
-                          <span className="font-medium">צ׳ק-אין / צ׳ק-אאוט</span>
+                          <span className="font-medium">כניסה / יציאה</span>
                         </div>
-                        <p className="text-gray-800">{checkIn} — {checkOut}</p>
+                        <p className="text-gray-800">{checkIn} – {checkOut}</p>
                       </div>
                       <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
                         <div className="flex items-center gap-2 text-gray-600 mb-1">
@@ -135,11 +134,11 @@ export default function GuestPortal() {
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-4">
                     <Clock className="w-5 h-5 text-brand-600" />
-                    <h3 className="font-semibold text-gray-900">צ׳ק-אין / צ׳ק-אאוט</h3>
+                    <h3 className="font-semibold text-gray-900">כניסה / יציאה</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="checkIn">צ׳ק-אין</Label>
+                      <Label htmlFor="checkIn">כניסה</Label>
                       <Input
                         id="checkIn"
                         type="time"
@@ -149,7 +148,7 @@ export default function GuestPortal() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="checkOut">צ׳ק-אאוט</Label>
+                      <Label htmlFor="checkOut">יציאה</Label>
                       <Input
                         id="checkOut"
                         type="time"

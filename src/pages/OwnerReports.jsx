@@ -110,7 +110,7 @@ export default function OwnerReports() {
           </div>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">
-          הפק דוחות אוטומטיים לבעלי הנכסים שלך — הכנסות, הוצאות, עמלות וסכום לתשלום. שלח בלחיצה אחת.
+          הפק דוחות אוטומטיים לבעלי הנכסים שלך, הכנסות, הוצאות, עמלות וסכום לתשלום. שלח בלחיצה אחת.
         </p>
       </div>
 
@@ -182,7 +182,7 @@ export default function OwnerReports() {
       <div>
         <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
           <FileBarChart className="w-5 h-5 text-brand-500" />
-          תצוגה מקדימה — דוח חודשי
+          תצוגה מקדימה, דוח חודשי
         </h2>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
 
@@ -190,7 +190,7 @@ export default function OwnerReports() {
           <div className="bg-brand-600 text-white p-6">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-xl font-bold mb-1">דוח חודשי — מרץ 2026</h3>
+                <h3 className="text-xl font-bold mb-1">דוח חודשי, מרץ 2026</h3>
                 <p className="text-brand-200 text-sm">תאריך הפקה: 17 במרץ 2026</p>
               </div>
               <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2">
@@ -319,7 +319,7 @@ export default function OwnerReports() {
       <div>
         <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
           <Calendar className="w-5 h-5 text-brand-500" />
-          היסטוריית תשלומים — {selectedOwner.name}
+          היסטוריית תשלומים, {selectedOwner.name}
         </h2>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>

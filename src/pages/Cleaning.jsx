@@ -221,7 +221,6 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
           <h1 className="text-2xl font-bold text-gray-900">ניקיון</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-12">נהל משימות ניקיון לכל הנכסים. הקצה משימות לצוות, עקוב אחר סטטוס ותזמן ניקיונות.</p>
-        <p className="text-brand-500 text-xs mt-1 mr-12">טיפ: משימות חדשות נוצרות אוטומטית לפי הזמנות צ'ק-אאוט</p>
       </div>
 
       {/* Header */}
@@ -273,7 +272,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
               </div>
               <p className="text-base font-semibold text-gray-700 mb-2">אין משימות ניקיון</p>
               <p className="text-sm text-gray-500 mb-6 max-w-sm mx-auto">
-                צור את משימת הניקיון הראשונה שלך. משימות נוצרות אוטומטית מהזמנות צ'ק-אאוט, או שתוכל ליצור ידנית.
+                צור את משימת הניקיון הראשונה שלך. משימות נוצרות אוטומטית מיציאות של אורחים, או שתוכל ליצור ידנית.
               </p>
               <Button
                 onClick={() => setIsCreateOpen(true)}

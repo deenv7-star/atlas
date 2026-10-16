@@ -209,7 +209,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 <ol>
   <li>השוכר מתחייב לשמור על הנכס בצורה נאותה.</li>
   <li>אסור לעשן בנכס.</li>
-  <li>שעת צ'ק-אין: 15:00, שעת צ'ק-אאוט: 11:00</li>
+  <li>שעת כניסה: 15:00, שעת יציאה: 11:00</li>
 </ol>
 <p style="margin-top: 40px;">חתימת השוכר: _________________</p>
 <p>תאריך: _________________</p>
@@ -225,7 +225,6 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
           <h1 className="text-2xl font-bold text-gray-900">חוזים</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל חוזי שכירות והסכמים עם אורחים. צור חוזים חדשים ועקוב אחר חתימות.</p>
-        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: שלח חוזה לחתימה דיגיטלית ישירות מהמערכת</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>

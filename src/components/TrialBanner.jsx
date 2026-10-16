@@ -12,7 +12,7 @@ export default function TrialBanner() {
     return (
       <div className="bg-red-600 text-white py-2 px-4 text-center text-sm font-semibold" dir="rtl">
         <Link to={createPageUrl('Subscription')} className="underline hover:no-underline">
-          תקופת הניסיון הסתיימה — שדרג עכשיו לגישה מלאה
+          תקופת הניסיון הסתיימה, שדרג עכשיו לגישה מלאה
         </Link>
       </div>
     );

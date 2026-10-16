@@ -33,7 +33,7 @@ const ONBOARDING_STEP_LABELS = [
   'ברוכים הבאים',
   'פרטי מתחם ונכס',
   'בחירת תוכנית',
-  'סיום — כניסה לדשבורד',
+  'סיום, כניסה לדשבורד',
 ];
 
 /* Emil: snappy press feedback, strong ease-out */
@@ -624,7 +624,7 @@ export default function Onboarding() {
               disabled={saving}
               className="w-full mt-3 text-sm font-medium text-zinc-500 hover:text-teal-700 transition-colors duration-200 ease-out py-2 cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-teal-500/25 rounded"
             >
-              יש לי חשבון קיים — מעבר לדאשבורד
+              יש לי חשבון קיים, מעבר לדאשבורד
             </button>
           </div>
         );

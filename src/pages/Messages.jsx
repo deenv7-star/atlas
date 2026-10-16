@@ -143,7 +143,6 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
           <h1 className="text-2xl font-bold text-gray-900">הודעות</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">כל ההודעות לאורחים וללידים במקום אחד. שלח הודעות WhatsApp, מייל או SMS ישירות מכאן.</p>
-        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: תוכל לשלוח הודעות מוכנות מראש כדי לחסוך זמן</p>
       </div>
       <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
       {/* Threads list */}

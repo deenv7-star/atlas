@@ -142,7 +142,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
   const handlePaymentSubmit = async (data) => {
     if (!orgId) {
-      throw new Error('חסר ארגון — השלם הגדרה');
+      throw new Error('חסר ארגון, השלם הגדרה');
     }
     if (editingPayment) {
       await updateMutation.mutateAsync({ id: editingPayment.id, data: paymentFormToPayload(data) });

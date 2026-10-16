@@ -101,7 +101,6 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
           <h1 className="text-2xl font-bold text-gray-900">ביקורות</h1>
         </div>
         <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">צפה בביקורות שהשאירו אורחים, עקוב אחר דירוגים ושפר את חוויית האירוח.</p>
-        <p className="text-brand-500 text-xs mt-1 mr-[3.25rem]">טיפ: מענה מהיר לביקורות משפר את הדירוג שלך</p>
       </div>
 
       {/* Stats */}
