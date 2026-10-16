@@ -63,11 +63,11 @@ function ArrivalCard({ variant, property, booking, unit, action, i }) {
   const nights = booking.nights ? `${booking.nights} לילות` : null;
   if (variant === 'b') {
     return (
-      <Rise i={i} className="v4-lift flex items-center gap-4 rounded-[22px] bg-white p-3 pe-4 shadow-card">
-        <UnitPhoto property={property} className="h-[88px] w-[88px]" rounded="rounded-[18px]" />
+      <Rise i={i} className="v4-lift flex items-center gap-3 rounded-[22px] bg-white p-3 pe-3 shadow-card sm:gap-4 sm:pe-4">
+        <UnitPhoto property={property} className="h-[76px] w-[76px] sm:h-[88px] sm:w-[88px]" rounded="rounded-[18px]" />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <GuestAvatar name={guest} size={28} />
+            <GuestAvatar name={guest} size={28} className="hidden sm:inline-flex" />
             <p className="truncate text-[17px] font-extrabold text-navy-900">{guest}</p>
           </div>
           <p className="mt-1 truncate text-[14px] text-ink-600">{[unit, nights].filter(Boolean).join(' · ')}</p>
