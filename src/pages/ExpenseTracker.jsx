@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { PageHeader, StatTile, fmtMoney } from '@/components/ds';
 import { Card, CardContent } from '@/components/ui/card';
-import DemoDataBanner from '@/components/common/DemoDataBanner';
+import { useExpenses } from '@/hooks/useExpenses';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,17 +22,6 @@ const CATEGORIES = [
   { value: 'אחר', label: 'אחר', color: 'bg-neutral-100 text-ink-600', barColor: 'bg-gray-500' },
 ];
 
-const DEMO_PROPERTIES = ['דירה תל אביב', 'וילה צפון', 'סטודיו אילת', 'דירת גן הרצליה'];
-
-const DEMO_EXPENSES = [
-  { id: 1, date: '2025-03-15', property: 'דירה תל אביב', category: 'ניקיון', amount: 450, description: 'ניקיון מעבר אורחים' },
-  { id: 2, date: '2025-03-12', property: 'וילה צפון', category: 'תחזוקה', amount: 1200, description: 'תיקון מזגן' },
-  { id: 3, date: '2025-03-10', property: 'דירה תל אביב', category: 'ארנונה', amount: 850, description: 'תשלום ארנונה חודשי' },
-  { id: 4, date: '2025-03-08', property: 'סטודיו אילת', category: 'חשמל', amount: 320, description: 'חשבון חשמל' },
-  { id: 5, date: '2025-03-05', property: 'וילה צפון', category: 'ציוד', amount: 680, description: 'מצעים וכלי מיטה' },
-  { id: 6, date: '2025-03-02', property: 'דירת גן הרצליה', category: 'מים', amount: 95, description: 'חשבון מים' },
-];
-
 function formatDate(dateStr) {
   const d = new Date(dateStr);
   return d.toLocaleDateString('he-IL', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -41,8 +31,8 @@ function getCategoryColor(category) {
   return CATEGORIES.find(c => c.value === category)?.color || 'bg-neutral-100 text-ink-600';
 }
 
-export default function ExpenseTracker() {
-  const [expenses, setExpenses] = useState(DEMO_EXPENSES);
+export default function ExpenseTracker({ orgId }) {
+  const { expenses, propertyNames, addExpense } = useExpenses({ orgId });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({
     property: '',
@@ -72,15 +62,14 @@ export default function ExpenseTracker() {
 
   const handleAddExpense = () => {
     if (!form.property || !form.category || !form.amount) return;
-    const newExpense = {
-      id: Date.now(),
+    addExpense({
       date: form.date,
-      property: form.property,
+      propertyName: form.property,
       category: form.category,
       amount: parseFloat(form.amount) || 0,
       description: form.description || '',
-    };
-    setExpenses(prev => [newExpense, ...prev]);
+    }).then(() => atlasToastApi.success('ההוצאה נשמרה'))
+      .catch(() => atlasToastApi.error('ההוצאה לא נשמרה'));
     setForm({ property: '', category: '', amount: '', date: new Date().toISOString().slice(0, 10), description: '' });
     setDialogOpen(false);
   };
@@ -94,8 +83,6 @@ export default function ExpenseTracker() {
         className="!mb-0"
         actions={<Button onClick={() => setDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />הוצאה חדשה</Button>}
       />
-
-      <DemoDataBanner message="נתוני דוגמה, ההוצאות המוצגות הן לצורך המחשה. הוסיפו הוצאות אמיתיות כדי לראות את הרווח הנקי." />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} tone="danger" />
@@ -203,7 +190,7 @@ export default function ExpenseTracker() {
                   <SelectValue placeholder="בחר נכס" />
                 </SelectTrigger>
                 <SelectContent>
-                  {DEMO_PROPERTIES.map(p => (
+                  {propertyNames.map(p => (
                     <SelectItem key={p} value={p}>{p}</SelectItem>
                   ))}
                 </SelectContent>

@@ -7,6 +7,7 @@ import {
   Sun, CalendarRange, CalendarDays, Users, MessageSquare, Star, Sparkles as SparklesIcon,
   Brush, Headset, FileSignature, Zap, Wallet, FileText, TrendingDown, BarChart3,
   FileBarChart, Tags, Link2, Route, Globe, CreditCard, Receipt, Settings, Shield,
+  LayoutGrid, Scale, FileSpreadsheet,
 } from 'lucide-react';
 
 export const NAV_GROUPS = [
@@ -14,7 +15,8 @@ export const NAV_GROUPS = [
     id: 'daily',
     label: null,
     items: [
-      { page: 'Dashboard', label: 'היום', icon: Sun },
+      { page: 'Today', label: 'היום', icon: Sun },
+      { page: 'Dashboard', label: 'סקירה', icon: LayoutGrid },
       { page: 'MultiCalendar', label: 'לוח שנה', icon: CalendarRange },
       { page: 'Bookings', label: 'הזמנות', icon: CalendarDays },
       { page: 'Leads', label: 'לידים', icon: Users },
@@ -37,6 +39,8 @@ export const NAV_GROUPS = [
     label: 'כספים',
     items: [
       { page: 'Payments', label: 'תשלומים', icon: Wallet },
+      { page: 'Balances', label: 'מקדמות ויתרות', icon: Scale },
+      { page: 'MonthlyReport', label: 'דוח חודשי', icon: FileSpreadsheet },
       { page: 'Invoices', label: 'חשבוניות', icon: FileText },
       { page: 'ExpenseTracker', label: 'הוצאות', icon: TrendingDown },
       { page: 'RevenueIntelligence', label: 'הכנסות', icon: BarChart3 },
@@ -49,7 +53,7 @@ export const NAV_GROUPS = [
     label: 'חוויית אורח',
     items: [
       { page: 'GuestJourney', label: 'מסע אורח', icon: Route },
-      { page: 'GuestPortal', label: 'פורטל אורחים', icon: Globe },
+      { page: 'GuestPortal', label: 'דף אורח והזמנה ישירה', icon: Globe },
       { page: 'AIAssistant', label: 'עוזר AI', icon: SparklesIcon },
     ],
   },

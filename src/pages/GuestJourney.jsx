@@ -58,7 +58,7 @@ const INITIAL_STAGES = [
     name: 'לפני הגעה',
     subtitle: 'Pre-Arrival',
     trigger: 'יום לפני הכניסה',
-    action: 'שלח לינק לפורטל אורחים + הוראות הגעה + קוד WiFi',
+    action: 'שליחת דף האורח + הוראות הגעה + קוד WiFi',
     timing: '24 שעות לפני',
     channel: 'whatsapp',
     active: true,

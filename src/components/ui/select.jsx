@@ -49,6 +49,10 @@ const SelectScrollDownButton = React.forwardRef(({ className, ...props }, ref) =
 SelectScrollDownButton.displayName =
   SelectPrimitive.ScrollDownButton.displayName
 
+// The old mobile branch rendered SelectItems inside a vaul Drawer, outside Radix's
+// SelectContent context, and opened whenever ANY element had data-state="open"
+// (e.g. a dialog). On phones that threw "SelectItem must be used within SelectContent"
+// and took down the whole app. Radix's own content works on touch, so use it everywhere.
 const SelectContent = React.forwardRef(({ className, children, position = "popper", ...props }, ref) => {
   return (
     <SelectPrimitive.Portal>
