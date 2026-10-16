@@ -552,3 +552,6 @@
   .lp-h1 { font-size: clamp(40px, 3.6vw, 50px); }
   .lp-h1-line { white-space: nowrap; }
 }
+
+/* Text links that stand alone in a line still get a 44px hit area. */
+.lp .lp-sub a, .lp .lpb-trust-title a, .lp .lp-faq-a a, .lp-cookie p a { display: inline-block; padding-block: 12px; margin-block: -12px; }

@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowLeft, Check, ChevronDown, CalendarX, MessagesSquare, Wallet, CalendarRange, Users,
-  MessageCircle, SprayCan, FileBarChart, Receipt, FileSignature, Star, Zap, Globe,
-  Lock, UserCog, Download, Headset, CircleCheck,
+  ArrowLeft, Check, ChevronDown, CalendarX, MessagesSquare, Wallet, SprayCan,
+  MessageCircle, Users, FileBarChart, Receipt, FileSignature, Star, Zap, Globe,
+  Lock, UserCog, Download, Headset, CircleCheck, X,
 } from 'lucide-react';
 import CookieConsent from '@/components/landing/CookieConsent';
 import { HeroMock, SHOWCASE_MOCKS } from '@/components/landing/ProductMockups';
 import { PRICING_PLANS } from '@/config/pricing';
 import '@/components/landing/landing.css';
+import '@/components/landing/landing-b.css';
 
 const WHATSAPP_URL = 'https://wa.me/972545380085';
 const SUPPORT_EMAIL = 'support@atlas-app.co.il';
@@ -22,127 +23,79 @@ const FEATURE_HE = {
 };
 const planFeature = (f) => FEATURE_HE[f] || f;
 
-const PAINS = [
-  {
-    icon: CalendarX,
-    title: 'הזמנה כפולה',
-    text: 'אותו לילה נמכר ב-Booking וגם ב-Airbnb, ועכשיו צריך להתקשר לאורח ולהתנצל.',
-  },
-  {
-    icon: MessagesSquare,
-    title: 'וואטסאפ, אקסל ופתקים',
-    text: 'פרטי האורח בצ׳אט אחד, המקדמה בגיליון, והמנקה יודעת רק אם זכרתם לכתוב לה.',
-  },
-  {
-    icon: Wallet,
-    title: 'רודפים אחרי כסף',
-    text: 'מי שילם מקדמה? מי עוד חייב יתרה? כל חודש מחשבים הכל מחדש בראש.',
-  },
-];
-
-const SHOWCASE = [
+/* Each story = one pain the owner knows, and how ATLAS removes it. */
+const STORIES = [
   {
     key: 'calendar',
-    icon: CalendarRange,
-    tab: 'יומן מסונכרן',
-    pain: 'בלי הזמנות כפולות',
-    title: 'כל ההזמנות, מכל הערוצים, ביומן אחד',
+    before: 'אותו לילה נמכר ב-Booking וגם ב-Airbnb',
+    beforeIcon: CalendarX,
+    title: 'יומן אחד לכל הערוצים',
     text: 'מחברים את Booking.com ו-Airbnb בקישור iCal, וכל הזמנה נכנסת ללוח שנה אחד. רואים כל יחידה וכל לילה בלי לקפוץ בין אתרים.',
-    points: ['סנכרון iCal עם Booking.com ו-Airbnb', 'תצוגה לפי יחידה, שבוע או חודש', 'הזמנות ישירות נכנסות לאותו יומן'],
-  },
-  {
-    key: 'leads',
-    icon: Users,
-    tab: 'הזמנות ולידים',
-    pain: 'בלי פניות שהולכות לאיבוד',
-    title: 'כל פנייה במקום אחד, עד שהיא הופכת להזמנה',
-    text: 'כל מי שפנה מקבל כרטיס עם הפרטים, התאריכים והשלב שלו. רואים מה פתוח, ממי מחכים לתשובה, ומה כבר נסגר.',
-    points: ['כרטיס לכל אורח עם כל ההיסטוריה', 'שלב לכל פנייה: חדשה, הצעת מחיר, מקדמה', 'הופכים ליד להזמנה בלחיצה'],
+    points: ['סנכרון iCal עם Booking.com ו-Airbnb', 'הזמנות ישירות באותו יומן'],
   },
   {
     key: 'messages',
-    icon: MessageCircle,
-    tab: 'הודעות לאורחים',
-    pain: 'בלי להקליד אותה הודעה עשר פעמים',
-    title: 'האורח מקבל את המידע בזמן, בלי שתזכרו לשלוח',
-    text: 'אישור הזמנה, הוראות הגעה ובקשה לביקורת יוצאים לבד ב-WhatsApp או ב-SMS, בנוסח שלכם ובתזמון שבחרתם.',
-    points: ['תבניות הודעה בעברית', 'תזמון לפי ההזמנה: לפני הגעה, אחרי עזיבה', 'כל ההודעות של האורח בשרשור אחד'],
+    before: 'מקלידים את אותה הודעה לכל אורח',
+    beforeIcon: MessagesSquare,
+    title: 'הודעות שיוצאות לבד',
+    text: 'אישור הזמנה, הוראות הגעה ובקשה לביקורת יוצאים ב-WhatsApp או ב-SMS, בנוסח שלכם ובתזמון שבחרתם.',
+    points: ['תבניות הודעה בעברית', 'תזמון לפי ההזמנה'],
     note: 'השליחה האוטומטית פועלת אחרי חיבור חשבון WhatsApp Business או ספק SMS.',
   },
   {
     key: 'payments',
-    icon: Wallet,
-    tab: 'תשלומים והכנסות',
-    pain: 'בלי לרדוף אחרי מקדמות',
-    title: 'יודעים בדיוק מי שילם, מי חייב, וכמה נשאר בקופה',
+    before: 'מי שילם מקדמה? מי עוד חייב?',
+    beforeIcon: Wallet,
+    title: 'כל שקל במקום שלו',
     text: 'מקדמות, יתרות והוצאות במסך אחד. הכנסות מול הוצאות של החודש מחכות לכם בלי אקסל.',
-    points: ['סטטוס תשלום לכל הזמנה', 'מעקב הוצאות לפי קטגוריה', 'חשבוניות ודוח חודשי'],
+    points: ['סטטוס תשלום לכל הזמנה', 'מעקב הוצאות ודוח חודשי'],
   },
   {
     key: 'cleaning',
-    icon: SprayCan,
-    tab: 'ניקיון',
-    pain: 'בלי טלפונים למנקה',
+    before: 'המנקה לא ידעה שיש עזיבה',
+    beforeIcon: SprayCan,
     title: 'הצוות יודע מה לנקות ומתי',
-    text: 'רשימת ניקיונות לכל יום, לפי עזיבות. כל משימה משויכת לאיש צוות עם שעה וצ׳קליסט, ואתם רואים מה כבר מוכן.',
-    points: ['משימה לכל יחידה, עם שעה', 'שיוך לאיש צוות', 'צ׳קליסט וסימון ״בוצע״'],
+    text: 'רשימת ניקיונות לכל יום לפי עזיבות. כל משימה משויכת לאיש צוות, עם שעה וצ׳קליסט.',
+    points: ['שיוך לאיש צוות', 'צ׳קליסט וסימון ״בוצע״'],
   },
 ];
 
-const MODULES = [
-  { icon: FileBarChart, title: 'דוחות', text: 'הכנסות, תפוסה ודוח לבעלי נכסים.' },
-  { icon: Receipt, title: 'חשבוניות', text: 'מפיקים חשבונית להזמנה ושולחים לאורח.' },
-  { icon: FileSignature, title: 'חוזים דיגיטליים', text: 'שולחים חוזה לחתימה ועוקבים אחרי הסטטוס.' },
-  { icon: Star, title: 'ביקורות', text: 'בקשת ביקורת אחרי העזיבה, ומעקב במקום אחד.' },
-  { icon: Zap, title: 'אוטומציות', text: 'כללים פשוטים: כשקורה X, ATLAS עושה Y.' },
-  { icon: Globe, title: 'פורטל אורחים', text: 'עמוד לאורח עם כל המידע לפני ההגעה.' },
+const ALSO = [
+  { icon: Users, title: 'לידים ופניות' },
+  { icon: FileBarChart, title: 'דוחות ודוח בעלים' },
+  { icon: Receipt, title: 'חשבוניות' },
+  { icon: FileSignature, title: 'חוזים דיגיטליים' },
+  { icon: Star, title: 'בקשות לביקורת' },
+  { icon: Zap, title: 'אוטומציות' },
+  { icon: Globe, title: 'פורטל אורחים' },
 ];
 
 const STEPS = [
-  { title: 'נרשמים', text: 'אימייל וסיסמה. 14 יום עם כל המערכת, בלי כרטיס אשראי.' },
-  { title: 'מוסיפים יחידות ומחברים יומנים', text: 'מגדירים את הצימרים ומדביקים את קישורי היומן מ-Booking.com ומ-Airbnb.' },
-  { title: 'מנהלים הכל ממקום אחד', text: 'הזמנות, הודעות, תשלומים וניקיון. מהמחשב או מהנייד.' },
+  { title: 'נרשמים', text: 'אימייל וסיסמה. בלי כרטיס אשראי.' },
+  { title: 'מחברים יומנים', text: 'מדביקים את קישורי היומן מ-Booking.com ומ-Airbnb.' },
+  { title: 'מנהלים ממקום אחד', text: 'הזמנות, הודעות, תשלומים וניקיון. מהמחשב או מהנייד.' },
 ];
 
 const TRUST = [
-  { icon: Lock, title: 'חיבור מוצפן', text: 'כל המידע עובר בין הדפדפן לשרת בחיבור HTTPS מוצפן.' },
-  { icon: UserCog, title: 'הרשאות לצוות', text: 'מנהלים ועובדים נכנסים כל אחד עם הרשאות משלו.' },
-  { icon: Download, title: 'הנתונים שלכם', text: 'מייצאים את ההזמנות לקובץ CSV בכל רגע.' },
-  { icon: Headset, title: 'תמיכה אנושית בעברית', text: 'אנשים אמיתיים עונים בוואטסאפ ובמייל.' },
+  { icon: Lock, title: 'חיבור מוצפן', text: 'כל המידע עובר בחיבור HTTPS מוצפן.' },
+  { icon: UserCog, title: 'הרשאות לצוות', text: 'מנהלים ועובדים, כל אחד עם הרשאות משלו.' },
+  { icon: Download, title: 'הנתונים שלכם', text: 'מייצאים את ההזמנות ל-CSV בכל רגע.' },
+  { icon: Headset, title: 'תמיכה אנושית', text: 'אנשים עונים בעברית, בוואטסאפ ובמייל.' },
 ];
 
 const FAQ = [
-  {
-    q: 'צריך כרטיס אשראי כדי להתחיל?',
-    a: 'לא. נרשמים, מקבלים 14 יום עם כל המערכת, ומחליטים אחר כך אם להמשיך.',
-  },
-  {
-    q: 'מה קורה בסוף 14 הימים?',
-    a: 'בוחרים מסלול שמתאים למספר היחידות שלכם. אם לא בוחרים מסלול, לא מחויבים.',
-  },
-  {
-    q: 'איך ATLAS מתחברת ל-Booking.com ול-Airbnb?',
-    a: 'דרך קישור iCal שכל ערוץ נותן. מדביקים אותו פעם אחת, וההזמנות מהערוץ נכנסות ללוח השנה של ATLAS ומתעדכנות לבד.',
-  },
-  {
-    q: 'צריך להתקין משהו?',
-    a: 'לא. ATLAS עובדת בדפדפן, במחשב ובנייד. נכנסים עם אימייל וסיסמה.',
-  },
-  {
-    q: 'אפשר לבטל?',
-    a: 'כן, בכל עת וללא התחייבות.',
-  },
-  {
-    q: 'ומה אם נתקעים?',
-    a: 'כותבים לנו בוואטסאפ או במייל, ומקבלים תשובה בעברית מאדם, לא מבוט.',
-    contact: true,
-  },
+  { q: 'צריך כרטיס אשראי כדי להתחיל?', a: 'לא. נרשמים, מקבלים 14 יום עם כל המערכת, ומחליטים אחר כך אם להמשיך.' },
+  { q: 'מה קורה בסוף 14 הימים?', a: 'בוחרים מסלול שמתאים למספר היחידות שלכם. אם לא בוחרים מסלול, לא מחויבים.' },
+  { q: 'איך ATLAS מתחברת ל-Booking.com ול-Airbnb?', a: 'דרך קישור iCal שכל ערוץ נותן. מדביקים אותו פעם אחת, וההזמנות מהערוץ נכנסות ללוח השנה של ATLAS ומתעדכנות לבד.' },
+  { q: 'צריך להתקין משהו?', a: 'לא. ATLAS עובדת בדפדפן, במחשב ובנייד. נכנסים עם אימייל וסיסמה.' },
+  { q: 'אפשר לבטל?', a: 'כן, בכל עת וללא התחייבות.' },
+  { q: 'ומה אם נתקעים?', a: 'כותבים לנו בוואטסאפ או במייל, ומקבלים תשובה בעברית מאדם, לא מבוט.', contact: true },
 ];
 
-function CtaButton({ className = '', children = CTA_LABEL }) {
+function CtaButton({ className = '' }) {
   return (
     <Link to="/register" className={`lp-btn lp-btn-primary ${className}`}>
-      {children}
+      {CTA_LABEL}
       <ArrowLeft size={18} className="lp-arrow" aria-hidden="true" />
     </Link>
   );
@@ -176,7 +129,7 @@ function Header() {
             <img src="/atlas-logo-final.png" width={546} height={183} alt="ATLAS" decoding="async" />
           </Link>
           <nav className="lp-nav" aria-label="ניווט ראשי">
-            <a href="#features">מה יש בפנים</a>
+            <a href="#features">איך זה עוזר</a>
             <a href="#how">איך מתחילים</a>
             <a href="#pricing">מחירים</a>
             <a href="#faq">שאלות</a>
@@ -195,161 +148,93 @@ function Header() {
   );
 }
 
+function TodayCard() {
+  const rows = [
+    { t: 'אישור הזמנה', g: 'יעל ונדב', time: '09:12' },
+    { t: 'הוראות הגעה', g: 'משפחת מזרחי', time: '12:00' },
+    { t: 'בקשה לביקורת', g: 'אורי דהן', time: '13:30' },
+  ];
+  return (
+    <div className="lp-window lpb-side" aria-hidden="true">
+      <div className="lp-win-bar">
+        <span className="lp-win-title"><MessageCircle size={16} />נשלח היום</span>
+        <span className="lp-chip lp-chip-ok">אוטומטי</span>
+      </div>
+      <div className="lp-list">
+        {rows.map((r) => (
+          <div key={r.t} className="lp-row">
+            <span className="lp-av lp-av-direct"><Check size={15} strokeWidth={2.5} /></span>
+            <div className="lp-row-main"><b>{r.t}</b><span>{r.g}</span></div>
+            <span className="lp-row-time num">{r.time}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Hero() {
   return (
-    <section className="lp-hero" aria-labelledby="hero-title">
-      <div className="lp-wrap lp-hero-grid">
-        <div>
-          <span className="lp-eyebrow lp-rise">מערכת ניהול לצימרים ולמתחמי נופש</span>
-          <h1 id="hero-title" className="lp-h1 lp-rise lp-rise-2">
-            <span className="lp-h1-line">אתם מארחים.</span>{' '}
-            <span className="lp-h1-line"><em>ATLAS</em> מנהלת את השאר.</span>
-          </h1>
-          <p className="lp-lead lp-rise lp-rise-3">
-            יומן אחד שמסונכרן עם Booking.com ו-Airbnb, הודעות אוטומטיות לאורחים, תשלומים וניקיון. במקום אקסל וקבוצות וואטסאפ.
-          </p>
-          <div className="lp-rise lp-rise-4">
-            <div className="lp-hero-ctas">
-              <CtaButton />
-              <a href="#features" className="lp-btn lp-btn-ghost">איך זה עובד</a>
-            </div>
-            <FinePrint />
-          </div>
-        </div>
-        <div className="lp-hero-visual lp-rise lp-rise-3">
-          <HeroMock />
-          <div className="lp-toast" aria-hidden="true">
-            <span className="lp-toast-ic"><MessageCircle size={18} /></span>
-            <div>
-              <b>הוראות הגעה נשלחו למשפחת מזרחי</b>
-              <span>WhatsApp, אוטומטית, יום לפני ההגעה</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Pain() {
-  return (
-    <section className="lp-section" aria-labelledby="pain-title" style={{ paddingTop: 40 }}>
-      <div className="lp-wrap">
-        <div className="lp-head">
-          <h2 id="pain-title" className="lp-h2">נשמע מוכר?</h2>
-          <p className="lp-sub">ככה נראה ניהול מתחם כשהכל מפוזר בין אתרים, צ׳אטים וגיליונות.</p>
-        </div>
-        <div className="lp-pain">
-          {PAINS.map((p) => (
-            <div key={p.title} className="lp-pain-item">
-              <span className="lp-pain-ic"><p.icon size={20} aria-hidden="true" /></span>
-              <div>
-                <h3>{p.title}</h3>
-                <p>{p.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <p className="lp-promise">
-          <Check size={22} aria-hidden="true" />
-          ATLAS מחליפה את כל זה במסך אחד.
+    <section className="lpb-hero" aria-labelledby="hero-title">
+      <div className="lp-wrap lpb-hero-text">
+        <span className="lp-eyebrow lp-rise">מערכת ניהול לצימרים ולמתחמי נופש</span>
+        <h1 id="hero-title" className="lp-h1 lpb-h1 lp-rise lp-rise-2">
+          <span className="lp-h1-line">אתם מארחים.</span>{' '}
+          <span className="lp-h1-line"><em>ATLAS</em> מנהלת את השאר.</span>
+        </h1>
+        <p className="lp-lead lp-rise lp-rise-3">
+          הזמנות מכל הערוצים, הודעות לאורחים, תשלומים וניקיון. הכל במקום אחד, בעברית, במקום אקסל וקבוצות וואטסאפ.
         </p>
+        <div className="lp-rise lp-rise-4">
+          <div className="lp-hero-ctas">
+            <CtaButton />
+            <a href="#features" className="lp-btn lp-btn-ghost">איך זה עוזר</a>
+          </div>
+          <FinePrint />
+        </div>
+      </div>
+      <div className="lp-wrap lpb-stage lp-rise lp-rise-4">
+        <div className="lpb-stage-main"><HeroMock /></div>
+        <TodayCard />
       </div>
     </section>
   );
 }
 
-function Showcase() {
-  const [active, setActive] = useState(0);
-  const tabRefs = useRef([]);
-  const item = SHOWCASE[active];
-  const Mock = SHOWCASE_MOCKS[item.key];
-
-  const onKeyDown = (e) => {
-    // RTL: ArrowLeft moves forward.
-    let next = null;
-    if (e.key === 'ArrowLeft') next = (active + 1) % SHOWCASE.length;
-    if (e.key === 'ArrowRight') next = (active - 1 + SHOWCASE.length) % SHOWCASE.length;
-    if (e.key === 'Home') next = 0;
-    if (e.key === 'End') next = SHOWCASE.length - 1;
-    if (next === null) return;
-    e.preventDefault();
-    setActive(next);
-    tabRefs.current[next]?.focus();
-  };
-
-  const select = (i) => {
-    setActive(i);
-    tabRefs.current[i]?.scrollIntoView?.({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-  };
-
+function Stories() {
   return (
-    <section id="features" className="lp-section" aria-labelledby="features-title" style={{ background: 'var(--lp-surface)' }}>
+    <section id="features" className="lp-section lpb-stories" aria-labelledby="features-title">
       <div className="lp-wrap">
         <div className="lp-head lp-head-center">
-          <h2 id="features-title" className="lp-h2">כל מה שהמתחם צריך. במקום אחד.</h2>
-          <p className="lp-sub">בחרו נושא וראו איך זה נראה בתוך ATLAS.</p>
+          <h2 id="features-title" className="lp-h2">ככה נראה היום שלכם עם ATLAS</h2>
+          <p className="lp-sub">ארבעה דברים שגוזלים זמן לכל מארח, ואיך הם נפתרים.</p>
         </div>
-        <div className="lp-tabs" role="tablist" aria-label="יכולות ATLAS">
-          {SHOWCASE.map((s, i) => (
-            <button
-              key={s.key}
-              ref={(el) => { tabRefs.current[i] = el; }}
-              type="button"
-              role="tab"
-              id={`tab-${s.key}`}
-              aria-selected={i === active}
-              aria-controls={`panel-${s.key}`}
-              tabIndex={i === active ? 0 : -1}
-              className="lp-tab"
-              onClick={() => select(i)}
-              onKeyDown={onKeyDown}
-            >
-              <s.icon size={17} aria-hidden="true" />
-              {s.tab}
-            </button>
-          ))}
+        <div className="lpb-bento">
+          {STORIES.map((s) => {
+            const Mock = SHOWCASE_MOCKS[s.key];
+            return (
+              <article key={s.key} className="lpb-story">
+                <div className="lpb-story-text">
+                  <p className="lpb-before"><X size={14} strokeWidth={2.5} aria-hidden="true" /><span>{s.before}</span></p>
+                  <h3>{s.title}</h3>
+                  <p className="lpb-story-p">{s.text}</p>
+                  <ul className="lp-checks">
+                    {s.points.map((p) => <li key={p}><Check size={17} aria-hidden="true" />{p}</li>)}
+                  </ul>
+                  {s.note && <p className="lp-note">{s.note}</p>}
+                </div>
+                <div className="lpb-story-mock"><Mock /></div>
+              </article>
+            );
+          })}
         </div>
-        <div
-          key={item.key}
-          id={`panel-${item.key}`}
-          role="tabpanel"
-          aria-labelledby={`tab-${item.key}`}
-          className="lp-panel lp-panel-anim"
-        >
-          <div>
-            <span className="lp-panel-pain"><Check size={15} aria-hidden="true" />{item.pain}</span>
-            <h3>{item.title}</h3>
-            <p className="lp-panel-text">{item.text}</p>
-            <ul className="lp-checks">
-              {item.points.map((p) => (
-                <li key={p}><Check size={18} aria-hidden="true" />{p}</li>
-              ))}
-            </ul>
-            {item.note && <p className="lp-note">{item.note}</p>}
-          </div>
-          <Mock />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Modules() {
-  return (
-    <section className="lp-section" aria-labelledby="modules-title">
-      <div className="lp-wrap">
-        <div className="lp-head">
-          <h2 id="modules-title" className="lp-h2">ועוד כמה דברים שכבר בפנים</h2>
-        </div>
-        <div className="lp-mods">
-          {MODULES.map((m) => (
-            <div key={m.title} className="lp-mod">
-              <span className="lp-mod-ic"><m.icon size={19} aria-hidden="true" /></span>
-              <h3>{m.title}</h3>
-              <p>{m.text}</p>
-            </div>
-          ))}
+        <div className="lpb-also" aria-labelledby="also-title">
+          <h3 id="also-title">וגם, בלי תוספים:</h3>
+          <ul>
+            {ALSO.map((a) => (
+              <li key={a.title}><a.icon size={16} aria-hidden="true" />{a.title}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
@@ -358,23 +243,22 @@ function Modules() {
 
 function Steps() {
   return (
-    <section id="how" className="lp-section" aria-labelledby="how-title" style={{ paddingTop: 0 }}>
+    <section id="how" className="lp-section lpb-steps-sec" aria-labelledby="how-title">
       <div className="lp-wrap">
-        <div className="lp-head">
-          <h2 id="how-title" className="lp-h2">שלושה צעדים ואתם בפנים</h2>
+        <div className="lp-head lp-head-center">
+          <h2 id="how-title" className="lp-h2">מתחילים בשלושה צעדים</h2>
           <p className="lp-sub">לא צריך הדרכה ולא צריך טכנאי.</p>
         </div>
-        <ol className="lp-steps">
+        <ol className="lpb-steps">
           {STEPS.map((s, i) => (
-            <li key={s.title} className="lp-step">
-              <span className="lp-step-n num" aria-hidden="true">{i + 1}</span>
-              <div>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
-              </div>
+            <li key={s.title}>
+              <span className="lpb-step-n num" aria-hidden="true">{i + 1}</span>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
             </li>
           ))}
         </ol>
+        <div className="lp-steps-cta"><CtaButton /></div>
       </div>
     </section>
   );
@@ -383,7 +267,7 @@ function Steps() {
 function Pricing() {
   const [yearly, setYearly] = useState(false);
   return (
-    <section id="pricing" className="lp-section" aria-labelledby="pricing-title" style={{ background: 'var(--lp-surface)' }}>
+    <section id="pricing" className="lp-section" aria-labelledby="pricing-title">
       <div className="lp-wrap">
         <div className="lp-head lp-head-center">
           <h2 id="pricing-title" className="lp-h2">מחיר לפי גודל המתחם</h2>
@@ -395,7 +279,7 @@ function Pricing() {
             </button>
           </div>
         </div>
-        <div className="lp-plans">
+        <div className="lp-plans lpb-plans">
           {PRICING_PLANS.map((p) => {
             const price = yearly ? p.priceYearly : p.price;
             const isBusiness = p.key === 'business';
@@ -433,27 +317,20 @@ function Pricing() {
 
 function Trust() {
   return (
-    <section className="lp-section" aria-labelledby="trust-title">
+    <section className="lpb-trust" aria-labelledby="trust-title">
       <div className="lp-wrap">
-        <div className="lp-trust">
-          <div>
-            <h2 id="trust-title" className="lp-h2" style={{ fontSize: 'clamp(26px, 5.6vw, 34px)' }}>המידע של האורחים שלכם, בידיים שלכם</h2>
-            <p className="lp-sub" style={{ fontSize: 16 }}>
-              פרטים נוספים בעמוד <Link to="/data-security" style={{ color: 'var(--lp-teal-ink)', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 3 }}>אבטחת מידע</Link>.
-            </p>
-          </div>
-          <div className="lp-trust-items">
-            {TRUST.map((t) => (
-              <div key={t.title} className="lp-trust-item">
-                <span className="lp-mod-ic"><t.icon size={19} aria-hidden="true" /></span>
-                <div>
-                  <h3>{t.title}</h3>
-                  <p>{t.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <h2 id="trust-title" className="lpb-trust-title">
+          המידע של האורחים שלכם, בידיים שלכם.{' '}
+          <Link to="/data-security">עוד על אבטחת מידע</Link>
+        </h2>
+        <ul className="lpb-trust-list">
+          {TRUST.map((t) => (
+            <li key={t.title}>
+              <span className="lp-mod-ic"><t.icon size={18} aria-hidden="true" /></span>
+              <div><b>{t.title}</b><span>{t.text}</span></div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -461,10 +338,11 @@ function Trust() {
 
 function Faq() {
   return (
-    <section id="faq" className="lp-section" aria-labelledby="faq-title" style={{ paddingTop: 0 }}>
-      <div className="lp-wrap">
-        <div className="lp-head lp-head-center">
+    <section id="faq" className="lp-section" aria-labelledby="faq-title">
+      <div className="lp-wrap lpb-faq-wrap">
+        <div>
           <h2 id="faq-title" className="lp-h2">שאלות לפני שמתחילים</h2>
+          <p className="lp-sub">לא מצאתם תשובה? <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="lpb-inline">כתבו לנו בוואטסאפ</a></p>
         </div>
         <div className="lp-faq">
           {FAQ.map((f) => (
@@ -478,8 +356,6 @@ function Faq() {
                 {f.contact && (
                   <>
                     {' '}
-                    <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">לוואטסאפ</a>
-                    {' או '}
                     <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
                   </>
                 )}
@@ -494,16 +370,12 @@ function Faq() {
 
 function FinalCta() {
   return (
-    <section className="lp-section" aria-labelledby="final-title" style={{ paddingTop: 0, paddingBottom: 0 }}>
+    <section className="lpb-final" aria-labelledby="final-title">
       <div className="lp-wrap">
-        <div className="lp-final">
-          <h2 id="final-title" className="lp-h2">ההזמנה הבאה שלכם כבר יכולה להיכנס ל-ATLAS</h2>
-          <p>נרשמים עכשיו, מחברים את היומנים, ומרגישים את ההבדל כבר השבוע.</p>
-          <div className="lp-hero-ctas">
-            <CtaButton />
-          </div>
-          <FinePrint />
-        </div>
+        <h2 id="final-title" className="lpb-final-h">ההזמנה הבאה שלכם כבר יכולה להיכנס ל-ATLAS.</h2>
+        <p>נרשמים עכשיו, מחברים את היומנים, ומרגישים את ההבדל כבר השבוע.</p>
+        <div className="lp-hero-ctas"><CtaButton /></div>
+        <FinePrint />
       </div>
     </section>
   );
@@ -539,14 +411,12 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="lp" dir="rtl" lang="he">
+    <div className="lp lp-b" dir="rtl" lang="he">
       <a href="#main" className="lp-skip">דלגו לתוכן</a>
       <Header />
       <main id="main">
         <Hero />
-        <Pain />
-        <Showcase />
-        <Modules />
+        <Stories />
         <Steps />
         <Pricing />
         <Trust />
