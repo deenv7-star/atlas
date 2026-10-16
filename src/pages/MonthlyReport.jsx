@@ -1,4 +1,5 @@
 /** Monthly report for the accountant: income by channel, expenses, net, occupancy, ADR. CSV + print/PDF. */
+import FinanceTabs from '@/components/app/FinanceTabs';
 import React, { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Download, Printer } from 'lucide-react';
@@ -43,6 +44,7 @@ export default function MonthlyReportPage({ user }) {
 
   return (
     <StayPage wide>
+      <FinanceTabs />
       <PageHeader
         eyebrow="דוח לרואה החשבון"
         title={report.label}

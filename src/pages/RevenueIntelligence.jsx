@@ -124,7 +124,7 @@ export default function RevenueIntelligence() {
 
   return (
     <div dir="rtl">
-      <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7">
+      <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10">
 
         {/* ── Header ──────────────────────────────────────── */}
         <PageHeader title="הכנסות" subtitle="מגמות, תחזית והשוואה בין הנכסים." className="!mb-0" />

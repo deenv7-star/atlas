@@ -213,7 +213,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader
         title="ניקיון"
         subtitle="משימות ניקיון לכל יחידה. הצוות רואה רק את המשימות שלו."

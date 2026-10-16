@@ -1,4 +1,5 @@
 /** Deposits and balances: deposit paid vs balance per booking, overdue badge, WhatsApp reminder. */
+import FinanceTabs from '@/components/app/FinanceTabs';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageCircle, Search, Wallet } from 'lucide-react';
@@ -74,6 +75,7 @@ export default function BalancesPage({ user, orgId }) {
 
   return (
     <StayPage>
+      <FinanceTabs />
       <PageHeader
         title="מקדמות ויתרות"
         subtitle="מה שולם, מה נשאר ומי באיחור. תזכורת יוצאת בוואטסאפ בלחיצה."
@@ -83,11 +85,10 @@ export default function BalancesPage({ user, orgId }) {
         <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[14px]" />)}</div>
       ) : (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <div className="grid grid-cols-3 lg:grid-cols-3 gap-3 mb-4">
             <StatTile label="יתרות פתוחות" value={formatMoney(totals.open)} hint={`${rows.filter((r) => r.balance.balance > 0).length} הזמנות`} />
             <StatTile label="באיחור" value={formatMoney(totals.overdue)} hint={`${totals.overdueCount} הזמנות`} tone={totals.overdueCount ? 'danger' : undefined} />
             <StatTile label="מקדמות שהתקבלו" value={formatMoney(totals.deposits)} hint="בהזמנות פעילות" />
-            <StatTile label="הגעות השבוע עם יתרה" value={totals.upcoming} hint="כדאי לשלוח תזכורת" />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-3">

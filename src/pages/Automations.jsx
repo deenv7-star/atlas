@@ -126,7 +126,7 @@ export default function AutomationsPage({ user, orgId }) {
 
   if (isLoading) {
     return (
-      <div className="mx-auto w-full max-w-[1200px] px-4 pt-4 md:px-8 md:pt-7" aria-busy="true" aria-label="טוען">
+      <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" aria-busy="true" aria-label="טוען">
         <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
         <div className="mt-6 grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-24 rounded-[14px]" />)}</div>
       </div>
@@ -134,7 +134,7 @@ export default function AutomationsPage({ user, orgId }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       <PageHeader title="אוטומציות" subtitle="הודעות ומשימות שיוצאות לבד, בזמן הנכון." className="!mb-0" />
       <div className="flex shrink-0">

@@ -139,7 +139,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden" dir="rtl">
-      <div className="mx-auto w-full max-w-[1400px] flex-shrink-0 px-4 pt-4 md:px-8 md:pt-7">
+      <div className="mx-auto w-full max-w-[1400px] flex-shrink-0 px-5 pt-6 md:px-10 md:pt-10">
         <PageHeader title="הודעות" subtitle="WhatsApp, SMS ומייל לאורחים וללידים, במקום אחד." className="!mb-4 md:!mb-5" />
       </div>
       <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col overflow-hidden md:mb-6 md:px-8">

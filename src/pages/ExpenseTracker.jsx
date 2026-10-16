@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FinanceTabs from '@/components/app/FinanceTabs';
 import { PageHeader, StatTile, fmtMoney } from '@/components/ds';
 import { Card, CardContent } from '@/components/ui/card';
 import { useExpenses } from '@/hooks/useExpenses';
@@ -75,8 +76,9 @@ export default function ExpenseTracker({ orgId }) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       {/* Header */}
+      <FinanceTabs className="!mb-0" />
       <PageHeader
         title="הוצאות"
         subtitle="כל ההוצאות לפי נכס, כדי לדעת כמה באמת נשאר."
@@ -84,10 +86,9 @@ export default function ExpenseTracker({ orgId }) {
         actions={<Button onClick={() => setDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />הוצאה חדשה</Button>}
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-3 gap-3 lg:grid-cols-3">
         <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} tone="danger" />
         <StatTile label="החודש" value={fmtMoney(thisMonthTotal)} hint={`${thisMonth.length} הוצאות החודש`} icon={Calendar} />
-        <StatTile label="ממוצע לנכס" value={fmtMoney(avgPerProperty)} hint={`${uniqueProperties.length} נכסים`} icon={Building2} />
         <StatTile label="רווח נקי משוער" value={fmtMoney(netProfitEstimate)} hint="הכנסות פחות הוצאות" icon={Wallet} tone="success" />
       </div>
 

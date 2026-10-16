@@ -113,7 +113,7 @@ export function StatusPill({ status, label, tone, className }) {
 /* ── Layout primitives ─────────────────────────────────────────────────────── */
 export function Page({ children, className, wide = false }) {
   return (
-    <div className={cn('mx-auto w-full px-4 pb-10 pt-4 md:px-8 md:pt-7', wide ? 'max-w-[1400px]' : 'max-w-[1200px]', className)} dir="rtl">
+    <div className={cn('mx-auto w-full px-5 pb-16 pt-6 md:px-10 md:pt-10', wide ? 'max-w-[1400px]' : 'max-w-[1200px]', className)} dir="rtl">
       {children}
     </div>
   );
@@ -121,10 +121,10 @@ export function Page({ children, className, wide = false }) {
 
 export function PageHeader({ title, subtitle, actions, children, className }) {
   return (
-    <header className={cn('mb-5 flex flex-col gap-3 md:mb-7 md:flex-row md:items-end md:justify-between', className)}>
+    <header className={cn('mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between', className)}>
       <div className="min-w-0">
-        <h1 className="text-[28px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[32px]">{title}</h1>
-        {subtitle ? <p className="mt-1.5 text-[15px] text-ink-600">{subtitle}</p> : null}
+        <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[34px]">{title}</h1>
+        {subtitle ? <p className="mt-2 text-[16px] text-ink-600">{subtitle}</p> : null}
         {children}
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
@@ -160,29 +160,18 @@ export function Section({ title, subtitle, action, children, className, bodyClas
   );
 }
 
-export function StatTile({ label, value, hint, icon: Icon, tone = 'brand', className, loading }) {
-  const toneCls = {
-    brand: 'bg-brand-50 text-brand-600',
-    success: 'bg-success-50 text-success-600',
-    amber: 'bg-warning-50 text-warning-600',
-    danger: 'bg-danger-50 text-danger-600',
-  }[tone];
+/** A quiet number. No icon squares (simplicity rules); amber/danger tone only tints the value. */
+export function StatTile({ label, value, hint, tone = 'brand', className, loading }) {
+  const valueCls = tone === 'danger' ? 'text-danger-600' : 'text-navy-900';
   return (
-    <Card className={cn('flex min-w-0 flex-col gap-3 p-4 md:p-5', className)}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="truncate text-[14px] font-medium text-ink-600">{label}</span>
-        {Icon ? (
-          <span className={cn('inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px]', toneCls)}>
-            <Icon className="h-5 w-5" strokeWidth={1.75} />
-          </span>
-        ) : null}
-      </div>
+    <Card className={cn('flex min-w-0 flex-col gap-2 p-4 md:p-6', className)}>
+      <span className="truncate text-[14px] text-ink-600 md:text-[15px]">{label}</span>
       {loading ? (
         <SkelLine className="h-8 w-24" />
       ) : (
-        <span className="truncate text-[26px] font-extrabold leading-none tracking-[-0.02em] text-navy-900 tabular md:text-[28px]">{value}</span>
+        <span className={cn('truncate text-[22px] font-extrabold leading-none tracking-[-0.02em] tabular md:text-[30px]', valueCls)}>{value}</span>
       )}
-      {hint ? <span className="truncate text-[13px] text-ink-400">{hint}</span> : null}
+      {hint ? <span className="hidden truncate text-[13px] text-ink-400 md:block">{hint}</span> : null}
     </Card>
   );
 }

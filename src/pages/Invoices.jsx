@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FinanceTabs from '@/components/app/FinanceTabs';
 import { PageHeader, EmptyState, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -207,7 +208,8 @@ export default function InvoicesPage({ orgId }) {
   });
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
+      <FinanceTabs className="!mb-0" />
       <PageHeader
         title="חשבוניות"
         subtitle="חשבוניות וקבלות ללקוחות, במקום אחד."

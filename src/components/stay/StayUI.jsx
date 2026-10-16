@@ -8,7 +8,7 @@ import '@/styles/atlas-brand.css';
 export function StayPage({ children, className, wide = false }) {
   return (
     <div dir="rtl" className={cn('ab-root ab-canvas min-h-full', className)}>
-      <div className={cn('mx-auto px-4 sm:px-6 py-5 sm:py-8', wide ? 'max-w-6xl' : 'max-w-5xl')}>{children}</div>
+      <div className={cn('mx-auto px-5 pb-16 pt-6 md:px-10 md:pt-10', wide ? 'max-w-[1200px]' : 'max-w-[960px]')}>{children}</div>
     </div>
   );
 }

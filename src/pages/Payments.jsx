@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import FinanceTabs from '@/components/app/FinanceTabs';
 import { paymentFormToPayload } from '@/lib/entityPayloads';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
@@ -161,6 +162,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
   return (
     <Page>
+      <FinanceTabs />
 
       {!orgId && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 text-right">
@@ -188,10 +190,9 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       />
 
       <ErrorBoundary section="financial-summary" variant="inline" resetKey={orgId ?? 'no-org'}>
-        <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="mb-5 grid grid-cols-3 gap-3 lg:grid-cols-3">
           <StatTile label="התקבל" value={fmtMoney(stats.paid, { compact: true })} icon={CheckCircle2} tone="success" />
           <StatTile label="ממתין לגבייה" value={fmtMoney(stats.pending, { compact: true })} icon={Clock} tone="amber" />
-          <StatTile label="סך הכל" value={fmtMoney(stats.total, { compact: true })} icon={TrendingUp} />
           <StatTile label="באיחור" value={stats.overdue} icon={AlertCircle} tone="danger" />
         </div>
       </ErrorBoundary>

@@ -300,7 +300,7 @@ export default function GuestJourney() {
   const activeCount = stages.filter(s => s.active).length;
 
   return (
-    <div dir="rtl" className="mx-auto w-full max-w-[960px] px-4 pb-10 pt-4 md:px-8 md:pt-7">
+    <div dir="rtl" className="mx-auto w-full max-w-[960px] px-5 pb-16 pt-6 md:px-10 md:pt-10">
 
       {/* Header */}
       <PageHeader title="מסע אורח" subtitle="כל נקודות המגע עם האורח, מהפנייה ועד הביקורת." className="!mb-0" />

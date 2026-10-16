@@ -224,7 +224,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
   const rangeLabel = `${formatHebrewDate(days[0])} – ${formatHebrewDate(days[days.length - 1])}`;
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-4 pb-10 pt-4 md:px-8 md:pt-7 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
+    <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-6 md:px-10 md:pt-10 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
       <header className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-[28px] font-extrabold leading-[1.1] tracking-[-0.02em] text-navy-900 md:text-[32px]">לוח שנה</h1>

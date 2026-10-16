@@ -303,7 +303,7 @@ export default function IntegrationsPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto w-full max-w-[1200px] px-4 pt-4 md:px-8 md:pt-7" aria-busy="true" aria-label="טוען">
+      <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" aria-busy="true" aria-label="טוען">
         <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
         <SkelLine className="mt-6 h-[52px] w-full max-w-lg rounded-[12px]" /><SkelLine className="mt-6 h-48 rounded-[14px]" />
       </div>
@@ -311,7 +311,7 @@ export default function IntegrationsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader title="ערוצים וחיבורים" subtitle="יומנים, תשלומים, הודעות וחשבונאות. כל חיבור חוסך עבודה ידנית." className="!mb-0" />
       <Tabs defaultValue="calendars">
         <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">

@@ -159,7 +159,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7"
+        className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10"
       >
         {/* Header & Stats */}
         <div className="space-y-5">
@@ -187,8 +187,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatTile label="סה״כ בקשות" value={stats.total} icon={Inbox} />
+          <div className="grid grid-cols-3 gap-3 md:grid-cols-3">
             <StatTile label="חדשות" value={stats.new} icon={Sparkles} />
             <StatTile label="דחופות" value={stats.urgent} icon={AlertTriangle} tone="danger" />
             <StatTile label="טופלו" value={stats.resolved} icon={CheckDone} tone="success" />

@@ -94,12 +94,11 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
   }, [reviews]);
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader title="ביקורות" subtitle="מה האורחים כתבו, ולמי עוד כדאי לשלוח בקשה." className="!mb-0" />
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-3 gap-3 md:grid-cols-3">
         <StatTile label="דירוג ממוצע" value={stats.avg} icon={Star} tone="amber" />
-        <StatTile label="סה״כ ביקורות" value={stats.total} icon={MessageSquareText} />
         <StatTile label="התקבלו" value={stats.reviewed} icon={CheckCircle2} tone="success" />
         <StatTile label="ממתינות" value={stats.pending} icon={Clock3} tone="amber" />
       </div>
