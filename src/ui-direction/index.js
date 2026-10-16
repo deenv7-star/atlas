@@ -5,7 +5,9 @@
 import * as A from './a';
 import * as B from './b';
 
-const D = import.meta.env.VITE_UI_DIRECTION === 'b' ? B : A;
+// This branch ships direction B by default; set VITE_UI_DIRECTION to compare the other.
+const DIRECTION = import.meta.env.VITE_UI_DIRECTION || 'b';
+const D = DIRECTION === 'b' ? B : A;
 
 export const Sidebar = D.Sidebar;
 export const Header = D.Header;
