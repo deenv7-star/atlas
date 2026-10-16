@@ -72,7 +72,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
     const thisMonth = today.substring(0, 7);
 
     // Calculate metrics
-    const thisMonthBookings = bookings.filter(b => b.checkin_date?.startsWith(thisMonth));
+    const thisMonthBookings = bookings.filter(b => (b.check_in_date || b.checkin_date)?.startsWith(thisMonth));
     const thisMonthRevenue = thisMonthBookings.reduce((sum, b) => sum + (b.total_amount || 0), 0);
     const todayCheckins = bookings.filter(b => b.checkin_date === today);
     const todayCheckouts = bookings.filter(b => b.checkout_date === today);
@@ -177,21 +177,21 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
         
         {/* Quick Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-brand-50 rounded-xl p-3 border border-brand-100">
-            <div className="text-xs text-brand-600 mb-1">הזמנות החודש</div>
-            <div className="text-xl font-bold text-navy-900">{bookings.filter(b => b.checkin_date?.startsWith(new Date().toISOString().substring(0, 7))).length}</div>
+          <div className="rounded-[14px] border border-line bg-white p-3 shadow-card">
+            <div className="mb-1 text-[13px] font-medium text-ink-600">הזמנות החודש</div>
+            <div className="tabular text-[22px] font-extrabold text-navy-900">{bookings.filter(b => (b.check_in_date || b.checkin_date)?.startsWith(new Date().toISOString().substring(0, 7))).length}</div>
           </div>
-          <div className="bg-green-50 rounded-xl p-3 border border-green-200">
-            <div className="text-xs text-green-600 mb-1">לידים פעילים</div>
-            <div className="text-xl font-bold text-green-900">{leads.filter(l => ['NEW', 'CONTACTED', 'OFFER_SENT'].includes(l.status)).length}</div>
+          <div className="rounded-[14px] border border-line bg-white p-3 shadow-card">
+            <div className="mb-1 text-[13px] font-medium text-ink-600">לידים פעילים</div>
+            <div className="tabular text-[22px] font-extrabold text-navy-900">{leads.filter(l => ['NEW', 'CONTACTED', 'OFFER_SENT'].includes(l.status)).length}</div>
           </div>
-          <div className="bg-orange-50 rounded-xl p-3 border border-orange-200">
-            <div className="text-xs text-orange-600 mb-1">תשלומים ממתינים</div>
-            <div className="text-xl font-bold text-orange-900">{payments.filter(p => p.status === 'DUE').length}</div>
+          <div className="rounded-[14px] border border-line bg-white p-3 shadow-card">
+            <div className="mb-1 text-[13px] font-medium text-ink-600">תשלומים ממתינים</div>
+            <div className="tabular text-[22px] font-extrabold text-navy-900">{payments.filter(p => p.status === 'DUE').length}</div>
           </div>
-          <div className="bg-brand-50 rounded-xl p-3 border border-brand-100">
-            <div className="text-xs text-brand-600 mb-1">משימות פתוחות</div>
-            <div className="text-xl font-bold text-navy-900">{cleaningTasks.filter(t => t.status === 'OPEN').length}</div>
+          <div className="rounded-[14px] border border-line bg-white p-3 shadow-card">
+            <div className="mb-1 text-[13px] font-medium text-ink-600">משימות פתוחות</div>
+            <div className="tabular text-[22px] font-extrabold text-navy-900">{cleaningTasks.filter(t => t.status === 'OPEN').length}</div>
           </div>
         </div>
       </div>
@@ -203,13 +203,8 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8">
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <Bot className="h-20 w-20 text-brand-500 mb-4" />
-                </motion.div>
-                <h3 className="text-2xl font-bold text-navy-900 mb-2">שלום! אני העוזר החכם של ATLAS </h3>
+                <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-50 text-brand-600"><Bot className="h-7 w-7" strokeWidth={1.75} /></span>
+                <h3 className="text-2xl font-bold text-navy-900 mb-2">העוזר של ATLAS</h3>
                 <p className="text-ink-600 mb-3 leading-relaxed">אני מנתח את כל הנתונים שלך בזמן אמת ויכול לעזור לך עם:</p>
                 <div className="grid grid-cols-2 gap-2 mb-6 text-sm text-right">
                 <div className="flex items-start gap-2">

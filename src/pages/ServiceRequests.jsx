@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { PageHeader } from '@/components/ds';
+import { PageHeader, StatTile } from '@/components/ds';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
+import { Inbox, Sparkles, AlertTriangle, CheckCircle2 as CheckDone } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -8,7 +10,6 @@ import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,7 +21,6 @@ import {
   Clock,
   Phone,
   User,
-  Filter,
   ArrowUpCircle,
   Bell,
 } from 'lucide-react';
@@ -159,57 +159,46 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7"
       >
         {/* Header & Stats */}
-        <div className="mb-6">
+        <div className="space-y-5">
           <PageHeader title="בקשות שירות" subtitle="בקשות תחזוקה מאורחים ומהצוות." className="!mb-0" />
-          <div className="bg-brand-50 border border-brand-100 rounded-xl p-4 mb-6">
-            <h3 className="font-semibold text-navy-900 mb-2">קישור לטופס אורחים</h3>
-            <p className="text-sm text-ink-600 mb-3">שתף את הקישור הזה עם האורחים שלך (בהודעת כניסה, בנכס וכו'):</p>
+          <div className="rounded-[14px] border border-line bg-white p-4 shadow-card">
+            <h3 className="mb-1 text-[15px] font-bold text-navy-900">קישור לטופס אורחים</h3>
+            <p className="mb-3 text-[14px] text-ink-600">שלחו לאורחים בהודעת הכניסה, או תלו בנכס.</p>
             <div className="flex gap-2">
-              <input 
-                type="text" 
-                readOnly 
+              <input
+                type="text"
+                readOnly
+                aria-label="קישור לטופס אורחים"
                 value={`${window.location.origin}${createPageUrl('GuestService')}`}
-                className="flex-1 px-3 py-2 bg-white border rounded-lg text-sm"
+                className="h-11 min-w-0 flex-1 rounded-[10px] border border-line bg-canvas px-3 text-[14px] text-navy-900"
                 dir="ltr"
               />
               <Button
                 onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}${createPageUrl('GuestService')}`);
-                  alert('הקישור הועתק!');
+                  navigator.clipboard?.writeText(`${window.location.origin}${createPageUrl('GuestService')}`);
+                  atlasToastApi.success('הקישור הועתק');
                 }}
-                className="bg-brand-600 hover:bg-brand-500 text-white"
               >
-                העתק
+                העתקה
               </Button>
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {[
-              { label: 'סה"כ בקשות', value: stats.total, color: 'from-blue-500 to-blue-600' },
-              { label: 'חדשות', value: stats.new, color: 'from-brand-500 to-brand-600' },
-              { label: 'דחופות', value: stats.urgent, color: 'from-red-500 to-red-600' },
-              { label: 'טופלו', value: stats.resolved, color: 'from-green-500 to-green-600' }
-            ].map((stat, i) => (
-              <Card key={i} className="border-0 shadow-sm">
-                <CardContent className="p-4">
-                  <div className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl mb-2`}>
-                    <span className="text-white text-xl font-bold">{stat.value}</span>
-                  </div>
-                  <p className="text-sm text-[#64748B] font-medium">{stat.label}</p>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <StatTile label="סה״כ בקשות" value={stats.total} icon={Inbox} />
+            <StatTile label="חדשות" value={stats.new} icon={Sparkles} />
+            <StatTile label="דחופות" value={stats.urgent} icon={AlertTriangle} tone="danger" />
+            <StatTile label="טופלו" value={stats.resolved} icon={CheckDone} tone="success" />
           </div>
 
           {/* Filters */}
           <div className="flex flex-wrap gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <ShareViewButton />
-              <Filter className="h-4 w-4 text-[#64748B]" />
+              
               <Select value={filterStatus} onValueChange={(v) => void setUrlState({ filterStatus: v })}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
