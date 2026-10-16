@@ -1,6 +1,6 @@
 import React from 'react';
-import LandingV4 from '@/components/landing/v4/LandingV4';
+import LandingV5 from '@/components/landing/v5/LandingV5';
 
 export default function Landing() {
-  return <LandingV4 variant="b" />;
+  return <LandingV5 variant="a" />;
 }
