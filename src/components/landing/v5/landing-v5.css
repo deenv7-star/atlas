@@ -608,7 +608,7 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
     radial-gradient(50% 40% at 50% 62%, rgba(62, 43, 241, 0.1), rgba(62, 43, 241, 0) 72%),
     linear-gradient(180deg, #fff 0%, #fafbfe 100%); }
 .l5-hero-b-copy { display: flex; flex-direction: column; align-items: center; gap: 24px; margin-bottom: 48px; }
-.l5-hero-b .l5-lead { margin-inline: auto; max-width: 34em; }
+.l5-hero-b .l5-lead { margin-inline: auto; max-width: 34em; text-wrap: balance; }
 @media (min-width: 1024px) { .l5-hero-b { padding-block: 72px 120px; } .l5-hero-b-copy { margin-bottom: 72px; gap: 28px; } }
 
 .l5-pt { max-width: 1120px; margin-inline: auto; text-align: start; }
