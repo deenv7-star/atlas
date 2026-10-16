@@ -66,10 +66,12 @@ function ChartTooltip({ active, payload }) {
   );
 }
 
-export default function RevenueChart({ data, height = '100%' }) {
+export default function RevenueChart({ data, height = '100%', axis = false }) {
   const id = useId().replace(/:/g, '');
   const last = data[data.length - 1];
   const max = Math.max(...data.map((d) => d.value), 1);
+  const step = Math.max(1000, Math.ceil((max * 1.12) / 3 / 5000) * 5000);
+  const ticks = [0, step, step * 2, step * 3];
   return (
     <div className="v5-chart" style={{ height }} dir="ltr" role="img" aria-label={`הכנסות לפי חודש, ${data.map((d) => `${d.label} ${formatMoney(d.value)}`).join(', ')}`}>
       <ResponsiveContainer width="100%" height="100%">
@@ -83,7 +85,16 @@ export default function RevenueChart({ data, height = '100%' }) {
           </defs>
           <CartesianGrid vertical={false} stroke="#EDEFF4" strokeDasharray="3 4" />
           <XAxis dataKey="label" axisLine={false} padding={{ left: 8, right: 8 }} tickLine={false} tickMargin={10} interval={0} />
-          <YAxis hide domain={[0, Math.ceil((max * 1.15) / 1000) * 1000]} />
+          <YAxis
+            hide={!axis}
+            orientation="right"
+            axisLine={false}
+            tickLine={false}
+            width={44}
+            ticks={ticks}
+            tickFormatter={(v) => (v >= 1000 ? `${Math.round(v / 1000)}K` : String(v))}
+            domain={[0, step * 3]}
+          />
           <Tooltip content={<ChartTooltip />} cursor={{ stroke: '#C9C3FB', strokeWidth: 1 }} isAnimationActive={false} />
           <Area
             type="monotone"

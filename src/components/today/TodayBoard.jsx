@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { Check, ChevronLeft, Plus, Wallet, BedDouble, Receipt, LogIn, LogOut, Sparkles, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
-import { todayISO, addDays, formatDayHe, firstName } from '@/lib/stay/format';
+import { todayISO, addDays, formatDayHe, formatMoney, firstName } from '@/lib/stay/format';
 import { isActiveBooking, checkOutOf, balanceOf } from '@/lib/stay/bookings';
 import { templateByKey } from '@/lib/stay/whatsapp';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
@@ -39,7 +39,7 @@ function Done({ children = 'בוצע' }) {
 }
 
 /* ── KPI cards ─────────────────────────────────────────────────────────────── */
-function Kpi({ i, label, icon: Icon, stripe, attention, to, children, className }) {
+function Kpi({ i, label, icon: Icon, stripe, attention, to, children, className, footer }) {
   const body = (
     <>
       <p className="flex items-center gap-2 text-[13px] font-medium text-ink-400">
@@ -53,6 +53,9 @@ function Kpi({ i, label, icon: Icon, stripe, attention, to, children, className 
         {to ? <ChevronLeft className="ms-auto h-4 w-4 text-ink-300 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.5} /> : null}
       </p>
       {children}
+      {stripe && footer ? (
+        <p className="-mx-5 mt-4 flex items-center justify-between gap-2 border-t border-line px-5 pt-3 text-[13px] text-ink-400 md:-mx-6 md:px-6">{footer}</p>
+      ) : null}
     </>
   );
   const cls = cn(
@@ -181,12 +184,20 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
       const bal = balanceOf(b, data.paymentsByBooking.get(b.id) || [], day);
       if (bal.balance > 0) { openTotal += bal.balance; openCount += 1; if (bal.overdue) overdue = true; }
     }
-    return { months, thisMonth, pct, occupancy, nights, units, daysInMonth, openTotal, openCount, overdue, spark: months.slice(-7).map((x) => x.value) };
-  }, [data.bookings, data.properties, data.paymentsByBooking, day]);
+    const monthKey = first.slice(0, 7);
+    const paidThisMonth = (data.payments || [])
+      .filter((p) => String(p.status).toUpperCase() === 'PAID' && String(p.paid_date || p.paid_at || '').slice(0, 7) === monthKey)
+      .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+    return { paidThisMonth, months, thisMonth, pct, occupancy, nights, units, daysInMonth, openTotal, openCount, overdue, spark: months.slice(-7).map((x) => x.value) };
+  }, [data.bookings, data.properties, data.payments, data.paymentsByBooking, day]);
 
-  const chartData = range === '12' ? kpi.months : kpi.months.slice(-6);
+  const chartData = useMemo(() => (range === '12' ? kpi.months : kpi.months.slice(-6)), [range, kpi.months]);
   const chartTotal = chartData.reduce((s, x) => s + x.value, 0);
   const hasHistory = chartData.filter((x) => x.value > 0).length >= 2;
+  const chartBookings = useMemo(() => {
+    const keys = new Set(chartData.map((m) => m.key));
+    return (data.bookings || []).filter((b) => isActiveBooking(b) && keys.has(String(b.check_in_date).slice(0, 7))).length;
+  }, [chartData, data.bookings]);
 
   const setStatus = async (booking, status, msg) => {
     try { await updateBooking.mutateAsync({ id: booking.id, data: { status } }); atlasToastApi.success(msg); }
@@ -279,7 +290,15 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
 
   const kpis = (
     <section aria-label="מספרים" className="mt-6 grid grid-cols-2 gap-3 md:mt-7 md:grid-cols-3 md:gap-4">
-      <Kpi i={1} label="הכנסות החודש" icon={Wallet} stripe={stripe} to="/payments" className="col-span-2 md:col-span-1">
+      <Kpi
+        i={1}
+        label="הכנסות החודש"
+        icon={Wallet}
+        stripe={stripe}
+        to="/payments"
+        className="col-span-2 md:col-span-1"
+        footer={<><span>{kpi.months[kpi.months.length - 2]?.long?.split(' ')[0]}</span><span className="tabular font-medium text-ink-600">{formatMoney(kpi.months[kpi.months.length - 2]?.value || 0)}</span></>}
+      >
         <div className="mt-2 flex items-end justify-between gap-3">
           <div className="min-w-0">
             <Money value={kpi.thisMonth} className="text-[26px] leading-none md:text-[28px]" />
@@ -291,7 +310,14 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
           <Sparkline values={kpi.spark} width={stripe ? 112 : 104} height={40} className="shrink-0" />
         </div>
       </Kpi>
-      <Kpi i={2} label="תפוסה" icon={BedDouble} stripe={stripe} to="/calendar">
+      <Kpi
+        i={2}
+        label="תפוסה"
+        icon={BedDouble}
+        stripe={stripe}
+        to="/calendar"
+        footer={<><span>לילות שהוזמנו</span><span className="font-medium text-ink-600"><span className="tabular">{kpi.nights}</span> מתוך <span className="tabular">{kpi.units * kpi.daysInMonth}</span></span></>}
+      >
         <span className="v5-num mt-2 text-[26px] font-bold leading-none text-navy-900 md:text-[28px]" dir="ltr">
           <CountUp value={kpi.occupancy} />
           <span className="text-[0.62em] font-semibold text-ink-400">%</span>
@@ -299,9 +325,17 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
         <span className="mt-3 block h-1.5 overflow-hidden rounded-full bg-[#EEF0FF]" aria-hidden>
           <span className="block h-full rounded-full bg-brand-600 transition-[width] duration-700 ease-out" style={{ width: `${kpi.occupancy}%` }} />
         </span>
-        <span className="mt-2 hidden text-[13px] text-ink-400 md:block">{kpi.nights} לילות החודש</span>
+        {stripe ? null : <span className="mt-2 hidden text-[13px] text-ink-400 md:block">{kpi.nights} לילות החודש</span>}
       </Kpi>
-      <Kpi i={3} label="יתרות פתוחות" icon={Receipt} stripe={stripe} attention={kpi.overdue} to="/balances">
+      <Kpi
+        i={3}
+        label="יתרות פתוחות"
+        icon={Receipt}
+        stripe={stripe}
+        attention={kpi.overdue}
+        to="/balances"
+        footer={<><span>התקבל החודש</span><span className="tabular font-medium text-ink-600">{formatMoney(kpi.paidThisMonth)}</span></>}
+      >
         <Money value={kpi.openTotal} className="mt-2 text-[26px] leading-none md:text-[28px]" />
         <span className="mt-2 text-[13px] text-ink-400">{kpi.openCount ? `${kpi.openCount} הזמנות` : 'הכל שולם'}</span>
       </Kpi>
@@ -327,7 +361,7 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
       </div>
       <div className="flex min-h-[260px] flex-1 flex-col px-1 pb-3 pt-2 md:px-2">
         {hasHistory ? (
-          <div className="relative min-h-[240px] flex-1"><div className="absolute inset-0"><RevenueChart data={chartData} /></div></div>
+          <div className="relative min-h-[240px] flex-1"><div className="absolute inset-0"><RevenueChart data={chartData} axis={stripe} /></div></div>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
             <p className="text-[15px] font-medium text-navy-900">הגרף יתמלא עם ההזמנות הבאות</p>
@@ -335,6 +369,20 @@ export default function TodayBoard({ user, orgId, variant = 'a' }) {
           </div>
         )}
       </div>
+      {stripe && hasHistory ? (
+        <dl className="grid grid-cols-3 divide-x divide-x-reverse divide-line border-t border-line">
+          {[
+            { k: 'ממוצע לחודש', v: formatMoney(Math.round(chartTotal / chartData.length)) },
+            { k: 'החודש החזק', v: (() => { const best = chartData.reduce((a, b) => (b.value > a.value ? b : a), chartData[0]); return best.long.split(' ')[0]; })() },
+            { k: 'הזמנות בתקופה', v: String(chartBookings) },
+          ].map((x) => (
+            <div key={x.k} className="px-5 py-3.5 md:px-6">
+              <dt className="text-[12px] text-ink-400">{x.k}</dt>
+              <dd className="mt-0.5 text-[15px] font-semibold tabular text-navy-900">{x.v}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
     </Rise>
   );
 
