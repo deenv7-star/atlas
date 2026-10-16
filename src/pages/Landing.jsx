@@ -11,7 +11,7 @@ import {
   WHATSAPP_URL, PHONE_DISPLAY, PHONE_TEL, SUPPORT_EMAIL, CTA_SIGNUP, CTA_CONTACT,
 } from '@/components/landing/v2/content';
 import '@/components/landing/v2/landing-v2.css';
-import '@/components/landing/v2/landing-a.css';
+import '@/components/landing/v2/landing-b.css';
 
 const IC = { size: 20, strokeWidth: 1.75, 'aria-hidden': true };
 
@@ -24,32 +24,23 @@ function SignupButton({ className = '', label = CTA_SIGNUP }) {
   );
 }
 
-function WhatsAppButton({ className = 'btn-ghost' }) {
-  return (
-    <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={`btn ${className}`}>
-      <MessageCircle {...IC} />
-      {CTA_CONTACT}
-    </a>
-  );
-}
-
 function Header() {
   const [scrolled, setScrolled] = useState(false);
   const sentinel = useRef(null);
   useEffect(() => {
     const el = sentinel.current;
     if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting));
+    const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting), { rootMargin: '-68px 0px 0px 0px' });
     io.observe(el);
     return () => io.disconnect();
   }, []);
   return (
     <>
-      <div ref={sentinel} aria-hidden="true" className="hdr-sentinel" />
-      <header className="hdr" data-scrolled={scrolled}>
+      <div ref={sentinel} aria-hidden="true" className="hdr-sentinel hdr-sentinel-b" />
+      <header className="hdr hdr-b" data-scrolled={scrolled}>
         <div className="wrap hdr-in">
           <Link to="/" className="hdr-logo" aria-label="ATLAS, לדף הבית">
-            <Wordmark />
+            <Wordmark tone={scrolled ? 'dark' : 'light'} />
           </Link>
           <nav className="hdr-nav" aria-label="ניווט ראשי">
             <a href="#modules">מה יש בפנים</a>
@@ -70,17 +61,11 @@ function Header() {
   );
 }
 
-function ScreenTabs({ index, select, label }) {
+function Segmented({ items, index, select, label, className = '' }) {
   return (
-    <div className="scr-tabs" role="group" aria-label={label}>
-      {SCREENS.map((s, i) => (
-        <button
-          key={s.key}
-          type="button"
-          aria-pressed={i === index}
-          className="scr-tab"
-          onClick={() => select(i)}
-        >
+    <div className={`seg ${className}`} role="group" aria-label={label}>
+      {items.map((s, i) => (
+        <button key={s.key} type="button" aria-pressed={i === index} className="seg-btn" onClick={() => select(i)}>
           {s.label}
         </button>
       ))}
@@ -91,26 +76,27 @@ function ScreenTabs({ index, select, label }) {
 function Hero() {
   const { index, select, bind } = useRotator(SCREENS.length, 3800);
   return (
-    <section className="hero-a" aria-labelledby="hero-title">
-      <div className="wrap hero-a-grid">
-        <div className="hero-a-copy">
-          <p className="hero-q">בעלי צימרים? מתחמי נופש? וילות?</p>
-          <h1 id="hero-title" className="h1">
-            <span className="h1-line">אתם מארחים.</span>{' '}
-            <span className="h1-line"><span className="hl">ATLAS</span> מנהלת את כל השאר.</span>
-          </h1>
-          <p className="lead">לוח שנה, הזמנות, תשלומים והודעות לאורחים. במקום אחד, בעברית.</p>
-          <div className="cta-row">
-            <SignupButton />
-            <WhatsAppButton />
-          </div>
+    <section className="hero-b" aria-labelledby="hero-title">
+      <div className="wrap hero-b-copy">
+        <p className="hero-q">בעלי צימרים? מתחמי נופש? וילות?</p>
+        <h1 id="hero-title" className="h1">
+          <span className="h1-line">אתם מארחים.</span>{' '}
+          <span className="h1-line"><span className="hl">ATLAS</span> מנהלת את כל השאר.</span>
+        </h1>
+        <p className="lead">לוח שנה, הזמנות, תשלומים והודעות לאורחים. במקום אחד, בעברית.</p>
+        <div className="cta-row">
+          <SignupButton />
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn btn-outline-light">
+            <MessageCircle {...IC} />
+            {CTA_CONTACT}
+          </a>
         </div>
-        <div className="hero-a-stage" {...bind}>
-          <div className="hero-a-devices">
-            <Laptop shots={SCREENS} index={index} priority />
-            <Phone shots={SCREENS} index={index} priority className="hero-a-phone" />
-          </div>
-          <ScreenTabs index={index} select={select} label="מסכים מתוך ATLAS" />
+      </div>
+      <div className="wrap hero-b-stage" {...bind}>
+        <Segmented items={SCREENS} index={index} select={select} label="מסכים מתוך ATLAS" className="seg-dark" />
+        <div className="hero-b-devices">
+          <Laptop shots={SCREENS} index={index} priority />
+          <Phone shots={SCREENS} index={index} priority className="hero-b-phone" />
         </div>
       </div>
     </section>
@@ -119,83 +105,78 @@ function Hero() {
 
 function Sync() {
   return (
-    <section className="sec sec-sync" aria-labelledby="sync-title">
-      <div className="wrap">
-        <h2 id="sync-title" className="h2 center">שלושה ערוצים. לוח שנה אחד.</h2>
-        <p className="sub center">כל הזמנה מכל ערוץ נכנסת ללוח השנה ומתעדכנת לבד.</p>
-        <SyncDiagram />
+    <section className="sec sec-sync-b" aria-labelledby="sync-title">
+      <div className="wrap sync-b-grid">
+        <div>
+          <h2 id="sync-title" className="h2">שלושה ערוצים.<br />לוח שנה אחד.</h2>
+          <p className="sub">כל הזמנה מכל ערוץ נכנסת ללוח השנה ומתעדכנת לבד.</p>
+        </div>
+        <SyncDiagram className="sync-b" />
       </div>
     </section>
   );
 }
 
-function ModuleCard({ m, big = false, tall = false }) {
-  const cropKey = m.crop || m.key;
-  const crop = CROPS[cropKey];
-  const small = CROPS_MOBILE[cropKey];
+function ModuleVisual({ m }) {
+  if (m.key === 'cleaning') {
+    return <PhoneStatic src={MOBILE_CLEANING} alt={CROPS.cleaning.alt} className="mx-phone" />;
+  }
+  const key = m.crop || m.key;
+  const crop = CROPS[key];
+  const small = CROPS_MOBILE[key];
   return (
-    <article className={`mod mod-${m.key}${big ? ' mod-big' : ''}${tall ? ' mod-tall' : ''}`}>
-      <div className="mod-head">
-        <span className={`mod-ic tone-${m.tone}`}><m.icon {...IC} /></span>
-        <div>
-          <h3>{m.title}</h3>
-          <p>{m.line}</p>
-        </div>
-      </div>
-      <div className="mod-shot">
-        {tall ? (
-          <PhoneStatic src={MOBILE_CLEANING} alt={crop.alt} className="mod-phone" />
-        ) : (
-          <picture>
-            {small && <source media="(max-width: 759px)" srcSet={small.src} width={small.w} height={small.h} />}
-            <img src={crop.src} width={crop.w} height={crop.h} alt={crop.alt} loading="lazy" decoding="async" />
-          </picture>
-        )}
-      </div>
-    </article>
+    <picture className="mx-shot">
+      {small && <source media="(max-width: 759px)" srcSet={small.src} width={small.w} height={small.h} />}
+      <img src={crop.src} width={crop.w} height={crop.h} alt={crop.alt} loading="lazy" decoding="async" />
+    </picture>
   );
 }
 
 function Modules() {
-  const by = Object.fromEntries(MODULES.map((m) => [m.key, m]));
+  const { index, select, bind } = useRotator(MODULES.length, 5200);
+  const active = MODULES[index];
   return (
-    <section id="modules" className="sec" aria-labelledby="modules-title">
+    <section id="modules" className="sec sec-modules-b" aria-labelledby="modules-title">
       <div className="wrap">
-        <h2 id="modules-title" className="h2">כל מה שהמתחם צריך, במערכת אחת.</h2>
-        <div className="bento">
-          <ModuleCard m={by.calendar} big />
-          <ModuleCard m={by.cleaning} tall />
-          <ModuleCard m={by.messages} />
-          <ModuleCard m={by.payments} />
-          <ModuleCard m={by.leads} big />
-          <ModuleCard m={by.bookings} />
+        <h2 id="modules-title" className="h2 center">כל מה שהמתחם צריך, במערכת אחת.</h2>
+        <div className="mx" {...bind}>
+          <ul className="mx-list" role="group" aria-label="מודולים">
+            {MODULES.map((m, i) => (
+              <li key={m.key}>
+                <button type="button" className="mx-item" aria-pressed={i === index} onClick={() => select(i)}>
+                  <span className="mx-ic"><m.icon {...IC} /></span>
+                  <span className="mx-txt">
+                    <b>{m.title}</b>
+                    <span>{m.line}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <div className={`mx-stage mx-stage-${active.key}`} aria-live="polite">
+            <div key={active.key} className="mx-fade">
+              <ModuleVisual m={active} />
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-const MOBILE_SET = SCREENS.filter((s) => ['dashboard', 'calendar', 'messages', 'payments'].includes(s.key));
+const PHONE_ROW = ['messages', 'dashboard', 'calendar'].map((k) => SCREENS.find((s) => s.key === k));
 
 function Anywhere() {
-  const { index, select, bind } = useRotator(MOBILE_SET.length, 3200);
   return (
-    <section className="sec sec-anywhere" aria-labelledby="any-title">
-      <div className="wrap any-grid">
-        <div className="any-copy">
-          <h2 id="any-title" className="h2">המתחם בכיס.</h2>
-          <p className="sub">כל מסך עובד גם בטלפון. הזמנה חדשה, הודעה לאורח או תשלום, מכל מקום.</p>
-          <span className="pill-note"><Smartphone {...IC} />עובד מהנייד, בלי להתקין</span>
-          <div className="any-tabs" role="group" aria-label="מסכים בנייד">
-            {MOBILE_SET.map((s, i) => (
-              <button key={s.key} type="button" aria-pressed={i === index} className="scr-tab" onClick={() => select(i)}>
-                {s.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="any-stage" {...bind}>
-          <Phone shots={MOBILE_SET} index={index} className="any-phone" />
+    <section className="sec sec-anywhere-b" aria-labelledby="any-title">
+      <div className="wrap">
+        <h2 id="any-title" className="h2 center">המתחם בכיס.</h2>
+        <p className="sub center">כל מסך עובד גם בטלפון, מכל מקום.</p>
+        <p className="center any-pill"><span className="pill-note"><Smartphone {...IC} />עובד מהנייד, בלי להתקין</span></p>
+        <div className="phones-row">
+          {PHONE_ROW.map((s, i) => (
+            <Phone key={s.key} shots={[s]} index={0} className={`row-phone row-phone-${i}`} />
+          ))}
         </div>
       </div>
     </section>
@@ -204,21 +185,19 @@ function Anywhere() {
 
 function Trust() {
   return (
-    <section className="sec sec-trust" aria-labelledby="trust-title">
+    <section className="sec sec-trust-b" aria-labelledby="trust-title">
       <div className="wrap">
-        <h2 id="trust-title" className="h2 center">המידע שלכם נשאר שלכם.</h2>
-        <ul className="trust">
+        <h2 id="trust-title" className="h2">המידע שלכם נשאר שלכם.</h2>
+        <ul className="trust-b">
           {TRUST.map((t) => (
-            <li key={t.title} className="trust-item">
-              <span className="trust-ic"><t.icon size={26} strokeWidth={1.75} aria-hidden="true" /></span>
+            <li key={t.title}>
+              <t.icon size={28} strokeWidth={1.75} aria-hidden="true" className="trust-b-ic" />
               <h3>{t.title}</h3>
               <p>{t.line}</p>
             </li>
           ))}
         </ul>
-        <p className="trust-more">
-          <Link to="/data-security" className="text-link">איך אנחנו שומרים על המידע</Link>
-        </p>
+        <p><Link to="/data-security" className="text-link">איך אנחנו שומרים על המידע</Link></p>
       </div>
     </section>
   );
@@ -226,17 +205,15 @@ function Trust() {
 
 function Features() {
   return (
-    <section className="sec" aria-labelledby="feat-title">
+    <section className="sec sec-feat-b" aria-labelledby="feat-title">
       <div className="wrap">
-        <h2 id="feat-title" className="h2">ועוד הרבה בפנים.</h2>
-        <ul className="feat">
+        <h2 id="feat-title" className="h2 center">ועוד הרבה בפנים.</h2>
+        <ul className="feat-b">
           {FEATURES.map((f) => (
-            <li key={f.title} className="feat-item">
-              <span className="feat-ic"><f.icon {...IC} /></span>
-              <div>
-                <h3>{f.title}</h3>
-                <p>{f.line}</p>
-              </div>
+            <li key={f.title}>
+              <f.icon size={24} strokeWidth={1.75} aria-hidden="true" />
+              <h3>{f.title}</h3>
+              <p>{f.line}</p>
             </li>
           ))}
         </ul>
@@ -248,14 +225,20 @@ function Features() {
 function Pricing() {
   const [yearly, setYearly] = useState(false);
   return (
-    <section id="pricing" className="sec sec-pricing" aria-labelledby="pricing-title">
+    <section id="pricing" className="sec sec-pricing-b" aria-labelledby="pricing-title">
       <div className="wrap">
-        <h2 id="pricing-title" className="h2 center">מחיר לפי גודל המתחם.</h2>
-        <div className="bill-toggle" role="group" aria-label="תדירות חיוב">
-          <button type="button" aria-pressed={!yearly} onClick={() => setYearly(false)}>חודשי</button>
-          <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)}>שנתי <em>חוסכים 20%</em></button>
+        <div className="trial-b">
+          <p className="trial-b-big">14 ימי ניסיון בחינם וללא התחייבות</p>
+          <SignupButton className="btn-light" label="מתחילים עכשיו" />
         </div>
-        <div className="plans">
+        <h2 id="pricing-title" className="h2 center">מחיר לפי גודל המתחם.</h2>
+        <div className="center-row">
+          <div className="bill-toggle" role="group" aria-label="תדירות חיוב">
+            <button type="button" aria-pressed={!yearly} onClick={() => setYearly(false)}>חודשי</button>
+            <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)}>שנתי <em>חוסכים 20%</em></button>
+          </div>
+        </div>
+        <div className="plans-b">
           {PRICING_PLANS.map((p) => {
             const price = yearly ? p.priceYearly : p.price;
             return (
@@ -272,15 +255,11 @@ function Pricing() {
                 {p.key === 'business' ? (
                   <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">{CTA_CONTACT}</a>
                 ) : (
-                  <Link to="/register" className={`btn ${p.popular ? 'btn-primary' : 'btn-ghost'}`}>{CTA_SIGNUP}</Link>
+                  <Link to="/register" className={`btn ${p.popular ? 'btn-light' : 'btn-ghost'}`}>{CTA_SIGNUP}</Link>
                 )}
               </article>
             );
           })}
-        </div>
-        <div className="trial-band">
-          <p>14 ימי ניסיון בחינם וללא התחייבות</p>
-          <SignupButton className="btn-light" label="מתחילים עכשיו" />
         </div>
       </div>
     </section>
@@ -290,9 +269,9 @@ function Pricing() {
 function Faq() {
   return (
     <section id="faq" className="sec" aria-labelledby="faq-title">
-      <div className="wrap faq-wrap">
-        <h2 id="faq-title" className="h2">שאלות נפוצות</h2>
-        <div className="faq">
+      <div className="wrap">
+        <h2 id="faq-title" className="h2 center">שאלות נפוצות</h2>
+        <div className="faq faq-b">
           {FAQ.map((f) => (
             <details key={f.q} className="faq-item">
               <summary>
@@ -310,19 +289,21 @@ function Faq() {
 
 function Contact() {
   return (
-    <section id="contact" className="sec sec-contact" aria-labelledby="contact-title">
-      <div className="wrap contact-grid">
-        <div className="contact-copy">
-          <h2 id="contact-title" className="h2">רוצים לראות את זה על המתחם שלכם?</h2>
-          <p className="sub">השאירו פרטים, או דברו איתנו ישר.</p>
-          <ul className="contact-links">
-            <li><a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"><MessageCircle {...IC} />וואטסאפ</a></li>
-            <li><a href={PHONE_TEL} dir="ltr"><PhoneIcon {...IC} />{PHONE_DISPLAY}</a></li>
-            <li><a href={`mailto:${SUPPORT_EMAIL}`} dir="ltr"><Mail {...IC} />{SUPPORT_EMAIL}</a></li>
-          </ul>
-        </div>
-        <div className="contact-card">
-          <ContactForm idPrefix="a-lead" />
+    <section id="contact" className="sec sec-contact-b" aria-labelledby="contact-title">
+      <div className="wrap">
+        <div className="contact-b">
+          <div className="contact-b-side">
+            <h2 id="contact-title" className="h2">רוצים לראות את זה על המתחם שלכם?</h2>
+            <p className="sub">השאירו פרטים, או דברו איתנו ישר.</p>
+            <ul className="contact-links">
+              <li><a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"><MessageCircle {...IC} />וואטסאפ</a></li>
+              <li><a href={PHONE_TEL} dir="ltr"><PhoneIcon {...IC} />{PHONE_DISPLAY}</a></li>
+              <li><a href={`mailto:${SUPPORT_EMAIL}`} dir="ltr"><Mail {...IC} />{SUPPORT_EMAIL}</a></li>
+            </ul>
+          </div>
+          <div className="contact-b-form">
+            <ContactForm idPrefix="b-lead" />
+          </div>
         </div>
       </div>
     </section>
@@ -331,9 +312,9 @@ function Contact() {
 
 function Footer() {
   return (
-    <footer className="ftr">
+    <footer className="ftr ftr-b">
       <div className="wrap ftr-in">
-        <Wordmark />
+        <Wordmark tone="light" />
         <nav aria-label="קישורים משפטיים" className="ftr-links">
           <Link to="/privacy">פרטיות</Link>
           <Link to="/terms">תנאי שימוש</Link>
@@ -352,7 +333,7 @@ export default function Landing() {
     document.title = 'ATLAS | מערכת ניהול לצימרים ומתחמי נופש';
   }, []);
   return (
-    <div className="lv2 lv2-a" dir="rtl" lang="he">
+    <div className="lv2 lv2-b" dir="rtl" lang="he">
       <a href="#main" className="skip">דלגו לתוכן</a>
       <Header />
       <main id="main">
