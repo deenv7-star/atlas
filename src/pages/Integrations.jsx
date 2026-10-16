@@ -303,7 +303,7 @@ export default function IntegrationsPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" aria-busy="true" aria-label="טוען">
+      <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" role="status" aria-busy="true" aria-label="טוען">
         <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
         <SkelLine className="mt-6 h-[52px] w-full max-w-lg rounded-[12px]" /><SkelLine className="mt-6 h-48 rounded-[14px]" />
       </div>
@@ -456,7 +456,7 @@ export default function IntegrationsPage() {
                             />
                             <Dialog open={deleteConfirmId === sync.id} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
                               <DialogTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={() => setDeleteConfirmId(sync.id)}>
+                                <Button aria-label="מחיקה" variant="ghost" size="icon" onClick={() => setDeleteConfirmId(sync.id)}>
                                   <Trash2 className="h-4 w-4 text-ink-400" />
                                 </Button>
                               </DialogTrigger>
@@ -528,7 +528,7 @@ export default function IntegrationsPage() {
                             {gateway.status === 'ACTIVE' ? 'פעיל' : 
                              gateway.status === 'ERROR' ? 'שגיאה' : 'לא פעיל'}
                           </span>
-                          <Button
+                          <Button aria-label="מחיקה"
                             variant="ghost"
                             size="icon"
                             onClick={() => handleDeletePayment(gateway.id)}
@@ -705,7 +705,7 @@ export default function IntegrationsPage() {
                             {integration.status === 'ACTIVE' ? 'פעיל' : 
                              integration.status === 'ERROR' ? 'שגיאה' : 'לא פעיל'}
                           </span>
-                          <Button
+                          <Button aria-label="מחיקה"
                             variant="ghost"
                             size="icon"
                             onClick={() => handleDeleteMessaging(integration.id)}
@@ -853,7 +853,7 @@ export default function IntegrationsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <div className={`w-2 h-2 rounded-full ${integration.status === 'ACTIVE' ? 'bg-green-500' : integration.status === 'ERROR' ? 'bg-red-500' : 'bg-gray-400'}`} />
-                          <Button variant="ghost" size="icon" onClick={() => handleDeleteAccounting(integration.id)}><Trash2 className="h-4 w-4 text-ink-400" /></Button>
+                          <Button aria-label="מחיקה" variant="ghost" size="icon" onClick={() => handleDeleteAccounting(integration.id)}><Trash2 className="h-4 w-4 text-ink-400" /></Button>
                         </div>
                       </div>
                     </CardContent>
@@ -922,7 +922,7 @@ export default function IntegrationsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <div className={`w-2 h-2 rounded-full ${integration.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-400'}`} />
-                          <Button variant="ghost" size="icon" onClick={() => handleDeletePMS(integration.id)}><Trash2 className="h-4 w-4 text-ink-400" /></Button>
+                          <Button aria-label="מחיקה" variant="ghost" size="icon" onClick={() => handleDeletePMS(integration.id)}><Trash2 className="h-4 w-4 text-ink-400" /></Button>
                         </div>
                       </div>
                     </CardContent>

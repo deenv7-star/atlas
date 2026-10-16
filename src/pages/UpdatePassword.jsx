@@ -92,7 +92,7 @@ export default function UpdatePassword() {
                   autoFocus
                   maxLength={128}
                 />
-                <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -120,7 +120,7 @@ export default function UpdatePassword() {
                   className={cn("h-12 rounded-xl text-base pl-10", touched.confirmPassword && errors.confirmPassword && "border-red-500")}
                   maxLength={128}
                 />
-                <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                   {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>

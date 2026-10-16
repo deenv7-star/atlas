@@ -75,18 +75,18 @@ export default function ApiDocs() {
         </div>
       </nav>
 
-      <header className="bg-[#1B2656] text-white px-4 py-14">
+      <header className="bg-[#F4F3FF] text-navy-900 px-4 py-14">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 text-brand-600 text-sm font-semibold mb-3">
             <Code2 className="w-5 h-5" />
             REST API
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">תיעוד API — ATLAS</h1>
-          <p className="text-white/80 text-lg max-w-2xl leading-relaxed">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">תיעוד API: ATLAS</h1>
+          <p className="text-ink-600 text-lg max-w-2xl leading-relaxed">
             ממשק REST מאובטח (JWT), מרובה־דיירים (tenant). כל הבקשות לנתיבי ישויות דורשות הרשאה ומסוננות לפי ארגון.
           </p>
-          <p className="text-white/60 text-sm mt-4">
-            בסיס URL: אותו דומיין כמו האפליקציה, נתיב <code className="bg-white/10 px-1.5 py-0.5 rounded">/api</code>
+          <p className="text-ink-400 text-sm mt-4">
+            בסיס URL: אותו דומיין כמו האפליקציה, נתיב <code className="bg-white border border-line shadow-card px-1.5 py-0.5 rounded">/api</code>
             {' · '}גרסת השרת: Express (Node)
           </p>
         </div>
@@ -125,7 +125,7 @@ export default function ApiDocs() {
         <div className="flex flex-wrap gap-4 justify-center pb-12">
           <Link to={createPageUrl('Contact')}>
             <Button className="gap-2 bg-brand-600 hover:bg-brand-500 text-white">
-              שאלות טכניות — צור קשר
+              שאלות טכניות: צור קשר
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>

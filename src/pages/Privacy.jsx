@@ -78,15 +78,15 @@ export default function Privacy() {
               בהתאם לתקנות הגנת הפרטיות (GDPR ורשות הגנת הפרטיות בישראל), יש לכם זכות:
             </p>
             <ul className="list-disc pr-6 space-y-2 mt-2">
-              <li>גישה — לקבל עותק של המידע האישי שלכם</li>
-              <li>תיקון — לתקן מידע שגוי או לא מעודכן</li>
-              <li>מחיקה — לבקש מחיקת המידע שלכם ("הזכות להישכח")</li>
-              <li>הגבלת עיבוד — להגביל את השימוש במידע</li>
-              <li>ניידות נתונים — לקבל את הנתונים בפורמט מובנה</li>
-              <li>התנגדות — להתנגד לעיבוד למטרות שיווק</li>
+              <li>גישה: לקבל עותק של המידע האישי שלכם</li>
+              <li>תיקון: לתקן מידע שגוי או לא מעודכן</li>
+              <li>מחיקה: לבקש מחיקת המידע שלכם ("הזכות להישכח")</li>
+              <li>הגבלת עיבוד: להגביל את השימוש במידע</li>
+              <li>ניידות נתונים: לקבל את הנתונים בפורמט מובנה</li>
+              <li>התנגדות: להתנגד לעיבוד למטרות שיווק</li>
             </ul>
             <p className="mt-3">
-              למימוש זכויותיכם, אנא צרו קשר בכתובת support@atlas-app.co.il. נענה בתוך 30 יום.
+              למימוש זכויותיכם, אנא צרו קשר בכתובת support@atlas-il.com. נענה בתוך 30 יום.
             </p>
           </section>
 
@@ -104,8 +104,8 @@ export default function Privacy() {
               לשאלות בנוגע למדיניות פרטיות זו, מימוש זכויות או תלונות:
             </p>
             <p className="mt-2">
-              <strong>דוא"ל:</strong> support@atlas-app.co.il<br />
-              <strong>אתר:</strong> https://atlas-app.co.il<br />
+              <strong>דוא"ל:</strong> support@atlas-il.com<br />
+              <strong>אתר:</strong> https://atlas-il.com<br />
               <strong>שעות תמיכה:</strong> ימים א׳-ה׳ 09:00–18:00
             </p>
           </section>
@@ -114,7 +114,7 @@ export default function Privacy() {
 
       <footer className="py-8 px-4 border-t bg-white mt-12">
         <div className="max-w-4xl mx-auto text-center text-gray-500 text-sm">
-          © 2025 ATLAS. כל הזכויות שמורות.
+          © {new Date().getFullYear()} ATLAS. כל הזכויות שמורות.
         </div>
       </footer>
     </div>

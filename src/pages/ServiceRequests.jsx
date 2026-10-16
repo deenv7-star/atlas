@@ -199,7 +199,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
               <ShareViewButton />
               
               <Select value={filterStatus} onValueChange={(v) => void setUrlState({ filterStatus: v })}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-40" aria-label="סינון לפי סטטוס">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -212,7 +212,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
             </div>
 
             <Select value={filterUrgency} onValueChange={(v) => void setUrlState({ filterUrgency: v })}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-40" aria-label="סינון לפי דחיפות">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -338,7 +338,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-brand-600 hover:bg-[#00B8AA] text-navy-900"
+                className="w-full bg-brand-600 hover:bg-brand-500 text-white"
                 disabled={
                   createMutation.isPending
                   || !orgId
@@ -450,7 +450,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                         });
                       }}
                       disabled={updateMutation.isPending}
-                      className="mt-2 w-full bg-brand-600 hover:bg-[#00B8AA] text-navy-900"
+                      className="mt-2 w-full bg-brand-600 hover:bg-brand-500 text-white"
                     >
                       שמור הערות
                     </Button>

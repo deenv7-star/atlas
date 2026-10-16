@@ -301,7 +301,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
                 />
               </div>
               <div className="col-span-1">
-                <Button
+                <Button aria-label="הסרת שורה"
                   type="button"
                   size="icon"
                   variant="ghost"

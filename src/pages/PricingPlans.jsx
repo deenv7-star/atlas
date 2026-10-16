@@ -12,7 +12,7 @@ const PLANS = [
     tag: 'להתחלה',
     priceMonthly: 299,
     priceYearly: 2990,
-    blurb: 'צימר בודד או נכס ראשון — כל מה שצריך לנהל הזמנות ולידים.',
+    blurb: 'צימר בודד או נכס ראשון: כל מה שצריך לנהל הזמנות ולידים.',
     cta: 'התחילו',
     highlight: false,
     features: [
@@ -29,7 +29,7 @@ const PLANS = [
     tag: 'הכי פופולרית',
     priceMonthly: 599,
     priceYearly: 5990,
-    blurb: 'מספר נכסים, תשלומים, חשבוניות ואוטומציות — רוב המתחמים בישראל.',
+    blurb: 'מספר נכסים, תשלומים, חשבוניות ואוטומציות, רוב המתחמים בישראל.',
     cta: 'בחרו במתקדמת',
     highlight: true,
     features: [
@@ -82,7 +82,7 @@ function PricingRoiCalculator() {
     const net = planAnnual != null ? annual - planAnnual : null;
     let hint = '';
     if (n >= 9) {
-      hint = 'למספר נכסים גבוה — תמחור לפי נפח ו-SLA; צרו קשר לאומדן מדויק.';
+      hint = 'למספר נכסים גבוה: תמחור לפי נפח ו-SLA; צרו קשר לאומדן מדויק.';
     }
     return {
       weeklyHours: weekly,
@@ -103,7 +103,7 @@ function PricingRoiCalculator() {
         </h2>
       </div>
       <p className="text-gray-600 text-base leading-relaxed mb-6">
-        הזיזו את מספר הנכסים ואת עלות השעה שלכם — נראה כמה זמן ניהול ידני (הזמנות, תשלומים, לידים, תיאומים)
+        הזיזו את מספר הנכסים ואת עלות השעה שלכם, נראה כמה זמן ניהול ידני (הזמנות, תשלומים, לידים, תיאומים)
         אתם עשויים לחסוך לעומת ריכוז הכל במערכת אחת.{' '}
         <strong className="text-gray-800">המספרים להמחשה בלבד</strong> ואינם התחייבות.
       </p>
@@ -129,7 +129,7 @@ function PricingRoiCalculator() {
         </div>
         <div>
           <Label htmlFor="roi-rate" className="text-gray-800 font-semibold">
-            עלות שעה משוערת (₪) — ניהול / תפעול
+            עלות שעה משוערת (₪): ניהול / תפעול
           </Label>
           <input
             id="roi-rate"
@@ -202,7 +202,7 @@ export default function PricingPlans() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">תוכניות ותמחור</h1>
           <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed text-base">
             השוואה מהירה בין חבילות, מחשבון חיסכון משוער, ושקיפות לגבי ניסיון ו-Enterprise.
-            המחירים להמחשה — בפועל ייתכנו מבצעים, שנתיות ומותאם ארגון.{' '}
+            המחירים להמחשה: בפועל ייתכנו מבצעים, שנתיות ומותאם ארגון.{' '}
             <Link to="/contact" className="text-brand-600 font-semibold underline-offset-2 hover:underline">
               צרו קשר
             </Link>
@@ -280,7 +280,7 @@ export default function PricingPlans() {
           <h2 className="text-lg font-bold text-gray-900">שקיפות לפני שמחליטים</h2>
           <ul className="text-base text-gray-600 space-y-2 leading-relaxed list-disc pr-5">
             <li>
-              <strong className="text-gray-800">ניסיון:</strong> 14 יום ללא חיוב (ללא כרטיס אשראי), ביטול בכל עת — כפי שמופיע גם בהרשמה.
+              <strong className="text-gray-800">ניסיון:</strong> 14 יום ללא חיוב (ללא כרטיס אשראי), ביטול בכל עת, כפי שמופיע גם בהרשמה.
             </li>
             <li>
               <strong className="text-gray-800">בסיסית / מתקדמת:</strong> המחירים להמחשה; בפועל עשויים לחול מבצעים, תשלום שנתי או התאמה לארגון.
@@ -290,7 +290,7 @@ export default function PricingPlans() {
               <Link to="/contact" className="text-[#2A1AC9] font-semibold underline-offset-2 hover:underline">בשיחה עם המכירות</Link>.
             </li>
             <li>
-              <strong className="text-gray-800">תמיכה:</strong> ימים א–ה 09:00–18:00 — דף{' '}
+              <strong className="text-gray-800">תמיכה:</strong> ימים א–ה 09:00–18:00: דף{' '}
               <Link to="/contact" className="text-[#2A1AC9] font-semibold underline-offset-2 hover:underline">צור קשר</Link>
               {' '}או וואטסאפ מהאתר.
             </li>

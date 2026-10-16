@@ -178,12 +178,12 @@ export default function About() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-[#1B2656]">
+      <section className="py-20 px-4 bg-[#F4F3FF]">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-6">
             מוכנים להצטרף?
           </h2>
-          <p className="text-xl text-white/70 mb-8">
+          <p className="text-xl text-ink-600 mb-8">
             הצטרפו למנהלי מתחמים שכבר עובדים עם ATLAS
           </p>
           <Link to="/register">
@@ -198,20 +198,20 @@ export default function About() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-[#1B2656] border-t border-white/10">
+      <footer className="py-12 px-4 bg-white border-t border-line border-t border-line">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Logo variant="light" />
-            <div className="flex gap-6 text-white/60 text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
+            <Logo  />
+            <div className="flex gap-6 text-ink-400 text-sm">
+              <Link to={createPageUrl('Privacy')} className="hover:text-navy-900 transition-colors">
                 מדיניות פרטיות
               </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
+              <Link to={createPageUrl('Terms')} className="hover:text-navy-900 transition-colors">
                 תנאי שימוש
               </Link>
             </div>
-            <p className="text-white/40 text-sm">
-              © 2025 ATLAS. כל הזכויות שמורות
+            <p className="text-ink-400 text-sm">
+              © {new Date().getFullYear()} ATLAS. כל הזכויות שמורות
             </p>
           </div>
         </div>

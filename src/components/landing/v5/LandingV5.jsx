@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft, ChevronLeft, Plus, Check, X, ShieldCheck, DatabaseBackup, MessageCircle, CircleOff,
-  CalendarCheck, CalendarDays, Wallet, Sun,
+  CalendarCheck, Wallet,
 } from 'lucide-react';
 import CookieConsent from '@/components/landing/CookieConsent';
 import { PRICING_PLANS } from '@/config/pricing';
-import { useReveal, useInView, useCountUp, useTimeline, prefersReducedMotion, fmt } from '@/components/landing/v4/motion';
+import { useReveal, useInView, useCountUp, useTimeline, fmt } from './motion';
 import {
   Mark, Wordmark, AppWindow, Calendar, RevenueCard, WhatsAppCard, TodayBoard, Payments,
-  SyncMini, ReportMini, DirectPageMini, FinanceView,
+  SyncMini, ReportMini, DirectPageMini,
 } from './ui';
 import {
   HERO, STEPS, BEFORE_AFTER, TRUST, FAQ, WHATSAPP_URL, PHONE_DISPLAY, CTA_SIGNUP, CTA_NOTE,
@@ -67,10 +67,10 @@ function SectionHead({ id, title, sub, center = true }) {
   );
 }
 
-function Channels({ quiet = false }) {
+function Channels() {
   const items = [['airbnb', 'Airbnb'], ['booking', 'Booking.com'], ['whatsapp', 'WhatsApp'], ['gcal', 'Google Calendar']];
   return (
-    <section className={`l5-channels${quiet ? ' is-quiet' : ''}`} aria-labelledby="ch-title">
+    <section className="l5-channels" aria-labelledby="ch-title">
       <div className="l5-wrap l5-channels-in" data-reveal>
         <p id="ch-title" className="l5-channels-t">מתחברת למה שאתם כבר עובדים איתו</p>
         <ul className="l5-logos">
@@ -87,7 +87,7 @@ function Channels({ quiet = false }) {
 const HERO_TL = [150, 1300, 2500, 3300, 4300, 5600];
 
 function HeroA() {
-  const h = HERO.a;
+  const h = HERO;
   const step = useTimeline(HERO_TL, { active: true });
   const rev = useCountUp(48250, step >= 1, 1800);
   const waStage = step >= 6 ? 3 : step >= 4 ? 2 : step >= 1 ? 1 : 0;
@@ -153,7 +153,7 @@ function Bento() {
     <section id="product" className="l5-sec l5-bento-sec" aria-labelledby="bento-title">
       <div className="l5-wrap">
         <SectionHead id="bento-title" title="כל העסק. מערכת אחת." sub="מה שהיה מפוזר בין יומנים, וואטסאפ ואקסל, עובד עכשיו במקום אחד." />
-        <ul className="l5-bento">
+        <ul className="l5-bento" tabIndex={0} aria-label="מה יש במערכת">
           {BENTO.map((t, i) => (
             <li key={t.k} className={`l5-tile l5-tile-${t.k} is-${t.span}`} data-reveal style={{ '--d': `${(i % 2) * 80}ms` }}>
               <div className="l5-tile-ui" aria-hidden="true">{t.ui}</div>
@@ -326,167 +326,11 @@ function Footer() {
 }
 
 /* ---------------- B: hero with tabbed product window ---------------- */
-const TABS = [
-  { key: 'cal', label: 'לוח שנה', icon: CalendarDays },
-  { key: 'today', label: 'היום', icon: Sun },
-  { key: 'money', label: 'כספים', icon: Wallet },
-];
-const TAB_MS = 5000;
-
-function ProductTabs() {
-  const [tab, setTab] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [auto, setAuto] = useState(true);
-  const tabRefs = useRef([]);
-  useEffect(() => {
-    if (!auto || paused || prefersReducedMotion()) return undefined;
-    const t = setTimeout(() => setTab((x) => (x + 1) % TABS.length), TAB_MS);
-    return () => clearTimeout(t);
-  }, [tab, paused, auto]);
-  const pick = (i) => { setAuto(false); setTab(i); };
-  const onKey = (e) => {
-    const dir = e.key === 'ArrowLeft' ? 1 : e.key === 'ArrowRight' ? -1 : 0; // RTL
-    if (!dir) return;
-    e.preventDefault();
-    const n = (tab + dir + TABS.length) % TABS.length;
-    pick(n);
-    tabRefs.current[n]?.focus();
-  };
-  return (
-    <div
-      className={`l5-pt${auto && !paused ? ' is-auto' : ''}`}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
-    >
-      <div className="l5-pt-tabs" role="tablist" aria-label="תצוגות במערכת" onKeyDown={onKey}>
-        {TABS.map((t, i) => (
-          <button
-            key={t.key}
-            ref={(el) => { tabRefs.current[i] = el; }}
-            type="button"
-            role="tab"
-            id={`pt-tab-${t.key}`}
-            aria-selected={tab === i}
-            aria-controls={`pt-panel-${t.key}`}
-            tabIndex={tab === i ? 0 : -1}
-            className={tab === i ? 'is-on' : ''}
-            onClick={() => pick(i)}
-          >
-            <t.icon size={16} strokeWidth={1.75} aria-hidden="true" />
-            {t.label}
-            {tab === i && <i className="l5-pt-prog" key={`p${tab}`} aria-hidden="true" />}
-          </button>
-        ))}
-      </div>
-      <div className="l5-pt-frame">
-        {TABS.map((t, i) => (
-          <div
-            key={t.key}
-            id={`pt-panel-${t.key}`}
-            role="tabpanel"
-            aria-labelledby={`pt-tab-${t.key}`}
-            className={`l5-pt-panel${tab === i ? ' is-on' : ''}`}
-            hidden={tab !== i}
-          >
-            <div aria-hidden="true">
-              <AppWindow active={[1, 0, 4][i]}>
-                {t.key === 'cal' && <Calendar showIncoming />}
-                {t.key === 'today' && (
-                  <div className="l5-pt-today">
-                    <TodayBoard />
-                    <div className="l5-pt-aside">
-                      <WhatsAppCard stage={3} className="is-flat" />
-                    </div>
-                  </div>
-                )}
-                {t.key === 'money' && <FinanceView />}
-              </AppWindow>
-            </div>
-            <span className="l5-sr">
-              {t.key === 'cal' && 'לוח שנה עם הזמנות מ-Airbnb, Booking.com והזמנות ישירות לארבע יחידות.'}
-              {t.key === 'today' && 'מסך היום: שתי כניסות, יציאה אחת וניקיון אחד, והודעת וואטסאפ שנשלחה לאורחת.'}
-              {t.key === 'money' && 'מסך כספים: הכנסות החודש, גרף הכנסות שנתי ותשלומים אחרונים.'}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function HeroB() {
-  const h = HERO.b;
-  return (
-    <section className="l5-hero l5-hero-b" aria-labelledby="hero-title">
-      <div className="l5-hero-light" aria-hidden="true" />
-      <div className="l5-wrap l5-hero-b-copy">
-        <h1 id="hero-title" className="l5-h1 l5-h1-xl">
-          {h.title.map((t, i) => <span key={t} className="l5-h1-line" style={{ '--i': i }}>{t}</span>)}
-        </h1>
-        <p className="l5-lead l5-in" style={{ '--i': 2 }}>{h.sub}</p>
-        <div className="l5-in" style={{ '--i': 3 }}><HeroCta center /></div>
-      </div>
-      <div className="l5-wrap-wide l5-in l5-in-stage" style={{ '--i': 4 }}>
-        <ProductTabs />
-      </div>
-    </section>
-  );
-}
-
-const ROWS = [
-  { k: 'sync', title: 'כל הערוצים. לוח אחד.', line: 'Airbnb, Booking.com וההזמנות הישירות נכנסים לאותו לוח ומתעדכנים לבד, כדי שתאריך לא יימכר פעמיים.', points: ['חיבור בקישור אחד מכל ערוץ', 'הזמנה ישירה חוסמת את התאריכים בערוצים'], ui: <SyncMini /> },
-  { k: 'wa', title: 'האורחים מקבלים תשובה. אתם לא צריכים לכתוב אותה.', line: 'אישור הזמנה, הוראות הגעה, תזכורת תשלום ובקשה לביקורת יוצאים בוואטסאפ, בזמן ובשם שלכם.', points: ['תבניות בעברית, מוכנות לשימוש', 'הפרטים של כל אורח ממולאים לבד'], ui: <WhatsAppCard stage={3} className="is-flat" /> },
-  { k: 'money', title: 'יודעים בדיוק מי שילם.', line: 'מקדמה נגבית עם ההזמנה, תזכורת ליתרה יוצאת לבד, ובסוף החודש יש דוח מוכן לרואה החשבון.', points: ['מקדמות ויתרות לכל הזמנה', 'דוח הכנסות ב-Excel או PDF'], ui: <Payments className="l5-card is-flat" /> },
-];
-
-function FeatureRows() {
-  return (
-    <section id="product" className="l5-sec l5-rows-sec" aria-labelledby="rows-title">
-      <div className="l5-wrap">
-        <SectionHead id="rows-title" title="פחות ניהול. יותר אירוח." sub="שלושה דברים ש-ATLAS עושה בשבילכם, כל יום." />
-        <div className="l5-rows">
-          {ROWS.map((r, i) => (
-            <article key={r.k} className={`l5-row${i % 2 ? ' is-flip' : ''}`} data-reveal>
-              <div className="l5-row-txt">
-                <span className="l5-row-n num">0{i + 1}</span>
-                <h3>{r.title}</h3>
-                <p>{r.line}</p>
-                <ul>{r.points.map((p) => <li key={p}><Check size={16} strokeWidth={2.25} aria-hidden="true" />{p}</li>)}</ul>
-              </div>
-              <div className={`l5-row-ui l5-row-ui-${r.k}`} aria-hidden="true">{r.ui}</div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function StepsInline() {
-  return (
-    <section id="how" className="l5-sec l5-steps-sec is-inline" aria-labelledby="how-title">
-      <div className="l5-wrap">
-        <SectionHead id="how-title" title="מתחילים תוך 10 דקות." />
-        <ol className="l5-steps is-inline">
-          {STEPS.map((s, i) => (
-            <li key={s.title} data-reveal style={{ '--d': `${i * 90}ms` }}>
-              <span className="l5-step-n num" aria-hidden="true">{i + 1}</span>
-              <div><h3>{s.title}</h3><p>{s.line}</p></div>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
 /**
  * Landing v5 (brand/direction-v5.md). Cool, light, indigo-only accent.
- * variant "a": Stripe-grade layered product hero + bento. variant "b": Linear-grade centered window with tabs.
+ * Stripe-grade layered product hero + bento.
  */
-export default function LandingV5({ variant = 'a' }) {
+export default function LandingV5() {
   const root = useRef(null);
   const [settled, setSettled] = useState(false);
   useReveal(root);
@@ -495,36 +339,19 @@ export default function LandingV5({ variant = 'a' }) {
     const t = setTimeout(() => setSettled(true), 2600);
     return () => clearTimeout(t);
   }, []);
-  useEffect(() => {
-    document.title = 'ATLAS | מערכת ניהול לצימרים ומתחמי נופש';
-  }, []);
   return (
-    <div ref={root} className={`l5 l5-${variant}${settled ? ' is-settled' : ''}`} dir="rtl" lang="he">
+    <div ref={root} className={`l5 l5-a${settled ? ' is-settled' : ''}`} dir="rtl" lang="he">
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <Header />
       <main id="main">
-        {variant === 'b' ? (
-          <>
-            <HeroB />
-            <Channels quiet />
-            <FeatureRows />
-            <StepsInline />
-            <Pricing />
-            <Faq limit={5} />
-            <FinalCta title="הצימר שלכם, על טייס אוטומטי." />
-          </>
-        ) : (
-          <>
-            <HeroA />
-            <Channels />
-            <Bento />
-            <Steps />
-            <Value />
-            <Pricing />
-            <Faq />
-            <FinalCta title="פחות ניהול. יותר הזמנות." />
-          </>
-        )}
+        <HeroA />
+        <Channels />
+        <Bento />
+        <Steps />
+        <Value />
+        <Pricing />
+        <Faq />
+        <FinalCta title="פחות ניהול. יותר הזמנות." />
       </main>
       <Footer />
       <CookieConsent revealAfter=".l5-hero" />

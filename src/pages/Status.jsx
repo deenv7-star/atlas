@@ -43,7 +43,7 @@ export default function Status() {
             <CheckCircle2 className="w-8 h-8 text-green-600 shrink-0" />
             <div>
               <p className="font-bold text-green-800">כל המערכות פועלות כרגיל</p>
-              <p className="text-sm text-green-700">אין השבתה מתוכננת. במקרה של תקלה — נעדכן כאן ובמייל ללקוחות.</p>
+              <p className="text-sm text-green-700">אין השבתה מתוכננת. במקרה של תקלה, נעדכן כאן ובמייל ללקוחות.</p>
             </div>
           </div>
 

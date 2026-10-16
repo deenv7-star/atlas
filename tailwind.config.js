@@ -4,9 +4,9 @@
 // gray/slate/zinc/neutral/stone → navy-tinted neutrals, green/emerald → success,
 // red/rose/pink → danger, amber/yellow/orange → amber accent.
 const brand = { 50: '#F1EFFE', 100: '#E4E1FD', 200: '#C9C3FB', 300: '#A79EF8', 400: '#7F72F4', 500: '#5545F0', 600: '#3E2BF1', 700: '#2A1AC9', 800: '#22169E', 900: '#1B2656', 950: '#121A3D', DEFAULT: '#3E2BF1' };
-const neutral = { 50: '#F7F8FB', 100: '#F1F3F8', 200: '#E7E9F1', 300: '#D7DBE8', 400: '#8C93AB', 500: '#6B7393', 600: '#4A5578', 700: '#3A4469', 800: '#28325F', 900: '#1B2656', 950: '#121A3D' };
-const success = { 50: '#E7F7F0', 100: '#CFF0E2', 200: '#A6E3CA', 300: '#74D1AC', 400: '#45BF8F', 500: '#22B07D', 600: '#1A9268', 700: '#157554', 800: '#115C43', 900: '#0D4634', 950: '#072A1F' };
-const danger = { 50: '#FDEEEE', 100: '#FBDADA', 200: '#F8BDBD', 300: '#F49393', 400: '#F17575', 500: '#EF5B5B', 600: '#D94545', 700: '#B53636', 800: '#8E2B2B', 900: '#6E2222', 950: '#401313' };
+const neutral = { 50: '#F7F8FB', 100: '#F1F3F8', 200: '#E7E9F1', 300: '#D7DBE8', 400: '#646B85', 500: '#5A6282', 600: '#4A5578', 700: '#3A4469', 800: '#28325F', 900: '#1B2656', 950: '#121A3D' };
+const success = { 50: '#E7F7F0', 100: '#CFF0E2', 200: '#A6E3CA', 300: '#74D1AC', 400: '#45BF8F', 500: '#22B07D', 600: '#167F5A', 700: '#157554', 800: '#115C43', 900: '#0D4634', 950: '#072A1F' };
+const danger = { 50: '#FDEEEE', 100: '#FBDADA', 200: '#F8BDBD', 300: '#F49393', 400: '#F17575', 500: '#EF5B5B', 600: '#C93C3C', 700: '#B53636', 800: '#8E2B2B', 900: '#6E2222', 950: '#401313' };
 // v5 (direction-v5.md): amber is only ever a tiny "needs attention" dot. Legacy amber/yellow/orange/warning
 // classes therefore land on cool neutrals; only the 400/500 steps (dots, small marks) keep the amber hue.
 const amber = { 50: '#F3F4F8', 100: '#ECEEF4', 200: '#DDE1EB', 300: '#C5CAD9', 400: '#F8B040', 500: '#F8B040', 600: '#4A5578', 700: '#3A4469', 800: '#28325F', 900: '#1B2656', 950: '#121A3D' };
@@ -27,7 +27,7 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
-  			brand, navy: { 900: '#1B2656', DEFAULT: '#1B2656' }, ink: { 600: '#4A5578', 400: '#6B7280', 300: '#9CA3B4' }, attention: '#F8B040',
+  			brand, navy: { 900: '#1B2656', DEFAULT: '#1B2656' }, ink: { 600: '#4A5578', 400: '#646B85', 300: '#9CA3B4' }, attention: '#F8B040',
   			canvas: '#F7F8FB', surface: '#FFFFFF', line: '#E6E8F0',
   			channel: { booking: '#1B2656', airbnb: '#EF5B5B', direct: '#3E2BF1', other: '#8C93AB' },
   			success, danger, warning: amber,

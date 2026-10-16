@@ -247,8 +247,8 @@ export default function Terms() {
               לשאלות, בקשות תמיכה או כל נושא הקשור לתנאי שימוש אלה, אנא צרו קשר:
             </p>
             <div className="space-y-2 text-sm">
-              <p><strong>דואר אלקטרוני:</strong> legal@atlas-app.co.il</p>
-              <p><strong>תמיכה טכנית:</strong> support@atlas-app.co.il</p>
+              <p><strong>דואר אלקטרוני:</strong> legal@atlas-il.com</p>
+              <p><strong>תמיכה טכנית:</strong> support@atlas-il.com</p>
               <p><strong>כתובת:</strong> רח' הרצל 1, תל אביב, ישראל</p>
             </div>
           </section>
@@ -257,7 +257,7 @@ export default function Terms() {
 
       <footer className="py-8 px-4 border-t bg-white mt-12">
         <div className="max-w-4xl mx-auto text-center text-gray-500 text-sm">
-          © 2025 ATLAS. כל הזכויות שמורות.
+          © {new Date().getFullYear()} ATLAS. כל הזכויות שמורות.
         </div>
       </footer>
     </div>

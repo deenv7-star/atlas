@@ -1,36 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useSubscription } from '@/hooks/useSubscription';
-import { Crown } from 'lucide-react';
 
+/** One calm line about the trial. Indigo tint, never red or amber blocks (direction-v5). */
 export default function TrialBanner() {
   const { daysLeft, isTrialing, isExpired, isLoading } = useSubscription();
 
   if (isLoading || (!isTrialing && !isExpired)) return null;
-  if (isExpired) {
-    return (
-      <div className="bg-red-600 text-white py-2 px-4 text-center text-sm font-semibold" dir="rtl">
-        <Link to={createPageUrl('Subscription')} className="underline hover:no-underline">
-          תקופת הניסיון הסתיימה, שדרג עכשיו לגישה מלאה
-        </Link>
-      </div>
-    );
-  }
-  if (daysLeft <= 3) {
-    return (
-      <div className="bg-red-500 text-white py-2 px-4 text-center text-sm font-semibold flex items-center justify-center gap-2" dir="rtl">
-        <Crown className="w-4 h-4" />
-        <span>נותרו {daysLeft} ימים לתקופת הניסיון שלך —</span>
-        <Link to={createPageUrl('Subscription')} className="underline font-bold hover:no-underline">שדרג עכשיו</Link>
-      </div>
-    );
-  }
+  const urgent = isExpired || daysLeft <= 3;
+  const text = isExpired
+    ? 'תקופת הניסיון הסתיימה'
+    : daysLeft === 1 ? 'נשאר יום אחד לתקופת הניסיון' : `נשארו ${daysLeft} ימים לתקופת הניסיון`;
   return (
-    <div className="bg-amber-100 text-amber-900 py-2 px-4 text-center text-sm font-medium flex items-center justify-center gap-2" dir="rtl">
-      <Crown className="w-4 h-4" />
-      <span>נותרו {daysLeft} ימים לתקופת הניסיון שלך —</span>
-      <Link to={createPageUrl('Subscription')} className="text-amber-800 font-semibold underline hover:no-underline">שדרג עכשיו</Link>
+    <div className="flex min-h-[40px] items-center justify-center gap-2 border-b border-[#E4E1FD] bg-[#F4F3FF] px-4 text-[14px] text-navy-900" dir="rtl" role="status">
+      {urgent ? <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-attention" /> : null}
+      <span>{text}</span>
+      <Link
+        to={createPageUrl('Subscription')}
+        className="inline-flex min-h-[40px] items-center gap-0.5 rounded-[8px] px-1 font-semibold text-brand-600 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+      >
+        בחירת מסלול
+        <ChevronLeft className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+      </Link>
     </div>
   );
 }

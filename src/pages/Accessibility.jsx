@@ -21,13 +21,13 @@ export default function Accessibility() {
       </nav>
 
       {/* Hero */}
-      <section className="bg-[#1B2656] py-16">
+      <section className="bg-[#F4F3FF] py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <Heart className="w-16 h-16 text-brand-600 mx-auto mb-6" />
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-4">
             הצהרת נגישות
           </h1>
-          <p className="text-xl text-white/80">
+          <p className="text-xl text-ink-600">
             אנחנו מחויבים להנגשת השירות שלנו לכלל המשתמשים
           </p>
         </div>
@@ -143,10 +143,10 @@ export default function Accessibility() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 bg-[#1B2656] border-t border-white/10">
+      <footer className="py-8 px-4 bg-white border-t border-line border-t border-line">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Logo variant="light" size="small" />
-          <p className="text-white/40 text-sm">© 2024 ATLAS. כל הזכויות שמורות</p>
+          <Logo  size="small" />
+          <p className="text-ink-400 text-sm">© 2024 ATLAS. כל הזכויות שמורות</p>
         </div>
       </footer>
     </div>

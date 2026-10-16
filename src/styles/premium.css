@@ -2,12 +2,11 @@
  * ATLAS v5 — premium light layer on top of brand.css (brand/direction-v5.md).
  * Cool palette only: white surfaces on #F7F8FB, indigo #3E2BF1 as the single strong accent,
  * navy #1B2656 text, hairlines #E6E8F0. Amber exists only as the tiny "needs attention" dot.
- * html[data-ui='a'] = Mercury (ultra-white, minimal) · html[data-ui='b'] = Stripe (header band, richer cards).
  */
 :root {
   --line: #e6e8f0;
   --line-strong: #d9dce6;
-  --meta: #6b7280;
+  --meta: #646b85;
   --brand-tint: #eef0ff;
   --brand-tint-2: #f4f3ff;
   --attention: #f8b040;
@@ -29,9 +28,6 @@
   --tint-sage: var(--brand-tint-2);
   --amber-50: #f3f4f8;
   --warning-50: #f3f4f8;
-}
-html[data-ui='b'] {
-  --shadow-card: 0 0 0 1px rgba(16, 24, 64, 0.02), 0 1px 2px rgba(16, 24, 64, 0.05), 0 4px 12px rgba(16, 24, 64, 0.04);
 }
 
 body { background-color: var(--canvas); }

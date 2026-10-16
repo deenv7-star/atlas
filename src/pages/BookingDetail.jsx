@@ -20,7 +20,7 @@ export default function BookingDetail({ orgId }) {
 
   if (isLoading) {
     return (
-      <div className="mx-auto w-full max-w-[880px] px-4 pt-6 md:px-8" aria-busy="true" aria-label="טוען הזמנה">
+      <div className="mx-auto w-full max-w-[880px] px-4 pt-6 md:px-8" role="status" aria-busy="true" aria-label="טוען הזמנה">
         <SkelLine className="h-6 w-24" />
         <SkelLine className="mt-4 h-[260px] rounded-[14px]" />
         <div className="mt-4 grid gap-4 md:grid-cols-[1.3fr_1fr]">

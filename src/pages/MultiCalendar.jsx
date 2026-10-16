@@ -14,8 +14,7 @@ import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
-import { UnitPhoto, UnitTile, guestInitials } from '@/components/app/atoms';
-import { isStripe } from '@/ui-direction/flag';
+import { UnitTile, guestInitials } from '@/components/app/atoms';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#EF5B5B' },
@@ -238,7 +237,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-6 md:px-10 md:pt-9 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
-      <header className={cn('v5-rise mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between', isStripe && 'v5-band pb-7')}>
+      <header className={cn('v5-rise mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between')}>
         <div>
           <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">לוח שנה</h1>
           <p className="mt-1.5 text-[15px] text-ink-400">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
@@ -319,9 +318,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   return (
                     <React.Fragment key={prop.id}>
                       <div className="sticky right-0 z-10 flex min-h-[68px] items-center gap-3 border-b border-l border-line bg-white px-2.5 md:px-3">
-                        {isStripe
-                          ? <UnitPhoto property={prop.raw} className="hidden h-9 w-9 md:block" rounded="rounded-[9px]" />
-                          : <UnitTile property={prop.raw} className="hidden h-9 w-9 text-[14px] md:inline-flex" rounded="rounded-[9px]" />}
+                        <UnitTile property={prop.raw} className="hidden h-9 w-9 text-[14px] md:inline-flex" rounded="rounded-[9px]" />
                         <div className="min-w-0">
                           <div className="truncate text-[15px] font-medium text-navy-900">{prop.name}</div>
                           <div className="hidden truncate text-[12px] text-ink-400 md:block">{prop.raw?.max_guests ? `עד ${prop.raw.max_guests} אורחים` : prop.type}</div>
@@ -433,7 +430,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   const prop = properties.find((p) => p.name === gap.property);
                   return (
                     <li key={gap.id} className="v5-row flex min-h-[64px] items-center gap-3 rounded-[10px] px-3">
-                      {isStripe ? <UnitPhoto property={prop?.raw} className="h-10 w-10" rounded="rounded-[10px]" /> : <UnitTile property={prop?.raw} className="h-10 w-10 text-[15px]" />}
+                      <UnitTile property={prop?.raw} className="h-10 w-10 text-[15px]" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-medium text-navy-900">{gap.property}</div>
                         <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {gap.nights} לילות</div>

@@ -15,7 +15,7 @@ const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestS
 
 function PageLoader() {
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 pt-6 md:px-8" aria-busy="true" aria-label="טוען את המסך">
+    <div className="mx-auto w-full max-w-[1200px] px-4 pt-6 md:px-8" role="status" aria-busy="true" aria-label="טוען את המסך">
       <SkelLine className="h-8 w-48" />
       <SkelLine className="mt-3 h-4 w-72 max-w-full" />
       <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">

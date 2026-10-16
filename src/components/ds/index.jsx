@@ -4,7 +4,6 @@
  */
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { isStripe } from '@/ui-direction/flag';
 import { CountUp } from '@/components/app/atoms';
 import { Button } from '@/components/ui/button';
 import { format, parseISO, isValid } from 'date-fns';
@@ -126,7 +125,7 @@ export function Page({ children, className, wide = false }) {
 
 export function PageHeader({ title, subtitle, actions, children, className }) {
   return (
-    <header className={cn('v5-rise mb-7 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between', isStripe && 'v5-band pb-7 md:pb-8', className)}>
+    <header className={cn('v5-rise mb-7 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between', className)}>
       <div className="min-w-0">
         <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">{title}</h1>
         {subtitle ? <p className="mt-1.5 text-[15px] text-ink-400">{subtitle}</p> : null}
@@ -151,7 +150,7 @@ export function Section({ title, subtitle, action, children, className, bodyClas
       {(title || action) && (
         <div className="flex min-h-[56px] items-center justify-between gap-3 px-5 pt-4 md:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
-            {Icon && isStripe ? <span className="ds-icon-square h-8 w-8"><Icon className="h-[18px] w-[18px]" strokeWidth={1.5} /></span> : null}
+            
             <div className="min-w-0">
               <h2 className="truncate text-[15px] font-semibold text-navy-900">{title}</h2>
               {subtitle ? <p className="truncate text-[13px] text-ink-400">{subtitle}</p> : null}
@@ -180,7 +179,7 @@ export function StatTile({ label, value, hint, tone = 'brand', className, loadin
   return (
     <Card className={cn('v5-rise flex min-w-0 flex-col gap-1 px-5 py-4 md:px-6 md:py-5', className)}>
       <span className="flex items-center gap-2 truncate text-[13px] font-medium text-ink-400">
-        {Icon && isStripe ? <span className="ds-icon-square h-7 w-7 rounded-[8px]"><Icon className="h-4 w-4" strokeWidth={1.5} /></span> : null}
+        
         {label}
         {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
       </span>
@@ -240,12 +239,31 @@ export function EmptyState({ icon: Icon, title, description, actionLabel, onActi
   );
 }
 
+/** Calm placeholder for a feature that is not switched on for this account yet. */
+export function ComingSoon({ icon: Icon, title, description, className }) {
+  return (
+    <Card className={cn('v5-rise', className)}>
+      <div className="flex flex-col items-center px-6 py-16 text-center">
+        {Icon ? (
+          <span className="relative mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] border border-line bg-white shadow-card" aria-hidden>
+            <span className="absolute inset-[5px] rounded-[11px] bg-[#F4F3FF]" />
+            <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.5} />
+          </span>
+        ) : null}
+        <span className="mb-3 inline-flex h-7 items-center rounded-full border border-line bg-white px-3 text-[13px] font-medium text-ink-600">בקרוב</span>
+        <p className="text-[17px] font-semibold text-navy-900">{title}</p>
+        {description ? <p className="mt-1.5 max-w-sm text-[15px] text-ink-400">{description}</p> : null}
+      </div>
+    </Card>
+  );
+}
+
 export function SkelLine({ className, style }) {
   return <div aria-hidden className={cn('atlas-skeleton h-4 rounded-[8px]', className)} style={style} />;
 }
 export function SkelRows({ rows = 3, avatar = true }) {
   return (
-    <div className="space-y-4" aria-busy="true" aria-label="טוען">
+    <div className="space-y-4" role="status" aria-busy="true" aria-label="טוען">
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center gap-3">
           {avatar ? <SkelLine className="h-10 w-10 shrink-0 rounded-[10px]" /> : null}

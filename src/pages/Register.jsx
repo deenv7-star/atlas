@@ -200,7 +200,7 @@ export default function Register() {
                     autoComplete="new-password"
                     maxLength={128}
                   />
-                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   {touched.password && (errors.password ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.password && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}
@@ -234,7 +234,7 @@ export default function Register() {
                     autoComplete="new-password"
                     maxLength={128}
                   />
-                  <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                  <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   {touched.confirmPassword && (errors.confirmPassword ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.confirmPassword && form.password === form.confirmPassword && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}

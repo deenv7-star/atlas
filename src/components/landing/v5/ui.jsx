@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { AIRBNB, WHATSAPP, GCAL } from './brandPaths';
 import { DEMO, CHANNEL_LABEL } from './content';
-import { fmt } from '@/components/landing/v4/motion';
+import { fmt } from './motion';
 
 const ILS = (n) => `₪${fmt(n)}`;
 
@@ -336,26 +336,6 @@ export function DirectPageMini() {
         </div>
         <div className="l5-direct-total"><span>2 לילות</span><b className="num">{ILS(1900)}</b></div>
         <span className="l5-fakebtn is-primary is-block">להזמין ולשלם מקדמה</span>
-      </div>
-    </div>
-  );
-}
-
-/* ---------- finance view (variant B tab) ---------- */
-export function FinanceView() {
-  return (
-    <div className="l5-fin">
-      <div className="l5-fin-kpis">
-        <div><span className="l5-meta">הכנסות</span><b className="num">{ILS(DEMO.revenue)}</b><span className="l5-delta"><TrendingUp size={12} strokeWidth={2.25} />{DEMO.revenueDelta}</span></div>
-        <div><span className="l5-meta">שולם</span><b className="num">{ILS(31840)}</b></div>
-        <div><span className="l5-meta">ממתין</span><b className="num">{ILS(8900)}</b></div>
-      </div>
-      <div className="l5-fin-body">
-        <div className="l5-fin-chart">
-          <RevenueChart id="fin" w={560} h={180} grid />
-          <div className="l5-fin-axis" dir="ltr">{DEMO.months.map((m) => <span key={m}>{m}</span>)}</div>
-        </div>
-        <div className="l5-fin-pay"><span className="l5-meta">תשלומים אחרונים</span><Payments total={false} /></div>
       </div>
     </div>
   );

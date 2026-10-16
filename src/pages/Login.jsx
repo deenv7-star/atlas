@@ -139,7 +139,7 @@ export default function Login() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password" className="text-[14px] font-medium text-navy-900">סיסמה</Label>
-            <Link to="/reset-password" className="text-[14px] font-medium text-brand-600 hover:underline">שכחתי סיסמה</Link>
+            <Link to="/reset-password" className="-my-2 inline-flex min-h-[44px] items-center px-1 text-[14px] font-medium text-brand-600 hover:underline">שכחתי סיסמה</Link>
           </div>
           <div className="relative">
             <Input

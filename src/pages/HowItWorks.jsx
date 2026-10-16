@@ -64,7 +64,7 @@ export default function HowItWorks() {
             איך ATLAS מונעת הזמנות כפולות ומסנכרנת ערוצים
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed mb-10">
-            דף זה מסביר ברמת מערכת — בלי הבטחות קסם — איך נתונים זורמים מערוצי הזמנה ללוח אחד, ואיך מתמודדים עם התנגשויות.
+            דף זה מסביר ברמת מערכת: בלי הבטחות קסם, איך נתונים זורמים מערוצי הזמנה ללוח אחד, ואיך מתמודדים עם התנגשויות.
             לפרטי ממשק REST ראו{' '}
             <Link to={createPageUrl('ApiDocs')} className="text-brand-600 font-semibold underline-offset-2 hover:underline">
               תיעוד ה-API
@@ -77,8 +77,8 @@ export default function HowItWorks() {
             <ol className="space-y-3 text-gray-700 text-sm sm:text-base leading-relaxed list-decimal list-inside marker:font-bold marker:text-[#2A1AC9]">
               <li>מקור חיצוני או ידני יוצר/מעדכן הזמנה.</li>
               <li>ATLAS מאמתת טווח תאריכים מול הלוח הפנימי לנכס/חדר.</li>
-              <li>אם יש חפיפה — נוצרת התראה והרשומה מסומנת לטיפול אנושי או לפי כללים שהוגדרו בארגון.</li>
-              <li>אין חפיפה — ההזמנה נרשמת והלוח מתעדכן; הערוץ המקושר מקבל עדכון כשהאינטגרציה תומכת בכך.</li>
+              <li>אם יש חפיפה: נוצרת התראה והרשומה מסומנת לטיפול אנושי או לפי כללים שהוגדרו בארגון.</li>
+              <li>אין חפיפה: ההזמנה נרשמת והלוח מתעדכן; הערוץ המקושר מקבל עדכון כשהאינטגרציה תומכת בכך.</li>
             </ol>
           </div>
 
@@ -108,7 +108,7 @@ export default function HowItWorks() {
             })}
           </div>
 
-          <div className="mt-14 rounded-2xl bg-[#1B2656] text-white p-8 text-center">
+          <div className="mt-14 rounded-2xl bg-[#F4F3FF] text-navy-900 p-8 text-center">
             <p className="text-lg font-semibold mb-4">מוכנים לראות את זה בפעולה?</p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link to="/register">
@@ -117,7 +117,7 @@ export default function HowItWorks() {
                 </Button>
               </Link>
               <Link to="/contact">
-                <Button variant="outline" className="border-white/40 text-white hover:bg-white/10">
+                <Button variant="outline" className="border-white/40 text-navy-900 hover:bg-white border border-line shadow-card">
                   דברו עם המכירות
                 </Button>
               </Link>

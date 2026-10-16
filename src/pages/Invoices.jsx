@@ -235,7 +235,7 @@ export default function InvoicesPage({ orgId }) {
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="סינון לפי סטטוס">
               <SelectValue placeholder="סטטוס" />
             </SelectTrigger>
             <SelectContent>
@@ -247,7 +247,7 @@ export default function InvoicesPage({ orgId }) {
           </Select>
 
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="סינון לפי סוג מסמך">
               <SelectValue placeholder="סוג מסמך" />
             </SelectTrigger>
             <SelectContent>
@@ -330,6 +330,7 @@ export default function InvoicesPage({ orgId }) {
                           <Button
                             size="icon"
                             variant="ghost"
+                            aria-label="תצוגה מקדימה"
                             onClick={() => handlePreview(invoice)}
                           >
                             <Eye className="w-4 h-4" />
@@ -337,6 +338,7 @@ export default function InvoicesPage({ orgId }) {
                           <Button
                             size="icon"
                             variant="ghost"
+                            aria-label="עריכה"
                             onClick={() => handleEdit(invoice)}
                           >
                             <Pencil className="w-4 h-4" />
@@ -344,6 +346,7 @@ export default function InvoicesPage({ orgId }) {
                           <Button
                             size="icon"
                             variant="ghost"
+                            aria-label="שליחה במייל"
                             onClick={() => handleSendEmail(invoice)}
                             disabled={!(invoice.guest_email || invoice.customer_email)}
                           >
@@ -352,6 +355,7 @@ export default function InvoicesPage({ orgId }) {
                           <Button
                             size="icon"
                             variant="ghost"
+                            aria-label="מחיקה"
                             onClick={() => {
                               if (confirm('למחוק את החשבונית?')) {
                                 deleteMutation.mutate(invoice.id);

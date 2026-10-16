@@ -4,21 +4,15 @@
  * amber only as a tiny "today" dot. No photos. No invented customer numbers or testimonials:
  * every number on the page is example data inside the product UI or a real price from pricing.js.
  */
-export {
-  WHATSAPP_URL, PHONE_DISPLAY, CTA_SIGNUP,
-} from '@/components/landing/v2/content';
+export const WHATSAPP_URL = 'https://wa.me/972545380085';
+export const PHONE_DISPLAY = '054-538-0085';
+export const CTA_SIGNUP = '14 ימי ניסיון חינם';
 
 export const CTA_NOTE = 'בלי כרטיס אשראי';
 
 export const HERO = {
-  a: {
-    title: ['יותר הזמנות.', 'אפס כפילויות.', 'כסף בזמן.'],
-    sub: 'לוח אחד לכל הערוצים, וואטסאפ לאורחים שיוצא לבד ומקדמות שנגבות בזמן. בעברית.',
-  },
-  b: {
-    title: ['הצימר שלכם,', 'על טייס אוטומטי.'],
-    sub: 'הזמנות מכל הערוצים, הודעות לאורחים ותשלומים. במערכת אחת שעובדת בשבילכם.',
-  },
+  title: ['יותר הזמנות.', 'אפס כפילויות.', 'כסף בזמן.'],
+  sub: 'לוח אחד לכל הערוצים, וואטסאפ לאורחים שיוצא לבד ומקדמות שנגבות בזמן. בעברית.',
 };
 
 export const STEPS = [

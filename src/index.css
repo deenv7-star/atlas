@@ -698,3 +698,6 @@ textarea:focus-visible {
   pointer-events: none;
   border-radius: inherit;
 }
+
+/* v5 release QA: footer links on the legacy public pages are tap targets (≥44px) */
+footer a[href] { display: inline-flex; align-items: center; min-height: 44px; }

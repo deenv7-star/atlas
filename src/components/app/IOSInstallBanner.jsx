@@ -28,14 +28,14 @@ export default function IOSInstallBanner() {
 
   return (
     <div
-      className="fixed bottom-20 inset-x-4 z-50 bg-[#1B2656] border border-brand-600/30 rounded-2xl shadow-2xl p-4 text-white"
+      className="fixed bottom-20 inset-x-4 z-50 bg-[#F4F3FF] border border-brand-600/30 rounded-2xl shadow-2xl p-4 text-navy-900"
       style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
       role="dialog"
       aria-label="התקן את ATLAS"
     >
       <button
         onClick={dismiss}
-        className="absolute top-3 left-3 text-gray-400 hover:text-white"
+        className="absolute top-3 left-3 text-gray-400 hover:text-navy-900"
         aria-label="סגור"
       >
         <X className="h-4 w-4" />

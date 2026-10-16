@@ -55,10 +55,10 @@ export default function Contact() {
           message: form.message.trim(),
         });
         setSent(true);
-        atlasToastApi.info('נפתח לכם מייל — שלחו את ההודעה מתוך תיבת הדואר שלכם');
+        atlasToastApi.info('נפתח לכם מייל: שלחו את ההודעה מתוך תיבת הדואר שלכם');
         return;
       }
-      atlasToastApi.error(typeof data?.error === 'string' ? data.error : 'לא הצלחנו לשלוח. נסו שוב או כתבו ל־support@atlas-app.co.il');
+      atlasToastApi.error(typeof data?.error === 'string' ? data.error : 'לא הצלחנו לשלוח. נסו שוב או כתבו ל־support@atlas-il.com');
     } catch {
       window.location.href = buildContactMailto({
         name: form.name.trim(),
@@ -68,7 +68,7 @@ export default function Contact() {
         message: form.message.trim(),
       });
       setSent(true);
-      atlasToastApi.info('נפתח מייל — שלחו את ההודעה ידנית');
+      atlasToastApi.info('נפתח מייל: שלחו את ההודעה ידנית');
     } finally {
       setSubmitting(false);
     }
@@ -104,7 +104,7 @@ export default function Contact() {
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">צור קשר</h1>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            נשמח לשמוע ממך. צוות ATLAS זמין בימים א–ה 09:00–18:00 — גם בוואטסאפ וגם במייל.
+            נשמח לשמוע ממך. צוות ATLAS זמין בימים א–ה 09:00–18:00, גם בוואטסאפ וגם במייל.
           </p>
         </div>
 
@@ -112,7 +112,7 @@ export default function Contact() {
           {/* Contact info */}
           <div className="md:col-span-2 space-y-6">
             {[
-              { icon: Mail, label: 'אימייל', value: 'support@atlas-app.co.il', href: 'mailto:support@atlas-app.co.il' },
+              { icon: Mail, label: 'אימייל', value: 'support@atlas-il.com', href: 'mailto:support@atlas-il.com' },
               { icon: Phone, label: 'טלפון', value: '03-1234567', href: 'tel:031234567' },
               { icon: Clock, label: 'שעות פעילות', value: 'ימים א-ה 09:00-18:00' },
               { icon: MapPin, label: 'כתובת', value: 'תל אביב, ישראל' },
@@ -136,7 +136,7 @@ export default function Contact() {
               href="https://wa.me/972545380085"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 bg-[#25D366] text-white rounded-xl px-5 py-3.5 font-semibold hover:bg-[#20bd5a] transition-colors mt-8 w-fit"
+              className="flex items-center gap-3 bg-[#14804A] text-white rounded-xl px-5 py-3.5 font-semibold hover:bg-[#106B3D] transition-colors mt-8 w-fit"
             >
               <MessageCircle className="w-5 h-5" />
               שלח הודעה בוואטסאפ
@@ -163,7 +163,7 @@ export default function Contact() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">תודה על הפנייה</h3>
                 <p className="text-gray-600">
-                  אם נפתח לכם חלון מייל — שלחו את ההודעה. אחרת נחזור אליכם תוך יום עסקים לרוב הפניות.
+                  אם נפתח לכם חלון מייל: שלחו את ההודעה. אחרת נחזור אליכם תוך יום עסקים לרוב הפניות.
                 </p>
               </div>
             ) : (
@@ -175,8 +175,9 @@ export default function Contact() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">שם מלא</label>
+                    <label htmlFor="contact-name" className="block text-sm font-semibold text-gray-700 mb-2">שם מלא</label>
                     <input
+                      id="contact-name"
                       type="text" required
                       style={inputStyle}
                       value={form.name}
@@ -187,8 +188,9 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">טלפון</label>
+                    <label htmlFor="contact-phone" className="block text-sm font-semibold text-gray-700 mb-2">טלפון</label>
                     <input
+                      id="contact-phone"
                       type="tel"
                       style={inputStyle}
                       value={form.phone}
@@ -200,8 +202,9 @@ export default function Contact() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">אימייל</label>
+                  <label htmlFor="contact-email" className="block text-sm font-semibold text-gray-700 mb-2">אימייל</label>
                   <input
+                      id="contact-email"
                     type="email" required
                     style={inputStyle}
                     value={form.email}
@@ -212,8 +215,9 @@ export default function Contact() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">נושא</label>
+                  <label htmlFor="contact-subject" className="block text-sm font-semibold text-gray-700 mb-2">נושא</label>
                   <select
+                    id="contact-subject"
                     style={{ ...inputStyle, appearance: 'none', background: 'white' }}
                     value={form.subject}
                     onChange={e => setForm({ ...form, subject: e.target.value })}
@@ -224,8 +228,9 @@ export default function Contact() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">הודעה</label>
+                  <label htmlFor="contact-message" className="block text-sm font-semibold text-gray-700 mb-2">הודעה</label>
                   <textarea
+                      id="contact-message"
                     required rows={5}
                     style={{ ...inputStyle, resize: 'vertical' }}
                     value={form.message}
@@ -252,7 +257,7 @@ export default function Contact() {
                 </button>
                 <p className="text-xs text-gray-500 text-center leading-relaxed">
                   לחלופין:{' '}
-                  <a href="mailto:support@atlas-app.co.il" className="text-brand-600 font-medium hover:underline">support@atlas-app.co.il</a>
+                  <a href="mailto:support@atlas-il.com" className="text-brand-600 font-medium hover:underline">support@atlas-il.com</a>
                   {' · '}
                   <a href="https://wa.me/972545380085" className="text-brand-600 font-medium hover:underline" target="_blank" rel="noopener noreferrer">וואטסאפ</a>
                 </p>
@@ -264,7 +269,7 @@ export default function Contact() {
 
       <footer className="py-8 px-4 bg-gray-50 border-t border-gray-100 mt-16">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <p className="text-sm text-gray-400">© 2025 ATLAS. כל הזכויות שמורות.</p>
+          <p className="text-sm text-gray-400">© {new Date().getFullYear()} ATLAS. כל הזכויות שמורות.</p>
           <div className="flex gap-4 text-sm text-gray-400">
             <Link to={createPageUrl('Privacy')} className="hover:text-gray-600 transition-colors">פרטיות</Link>
             <Link to={createPageUrl('Terms')} className="hover:text-gray-600 transition-colors">תנאי שימוש</Link>

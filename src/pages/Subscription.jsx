@@ -91,7 +91,7 @@ export default function SubscriptionPage({ user }) {
           ))}
         </ul>
         <p className="text-[14px] text-ink-400">
-          שאלות? <a href="mailto:support@atlas-app.co.il" className="inline-flex min-h-11 items-center font-medium text-brand-600 hover:underline">כתבו לנו</a>
+          שאלות? <a href="mailto:support@atlas-il.com" className="inline-flex min-h-11 items-center font-medium text-brand-600 hover:underline">כתבו לנו</a>
         </p>
       </div>
     </Page>
