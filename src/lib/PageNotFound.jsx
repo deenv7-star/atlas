@@ -19,7 +19,7 @@ export default function PageNotFound() {
       <div className="max-w-md w-full text-center space-y-6">
         <div className="space-y-2">
           <h1 className="text-8xl font-bold text-gray-200">404</h1>
-          <div className="h-0.5 w-16 bg-[#00D1C1]/30 mx-auto" />
+          <div className="h-0.5 w-16 bg-brand-600/30 mx-auto" />
         </div>
 
         <div className="space-y-3">
@@ -34,7 +34,7 @@ export default function PageNotFound() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Link
             to={createPageUrl('Dashboard')}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-[#0B1220] bg-[#00D1C1] hover:bg-[#00b8aa] rounded-lg transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-lg transition-colors"
           >
             <Home className="w-4 h-4" />
             חזור לדשבורד

@@ -21,7 +21,7 @@ export function ShimmerButton({ children, onClick, className = '', style = {}, d
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
       style={{
-        background: 'linear-gradient(135deg, #0B1220 0%, #1e2d4a 100%)',
+        background: 'linear-gradient(135deg, #1B2656 0%, #1e2d4a 100%)',
         boxShadow: '0 4px 20px rgba(11,18,32,0.30), inset 0 1px 0 rgba(255,255,255,0.10)',
         padding: '12px 28px',
         fontSize: '15px',
@@ -61,7 +61,7 @@ export function GradientButton({ children, onClick, className = '', style = {} }
         animate={{ rotate: 360 }}
         transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
         style={{
-          background: 'conic-gradient(from 0deg, #00D1C1, #6366f1, #f59e0b, #00D1C1)',
+          background: 'conic-gradient(from 0deg, #3E2BF1, #3E2BF1, #f59e0b, #3E2BF1)',
           borderRadius: 'inherit',
         }}
       />
@@ -74,7 +74,7 @@ export function GradientButton({ children, onClick, className = '', style = {} }
           background: 'white',
           padding: '11px 26px',
           fontSize: '15px',
-          color: '#0B1220',
+          color: '#1B2656',
           letterSpacing: '-0.01em',
           border: 'none',
           cursor: 'pointer',
@@ -118,11 +118,11 @@ export function MagneticButton({ children, onClick, className = '', style = {}, 
       style={{
         x,
         y,
-        background: 'linear-gradient(135deg, #00D1C1 0%, #00a8a0 100%)',
-        boxShadow: '0 4px 20px rgba(0,209,193,0.40), inset 0 1px 0 rgba(255,255,255,0.25)',
+        background: '#3E2BF1',
+        boxShadow: '0 4px 20px rgba(62, 43, 241,0.40), inset 0 1px 0 rgba(255,255,255,0.25)',
         padding: '12px 28px',
         fontSize: '15px',
-        color: '#0B1220',
+        color: '#1B2656',
         letterSpacing: '-0.01em',
         border: 'none',
         cursor: 'pointer',
@@ -144,7 +144,7 @@ export function MagneticButton({ children, onClick, className = '', style = {}, 
 }
 
 /* ── Glow Button ────────────────────────────────────────────── */
-export function GlowButton({ children, onClick, className = '', style = {}, color = '#00D1C1' }) {
+export function GlowButton({ children, onClick, className = '', style = {}, color = '#3E2BF1' }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -156,7 +156,7 @@ export function GlowButton({ children, onClick, className = '', style = {}, colo
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.96 }}
       style={{
-        background: 'linear-gradient(135deg, #0B1220 0%, #162035 100%)',
+        background: 'linear-gradient(135deg, #1B2656 0%, #162035 100%)',
         border: `1px solid ${color}55`,
         boxShadow: hovered
           ? `0 0 0 1px ${color}66, 0 0 20px ${color}55, 0 0 40px ${color}33, 0 4px 20px rgba(0,0,0,0.30)`
@@ -203,21 +203,21 @@ export function RippleButton({ children, onClick, className = '', style = {}, va
 
   const variants = {
     primary: {
-      bg: 'linear-gradient(135deg, #0B1220 0%, #1e2d4a 100%)',
+      bg: 'linear-gradient(135deg, #1B2656 0%, #1e2d4a 100%)',
       color: 'white',
       rippleColor: 'rgba(255,255,255,0.25)',
       shadow: '0 4px 16px rgba(11,18,32,0.30)',
     },
     teal: {
-      bg: 'linear-gradient(135deg, #00D1C1 0%, #00a8a0 100%)',
-      color: '#0B1220',
+      bg: '#3E2BF1',
+      color: '#1B2656',
       rippleColor: 'rgba(255,255,255,0.35)',
-      shadow: '0 4px 16px rgba(0,209,193,0.40)',
+      shadow: '0 4px 16px rgba(62, 43, 241,0.40)',
     },
     ghost: {
       bg: 'transparent',
-      color: '#0B1220',
-      rippleColor: 'rgba(0,209,193,0.20)',
+      color: '#1B2656',
+      rippleColor: 'rgba(62, 43, 241,0.20)',
       shadow: 'none',
       border: '1.5px solid rgba(11,18,32,0.15)',
     },
@@ -263,7 +263,7 @@ export function RippleButton({ children, onClick, className = '', style = {}, va
 }
 
 /* ── Icon Button (animated) ─────────────────────────────────── */
-export function IconButton({ icon: Icon, label, onClick, className = '', color = '#00D1C1', size = 40 }) {
+export function IconButton({ icon: Icon, label, onClick, className = '', color = '#3E2BF1', size = 40 }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -301,11 +301,11 @@ export function LoadingButton({ children, loading = false, onClick, className = 
       style={{
         background: loading
           ? 'linear-gradient(135deg, #374151 0%, #4b5563 100%)'
-          : 'linear-gradient(135deg, #00D1C1 0%, #00a8a0 100%)',
-        boxShadow: loading ? 'none' : '0 4px 20px rgba(0,209,193,0.40)',
+          : '#3E2BF1',
+        boxShadow: loading ? 'none' : '0 4px 20px rgba(62, 43, 241,0.40)',
         padding: '12px 28px',
         fontSize: '15px',
-        color: loading ? '#9ca3af' : '#0B1220',
+        color: loading ? '#9ca3af' : '#1B2656',
         letterSpacing: '-0.01em',
         border: 'none',
         cursor: loading ? 'not-allowed' : 'pointer',

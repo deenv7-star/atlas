@@ -36,7 +36,7 @@ export const BOOKING_COLUMNS = [
   { label: 'לילות',         accessor: r => r.nights },
   { label: 'סטטוס',         accessor: r => r.status },
   { label: 'מחיר כולל (₪)', accessor: r => r.total_price },
-  { label: 'מקור הזמנה',    accessor: r => r.booking_source },
+  { label: 'מקור הזמנה',    accessor: r => r.source || r.booking_source },
   { label: 'הערות',         accessor: r => r.notes },
 ];
 

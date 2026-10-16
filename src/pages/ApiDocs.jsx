@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -58,7 +59,7 @@ export default function ApiDocs() {
       <nav className="sticky top-0 z-50 bg-white/95 border-b border-gray-200 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/atlas-logo-final.png" alt="ATLAS" className="h-9" />
+            <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           </Link>
           <div className="flex items-center gap-2">
             <Link to={createPageUrl('DataSecurity')}>
@@ -74,9 +75,9 @@ export default function ApiDocs() {
         </div>
       </nav>
 
-      <header className="bg-gradient-to-br from-[#0B1220] to-[#1a2744] text-white px-4 py-14">
+      <header className="bg-[#1B2656] text-white px-4 py-14">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-2 text-[#00D1C1] text-sm font-semibold mb-3">
+          <div className="flex items-center gap-2 text-brand-600 text-sm font-semibold mb-3">
             <Code2 className="w-5 h-5" />
             REST API
           </div>
@@ -100,7 +101,7 @@ export default function ApiDocs() {
             <ul className="divide-y divide-gray-100">
               {section.items.map(([method, path, desc]) => (
                 <li key={path + method} className="px-6 py-4 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
-                  <span className="font-mono text-xs font-bold text-[#4F46E5] shrink-0 w-24">{method}</span>
+                  <span className="font-mono text-xs font-bold text-brand-600 shrink-0 w-24">{method}</span>
                   <code className="font-mono text-sm text-gray-800 break-all flex-1">{path}</code>
                   <span className="text-sm text-gray-600 sm:text-right sm:max-w-xs">{desc}</span>
                 </li>
@@ -123,7 +124,7 @@ export default function ApiDocs() {
 
         <div className="flex flex-wrap gap-4 justify-center pb-12">
           <Link to={createPageUrl('Contact')}>
-            <Button className="gap-2 bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]">
+            <Button className="gap-2 bg-brand-600 hover:bg-brand-500 text-white">
               שאלות טכניות — צור קשר
               <ArrowRight className="w-4 h-4" />
             </Button>

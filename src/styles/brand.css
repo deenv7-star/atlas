@@ -1,0 +1,306 @@
+/*
+ * ATLAS brand tokens — the single place colors, type, shape and motion live.
+ * Source of truth: docs/brand.md. Every page, the landing and guest pages read these names.
+ * Tailwind exposes the same tokens (tailwind.config.js) so classes and CSS never disagree.
+ */
+
+/* Heebo, self-hosted (docs/brand.md) */
+@font-face { font-family: 'Heebo'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/heebo/heebo-hebrew-400-normal.woff2') format('woff2'); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Heebo'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/heebo/heebo-latin-400-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Heebo'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/heebo/heebo-hebrew-500-normal.woff2') format('woff2'); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Heebo'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/heebo/heebo-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Heebo'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/heebo/heebo-hebrew-700-normal.woff2') format('woff2'); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Heebo'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/heebo/heebo-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Heebo'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/heebo/heebo-hebrew-800-normal.woff2') format('woff2'); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Heebo'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/heebo/heebo-latin-800-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  /* Brand — electric indigo */
+  --brand-700: #2a1ac9;
+  --brand-600: #3e2bf1;
+  --brand-500: #5545f0;
+  --brand-100: #e4e1fd;
+  --brand-50: #f1effe;
+  --brand-rgb: 62, 43, 241;
+
+  /* Ink — navy family */
+  --navy-900: #1b2656;
+  --ink-600: #4a5578;
+  --ink-400: #6b7280;
+
+  /* Surfaces */
+  --surface: #ffffff;
+  --canvas: #f7f8fb;
+  --line: #e6e8f0;
+  --line-strong: #d7dbe8;
+  --fill-soft: #f1f3f8;
+
+  /* Accent + status */
+  --accent-amber: #f8b040;
+  --amber-50: #fef5e6;
+  --success: #22b07d;
+  --success-50: #e7f7f0;
+  --warning: #e59a1f;
+  --warning-50: #fdf3e2;
+  --danger: #ef5b5b;
+  --danger-50: #fdeeee;
+  --info: var(--brand-600);
+
+  /* Channels — identical everywhere */
+  --ch-booking: #1b2656;
+  --ch-airbnb: #ef5b5b;
+  --ch-direct: #3e2bf1;
+  --ch-other: #8c93ab;
+
+  /* Charts */
+  --chart-income: #4cc38a;
+  --chart-expense: #ef6b6b;
+  --chart-profit: #3e2bf1;
+
+  /* Shape */
+  --r-control: 10px;
+  --r-card: 14px;
+  --r-sheet: 20px;
+  --shadow-card: 0 1px 2px rgba(27, 38, 86, 0.05), 0 4px 16px rgba(27, 38, 86, 0.05);
+  --shadow-raised: 0 2px 6px rgba(27, 38, 86, 0.06), 0 12px 32px rgba(27, 38, 86, 0.1);
+  --shadow-sheet: 0 -8px 40px rgba(27, 38, 86, 0.16);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-sheet: 320ms;
+
+  /* Type */
+  --font-sans: 'Heebo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Legacy aliases still referenced by older components — mapped onto the brand */
+  --brand-teal: var(--brand-600);
+  --brand-teal-light: var(--brand-500);
+  --brand-dark: var(--navy-900);
+  --brand-teal-rgb: var(--brand-rgb);
+  --page-bg: var(--canvas);
+  --atlas-ink: var(--navy-900);
+  --atlas-ink-muted: var(--ink-600);
+  --atlas-border-soft: var(--line);
+  --atlas-surface: var(--surface);
+  --atlas-shadow-card: var(--shadow-card);
+  --atlas-shadow-hero: var(--shadow-card);
+  --atlas-radius-card: var(--r-card);
+  --atlas-radius-lg: var(--r-card);
+  --atlas-ease-out: var(--ease-out);
+  --color-background-secondary: #eceef5;
+  --atlas-skeleton-shimmer-highlight: rgba(255, 255, 255, 0.75);
+
+  /* shadcn (HSL triplets) mapped onto the brand */
+  --background: 225 33% 98%;
+  --foreground: 228 52% 22%;
+  --card: 0 0% 100%;
+  --card-foreground: 228 52% 22%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 228 52% 22%;
+  --primary: 247 88% 56%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 225 30% 96%;
+  --secondary-foreground: 228 52% 22%;
+  --muted: 225 30% 96%;
+  --muted-foreground: 226 24% 38%;
+  --accent: 248 89% 97%;
+  --accent-foreground: 247 88% 56%;
+  --destructive: 0 82% 65%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 228 27% 93%;
+  --input: 228 27% 90%;
+  --ring: 247 88% 56%;
+  --radius: 0.625rem;
+  --chart-1: 247 88% 56%;
+  --chart-2: 152 50% 53%;
+  --chart-3: 0 82% 68%;
+  --chart-4: 37 93% 61%;
+  --chart-5: 228 52% 22%;
+}
+
+/* The app is light-only until a designed dark theme exists. A stray `.dark`
+   (old theme toggle, OS sync) must never repaint skeletons or surfaces black. */
+.dark {
+  --background: 225 33% 98%;
+  --foreground: 228 52% 22%;
+  --card: 0 0% 100%;
+  --card-foreground: 228 52% 22%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 228 52% 22%;
+  --primary: 247 88% 56%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 225 30% 96%;
+  --secondary-foreground: 228 52% 22%;
+  --muted: 225 30% 96%;
+  --muted-foreground: 226 24% 38%;
+  --accent: 248 89% 97%;
+  --accent-foreground: 247 88% 56%;
+  --border: 228 27% 93%;
+  --input: 228 27% 90%;
+  --color-background-secondary: #eceef5;
+  --atlas-skeleton-shimmer-highlight: rgba(255, 255, 255, 0.75);
+}
+
+html,
+body,
+[dir='rtl'],
+.atlas-app-shell {
+  font-family: var(--font-sans);
+}
+body {
+  background-color: var(--canvas);
+  color: var(--navy-900);
+  font-size: 15px;
+  line-height: 1.5;
+  font-feature-settings: 'tnum' 0;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (max-width: 767px) {
+  body { font-size: 16px; }
+}
+h1, h2, h3, h4 { color: var(--navy-900); line-height: 1.15; letter-spacing: -0.01em; }
+.tabular, .atlas-tabular { font-variant-numeric: tabular-nums; font-family: var(--font-sans); letter-spacing: 0; }
+
+/* Focus: always visible for keyboard users */
+:where(a, button, [role='button'], input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--brand-600);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Press feedback (haptic-like) for everything tappable */
+.press {
+  transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.press:active { transform: scale(0.98); }
+
+/* ── Design-system primitives (plain CSS so any page can use them) ───────────── */
+.ds-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+}
+.ds-card-flat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+}
+.ds-icon-square {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--brand-50); color: var(--brand-600); flex-shrink: 0;
+}
+.ds-meta { font-size: 13px; color: var(--ink-400); }
+.ds-sub { color: var(--ink-600); }
+.ds-material {
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Skeleton: light, quiet shimmer */
+.atlas-skeleton,
+.skeleton {
+  background-color: #eceef5 !important;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0)) !important;
+  background-size: 240px 100% !important;
+  background-repeat: no-repeat !important;
+  animation: ds-shimmer 1.4s var(--ease-out) infinite !important;
+}
+@keyframes ds-shimmer {
+  0% { background-position: -240px 0; }
+  100% { background-position: calc(100% + 240px) 0; }
+}
+
+/* ── Legacy classes re-pointed to the brand (no gradients, no glow) ─────────── */
+.stat-blue, .stat-purple, .stat-teal, .stat-amber, .stat-rose, .stat-green {
+  background: var(--surface) !important;
+  border: 1px solid var(--line);
+}
+.icon-blue, .icon-purple, .icon-teal, .icon-green { background: var(--brand-50) !important; color: var(--brand-600) !important; }
+.icon-amber { background: #f3f4f8 !important; color: var(--ink-600) !important; }
+.icon-rose { background: var(--danger-50) !important; color: #c83b3b !important; }
+.btn-teal {
+  background: var(--brand-600) !important; color: #fff !important; box-shadow: none !important;
+  transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out) !important;
+}
+.btn-teal:hover { background: var(--brand-500) !important; transform: none !important; }
+.btn-teal:active { background: var(--brand-700) !important; transform: scale(0.98) !important; }
+.gradient-text { background: none !important; -webkit-text-fill-color: currentColor !important; color: var(--brand-600) !important; }
+.glow-teal, .animate-pulse-glow { box-shadow: none !important; animation: none !important; }
+.glass { background: var(--surface) !important; border: 1px solid var(--line) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.card-premium, .atlas-card-surface {
+  background: var(--surface) !important; border: 1px solid var(--line) !important;
+  border-radius: var(--r-card) !important; box-shadow: var(--shadow-card) !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+.card-premium:hover, .card-hover:hover { transform: none !important; box-shadow: var(--shadow-raised) !important; }
+.animate-float { animation: none !important; }
+
+/* Page header (replaces the old pastel "hero" box on every inner page) */
+.atlas-page-hero {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 4px 0 0 !important;
+  margin-bottom: 20px !important;
+  border-radius: 0 !important;
+}
+.atlas-page-hero h1 { font-size: 28px !important; font-weight: 800 !important; color: var(--navy-900) !important; letter-spacing: -0.02em; }
+.atlas-page-hero p { color: var(--ink-600) !important; font-size: 15px !important; }
+.atlas-page-hero > div:first-child > div:first-child:not(:only-child) { display: none !important; } /* drop the pastel icon tile */
+@media (max-width: 767px) {
+  .atlas-page-hero h1 { font-size: 26px !important; }
+}
+.atlas-page-shell { max-width: 1200px; }
+
+/* Scrollbars in brand */
+@media (min-width: 769px) and (pointer: fine) {
+  ::-webkit-scrollbar-thumb { background: rgba(27, 38, 86, 0.18) !important; border: 3px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(27, 38, 86, 0.3) !important; background-clip: padding-box; }
+}
+@media (max-width: 768px), (pointer: coarse) {
+  ::-webkit-scrollbar-thumb { background: rgba(27, 38, 86, 0.15) !important; }
+}
+
+/* Sheets slide with a spring-like curve; overlays dim calmly */
+@keyframes ds-sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes ds-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ds-pop { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: none; } }
+.ds-enter { animation: ds-pop var(--dur-base) var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .atlas-skeleton, .skeleton { animation: none !important; }
+}
+
+/* Toasts: compact navy capsule, iOS-like */
+[data-sonner-toaster] [data-sonner-toast] {
+  background: var(--navy-900) !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  box-shadow: var(--shadow-raised) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 15px !important;
+  padding: 14px 16px !important;
+}
+[data-sonner-toaster] [data-sonner-toast] [data-description] { color: rgba(255, 255, 255, 0.72) !important; }
+[data-sonner-toaster] [data-sonner-toast][data-type='success'] [data-icon] { color: #5fd3a6 !important; }
+[data-sonner-toaster] [data-sonner-toast][data-type='error'] [data-icon] { color: #ff8a8a !important; }
+[data-sonner-toaster] [data-sonner-toast] [data-close-button] { background: rgba(255,255,255,.12) !important; color: #fff !important; border: 0 !important; }
+[data-sonner-toaster] [data-sonner-toast] [data-button] { background: #fff !important; color: var(--navy-900) !important; border-radius: 8px !important; font-weight: 700 !important; }
+
+.atlas-page-hero p { margin-right: 0 !important; margin-left: 0 !important; max-width: 65ch; }
+.atlas-page-hero p + p { font-size: 13px !important; color: var(--ink-400) !important; }
+.atlas-page-hero span[class*='bg-amber-500'] { background: #f3f4f8 !important; color: var(--ink-600) !important; }

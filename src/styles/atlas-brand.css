@@ -1,0 +1,124 @@
+/*
+ * ATLAS brand tokens (brand/atlas-brand.md, 16.10.2026).
+ * Same names as the brand spec so the app shell can adopt them globally.
+ * Scoped helpers are prefixed `ab-` and only used by the new feature screens.
+ */
+:root {
+  /* EasyList palette, chosen by the owner 16.10.2026 */
+  --brand-700: #2A1AC9;
+  --brand-600: #3E2BF1;
+  --brand-500: #5545F0;
+  --brand-100: #E4E1FD;
+  --brand-50: #F1EFFE;
+  --navy-900: #1B2656;
+  --ink-900: #1B2656; /* alias: primary text = navy */
+  --ink-600: #4A5578;
+  --ink-400: #8C93AB;
+  --surface: #FFFFFF;
+  --canvas: #F7F8FB;
+  --line: #E7E9F1;
+  --accent-amber: #F8B040;
+  --status-success: #22B07D;
+  --status-warning: #E59A1F;
+  --status-danger: #EF5B5B;
+  --status-info: #3E2BF1;
+  --chart-income: #4CC38A;
+  --chart-expense: #EF6B6B;
+  --chart-profit: #3E2BF1;
+  --channel-booking: #1B2656;
+  --channel-airbnb: #EF5B5B;
+  --channel-direct: #3E2BF1;
+  --channel-other: #8C93AB;
+  --ab-shadow: 0 1px 2px rgba(20, 23, 26, .06), 0 4px 16px rgba(20, 23, 26, .06);
+  --ab-ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+.ab-root {
+  font-family: 'Heebo', system-ui, sans-serif;
+  color: var(--ink-900);
+  font-size: 15px;
+  line-height: 1.5;
+}
+@media (max-width: 640px) { .ab-root { font-size: 16px; } }
+.ab-root .ab-num, .ab-num { font-variant-numeric: tabular-nums; }
+.ab-canvas { background: var(--canvas); }
+
+.ab-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--ab-shadow);
+}
+.ab-h1 { font-size: 28px; line-height: 1.15; font-weight: 800; letter-spacing: -.01em; color: var(--ink-900); }
+.ab-h3 { font-size: 18px; line-height: 1.25; font-weight: 700; color: var(--ink-900); }
+.ab-meta { font-size: 13px; color: var(--ink-600); }
+.ab-faint { font-size: 13px; color: var(--ink-400); }
+
+.ab-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 16px; border-radius: 10px;
+  font-weight: 700; font-size: 15px; white-space: nowrap;
+  border: 1px solid transparent; cursor: pointer; user-select: none;
+  transition: transform 160ms var(--ab-ease), background-color 160ms var(--ab-ease), border-color 160ms var(--ab-ease), color 160ms var(--ab-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.ab-btn:active { transform: scale(.98); }
+.ab-btn:focus-visible { outline: 2px solid var(--brand-500); outline-offset: 2px; }
+.ab-btn[disabled] { opacity: .5; cursor: not-allowed; transform: none; }
+.ab-btn-primary { background: var(--brand-600); color: #fff; }
+.ab-btn-primary:hover { background: var(--brand-500); }
+.ab-btn-primary:active { background: var(--brand-700); }
+.ab-btn-secondary { background: var(--surface); color: var(--ink-900); border-color: var(--line); }
+.ab-btn-secondary:hover { border-color: #CDD1E0; background: #FAFBFD; }
+.ab-btn-ghost { background: transparent; color: var(--brand-600); }
+.ab-btn-ghost:hover { background: var(--brand-50); }
+.ab-btn-sm { min-height: 40px; padding: 0 12px; font-size: 14px; }
+@media (pointer: coarse) { .ab-btn-sm { min-height: 44px; } }
+.ab-btn-lg { min-height: 48px; padding: 0 20px; font-size: 16px; }
+
+.ab-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  border-radius: 999px; padding: 2px 9px; font-size: 12px; font-weight: 700; line-height: 18px;
+  white-space: nowrap;
+}
+.ab-pill-brand { background: var(--brand-50); color: var(--brand-700); }
+.ab-pill-amber { background: #FEF3DF; color: #8A5A0E; }
+.ab-pill-danger { background: #FDECEC; color: #C93D3D; }
+.ab-pill-success { background: #E3F6EE; color: #17845C; }
+.ab-pill-muted { background: #F0F2F7; color: var(--ink-600); }
+
+.ab-icon-tile {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--brand-50); color: var(--brand-600);
+}
+.ab-input {
+  width: 100%; min-height: 44px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); padding: 0 12px; font-size: 16px; color: var(--ink-900);
+  transition: border-color 160ms var(--ab-ease), box-shadow 160ms var(--ab-ease);
+}
+.ab-input:focus { outline: none; border-color: var(--brand-500); box-shadow: 0 0 0 3px var(--brand-50); }
+textarea.ab-input { padding: 10px 12px; min-height: 96px; line-height: 1.5; }
+.ab-label { display: block; font-size: 13px; font-weight: 700; color: var(--ink-600); margin-bottom: 6px; }
+
+.ab-enter { animation: ab-enter 220ms var(--ab-ease) both; }
+@keyframes ab-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-enter { animation: none; }
+  .ab-btn { transition: none; }
+  .ab-btn:active { transform: none; }
+}
+
+@media print {
+  .ab-no-print { display: none !important; }
+  .ab-print-page { box-shadow: none !important; border: 0 !important; }
+}
+
+/* Quiet stat row: 3 tiles become 2+1 on narrow phones so money never gets cut. */
+.stat-row { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.stat-row > :nth-child(3):last-child { grid-column: 1 / -1; }
+@media (min-width: 640px) {
+  .stat-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .stat-row > :nth-child(3):last-child { grid-column: auto; }
+}

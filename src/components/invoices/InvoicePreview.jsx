@@ -28,34 +28,34 @@ export default function InvoicePreview({ invoice }) {
         {/* Header */}
         <div className="flex justify-between items-start mb-8 pb-4 border-b-2">
           <div>
-            <h1 className="text-3xl font-bold text-[#0B1220] mb-2">STAYFLOW</h1>
-            <p className="text-sm text-gray-600">מערכת ניהול נכסים</p>
+            <h1 className="text-3xl font-bold text-[#1B2656] mb-2">STAYFLOW</h1>
+            <p className="text-sm text-ink-600">מערכת ניהול נכסים</p>
           </div>
           <div className="text-left">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-2">
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-2">
               {typeLabels[invoice.type] || 'חשבונית'}
             </h2>
-            <p className="text-sm text-gray-600">מספר: {invoice.invoice_number}</p>
-            <p className="text-sm text-gray-600">תאריך: {format(new Date(invoice.issue_date), 'dd/MM/yyyy')}</p>
+            <p className="text-sm text-ink-600">מספר: {invoice.invoice_number}</p>
+            <p className="text-sm text-ink-600">תאריך: {format(new Date(invoice.issue_date), 'dd/MM/yyyy')}</p>
           </div>
         </div>
 
         {/* Customer Details */}
         <div className="mb-8">
-          <h3 className="font-semibold text-lg mb-3 text-[#0B1220]">ללקוח:</h3>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-[#1B2656]">ללקוח:</h3>
+          <div className="bg-canvas p-4 rounded-lg">
             <p className="font-semibold text-lg mb-1">{invoice.customer_name}</p>
             {invoice.customer_tax_id && (
-              <p className="text-sm text-gray-600">ת.ז / ח.פ: {invoice.customer_tax_id}</p>
+              <p className="text-sm text-ink-600">ת.ז / ח.פ: {invoice.customer_tax_id}</p>
             )}
             {invoice.customer_address && (
-              <p className="text-sm text-gray-600">{invoice.customer_address}</p>
+              <p className="text-sm text-ink-600">{invoice.customer_address}</p>
             )}
             {invoice.customer_phone && (
-              <p className="text-sm text-gray-600">טלפון: {invoice.customer_phone}</p>
+              <p className="text-sm text-ink-600">טלפון: {invoice.customer_phone}</p>
             )}
             {invoice.customer_email && (
-              <p className="text-sm text-gray-600">אימייל: {invoice.customer_email}</p>
+              <p className="text-sm text-ink-600">אימייל: {invoice.customer_email}</p>
             )}
           </div>
         </div>
@@ -64,7 +64,7 @@ export default function InvoicePreview({ invoice }) {
         <div className="mb-8">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-100 border-b-2 border-gray-300">
+              <tr className="bg-neutral-100 border-b-2 border-neutral-300">
                 <th className="text-right p-3 font-semibold">תיאור</th>
                 <th className="text-center p-3 font-semibold w-20">כמות</th>
                 <th className="text-center p-3 font-semibold w-24">מחיר יחידה</th>
@@ -95,16 +95,16 @@ export default function InvoicePreview({ invoice }) {
               <span>מע"מ ({invoice.tax_rate}%):</span>
               <span>₪{invoice.tax_amount?.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-xl font-bold pt-2 border-t-2 border-gray-300">
+            <div className="flex justify-between text-xl font-bold pt-2 border-t-2 border-neutral-300">
               <span>סה"כ לתשלום:</span>
-              <span className="text-[#00D1C1]">₪{invoice.total_amount?.toFixed(2)}</span>
+              <span className="text-brand-600">₪{invoice.total_amount?.toFixed(2)}</span>
             </div>
           </div>
         </div>
 
         {/* Payment Details */}
         {invoice.due_date && (
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+          <div className="mb-6 p-4 bg-brand-50 rounded-lg">
             <p className="text-sm">
               <span className="font-semibold">תאריך לתשלום:</span>{' '}
               {format(new Date(invoice.due_date), 'dd/MM/yyyy')}
@@ -116,14 +116,14 @@ export default function InvoicePreview({ invoice }) {
         {invoice.notes && (
           <div className="mb-6">
             <h3 className="font-semibold mb-2">הערות:</h3>
-            <p className="text-sm text-gray-700 whitespace-pre-line bg-gray-50 p-3 rounded">
+            <p className="text-sm text-ink-600 whitespace-pre-line bg-canvas p-3 rounded">
               {invoice.notes}
             </p>
           </div>
         )}
 
         {/* Footer */}
-        <div className="text-center text-xs text-gray-500 pt-6 border-t mt-8">
+        <div className="text-center text-xs text-ink-600 pt-6 border-t mt-8">
           <p>מסמך זה הופק באמצעות מערכת STAYFLOW</p>
           <p>תודה על העסקה!</p>
         </div>

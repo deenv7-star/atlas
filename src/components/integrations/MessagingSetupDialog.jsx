@@ -10,7 +10,7 @@ import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 const PROVIDER_CONFIGS = {
   WHATSAPP: {
     title: 'WhatsApp Business API',
-    icon: '💬',
+    icon: 'W',
     color: 'bg-[#25D366]',
     fields: [
       { key: 'phone_number_id', label: 'Phone Number ID', type: 'text', placeholder: '1234567890', required: true },
@@ -22,7 +22,7 @@ const PROVIDER_CONFIGS = {
   },
   EMAIL_SMTP: {
     title: 'Email (SMTP)',
-    icon: '📧',
+    icon: 'E',
     color: 'bg-gray-600',
     fields: [
       { key: 'smtp_host', label: 'SMTP Host', type: 'text', placeholder: 'smtp.gmail.com', required: true },
@@ -37,7 +37,7 @@ const PROVIDER_CONFIGS = {
   },
   SMS_TWILIO: {
     title: 'SMS (Twilio)',
-    icon: '📱',
+    icon: 'S',
     color: 'bg-[#F22F46]',
     fields: [
       { key: 'account_sid', label: 'Account SID', type: 'text', placeholder: 'ACxxxxx...', required: true },
@@ -49,8 +49,8 @@ const PROVIDER_CONFIGS = {
   },
   SENDGRID: {
     title: 'SendGrid',
-    icon: '📬',
-    color: 'bg-blue-500',
+    icon: 'S',
+    color: 'bg-brand-500',
     fields: [
       { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'SG.xxxxx...', required: true },
       { key: 'from_name', label: 'From Name', type: 'text', placeholder: 'ATLAS', required: true },
@@ -61,7 +61,7 @@ const PROVIDER_CONFIGS = {
   },
   TELEGRAM: {
     title: 'Telegram Bot',
-    icon: '✈️',
+    icon: 'T',
     color: 'bg-[#0088cc]',
     fields: [
       { key: 'bot_token', label: 'Bot Token', type: 'password', placeholder: '123456789:ABCdef...', required: true }
@@ -93,7 +93,7 @@ export default function MessagingSetupDialog({ open, onOpenChange, provider, onS
     setTestResult({
       success,
       message: success 
-        ? 'החיבור עבד בהצלחה! ✓' 
+        ? 'החיבור עבד בהצלחה! ' 
         : 'שגיאה בחיבור. בדוק את הפרטים שוב.'
     });
     setTesting(false);
@@ -141,14 +141,14 @@ export default function MessagingSetupDialog({ open, onOpenChange, provider, onS
 
         <div className="space-y-4 py-4">
           {/* Help Banner */}
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="text-sm text-blue-900 flex items-start gap-2">
+          <Alert className="bg-brand-50 border-brand-100">
+            <AlertDescription className="text-sm text-navy-900 flex items-start gap-2">
               <span>{config.helpText}</span>
               <a 
                 href={config.helpUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 flex-shrink-0"
+                className="text-brand-600 hover:text-brand-700 flex-shrink-0"
               >
                 <ExternalLink className="h-4 w-4" />
               </a>
@@ -225,7 +225,7 @@ export default function MessagingSetupDialog({ open, onOpenChange, provider, onS
           <Button 
             onClick={handleSave}
             disabled={!testResult?.success}
-            className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]"
+            className="bg-brand-600 hover:bg-brand-500 text-white"
           >
             שמור והפעל
           </Button>

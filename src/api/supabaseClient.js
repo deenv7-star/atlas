@@ -14,12 +14,48 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl  = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey  = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+/** Every network call gives up after this long so loading states never hang. */
+export const REQUEST_TIMEOUT_MS = 15000;
+
+/**
+ * fetch with a hard timeout. Respects a caller-provided AbortSignal as well.
+ * A timeout rejects with an Error named 'TimeoutError' (err.isTimeout = true).
+ */
+export function fetchWithTimeout(input, init = {}, ms = REQUEST_TIMEOUT_MS) {
+  const ctrl = new AbortController();
+  const outer = init.signal;
+  if (outer) {
+    if (outer.aborted) ctrl.abort(outer.reason);
+    else outer.addEventListener('abort', () => ctrl.abort(outer.reason), { once: true });
+  }
+  let timedOut = false;
+  const t = setTimeout(() => { timedOut = true; ctrl.abort(); }, ms);
+  return fetch(input, { ...init, signal: ctrl.signal })
+    .catch((err) => {
+      if (timedOut) {
+        const e = new Error('הבקשה לשרת לקחה יותר מדי זמן');
+        e.name = 'TimeoutError';
+        e.isTimeout = true;
+        throw e;
+      }
+      throw err;
+    })
+    .finally(() => clearTimeout(t));
+}
+
 export const supabase = (supabaseUrl && supabaseKey)
   ? createClient(supabaseUrl, supabaseKey, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
+      },
+      global: {
+        fetch: (input, init = {}) => {
+          const b = init.body;
+          const isUpload = typeof Blob !== 'undefined' && (b instanceof Blob || b instanceof FormData || b instanceof ArrayBuffer);
+          return fetchWithTimeout(input, init, isUpload ? 120000 : REQUEST_TIMEOUT_MS);
+        },
       },
     })
   : null;

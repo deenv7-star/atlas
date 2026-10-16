@@ -123,7 +123,7 @@ const SEGMENT_TITLE = {
   'revenue-intelligence': 'מודיעין הכנסות | ATLAS',
   'owner-reports': 'דוחות בעלים | ATLAS',
   'guest-journey': 'מסע אורח | ATLAS',
-  'guest-portal': 'פורטל אורחים | ATLAS',
+  'guest-portal': 'דף אורח והזמנה ישירה | ATLAS',
   'dynamic-pricing': 'תמחור דינאמי | ATLAS',
   'expense-tracker': 'מעקב הוצאות | ATLAS',
   'service-requests': 'בקשות שירות | ATLAS',

@@ -27,7 +27,7 @@ function SplineSkeleton({ style = {} }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, rgba(11,18,32,0.06) 0%, rgba(0,209,193,0.04) 100%)',
+        background: 'linear-gradient(135deg, rgba(11,18,32,0.06) 0%, rgba(62, 43, 241,0.04) 100%)',
         borderRadius: 'inherit',
         overflow: 'hidden',
         position: 'relative',
@@ -39,7 +39,7 @@ function SplineSkeleton({ style = {} }) {
         animate={{ x: ['-100%', '100%'] }}
         transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(0,209,193,0.08), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(62, 43, 241,0.08), transparent)',
         }}
       />
 
@@ -51,7 +51,7 @@ function SplineSkeleton({ style = {} }) {
           style={{
             width: 56, height: 56,
             borderRadius: '50%',
-            background: 'conic-gradient(from 0deg, #00D1C1, #6366f1, #00D1C1)',
+            background: 'conic-gradient(from 0deg, #3E2BF1, #3E2BF1, #3E2BF1)',
             opacity: 0.6,
           }}
         />
@@ -76,8 +76,8 @@ export default function SplineEmbed({ scene, style = {}, className = '', onLoad,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, rgba(11,18,32,0.04), rgba(0,209,193,0.04))',
-          border: '2px dashed rgba(0,209,193,0.30)',
+          background: 'linear-gradient(135deg, rgba(11,18,32,0.04), rgba(62, 43, 241,0.04))',
+          border: '2px dashed rgba(62, 43, 241,0.30)',
           borderRadius: 24,
           padding: 40,
           flexDirection: 'column',
@@ -87,10 +87,10 @@ export default function SplineEmbed({ scene, style = {}, className = '', onLoad,
       >
         <div style={{
           width: 48, height: 48, borderRadius: 16,
-          background: 'rgba(0,209,193,0.12)',
+          background: 'rgba(62, 43, 241,0.12)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="#00D1C1" strokeWidth={1.5}>
+          <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="#3E2BF1" strokeWidth={1.5}>
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
             <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
             <line x1="12" y1="22.08" x2="12" y2="12" />
@@ -100,7 +100,7 @@ export default function SplineEmbed({ scene, style = {}, className = '', onLoad,
           <p style={{ fontSize: 14, fontWeight: 700, color: '#374151', margin: 0 }}>Spline 3D Scene</p>
           <p style={{ fontSize: 12, color: '#9ca3af', margin: '4px 0 0' }}>
             Pass a <code style={{ background: 'rgba(0,0,0,0.06)', padding: '1px 5px', borderRadius: 4 }}>scene</code> URL from{' '}
-            <a href="https://spline.design" target="_blank" rel="noopener noreferrer" style={{ color: '#00D1C1' }}>spline.design</a>
+            <a href="https://spline.design" target="_blank" rel="noopener noreferrer" style={{ color: '#3E2BF1' }}>spline.design</a>
           </p>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { nightsBetween } from '@/lib/entityPayloads';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useLead, useUpdateLead } from '@/data/entities';
@@ -78,7 +79,10 @@ export default function LeadDetail({ orgId }) {
       guest_email: leadRow.email,
       check_in_date: leadRow.check_in_date,
       check_out_date: leadRow.check_out_date,
+      nights: leadRow.nights ?? nightsBetween(leadRow.check_in_date, leadRow.check_out_date),
       adults: leadRow.adults,
+      children: leadRow.children,
+      source: leadRow.source || null,
       notes: leadRow.notes,
       status: 'PENDING',
     });
@@ -120,12 +124,12 @@ export default function LeadDetail({ orgId }) {
       className={cn('p-6 space-y-6 max-w-2xl mx-auto', optimisticEntityClassName(lead.id))}
     >
       <div className="space-y-4">
-        <h3 className="font-semibold text-[#0B1220] select-none">פרטי קשר</h3>
+        <h3 className="font-semibold text-[#1B2656] select-none">פרטי קשר</h3>
         <Card className="border-0 shadow-sm rounded-2xl">
           <CardContent className="p-4 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#00D1C1]/10 rounded-xl flex items-center justify-center">
-                <span className="text-lg font-bold text-[#00D1C1] select-none">
+              <div className="w-10 h-10 bg-brand-600/10 rounded-xl flex items-center justify-center">
+                <span className="text-lg font-bold text-brand-600 select-none">
                   {lead.full_name?.charAt(0)}
                 </span>
               </div>
@@ -150,7 +154,7 @@ export default function LeadDetail({ orgId }) {
 
       {(lead.check_in_date || lead.check_out_date) && (
         <div className="space-y-4">
-          <h3 className="font-semibold text-[#0B1220] select-none">תאריכים מבוקשים</h3>
+          <h3 className="font-semibold text-[#1B2656] select-none">תאריכים מבוקשים</h3>
           <Card className="border-0 shadow-sm rounded-2xl">
             <CardContent className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -176,7 +180,7 @@ export default function LeadDetail({ orgId }) {
       )}
 
       <div className="space-y-2">
-        <h3 className="font-semibold text-[#0B1220] select-none">הערות</h3>
+        <h3 className="font-semibold text-[#1B2656] select-none">הערות</h3>
         <Card
           className={cn(
             'border-0 shadow-sm rounded-2xl',
@@ -202,7 +206,7 @@ export default function LeadDetail({ orgId }) {
       </div>
 
       <div className="space-y-2">
-        <h3 className="font-semibold text-[#0B1220] select-none">סטטוס</h3>
+        <h3 className="font-semibold text-[#1B2656] select-none">סטטוס</h3>
         <Select
           value={lead.status}
           onValueChange={(value) => updateMutation.mutate({ id: lead.id, data: { status: value } })}
@@ -221,7 +225,7 @@ export default function LeadDetail({ orgId }) {
       </div>
 
       <Button
-        className="w-full bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+        className="w-full bg-brand-600 hover:bg-brand-500 text-white rounded-xl"
         onClick={() => handleConvertToBooking(lead)}
       >
         <ArrowLeftRight className="h-4 w-4 ml-2" />

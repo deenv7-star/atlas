@@ -8,7 +8,7 @@ import { exportToCSV, LEAD_COLUMNS } from '@/lib/csvExport';
 const STATUS_OPTIONS = [
   { value: 'NEW', label: 'חדש', color: 'bg-blue-100 text-blue-700 border border-blue-200' },
   { value: 'CONTACTED', label: 'נוצר קשר', color: 'bg-yellow-100 text-yellow-700 border border-yellow-200' },
-  { value: 'OFFER_SENT', label: 'הצעה נשלחה', color: 'bg-purple-100 text-purple-700 border border-purple-200' },
+  { value: 'OFFER_SENT', label: 'הצעה נשלחה', color: 'bg-brand-100 text-brand-700 border border-brand-200' },
   { value: 'CONFIRMED', label: 'מאושר', color: 'bg-green-100 text-green-700 border border-green-200' },
   { value: 'REJECTED', label: 'נדחה', color: 'bg-red-100 text-red-700 border border-red-200' },
   { value: 'LOST', label: 'לא רלוונטי', color: 'bg-gray-100 text-gray-500 border border-gray-200' },

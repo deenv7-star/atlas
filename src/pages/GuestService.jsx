@@ -43,9 +43,10 @@ export default function GuestService() {
     e.preventDefault();
     submitMutation.mutate({
       ...formData,
-      booking_id: bookingId,
-      property_id: propertyId,
-      org_id: 'demo_org' // This would come from the booking/property lookup
+      booking_id: bookingId || null,
+      property_id: propertyId || null,
+      // org_id is filled from the signed-in user's profile by the data client;
+      // the old hardcoded 'demo_org' was not a uuid and always failed.
     });
   };
 
@@ -67,19 +68,19 @@ export default function GuestService() {
 
   if (submitted) {
     return (
-      <div dir="rtl" className="min-h-screen bg-gradient-to-br from-[#F8FAFC] to-white flex items-center justify-center p-6">
+      <div dir="rtl" className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full"
         >
-          <Card className="border-[#00D1C1] shadow-xl">
+          <Card className="border-brand-600 shadow-xl">
             <CardContent className="p-8 text-center">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring" }}
-                className="w-20 h-20 bg-gradient-to-br from-[#00D1C1] to-[#00B8AA] rounded-full flex items-center justify-center mx-auto mb-6"
+                className="w-20 h-20 bg-[#3E2BF1] rounded-full flex items-center justify-center mx-auto mb-6"
               >
                 <CheckCircle2 className="h-10 w-10 text-white" />
               </motion.div>
@@ -96,7 +97,7 @@ export default function GuestService() {
   }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-[#F8FAFC] to-white">
+    <div dir="rtl" className="min-h-screen bg-[#F8FAFC]">
       <div className="max-w-3xl mx-auto p-6">
         <div className="mb-8 text-center">
           <Logo variant="dark" size="large" />
@@ -197,7 +198,7 @@ export default function GuestService() {
               <Button
                 type="submit"
                 disabled={submitMutation.isPending}
-                className="w-full bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A] h-12 text-base font-semibold"
+                className="w-full bg-brand-600 hover:bg-[#00B8AA] text-[#0F172A] h-12 text-base font-semibold"
               >
                 {submitMutation.isPending ? (
                   <>

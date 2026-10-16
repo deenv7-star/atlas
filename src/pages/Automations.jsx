@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PageHeader, SkelLine } from '@/components/ds';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -16,16 +17,16 @@ import {
 } from 'lucide-react';
 
 const TRIGGERS = {
-  LEAD_CREATED: { label: 'ליד חדש נוצר', icon: Users, color: 'bg-blue-500' },
+  LEAD_CREATED: { label: 'ליד חדש נוצר', icon: Users, color: 'bg-brand-500' },
   BOOKING_CREATED: { label: 'הזמנה נוצרה', icon: Calendar, color: 'bg-green-500' },
   BOOKING_CONFIRMED: { label: 'הזמנה אושרה', icon: CheckCircle, color: 'bg-emerald-500' },
-  PAYMENT_RECEIVED: { label: 'תשלום התקבל', icon: CreditCard, color: 'bg-violet-500' },
+  PAYMENT_RECEIVED: { label: 'תשלום התקבל', icon: CreditCard, color: 'bg-brand-500' },
   PAYMENT_OVERDUE: { label: 'תשלום באיחור', icon: AlertTriangle, color: 'bg-red-500' },
-  CHECKIN_DAY: { label: 'יום כניסה', icon: Calendar, color: 'bg-cyan-500' },
-  CHECKOUT_DAY: { label: 'יום יציאה', icon: Calendar, color: 'bg-orange-500' },
+  CHECKIN_DAY: { label: 'יום כניסה', icon: Calendar, color: 'bg-brand-500' },
+  CHECKOUT_DAY: { label: 'יום יציאה', icon: Calendar, color: 'bg-brand-300' },
   CLEANING_COMPLETED: { label: 'ניקיון הושלם', icon: Sparkles, color: 'bg-pink-500' },
   BOOKING_CANCELLED: { label: 'הזמנה בוטלה', icon: AlertTriangle, color: 'bg-gray-500' },
-  REVIEW_RECEIVED: { label: 'ביקורת התקבלה', icon: MessageSquare, color: 'bg-yellow-500' }
+  REVIEW_RECEIVED: { label: 'ביקורת התקבלה', icon: MessageSquare, color: 'bg-brand-400' }
 };
 
 const ACTIONS = {
@@ -124,26 +125,23 @@ export default function AutomationsPage({ user, orgId }) {
   };
 
   if (isLoading) {
-    return <div className="p-6 text-center text-gray-500">טוען...</div>;
+    return (
+      <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" aria-busy="true" aria-label="טוען">
+        <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
+        <div className="mt-6 grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-24 rounded-[14px]" />)}</div>
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 space-y-6" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Zap className="w-5 h-5 text-indigo-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">אוטומציות</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">הגדר תהליכים אוטומטיים שיחסכו לך זמן — שליחת הודעות, תזכורות, עדכוני סטטוס ועוד.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: התחל עם אוטומציית הודעת ברוכים הבאים לאורחים חדשים</p>
-      </div>
-      <div className="flex justify-end">
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
+      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <PageHeader title="אוטומציות" subtitle="הודעות ומשימות שיוצאות לבד, בזמן הנכון." className="!mb-0" />
+      <div className="flex shrink-0">
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
-            <Button className="bg-[#0A2540] hover:bg-[#0A2540]/90">
-              <Plus className="h-4 w-4 ml-2" />
+            <Button>
+              <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
               אוטומציה חדשה
             </Button>
           </DialogTrigger>
@@ -180,7 +178,7 @@ export default function AutomationsPage({ user, orgId }) {
                   value={newRule.timing_offset_hours}
                   onChange={(e) => setNewRule({ ...newRule, timing_offset_hours: parseInt(e.target.value) || 0 })}
                 />
-                <p className="text-xs text-gray-500 mt-1">שלילי = לפני, חיובי = אחרי</p>
+                <p className="text-xs text-ink-600 mt-1">שלילי = לפני, חיובי = אחרי</p>
               </div>
               <div>
                 <Label>פעולות</Label>
@@ -209,7 +207,7 @@ export default function AutomationsPage({ user, orgId }) {
                 </div>
               </div>
               <Button 
-                className="w-full bg-[#0A2540]"
+                className="w-full "
                 onClick={() => createMutation.mutate(newRule)}
                 disabled={!newRule.name || !newRule.trigger || newRule.actions.length === 0}
               >
@@ -219,16 +217,17 @@ export default function AutomationsPage({ user, orgId }) {
           </DialogContent>
         </Dialog>
       </div>
+      </div>
 
       {/* Template Suggestions */}
       {automations.length === 0 && (
-        <Card className="border-dashed border-2">
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Zap className="h-5 w-5 text-[#00D4AA]" />
+              <span className="ds-icon-square"><Zap className="h-5 w-5" strokeWidth={1.75} /></span>
               תבניות מוכנות
             </CardTitle>
-            <CardDescription>התחל עם אוטומציות מומלצות</CardDescription>
+            <CardDescription>בחרו תבנית והיא מתחילה לעבוד מיד.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-3">
@@ -236,10 +235,11 @@ export default function AutomationsPage({ user, orgId }) {
                 <button
                   key={i}
                   onClick={() => handleCreateFromTemplate(template)}
-                  className="p-4 border rounded-lg text-right hover:border-[#00D4AA] hover:bg-[#00D4AA]/5 transition-all"
+                  type="button"
+                  className="press min-h-[72px] rounded-[12px] border border-line bg-white p-4 text-right transition-[background-color,border-color] duration-150 hover:border-brand-600 hover:bg-brand-50"
                 >
-                  <div className="font-medium">{template.name}</div>
-                  <div className="text-sm text-gray-500 mt-1">{template.description}</div>
+                  <div className="text-[15px] font-bold text-navy-900">{template.name}</div>
+                  <div className="text-sm text-ink-600 mt-1">{template.description}</div>
                 </button>
               ))}
             </div>
@@ -254,7 +254,7 @@ export default function AutomationsPage({ user, orgId }) {
           const TriggerIcon = trigger.icon || Zap;
           
           return (
-            <Card key={rule.id} className={`transition-all ${!rule.is_active ? 'opacity-60' : ''}`}>
+            <Card key={rule.id} className={`transition-[background-color,border-color,color,box-shadow,transform] ${!rule.is_active ? 'opacity-60' : ''}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -270,7 +270,7 @@ export default function AutomationsPage({ user, orgId }) {
                           </Badge>
                         )}
                       </div>
-                      <div className="text-sm text-gray-500 flex items-center gap-2 mt-1">
+                      <div className="text-sm text-ink-600 flex items-center gap-2 mt-1">
                         <span>{trigger.label}</span>
                         <ChevronRight className="h-3 w-3" />
                         <span>{rule.actions?.map(a => ACTIONS[a.type]?.label).join(', ')}</span>
@@ -278,7 +278,7 @@ export default function AutomationsPage({ user, orgId }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-ink-600">
                       {rule.execution_count || 0} הפעלות
                     </div>
                     <Switch
@@ -290,7 +290,7 @@ export default function AutomationsPage({ user, orgId }) {
                       size="icon"
                       onClick={() => deleteMutation.mutate(rule.id)}
                     >
-                      <Trash2 className="h-4 w-4 text-gray-400" />
+                      <Trash2 className="h-4 w-4 text-ink-400" />
                     </Button>
                   </div>
                 </div>

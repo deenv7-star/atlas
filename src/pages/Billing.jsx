@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Page, PageHeader, Card, Section, EmptyState, fmtMoney, fmtDay } from '@/components/ds';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Check, Crown, Zap, Rocket, CreditCard, Calendar, Receipt } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { PRICING_PLANS } from '@/config/pricing';
 import { isSupabaseConfigured, LOCAL_API_URL } from '@/api/supabaseClient';
 
@@ -46,7 +46,7 @@ export default function BillingPage({ user }) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        window.alert(data.error || 'לא ניתן לפתוח דף תשלום — בדוק הגדרות Stripe בשרת');
+        window.alert(data.error || 'לא הצלחנו לפתוח את דף התשלום. נסו שוב בעוד רגע.');
       }
     } finally {
       setStripeLoading(false);
@@ -91,169 +91,101 @@ export default function BillingPage({ user }) {
     }
   };
 
+  const plan = PLANS[currentPlan];
+  const upgrades = Object.entries(PLANS).filter(([key]) => {
+    if (currentPlan === 'starter') return key === 'pro' || key === 'business';
+    if (currentPlan === 'pro') return key === 'business';
+    return false;
+  });
+
   return (
-    <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6" dir="rtl">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-[#0B1220]">מנוי וחיוב</h1>
-        <p className="text-gray-500 mt-1">נהל את המנוי ופרטי התשלום שלך</p>
-      </div>
+    <Page className="max-w-[960px] space-y-6">
+      <PageHeader title="חיובים" subtitle="התוכנית שלכם, החיוב הבא והיסטוריית התשלומים." className="!mb-0" />
 
-      {/* Current Plan */}
-      <Card className="border-2 border-[#00D1C1] shadow-lg rounded-2xl">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00D1C1] to-[#00B8A9] flex items-center justify-center">
-                {React.createElement(PLANS[currentPlan].icon, { className: "h-6 w-6 text-white" })}
-              </div>
-              <div>
-                <CardTitle>תוכנית {PLANS[currentPlan].name}</CardTitle>
-                <CardDescription>התוכנית הנוכחית שלך</CardDescription>
-              </div>
-            </div>
-            <div className="text-left">
-              <div className="text-3xl font-bold text-[#0B1220]">₪{PLANS[currentPlan].price}</div>
-              <div className="text-sm text-gray-500">לחודש</div>
+      <Card className="p-5 md:p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="ds-icon-square">{React.createElement(plan.icon, { className: 'h-5 w-5', strokeWidth: 1.75 })}</span>
+            <div className="min-w-0">
+              <p className="text-[13px] font-medium text-ink-400">התוכנית הנוכחית</p>
+              <h2 className="truncate text-[20px] font-bold text-navy-900">{plan.name}</h2>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-gray-600 mb-1">
-                <Calendar className="h-4 w-4" />
-                <span className="text-sm">תאריך חיוב הבא</span>
-              </div>
-              <p className="font-semibold text-[#0B1220]">
-                {new Date(nextBillingDate).toLocaleDateString('he-IL')}
-              </p>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-gray-600 mb-1">
-                <CreditCard className="h-4 w-4" />
-                <span className="text-sm">אמצעי תשלום</span>
-              </div>
-              <p className="font-semibold text-[#0B1220]">חבר כרטיס בהגדרות</p>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t">
-            <h4 className="font-semibold mb-3">מה כלול בתוכנית שלך:</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {PLANS[currentPlan].features.map((feature, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-[#00D1C1]" />
-                  <span>{feature}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {!isSupabaseConfigured && (
-        <Card className="border border-indigo-100 rounded-2xl bg-indigo-50/40">
-          <CardHeader>
-            <CardTitle className="text-lg">חיוב מאובטח (Stripe)</CardTitle>
-            <CardDescription>
-              דורש הגדרה בשרת: STRIPE_SECRET_KEY, STRIPE_PRICE_STARTER, ו-STRIPE_WEBHOOK_SECRET ל-webhook.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-3">
-            <Button
-              type="button"
-              variant="default"
-              className="bg-[#635BFF] hover:bg-[#635BFF]/90 text-white"
-              disabled={stripeLoading}
-              onClick={goStripeCheckout}
-            >
-              {stripeLoading ? 'פותח...' : 'מנוי בתשלום (Checkout)'}
-            </Button>
-            <Button type="button" variant="outline" disabled={stripeLoading} onClick={goStripePortal}>
-              ניהול מנוי (פורטל Stripe)
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Upgrade Options */}
-      {currentPlan !== 'business' && (
-        <div>
-          <h2 className="text-xl font-bold text-[#0B1220] mb-4">שדרג את התוכנית שלך</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {Object.entries(PLANS)
-              .filter(([key]) => {
-                if (currentPlan === 'starter') return key === 'pro' || key === 'business';
-                if (currentPlan === 'pro') return key === 'business';
-                return false;
-              })
-              .map(([key, plan]) => {
-                const Icon = plan.icon;
-                return (
-                  <motion.div
-                    key={key}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <Card className={`h-full ${plan.popular ? 'border-2 border-[#00D1C1]' : 'border'}`}>
-                      {plan.popular && (
-                        <div className="bg-[#00D1C1] text-center text-[#0B1220] text-sm font-semibold py-2">
-                          🔥 הכי פופולרי
-                        </div>
-                      )}
-                      <CardHeader className="text-center">
-                        <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${plan.popular ? 'from-[#00D1C1] to-[#00B8A9]' : 'from-gray-100 to-gray-200'} flex items-center justify-center`}>
-                          <Icon className={`h-7 w-7 ${plan.popular ? 'text-white' : 'text-gray-600'}`} />
-                        </div>
-                        <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                        <div className="text-4xl font-bold text-[#0B1220] mt-2">
-                          ₪{plan.price}
-                          <span className="text-lg text-gray-500 font-normal">/חודש</span>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-2 mb-6">
-                          {plan.features.map((feature, j) => (
-                            <li key={j} className="flex items-start gap-2 text-sm">
-                              <Check className="h-4 w-4 text-[#00D1C1] flex-shrink-0 mt-0.5" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        <Button 
-                          className="w-full rounded-xl bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:opacity-90 text-white"
-                          onClick={() => handleUpgrade(key)}
-                          disabled={loading}
-                        >
-                          {loading ? 'מעדכן...' : 'שדרג עכשיו'}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
+          <div className="shrink-0 text-left">
+            <p className="tabular text-[28px] font-bold leading-none text-navy-900">{fmtMoney(plan.price)}</p>
+            <p className="mt-1 text-[13px] text-ink-400">לחודש</p>
           </div>
         </div>
+
+        <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="rounded-[12px] bg-canvas p-4">
+            <dt className="flex items-center gap-2 text-[13px] text-ink-600"><Calendar className="h-4 w-4" strokeWidth={1.75} />החיוב הבא</dt>
+            <dd className="mt-1 text-[15px] font-bold text-navy-900">{fmtDay(nextBillingDate)}</dd>
+          </div>
+          <div className="rounded-[12px] bg-canvas p-4">
+            <dt className="flex items-center gap-2 text-[13px] text-ink-600"><CreditCard className="h-4 w-4" strokeWidth={1.75} />אמצעי תשלום</dt>
+            <dd className="mt-1 text-[15px] font-bold text-navy-900">עדיין לא נוסף כרטיס</dd>
+          </div>
+        </dl>
+
+        <div className="mt-5 border-t border-line pt-5">
+          <h3 className="mb-3 text-[15px] font-bold text-navy-900">מה כלול</h3>
+          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {plan.features.map((feature, i) => (
+              <li key={i} className="flex items-start gap-2 text-[15px] text-ink-600">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" strokeWidth={2} />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {!isSupabaseConfigured && (
+          <div className="mt-5 flex flex-wrap gap-2 border-t border-line pt-5">
+            <Button type="button" disabled={stripeLoading} onClick={goStripeCheckout}>
+              {stripeLoading ? 'פותחים…' : 'הוספת אמצעי תשלום'}
+            </Button>
+            <Button type="button" variant="outline" disabled={stripeLoading} onClick={goStripePortal}>
+              ניהול המנוי
+            </Button>
+          </div>
+        )}
+      </Card>
+
+      {upgrades.length > 0 && (
+        <section>
+          <h2 className="mb-3 text-[20px] font-bold text-navy-900">שדרוג</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {upgrades.map(([key, p]) => (
+              <Card key={key} className={cn('flex h-full flex-col p-5 md:p-6', p.popular && 'border-brand-600 ring-1 ring-brand-600')}>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="ds-icon-square">{React.createElement(p.icon, { className: 'h-5 w-5', strokeWidth: 1.75 })}</span>
+                    <h3 className="text-[18px] font-bold text-navy-900">{p.name}</h3>
+                  </div>
+                  {p.popular ? <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">הכי נבחרת</span> : null}
+                </div>
+                <p className="mt-4 text-navy-900"><span className="tabular text-[32px] font-bold">{fmtMoney(p.price)}</span><span className="text-[15px] text-ink-400"> לחודש</span></p>
+                <ul className="mb-6 mt-4 flex-1 space-y-2">
+                  {p.features.map((feature, j) => (
+                    <li key={j} className="flex items-start gap-2 text-[15px] text-ink-600">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" strokeWidth={2} />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button className="w-full" variant={p.popular ? 'default' : 'outline'} onClick={() => handleUpgrade(key)} disabled={loading}>
+                  {loading ? 'מעדכנים…' : `מעבר ל-${p.name}`}
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </section>
       )}
 
-      {/* Payment History */}
-      <Card className="border-0 shadow-sm rounded-2xl">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Receipt className="h-5 w-5" />
-            היסטוריית חיובים
-          </CardTitle>
-          <CardDescription>תשלומי מנוי חודשיים</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="py-8 text-center text-gray-500">
-            <Receipt className="h-10 w-10 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">אין חיובים עדיין</p>
-            <p className="text-xs mt-1">היסטוריית התשלומים תופיע כאן לאחר החיוב הראשון</p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      <Section title="היסטוריית חיובים" icon={Receipt}>
+        <EmptyState compact title="אין עדיין חיובים" description="אחרי החיוב הראשון הקבלות יופיעו כאן." />
+      </Section>
+    </Page>
   );
 }

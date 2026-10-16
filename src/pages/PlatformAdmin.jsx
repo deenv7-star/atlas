@@ -82,7 +82,7 @@ export default function PlatformAdmin() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-4 flex items-center gap-3">
-          <Building2 className="w-8 h-8 text-indigo-600" />
+          <Building2 className="w-8 h-8 text-brand-600" />
           <div>
             <p className="text-xs text-gray-500">ארגונים</p>
             <p className="text-2xl font-bold">

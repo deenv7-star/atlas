@@ -24,6 +24,14 @@ import ResetPassword from '@/pages/ResetPassword';
 import UpdatePassword from '@/pages/UpdatePassword';
 import Onboarding from '@/pages/Onboarding';
 
+const GuestStayPage = lazy(() => import('@/pages/GuestStay'));
+const BookDirectPage = lazy(() => import('@/pages/BookDirect'));
+const MonthlyReportPrintPage = lazy(() => import('@/pages/MonthlyReportPrint'));
+
+function PublicFallback() {
+  return <div className="min-h-[100dvh]" style={{ background: '#F7F8FB' }} />;
+}
+
 const DevSkeletonsPage = import.meta.env.DEV ? lazy(() => import('@/pages/DevSkeletons')) : null;
 
 const { Pages, Layout } = pagesConfig;
@@ -156,6 +164,12 @@ const AuthenticatedApp = () => {
       <Route path="/api-docs" element={<LayoutWrapper currentPageName="ApiDocs"><Pages.ApiDocs /></LayoutWrapper>} />
       <Route path="/how-it-works" element={<LayoutWrapper currentPageName="HowItWorks"><Pages.HowItWorks /></LayoutWrapper>} />
       <Route path="/pricing" element={<LayoutWrapper currentPageName="PricingPlans"><Pages.PricingPlans /></LayoutWrapper>} />
+
+      {/* Public guest page per booking + direct-booking page per property (no login) */}
+      <Route path="/g/:token" element={<Suspense fallback={<PublicFallback />}><GuestStayPage /></Suspense>} />
+      <Route path="/book/:slug" element={<Suspense fallback={<PublicFallback />}><BookDirectPage /></Suspense>} />
+      {/* Print / PDF view of the monthly accountant report (no app chrome) */}
+      <Route path="/monthly-report/print" element={<ProtectedRoute><Suspense fallback={<PublicFallback />}><MonthlyReportPrintPage /></Suspense></ProtectedRoute>} />
 
       {/* Onboarding — requires auth but NOT onboarding_completed (user lands here after verification) */}
       <Route

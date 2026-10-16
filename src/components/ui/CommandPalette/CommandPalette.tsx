@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {
   CommandDialog,
   CommandEmpty,
@@ -229,13 +230,16 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       )}
     >
+      {/* cmdk's dialog renders no Radix Title/Description; Radix logs a console error without them */}
+      <DialogPrimitive.Title className="sr-only">פלטת פקודות</DialogPrimitive.Title>
+      <DialogPrimitive.Description className="sr-only">חפש, נווט ובצע פעולות מהירות</DialogPrimitive.Description>
       <CommandPaletteAnnouncer />
       <div dir="rtl" className="flex flex-col">
         <div className="border-b border-gray-100/90 px-3 py-2">
           <CommandInput
             value={search}
             onValueChange={setSearch}
-            placeholder="חפש, נווט, פעל..."
+            placeholder="חיפוש אורח, הזמנה או מסך"
             className={cn(
               'flex h-12 w-full rounded-none border-0 bg-transparent py-3 text-base text-gray-900 outline-none',
               'placeholder:text-gray-400 focus:ring-0',
@@ -250,11 +254,11 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             <p className="font-medium text-gray-700">
               לא נמצאו תוצאות עבור &quot;{search.trim() || '…'}&quot;
             </p>
-            <p className="mt-2 text-xs text-gray-400">נסה מילת חיפוש אחרת, או צור רשומה חדשה מפעולות מהירות.</p>
+            <p className="mt-2 text-xs text-gray-400">נסו מילה אחרת, או צרו רשומה חדשה מהפעולות המהירות.</p>
           </CommandEmpty>
 
           {!search.trim() && recents.length > 0 ? (
-            <CommandGroup heading="פעולות אחרונות" className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-gray-500">
+            <CommandGroup heading="פעולות אחרונות" className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-ink-400">
               {recents.map((r) => (
                 <CommandItem
                   key={`${r.kind}-${r.id}`}
@@ -266,7 +270,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                     else if (r.kind === 'guest') go(`${createPageUrl('Leads')}?openGuestId=${encodeURIComponent(r.id)}`);
                     else go(calendarUrlForUnit(r.id, r.propertyId ?? null));
                   }}
-                  className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm text-gray-900 data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+                  className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] text-gray-900 data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
                     {r.kind === 'booking' ? <CalendarDays className="h-4 w-4" /> : null}
@@ -287,23 +291,23 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
 
           <CommandGroup
             heading="ניווט מהיר"
-            className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-gray-500"
+            className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-ink-400"
           >
             <CommandItem
               value="nav-dashboard"
-              data-announce={announce('לוח בקרה')}
+              data-announce={announce('היום')}
               onSelect={() => go(createPageUrl('Dashboard'))}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <LayoutDashboard className="h-4 w-4 shrink-0 text-indigo-500" aria-hidden />
-              <span className="flex-1 text-start font-medium">לוח בקרה</span>
+              <LayoutDashboard className="h-4 w-4 shrink-0 text-brand-500" aria-hidden />
+              <span className="flex-1 text-start font-medium">היום</span>
               <ChordHint keys={['D']} isApple={isApple} />
             </CommandItem>
             <CommandItem
               value="nav-bookings"
               data-announce={announce('הזמנות')}
               onSelect={() => go(createPageUrl('Bookings'))}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <CalendarDays className="h-4 w-4 shrink-0 text-blue-500" aria-hidden />
               <span className="flex-1 text-start font-medium">הזמנות</span>
@@ -311,19 +315,19 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-guests"
-              data-announce={announce('אורחים')}
+              data-announce={announce('לידים')}
               onSelect={() => go(createPageUrl('Leads'))}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <Users className="h-4 w-4 shrink-0 text-purple-500" aria-hidden />
-              <span className="flex-1 text-start font-medium">אורחים</span>
+              <Users className="h-4 w-4 shrink-0 text-brand-500" aria-hidden />
+              <span className="flex-1 text-start font-medium">לידים</span>
               <ChordHint keys={['G']} isApple={isApple} />
             </CommandItem>
             <CommandItem
               value="nav-calendar"
               data-announce={announce('לוח שנה')}
               onSelect={() => go(createPageUrl('MultiCalendar'))}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <CalendarDays className="h-4 w-4 shrink-0 text-teal-600" aria-hidden />
               <span className="flex-1 text-start font-medium">לוח שנה</span>
@@ -331,29 +335,29 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-maintenance"
-              data-announce={announce('תחזוקה')}
+              data-announce={announce('בקשות שירות')}
               onSelect={() => go(createPageUrl('ServiceRequests'))}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <Wrench className="h-4 w-4 shrink-0 text-orange-600" aria-hidden />
-              <span className="flex-1 text-start font-medium">תחזוקה</span>
+              <span className="flex-1 text-start font-medium">בקשות שירות</span>
               <ChordHint keys={['M']} isApple={isApple} />
             </CommandItem>
             <CommandItem
               value="nav-financials"
-              data-announce={announce('דוחות כספיים')}
+              data-announce={announce('תשלומים')}
               onSelect={() => go(createPageUrl('Payments'))}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <Wallet className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-              <span className="flex-1 text-start font-medium">דוחות כספיים</span>
+              <span className="flex-1 text-start font-medium">תשלומים</span>
               <ChordHint keys={['F']} isApple={isApple} />
             </CommandItem>
             <CommandItem
               value="nav-settings"
               data-announce={announce('הגדרות')}
               onSelect={() => go(createPageUrl('Settings'))}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <Settings className="h-4 w-4 shrink-0 text-gray-600" aria-hidden />
               <span className="flex-1 text-start font-medium">הגדרות</span>
@@ -365,43 +369,43 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
 
           <CommandGroup
             heading="פעולות מהירות"
-            className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-gray-500"
+            className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-ink-400"
           >
             <CommandItem
               value="act-new-booking"
               data-announce={announce('הזמנה חדשה')}
               onSelect={() => go(createPageUrl('Bookings'), { commandPalette: { newBooking: true } })}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <PlusCircle className="h-4 w-4 shrink-0 text-[#00D1C1]" aria-hidden />
+              <PlusCircle className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">הזמנה חדשה</span>
             </CommandItem>
             <CommandItem
               value="act-new-guest"
-              data-announce={announce('אורח חדש')}
+              data-announce={announce('ליד חדש')}
               onSelect={() => go(createPageUrl('Leads'), { commandPalette: { newGuest: true } })}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <UserPlus className="h-4 w-4 shrink-0 text-purple-500" aria-hidden />
-              <span className="flex-1 text-start font-medium">אורח חדש</span>
+              <UserPlus className="h-4 w-4 shrink-0 text-brand-500" aria-hidden />
+              <span className="flex-1 text-start font-medium">ליד חדש</span>
             </CommandItem>
             <CommandItem
               value="act-new-maintenance"
-              data-announce={announce('משימת תחזוקה חדשה')}
+              data-announce={announce('בקשת שירות חדשה')}
               onSelect={() => go(createPageUrl('ServiceRequests'), { commandPalette: { newMaintenance: true } })}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <ClipboardList className="h-4 w-4 shrink-0 text-orange-600" aria-hidden />
-              <span className="flex-1 text-start font-medium">משימת תחזוקה חדשה</span>
+              <span className="flex-1 text-start font-medium">בקשת שירות חדשה</span>
             </CommandItem>
             <CommandItem
               value="act-new-payment"
-              data-announce={announce('רישום תשלום')}
+              data-announce={announce('תשלום חדש')}
               onSelect={() => go(createPageUrl('Payments'), { commandPalette: { newPayment: true } })}
-              className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+              className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <Banknote className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-              <span className="flex-1 text-start font-medium">רישום תשלום</span>
+              <span className="flex-1 text-start font-medium">תשלום חדש</span>
             </CommandItem>
           </CommandGroup>
 
@@ -410,7 +414,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               <CommandSeparator className="my-2 bg-gray-100" />
               <CommandGroup
                 heading="חיפוש חי"
-                className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-gray-500"
+                className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-ink-400"
               >
                 {remoteLoading ? (
                   <div className="px-3 py-2 text-xs text-gray-400">טוען…</div>
@@ -425,7 +429,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                       recordCommandPaletteVisit({ kind: 'booking', id: h.id, title: h.title, subtitle: h.subtitle });
                       go(`${createPageUrl('Bookings')}?openBookingId=${encodeURIComponent(h.id)}`);
                     }}
-                    className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+                    className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
                   >
                     <CalendarDays className="h-4 w-4 shrink-0 text-blue-500" />
                     <span className="min-w-0 flex-1 text-start">
@@ -445,9 +449,9 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                       recordCommandPaletteVisit({ kind: 'guest', id: h.id, title: h.title, subtitle: h.subtitle });
                       go(`${createPageUrl('Leads')}?openGuestId=${encodeURIComponent(h.id)}`);
                     }}
-                    className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+                    className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
                   >
-                    <Users className="h-4 w-4 shrink-0 text-purple-500" />
+                    <Users className="h-4 w-4 shrink-0 text-brand-500" />
                     <span className="min-w-0 flex-1 text-start">
                       <span className="block truncate font-medium">{h.title}</span>
                       <span className="block truncate text-xs text-gray-500">{h.subtitle}</span>
@@ -471,7 +475,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                       });
                       go(calendarUrlForUnit(h.id, h.propertyId ?? null));
                     }}
-                    className="mx-1 flex h-10 cursor-pointer select-none items-center gap-2 rounded-lg px-2 text-sm data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
+                    className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
                   >
                     <Building2 className="h-4 w-4 shrink-0 text-gray-600" />
                     <span className="min-w-0 flex-1 text-start">

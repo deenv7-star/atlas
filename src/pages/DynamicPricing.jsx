@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { PageHeader } from '@/components/ds';
 import { Card, CardContent } from '@/components/ui/card';
 import DemoDataBanner from '@/components/common/DemoDataBanner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { TrendingUp, ArrowUp, ArrowDown, Calendar, Zap, Sun, Moon, Star, DollarSign, Settings } from 'lucide-react';
+import { ArrowUp, ArrowDown, Calendar, Zap, Sun, Moon, Star, DollarSign, Settings } from 'lucide-react';
 
 const SAMPLE_PROPERTIES = [
   { id: 1, name: 'דירת נופש תל אביב - מרכז', currentPrice: 450, recommendedPrice: 520, occupancy: 78, season: 'high' },
@@ -15,8 +16,8 @@ const SAMPLE_PROPERTIES = [
 ];
 
 const SEASON_LABELS = {
-  high: { label: 'עונה גבוהה', color: 'bg-purple-100 text-purple-700', icon: Sun },
-  medium: { label: 'עונה בינונית', color: 'bg-blue-100 text-blue-700', icon: Moon },
+  high: { label: 'עונה גבוהה', color: 'bg-brand-100 text-brand-700', icon: Sun },
+  medium: { label: 'עונה בינונית', color: 'bg-brand-100 text-brand-700', icon: Moon },
   peak: { label: 'שיא עונה', color: 'bg-red-100 text-red-700', icon: Star },
   low: { label: 'עונה נמוכה', color: 'bg-green-100 text-green-700', icon: Moon },
 };
@@ -24,8 +25,8 @@ const SEASON_LABELS = {
 const PRICE_LEVELS = ['low', 'medium', 'high', 'peak'];
 const PRICE_COLORS = {
   low: 'bg-green-400',
-  medium: 'bg-blue-400',
-  high: 'bg-purple-400',
+  medium: 'bg-brand-500',
+  high: 'bg-brand-500',
   peak: 'bg-red-500',
 };
 
@@ -59,8 +60,8 @@ const SMART_TIPS = [
     title: 'ימי חול',
     text: 'הורד מחיר ב-15% למילוי תפוסה',
     icon: Sun,
-    color: 'bg-blue-50 border-blue-200',
-    iconColor: 'text-blue-600',
+    color: 'bg-brand-50 border-brand-100',
+    iconColor: 'text-brand-600',
   },
   {
     title: 'הזמנות דקה אחרונה',
@@ -79,37 +80,28 @@ export default function DynamicPricing() {
   const [calendarData] = useState(() => generateCalendarData());
 
   return (
-    <div className="min-h-screen bg-gray-50/50" dir="rtl">
-      <div className="max-w-5xl mx-auto px-4 py-6">
+    <div dir="rtl">
+      <div className="mx-auto w-full max-w-[1200px] px-5 pb-16 pt-6 md:px-10 md:pt-10">
         {/* Header */}
-        <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-indigo-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">תמחור דינאמי</h1>
-          </div>
-          <p className="text-gray-600 text-sm leading-relaxed sm:mr-12">מקסם את ההכנסות שלך עם תמחור חכם. המערכת ממליצה על מחירים אופטימליים לפי עונה, ביקוש ותחרות.</p>
-          <p className="text-indigo-500 text-xs mt-1 sm:mr-12">💡 טיפ: הפעל תמחור אוטומטי כדי למקסם הכנסות בלי מאמץ</p>
-        </div>
+        <PageHeader title="תמחור דינמי" subtitle="המלצות מחיר לפי עונה, ביקוש ותפוסה." className="!mb-0" />
 
-        <DemoDataBanner message="נתוני דוגמה — המחירים וההמלצות המוצגים הם לצורך המחשה. חבר את הנכסים שלך כדי לראות המלצות אמיתיות." />
+        <DemoDataBanner message="נתוני דוגמה, המחירים וההמלצות המוצגים הם לצורך המחשה. חבר את הנכסים שלך כדי לראות המלצות אמיתיות." />
 
         {/* Revenue Impact Card */}
-        <div className="mb-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-6 text-white shadow-lg">
+        <div className="mb-6 rounded-[14px] border border-[rgba(62,43,241,0.10)] bg-[#F4F3FF] p-5 text-navy-900 md:p-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-              <DollarSign className="w-6 h-6" />
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] bg-white text-brand-600 shadow-card">
+              <DollarSign className="h-5 w-5" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-xl font-bold">הכנסות יכולות לעלות ב-25% עם תמחור חכם</h2>
-              <p className="text-white/90 text-sm mt-1">בהתבסס על נתוני השוק והביקוש באזור שלך</p>
+              <h2 className="text-[17px] font-semibold text-navy-900">הכנסות יכולות לעלות ב-25% עם תמחור חכם</h2>
+              <p className="mt-1 text-[14px] text-ink-400">בהתבסס על נתוני השוק והביקוש באזור שלך</p>
             </div>
           </div>
         </div>
 
         {/* Property Pricing Cards */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">מחירי נכסים</h3>
+        <h3 className="text-lg font-semibold text-navy-900 mb-3">מחירי נכסים</h3>
         <div className="grid gap-4 mb-8 sm:grid-cols-1 md:grid-cols-2">
           {SAMPLE_PROPERTIES.map((prop) => {
             const seasonInfo = SEASON_LABELS[prop.season];
@@ -120,7 +112,7 @@ export default function DynamicPricing() {
               <Card key={prop.id} className="overflow-hidden">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
-                    <h4 className="font-semibold text-gray-900">{prop.name}</h4>
+                    <h4 className="font-semibold text-navy-900">{prop.name}</h4>
                     <span className={`text-xs px-2.5 py-1 rounded-full ${seasonInfo.color} flex items-center gap-1`}>
                       <SeasonIcon className="w-3 h-3" />
                       {seasonInfo.label}
@@ -128,19 +120,19 @@ export default function DynamicPricing() {
                   </div>
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">מחיר נוכחי:</span>
+                      <span className="text-ink-600">מחיר נוכחי:</span>
                       <span className="font-medium">₪{prop.currentPrice} / לילה</span>
                     </div>
                     <div className="flex justify-between text-sm items-center">
-                      <span className="text-gray-500">מחיר מומלץ:</span>
-                      <span className={`font-semibold flex items-center gap-1 ${isHigher ? 'text-emerald-600' : isSame ? 'text-gray-600' : 'text-red-600'}`}>
+                      <span className="text-ink-600">מחיר מומלץ:</span>
+                      <span className={`font-semibold flex items-center gap-1 ${isHigher ? 'text-emerald-600' : isSame ? 'text-ink-600' : 'text-red-600'}`}>
                         {isHigher && <ArrowUp className="w-4 h-4" />}
                         {!isHigher && !isSame && <ArrowDown className="w-4 h-4" />}
                         ₪{prop.recommendedPrice} / לילה
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">תפוסה:</span>
+                      <span className="text-ink-600">תפוסה:</span>
                       <span className="font-medium">{prop.occupancy}%</span>
                     </div>
                   </div>
@@ -152,19 +144,19 @@ export default function DynamicPricing() {
         </div>
 
         {/* Pricing Calendar */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">לוח מחירים שבועי</h3>
+        <h3 className="text-lg font-semibold text-navy-900 mb-3">לוח מחירים שבועי</h3>
         <Card className="mb-8">
           <CardContent className="p-5">
             <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5 text-indigo-600" />
-              <span className="text-sm text-gray-600">ירוק = נמוך | כחול = בינוני | סגול = גבוה | אדום = שיא</span>
+              <Calendar className="w-5 h-5 text-brand-600" />
+              <span className="text-sm text-ink-600">ירוק = נמוך | כחול = בינוני | סגול = גבוה | אדום = שיא</span>
             </div>
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
               <table className="w-full min-w-[280px] border-collapse">
                 <thead>
                   <tr>
                     {calendarData.days.map((d, i) => (
-                      <th key={i} className="text-center text-xs font-medium text-gray-500 pb-2">{d}</th>
+                      <th key={i} className="text-center text-xs font-medium text-ink-600 pb-2">{d}</th>
                     ))}
                   </tr>
                 </thead>
@@ -185,8 +177,8 @@ export default function DynamicPricing() {
         </Card>
 
         {/* Settings Section */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <Settings className="w-5 h-5 text-indigo-600" />
+        <h3 className="text-lg font-semibold text-navy-900 mb-3 flex items-center gap-2">
+          <Settings className="w-5 h-5 text-brand-600" />
           הגדרות
         </h3>
         <Card className="mb-8">
@@ -194,14 +186,14 @@ export default function DynamicPricing() {
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="auto-pricing" className="text-base font-medium">תמחור אוטומטי</Label>
-                <p className="text-sm text-gray-500 mt-0.5">המערכת תעדכן מחירים אוטומטית לפי ביקוש ותחרות</p>
+                <p className="text-sm text-ink-600 mt-0.5">המערכת תעדכן מחירים אוטומטית לפי ביקוש ותחרות</p>
               </div>
               <Switch id="auto-pricing" checked={autoPricing} onCheckedChange={setAutoPricing} />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="price-alerts" className="text-base font-medium">התראות על שינויי מחיר</Label>
-                <p className="text-sm text-gray-500 mt-0.5">קבל התראה כשהמערכת ממליצה על שינוי משמעותי</p>
+                <p className="text-sm text-ink-600 mt-0.5">קבל התראה כשהמערכת ממליצה על שינוי משמעותי</p>
               </div>
               <Switch id="price-alerts" checked={priceAlerts} onCheckedChange={setPriceAlerts} />
             </div>
@@ -219,7 +211,7 @@ export default function DynamicPricing() {
         </Card>
 
         {/* Smart Tips Section */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">טיפים חכמים</h3>
+        <h3 className="text-lg font-semibold text-navy-900 mb-3">טיפים חכמים</h3>
         <div className="grid gap-4 sm:grid-cols-3">
           {SMART_TIPS.map((tip, i) => {
             const Icon = tip.icon;
@@ -231,8 +223,8 @@ export default function DynamicPricing() {
                       <Icon className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">{tip.title}</h4>
-                      <p className="text-sm text-gray-600 mt-1">— {tip.text}</p>
+                      <h4 className="font-semibold text-navy-900">{tip.title}</h4>
+                      <p className="text-sm text-ink-600 mt-1">— {tip.text}</p>
                     </div>
                   </div>
                 </CardContent>

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { PageHeader, StatTile } from '@/components/ds';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
+import { Sparkles, AlertTriangle, CheckCircle2 as CheckDone } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -7,7 +10,6 @@ import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,12 +21,10 @@ import {
   Clock,
   Phone,
   User,
-  Filter,
   ArrowUpCircle,
   Bell,
-  Wrench,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import PullToRefresh from '@/components/common/PullToRefresh';
 import { MaintenanceTable } from '@/components/tables/MaintenanceTable';
 import { useMaintenanceUrlState } from '@/hooks/url-state/useMaintenanceUrlState';
@@ -104,17 +104,17 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
   };
 
   const urgencyConfig = {
-    LOW: { label: 'נמוך', color: 'bg-blue-100 text-blue-800', icon: Clock },
+    LOW: { label: 'נמוך', color: 'bg-brand-100 text-brand-700', icon: Clock },
     MEDIUM: { label: 'בינוני', color: 'bg-yellow-100 text-yellow-800', icon: Clock },
     HIGH: { label: 'גבוה', color: 'bg-orange-100 text-orange-800', icon: ArrowUpCircle },
     URGENT: { label: 'דחוף', color: 'bg-red-100 text-red-800', icon: Bell }
   };
 
   const statusConfig = {
-    NEW: { label: 'חדש', color: 'bg-purple-100 text-purple-800' },
-    IN_PROGRESS: { label: 'בטיפול', color: 'bg-blue-100 text-blue-800' },
+    NEW: { label: 'חדש', color: 'bg-brand-100 text-brand-700' },
+    IN_PROGRESS: { label: 'בטיפול', color: 'bg-brand-100 text-brand-700' },
     RESOLVED: { label: 'טופל', color: 'bg-green-100 text-green-800' },
-    CLOSED: { label: 'סגור', color: 'bg-gray-100 text-gray-800' }
+    CLOSED: { label: 'סגור', color: 'bg-neutral-100 text-navy-900' }
   };
 
   useEffect(() => {
@@ -159,66 +159,45 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10"
       >
         {/* Header & Stats */}
-        <div className="mb-6">
-          <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6" dir="rtl">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-                <Wrench className="w-5 h-5 text-indigo-600" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900">בקשות שירות</h1>
-            </div>
-            <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל בקשות תחזוקה ושירות מאורחים ומנהלי נכסים. עקוב אחר סטטוס הטיפול.</p>
-            <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: בקשות דחופות מסומנות באדום — טפל בהן קודם</p>
-          </div>
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-            <h3 className="font-semibold text-[#0F172A] mb-2">📋 קישור לטופס אורחים</h3>
-            <p className="text-sm text-gray-600 mb-3">שתף את הקישור הזה עם האורחים שלך (בהודעת כניסה, בנכס וכו'):</p>
+        <div className="space-y-5">
+          <PageHeader title="בקשות שירות" subtitle="בקשות תחזוקה מאורחים ומהצוות." className="!mb-0" />
+          <div className="rounded-[14px] border border-line bg-white p-4 shadow-card">
+            <h3 className="mb-1 text-[15px] font-bold text-navy-900">קישור לטופס אורחים</h3>
+            <p className="mb-3 text-[14px] text-ink-600">שלחו לאורחים בהודעת הכניסה, או תלו בנכס.</p>
             <div className="flex gap-2">
-              <input 
-                type="text" 
-                readOnly 
+              <input
+                type="text"
+                readOnly
+                aria-label="קישור לטופס אורחים"
                 value={`${window.location.origin}${createPageUrl('GuestService')}`}
-                className="flex-1 px-3 py-2 bg-white border rounded-lg text-sm"
+                className="h-11 min-w-0 flex-1 rounded-[10px] border border-line bg-canvas px-3 text-[14px] text-navy-900"
                 dir="ltr"
               />
               <Button
                 onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}${createPageUrl('GuestService')}`);
-                  alert('הקישור הועתק!');
+                  navigator.clipboard?.writeText(`${window.location.origin}${createPageUrl('GuestService')}`);
+                  atlasToastApi.success('הקישור הועתק');
                 }}
-                className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]"
               >
-                העתק
+                העתקה
               </Button>
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {[
-              { label: 'סה"כ בקשות', value: stats.total, color: 'from-blue-500 to-blue-600' },
-              { label: 'חדשות', value: stats.new, color: 'from-purple-500 to-purple-600' },
-              { label: 'דחופות', value: stats.urgent, color: 'from-red-500 to-red-600' },
-              { label: 'טופלו', value: stats.resolved, color: 'from-green-500 to-green-600' }
-            ].map((stat, i) => (
-              <Card key={i} className="border-0 shadow-sm">
-                <CardContent className="p-4">
-                  <div className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl mb-2`}>
-                    <span className="text-white text-xl font-bold">{stat.value}</span>
-                  </div>
-                  <p className="text-sm text-[#64748B] font-medium">{stat.label}</p>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="stat-row">
+            <StatTile label="חדשות" value={stats.new} icon={Sparkles} />
+            <StatTile label="דחופות" value={stats.urgent} icon={AlertTriangle} tone="danger" />
+            <StatTile label="טופלו" value={stats.resolved} icon={CheckDone} tone="success" />
           </div>
 
           {/* Filters */}
           <div className="flex flex-wrap gap-3">
             <div className="flex flex-wrap items-center gap-2">
-              <ShareViewButton className="h-9 rounded-lg text-xs" />
-              <Filter className="h-4 w-4 text-[#64748B]" />
+              <ShareViewButton />
+              
               <Select value={filterStatus} onValueChange={(v) => void setUrlState({ filterStatus: v })}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
@@ -247,7 +226,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
         </div>
 
         {/* Requests table */}
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+        <div className="rounded-2xl border border-line bg-white shadow-sm overflow-hidden">
           <MaintenanceTable
             requests={filteredRequests}
             properties={properties}
@@ -353,13 +332,13 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <p className="text-xs text-amber-700">אין נכסים — הוסף נכס בהגדרות.</p>
+                    <p className="text-xs text-amber-700">אין נכסים, הוסף נכס בהגדרות.</p>
                   )}
                 </div>
               </div>
               <Button
                 type="submit"
-                className="w-full bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A]"
+                className="w-full bg-brand-600 hover:bg-[#00B8AA] text-navy-900"
                 disabled={
                   createMutation.isPending
                   || !orgId
@@ -404,7 +383,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-[#0F172A] mb-2">פרטי האורח</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">פרטי האורח</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-[#64748B]" />
@@ -413,7 +392,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       {selectedRequest.guest_phone && (
                         <div className="flex items-center gap-2">
                           <Phone className="h-4 w-4 text-[#64748B]" />
-                          <a href={`tel:${selectedRequest.guest_phone}`} className="text-[#00D1C1] hover:underline">
+                          <a href={`tel:${selectedRequest.guest_phone}`} className="text-brand-600 hover:underline">
                             {selectedRequest.guest_phone}
                           </a>
                         </div>
@@ -422,14 +401,14 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-[#0F172A] mb-2">תיאור הבקשה</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">תיאור הבקשה</h4>
                     <p className="text-sm text-[#64748B] leading-relaxed whitespace-pre-wrap">
                       {selectedRequest.description}
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-[#0F172A] mb-2">עדכן סטטוס</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">עדכן סטטוס</h4>
                     <Select
                       value={selectedRequest.status}
                       onValueChange={(value) => {
@@ -454,7 +433,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-[#0F172A] mb-2">הערות פנימיות</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">הערות פנימיות</h4>
                     <Textarea
                       value={selectedRequest.notes || ''}
                       onChange={(e) => {
@@ -471,7 +450,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                         });
                       }}
                       disabled={updateMutation.isPending}
-                      className="mt-2 w-full bg-[#00D1C1] hover:bg-[#00B8AA] text-[#0F172A]"
+                      className="mt-2 w-full bg-brand-600 hover:bg-[#00B8AA] text-navy-900"
                     >
                       שמור הערות
                     </Button>

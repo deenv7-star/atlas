@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BarChart3, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, DollarSign, Calendar, Home, Zap, AlertTriangle, Sparkles, Target } from 'lucide-react';
+import { PageHeader } from '@/components/ds';
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, DollarSign, Calendar, Home, Zap, AlertTriangle, Sparkles, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const MONTHS_HEB = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
@@ -33,7 +34,7 @@ const FORECAST = [
   { month: 'מרץ 2026',    predicted: 39300, confidence: 84 },
 ];
 
-function Sparkline({ data, color = 'from-indigo-400 to-violet-400' }) {
+function Sparkline({ data, color = 'from-brand-400 to-brand-400' }) {
   const max = Math.max(...data);
   return (
     <div className="flex items-end gap-[3px] h-8">
@@ -59,12 +60,12 @@ function CircularProgress({ value, size = 48, strokeWidth = 5 }) {
         cx={size / 2} cy={size / 2} r={radius} fill="none"
         stroke="url(#gaugeGrad)" strokeWidth={strokeWidth}
         strokeDasharray={circumference} strokeDashoffset={offset}
-        strokeLinecap="round" className="transition-all duration-700"
+        strokeLinecap="round" className="transition-[background-color,border-color,color,box-shadow,transform] duration-700"
       />
       <defs>
         <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#8b5cf6" />
+          <stop offset="0%" stopColor="#3E2BF1" />
+          <stop offset="100%" stopColor="#3E2BF1" />
         </linearGradient>
       </defs>
     </svg>
@@ -73,13 +74,13 @@ function CircularProgress({ value, size = 48, strokeWidth = 5 }) {
 
 function KPICard({ icon: Icon, label, value, suffix, change, positive, sparkData, isCircular, circularValue }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-300 group">
+    <div className="bg-white rounded-2xl border border-line p-5 shadow-sm hover:shadow-md transition-shadow duration-300 group">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-50 to-violet-50 flex items-center justify-center group-hover:from-indigo-100 group-hover:to-violet-100 transition-colors">
-            <Icon className="w-[18px] h-[18px] text-indigo-600" />
+          <div className="w-9 h-9 rounded-lg bg-brand-50 flex items-center justify-center group-hover:from-brand-100 group-hover:to-brand-100 transition-colors">
+            <Icon className="w-[18px] h-[18px] text-brand-600" />
           </div>
-          <span className="text-sm text-gray-500 font-medium">{label}</span>
+          <span className="text-sm text-ink-600 font-medium">{label}</span>
         </div>
         {change !== undefined && (
           <div className={cn(
@@ -93,14 +94,14 @@ function KPICard({ icon: Icon, label, value, suffix, change, positive, sparkData
       </div>
       <div className="flex items-end justify-between">
         <div>
-          <div className="text-2xl font-bold text-gray-900 tracking-tight">
-            {value}{suffix && <span className="text-base font-medium text-gray-400 mr-0.5">{suffix}</span>}
+          <div className="text-2xl font-bold text-navy-900 tracking-tight">
+            {value}{suffix && <span className="text-base font-medium text-ink-400 mr-0.5">{suffix}</span>}
           </div>
         </div>
         {isCircular ? (
           <div className="relative">
             <CircularProgress value={circularValue} />
-            <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-indigo-600">{circularValue}%</span>
+            <span className="absolute inset-0 flex items-center justify-center text-[12px] font-bold text-brand-600">{circularValue}%</span>
           </div>
         ) : (
           sparkData && <Sparkline data={sparkData} />
@@ -122,24 +123,11 @@ export default function RevenueIntelligence() {
   ];
 
   return (
-    <div className="min-h-screen" dir="rtl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <div dir="rtl">
+      <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10">
 
         {/* ── Header ──────────────────────────────────────── */}
-        <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">מודיעין הכנסות</h1>
-              <span className="text-xs font-medium bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full">PRO</span>
-            </div>
-          </div>
-          <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">
-            תמונת מצב מלאה על ההכנסות שלך — ניתוח מגמות, חיזוי הכנסות, השוואת ביצועים בין נכסים ותובנות AI חכמות.
-          </p>
-        </div>
+        <PageHeader title="הכנסות" subtitle="מגמות, תחזית והשוואה בין הנכסים." className="!mb-0" />
 
         {/* ── KPI Row ─────────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -162,22 +150,22 @@ export default function RevenueIntelligence() {
         </div>
 
         {/* ── Revenue Chart ──────────────────────────────── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
           <div className="px-6 pt-5 pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold text-gray-900">סקירת הכנסות</h2>
-              <p className="text-xs text-gray-400 mt-0.5">2025 מול 2024</p>
+              <h2 className="text-lg font-bold text-navy-900">סקירת הכנסות</h2>
+              <p className="text-xs text-ink-400 mt-0.5">2025 מול 2024</p>
             </div>
-            <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+            <div className="flex gap-1 bg-neutral-100 rounded-xl p-1">
               {chartTabs.map(t => (
                 <button
                   key={t.id}
                   onClick={() => setChartTab(t.id)}
                   className={cn(
-                    'px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-200',
+                    'inline-flex h-11 items-center px-4 text-[15px] font-medium rounded-[9px] transition-[background-color,color,box-shadow] duration-150',
                     chartTab === t.id
-                      ? 'bg-white text-indigo-700 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-white text-brand-700 shadow-sm'
+                      : 'text-ink-600 hover:text-ink-600'
                   )}
                 >
                   {t.label}
@@ -187,9 +175,9 @@ export default function RevenueIntelligence() {
           </div>
 
           <div className="px-6 pb-2">
-            <div className="flex items-center gap-5 text-xs text-gray-400">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-gradient-to-r from-indigo-500 to-violet-500" /> 2025</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 border-t-2 border-dashed border-gray-300" /> 2024</span>
+            <div className="flex items-center gap-5 text-xs text-ink-400">
+              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-brand-500" /> 2025</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 border-t-2 border-dashed border-neutral-300" /> 2024</span>
             </div>
           </div>
 
@@ -197,8 +185,8 @@ export default function RevenueIntelligence() {
             <div className="relative h-64">
               {/* Y-axis grid lines */}
               {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
-                <div key={i} className="absolute left-0 right-0 border-t border-gray-50" style={{ bottom: `${pct * 100}%` }}>
-                  <span className="absolute -top-2.5 left-0 text-[10px] text-gray-300 font-mono">
+                <div key={i} className="absolute left-0 right-0 border-t border-line" style={{ bottom: `${pct * 100}%` }}>
+                  <span className="absolute -top-2.5 left-0 text-[12px] text-neutral-300 font-mono">
                     {Math.round(maxRevenue * pct / 1000)}K
                   </span>
                 </div>
@@ -212,23 +200,23 @@ export default function RevenueIntelligence() {
                     <div key={i} className="flex-1 flex flex-col items-center gap-1 group/bar relative">
                       {/* Tooltip */}
                       <div className="absolute -top-10 opacity-0 group-hover/bar:opacity-100 transition-opacity duration-200 z-10
-                        bg-gray-900 text-white text-[10px] font-medium px-2 py-1 rounded-lg whitespace-nowrap pointer-events-none">
+                        bg-gray-900 text-white text-[12px] font-medium px-2 py-1 rounded-lg whitespace-nowrap pointer-events-none">
                         ₪{d.revenue.toLocaleString()} | שנה קודמת: ₪{d.prev.toLocaleString()}
                       </div>
                       <div className="w-full relative" style={{ height: '100%' }}>
                         {/* Previous year dashed marker */}
                         <div
-                          className="absolute left-1/2 -translate-x-1/2 w-[70%] border-t-2 border-dashed border-gray-300/70 z-10"
+                          className="absolute left-1/2 -translate-x-1/2 w-[70%] border-t-2 border-dashed border-neutral-300/70 z-10"
                           style={{ bottom: `${prevH}%` }}
                         />
                         {/* Current year bar */}
                         <div
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] rounded-t-lg bg-gradient-to-t from-indigo-600 to-violet-400
-                            group-hover/bar:from-indigo-500 group-hover/bar:to-violet-300 transition-all duration-300 cursor-pointer"
+                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] rounded-t-lg bg-brand-600
+                            group-hover/bar:from-brand-500 group-hover/bar:to-brand-300 transition-[background-color,border-color,color,box-shadow,transform] duration-300 cursor-pointer"
                           style={{ height: `${barH}%` }}
                         />
                       </div>
-                      <span className="text-[10px] text-gray-400 font-medium mt-1 shrink-0">{MONTHS_HEB[i]}</span>
+                      <span className="text-[12px] text-ink-400 font-medium mt-1 shrink-0">{MONTHS_HEB[i]}</span>
                     </div>
                   );
                 })}
@@ -237,15 +225,15 @@ export default function RevenueIntelligence() {
           </div>
 
           {/* AI Insight */}
-          <div className="mx-6 mb-6 p-4 rounded-xl border-2 border-violet-200 bg-gradient-to-r from-violet-50/80 to-indigo-50/50">
+          <div className="mx-6 mb-6 p-4 rounded-xl border-2 border-brand-100 bg-brand-50/80">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center shrink-0 mt-0.5">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <span className="text-xs font-bold text-violet-700 uppercase tracking-wider">AI Insight</span>
-                <p className="text-sm text-gray-700 mt-1 leading-relaxed">
-                  📈 ההכנסות עלו ב-18% לעומת השנה שעברה. החודש הכי חזק: <span className="font-semibold text-indigo-700">אוגוסט (₪42,300)</span>. המלצה: העלה מחירים בסופי שבוע ב-15%.
+                <span className="text-xs font-bold text-brand-700 uppercase tracking-wider">AI Insight</span>
+                <p className="text-sm text-ink-600 mt-1 leading-relaxed">
+                  ההכנסות עלו ב-18% לעומת השנה שעברה. החודש הכי חזק: <span className="font-semibold text-brand-700">אוגוסט (₪42,300)</span>. המלצה: העלה מחירים בסופי שבוע ב-15%.
                 </p>
               </div>
             </div>
@@ -253,17 +241,17 @@ export default function RevenueIntelligence() {
         </div>
 
         {/* ── Property Performance Table ──────────────── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-50">
-            <h2 className="text-lg font-bold text-gray-900">ביצועי נכסים</h2>
-            <p className="text-xs text-gray-400 mt-0.5">השוואת ביצועים בין כל הנכסים</p>
+        <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-line">
+            <h2 className="text-lg font-bold text-navy-900">ביצועי נכסים</h2>
+            <p className="text-xs text-ink-400 mt-0.5">השוואת ביצועים בין כל הנכסים</p>
           </div>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
             <table className="w-full min-w-[600px]">
               <thead>
-                <tr className="bg-gray-50/80">
+                <tr className="bg-canvas">
                   {['נכס', 'הכנסות', 'לילות', 'ממוצע ללילה', 'תפוסה', 'RevPAR', 'מגמה'].map((h, i) => (
-                    <th key={i} className="px-5 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-600 transition-colors select-none">
+                    <th key={i} className="px-5 py-3 text-right text-[12px] font-semibold text-ink-400 uppercase tracking-wider cursor-pointer hover:text-ink-600 transition-colors select-none">
                       {h}
                     </th>
                   ))}
@@ -276,7 +264,7 @@ export default function RevenueIntelligence() {
                     <tr
                       key={i}
                       className={cn(
-                        'hover:bg-gray-50/60 transition-colors',
+                        'hover:bg-canvas transition-colors',
                         isBest && 'bg-emerald-50/40'
                       )}
                     >
@@ -285,37 +273,37 @@ export default function RevenueIntelligence() {
                           <div className={cn(
                             'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold',
                             isBest
-                              ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white'
-                              : 'bg-gray-100 text-gray-500'
+                              ? 'bg-emerald-400 text-white'
+                              : 'bg-neutral-100 text-ink-600'
                           )}>
                             {i + 1}
                           </div>
-                          <span className="font-medium text-gray-900 text-sm">{p.name}</span>
+                          <span className="font-medium text-navy-900 text-sm">{p.name}</span>
                           {isBest && (
-                            <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
+                            <span className="text-[12px] font-semibold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
                               Top
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="px-5 py-3.5 font-semibold text-gray-900 text-sm">₪{p.revenue.toLocaleString()}</td>
-                      <td className="px-5 py-3.5 text-gray-600 text-sm">{p.nights}</td>
-                      <td className="px-5 py-3.5 text-gray-600 text-sm">₪{p.avgNight}</td>
+                      <td className="px-5 py-3.5 font-semibold text-navy-900 text-sm">₪{p.revenue.toLocaleString()}</td>
+                      <td className="px-5 py-3.5 text-ink-600 text-sm">{p.nights}</td>
+                      <td className="px-5 py-3.5 text-ink-600 text-sm">₪{p.avgNight}</td>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-2">
-                          <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="w-16 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
                             <div
                               className={cn(
-                                'h-full rounded-full transition-all',
-                                p.occupancy >= 85 ? 'bg-emerald-400' : p.occupancy >= 70 ? 'bg-amber-400' : 'bg-red-400'
+                                'h-full rounded-full transition-[background-color,border-color,color,box-shadow,transform]',
+                                p.occupancy >= 85 ? 'bg-emerald-400' : p.occupancy >= 70 ? 'bg-brand-300' : 'bg-red-400'
                               )}
                               style={{ width: `${p.occupancy}%` }}
                             />
                           </div>
-                          <span className="text-sm text-gray-600">{p.occupancy}%</span>
+                          <span className="text-sm text-ink-600">{p.occupancy}%</span>
                         </div>
                       </td>
-                      <td className="px-5 py-3.5 text-gray-600 text-sm">₪{p.revpar}</td>
+                      <td className="px-5 py-3.5 text-ink-600 text-sm">₪{p.revpar}</td>
                       <td className="px-5 py-3.5">
                         <div className={cn(
                           'inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-1 rounded-full',
@@ -336,57 +324,57 @@ export default function RevenueIntelligence() {
         {/* ── AI Insights Panel ──────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Opportunity */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-            <div className="h-1 bg-gradient-to-r from-emerald-400 to-teal-400" />
+          <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+            <div className="h-1 bg-emerald-400" />
             <div className="p-5">
               <div className="flex items-center gap-2.5 mb-3">
                 <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center">
                   <Zap className="w-[18px] h-[18px] text-emerald-600" />
                 </div>
-                <h3 className="font-bold text-gray-900 text-sm">חלון הזדמנות</h3>
+                <h3 className="font-bold text-navy-900 text-sm">חלון הזדמנות</h3>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              <p className="text-sm text-ink-600 leading-relaxed mb-4">
                 יש <span className="font-semibold text-emerald-700">12 לילות פנויים</span> בחודש הבא שיכולים לייצר <span className="font-semibold text-emerald-700">₪10,000+</span> אם תוריד מחיר ב-20%.
               </p>
-              <button className="w-full py-2 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors">
+              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors">
                 בצע אופטימיזציה
               </button>
             </div>
           </div>
 
           {/* Warning */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-            <div className="h-1 bg-gradient-to-r from-amber-400 to-orange-400" />
+          <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+            <div className="h-1 bg-brand-200" />
             <div className="p-5">
               <div className="flex items-center gap-2.5 mb-3">
                 <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
                   <AlertTriangle className="w-[18px] h-[18px] text-amber-600" />
                 </div>
-                <h3 className="font-bold text-gray-900 text-sm">אזהרת ביצועים</h3>
+                <h3 className="font-bold text-navy-900 text-sm">אזהרת ביצועים</h3>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              <p className="text-sm text-ink-600 leading-relaxed mb-4">
                 הנכס <span className="font-semibold text-amber-700">׳סוויטת הכרמל׳</span> ירד ב-30% בתפוסה. בדוק מחיר מול מתחרים.
               </p>
-              <button className="w-full py-2 rounded-xl text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">
+              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">
                 בדוק עכשיו
               </button>
             </div>
           </div>
 
           {/* Forecast */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-            <div className="h-1 bg-gradient-to-r from-violet-400 to-indigo-400" />
+          <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+            <div className="h-1 bg-brand-500" />
             <div className="p-5">
               <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-9 h-9 rounded-lg bg-violet-50 flex items-center justify-center">
-                  <Sparkles className="w-[18px] h-[18px] text-violet-600" />
+                <div className="w-9 h-9 rounded-lg bg-brand-50 flex items-center justify-center">
+                  <Sparkles className="w-[18px] h-[18px] text-brand-600" />
                 </div>
-                <h3 className="font-bold text-gray-900 text-sm">חיזוי</h3>
+                <h3 className="font-bold text-navy-900 text-sm">חיזוי</h3>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                לפי המגמה הנוכחית, ההכנסות ברבעון הבא צפויות להיות <span className="font-semibold text-violet-700">₪95,000</span>.
+              <p className="text-sm text-ink-600 leading-relaxed mb-4">
+                לפי המגמה הנוכחית, ההכנסות ברבעון הבא צפויות להיות <span className="font-semibold text-brand-700">₪95,000</span>.
               </p>
-              <button className="w-full py-2 rounded-xl text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors">
+              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 transition-colors">
                 צפה בפירוט
               </button>
             </div>
@@ -394,47 +382,47 @@ export default function RevenueIntelligence() {
         </div>
 
         {/* ── Revenue Forecast ───────────────────────────── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-line flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-gray-900">חיזוי הכנסות</h2>
-              <p className="text-xs text-gray-400 mt-0.5">תחזית ל-3 חודשים הבאים מבוססת AI</p>
+              <h2 className="text-lg font-bold text-navy-900">חיזוי הכנסות</h2>
+              <p className="text-xs text-ink-400 mt-0.5">תחזית ל-3 חודשים הבאים מבוססת AI</p>
             </div>
-            <div className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-full">
-              <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-              <span className="text-xs font-semibold text-indigo-700">רמת דיוק: 89%</span>
+            <div className="flex items-center gap-2 bg-brand-50 px-3 py-1.5 rounded-full">
+              <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+              <span className="text-xs font-semibold text-brand-700">רמת דיוק: 89%</span>
             </div>
           </div>
 
           <div className="px-6 py-6">
             {/* Timeline bar */}
             <div className="relative">
-              <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-100 z-0" />
+              <div className="absolute top-5 left-0 right-0 h-0.5 bg-neutral-100 z-0" />
               <div className="grid grid-cols-3 gap-4 relative z-10">
                 {FORECAST.map((f, i) => {
                   const barH = (f.predicted / maxForecast) * 100;
                   return (
                     <div key={i} className="flex flex-col items-center">
-                      <div className="w-10 h-10 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center mb-4 shadow-sm">
-                        <Calendar className="w-4 h-4 text-indigo-500" />
+                      <div className="w-10 h-10 rounded-full bg-white border-2 border-brand-100 flex items-center justify-center mb-4 shadow-sm">
+                        <Calendar className="w-4 h-4 text-brand-500" />
                       </div>
-                      <div className="w-full bg-gradient-to-br from-indigo-50/80 to-violet-50/50 rounded-xl p-4 border border-indigo-100/50 text-center">
-                        <p className="text-xs text-gray-400 font-medium mb-1">{f.month}</p>
+                      <div className="w-full bg-brand-50/80 rounded-xl p-4 border border-brand-100/50 text-center">
+                        <p className="text-xs text-ink-400 font-medium mb-1">{f.month}</p>
                         <div className="h-24 flex items-end justify-center mb-3">
                           <div
-                            className="w-12 rounded-t-lg bg-gradient-to-t from-indigo-400/50 to-violet-300/50 border border-indigo-200/50 border-b-0"
+                            className="w-12 rounded-t-lg bg-brand-500/50 border border-brand-100/50 border-b-0"
                             style={{ height: `${barH}%` }}
                           />
                         </div>
-                        <p className="text-lg font-bold text-gray-900">₪{f.predicted.toLocaleString()}</p>
+                        <p className="text-lg font-bold text-navy-900">₪{f.predicted.toLocaleString()}</p>
                         <div className="flex items-center justify-center gap-1 mt-1.5">
-                          <div className="h-1 flex-1 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-1 flex-1 bg-neutral-100 rounded-full overflow-hidden">
                             <div
-                              className="h-full rounded-full bg-gradient-to-r from-indigo-400 to-violet-400"
+                              className="h-full rounded-full bg-brand-500"
                               style={{ width: `${f.confidence}%` }}
                             />
                           </div>
-                          <span className="text-[10px] font-semibold text-indigo-600">{f.confidence}%</span>
+                          <span className="text-[12px] font-semibold text-brand-600">{f.confidence}%</span>
                         </div>
                       </div>
                     </div>
@@ -444,11 +432,11 @@ export default function RevenueIntelligence() {
             </div>
 
             {/* Bottom summary */}
-            <div className="mt-6 flex items-center justify-between p-3 bg-gradient-to-r from-indigo-50/60 to-violet-50/40 rounded-xl border border-indigo-100/30">
+            <div className="mt-6 flex items-center justify-between p-3 bg-brand-50/60 rounded-xl border border-brand-100/30">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-indigo-500" />
-                <span className="text-sm text-gray-600">
-                  סה״כ תחזית רבעונית: <span className="font-bold text-indigo-700">₪95,000</span>
+                <TrendingUp className="w-4 h-4 text-brand-500" />
+                <span className="text-sm text-ink-600">
+                  סה״כ תחזית רבעונית: <span className="font-bold text-brand-700">₪95,000</span>
                 </span>
               </div>
               <div className="flex items-center gap-1 text-xs text-emerald-600 font-semibold">

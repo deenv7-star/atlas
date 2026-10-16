@@ -35,7 +35,7 @@ const PROVIDER_CONFIGS = {
   },
   BIT: {
     title: 'Bit',
-    icon: '💳',
+    icon: 'B',
     color: 'bg-green-600',
     fields: [
       { key: 'merchant_id', label: 'Merchant ID', type: 'text', placeholder: '12345', required: true },
@@ -47,8 +47,8 @@ const PROVIDER_CONFIGS = {
   },
   TRANZILA: {
     title: 'Tranzila',
-    icon: '💰',
-    color: 'bg-blue-600',
+    icon: 'T',
+    color: 'bg-brand-600',
     fields: [
       { key: 'terminal_name', label: 'Terminal Name', type: 'text', placeholder: 'terminal123', required: true },
       { key: 'terminal_password', label: 'Terminal Password', type: 'password', placeholder: '••••••••', required: true }
@@ -58,7 +58,7 @@ const PROVIDER_CONFIGS = {
   },
   MESHULAM: {
     title: 'Meshulam',
-    icon: '🏦',
+    icon: 'M',
     color: 'bg-orange-600',
     fields: [
       { key: 'page_code', label: 'Page Code', type: 'text', placeholder: 'xxxxx', required: true },
@@ -70,8 +70,8 @@ const PROVIDER_CONFIGS = {
   },
   CARDCOM: {
     title: 'Cardcom',
-    icon: '🔐',
-    color: 'bg-purple-600',
+    icon: 'C',
+    color: 'bg-brand-600',
     fields: [
       { key: 'terminal', label: 'Terminal Number', type: 'text', placeholder: '1000', required: true },
       { key: 'api_name', label: 'API Name', type: 'text', placeholder: 'api_user', required: true },
@@ -103,7 +103,7 @@ export default function PaymentSetupDialog({ open, onOpenChange, provider, onSav
     setTestResult({
       success,
       message: success 
-        ? 'החיבור עבד בהצלחה! שער התשלומים מוכן לשימוש ✓' 
+        ? 'החיבור עבד בהצלחה! שער התשלומים מוכן לשימוש ' 
         : 'שגיאה בחיבור. בדוק את פרטי ה-API ונסה שוב.'
     });
     setTesting(false);
@@ -150,14 +150,14 @@ export default function PaymentSetupDialog({ open, onOpenChange, provider, onSav
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="text-sm text-blue-900 flex items-start gap-2">
+          <Alert className="bg-brand-50 border-brand-100">
+            <AlertDescription className="text-sm text-navy-900 flex items-start gap-2">
               <span>{config.helpText}</span>
               <a 
                 href={config.helpUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 flex-shrink-0"
+                className="text-brand-600 hover:text-brand-700 flex-shrink-0"
               >
                 <ExternalLink className="h-4 w-4" />
               </a>
@@ -261,7 +261,7 @@ export default function PaymentSetupDialog({ open, onOpenChange, provider, onSav
           <Button 
             onClick={handleSave}
             disabled={!testResult?.success}
-            className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]"
+            className="bg-brand-600 hover:bg-brand-500 text-white"
           >
             שמור והפעל
           </Button>

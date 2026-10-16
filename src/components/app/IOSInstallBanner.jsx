@@ -28,7 +28,7 @@ export default function IOSInstallBanner() {
 
   return (
     <div
-      className="fixed bottom-20 inset-x-4 z-50 bg-[#0B1220] border border-[#00D1C1]/30 rounded-2xl shadow-2xl p-4 text-white"
+      className="fixed bottom-20 inset-x-4 z-50 bg-[#1B2656] border border-brand-600/30 rounded-2xl shadow-2xl p-4 text-white"
       style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
       role="dialog"
       aria-label="התקן את ATLAS"
@@ -47,9 +47,9 @@ export default function IOSInstallBanner() {
           <p className="font-semibold text-sm leading-snug">התקן את ATLAS על האייפון</p>
           <p className="text-xs text-gray-400 mt-0.5 leading-snug">
             לחץ על{' '}
-            <Share className="inline h-3.5 w-3.5 text-[#00D1C1]" />
+            <Share className="inline h-3.5 w-3.5 text-brand-600" />
             {' '}ואז{' '}
-            <span className="text-[#00D1C1] font-medium inline-flex items-center gap-0.5">
+            <span className="text-brand-600 font-medium inline-flex items-center gap-0.5">
               <PlusSquare className="inline h-3.5 w-3.5" /> הוסף למסך הבית
             </span>
           </p>

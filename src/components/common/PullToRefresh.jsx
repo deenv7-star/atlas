@@ -68,7 +68,7 @@ export default function PullToRefresh({ onRefresh, children }) {
         >
           <div className="bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg">
             <Loader2 
-              className="h-5 w-5 text-[#00D1C1]" 
+              className="h-5 w-5 text-brand-600" 
               style={{ 
                 transform: refreshing ? 'none' : `rotate(${rotation}deg)`,
                 animation: refreshing ? 'spin 1s linear infinite' : 'none'
