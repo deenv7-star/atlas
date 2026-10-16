@@ -189,7 +189,7 @@ export default function About() {
           <Link to="/register">
             <Button
               size="lg"
-              className="bg-brand-600 hover:bg-[#00B8A9] text-white font-semibold px-10 py-6 text-lg rounded-xl"
+              className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-10 py-6 text-lg rounded-xl"
             >
               התחילו עכשיו
             </Button>

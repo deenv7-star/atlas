@@ -225,7 +225,7 @@ export default function LeadDetail({ orgId }) {
       </div>
 
       <Button
-        className="w-full bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl"
+        className="w-full bg-brand-600 hover:bg-brand-500 text-white rounded-xl"
         onClick={() => handleConvertToBooking(lead)}
       >
         <ArrowLeftRight className="h-4 w-4 ml-2" />

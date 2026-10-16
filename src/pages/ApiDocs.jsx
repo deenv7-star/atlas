@@ -124,7 +124,7 @@ export default function ApiDocs() {
 
         <div className="flex flex-wrap gap-4 justify-center pb-12">
           <Link to={createPageUrl('Contact')}>
-            <Button className="gap-2 bg-brand-600 hover:bg-[#00B8A9] text-white">
+            <Button className="gap-2 bg-brand-600 hover:bg-brand-500 text-white">
               שאלות טכניות — צור קשר
               <ArrowRight className="w-4 h-4" />
             </Button>

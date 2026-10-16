@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { PageHeader } from '@/components/ds';
+import { PageHeader, StatTile, SegmentedControl, EmptyState } from '@/components/ds';
+import { MessageSquareText, CheckCircle2, Clock3 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -96,69 +97,30 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
     <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
       <PageHeader title="ביקורות" subtitle="מה האורחים כתבו, ולמי עוד כדאי לשלוח בקשה." className="!mb-0" />
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <span className="text-2xl font-bold text-amber-500">{stats.avg}</span>
-              <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
-            </div>
-            <p className="text-xs text-ink-400">דירוג ממוצע</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-ink-600 mb-1">{stats.total}</p>
-            <p className="text-xs text-ink-400">סה"כ ביקורות</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-green-600 mb-1">{stats.reviewed}</p>
-            <p className="text-xs text-ink-400">ביקורות שהתקבלו</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-amber-600 mb-1">{stats.pending}</p>
-            <p className="text-xs text-ink-400">ממתינות</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <StatTile label="דירוג ממוצע" value={stats.avg} icon={Star} tone="amber" />
+        <StatTile label="סה״כ ביקורות" value={stats.total} icon={MessageSquareText} />
+        <StatTile label="התקבלו" value={stats.reviewed} icon={CheckCircle2} tone="success" />
+        <StatTile label="ממתינות" value={stats.pending} icon={Clock3} tone="amber" />
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="relative flex-1">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-400" />
+          <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" strokeWidth={1.75} aria-hidden />
           <Input
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            placeholder="חפש לפי שם אורח..."
-            className="h-9 pr-9 text-sm"
+            placeholder="חיפוש לפי שם אורח"
+            aria-label="חיפוש ביקורת"
+            className="pr-10"
           />
         </div>
-        <div className="flex gap-1.5 flex-wrap">
-          <Button
-            size="sm"
-            variant={statusFilter === 'all' ? 'default' : 'outline'}
-            onClick={() => setStatusFilter('all')}
-            className={cn("h-9 text-xs", statusFilter === 'all' && "bg-brand-600 text-white hover:bg-brand-500")}
-          >
-            הכל
-          </Button>
-          {STATUS_OPTIONS.map(s => (
-            <Button
-              key={s.value}
-              size="sm"
-              variant={statusFilter === s.value ? 'default' : 'outline'}
-              onClick={() => setStatusFilter(s.value)}
-              className={cn("h-9 text-xs", statusFilter === s.value && "bg-brand-600 text-white hover:bg-brand-500")}
-            >
-              {s.label}
-            </Button>
-          ))}
-        </div>
+        <SegmentedControl
+          ariaLabel="סינון לפי סטטוס"
+          value={statusFilter}
+          onChange={setStatusFilter}
+          options={[{ value: 'all', label: 'הכל' }, ...STATUS_OPTIONS.map((o) => ({ value: o.value, label: o.label }))]}
+        />
       </div>
 
       {/* Reviews list */}
@@ -166,13 +128,13 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
         {isLoading ? (
           [...Array(4)].map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)
         ) : filtered.length === 0 ? (
-          <Card className="border-0 shadow-sm">
-            <CardContent className="py-12 text-center">
-              <Star className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-              <p className="text-sm text-ink-400">
-                {searchTerm || statusFilter !== 'all' ? 'לא נמצאו תוצאות' : 'אין ביקורות עדיין'}
-              </p>
-            </CardContent>
+          <Card>
+            <EmptyState
+              compact
+              icon={Star}
+              title={searchTerm || statusFilter !== 'all' ? 'לא נמצאו ביקורות' : 'אין עדיין ביקורות'}
+              description={searchTerm || statusFilter !== 'all' ? 'נסו חיפוש או סינון אחר.' : 'אחרי כל יציאה אפשר לשלוח לאורח בקשה לביקורת, זה לוקח לו דקה.'}
+            />
           </Card>
         ) : (
           filtered.map((review) => {
@@ -218,12 +180,12 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 text-xs gap-1.5 whitespace-nowrap"
+                          className="gap-1.5 whitespace-nowrap"
                           onClick={() => sendReminderMutation.mutate(review.id)}
                           disabled={sendReminderMutation.isPending}
                         >
-                          <Send className="w-3 h-3" />
-                          שלח בקשה
+                          <Send className="h-4 w-4 -scale-x-100" strokeWidth={1.75} />
+                          בקשת ביקורת
                         </Button>
                       )}
                     </div>

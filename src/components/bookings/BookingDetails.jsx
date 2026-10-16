@@ -448,7 +448,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             <Button 
               onClick={() => createPaymentMutation.mutate(newPayment)}
               disabled={newPayment.amount <= 0 || createPaymentMutation.isPending}
-              className="bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl"
+              className="bg-brand-600 hover:bg-brand-500 text-white rounded-xl"
             >
               {createPaymentMutation.isPending ? 'שומר...' : 'הוסף תשלום'}
             </Button>

@@ -75,7 +75,7 @@ class GlobalErrorBoundary extends React.Component {
               <div className="flex flex-col gap-3">
                 <Button
                   onClick={this.handleReload}
-                  className="w-full bg-brand-600 hover:bg-[#00B8A9] text-white font-semibold gap-2"
+                  className="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold gap-2"
                   size="lg"
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -98,7 +98,7 @@ class GlobalErrorBoundary extends React.Component {
                   אם הבעיה נמשכת,{' '}
                   <a 
                     href="mailto:support@atlas-app.co.il" 
-                    className="text-brand-600 hover:text-[#00B8A9] font-medium underline"
+                    className="text-brand-600 hover:text-brand-500 font-medium underline"
                   >
                     צור קשר עם התמיכה
                   </a>

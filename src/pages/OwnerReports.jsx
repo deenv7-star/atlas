@@ -342,7 +342,7 @@ export default function OwnerReports() {
       <div>
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="flex items-center gap-2 text-lg font-bold text-navy-900 mb-3 hover:text-brand-600 transition-colors"
+          className="mb-3 flex min-h-11 items-center gap-2 text-lg font-bold text-navy-900 transition-colors hover:text-brand-600"
         >
           <Settings className="w-5 h-5 text-brand-500" />
           הגדרות דוחות

@@ -225,7 +225,7 @@ export default function MessagingSetupDialog({ open, onOpenChange, provider, onS
           <Button 
             onClick={handleSave}
             disabled={!testResult?.success}
-            className="bg-brand-600 hover:bg-[#00B8A9] text-white"
+            className="bg-brand-600 hover:bg-brand-500 text-white"
           >
             שמור והפעל
           </Button>

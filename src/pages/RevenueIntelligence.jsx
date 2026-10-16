@@ -162,7 +162,7 @@ export default function RevenueIntelligence() {
                   key={t.id}
                   onClick={() => setChartTab(t.id)}
                   className={cn(
-                    'px-4 py-1.5 text-sm font-medium rounded-lg transition-[background-color,border-color,color,box-shadow,transform] duration-200',
+                    'inline-flex h-11 items-center px-4 text-[15px] font-medium rounded-[9px] transition-[background-color,color,box-shadow] duration-150',
                     chartTab === t.id
                       ? 'bg-white text-brand-700 shadow-sm'
                       : 'text-ink-600 hover:text-ink-600'
@@ -336,7 +336,7 @@ export default function RevenueIntelligence() {
               <p className="text-sm text-ink-600 leading-relaxed mb-4">
                 יש <span className="font-semibold text-emerald-700">12 לילות פנויים</span> בחודש הבא שיכולים לייצר <span className="font-semibold text-emerald-700">₪10,000+</span> אם תוריד מחיר ב-20%.
               </p>
-              <button className="w-full py-2 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors">
+              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors">
                 בצע אופטימיזציה
               </button>
             </div>
@@ -355,7 +355,7 @@ export default function RevenueIntelligence() {
               <p className="text-sm text-ink-600 leading-relaxed mb-4">
                 הנכס <span className="font-semibold text-amber-700">׳סוויטת הכרמל׳</span> ירד ב-30% בתפוסה. בדוק מחיר מול מתחרים.
               </p>
-              <button className="w-full py-2 rounded-xl text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">
+              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">
                 בדוק עכשיו
               </button>
             </div>
@@ -374,7 +374,7 @@ export default function RevenueIntelligence() {
               <p className="text-sm text-ink-600 leading-relaxed mb-4">
                 לפי המגמה הנוכחית, ההכנסות ברבעון הבא צפויות להיות <span className="font-semibold text-brand-700">₪95,000</span>.
               </p>
-              <button className="w-full py-2 rounded-xl text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 transition-colors">
+              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 transition-colors">
                 צפה בפירוט
               </button>
             </div>

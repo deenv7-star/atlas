@@ -170,32 +170,30 @@ export default function SettingsPage({ user }) {
                 <Separator />
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="full_name" className="text-xs font-medium">שם מלא</Label>
+                    <Label htmlFor="full_name" className="text-[14px] font-medium text-navy-900">שם מלא</Label>
                     <Input
                       id="full_name"
                       value={profileForm.full_name}
                       onChange={e => setProfileForm(prev => ({ ...prev, full_name: e.target.value }))}
                       placeholder="שם מלא"
-                      className="h-9 text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="phone" className="text-xs font-medium">טלפון</Label>
+                    <Label htmlFor="phone" className="text-[14px] font-medium text-navy-900">טלפון</Label>
                     <Input
                       id="phone"
                       value={profileForm.phone}
                       onChange={e => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
                       placeholder="050-0000000"
-                      className="h-9 text-sm"
                     />
                   </div>
                   <div className="space-y-1.5 sm:col-span-2">
-                    <Label htmlFor="email" className="text-xs font-medium">אימייל</Label>
+                    <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">אימייל</Label>
                     <Input
                       id="email"
                       value={profileForm.email}
                       disabled
-                      className="h-9 text-sm bg-canvas"
+                      className="bg-canvas"
                     />
                     <p className="text-[12px] text-ink-400">לא ניתן לשנות כתובת אימייל</p>
                   </div>
@@ -204,14 +202,14 @@ export default function SettingsPage({ user }) {
                   <Button
                     onClick={() => saveProfileMutation.mutate()}
                     disabled={saveProfileMutation.isPending}
-                    className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold h-9 text-sm"
+                    className="gap-2"
                   >
                     {saveProfileMutation.isPending ? (
-                      <div className="w-4 h-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <Save className="w-4 h-4" />
                     )}
-                    שמור שינויים
+                    שמירה
                   </Button>
                 </div>
               </CardContent>
@@ -228,48 +226,43 @@ export default function SettingsPage({ user }) {
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium">שם הארגון</Label>
+                    <Label className="text-[14px] font-medium text-navy-900">שם הארגון</Label>
                     <Input
                       value={orgForm.name}
                       onChange={e => setOrgForm(prev => ({ ...prev, name: e.target.value }))}
                       placeholder="שם החברה / העסק"
-                      className="h-9 text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium">אימייל עסקי</Label>
+                    <Label className="text-[14px] font-medium text-navy-900">אימייל עסקי</Label>
                     <Input
                       value={orgForm.email}
                       onChange={e => setOrgForm(prev => ({ ...prev, email: e.target.value }))}
                       placeholder="info@company.com"
-                      className="h-9 text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium">טלפון</Label>
+                    <Label className="text-[14px] font-medium text-navy-900">טלפון</Label>
                     <Input
                       value={orgForm.phone}
                       onChange={e => setOrgForm(prev => ({ ...prev, phone: e.target.value }))}
                       placeholder="03-0000000"
-                      className="h-9 text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium">אתר אינטרנט</Label>
+                    <Label className="text-[14px] font-medium text-navy-900">אתר אינטרנט</Label>
                     <Input
                       value={orgForm.website}
                       onChange={e => setOrgForm(prev => ({ ...prev, website: e.target.value }))}
                       placeholder="https://www.example.com"
-                      className="h-9 text-sm"
                     />
                   </div>
                   <div className="space-y-1.5 sm:col-span-2">
-                    <Label className="text-xs font-medium">כתובת</Label>
+                    <Label className="text-[14px] font-medium text-navy-900">כתובת</Label>
                     <Input
                       value={orgForm.address}
                       onChange={e => setOrgForm(prev => ({ ...prev, address: e.target.value }))}
                       placeholder="רחוב, עיר, מיקוד"
-                      className="h-9 text-sm"
                     />
                   </div>
                 </div>
@@ -277,14 +270,14 @@ export default function SettingsPage({ user }) {
                   <Button
                     onClick={() => saveOrgMutation.mutate()}
                     disabled={saveOrgMutation.isPending}
-                    className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold h-9 text-sm"
+                    className="gap-2"
                   >
                     {saveOrgMutation.isPending ? (
-                      <div className="w-4 h-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <Save className="w-4 h-4" />
                     )}
-                    שמור שינויים
+                    שמירה
                   </Button>
                 </div>
               </CardContent>
@@ -321,7 +314,7 @@ export default function SettingsPage({ user }) {
                 <div className="pt-3 flex justify-end">
                   <Button
                     onClick={() => toast({ title: 'הגדרות ההתראות נשמרו' })}
-                    className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold h-9 text-sm"
+                    className="gap-2"
                   >
                     <Save className="w-4 h-4" />
                     שמור
@@ -351,13 +344,13 @@ export default function SettingsPage({ user }) {
                 <Separator />
                 <div className="space-y-3">
                   <p className="text-sm font-medium text-ink-600">פעולות אבטחה</p>
-                  <Button variant="outline" className="w-full justify-start text-sm h-9 gap-2">
+                  <Button variant="outline" className="w-full justify-start gap-2">
                     <Shield className="w-4 h-4 text-ink-400" />
                     אפשר אימות דו-שלבי
                   </Button>
                   <Button
                     variant="outline"
-                    className="w-full justify-start text-sm h-9 gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                    className="w-full justify-start gap-2 text-red-600 border-red-200 hover:bg-red-50"
                     onClick={async () => {
                       if (confirm('האם אתה בטוח שברצונך למחוק את החשבון? פעולה זו בלתי הפיכה.')) {
                         try {

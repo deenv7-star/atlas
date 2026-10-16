@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageHeader } from '@/components/ds';
+import { PageHeader, SkelLine } from '@/components/ds';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -125,17 +125,23 @@ export default function AutomationsPage({ user, orgId }) {
   };
 
   if (isLoading) {
-    return <div className="p-6 text-center text-ink-600">טוען...</div>;
+    return (
+      <div className="mx-auto w-full max-w-[1200px] px-4 pt-4 md:px-8 md:pt-7" aria-busy="true" aria-label="טוען">
+        <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
+        <div className="mt-6 grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-24 rounded-[14px]" />)}</div>
+      </div>
+    );
   }
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
+      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       <PageHeader title="אוטומציות" subtitle="הודעות ומשימות שיוצאות לבד, בזמן הנכון." className="!mb-0" />
-      <div className="flex justify-end">
+      <div className="flex shrink-0">
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
-            <Button >
-              <Plus className="h-4 w-4 ml-2" />
+            <Button>
+              <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
               אוטומציה חדשה
             </Button>
           </DialogTrigger>
@@ -211,16 +217,17 @@ export default function AutomationsPage({ user, orgId }) {
           </DialogContent>
         </Dialog>
       </div>
+      </div>
 
       {/* Template Suggestions */}
       {automations.length === 0 && (
-        <Card className="border-dashed border-2">
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Zap className="h-5 w-5 text-[#00D4AA]" />
+              <span className="ds-icon-square"><Zap className="h-5 w-5" strokeWidth={1.75} /></span>
               תבניות מוכנות
             </CardTitle>
-            <CardDescription>התחל עם אוטומציות מומלצות</CardDescription>
+            <CardDescription>בחרו תבנית והיא מתחילה לעבוד מיד.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-3">
@@ -228,9 +235,10 @@ export default function AutomationsPage({ user, orgId }) {
                 <button
                   key={i}
                   onClick={() => handleCreateFromTemplate(template)}
-                  className="p-4 border rounded-lg text-right hover:border-[#00D4AA] hover:bg-[#00D4AA]/5 transition-[background-color,border-color,color,box-shadow,transform]"
+                  type="button"
+                  className="press min-h-[72px] rounded-[12px] border border-line bg-white p-4 text-right transition-[background-color,border-color] duration-150 hover:border-brand-600 hover:bg-brand-50"
                 >
-                  <div className="font-medium">{template.name}</div>
+                  <div className="text-[15px] font-bold text-navy-900">{template.name}</div>
                   <div className="text-sm text-ink-600 mt-1">{template.description}</div>
                 </button>
               ))}

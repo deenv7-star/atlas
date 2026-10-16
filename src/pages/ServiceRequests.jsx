@@ -180,7 +180,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   navigator.clipboard.writeText(`${window.location.origin}${createPageUrl('GuestService')}`);
                   alert('הקישור הועתק!');
                 }}
-                className="bg-brand-600 hover:bg-[#00B8A9] text-white"
+                className="bg-brand-600 hover:bg-brand-500 text-white"
               >
                 העתק
               </Button>
@@ -208,7 +208,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
           {/* Filters */}
           <div className="flex flex-wrap gap-3">
             <div className="flex flex-wrap items-center gap-2">
-              <ShareViewButton className="h-9 rounded-lg text-xs" />
+              <ShareViewButton />
               <Filter className="h-4 w-4 text-[#64748B]" />
               <Select value={filterStatus} onValueChange={(v) => void setUrlState({ filterStatus: v })}>
                 <SelectTrigger className="w-40">

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { PageHeader } from '@/components/ds';
+import { PageHeader, SkelLine } from '@/components/ds';
 import {
   useCleaningTasks,
   useCreateCleaningTask,
@@ -214,46 +214,36 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-6 px-4 pb-10 pt-4 md:px-8 md:pt-7" dir="rtl">
-      <PageHeader title="ניקיון" subtitle="משימות ניקיון לכל יחידה, לפי כניסות ויציאות." className="!mb-0" />
-
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-[#1B2656]">משימות ניקיון</h1>
-          <p className="text-ink-600">צור משימות ניקיון והקצה אותן לצוות. צוות הניקיון יכול להתחבר ולראות רק את המשימות שלו, לסמן צ'קליסטים ולעדכן סטטוס.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-[150px] rounded-xl">
-              <SelectValue placeholder="סטטוס" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">כל הסטטוסים</SelectItem>
-              {Object.entries(statusLabels).map(([key, label]) => (
-                <SelectItem key={key} value={key}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button 
-            onClick={() => setIsCreateOpen(true)}
-            className="bg-brand-600 hover:bg-[#00B8A9] text-white rounded-xl gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            משימה חדשה
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="ניקיון"
+        subtitle="משימות ניקיון לכל יחידה. הצוות רואה רק את המשימות שלו."
+        className="!mb-0"
+        actions={
+          <>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-[160px]" aria-label="סינון לפי סטטוס">
+                <SelectValue placeholder="סטטוס" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">כל הסטטוסים</SelectItem>
+                {Object.entries(statusLabels).map(([key, label]) => (
+                  <SelectItem key={key} value={key}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={() => setIsCreateOpen(true)}>
+              <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              משימה חדשה
+            </Button>
+          </>
+        }
+      />
 
       {/* Tasks Grid */}
       {isLoading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <Card key={i} className="border-0 shadow-sm rounded-2xl animate-pulse">
-              <CardContent className="p-4">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-neutral-100 rounded w-1/2"></div>
-              </CardContent>
-            </Card>
+            <SkelLine key={i} className="h-[132px] rounded-[14px]" />
           ))}
         </div>
       ) : filteredTasks.length === 0 ? (
@@ -263,14 +253,13 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
               <div className="w-16 h-16 rounded-2xl bg-canvas flex items-center justify-center mx-auto mb-4">
                 <ClipboardList className="w-8 h-8 text-neutral-300" />
               </div>
-              <p className="text-base font-semibold text-ink-600 mb-2">אין משימות ניקיון</p>
-              <p className="text-sm text-ink-600 mb-6 max-w-sm mx-auto">
-                צור את משימת הניקיון הראשונה שלך. משימות נוצרות אוטומטית מיציאות של אורחים, או שתוכל ליצור ידנית.
+              <p className="text-[17px] font-bold text-navy-900 mb-1.5">אין משימות ניקיון</p>
+              <p className="text-[15px] text-ink-600 mb-6 max-w-sm mx-auto">
+                משימה נוצרת לבד בכל יציאה של אורחים. אפשר גם להוסיף ידנית.
               </p>
               <Button
                 onClick={() => setIsCreateOpen(true)}
-                size="lg"
-                className="gap-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl"
+
               >
                 <Plus className="w-4 h-4" />
                 משימת ניקיון חדשה

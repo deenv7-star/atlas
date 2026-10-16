@@ -70,7 +70,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
                   {availableUpgrades.map(upgrade => {
                     const UpgradeIcon = upgrade.icon;
                     return (
-                      <div key={upgrade.id} className="bg-[#3E2BF1]/10 to-[#00B8A9]/10 border border-brand-600/20 rounded-xl p-3 flex items-center justify-between">
+                      <div key={upgrade.id} className="bg-[#3E2BF1]/10 to-brand-500/10 border border-brand-600/20 rounded-xl p-3 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-[#3E2BF1] flex items-center justify-center">
                             <UpgradeIcon className="h-5 w-5 text-white" />

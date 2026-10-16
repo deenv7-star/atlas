@@ -218,7 +218,7 @@ export default function PMSSetupDialog({ open, onOpenChange, provider, onSave })
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>ביטול</Button>
-          <Button onClick={handleSave} disabled={!testResult?.success} className="bg-brand-600 hover:bg-[#00B8A9] text-white">שמור והפעל</Button>
+          <Button onClick={handleSave} disabled={!testResult?.success} className="bg-brand-600 hover:bg-brand-500 text-white">שמור והפעל</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
