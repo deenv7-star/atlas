@@ -1,132 +1,74 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const STORAGE_KEY = 'atlas_cookie_consent';
 
-export default function CookieConsent() {
+function readChoice() {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return 'unavailable';
+  }
+}
+
+/**
+ * Compact bottom bar. It never covers the hero CTAs: it appears only after the
+ * visitor has scrolled a little (or after a short delay on short pages) and sits
+ * at the very bottom edge of the viewport. Styles live in landing.css (.lp-cookie).
+ */
+export default function CookieConsent({ revealAfter = null }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
-      // Small delay so it doesn't flash on first render
-      const timer = setTimeout(() => setVisible(true), 800);
-      return () => clearTimeout(timer);
+    if (readChoice()) return undefined;
+    // revealAfter: CSS selector (e.g. the hero). The bar appears only once that
+    // element has been scrolled fully out of view, so it can never cover it.
+    if (revealAfter) {
+      const el = document.querySelector(revealAfter);
+      if (el) {
+        const check = () => {
+          if (el.getBoundingClientRect().bottom <= 0) {
+            setVisible(true);
+            window.removeEventListener('scroll', check);
+          }
+        };
+        window.addEventListener('scroll', check, { passive: true });
+        check();
+        return () => window.removeEventListener('scroll', check);
+      }
     }
-  }, []);
+    let shown = false;
+    const show = () => {
+      if (shown) return;
+      shown = true;
+      setVisible(true);
+      window.removeEventListener('scroll', onScroll);
+    };
+    const onScroll = () => { if (window.scrollY > 240) show(); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    const timer = setTimeout(show, 4000);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [revealAfter]);
 
-  const accept = () => {
-    localStorage.setItem(STORAGE_KEY, 'accepted');
-    setVisible(false);
-  };
-
-  const decline = () => {
-    localStorage.setItem(STORAGE_KEY, 'declined');
+  const choose = (value) => {
+    try { localStorage.setItem(STORAGE_KEY, value); } catch { /* storage blocked: just hide */ }
     setVisible(false);
   };
 
   if (!visible) return null;
 
   return (
-    <div
-      className="atlas-cookie-consent-dialog"
-      dir="rtl"
-      role="dialog"
-      aria-label="הסכמה לעוגיות"
-      style={{
-        position: 'fixed',
-        bottom: 24,
-        right: 24,
-        left: 24,
-        zIndex: 9999,
-        maxWidth: 480,
-        margin: '0 auto',
-        background: '#111827',
-        color: 'white',
-        borderRadius: 14,
-        padding: '20px 24px',
-        boxShadow: '0 8px 40px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 14,
-        animation: 'cookieFadeUp 0.4s ease',
-      }}
-    >
-      <style>{`
-        @keyframes cookieFadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes cookieFadeDown {
-          from { opacity: 0; transform: translateY(-12px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        /* Bottom-fixed cookie overlaps footer links on many viewports; top bar keeps footer usable. */
-        @media (max-width: 1200px) {
-          .atlas-cookie-consent-dialog {
-            top: max(16px, env(safe-area-inset-top));
-            bottom: auto !important;
-            animation: cookieFadeDown 0.4s ease !important;
-          }
-        }
-      `}</style>
-
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-        <span style={{ fontSize: 22, flexShrink: 0 }}>🍪</span>
-        <div>
-          <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'white', marginBottom: 6 }}>
-            אנחנו משתמשים בעוגיות
-          </p>
-          <p style={{ margin: 0, fontSize: 13, color: '#9CA3AF', lineHeight: 1.6 }}>
-            ATLAS משתמשת בעוגיות כדי לשפר את חוויית הגלישה שלך, לנתח תנועה, ולהתאים תוכן.
-            המידע מעובד בהתאם ל-
-            <Link to="/privacy" style={{ color: '#A78BFA', textDecoration: 'underline' }}>מדיניות הפרטיות</Link>
-            {' '}שלנו ועמידה מלאה ב-GDPR.
-          </p>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-        <button
-          onClick={decline}
-          style={{
-            background: 'transparent',
-            border: '1px solid rgba(255,255,255,0.2)',
-            color: '#9CA3AF',
-            borderRadius: 8,
-            padding: '10px 18px',
-            minHeight: 44,
-            fontSize: 13,
-            fontWeight: 600,
-            fontFamily: 'Heebo, sans-serif',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'; e.currentTarget.style.color = 'white'; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.color = '#9CA3AF'; }}
-        >
-          דחה
-        </button>
-        <button
-          onClick={accept}
-          style={{
-            background: '#4F46E5',
-            border: 'none',
-            color: 'white',
-            borderRadius: 8,
-            padding: '10px 22px',
-            minHeight: 44,
-            fontSize: 13,
-            fontWeight: 700,
-            fontFamily: 'Heebo, sans-serif',
-            cursor: 'pointer',
-            transition: 'background 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#4338CA'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#4F46E5'; }}
-        >
-          אני מסכים/ה
-        </button>
+    <div className="lp-cookie" dir="rtl" role="region" aria-label="הסכמה לעוגיות">
+      <p>
+        אנחנו משתמשים בעוגיות כדי שהאתר יעבוד טוב יותר.{' '}
+        <Link to="/privacy">מדיניות הפרטיות</Link>
+      </p>
+      <div className="lp-cookie-actions">
+        <button type="button" className="no" onClick={() => choose('declined')}>לא תודה</button>
+        <button type="button" className="ok" onClick={() => choose('accepted')}>אישור</button>
       </div>
     </div>
   );
