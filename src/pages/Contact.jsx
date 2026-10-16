@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import Logo from '@/components/common/Logo';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Mail, Clock, MapPin, MessageCircle, Send, Loader2 } from 'lucide-react';
+import { ArrowRight, Mail, MessageCircle, Send, Loader2 } from 'lucide-react';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { submitPublicContact, buildContactMailto } from '@/lib/submitPublicContact';
 
@@ -113,8 +113,6 @@ export default function Contact() {
           <div className="md:col-span-2 space-y-6">
             {[
               { icon: Mail, label: 'אימייל', value: 'support@atlas-il.com', href: 'mailto:support@atlas-il.com' },
-              { icon: Clock, label: 'שעות פעילות', value: 'ימים א-ה 09:00-18:00' },
-              { icon: MapPin, label: 'כתובת', value: 'תל אביב, ישראל' },
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">

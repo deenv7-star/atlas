@@ -27,7 +27,7 @@ export function ShareViewButton(props: ShareViewButtonProps): React.ReactElement
     <button
       type="button"
       className={cn(
-        'inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground',
+        'inline-flex min-h-[44px] h-11 sm:h-9 sm:min-h-0 shrink-0 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground',
         className,
       )}
       onClick={onClick}
