@@ -120,11 +120,22 @@ export function Scene({ d, lit = false, compact = false, onUnit, onAdd, activeKe
           lit ? 'bg-white text-navy-900' : d.businessName ? 'bg-navy-900 text-white' : 'border-2 border-dashed border-[#C9CEE0] bg-white/60 text-ink-400')} key={d.businessName ? 'n' : 'e'}>
           <span className="truncate">{d.businessName || (d.type ? t.label : 'השם של העסק')}</span>
         </span>
+        <span className="flex flex-wrap items-center gap-1.5">
         {d.settlement ? (
           <span className={cn('ob-pop inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[13px] font-semibold', lit ? 'bg-white/15 text-white' : 'bg-white text-navy-900')}>
             <MapPin className="h-3.5 w-3.5 text-brand-600" aria-hidden />{d.settlement}
           </span>
         ) : null}
+        {providers.length ? (
+          <span className="contents">
+            {providers.map((k) => (
+              <span key={k} className={cn('ob-pop inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-bold text-white', lit && 'ring-1 ring-inset ring-white/40')} style={{ background: PROVIDERS[k].color }}>
+                <Check className="h-3 w-3" strokeWidth={3} aria-hidden />{PROVIDERS[k].label}
+              </span>
+            ))}
+          </span>
+        ) : null}
+        </span>
       </div>
 
       {/* photos pinned like prints */}
@@ -158,7 +169,7 @@ export function Scene({ d, lit = false, compact = false, onUnit, onAdd, activeKe
                   {u.name ? (
                     <span className={cn('mt-1 max-w-[120px] truncate rounded-full px-2.5 py-0.5 text-[13px] font-bold', lit ? 'bg-white/15 text-white' : 'bg-white text-navy-900')}>{u.name}</span>
                   ) : null}
-                  {showPrices && u.name ? <span className={cn('text-[12px] font-semibold tabular-nums', lit ? 'text-white/80' : 'text-ink-600')}>{formatMoney(u.price)} · {u.guests} אורחים</span> : null}
+                  {showPrices && u.name ? <span className={cn('flex flex-col items-center text-[12px] font-semibold leading-tight tabular-nums', lit ? 'text-white/80' : 'text-ink-600')}><span>{formatMoney(u.price)}</span><span>{u.guests} אורחים</span></span> : null}
                 </>
               );
               return onUnit && !u.placeholder ? (
@@ -172,16 +183,6 @@ export function Scene({ d, lit = false, compact = false, onUnit, onAdd, activeKe
         )}
       </div>
 
-      {/* channels: small flags at the bottom */}
-      {providers.length ? (
-        <div className="absolute bottom-3 start-4 z-10 flex gap-1.5">
-          {providers.map((k) => (
-            <span key={k} className="ob-pop inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-bold text-white" style={{ background: PROVIDERS[k].color }}>
-              <Check className="h-3 w-3" strokeWidth={3} aria-hidden />{PROVIDERS[k].label}
-            </span>
-          ))}
-        </div>
-      ) : null}
     </div>
   );
 }
