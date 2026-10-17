@@ -12,6 +12,7 @@ import { navigationTarget, wazeUrl, googleMapsUrl } from '@/lib/stay/guestInfo';
 import { waLink } from '@/lib/stay/whatsapp';
 import { Wordmark, LinkBtn } from '@/components/stay/StayUI';
 import '@/styles/atlas-brand.css';
+import { heCount } from '@/lib/hebrewCount';
 
 function Card({ icon: Icon, title, children }) {
   return (
@@ -111,7 +112,7 @@ export default function GuestStayPage() {
           <p className="text-[15px] font-medium" style={{ color: hero ? '#C9CDF9' : 'var(--brand-600, #3E2BF1)' }}>{name ? `שלום ${name},` : 'שלום,'}</p>
           <h1 className="mt-1 text-[30px] sm:text-[34px] leading-[1.15] font-extrabold" style={{ color: hero ? '#FFFFFF' : '#1B2656' }}>השהייה שלכם {withPrefix('ב', property.name)}</h1>
           <p className="mt-2 text-[15px]" style={{ color: hero ? '#DADDF6' : '#4A5578' }}>
-            {booking.nights} לילות{guests ? ` · ${guests} אורחים` : ''}
+            {heCount(booking.nights, 'night')}{guests ? ` · ${heCount(guests, 'guest')}` : ''}
           </p>
         </div>
       </header>

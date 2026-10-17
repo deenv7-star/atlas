@@ -2,6 +2,7 @@
 import React from 'react';
 import { formatMoney, pct, formatDayHe } from '@/lib/stay/format';
 import { Money, StatTile } from './StayUI';
+import { heCount } from '@/lib/hebrewCount';
 
 function Table({ head, rows, foot, align }) {
   return (
@@ -48,7 +49,7 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
   return (
     <div className="space-y-4">
       <div className="stat-row">
-        <StatTile label="הכנסות" value={formatMoney(r.income)} hint={`${r.lines.length} הזמנות`} />
+        <StatTile label="הכנסות" value={formatMoney(r.income)} hint={heCount(r.lines.length, 'booking')} />
         <StatTile label="הוצאות" value={formatMoney(r.expenseTotal)} hint={`${r.expenseRows.length} רשומות`} />
         <StatTile label="נטו" value={formatMoney(r.net)} tone={r.net < 0 ? 'danger' : 'brand'} />
       </div>
@@ -64,7 +65,7 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
                     <span className="flex items-center gap-2 font-bold min-w-0">
                       <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: c.color }} aria-hidden />
                       <span className="truncate">{c.label}</span>
-                      <span className="ab-faint font-normal ab-num whitespace-nowrap">{c.nights} לילות</span>
+                      <span className="ab-faint font-normal ab-num whitespace-nowrap">{heCount(c.nights, 'night')}</span>
                     </span>
                     <Money value={c.income} className="font-bold" />
                   </div>

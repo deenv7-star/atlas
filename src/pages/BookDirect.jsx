@@ -11,6 +11,7 @@ import { formatDayHe, formatMoney, nightsBetween } from '@/lib/stay/format';
 import { AvailabilityCalendar } from '@/components/stay/AvailabilityCalendar';
 import { Wordmark, Btn } from '@/components/stay/StayUI';
 import '@/styles/atlas-brand.css';
+import { heCount } from '@/lib/hebrewCount';
 
 function Shell({ children }) {
   return (
@@ -112,7 +113,7 @@ export default function BookDirectPage() {
                 {range.ci ? (
                   <>
                     <span className="font-bold">{formatDayHe(range.ci)}{range.co ? ` עד ${formatDayHe(range.co)}` : ''}</span>
-                    {nights ? <span className="ab-meta ab-num">{nights} לילות</span> : <span className="ab-meta">בחרו יום יציאה</span>}
+                    {nights ? <span className="ab-meta ab-num">{heCount(nights, 'night')}</span> : <span className="ab-meta">בחרו יום יציאה</span>}
                     {estimate ? <span className="ab-meta">מחיר משוער: <b className="ab-num" style={{ color: 'var(--ink-900)' }}>{formatMoney(estimate)}</b></span> : null}
                   </>
                 ) : <span className="ab-meta">עדיין לא נבחרו תאריכים</span>}

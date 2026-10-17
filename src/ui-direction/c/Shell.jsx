@@ -20,6 +20,7 @@ import { GuestAvatar, UnitPhoto, dayPart } from '@/components/app/atoms';
 import { IconButton } from '@/components/ds';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { useSubscription } from '@/hooks/useSubscription';
+import { trialShortText, TRIAL_DAYS } from '@/lib/trial';
 import { formatDayHe, todayISO, firstName } from '@/lib/stay/format';
 
 export const shellClass = 'bg-canvas';
@@ -29,9 +30,9 @@ function PlanCard() {
   const { daysLeft, isTrialing, isExpired, isLoading } = useSubscription();
   if (isLoading) return null;
   const trial = isTrialing || isExpired;
-  const title = isExpired ? 'הניסיון הסתיים' : isTrialing ? (daysLeft === 1 ? 'נשאר יום ניסיון' : `נשארו ${daysLeft} ימי ניסיון`) : 'ATLAS Pro';
+  const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : 'ATLAS Pro';
   const sub = trial ? 'בוחרים מסלול וממשיכים בלי הפסקה.' : 'כל הערוצים, התשלומים וההודעות במקום אחד.';
-  const pct = isTrialing ? Math.max(6, Math.min(100, ((14 - (daysLeft || 0)) / 14) * 100)) : null;
+  const pct = isTrialing ? Math.max(6, Math.min(100, ((TRIAL_DAYS - (daysLeft || 0)) / TRIAL_DAYS) * 100)) : null;
   return (
     <div className="c-plan relative overflow-hidden rounded-[24px] bg-brand-600 p-4 text-white">
       <span aria-hidden className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
