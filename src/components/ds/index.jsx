@@ -264,7 +264,7 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
             onClick={() => onChange(o.value)}
             className={cn(
               'press inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full font-semibold',
-              size === 'sm' ? 'h-10 px-3.5 text-[13px]' : 'h-10 px-4 text-[14px]',
+              size === 'sm' ? 'h-11 px-4 text-[13px]' : 'h-11 px-[18px] text-[14px]',
               active
                 ? 'bg-navy-900 text-white shadow-[0_6px_14px_-6px_rgba(27,38,86,0.5)]'
                 : 'bg-white text-ink-600 ring-1 ring-inset ring-[#E3E6EF] hover:text-navy-900 hover:ring-[#D2D6E3]',
