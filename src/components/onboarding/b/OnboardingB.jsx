@@ -273,13 +273,15 @@ export default function OnboardingB({ user, again = false }) {
               {T.single ? `ספרו לנו על ה${T.unit}` : `כמה ${T.units} יש לכם? (${d.units.length})`}
             </Q>
             {!T.single ? (
-              <div className="ob-scroll-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1" role="tablist" aria-label={T.units}>
+              <div className="ob-scroll-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+                <div className="flex shrink-0 gap-2" role="tablist" aria-label={T.units}>
                 {d.units.map((u) => (
                   <button key={u.key} type="button" role="tab" aria-selected={activeUnit?.key === u.key} onClick={() => setActive(u.key)}
                     className={cn('ob-press shrink-0 rounded-full px-4 text-[16px] font-semibold min-h-[48px]', activeUnit?.key === u.key ? 'bg-navy-900 text-white' : 'bg-white text-navy-900 ring-1 ring-inset ring-[#E1E4EE]')}>
                     {u.name || 'בלי שם'}
                   </button>
                 ))}
+                </div>
                 <button type="button" onClick={addUnit} className="ob-press shrink-0 rounded-full border-2 border-dashed border-brand-600 px-4 text-[16px] font-bold text-brand-600 min-h-[48px]">
                   + {`הוספת ${T.unit}`}
                 </button>
