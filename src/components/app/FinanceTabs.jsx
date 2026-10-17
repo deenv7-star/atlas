@@ -19,7 +19,7 @@ export default function FinanceTabs({ className }) {
                 to={url}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'press inline-flex h-10 items-center whitespace-nowrap rounded-full px-4 text-[14px] transition-colors duration-150',
+                  'press inline-flex h-11 items-center whitespace-nowrap rounded-full px-4 text-[14px] transition-colors duration-150',
                   active ? 'bg-brand-600 font-bold text-white shadow-[0_6px_14px_-6px_rgba(62,43,241,0.6)]' : 'font-semibold text-ink-600 hover:bg-[#F2F3F8] hover:text-navy-900',
                 )}
               >
