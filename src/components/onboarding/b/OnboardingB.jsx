@@ -46,7 +46,6 @@ function Milestones({ chapter }) {
               done ? 'bg-brand-600 text-white' : now ? 'bg-navy-900 text-white' : 'bg-white text-ink-400 ring-1 ring-inset ring-[#E1E4EE]')}>
               {done ? <Check className="h-4 w-4" strokeWidth={3} /> : <Icon className="h-4 w-4" strokeWidth={2} />}
             </span>
-            {now ? <span className="truncate text-[14px] font-bold text-navy-900">{t}</span> : null}
             {k < CHAPTERS.length - 1 ? <span className={cn('h-[3px] min-w-[6px] flex-1 rounded-full', done ? 'bg-brand-600' : 'bg-[#E1E4EE]')} /> : null}
           </li>
         );
@@ -55,9 +54,12 @@ function Milestones({ chapter }) {
   );
 }
 
-function Q({ children, sub }) {
+function Q({ children, sub, chapter }) {
   return (
     <div className="flex flex-col gap-2">
+      {chapter != null && chapter >= 0 && chapter < CHAPTERS.length ? (
+        <p className="text-[14px] font-bold text-brand-600">שלב {chapter + 1} מתוך {CHAPTERS.length} · {CHAPTERS[chapter].t}</p>
+      ) : null}
       <h1 className="text-[29px] font-extrabold leading-[1.15] tracking-[-0.015em] text-navy-900 md:text-[32px]">{children}</h1>
       {sub ? <p className="text-[17px] leading-relaxed text-ink-600">{sub}</p> : null}
     </div>
@@ -162,7 +164,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'hello':
         return (
           <div className="flex flex-col gap-6">
-            <Q sub="נבנה ביחד את המקום שלכם בתוך המערכת: שם, מיקום, תמונות, יחידות ושעות. כל תשובה מופיעה מיד בציור. כחמש דקות.">
+            <Q chapter={s.chapter} sub="נבנה ביחד את המקום שלכם בתוך המערכת: שם, מיקום, תמונות, יחידות ושעות. כל תשובה מופיעה מיד בציור. כחמש דקות.">
               {again ? 'נעבור שוב על המקום שלכם.' : 'בואו נבנה את המקום שלכם.'}
             </Q>
             <ul className="flex flex-col gap-2">
@@ -179,7 +181,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'role':
         return (
           <div className="flex flex-col gap-5">
-            <Q>מי אתם בעסק?</Q>
+            <Q chapter={s.chapter}>מי אתם בעסק?</Q>
             <div role="radiogroup" aria-label="תפקיד" className="flex flex-col gap-2.5">
               {OWNER_ROLES.map((r, k) => {
                 const Icon = [Crown, Briefcase, HeartHandshake, UserRound][k];
@@ -197,7 +199,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'name':
         return (
           <div className="flex flex-col gap-6">
-            <Q sub="ככה תופיעו במערכת ובהודעות לאורחים.">איך קוראים לכם?</Q>
+            <Q chapter={s.chapter} sub="ככה תופיעו במערכת ובהודעות לאורחים.">איך קוראים לכם?</Q>
             <div className="flex flex-col items-center gap-2">
               <PhotoPick shape="circle" label="תמונה שלכם (לא חובה)" value={d.ownerPhoto} onChange={(v) => update({ ownerPhoto: v })} max={256} />
               <span className="text-[14px] text-ink-400">תמונה, לא חובה</span>
@@ -208,7 +210,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'phone':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub="לכאן יגיעו ההתראות, וממנו האורחים יקבלו וואטסאפ.">מה מספר הנייד?</Q>
+            <Q chapter={s.chapter} sub="לכאן יגיעו ההתראות, וממנו האורחים יקבלו וואטסאפ.">מה מספר הנייד?</Q>
             <BigInput label="נייד" type="tel" inputMode="tel" dir="ltr" className="text-right" value={d.ownerPhone} onChange={(e) => update({ ownerPhone: e.target.value, phoneVerified: false })} placeholder="050-000-0000" autoComplete="tel"
               error={d.ownerPhone && !phoneOk(d.ownerPhone) ? 'חסרות ספרות. מספר נייד הוא 10 ספרות.' : ''} />
             {phoneOk(d.ownerPhone) ? <VerifyPhone phone={d.ownerPhone} verified={d.phoneVerified} onVerified={() => update({ phoneVerified: true })} /> : null}
@@ -217,7 +219,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'type':
         return (
           <div className="flex flex-col gap-4">
-            <Q>איזה מקום יש לכם?</Q>
+            <Q chapter={s.chapter}>איזה מקום יש לכם?</Q>
             <div role="radiogroup" aria-label="סוג העסק" className="flex flex-col gap-2.5">
               {[...BUSINESS_TYPES, OTHER_TYPE].map((t, k) => (
                 <button key={t.value} type="button" role="radio" aria-checked={d.type === t.value}
@@ -244,7 +246,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'business':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub="השם נכתב על השלט. אפשר לשנות בכל זמן.">איך קוראים לעסק?</Q>
+            <Q chapter={s.chapter} sub="השם נכתב על השלט. אפשר לשנות בכל זמן.">איך קוראים לעסק?</Q>
             <BigInput label="שם העסק" value={d.businessName} onChange={(e) => update({ businessName: e.target.value })}
               placeholder={{ hotel: 'למשל: מלון הגליל', boutique: 'למשל: בית הכרמל', villa: 'למשל: וילה בכרם', apartments: 'למשל: דירות הים', guesthouse: 'למשל: בית הארחה נוף' }[d.type] || 'למשל: צימרי הגליל'} maxLength={50} />
           </div>
@@ -252,7 +254,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'location':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub="נשלח לאורחים ניווט בוויז.">איפה המקום?</Q>
+            <Q chapter={s.chapter} sub="נשלח לאורחים ניווט בוויז.">איפה המקום?</Q>
             <SettlementInput value={d.settlement} onChange={(v) => update({ settlement: v })} />
             <BigInput label="רחוב ומספר (לא חובה)" value={d.street} onChange={(e) => update({ street: e.target.value })} placeholder="למשל: הגפן 12" maxLength={80} />
           </div>
@@ -260,14 +262,14 @@ export default function OnboardingB({ user, again = false }) {
       case 'photos':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub="מהטלפון או מהגלריה. הראשונה היא התמונה הראשית.">תמונות של המקום</Q>
+            <Q chapter={s.chapter} sub="מהטלפון או מהגלריה. הראשונה היא התמונה הראשית.">תמונות של המקום</Q>
             <PhotoGallery photos={d.photos} onChange={(v) => update({ photos: v })} />
           </div>
         );
       case 'units':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub={T.single ? 'כמה אורחים, מחיר ללילה ותמונה.' : `הקישו על + בציור כדי להוסיף, ועל ${T.unit} כדי לערוך.`}>
+            <Q chapter={s.chapter} sub={T.single ? 'כמה אורחים, מחיר ללילה ותמונה.' : `הקישו על + בציור כדי להוסיף, ועל ${T.unit} כדי לערוך.`}>
               {T.single ? `ספרו לנו על ה${T.unit}` : `כמה ${T.units} יש לכם? (${d.units.length})`}
             </Q>
             {!T.single ? (
@@ -278,6 +280,9 @@ export default function OnboardingB({ user, again = false }) {
                     {u.name || 'בלי שם'}
                   </button>
                 ))}
+                <button type="button" onClick={addUnit} className="ob-press shrink-0 rounded-full border-2 border-dashed border-brand-600 px-4 text-[16px] font-bold text-brand-600 min-h-[48px]">
+                  + {`הוספת ${T.unit}`}
+                </button>
               </div>
             ) : null}
             {activeUnit ? (
@@ -308,7 +313,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'today':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub="אפשר לבחור כמה.">מאיפה מגיעות הזמנות היום?</Q>
+            <Q chapter={s.chapter} sub="אפשר לבחור כמה.">מאיפה מגיעות הזמנות היום?</Q>
             <MultiChips label="מקורות הזמנות" options={CHANNELS_TODAY} value={d.channelsToday} onChange={(v) => update({ channelsToday: v })} />
           </div>
         );
@@ -317,7 +322,7 @@ export default function OnboardingB({ user, again = false }) {
         const fields = LINK_FIELDS.filter((f) => (f.key === 'booking' ? d.channelsToday.includes('booking') : f.key === 'airbnb' ? d.channelsToday.includes('airbnb') : true));
         return (
           <div className="flex flex-col gap-4">
-            <Q sub="מה שיש. אפשר להשאיר ריק.">קישורים לעסק</Q>
+            <Q chapter={s.chapter} sub="מה שיש. אפשר להשאיר ריק.">קישורים לעסק</Q>
             {fields.map((f) => {
               const Icon = icons[f.key];
               return (
@@ -336,7 +341,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'channels':
         return (
           <div className="flex flex-col gap-4">
-            <Q sub="ההזמנות משם ייכנסו ללוח השנה לבד.">נחבר את לוח השנה</Q>
+            <Q chapter={s.chapter} sub="ההזמנות משם ייכנסו ללוח השנה לבד.">נחבר את לוח השנה</Q>
             {Object.entries(PROVIDERS).filter(([k]) => d.channelsToday.includes(k === 'AIRBNB' ? 'airbnb' : 'booking')).map(([k, p]) => {
               const ch = d.channels[k];
               const setCh = (patch) => update((cur) => ({ channels: { ...cur.channels, [k]: { ...cur.channels[k], ...patch } } }));
@@ -363,21 +368,21 @@ export default function OnboardingB({ user, again = false }) {
       case 'checkin':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub="גררו את העיגול על השעון, או השתמשו ב- ו+.">מאיזו שעה אפשר להיכנס?</Q>
+            <Q chapter={s.chapter} sub="גררו את העיגול על השעון, או השתמשו ב- ו+.">מאיזו שעה אפשר להיכנס?</Q>
             <TimeDial label="שעת כניסה" value={d.checkIn} onChange={(v) => update({ checkIn: v })} color="#22B07D" />
           </div>
         );
       case 'checkout':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub={`כניסה מ-${d.checkIn}. עכשיו היציאה.`}>עד איזו שעה יוצאים?</Q>
+            <Q chapter={s.chapter} sub={`כניסה מ-${d.checkIn}. עכשיו היציאה.`}>עד איזו שעה יוצאים?</Q>
             <TimeDial label="שעת יציאה" value={d.checkOut} onChange={(v) => update({ checkOut: v })} color="#3E2BF1" />
           </div>
         );
       case 'wa':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub="בכל הזמנה חדשה, לחיצה אחת שולחת את זה לאורח.">ככה תיראה הודעת האישור</Q>
+            <Q chapter={s.chapter} sub="בכל הזמנה חדשה, לחיצה אחת שולחת את זה לאורח.">ככה תיראה הודעת האישור</Q>
             <div className="mx-auto w-full max-w-[340px] rounded-[40px] border-[10px] border-[#1B2656] bg-[#1B2656] shadow-[0_24px_48px_-24px_rgba(27,38,86,0.55)]">
               <WhatsAppPreview text={sampleMessage(d)} className="!rounded-[30px] !shadow-none" />
             </div>
@@ -388,7 +393,7 @@ export default function OnboardingB({ user, again = false }) {
       case 'pay':
         return (
           <div className="flex flex-col gap-5">
-            <Q sub="נזכיר לכם לגבות, ונראה מה נשאר פתוח.">איך משלמים לכם?</Q>
+            <Q chapter={s.chapter} sub="נזכיר לכם לגבות, ונראה מה נשאר פתוח.">איך משלמים לכם?</Q>
             <MultiChips label="אמצעי תשלום" options={PAY_METHODS} value={d.payMethods} onChange={(v) => update({ payMethods: v })} />
             <div className="flex flex-col gap-2.5">
               <p className="text-[17px] font-semibold text-navy-900">מקדמה בהזמנה</p>
@@ -421,7 +426,7 @@ export default function OnboardingB({ user, again = false }) {
               {d.ownerPhoto ? <img src={d.ownerPhoto} alt="" className="h-12 w-12 rounded-full object-cover" /> : <GuestAvatar name={d.ownerName || 'א'} size={48} photo={false} />}
               <p className="text-[16px] font-semibold text-ink-600">{d.ownerName ? `${d.ownerName.trim().split(/\s+/)[0]}, ` : ''}האורות דלוקים.</p>
             </div>
-            <Q sub="הכל במקום. ההזמנה הראשונה כבר יכולה להיכנס.">{`${d.businessName || 'המקום שלכם'} מוכן.`}</Q>
+            <Q chapter={s.chapter} sub="הכל במקום. ההזמנה הראשונה כבר יכולה להיכנס.">{`${d.businessName || 'המקום שלכם'} מוכן.`}</Q>
             <ul className="flex flex-wrap gap-2">
               {chips.map(({ Icon, t }, k) => (
                 <motion.li key={t} initial={still ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.26, delay: 0.5 + k * 0.06, ease: EASE }}
