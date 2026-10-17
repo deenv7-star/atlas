@@ -104,10 +104,10 @@ export default function HelpHint({ id, entry: entryProp, tone = 'plain', classNa
       <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="hh-scrim" />
-        <DialogPrimitive.Content className="hh-sheet" dir="rtl" aria-describedby={descId}>
+        <DialogPrimitive.Content className="hh-sheet" dir="rtl">
           <span className="hh-grab" aria-hidden />
-          <DialogPrimitive.Title asChild><p id={titleId} className="hh-title hh-title--sheet">{entry.title}</p></DialogPrimitive.Title>
-          <p id={descId} className="hh-what">{entry.what}</p>
+          <DialogPrimitive.Title className="hh-title hh-title--sheet">{entry.title}</DialogPrimitive.Title>
+          <DialogPrimitive.Description className="hh-what">{entry.what}</DialogPrimitive.Description>
           {entry.todo ? (
             <p className="hh-todo">
               <ArrowLeft className="hh-todo-icon" strokeWidth={2} aria-hidden />
