@@ -45,8 +45,8 @@ export default function TourView({ step, idx, total, steps, rect, ready, reduced
   const cardW = Math.min(360, vp.w - 24);
   let hole = holeFor(rect, vp);
   // a very tall element (the calendar on a phone): keep its top part lit, leave room for the card
-  if (hole && phone && hole.height > vp.h - cardH - GAP - 40) {
-    hole = { ...hole, height: Math.max(120, vp.h - cardH - GAP - 40 - hole.top) };
+  if (hole && phone && hole.height > vp.h - cardH - GAP - 56) {
+    hole = { ...hole, height: Math.max(120, vp.h - cardH - GAP - 56 - hole.top) };
   }
 
   let pos;
