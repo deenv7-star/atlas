@@ -21,7 +21,7 @@
   --st-red-bg: #FDE9EA; --st-red-fg: #B4303A;
   --st-slate-bg: #EDEFF5; --st-slate-fg: #4A5578;
 }
-html[data-ui='b']:root { --canvas: #F4F5FA; }
+html[data-ui='b']:root { --canvas: #F4F5FA; --page-max: 1320px; }
 body { background-color: var(--canvas); }
 
 /* Cards: white, 22px, no hard border, soft cool shadow */

@@ -155,7 +155,11 @@ function DayStrip({ day, bookings }) {
   );
 }
 
-export default function TodayBoard({ user, orgId }) {
+export default function TodayBoard({ user, orgId, variant = 'a' }) {
+  const B = variant === 'b';
+  const span = B
+    ? { hero: 'lg:col-span-4', occ: 'lg:col-span-4', bal: 'lg:col-span-4', chart: 'lg:col-span-8', list: 'lg:col-span-4' }
+    : { hero: 'lg:col-span-5', occ: 'lg:col-span-4', bal: 'lg:col-span-3', chart: 'lg:col-span-7', list: 'lg:col-span-5' };
   const day = todayISO();
   const tomorrow = addDays(day, 1);
   const data = useStayData();
@@ -307,7 +311,7 @@ export default function TodayBoard({ user, orgId }) {
 
   const kpis = (
     <section aria-label="מספרים" className="mt-6 grid grid-cols-2 gap-3 md:mt-7 md:gap-4 lg:grid-cols-12">
-      <Kpi i={1} hero label="הכנסות החודש" to="/payments" ariaLabel="הכנסות החודש, למסך הכספים" className="col-span-2 min-h-[188px] lg:col-span-5">
+      <Kpi i={1} hero label="הכנסות החודש" to="/payments" ariaLabel="הכנסות החודש, למסך הכספים" className={cn('col-span-2 min-h-[188px]', span.hero)}>
         <div className="mt-auto flex items-end justify-between gap-4 pt-5">
           <div className="min-w-0">
             <Money onHero value={kpi.thisMonth} className="text-[40px] leading-none tracking-[-0.03em]" />
@@ -319,7 +323,7 @@ export default function TodayBoard({ user, orgId }) {
           <Sparkline values={kpi.spark} width={112} height={48} color="#FFFFFF" dot="#3E2BF1" className="mb-1 shrink-0 opacity-95" />
         </div>
       </Kpi>
-      <Kpi i={2} label="תפוסה" to="/calendar" ariaLabel={`תפוסה ${kpi.occupancy}% החודש, ללוח השנה`} className="min-h-[188px] lg:col-span-4">
+      <Kpi i={2} label="תפוסה" to="/calendar" ariaLabel={`תפוסה ${kpi.occupancy}% החודש, ללוח השנה`} className={cn('min-h-[188px]', span.occ)}>
         <div className="mt-auto flex flex-col items-start gap-3 pt-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="order-2 min-w-0 sm:order-1">
             <p className="text-[13px] text-ink-400">{kpi.nights} לילות מתוך {kpi.units * kpi.daysInMonth}</p>
@@ -328,7 +332,7 @@ export default function TodayBoard({ user, orgId }) {
           <span className="order-1 sm:order-2"><Ring value={kpi.occupancy} size={96} stroke={11} label={`תפוסה ${kpi.occupancy}%`} /></span>
         </div>
       </Kpi>
-      <Kpi i={3} label="יתרות פתוחות" attention={kpi.overdue} to="/balances" ariaLabel="יתרות פתוחות, למסך היתרות" className="min-h-[188px] lg:col-span-3">
+      <Kpi i={3} label="יתרות פתוחות" attention={kpi.overdue} to="/balances" ariaLabel="יתרות פתוחות, למסך היתרות" className={cn('min-h-[188px]', span.bal)}>
         <div className="mt-auto pt-4">
           <Money value={kpi.openTotal} className="text-[30px] leading-none md:text-[32px]" />
           <p className="mt-3">
@@ -462,8 +466,8 @@ export default function TodayBoard({ user, orgId }) {
         <>
           {kpis}
           <div className="mt-3 grid gap-3 md:mt-4 md:gap-4 lg:grid-cols-12">
-            <div className="order-2 min-w-0 lg:order-1 lg:col-span-7">{chart}</div>
-            <div className="order-1 min-w-0 lg:order-2 lg:col-span-5">{today}</div>
+            <div className={cn('order-2 min-w-0 lg:order-1', span.chart)}>{chart}</div>
+            <div className={cn('order-1 min-w-0 lg:order-2', span.list)}>{today}</div>
           </div>
         </>
       )}
