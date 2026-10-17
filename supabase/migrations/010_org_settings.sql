@@ -1,6 +1,7 @@
--- 010: business defaults from onboarding v1 (NOT applied to the live project yet).
--- Today the app keeps these on the owner's device (localStorage, per organization). After applying,
--- set VITE_DB_SCHEMA_LEVEL=10 (and apply 008 + 009 first) so they sync to every device.
+-- 010: business defaults from onboarding v1. Applied to the live project on 18 Oct 2026.
+-- The app keeps these on the owner's device (localStorage, per organization) and, when this column
+-- exists (detected at runtime, independent of VITE_DB_SCHEMA_LEVEL / 008 / 009), also in
+-- organizations.settings so every device sees them.
 --   settings = { complex_type, check_in_time, check_out_time, host_name, host_phone, wa_greeting,
 --                deposit: 'none' | '30' | '50' | 'full', cover_photo }
 alter table public.organizations add column if not exists settings jsonb not null default '{}'::jsonb;

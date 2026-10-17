@@ -1,7 +1,7 @@
 // Run: npm i --no-save @electric-sql/pglite && node supabase/tests/admin_rls.test.mjs
 // Real Postgres (PGlite) + a Supabase-like auth stub: applies 001-007 then 011 and checks every role boundary.
 // Exits 1 on any failure.
-// Applies 001..007 + 011 to PGlite (real Postgres 17 in WASM) with a Supabase-like auth stub,
+// Applies 001..007 + 010 + 011 to PGlite (real Postgres 17 in WASM) with a Supabase-like auth stub,
 // then checks what an anonymous user, a normal customer, support, admin and owner can and cannot do.
 import { PGlite } from '@electric-sql/pglite';
 import { uuid_ossp } from '@electric-sql/pglite/contrib/uuid_ossp';
@@ -17,6 +17,11 @@ create table auth.users (id uuid primary key, email varchar(255), last_sign_in_a
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
 grant usage on schema auth to anon, authenticated;
 grant execute on function auth.uid() to anon, authenticated;
+-- minimal Supabase storage stub for 010 (bucket + object policy)
+create schema storage;
+create table storage.buckets (id text primary key, name text not null, public boolean default false);
+create table storage.objects (id uuid primary key default gen_random_uuid(), bucket_id text references storage.buckets(id), name text);
+alter table storage.objects enable row level security;
 `);
 for (const f of ['001_initial.sql','002_trial_system.sql','003_invoice_and_users_platform.sql','004_onboarding_completed_backfill.sql','005_audit_log.sql','006_schema_alignment.sql','007_ui_columns.sql']) {
   await db.exec(fs.readFileSync(M + f, 'utf8').replace(/notify pgrst[^;]*;/gi, ''));
@@ -31,6 +36,20 @@ const orgOf = async (uid) => (await db.query('select organization_id from public
 const CORG = await orgOf(U.cust);
 await db.query(`insert into public.units (org_id, name) values ($1,'צימר 1'),($1,'צימר 2')`, [CORG]);
 await db.query(`insert into public.bookings (org_id, guest_name, guest_phone, check_in_date, total_price) values ($1,'דנה לוי','0501234567', current_date, 1200)`, [CORG]);
+const m010 = fs.readFileSync(M + '010_org_settings.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, '');
+await db.exec(m010);
+log(true, 'migration 010 applies cleanly on top of 001-007');
+log(await db.exec(m010).then(() => true, () => false), 'migration 010 is re-runnable (idempotent)');
+const colS = (await db.query(`select data_type, is_nullable, column_default from information_schema.columns where table_schema='public' and table_name='organizations' and column_name='settings'`)).rows[0];
+log(colS?.data_type === 'jsonb' && colS.is_nullable === 'NO', 'organizations.settings is jsonb not null default {}', JSON.stringify(colS));
+const own = await as(U.cust, `update public.organizations set settings = '{"check_in_time":"14:00"}' where id = $1 returning settings`, [CORG]);
+log(own.ok && own.rows.length === 1 && own.rows[0].settings.check_in_time === '14:00', 'customer can write their own org settings', own.err || '');
+const other = await as(U.cust, `update public.organizations set settings = '{"x":1}' where id <> $1 returning id`, [CORG]);
+log(other.ok && other.rows.length === 0, 'customer cannot write another org\'s settings (RLS)', other.err || `rows=${other.rows?.length}`);
+const otherRead = await as(U.cust, `select settings from public.organizations where id <> $1`, [CORG]);
+log(otherRead.ok && otherRead.rows.length === 0, 'customer cannot read another org\'s settings');
+const bkt = (await db.query(`select public from storage.buckets where id='atlas-files'`)).rows[0];
+log(bkt?.public === true, 'atlas-files bucket created (public read)');
 await db.exec(fs.readFileSync(M + '011_platform_admin.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, ''));
 log(true, 'migration 011 applies cleanly on top of 001-007');
 const again = await db.exec(fs.readFileSync(M + '011_platform_admin.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, '')).then(() => true, (e) => e.message);
@@ -144,6 +163,8 @@ const anonFns = (await db.query(`select p.proname from pg_proc p join pg_namespa
 log(anonFns.length === 0, 'anon has EXECUTE on no admin function', anonFns.map((r) => r.proname).join(','));
 const defs = (await db.query(`select p.proname, p.prosecdef, array_to_string(p.proconfig, ',') cfg from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname like 'admin\\_%' and p.prosecdef`)).rows;
 log(defs.every((r) => /search_path=public, pg_temp/.test(r.cfg || '')), `all ${defs.length} SECURITY DEFINER admin functions pin search_path`);
+const hl = await as(U.deen, 'select public.admin_system_health() h');
+log(hl.ok && hl.rows[0].h.schema.org_settings_010 === true && hl.rows[0].h.schema.platform_admin_011 === true && hl.rows[0].h.schema.guest_pages_008 === false && hl.rows[0].h.schema.expenses_009 === false, 'health reports 010 + 011 applied, 008/009 not', JSON.stringify(hl.rows?.[0]?.h?.schema || hl.err));
 
 console.log(out.join('\n')); console.log(`\n${pass} passed, ${fail} failed`);
 

@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { adminApi } from './api';
 import { ADMIN_DB_READY } from './config';
 import { AdminCtx } from './hooks';
+import { isMissingSchemaError } from '@/config/dbFeatures';
 
 function Center({ icon: Icon, title, body, action }) {
   return (
@@ -60,7 +61,8 @@ export default function AdminGate({ children }) {
     const ret = encodeURIComponent(window.location.pathname + window.location.search);
     return <Navigate to={`/login?return=${ret}`} replace />;
   }
-  if (!ADMIN_DB_READY) {
+  // Migration 011 not on this database (admin_whoami does not exist): same calm card, no access.
+  if (!ADMIN_DB_READY || (who.isError && isMissingSchemaError(who.error))) {
     return (
       <Center
         icon={Clock}
@@ -71,6 +73,7 @@ export default function AdminGate({ children }) {
     );
   }
   if (who.isLoading) return <Spinner />;
+  // Any other failure (network, 42501…) fails closed: the no-access card below.
   if (!who.data) {
     return (
       <Center

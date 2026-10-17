@@ -8,10 +8,13 @@
 import { isSupabaseConfigured } from '@/api/supabaseClient';
 import { PRICING_PLANS } from '@/config/pricing';
 
-const LEVEL = Number(import.meta.env.VITE_DB_SCHEMA_LEVEL) || 7;
-
-/** Supabase mode: the admin RPCs exist only after migration 011. Below it we fire no requests. */
-export const ADMIN_DB_READY = !isSupabaseConfigured || LEVEL >= 11;
+/**
+ * Supabase mode: the admin RPCs exist only after migration 011. That is detected at runtime
+ * (AdminGate asks admin_whoami; "function does not exist" shows the calm "not enabled yet" card),
+ * independent of VITE_DB_SCHEMA_LEVEL, which still gates 008 / 009 elsewhere.
+ * Set VITE_ADMIN_CONSOLE=off to turn the console off without touching the database.
+ */
+export const ADMIN_DB_READY = !isSupabaseConfigured || String(import.meta.env.VITE_ADMIN_CONSOLE || '').toLowerCase() !== 'off';
 /** Local demo mode (no Supabase): sample data, persisted in this browser only. */
 export const ADMIN_DEMO = !isSupabaseConfigured;
 

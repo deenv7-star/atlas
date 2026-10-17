@@ -26,6 +26,7 @@ const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
 // Platform admin console (/admin): its own shell, gated by the database (migration 011).
 const AdminRoot = lazy(() => import('@/admin/AdminRoot'));
+const AccountSuspended = lazy(() => import('@/components/common/AccountSuspended'));
 
 const GuestStayPage = lazy(() => import('@/pages/GuestStay'));
 const BookDirectPage = lazy(() => import('@/pages/BookDirect'));
@@ -90,7 +91,7 @@ function hasOnboardingBypass(user) {
 // Redirects to /login if not authenticated; preserves return URL.
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
 
-const ProtectedRoute = ({ children, requireOnboarding = true }) => {
+const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = false }) => {
   const { isLoadingAuth, isAuthenticated, user } = useAuth();
   if (isLoadingAuth) {
     return (
@@ -105,6 +106,10 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   }
   // New orgs go through onboarding once, also when they arrive via /login after confirming their email.
   // Existing orgs are never forced: auth.me() marks an org that already has units / bookings / leads as done.
+  // Suspended by the ATLAS team (admin console, my_account_status()): billing stays reachable.
+  if (user?.account_suspended && !allowSuspended) {
+    return <S><AccountSuspended reason={user.account_suspended_reason} /></S>;
+  }
   if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass(user)) {
     return <Navigate to="/onboarding" replace />;
   }
@@ -211,8 +216,8 @@ const AuthenticatedApp = () => {
         />
       )}
       {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
-      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
-      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
+      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false} allowSuspended><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
+      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
       {/* Platform admin console. Access is checked server-side (admin_whoami + every admin_* RPC). */}
       <Route path="/admin/*" element={<Suspense fallback={<PublicFallback />}><AdminRoot /></Suspense>} />
       <Route path="/platform-admin" element={<Navigate to="/admin" replace />} />

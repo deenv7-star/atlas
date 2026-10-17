@@ -27,7 +27,7 @@ suspend / reactivate, WhatsApp / email the owner, read-only "view as") · Subscr
 | admin | + extend trial, change plan, suspend / reactivate, record charges, mark paid |
 | owner | + edit plan prices, manage the team |
 
-## Migration `supabase/migrations/011_platform_admin.sql` (NOT applied)
+## Migration `supabase/migrations/011_platform_admin.sql` (applied to the live project 18 Oct 2026)
 Additive only. Creates `platform_admins`, `platform_plans` (seeded with the landing prices
 399/319, 699/559, 999/799), `platform_subscriptions`, `platform_charges`, `platform_customer_notes`,
 `admin_audit_log` (append-only, trigger blocks UPDATE/DELETE), the `admin_*` functions,
@@ -37,13 +37,14 @@ qa+hark@atlas-il.com as admin (only if those logins exist).
 Write actions also update the columns the customer app reads today
 (`profiles.trial_ends_at / selected_plan / subscription_status`, `organizations.subscription_plan`).
 
-To enable after approval:
-1. Run `011_platform_admin.sql` in the Supabase SQL editor (it is re-runnable).
-2. Set `VITE_DB_SCHEMA_LEVEL=11` on Vercel and redeploy. Below level 11 `/admin` shows
-   "not enabled yet" and sends no requests.
+Enabling: the console detects 011 at runtime. `/admin` asks `admin_whoami()`; when the function
+does not exist it shows "not enabled yet", otherwise the database decides access. It does not use
+`VITE_DB_SCHEMA_LEVEL` (that still gates 008 / 009). `VITE_ADMIN_CONSOLE=off` turns the console off.
+Suspension is enforced in the customer app: after sign-in it reads `my_account_status()` and a
+suspended org sees a "החשבון מושהה" screen (billing / subscription stay reachable).
 
 Verification: `npm i --no-save @electric-sql/pglite && node supabase/tests/admin_rls.test.mjs`
-(applies 001-007 + 011 to real Postgres in WASM, 110 checks: anon / customer / support / admin / owner).
+(applies 001-007 + 010 + 011 to real Postgres in WASM, 118 checks: anon / customer / support / admin / owner, org settings RLS, health).
 
 ## Demo mode
 Without Supabase env (local demo) the console uses fictional sample data (`src/admin/demoData.js`),

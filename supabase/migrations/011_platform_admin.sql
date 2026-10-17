@@ -1,7 +1,8 @@
 -- =============================================================================
 -- 011: ATLAS platform admin (owners / staff console at /admin)
 --
--- NOT APPLIED. Needs Deen's approval. After applying, set VITE_DB_SCHEMA_LEVEL=11 on Vercel.
+-- Applied to the live project on 18 Oct 2026 (Deen approved). The app detects it at runtime
+-- (admin_whoami exists), so VITE_DB_SCHEMA_LEVEL does not need to change.
 --
 -- What it does (additive only, no drops, no data rewrites on customer tables):
 --   1. New tables, all RLS-enabled with NO policies and no grants to anon/authenticated,
@@ -529,7 +530,7 @@ BEGIN
     'schema', jsonb_build_object(
       'guest_pages_008', EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'bookings' AND column_name = 'guest_token'),
       'expenses_009',    to_regclass('public.expenses') IS NOT NULL,
-      'org_settings_010', to_regclass('public.org_settings') IS NOT NULL,
+      'org_settings_010', EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'organizations' AND column_name = 'settings'),
       'platform_admin_011', TRUE),
     'counts', jsonb_build_object(
       'organizations', (SELECT COUNT(*) FROM public.organizations),
