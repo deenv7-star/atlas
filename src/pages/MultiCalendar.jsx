@@ -128,6 +128,10 @@ export default function MultiCalendar({ selectedPropertyId }) {
   }, [baseDate, totalDays]);
 
   const bookings = useMemo(() => transformBookings(rawBookings, properties), [rawBookings, properties]);
+  const stripDays = useMemo(() => {
+    const t = startOfDay(new Date());
+    return Array.from({ length: 14 }, (_, i) => addDays(t, i));
+  }, []);
 
   const filteredBookings = useMemo(() => {
     if (channelFilter === 'all') return bookings;
@@ -237,21 +241,21 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-6 md:px-10 md:pt-9 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
-      <header className={cn('v5-rise mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between')}>
+      <header className={cn('v5-rise mb-5 flex flex-row items-end justify-between gap-3 md:mb-6')}>
         <div>
-          <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">לוח שנה</h1>
-          <p className="mt-1.5 text-[15px] text-ink-400">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
+          <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">לוח שנה</h1>
+          <p className="mt-2 hidden text-[15px] text-ink-400 md:block">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="ghost" onClick={handleSync}>
+          <Button variant="outline" onClick={handleSync} aria-label="סנכרון ערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
             <RefreshCw className={cn(syncing && 'animate-spin')} />
-            סנכרון ערוצים
+            <span className="hidden sm:inline">סנכרון ערוצים</span>
           </Button>
         </div>
       </header>
 
       {!bookingsLoading && !propertiesLoading && properties.length === 0 ? (
-        <div className="rounded-[14px] border border-line bg-white">
+        <div className="v7-card">
           <DsEmptyState
             photo="/demo/units/unit-2.webp"
             icon={CalendarRange}
@@ -262,19 +266,44 @@ export default function MultiCalendar({ selectedPropertyId }) {
         </div>
       ) : null}
 
+      {/* Phones: date chip strip. Tapping a day starts the view there. */}
+      <nav aria-label="בחירת יום" className="v7-strip -mx-5 mb-3 flex scroll-px-5 gap-2 overflow-x-auto px-5 pb-3 md:hidden">
+        {stripDays.map((d) => {
+          const on = isToday(d);
+          const first = d.toDateString() === anchorDate.toDateString();
+          return (
+            <button
+              key={d.toISOString()}
+              type="button"
+              onClick={() => void setUrlState({ date: on ? null : d })}
+              aria-pressed={first}
+              aria-label={`${HEB_DAYS[d.getDay()]} ${d.getDate()}`}
+              className={cn(
+                'press flex h-[64px] w-[50px] shrink-0 flex-col items-center justify-center gap-1 rounded-full',
+                on ? 'bg-brand-600 text-white shadow-[0_10px_20px_-8px_rgba(62,43,241,0.6)]'
+                  : first ? 'bg-navy-900 text-white' : 'bg-white text-navy-900 ring-1 ring-inset ring-[#E8EAF2]',
+              )}
+            >
+              <span className={cn('text-[12px] font-medium', on || first ? 'text-white/80' : 'text-ink-400')}>{HEB_DAYS[d.getDay()]}</span>
+              <span className="text-[17px] font-bold leading-none tabular">{d.getDate()}</span>
+            </button>
+          );
+        })}
+      </nav>
+
       {/* Toolbar */}
       <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-[10px] border border-line bg-white shadow-[0_1px_2px_rgba(16,24,64,0.04)]">
-            <button type="button" onClick={goPrev} aria-label="הקודם" className="press inline-flex h-11 w-11 items-center justify-center rounded-s-[10px] text-navy-900 hover:bg-[#F5F6F9]">
-              <ChevronRight className="h-[18px] w-[18px]" strokeWidth={1.5} />
+          <div className="flex items-center gap-1.5">
+            <button type="button" onClick={goPrev} aria-label="הקודם" className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]">
+              <ChevronRight className="h-[18px] w-[18px]" strokeWidth={1.75} />
             </button>
-            <button type="button" onClick={goToday} className="press h-11 border-x border-line px-4 text-[14px] font-medium text-navy-900 hover:bg-[#F5F6F9]">היום</button>
-            <button type="button" onClick={goNext} aria-label="הבא" className="press inline-flex h-11 w-11 items-center justify-center rounded-e-[10px] text-navy-900 hover:bg-[#F5F6F9]">
-              <ChevronLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
+            <button type="button" onClick={goToday} className="press h-11 rounded-full bg-white px-4 text-[14px] font-semibold text-navy-900 ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]">היום</button>
+            <button type="button" onClick={goNext} aria-label="הבא" className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]">
+              <ChevronLeft className="h-[18px] w-[18px]" strokeWidth={1.75} />
             </button>
           </div>
-          <span className="truncate text-[15px] font-semibold text-navy-900 tabular">{rangeLabel}</span>
+          <span className="truncate ps-1 text-[16px] font-bold text-navy-900 tabular">{rangeLabel}</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <SegmentedControl
@@ -291,12 +320,12 @@ export default function MultiCalendar({ selectedPropertyId }) {
       </div>
 
       {bookingsError ? (
-        <div className="mb-6 rounded-[14px] border border-line bg-white p-4"><ErrorFallback /></div>
+        <div className="mb-6 v7-card p-4"><ErrorFallback /></div>
       ) : bookingsLoading || propertiesLoading ? (
         <SkeletonCalendar className="mb-6" totalDays={totalDays} viewMode={viewMode === 'month' ? 'month' : 'week'} propertyRowCount={Math.max(properties.length, 3)} />
       ) : properties.length ? (
         <ErrorBoundary section="calendar-view" variant="inline" resetKey={`${viewMode}-${anchorDate.toISOString()}-${totalDays}-${effectivePropertyId ?? 'all'}`}>
-          <div className="v5-rise mb-6 overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+          <div className="v5-rise mb-6 overflow-hidden v7-card">
             <div className="overflow-x-auto overscroll-x-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
               <div style={{ minWidth: minW, display: 'grid', gridTemplateColumns: `${UNIT_W} repeat(${totalDays}, ${COL_W})` }}>
                 <div className="sticky right-0 z-20 flex items-end border-b border-l border-line bg-white px-4 pb-2.5 pt-3 text-[13px] font-medium text-ink-400">יחידה</div>
@@ -415,7 +444,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
       {properties.length ? (
         <div>
-          <section className="v5-rise overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+          <section className="v5-rise overflow-hidden v7-card">
             <div className="flex items-center justify-between px-5 pt-5">
               <div>
                 <h2 className="text-[15px] font-semibold text-navy-900">לילות פנויים בין הזמנות</h2>

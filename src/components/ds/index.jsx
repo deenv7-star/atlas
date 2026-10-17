@@ -4,7 +4,9 @@
  */
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { CountUp } from '@/components/app/atoms';
+import { CountUp, GuestAvatar } from '@/components/app/atoms';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { format, parseISO, isValid } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -63,7 +65,7 @@ export function ChannelDot({ source, className }) {
 export function ChannelBadge({ source, className }) {
   const ch = channelOf(source);
   return (
-    <span className={cn('inline-flex h-6 items-center gap-1.5 rounded-full border border-line bg-white px-2.5 text-[13px] font-medium text-ink-600', className)}>
+    <span className={cn('inline-flex h-7 items-center gap-1.5 rounded-full bg-[#F1F2F7] px-3 text-[13px] font-medium text-navy-900', className)}>
       <ChannelDot source={source} />
       {ch.short}
     </span>
@@ -71,19 +73,22 @@ export function ChannelBadge({ source, className }) {
 }
 
 /* ── Status pills ──────────────────────────────────────────────────────────── */
-/* v5: Linear-style tags. White pill, hairline, colour lives only in a 6px dot. Amber = the attention dot. */
-const DOTS = {
-  success: '#22B07D',
-  warning: 'var(--attention)',
-  danger: '#EF5B5B',
-  brand: '#3E2BF1',
-  neutral: '#A3A9BA',
+/* v7: tinted cool pills (owner refs). mint = paid/done, sky = confirmed, lilac = pending, soft red = overdue. */
+export const TONES = {
+  mint: { bg: 'var(--st-mint-bg)', fg: 'var(--st-mint-fg)' },
+  sky: { bg: 'var(--st-sky-bg)', fg: 'var(--st-sky-fg)' },
+  lilac: { bg: 'var(--st-lilac-bg)', fg: 'var(--st-lilac-fg)' },
+  red: { bg: 'var(--st-red-bg)', fg: 'var(--st-red-fg)' },
+  slate: { bg: 'var(--st-slate-bg)', fg: 'var(--st-slate-fg)' },
+  brand: { bg: '#E9E7FE', fg: '#3E2BF1' },
 };
+const TONE_ALIAS = { success: 'mint', warning: 'lilac', amber: 'lilac', danger: 'red', neutral: 'slate', info: 'sky' };
+export function toneOf(t) { return TONES[t] || TONES[TONE_ALIAS[t]] || TONES.slate; }
 export const STATUS_META = {
   // bookings
-  PENDING: { label: 'ממתינה', tone: 'warning' },
-  APPROVED: { label: 'מאושרת', tone: 'success' },
-  CONFIRMED: { label: 'מאושרת', tone: 'success' },
+  PENDING: { label: 'ממתינה', tone: 'lilac' },
+  APPROVED: { label: 'מאושרת', tone: 'sky' },
+  CONFIRMED: { label: 'מאושרת', tone: 'sky' },
   CHECKED_IN: { label: 'בשהייה', tone: 'brand' },
   CHECKED_OUT: { label: 'הסתיימה', tone: 'neutral' },
   CANCELLED: { label: 'בוטלה', tone: 'danger' },
@@ -91,7 +96,7 @@ export const STATUS_META = {
   // leads
   NEW: { label: 'חדש', tone: 'brand' },
   CONTACTED: { label: 'בטיפול', tone: 'warning' },
-  OFFER_SENT: { label: 'הצעה נשלחה', tone: 'brand' },
+  OFFER_SENT: { label: 'הצעה נשלחה', tone: 'sky' },
   REJECTED: { label: 'לא רלוונטי', tone: 'neutral' },
   LOST: { label: 'לא נסגר', tone: 'neutral' },
   // payments
@@ -105,11 +110,51 @@ export const STATUS_META = {
 };
 export function StatusPill({ status, label, tone, className }) {
   const meta = STATUS_META[String(status || '').toUpperCase()] || { label: label || status || '', tone: 'neutral' };
-  const t = tone || meta.tone;
+  const t = toneOf(tone || meta.tone);
   return (
-    <span className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border border-line bg-white px-2.5 text-[13px] font-medium text-ink-600', className)}>
-      <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: DOTS[t] || DOTS.neutral }} />
+    <span className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold', className)} style={{ background: t.bg, color: t.fg }}>
+      <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: 'currentColor', opacity: 0.75 }} />
       {label || meta.label}
+    </span>
+  );
+}
+
+/** Small "+12%" pill beside a big number. On the indigo hero it turns white-on-glass. */
+export function DeltaPill({ pct, onHero = false, className }) {
+  if (pct == null || !Number.isFinite(pct)) return null;
+  const up = pct >= 0;
+  const Icon = up ? ArrowUpRight : ArrowDownRight;
+  const style = onHero
+    ? { background: 'rgba(255,255,255,0.18)', color: '#fff' }
+    : up ? { background: 'var(--st-mint-bg)', color: 'var(--st-mint-fg)' } : { background: 'var(--st-red-bg)', color: 'var(--st-red-fg)' };
+  return (
+    <span className={cn('inline-flex h-6 items-center gap-0.5 rounded-full px-2 text-[12px] font-semibold', className)} style={style}>
+      <Icon className="h-3.5 w-3.5" strokeWidth={2.25} aria-hidden />
+      <span className="tabular" dir="ltr">{up ? '+' : '−'}{Math.abs(Math.round(pct))}%</span>
+    </span>
+  );
+}
+
+/** Round icon button (44px on touch, 40px with a fine pointer). */
+export const IconButton = React.forwardRef(function IconButton({ as: Comp = 'button', label, tone = 'plain', className, children, ...rest }, ref) {
+  const toneCls = {
+    plain: 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.06)] ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]',
+    soft: 'bg-[#EEF0F6] text-navy-900 hover:bg-[#E6E9F2]',
+    brand: 'bg-brand-600 text-white hover:bg-brand-500',
+    glass: 'bg-white/15 text-white hover:bg-white/25',
+  }[tone];
+  return (
+    <Comp ref={ref} aria-label={label} {...(Comp === 'button' ? { type: 'button' } : {})} className={cn('press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full [&_svg]:h-[19px] [&_svg]:w-[19px]', toneCls, className)} {...rest}>
+      {children}
+    </Comp>
+  );
+});
+
+/** The round ↗ mark in a card corner: tells the owner the whole card opens. Decorative (the card is the link). */
+export function CardArrow({ onHero = false, className }) {
+  return (
+    <span aria-hidden className={cn('v7-arrow inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full', onHero ? 'bg-white/15 text-white' : 'bg-[#F1F2F7] text-navy-900', className)}>
+      <ArrowUpRight className="h-[18px] w-[18px]" strokeWidth={1.75} />
     </span>
   );
 }
@@ -117,7 +162,7 @@ export function StatusPill({ status, label, tone, className }) {
 /* ── Layout primitives ─────────────────────────────────────────────────────── */
 export function Page({ children, className, wide = false }) {
   return (
-    <div className={cn('mx-auto w-full px-5 pb-16 pt-6 md:px-10 md:pt-9', wide ? 'max-w-[1400px]' : 'max-w-[1200px]', className)} dir="rtl">
+    <div className={cn('mx-auto w-full px-5 pb-16 pt-3 md:px-10 md:pt-5', wide ? 'max-w-[1400px]' : 'max-w-[var(--page-max,1200px)]', className)} dir="rtl">
       {children}
     </div>
   );
@@ -127,8 +172,8 @@ export function PageHeader({ title, subtitle, actions, children, className }) {
   return (
     <header className={cn('v5-rise mb-7 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between', className)}>
       <div className="min-w-0">
-        <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">{title}</h1>
-        {subtitle ? <p className="mt-1.5 text-[15px] text-ink-400">{subtitle}</p> : null}
+        <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">{title}</h1>
+        {subtitle ? <p className="mt-2 text-[15px] text-ink-400">{subtitle}</p> : null}
         {children}
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
@@ -138,7 +183,7 @@ export function PageHeader({ title, subtitle, actions, children, className }) {
 
 export function Card({ as: Comp = 'div', className, children, ...rest }) {
   return (
-    <Comp className={cn('rounded-[14px] border border-line bg-white shadow-card', className)} {...rest}>
+    <Comp className={cn('v7-card', className)} {...rest}>
       {children}
     </Comp>
   );
@@ -148,11 +193,11 @@ export function Section({ title, subtitle, action, children, className, bodyClas
   return (
     <Card className={cn('overflow-hidden', className)}>
       {(title || action) && (
-        <div className="flex min-h-[56px] items-center justify-between gap-3 px-5 pt-4 md:px-6">
+        <div className="flex min-h-[60px] items-center justify-between gap-3 px-5 pt-5 md:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
             
             <div className="min-w-0">
-              <h2 className="truncate text-[15px] font-semibold text-navy-900">{title}</h2>
+              <h2 className="truncate text-[17px] font-bold text-navy-900">{title}</h2>
               {subtitle ? <p className="truncate text-[13px] text-ink-400">{subtitle}</p> : null}
             </div>
           </div>
@@ -174,28 +219,40 @@ function AnimatedValue({ value }) {
   return <CountUp value={n} format={(x) => `${m[1]}${x.toLocaleString('en-US')}${m[3]}`} />;
 }
 
-export function StatTile({ label, value, hint, tone = 'brand', className, loading, icon: Icon, attention }) {
-  const valueCls = tone === 'danger' ? 'text-danger-600' : 'text-navy-900';
+export function StatTile({ label, value, hint, tone = 'brand', className, loading, icon: Icon, attention, to, hero = false, delta }) {
+  const valueCls = hero ? 'text-white' : tone === 'danger' ? 'text-[var(--st-red-fg)]' : 'text-navy-900';
+  const Comp = to ? Link : 'div';
   return (
-    <Card className={cn('v5-rise flex min-w-0 flex-col gap-1 px-5 py-4 md:px-6 md:py-5', className)}>
-      <span className="flex items-center gap-2 truncate text-[13px] font-medium text-ink-400">
-        
-        {label}
-        {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
+    <Comp
+      {...(to ? { to } : {})}
+      className={cn('v5-rise flex min-w-0 flex-col gap-1 px-5 py-5 md:px-6', hero ? 'v7-hero' : 'v7-card', to && 'press v7-lift', className)}
+    >
+      <span className="flex items-center justify-between gap-2">
+        <span className={cn('flex min-w-0 items-center gap-2 truncate text-[14px] font-medium', hero ? 'text-white/80' : 'text-ink-400')}>
+          {label}
+          {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
+        </span>
+        {to ? <CardArrow onHero={hero} className="-me-1 -mt-1" /> : null}
       </span>
       {loading ? (
-        <SkelLine className="mt-1 h-8 w-24" />
+        <SkelLine className="mt-1 h-9 w-24" />
       ) : (
-        <span className={cn('v5-num whitespace-nowrap text-[22px] font-bold leading-tight md:text-[26px]', valueCls)}><AnimatedValue value={value} /></span>
+        <span className={cn('v5-num mt-1 whitespace-nowrap text-[28px] font-extrabold leading-tight md:text-[32px]', valueCls)}><AnimatedValue value={value} /></span>
       )}
-      {hint ? <span className="hidden truncate text-[13px] text-ink-400 md:block">{hint}</span> : null}
-    </Card>
+      {hint || delta != null ? (
+        <span className={cn('mt-0.5 flex min-w-0 items-center gap-2 text-[13px]', hero ? 'text-white/75' : 'text-ink-400')}>
+          {delta != null ? <DeltaPill pct={delta} onHero={hero} /> : null}
+          {hint ? <span className="truncate">{hint}</span> : null}
+        </span>
+      ) : null}
+    </Comp>
   );
 }
 
-export function SegmentedControl({ options, value, onChange, className, ariaLabel }) {
+/** Pill tabs / filter pills. The chosen pill fills navy; the rest are quiet white pills. */
+export function SegmentedControl({ options, value, onChange, className, ariaLabel, size = 'md' }) {
   return (
-    <div role="tablist" aria-label={ariaLabel} className={cn('inline-flex max-w-full gap-0.5 overflow-x-auto rounded-[12px] border border-line bg-[#F3F4F8] p-[3px]', className)}>
+    <div role="tablist" aria-label={ariaLabel} className={cn('v7-strip inline-flex max-w-full gap-1.5 overflow-x-auto p-0.5', className)}>
       {options.map((o) => {
         const active = o.value === value;
         return (
@@ -206,13 +263,16 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
             aria-selected={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              'press inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[9px] px-4 text-[14px] font-medium',
-              active ? 'bg-white text-navy-900 shadow-[0_0_0_1px_rgba(16,24,64,0.06),0_1px_3px_rgba(16,24,64,0.08)]' : 'text-ink-400 hover:text-navy-900',
+              'press inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full font-semibold',
+              size === 'sm' ? 'h-10 px-3.5 text-[13px]' : 'h-10 px-4 text-[14px]',
+              active
+                ? 'bg-navy-900 text-white shadow-[0_6px_14px_-6px_rgba(27,38,86,0.5)]'
+                : 'bg-white text-ink-600 ring-1 ring-inset ring-[#E3E6EF] hover:text-navy-900 hover:ring-[#D2D6E3]',
             )}
           >
             {o.label}
             {o.count != null ? (
-              <span className="tabular text-[12px] text-ink-300">{o.count}</span>
+              <span className={cn('tabular inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[12px]', active ? 'bg-white/20 text-white' : 'bg-[#EEF0F6] text-ink-600')}>{o.count}</span>
             ) : null}
           </button>
         );
@@ -225,9 +285,8 @@ export function EmptyState({ icon: Icon, title, description, actionLabel, onActi
   return (
     <div className={cn('v5-rise flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
       {Icon || photo ? (
-        <span className="relative mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] border border-line bg-white shadow-card" aria-hidden>
-          <span className="absolute inset-[5px] rounded-[11px] bg-[#F4F3FF]" />
-          {Icon ? <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.5} /> : null}
+        <span className="relative mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#ECEAFE]" aria-hidden>
+          {Icon ? <Icon className="relative h-7 w-7 text-brand-600" strokeWidth={1.5} /> : null}
         </span>
       ) : null}
       <p className="text-[17px] font-semibold text-navy-900">{title}</p>
@@ -294,7 +353,7 @@ export function useLoadingGuard(isLoading, ms = 12000) {
 
 export function SlowLoadNotice({ onRetry, className }) {
   return (
-    <div role="status" className={cn('flex flex-col items-start gap-3 rounded-[14px] border border-line bg-white p-4 sm:flex-row sm:items-center sm:justify-between', className)}>
+    <div role="status" className={cn('v7-card flex flex-col items-start gap-3 p-5 sm:flex-row sm:items-center sm:justify-between', className)}>
       <div>
         <p className="font-bold text-navy-900">הטעינה לוקחת יותר מהרגיל</p>
         <p className="text-[14px] text-ink-600">ייתכן שהחיבור איטי. אפשר לנסות שוב, הנתונים שכבר נטענו נשמרים.</p>
@@ -304,21 +363,15 @@ export function SlowLoadNotice({ onRetry, className }) {
   );
 }
 
-export function Avatar({ name, className, tone = 'brand' }) {
-  const ch = (String(name || '').trim()[0] || 'א').toUpperCase();
-  const toneCls = tone === 'neutral' || tone === 'amber' ? 'bg-[#EEF1F6] text-ink-600' : 'bg-[#EEF0FF] text-brand-700';
-  return (
-    <span aria-hidden className={cn('inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[15px] font-bold', toneCls, className)}>
-      {ch}
-    </span>
-  );
+export function Avatar({ name, className }) {
+  return <GuestAvatar name={String(name || 'א')} size={40} className={className} />;
 }
 
 /** Row for lists (bookings, leads, payments): large hit area, chevron, press feedback. */
 export function ListRow({ as: Comp = 'div', leading, title, meta, trailing, className, ...rest }) {
   return (
     <Comp
-      className={cn('press v5-row flex min-h-[64px] items-center gap-3 rounded-[10px] px-3 py-2.5 text-start', className)}
+      className={cn('press v7-row flex min-h-[64px] items-center gap-3 rounded-[16px] px-3 py-2.5 text-start', className)}
       {...rest}
     >
       {leading}

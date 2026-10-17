@@ -8,7 +8,7 @@ import '@/styles/atlas-brand.css';
 export function StayPage({ children, className, wide = false }) {
   return (
     <div dir="rtl" className={cn('ab-root ab-canvas min-h-full', className)}>
-      <div className={cn('mx-auto px-5 pb-16 pt-6 md:px-10 md:pt-10', wide ? 'max-w-[1200px]' : 'max-w-[960px]')}>{children}</div>
+      <div className={cn('mx-auto px-5 pb-16 pt-3 md:px-10 md:pt-5', wide ? 'max-w-[var(--page-max,1200px)]' : 'max-w-[960px]')}>{children}</div>
     </div>
   );
 }
@@ -108,7 +108,7 @@ export function LinkBtn({ variant = 'secondary', size, className, children, icon
 
 export function Segmented({ value, onChange, options, label }) {
   return (
-    <div role="tablist" aria-label={label} className="inline-flex p-1 rounded-[12px] border" style={{ background: 'var(--surface)', borderColor: 'var(--line)' }}>
+    <div role="tablist" aria-label={label} className="v7-strip inline-flex max-w-full gap-1.5 overflow-x-auto p-0.5">
       {options.map((o) => {
         const active = o.value === value;
         return (
@@ -118,10 +118,8 @@ export function Segmented({ value, onChange, options, label }) {
             aria-selected={active}
             type="button"
             onClick={() => onChange(o.value)}
-            className="ab-btn ab-btn-sm"
-            style={active
-              ? { background: 'var(--brand-50)', color: 'var(--brand-700)' }
-              : { background: 'transparent', color: 'var(--ink-600)' }}
+            className={cn('press inline-flex h-10 shrink-0 items-center rounded-full px-4 text-[14px] font-semibold',
+              active ? 'bg-navy-900 text-white shadow-[0_6px_14px_-6px_rgba(27,38,86,0.5)]' : 'bg-white text-ink-600 ring-1 ring-inset ring-[#E3E6EF] hover:text-navy-900')}
           >
             {o.label}
           </button>
@@ -140,13 +138,13 @@ export function Wordmark({ size = 22 }) {
   );
 }
 
-export function StatTile({ label, value, hint, tone }) {
-  const color = tone === 'danger' ? 'var(--status-danger)' : 'var(--ink-900)';
+export function StatTile({ label, value, hint, tone, hero = false }) {
+  const color = hero ? '#fff' : tone === 'danger' ? 'var(--st-red-fg)' : 'var(--ink-900)';
   return (
-    <div className="min-w-0 rounded-[16px] bg-white px-5 py-4" style={{ border: '1px solid var(--line, #E8EAF0)' }}>
-      <p className="text-[14px] text-[color:var(--ink-600)] truncate">{label}</p>
-      <p className="ab-num mt-1.5 whitespace-nowrap text-[20px] font-semibold leading-tight tracking-[-0.01em] sm:text-[24px]" style={{ color }}>{value}</p>
-      {hint ? <p className="ab-faint mt-1 truncate">{hint}</p> : null}
+    <div className={cn('min-w-0 px-5 py-5 md:px-6', hero ? 'v7-hero' : 'v7-card')}>
+      <p className={cn('truncate text-[14px] font-medium', hero ? 'text-white/80' : 'text-[color:var(--ink-400)]')}>{label}</p>
+      <p className="ab-num mt-2 whitespace-nowrap text-[26px] font-extrabold leading-tight tracking-[-0.02em] sm:text-[32px]" style={{ color }}>{value}</p>
+      {hint ? <p className={cn('mt-1 truncate text-[13px]', hero ? 'text-white/75' : 'text-[color:var(--ink-400)]')}>{hint}</p> : null}
     </div>
   );
 }

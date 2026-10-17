@@ -1,0 +1,93 @@
+/*
+ * ATLAS v7 app system (brand/refs-app-deen.md, 17.10.2026).
+ * Structure taken from the owner's references, colours from the ATLAS palette only:
+ * soft cool canvas, white 22px cards, ONE solid-indigo hero card, pill buttons and tabs,
+ * round icon buttons, tinted cool status pills (mint / sky / lilac / soft red). No warm hues.
+ */
+:root:root {
+  --canvas: #F2F3F8;
+  --line: #E8EAF2;
+  --r-card: 22px;
+  --r-sheet: 28px;
+  --shadow-card: 0 1px 2px rgba(27, 38, 86, 0.04), 0 6px 24px -8px rgba(27, 38, 86, 0.08);
+  --shadow-raised: 0 2px 4px rgba(27, 38, 86, 0.05), 0 18px 40px -12px rgba(27, 38, 86, 0.16);
+  --shadow-float: 0 1px 2px rgba(27, 38, 86, 0.05), 0 12px 32px -6px rgba(27, 38, 86, 0.14);
+  --shadow-hero: 0 1px 2px rgba(42, 26, 201, 0.25), 0 18px 40px -14px rgba(62, 43, 241, 0.55);
+
+  /* status tints (cool only) */
+  --st-mint-bg: #E2F6EE; --st-mint-fg: #0F6E4C;
+  --st-sky-bg: #E3F0FD; --st-sky-fg: #1557A0;
+  --st-lilac-bg: #EEEAFE; --st-lilac-fg: #4B2FD6;
+  --st-red-bg: #FDE9EA; --st-red-fg: #B4303A;
+  --st-slate-bg: #EDEFF5; --st-slate-fg: #4A5578;
+}
+html[data-ui='b']:root { --canvas: #F4F5FA; }
+body { background-color: var(--canvas); }
+
+/* Cards: white, 22px, no hard border, soft cool shadow */
+.v7-card {
+  background: #fff;
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(232, 234, 242, 0.7);
+}
+.v7-hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  background: #3E2BF1; color: #fff; border-radius: var(--r-card); box-shadow: var(--shadow-hero);
+}
+/* a quiet cool sheen in the hero (no glow orbs): one large soft circle, clipped */
+.v7-hero::before {
+  content: ''; position: absolute; z-index: -1; width: 380px; height: 380px; border-radius: 50%;
+  inset-inline-start: -120px; bottom: -240px;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));
+}
+.v7-hero::after {
+  content: ''; position: absolute; z-index: -1; width: 260px; height: 260px; border-radius: 50%;
+  inset-inline-end: -110px; top: -150px; border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+/* Lift on hover (cards that link), press scale everywhere */
+@media (hover: hover) and (pointer: fine) {
+  .v7-lift { transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out); }
+  .v7-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised); }
+  .v7-hero.v7-lift:hover { box-shadow: 0 2px 4px rgba(42, 26, 201, 0.25), 0 26px 48px -14px rgba(62, 43, 241, 0.6); }
+  .v7-lift:hover .v7-arrow { transform: rotate(45deg); }
+}
+.v7-arrow { transition: transform 260ms var(--ease-out), background-color 160ms var(--ease-out); }
+
+/* Rows */
+.v7-row { transition: background-color 150ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .v7-row:hover { background-color: #F7F8FC; } }
+
+/* Bars grow from the baseline */
+@keyframes v7-grow { from { transform: scaleY(0.04); } to { transform: scaleY(1); } }
+.v7-bar { transform-origin: bottom; animation: v7-grow 700ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 45ms); }
+@keyframes v7-ring { from { stroke-dashoffset: var(--c); } }
+.v7-ring { animation: v7-ring 900ms var(--ease-out) both; }
+@keyframes v7-pop { from { opacity: 0; transform: translate(var(--tx, -50%), 4px) scale(0.96); } to { opacity: 1; transform: translate(var(--tx, -50%), 0) scale(1); } }
+.v7-tip { transform: translate(var(--tx, -50%), 0); animation: v7-pop 220ms var(--ease-out) both; }
+
+/* Floating sidebar / rail tooltips (B) */
+.v7-tt { position: relative; }
+.v7-tt > .v7-tt-label {
+  position: absolute; z-index: 60; inset-inline-start: calc(100% + 12px); top: 50%; transform: translate(-4px, -50%);
+  white-space: nowrap; pointer-events: none; opacity: 0;
+  background: #1B2656; color: #fff; font-size: 13px; font-weight: 500; line-height: 1; padding: 8px 10px; border-radius: 999px;
+  transition: opacity 140ms var(--ease-out), transform 140ms var(--ease-out);
+}
+[dir='rtl'] .v7-tt > .v7-tt-label { transform: translate(4px, -50%); }
+.v7-tt:hover > .v7-tt-label, .v7-tt:focus-visible > .v7-tt-label { opacity: 1; transform: translate(0, -50%); }
+
+/* Date chip strip */
+.v7-strip { scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+.v7-strip::-webkit-scrollbar { display: none; }
+.v7-strip > * { scroll-snap-align: start; }
+
+/* Charts */
+.v7-chart .recharts-cartesian-axis-tick-value { font-family: var(--font-sans); font-size: 12px; fill: #8b91a3; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v7-bar, .v7-ring, .v7-tip { animation: none !important; }
+  .v7-lift, .v7-lift:hover { transform: none !important; transition: none !important; }
+  .v7-arrow { transition: none !important; }
+}

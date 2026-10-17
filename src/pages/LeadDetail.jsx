@@ -130,7 +130,7 @@ export default function LeadDetail({ orgId }) {
       className={cn('p-6 space-y-6 max-w-2xl mx-auto', optimisticEntityClassName(lead.id))}
     >
       <div className="flex items-center justify-between gap-2">
-        <button type="button" onClick={() => navigate(createPageUrl('Leads'))} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-[10px] px-2 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
+        <button type="button" onClick={() => navigate(createPageUrl('Leads'))} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-full px-3 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
           <ChevronRight className="h-5 w-5" />
           לידים
         </button>
@@ -144,7 +144,7 @@ export default function LeadDetail({ orgId }) {
           </Button>
         </div>
       </div>
-      <h1 className="text-[26px] font-bold leading-tight text-navy-900">{lead.full_name || 'ליד'}</h1>
+      <h1 className="text-[30px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900">{lead.full_name || 'ליד'}</h1>
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <DialogContent className="max-w-[420px]" dir="rtl">
           <DialogHeader>
@@ -245,7 +245,7 @@ export default function LeadDetail({ orgId }) {
           value={lead.status}
           onValueChange={(value) => updateMutation.mutate({ id: lead.id, data: { status: value } })}
         >
-          <SelectTrigger className="rounded-xl">
+          <SelectTrigger className="rounded-xl" aria-label="מצב הליד">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

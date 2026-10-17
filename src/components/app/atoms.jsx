@@ -45,11 +45,14 @@ export function UnitTile({ property, name, className, rounded = 'rounded-[10px]'
   );
 }
 
-/* ── Guest initials: three cool tints only (indigo, slate, periwinkle), stable per name ── */
+/* ── Guest initials: cool palette only (indigo, sky, mint, lilac, slate, periwinkle), stable per name ── */
 const TINTS = [
-  { bg: '#EEF0FF', fg: '#3E2BF1' }, // indigo
-  { bg: '#EEF1F6', fg: '#3A4469' }, // slate
-  { bg: '#E9EEFB', fg: '#2B3F9E' }, // periwinkle
+  { bg: '#E7E5FE', fg: '#3E2BF1' }, // indigo
+  { bg: '#DDEEFC', fg: '#1557A0' }, // sky
+  { bg: '#DCF4EA', fg: '#0F6E4C' }, // mint
+  { bg: '#EEE6FD', fg: '#6233C9' }, // lilac
+  { bg: '#E6E9F2', fg: '#3A4469' }, // slate
+  { bg: '#E2E8FB', fg: '#2B3F9E' }, // periwinkle
 ];
 function tintFor(name) {
   let h = 0;

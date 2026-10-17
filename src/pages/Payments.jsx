@@ -47,6 +47,19 @@ function paymentEntityToFormValues(p) {
   };
 }
 
+/** Round status mark beside each payment: mint check (paid), lilac clock (waiting), soft red (late). */
+function PayIcon({ status }) {
+  const st = String(status || '').toUpperCase();
+  const [Icon, bg, fg] = st === 'PAID' ? [CheckCircle2, 'var(--st-mint-bg)', 'var(--st-mint-fg)']
+    : st === 'OVERDUE' || st === 'FAILED' ? [AlertCircle, 'var(--st-red-bg)', 'var(--st-red-fg)']
+      : [Clock, 'var(--st-lilac-bg)', 'var(--st-lilac-fg)'];
+  return (
+    <span aria-hidden className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full" style={{ background: bg, color: fg }}>
+      <Icon className="h-5 w-5" strokeWidth={1.75} />
+    </span>
+  );
+}
+
 export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   const { toast } = useToast();
   const location = useLocation();
@@ -193,9 +206,9 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
       <ErrorBoundary section="financial-summary" variant="inline" resetKey={orgId ?? 'no-org'}>
         <div className="stat-row mb-5">
-          <StatTile label="התקבל" value={fmtMoney(stats.paid, { compact: true })} icon={CheckCircle2} tone="success" />
+          <StatTile hero label="התקבל" value={fmtMoney(stats.paid, { compact: true })} icon={CheckCircle2} tone="success" />
           <StatTile label="ממתין לגבייה" value={fmtMoney(stats.pending, { compact: true })} icon={Clock} tone="amber" />
-          <StatTile label="באיחור" value={stats.overdue} icon={AlertCircle} tone="danger" />
+          <StatTile label="באיחור" value={stats.overdue} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
         </div>
       </ErrorBoundary>
 
@@ -208,12 +221,12 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         />
         <div className="relative lg:w-[320px]">
           <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
-          <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="חיפוש תשלום" className="pr-10" aria-label="חיפוש תשלום" />
+          <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="חיפוש תשלום" className="rounded-full pr-10" aria-label="חיפוש תשלום" />
         </div>
       </div>
 
       {/* Financial / payments table */}
-      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+      <div className="v7-card overflow-hidden">
         {!orgId ? (
           <div className="p-6 text-center text-sm text-gray-500">התחבר לארגון כדי לראות תשלומים</div>
         ) : filtered.length === 0 && !isLoading ? (
@@ -225,21 +238,22 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
           />
         ) : (
           <>
-          <ul className="divide-y divide-line">
+          <ul className="divide-y divide-[#EEF0F5]">
             {isLoading ? <li className="p-4"><SkelRows rows={5} /></li> : filtered.map((p) => {
               const st = PAYMENT_STATUSES.find((x) => x.value === p.status);
               return (
                 <li key={p.id}>
-                  <button type="button" onClick={() => openEdit(p)} className="press v5-row flex min-h-[68px] w-full items-center gap-4 px-5 py-3 text-start">
+                  <button type="button" onClick={() => openEdit(p)} className="press v7-row flex min-h-[76px] w-full items-center gap-4 px-5 py-3 text-start md:px-6">
+                    <PayIcon status={p.status} />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[15px] font-medium text-navy-900">{p.description || 'תשלום'}</span>
+                      <span className="block truncate text-[15px] font-semibold text-navy-900">{p.description || 'תשלום'}</span>
                       <span className="block truncate text-[13px] text-ink-400">
                         {METHOD_LABEL[String(p.method || '').toLowerCase()] || 'תשלום'} · {p.status === 'PAID' ? `שולם ${fmtShort(p.paid_date || p.created_date)}` : `עד ${fmtShort(p.due_date || p.created_date)}`}
                       </span>
                     </span>
                     <StatusPill status={p.status} label={st?.label} className="hidden sm:inline-flex" />
                     <span className="flex flex-col items-end gap-1 sm:w-[104px]">
-                      <span className="v5-num text-[15px] font-semibold text-navy-900">{fmtMoney(p.amount)}</span>
+                      <span className="v5-num text-[15px] font-bold text-navy-900">{fmtMoney(p.amount)}</span>
                       <StatusPill status={p.status} label={st?.label} className="sm:hidden" />
                     </span>
                   </button>

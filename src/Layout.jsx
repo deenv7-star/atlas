@@ -72,7 +72,7 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <QuickBookingProvider>
       <div className={cn('atlas-app-shell flex h-[100dvh] max-h-[100dvh] min-h-[100dvh] flex-col overflow-hidden safe-top safe-left safe-right', shellClass)} dir="rtl">
-        <TrialBanner />
+        <div className="lg:hidden"><TrialBanner /></div>
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <div className="hidden shrink-0 lg:flex">
             <Sidebar onLogout={handleLogout} user={user} />
@@ -87,7 +87,7 @@ function LayoutContent({ children, currentPageName }) {
               onLogout={handleLogout}
             />
             <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} orgId={orgId} />
-            <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(92px+env(safe-area-inset-bottom))] lg:pb-0">
+            <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(104px+env(safe-area-inset-bottom))] lg:pb-0">
               <ConnectionNotice />
               <ErrorBoundary section="layout-outlet" variant="page">
                 <Suspense fallback={<PageLoader />}>
