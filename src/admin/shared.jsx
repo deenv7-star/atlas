@@ -206,7 +206,7 @@ export function healthRows(h, build) {
   return [
     { key: 'db', label: 'מסד נתונים', ok: Boolean(h?.db_time), value: h?.db_time ? <>תקין · <span className="adm-ltr">{h.latency_ms} ms</span></> : 'לא זמין', meta: h?.db_version ? `Postgres ${h.db_version}` : '' },
     { key: 'deploy', label: 'פריסה אחרונה', ok: true, value: sha ? <span className="adm-ltr">{sha}{build.branch ? ` · ${build.branch}` : ''}</span> : 'גרסה מקומית', meta: build?.time ? `נבנתה ${date(build.time, { weekday: true })} · ${new Date(build.time).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}` : '', note: build?.message || '' },
-    { key: 'schema', label: 'מיגרציות', ok: true, value: [h?.schema?.guest_pages_008 ? '008 ✓' : '008 לא הוחלה', h?.schema?.expenses_009 ? '009 ✓' : '009 לא הוחלה', '010 ✓'].join(' · '), meta: '' },
+    { key: 'schema', label: 'מיגרציות', ok: true, value: [h?.schema?.guest_pages_008 ? '008 ✓' : '008 לא הוחלה', h?.schema?.expenses_009 ? '009 ✓' : '009 לא הוחלה', h?.schema?.org_settings_010 ? '010 ✓' : '010 לא הוחלה', '011 ✓'].join(' · '), meta: '' },
     { key: 'errors', label: 'שגיאות באפליקציה', ok: null, value: 'עוד לא מחובר', meta: 'מומלץ לחבר Sentry כדי לראות כאן שגיאות של לקוחות' },
     { key: 'charges', label: 'חיובים שנכשלו (30 יום)', ok: !(h?.failed_charges_30d > 0), value: String(h?.failed_charges_30d ?? '—'), meta: '' },
   ];

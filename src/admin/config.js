@@ -1,7 +1,7 @@
 /* global __ATLAS_BUILD__ */
 /**
  * ATLAS platform admin (/admin) — shared config.
- * Access is enforced in the database (supabase/migrations/010_platform_admin.sql): every read and
+ * Access is enforced in the database (supabase/migrations/011_platform_admin.sql): every read and
  * write goes through SECURITY DEFINER functions that check public.platform_admins. Nothing here is
  * a security boundary; it only decides what to render.
  */
@@ -10,8 +10,8 @@ import { PRICING_PLANS } from '@/config/pricing';
 
 const LEVEL = Number(import.meta.env.VITE_DB_SCHEMA_LEVEL) || 7;
 
-/** Supabase mode: the admin RPCs exist only after migration 010. Below it we fire no requests. */
-export const ADMIN_DB_READY = !isSupabaseConfigured || LEVEL >= 10;
+/** Supabase mode: the admin RPCs exist only after migration 011. Below it we fire no requests. */
+export const ADMIN_DB_READY = !isSupabaseConfigured || LEVEL >= 11;
 /** Local demo mode (no Supabase): sample data, persisted in this browser only. */
 export const ADMIN_DEMO = !isSupabaseConfigured;
 
