@@ -87,7 +87,7 @@ function Event({ ev, i }) {
           <div className="min-w-0 flex-1">
             <p className="line-clamp-2 text-[16px] font-bold leading-snug text-navy-900 md:truncate">{ev.title}</p>
             <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-600">
-              {ev.attention ? <span aria-label="דחוף" className="h-1.5 w-1.5 shrink-0 rounded-full bg-attention" /> : null}
+              {ev.attention ? <span role="img" aria-label="דחוף" className="h-1.5 w-1.5 shrink-0 rounded-full bg-attention" /> : null}
               <span className="md:truncate">{ev.detail}</span>
               {ev.balance ? <PayChip balance={ev.balance} /> : null}
             </p>
@@ -309,7 +309,7 @@ export default function TodayTimeline({ user, orgId }) {
         <div className="flex items-start justify-between">
           <p className="flex items-center gap-2 pt-1.5 text-[14px] font-semibold text-[var(--st-lilac-fg)]">
             יתרות פתוחות
-            {kpi.overdue ? <span aria-label="יש באיחור" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
+            {kpi.overdue ? <span role="img" aria-label="יש באיחור" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
           </p>
           <CardArrow className="bg-white/70" />
         </div>

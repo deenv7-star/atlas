@@ -51,12 +51,14 @@ function transformBookings(rawBookings, properties) {
         nights,
         amount: parseFloat(b.total_price) || 0,
         raw: b,
-        inHouse: b.status === 'CHECKED_IN',
+        inHouse: b.status === 'CHECKED_IN' || (['APPROVED', 'CONFIRMED'].includes(b.status) && b.check_in_date <= todayKey() && (b.check_out_date || '') > todayKey()),
         done: b.status === 'CHECKED_OUT',
         status: b.status === 'CANCELLED' ? 'בוטל' : ['APPROVED','CONFIRMED','CHECKED_IN'].includes(b.status) ? 'מאושר' : 'ממתין',
       };
     });
 }
+
+const todayKey = () => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
 
 const HEB_DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
 
