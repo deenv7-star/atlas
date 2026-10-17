@@ -84,14 +84,6 @@ function hasOnboardingBypass() {
   } catch { return false; }
 }
 
-// User came from Login = existing user, skip onboarding and go straight to dashboard
-function hasLoginBypass() {
-  try {
-    const ts = parseInt(localStorage.getItem('login_just_completed') || '0', 10);
-    return !!(ts && Date.now() - ts < 30 * 60 * 1000);
-  } catch { return false; }
-}
-
 // Redirects to /login if not authenticated; preserves return URL.
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
 
@@ -108,7 +100,9 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
     return <Navigate to={`/login?return=${returnUrl}`} replace />;
   }
-  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass() && !hasLoginBypass()) {
+  // New orgs go through onboarding once, also when they arrive via /login after confirming their email.
+  // Existing orgs are never forced: auth.me() marks an org that already has units / bookings / leads as done.
+  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass()) {
     return <Navigate to="/onboarding" replace />;
   }
   return children;

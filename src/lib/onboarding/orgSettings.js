@@ -19,6 +19,13 @@ export const ORG_SETTINGS_DEFAULTS = {
   wa_greeting: '',
   deposit: 'none', // none | 30 | 50 | full
   cover_photo: '',
+  owner_role: '',
+  phone_verified: false,
+  settlement: '',
+  photos: [],
+  channels_today: [],
+  links: {},
+  pay_methods: [],
 };
 
 const KEY = (orgId) => `atlas.org-settings.${orgId || 'local'}`;
