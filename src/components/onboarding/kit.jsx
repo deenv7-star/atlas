@@ -101,7 +101,7 @@ export function PhotoPick({ value, onChange, label, shape = 'circle', max = 640,
           : children || (
             <span className="flex flex-col items-center gap-1.5">
               {shape === 'circle' ? <Camera className="h-7 w-7" strokeWidth={1.75} aria-hidden /> : <ImagePlus className="h-7 w-7" strokeWidth={1.75} aria-hidden />}
-              {shape !== 'tile' ? <span className="text-[15px] font-semibold">{shape === 'wide' ? 'הוספת תמונה של המתחם' : 'תמונה'}</span> : null}
+              {shape !== 'tile' ? <span className="text-[15px] font-semibold">{shape === 'wide' ? 'הוספת תמונה של המקום' : 'תמונה'}</span> : null}
             </span>
           )}
         {value ? (
@@ -116,14 +116,19 @@ export function PhotoPick({ value, onChange, label, shape = 'circle', max = 640,
   );
 }
 
+function renderTemplateClean(key, ctx) {
+  // the sample booking has no guest page yet: drop its link line instead of showing a dead url
+  return renderTemplate(key, ctx).split('\n').filter((l) => !/\/g\/(undefined|null)?$|\/g\/\s*$/.test(l.trim())).join('\n');
+}
+
 /** The confirmation message a guest would get, rendered by the real template with the owner's answers. */
 export function sampleMessage(d) {
   const unit = d.units?.[0];
   const ci = addDays(todayISO(), 9);
-  return renderTemplate('confirmation', {
+  return renderTemplateClean('confirmation', {
     booking: { guest_name: 'נועה כהן', check_in_date: ci, check_out_date: addDays(ci, 2) },
     property: {
-      name: unit?.name || 'הצימר',
+      name: unit?.name || 'המקום',
       guest_info: { check_in_time: d.checkIn, check_out_time: d.checkOut, host_name: d.hostName || d.ownerName || '', closing_line: d.waGreeting },
     },
     orgName: d.businessName,
@@ -137,7 +142,7 @@ export function WhatsAppPreview({ text, title = 'נועה כהן', className }) 
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#DFE5E7] text-[14px] font-bold text-[#54656F]" aria-hidden>נכ</span>
         <div className="min-w-0">
           <p className="truncate text-[15px] font-semibold text-[#111B21]">{title}</p>
-          <p className="text-[12px] text-[#667781]">וואטסאפ</p>
+          <p className="text-[12px] text-[#54656F]">וואטסאפ</p>
         </div>
       </div>
       <div className="ob-wa rounded-none">

@@ -68,7 +68,7 @@
   border-radius: 12px 0 12px 12px; padding: 10px 12px 18px; font-size: 15px; line-height: 1.45; white-space: pre-line;
   box-shadow: 0 1px 1px rgba(11, 20, 26, 0.12);
 }
-.ob-wa-time { position: absolute; bottom: 4px; inset-inline-end: 10px; font-size: 11px; color: #667781; }
+.ob-wa-time { position: absolute; bottom: 4px; inset-inline-end: 10px; font-size: 11px; color: #54656F; }
 
 /* soft "pop in" used for units appearing (scale from .9, not 0) */
 @keyframes ob-pop { from { opacity: 0; transform: translateY(6px) scale(0.92); } to { opacity: 1; transform: none; } }
@@ -77,10 +77,11 @@
 .ob-fade { animation: ob-fade 260ms var(--ob-ease) both; }
 
 /* iCal how-to: three frames that loop slowly (copy link → paste here) */
-@keyframes ob-how { 0%, 28% { opacity: 1; transform: none; } 33%, 100% { opacity: 0; transform: translateY(4px); } }
-.ob-how > * { animation: ob-how 7.5s var(--ob-ease) infinite both; }
-.ob-how > *:nth-child(2) { animation-delay: 2.5s; opacity: 0; }
-.ob-how > *:nth-child(3) { animation-delay: 5s; opacity: 0; }
+/* each frame is hidden until its own slot (fill-mode backwards keeps the delayed ones at opacity 0) */
+@keyframes ob-how { 0% { opacity: 0; transform: translateY(4px); } 4%, 29% { opacity: 1; transform: none; } 33%, 100% { opacity: 0; transform: translateY(-4px); } }
+.ob-how > * { opacity: 0; animation: ob-how 7.5s var(--ob-ease) infinite backwards; }
+.ob-how > *:nth-child(2) { animation-delay: 2.5s; }
+.ob-how > *:nth-child(3) { animation-delay: 5s; }
 @keyframes ob-cursor { 0% { transform: translate(18px, 14px); } 60%, 100% { transform: translate(0, 0); } }
 .ob-cursor { animation: ob-cursor 1.6s var(--ob-ease) infinite alternate; }
 
