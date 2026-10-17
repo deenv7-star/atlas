@@ -1,6 +1,7 @@
 @import './styles/brand.css';
 @import './styles/premium.css';
 @import './styles/v7.css';
+@import './styles/v8c.css';
 
 @tailwind base;
 @tailwind components;
