@@ -17,7 +17,7 @@ import {
 import './landing-v5.css';
 
 /* ---------------- shared bits ---------------- */
-function SignupButton({ plan, className = '', children = CTA_SIGNUP }) {
+export function SignupButton({ plan, className = '', children = CTA_SIGNUP }) {
   return (
     <Link to={plan ? `/register?plan=${plan}` : '/register'} className={`l5-btn ${className}`}>
       <span>{children}</span>
@@ -26,7 +26,7 @@ function SignupButton({ plan, className = '', children = CTA_SIGNUP }) {
   );
 }
 
-function HeroCta({ center = false }) {
+export function HeroCta({ center = false }) {
   return (
     <div className={`l5-cta${center ? ' is-center' : ''}`}>
       <div className="l5-cta-main">
@@ -38,7 +38,7 @@ function HeroCta({ center = false }) {
   );
 }
 
-function Header() {
+export function Header() {
   return (
     <header className="l5-hdr">
       <div className="l5-wrap l5-hdr-in">
@@ -58,7 +58,7 @@ function Header() {
   );
 }
 
-function SectionHead({ id, title, sub, center = true }) {
+export function SectionHead({ id, title, sub, center = true }) {
   return (
     <div className={`l5-head${center ? ' is-center' : ''}`} data-reveal>
       <h2 id={id} className="l5-h2">{title}</h2>
@@ -67,7 +67,7 @@ function SectionHead({ id, title, sub, center = true }) {
   );
 }
 
-function Channels() {
+export function Channels() {
   const items = [['airbnb', 'Airbnb'], ['booking', 'Booking.com'], ['whatsapp', 'WhatsApp'], ['gcal', 'Google Calendar']];
   return (
     <section className="l5-channels" aria-labelledby="ch-title">
@@ -169,7 +169,7 @@ function Bento() {
   );
 }
 
-function Steps() {
+export function Steps() {
   return (
     <section id="how" className="l5-sec l5-steps-sec" aria-labelledby="how-title">
       <div className="l5-wrap">
@@ -224,7 +224,7 @@ function PlanPrice({ value }) {
   return <b ref={ref} className="num">₪{fmt(inView ? v : value)}</b>;
 }
 
-function Pricing() {
+export function Pricing() {
   const [yearly, setYearly] = useState(false);
   return (
     <section id="pricing" className="l5-sec l5-pricing" aria-labelledby="pricing-title">
@@ -264,7 +264,7 @@ function Pricing() {
   );
 }
 
-function Faq({ limit = FAQ.length }) {
+export function Faq({ limit = FAQ.length }) {
   return (
     <section id="faq" className="l5-sec l5-faq-sec" aria-labelledby="faq-title">
       <div className="l5-wrap l5-faq-grid">
@@ -293,7 +293,7 @@ function Faq({ limit = FAQ.length }) {
   );
 }
 
-function FinalCta({ title }) {
+export function FinalCta({ title }) {
   return (
     <section className="l5-final-sec" aria-labelledby="final-title">
       <div className="l5-wrap">
@@ -308,7 +308,7 @@ function FinalCta({ title }) {
   );
 }
 
-function Footer() {
+export function Footer() {
   return (
     <footer className="l5-ftr">
       <div className="l5-wrap l5-ftr-in">
