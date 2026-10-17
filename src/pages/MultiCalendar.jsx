@@ -14,7 +14,7 @@ import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
-import { UnitTile, guestInitials } from '@/components/app/atoms';
+import { UnitPhoto, GuestAvatar, guestInitials } from '@/components/app/atoms';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#EF5B5B' },
@@ -128,6 +128,10 @@ export default function MultiCalendar({ selectedPropertyId }) {
   }, [baseDate, totalDays]);
 
   const bookings = useMemo(() => transformBookings(rawBookings, properties), [rawBookings, properties]);
+  const stripDays = useMemo(() => {
+    const t = startOfDay(new Date());
+    return Array.from({ length: 14 }, (_, i) => addDays(t, i));
+  }, []);
 
   const filteredBookings = useMemo(() => {
     if (channelFilter === 'all') return bookings;
@@ -237,21 +241,21 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-6 md:px-10 md:pt-9 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
-      <header className={cn('v5-rise mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between')}>
+      <header className={cn('v5-rise mb-5 flex flex-row items-end justify-between gap-3 md:mb-6')}>
         <div>
-          <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">לוח שנה</h1>
-          <p className="mt-1.5 text-[15px] text-ink-400">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
+          <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">לוח שנה</h1>
+          <p className="mt-2 hidden text-[15px] text-ink-400 md:block">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="ghost" onClick={handleSync}>
+          <Button variant="outline" onClick={handleSync} aria-label="סנכרון ערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
             <RefreshCw className={cn(syncing && 'animate-spin')} />
-            סנכרון ערוצים
+            <span className="hidden sm:inline">סנכרון ערוצים</span>
           </Button>
         </div>
       </header>
 
       {!bookingsLoading && !propertiesLoading && properties.length === 0 ? (
-        <div className="rounded-[14px] border border-line bg-white">
+        <div className="v7-card">
           <DsEmptyState
             photo="/demo/units/unit-2.webp"
             icon={CalendarRange}
@@ -262,22 +266,48 @@ export default function MultiCalendar({ selectedPropertyId }) {
         </div>
       ) : null}
 
+      {/* Phones: date chip strip. Tapping a day starts the view there. */}
+      <nav aria-label="בחירת יום" className="v7-strip -mx-5 mb-3 flex scroll-px-5 gap-2 overflow-x-auto px-5 pb-3 md:hidden">
+        {stripDays.map((d) => {
+          const on = isToday(d);
+          const first = d.toDateString() === anchorDate.toDateString();
+          return (
+            <button
+              key={d.toISOString()}
+              type="button"
+              onClick={() => void setUrlState({ date: on ? null : d })}
+              aria-pressed={first}
+              aria-label={`${HEB_DAYS[d.getDay()]} ${d.getDate()}`}
+              className={cn(
+                'press flex h-[64px] w-[50px] shrink-0 flex-col items-center justify-center gap-1 rounded-full',
+                on ? 'bg-brand-600 text-white shadow-[0_10px_20px_-8px_rgba(62,43,241,0.6)]'
+                  : first ? 'bg-navy-900 text-white' : 'bg-white text-navy-900 ring-1 ring-inset ring-[#E8EAF2]',
+              )}
+            >
+              <span className={cn('text-[12px] font-medium', on || first ? 'text-white/80' : 'text-ink-400')}>{HEB_DAYS[d.getDay()]}</span>
+              <span className="text-[17px] font-bold leading-none tabular">{d.getDate()}</span>
+            </button>
+          );
+        })}
+      </nav>
+
       {/* Toolbar */}
       <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-[10px] border border-line bg-white shadow-[0_1px_2px_rgba(16,24,64,0.04)]">
-            <button type="button" onClick={goPrev} aria-label="הקודם" className="press inline-flex h-11 w-11 items-center justify-center rounded-s-[10px] text-navy-900 hover:bg-[#F5F6F9]">
-              <ChevronRight className="h-[18px] w-[18px]" strokeWidth={1.5} />
+          <div className="flex items-center gap-1.5">
+            <button type="button" onClick={goPrev} aria-label="הקודם" className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]">
+              <ChevronRight className="h-[18px] w-[18px]" strokeWidth={1.75} />
             </button>
-            <button type="button" onClick={goToday} className="press h-11 border-x border-line px-4 text-[14px] font-medium text-navy-900 hover:bg-[#F5F6F9]">היום</button>
-            <button type="button" onClick={goNext} aria-label="הבא" className="press inline-flex h-11 w-11 items-center justify-center rounded-e-[10px] text-navy-900 hover:bg-[#F5F6F9]">
-              <ChevronLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
+            <button type="button" onClick={goToday} className="press h-11 rounded-full bg-white px-4 text-[14px] font-semibold text-navy-900 ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]">היום</button>
+            <button type="button" onClick={goNext} aria-label="הבא" className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]">
+              <ChevronLeft className="h-[18px] w-[18px]" strokeWidth={1.75} />
             </button>
           </div>
-          <span className="truncate text-[15px] font-semibold text-navy-900 tabular">{rangeLabel}</span>
+          <span className="truncate ps-1 text-[16px] font-bold text-navy-900 tabular">{rangeLabel}</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <SegmentedControl
+            className="rounded-full bg-white p-1 shadow-[0_1px_2px_rgba(27,38,86,0.05)] [&_button]:ring-0 [&_button[aria-selected=false]]:bg-transparent [&_button[aria-selected=true]]:bg-brand-600"
             ariaLabel="טווח תצוגה"
             value={viewMode}
             onChange={(v) => void setUrlState({ view: v, date: null })}
@@ -291,12 +321,12 @@ export default function MultiCalendar({ selectedPropertyId }) {
       </div>
 
       {bookingsError ? (
-        <div className="mb-6 rounded-[14px] border border-line bg-white p-4"><ErrorFallback /></div>
+        <div className="mb-6 v7-card p-4"><ErrorFallback /></div>
       ) : bookingsLoading || propertiesLoading ? (
         <SkeletonCalendar className="mb-6" totalDays={totalDays} viewMode={viewMode === 'month' ? 'month' : 'week'} propertyRowCount={Math.max(properties.length, 3)} />
       ) : properties.length ? (
         <ErrorBoundary section="calendar-view" variant="inline" resetKey={`${viewMode}-${anchorDate.toISOString()}-${totalDays}-${effectivePropertyId ?? 'all'}`}>
-          <div className="v5-rise mb-6 overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+          <div className="v5-rise mb-6 overflow-hidden v7-card">
             <div className="overflow-x-auto overscroll-x-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
               <div style={{ minWidth: minW, display: 'grid', gridTemplateColumns: `${UNIT_W} repeat(${totalDays}, ${COL_W})` }}>
                 <div className="sticky right-0 z-20 flex items-end border-b border-l border-line bg-white px-4 pb-2.5 pt-3 text-[13px] font-medium text-ink-400">יחידה</div>
@@ -318,7 +348,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   return (
                     <React.Fragment key={prop.id}>
                       <div className="sticky right-0 z-10 flex min-h-[68px] items-center gap-3 border-b border-l border-line bg-white px-2.5 md:px-3">
-                        <UnitTile property={prop.raw} className="hidden h-9 w-9 text-[14px] md:inline-flex" rounded="rounded-[9px]" />
+                        <UnitPhoto property={prop.raw} className="hidden h-10 w-10 md:block" rounded="rounded-[12px]" />
                         <div className="min-w-0">
                           <div className="truncate text-[15px] font-medium text-navy-900">{prop.name}</div>
                           <div className="hidden truncate text-[12px] text-ink-400 md:block">{prop.raw?.max_guests ? `עד ${prop.raw.max_guests} אורחים` : prop.type}</div>
@@ -326,7 +356,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                       </div>
                       <div
                         className="relative border-b border-line"
-                        style={{ gridColumn: '2 / -1', display: 'grid', gridTemplateColumns: `repeat(${totalDays}, ${COL_W})`, minHeight: 68 }}
+                        style={{ gridColumn: '2 / -1', display: 'grid', gridTemplateColumns: `repeat(${totalDays}, ${COL_W})`, minHeight: 66 }}
                       >
                         {days.map((d, i) => (
                           <button
@@ -349,11 +379,12 @@ export default function MultiCalendar({ selectedPropertyId }) {
                           const ch = CHANNELS[booking.channel];
                           const isBlocked = booking.channel === 'blocked';
                           const pending = booking.status === 'ממתין';
+                          const showFace = !isBlocked && (viewMode === 'month' ? pos.span >= 3 : pos.span >= 2);
                           return (
                             <Link
                               key={booking.id}
                               to={`${createPageUrl('BookingDetail')}/${booking.id}`}
-                              className={cn('press absolute top-[12px] z-10 block', optimisticEntityClassName(booking.id))}
+                              className={cn('press absolute top-[11px] z-10 block', optimisticEntityClassName(booking.id))}
                               style={{ right: `calc(${(pos.start / totalDays) * 100}% + 2px)`, width: `calc(${(pos.span / totalDays) * 100}% - 4px)` }}
                               onMouseEnter={(e) => handleBookingHover(e, booking)}
                               onMouseLeave={() => setHoveredBooking(null)}
@@ -362,15 +393,23 @@ export default function MultiCalendar({ selectedPropertyId }) {
                               {/* v5: indigo-tint bar; the channel is only the thin coloured start edge */}
                               <span
                                 className={cn(
-                                  'relative flex h-[44px] flex-col justify-center overflow-hidden rounded-[10px] pe-2.5 ps-3.5 text-[13px] leading-tight transition-[background-color,box-shadow] duration-150 hover:shadow-[0_2px_8px_rgba(62,43,241,0.12)]',
+                                  'relative flex h-[44px] items-center gap-2 overflow-hidden rounded-full pe-3 text-[13px] leading-tight transition-[background-color,box-shadow] duration-150 hover:shadow-[0_4px_12px_-4px_rgba(62,43,241,0.3)]',
+                                  showFace ? 'ps-1' : 'ps-3',
                                   isBlocked ? 'bg-[repeating-linear-gradient(45deg,#F1F2F6,#F1F2F6_6px,#E9EBF1_6px,#E9EBF1_12px)] text-ink-400'
-                                    : pending ? 'border border-dashed border-brand-300 bg-white text-navy-900'
-                                      : 'border border-[rgba(62,43,241,0.10)] bg-[#EEF0FF] text-navy-900 hover:bg-[#E6E8FF]',
+                                    : pending ? 'border border-dashed border-[#B9B0FA] bg-white text-navy-900'
+                                      : 'bg-[#ECEAFE] text-navy-900 hover:bg-[#E3E0FD]',
                                 )}
                               >
-                                {isBlocked ? null : <span aria-hidden className="absolute inset-y-[6px] start-[5px] w-[3px] rounded-full" style={{ background: ch?.color }} />}
-                                <span className="truncate font-semibold">{isBlocked ? 'חסום' : pos.span > 1 || viewMode !== 'month' ? booking.guest : guestInitials(booking.guest)}</span>
-                                {!isBlocked && pos.span > 1 ? <span className="truncate text-[12px] text-ink-400">{pending ? 'ממתינה לאישור' : `${booking.nights} לילות`}</span> : null}
+                                {showFace ? <GuestAvatar name={booking.guest} size={36} className="ring-2 ring-white" /> : null}
+                                <span className="min-w-0 flex-1">
+                                  <span className="block truncate font-semibold">{isBlocked ? 'חסום' : pos.span > 1 || viewMode !== 'month' ? booking.guest : guestInitials(booking.guest)}</span>
+                                  {!isBlocked && pos.span > 1 ? (
+                                    <span className="flex items-center gap-1 truncate text-[12px] text-ink-600">
+                                      <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: ch?.color }} />
+                                      {pending ? 'ממתינה לאישור' : `${booking.nights} לילות`}
+                                    </span>
+                                  ) : null}
+                                </span>
                               </span>
                             </Link>
                           );
@@ -389,7 +428,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                 </span>
               ))}
               <span className="inline-flex items-center gap-1.5 text-[13px] text-ink-600">
-                <span className="h-3.5 w-6 rounded-[5px] border border-dashed border-brand-300" />
+                <span className="h-3.5 w-6 rounded-full border border-dashed border-[#B9B0FA]" />
                 ממתינה לאישור
               </span>
             </div>
@@ -414,8 +453,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
       )}
 
       {properties.length ? (
-        <div>
-          <section className="v5-rise overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-3 md:gap-4 lg:grid-cols-12">
+          <section className="v5-rise overflow-hidden v7-card lg:col-span-7">
             <div className="flex items-center justify-between px-5 pt-5">
               <div>
                 <h2 className="text-[15px] font-semibold text-navy-900">לילות פנויים בין הזמנות</h2>
@@ -429,8 +468,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
                 {gaps.slice(0, 3).map((gap) => {
                   const prop = properties.find((p) => p.name === gap.property);
                   return (
-                    <li key={gap.id} className="v5-row flex min-h-[64px] items-center gap-3 rounded-[10px] px-3">
-                      <UnitTile property={prop?.raw} className="h-10 w-10 text-[15px]" />
+                    <li key={gap.id} className="c-row flex min-h-[64px] items-center gap-3 rounded-[16px] px-3">
+                      <UnitPhoto property={prop?.raw} className="h-11 w-11" rounded="rounded-[14px]" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-medium text-navy-900">{gap.property}</div>
                         <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {gap.nights} לילות</div>
@@ -447,7 +486,23 @@ export default function MultiCalendar({ selectedPropertyId }) {
               </ul>
             )}
           </section>
-
+          <section className="v5-rise v7-card p-5 lg:col-span-5" aria-label="ערוצים">
+            <h2 className="text-[15px] font-semibold text-navy-900">מאיפה ההזמנות מגיעות</h2>
+            <p className="text-[13px] text-ink-400">כל ההזמנות בלוח</p>
+            <div aria-hidden className="mt-4 flex h-3 gap-1 overflow-hidden rounded-full">
+              {channelMix.filter((c) => c.pct > 0).map((c) => (
+                <span key={c.key} className="h-full rounded-full" style={{ width: `${c.pct}%`, background: CHANNELS[c.key].color }} />
+              ))}
+            </div>
+            <ul className="mt-4 space-y-2">
+              {channelMix.map((c) => (
+                <li key={c.key} className="flex min-h-[32px] items-center justify-between gap-3 text-[14px]">
+                  <span className="inline-flex items-center gap-2 text-ink-600"><ChannelDot channel={c.key} size={8} />{CHANNELS[c.key].label}</span>
+                  <span className="tabular font-bold text-navy-900">{c.pct}%</span>
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
       ) : null}
     </div>

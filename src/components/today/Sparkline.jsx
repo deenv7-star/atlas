@@ -3,7 +3,7 @@ import React, { useId, useMemo } from 'react';
 const INDIGO = '#3E2BF1';
 
 /** Tiny dependency-free SVG sparkline (kept out of the recharts chunk so auth pages stay light). */
-export function Sparkline({ values, width = 120, height = 36, className }) {
+export function Sparkline({ values, width = 120, height = 36, className, color = INDIGO, dot = '#fff' }) {
   const id = useId().replace(/:/g, '');
   const pts = useMemo(() => {
     const v = values.length > 1 ? values : [0, ...values, 0];
@@ -19,13 +19,13 @@ export function Sparkline({ values, width = 120, height = 36, className }) {
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className={className} aria-hidden>
       <defs>
         <linearGradient id={`sp-${id}`} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor={INDIGO} stopOpacity="0.16" />
-          <stop offset="100%" stopColor={INDIGO} stopOpacity="0" />
+          <stop offset="0%" stopColor={color} stopOpacity="0.2" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
         </linearGradient>
       </defs>
       <path d={area} fill={`url(#sp-${id})`} />
-      <path d={line} fill="none" stroke={INDIGO} strokeWidth="1.75" strokeLinejoin="round" strokeLinecap="round" />
-      <circle cx={last[0]} cy={last[1]} r="2.75" fill="#fff" stroke={INDIGO} strokeWidth="1.75" />
+      <path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      <circle cx={last[0]} cy={last[1]} r="2.75" fill={dot} stroke={color} strokeWidth="1.75" />
     </svg>
   );
 }
