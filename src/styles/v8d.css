@@ -1,0 +1,39 @@
+/*
+ * ATLAS v8 D, "mobile-first task app". Cool white canvas, big bold titles, white 26px cards,
+ * count chips, progress rings, a floating pill tab bar. On desktop: top pill nav + centred column
+ * with a right context panel. Cool tints only.
+ */
+html[data-ui='d']:root {
+  --canvas: #F3F4F9;
+  --line: #E7E9F1;
+  --r-card: 26px;
+  --page-max: 1280px;
+  --shadow-card: 0 1px 2px rgba(27, 38, 86, 0.035), 0 8px 26px -14px rgba(27, 38, 86, 0.14);
+  --shadow-raised: 0 2px 4px rgba(27, 38, 86, 0.05), 0 22px 44px -18px rgba(27, 38, 86, 0.22);
+  --st-mint-bg: #E8F7F1;
+}
+html[data-ui='d'] .v7-card { border: 0; }
+.d-card { background: #fff; border-radius: var(--r-card); box-shadow: var(--shadow-card); }
+
+@keyframes d-draw { from { stroke-dashoffset: var(--c); } }
+.d-arc { animation: d-draw 900ms var(--ease-out) both; }
+
+/* task card enter + hover */
+@media (hover: hover) and (pointer: fine) {
+  .d-lift { transition: transform 240ms var(--ease-out), box-shadow 240ms var(--ease-out); }
+  .d-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised); }
+  .d-lift:hover .v7-arrow { transform: rotate(45deg); }
+}
+.d-strip { scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+.d-strip::-webkit-scrollbar { display: none; }
+.d-strip > * { scroll-snap-align: start; }
+
+/* agenda timeline line */
+.d-line { position: relative; }
+.d-line::before { content: ''; position: absolute; inset-inline-start: 27px; top: 44px; bottom: -12px; width: 2px; border-radius: 2px; background: #E4E6F0; }
+.d-line:last-child::before { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .d-arc { animation: none !important; }
+  .d-lift, .d-lift:hover { transform: none !important; transition: none !important; }
+}

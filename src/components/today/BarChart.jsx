@@ -14,13 +14,14 @@ function compact(n) {
 }
 
 /** `height` in px, or 'fill' to take the remaining height of a flex column (min 220px). */
-export default function BarChart({ data, height = 240, className }) {
+export default function BarChart({ data, height = 240, className, barClass = 'rounded-[12px]', idleClass = 'bg-[#E9EBF4]' }) {
   const fill = height === 'fill';
   const last = data.length - 1;
   const [sel, setSel] = useState(null);
   const active = sel ?? last;
   const max = Math.max(...data.map((d) => d.value), 1);
-  const top = Math.ceil((max * 1.15) / 5000) * 5000 || 5000;
+  const step = max * 1.15 > 15000 ? 5000 : max * 1.15 > 3000 ? 1000 : 500;
+  const top = Math.ceil((max * 1.15) / step) * step || step;
   const grid = [top, (top * 2) / 3, top / 3, 0];
   return (
     <div className={cn('relative', fill && 'flex flex-1 flex-col', className)} dir="ltr">
@@ -58,7 +59,7 @@ export default function BarChart({ data, height = 240, className }) {
                   </span>
                 ) : null}
                 <span
-                  className={cn('v7-bar block w-full max-w-[44px] rounded-[12px] transition-colors duration-200', on ? 'bg-brand-600' : 'bg-[#E9EBF4]')}
+                  className={cn('v7-bar block w-full max-w-[44px] transition-colors duration-200', barClass, on ? 'bg-brand-600' : idleClass)}
                   style={{ height: `${h}%`, '--i': i }}
                 />
               </div>

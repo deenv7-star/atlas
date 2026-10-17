@@ -13,11 +13,11 @@ import { BookingsTable } from '@/components/tables/BookingsTable';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { CalendarDays, Plus, Search, SlidersHorizontal } from 'lucide-react';
+import { CalendarDays, Plus, Search, SlidersHorizontal, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
-  Page, PageHeader, ChannelDot, ChannelBadge, fmtMoney, fmtShort, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows,
+  fmtMoney, channelOf, EmptyState as DsEmptyState, StatusPill, SkelRows,
 } from '@/components/ds';
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
@@ -27,7 +27,9 @@ import { bookingFormToPayload } from '@/lib/entityPayloads';
 import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
-import { Rise, GuestAvatar } from '@/components/app/atoms';
+import { Rise, GuestAvatar, AvatarStack } from '@/components/app/atoms';
+import { DPage, DSplit, DTitle, CountChip, Tag, ProgressRing } from '@/components/app/DSplit';
+import { todayISO, nightsBetween, formatRangeHe } from '@/lib/stay/format';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -96,6 +98,61 @@ function bookingEntityToFormValues(b) {
     booking_source: b.source || b.booking_source || 'direct',
     payment_status: b.payment_status || 'pending',
   };
+}
+
+/** Where the stay is: before arrival, during (night x of n), after. */
+function stayOf(b, today = todayISO()) {
+  const ci = b.check_in_date;
+  const co = b.check_out_date || ci;
+  const n = Math.max(1, Number(b.nights) || nightsBetween(ci, co) || 1);
+  if (b.status === 'CANCELLED') return { pct: 0, label: 'בוטלה' };
+  if (!ci) return { pct: 0, label: '' };
+  if (today < ci) {
+    const d = nightsBetween(today, ci);
+    // countdown ring: fills as the arrival gets closer (a month out = almost empty)
+    return { pct: Math.max(6, Math.round(100 - (Math.min(d, 30) / 30) * 100)), label: d === 1 ? 'מגיעים מחר' : `מגיעים בעוד ${d} ימים`, days: d };
+  }
+  if (today === ci) return { pct: Math.round(100 / (n + 1)), label: 'מגיעים היום' };
+  if (today < co) { const x = nightsBetween(ci, today) + 1; return { pct: Math.round((x / n) * 100), label: `לילה ${x} מתוך ${n}` }; }
+  return { pct: 100, label: 'השהייה הסתיימה' };
+}
+
+function BookingCard({ booking: b, unit }) {
+  const st = stayOf(b);
+  const ch = channelOf(b.booking_source || b.source);
+  const paid = String(b.payment_status || '').toLowerCase() === 'paid';
+  return (
+    <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press d-card d-lift flex h-full flex-col p-4 md:p-5">
+      <div className="flex items-center gap-3">
+        <GuestAvatar name={b.guest_name || 'אורח'} size={48} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[16px] font-bold text-navy-900">{b.guest_name || 'אורח'}</p>
+          <p className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
+            <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: ch.color }} />
+            <span className="truncate">{unit} · {ch.label}</span>
+          </p>
+        </div>
+        <StatusPill status={b.status} />
+      </div>
+      <div className="mb-4 mt-4 flex flex-wrap items-center gap-2">
+        <span className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#F3F4F9] px-3 text-[13px] font-semibold text-navy-900">
+          <CalendarDays className="h-4 w-4 text-ink-400" strokeWidth={1.75} aria-hidden />
+          <span className="tabular">{formatRangeHe(b.check_in_date, b.check_out_date)}</span>
+        </span>
+        <span className="inline-flex h-9 items-center rounded-full bg-[#F3F4F9] px-3 text-[13px] font-semibold text-navy-900"><span className="tabular">{b.nights || 1}</span>&nbsp;לילות</span>
+        {b.status !== 'CANCELLED' ? <Tag tone={paid ? 'mint' : 'lilac'}>{paid ? 'שולם' : 'ממתין לתשלום'}</Tag> : null}
+      </div>
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#F0F1F6] pt-3.5">
+        <span className="flex min-w-0 items-center gap-2.5">
+          <ProgressRing pct={st.pct} size={38} stroke={4}>
+            {st.days != null ? <span className="tabular text-[12px] font-bold text-navy-900">{st.days}</span> : null}
+          </ProgressRing>
+          <span className="truncate text-[13px] font-medium text-ink-600">{st.label}</span>
+        </span>
+        <span className="text-[17px] font-extrabold tabular text-navy-900">{fmtMoney(b.total_price)}</span>
+      </div>
+    </Link>
+  );
 }
 
 export default function BookingsPage({ selectedPropertyId }) {
@@ -275,55 +332,44 @@ export default function BookingsPage({ selectedPropertyId }) {
   const hasQuery = !!search || tab !== 'all' || filtersActive;
 
   return (
-    <Page>
-      <PageHeader
-        title="הזמנות"
-        subtitle={`${counts.total} הזמנות · ${counts.confirmed} פעילות · ${counts.pending} ממתינות לאישור`}
-        actions={
+    <DPage>
+      <DTitle sub={`${counts.total} הזמנות · ${counts.pending} ממתינות לאישור`}>הזמנות</DTitle>
+      <DSplit
+        asideLabel="סיכום וסינון"
+        main={(
           <>
-            <Button onClick={openNew} className="hidden md:inline-flex">
-              <Plus strokeWidth={2.25} />
-              הזמנה חדשה
-            </Button>
-          </>
-        }
-      />
-
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <SegmentedControl
-          ariaLabel="סינון לפי מצב"
-          value={tab}
-          onChange={(v) => void setUrlState({ tab: v, page: 1 })}
-          options={[
-            { value: 'all', label: 'הכל' },
-            { value: 'active', label: 'פעילות' },
-            { value: 'pending', label: 'ממתינות' },
-          ]}
-        />
-        <div className="flex gap-2">
-          <div className="relative flex-1 lg:w-[320px] lg:flex-none">
-            <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
-            <Input
-              value={search}
-              onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
-              placeholder="חיפוש לפי שם אורח"
-              className="rounded-full pr-10"
-              aria-label="חיפוש לפי שם אורח"
-            />
-          </div>
-          <Button variant={filtersActive ? 'secondary' : 'outline'} onClick={() => setFiltersOpen(true)} aria-label="סינון">
-            <SlidersHorizontal />
-            <span className="hidden sm:inline">סינון</span>
-            {filtersActive ? <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1 text-[12px] text-white">{statusFilterArr.length + (dateFrom || dateTo ? 1 : 0) + (urlPropertyId ? 1 : 0)}</span> : null}
-          </Button>
+      <div role="group" aria-label="סינון לפי מצב" className="d-strip -mx-5 scroll-px-5 mb-3 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
+        {[
+          { value: 'all', label: 'הכל', n: counts.total },
+          { value: 'active', label: 'פעילות', n: counts.confirmed },
+          { value: 'pending', label: 'ממתינות', n: counts.pending },
+          { value: 'cancelled', label: 'בוטלו', n: counts.cancelled },
+        ].map((t) => (
+          <CountChip key={t.value} on={tab === t.value} count={t.n} aria-pressed={tab === t.value} onClick={() => void setUrlState({ tab: t.value, page: 1 })}>{t.label}</CountChip>
+        ))}
+      </div>
+      <div className="mb-4 flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute right-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
+          <Input
+            value={search}
+            onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
+            placeholder="חיפוש לפי שם אורח"
+            className="h-12 rounded-full border-0 bg-white pr-11 shadow-[0_1px_2px_rgba(27,38,86,0.05)]"
+            aria-label="חיפוש לפי שם אורח"
+          />
         </div>
+        <button type="button" onClick={() => setFiltersOpen(true)} aria-label="סינון" className={cn('press relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-[0_1px_2px_rgba(27,38,86,0.05)]', filtersActive ? 'bg-navy-900 text-white' : 'bg-white text-navy-900')}>
+          <SlidersHorizontal className="h-[19px] w-[19px]" strokeWidth={1.75} />
+          {filtersActive ? <span className="absolute -top-0.5 end-0 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1 text-[11px] font-bold text-white ring-2 ring-[var(--canvas)]">{statusFilterArr.length + (dateFrom || dateTo ? 1 : 0) + (urlPropertyId ? 1 : 0)}</span> : null}
+        </button>
       </div>
 
-      <div className="v7-card overflow-hidden">
+      <div>
         {isError ? (
-          <div className="p-4"><ErrorFallback /></div>
+          <div className="d-card p-4"><ErrorFallback /></div>
         ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
-          <DsEmptyState
+          <DsEmptyState className="d-card"
             icon={CalendarDays}
             title={hasQuery ? 'לא נמצאו הזמנות' : 'עדיין אין הזמנות'}
             description={hasQuery ? 'נסו חיפוש אחר או נקו את הסינון.' : 'הזמנה ראשונה לוקחת פחות מדקה: שם, תאריכים וערוץ.'}
@@ -335,34 +381,18 @@ export default function BookingsPage({ selectedPropertyId }) {
           />
         ) : (
           <ErrorBoundary section="bookings-table" variant="inline" resetKey={`${effectivePropertyId ?? 'all'}|${tab}|${search}|${page}|${pageSize}`}>
-            {/* Phones: cards. Desktop: the full table with bulk actions. */}
-            <div aria-hidden className="hidden h-11 grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px] items-center gap-4 border-b border-[#EEF0F5] px-6 text-[12px] font-semibold text-ink-400 md:grid">
-              <span>אורח</span><span>תאריכים</span><span>ערוץ</span><span className="text-left">סכום</span><span>מצב</span>
-            </div>
-            <ul className="divide-y divide-[#EEF0F5]">
-              {isLoading ? (
-                <li className="p-4"><SkelRows rows={5} /></li>
-              ) : paged.map((b, idx) => (
-                <Rise as="li" i={Math.min(idx, 8)} key={b.id}>
-                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press v7-row flex min-h-[76px] items-center gap-3.5 px-4 py-3 md:grid md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px] md:gap-4 md:px-6">
-                    <span className="flex min-w-0 flex-1 items-center gap-3.5">
-                      <GuestAvatar name={b.guest_name || 'אורח'} size={44} />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[15px] font-semibold text-navy-900">{b.guest_name || 'אורח'}</span>
-                        <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
-                          <ChannelDot source={b.booking_source || b.source} className="h-1.5 w-1.5 md:hidden" />
-                          <span className="truncate">{propName(b.property_id) || b.property_name}<span className="md:hidden"> · {fmtShort(b.check_in_date)}</span> · {b.nights || 1} לילות</span>
-                        </span>
-                      </span>
-                    </span>
-                    <span className="hidden truncate text-[14px] font-medium tabular text-navy-900 md:block">{fmtShort(b.check_in_date)} – {fmtShort(b.check_out_date)}</span>
-                    <span className="hidden md:block"><ChannelBadge source={b.booking_source || b.source} /></span>
-                    <span className="hidden text-left text-[15px] font-bold tabular text-navy-900 md:block">{fmtMoney(b.total_price)}</span>
-                    <span className="shrink-0"><StatusPill status={b.status} /></span>
-                  </Link>
-                </Rise>
-              ))}
-            </ul>
+            {/* v8 D: every booking is a rich card (photo, tinted status, date chips, stay ring, amount). */}
+            {isLoading ? (
+              <div className="d-card p-4"><SkelRows rows={5} /></div>
+            ) : (
+              <ul className="grid grid-cols-[minmax(0,1fr)] gap-3 md:grid-cols-2 md:gap-4">
+                {paged.map((b, idx) => (
+                  <Rise as="li" i={Math.min(idx, 8)} key={b.id} className="min-w-0">
+                    <BookingCard booking={b} unit={propName(b.property_id) || b.property_name} />
+                  </Rise>
+                ))}
+              </ul>
+            )}
             <div className="hidden">
               <BookingsTable
                 bookings={paged}
@@ -380,13 +410,13 @@ export default function BookingsPage({ selectedPropertyId }) {
               />
             </div>
             {sorted.length > pageSize ? (
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-3 text-[14px] text-ink-600">
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-full bg-white px-4 py-2 text-[14px] text-ink-600">
                 <span>עמוד {page} מתוך {totalPages} · {sorted.length} הזמנות</span>
                 <div className="flex gap-2">
                   <Button type="button" variant="outline" size="sm" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
                   <Button type="button" variant="outline" size="sm" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
                   <select
-                    className="h-10 rounded-[10px] border border-line bg-white px-2 text-[14px]"
+                    className="h-11 rounded-[10px] border border-line bg-white px-2 text-[14px]"
                     value={String(pageSize)}
                     onChange={(e) => void setUrlState({ pageSize: Number(e.target.value), page: 1 })}
                     aria-label="הזמנות בעמוד"
@@ -401,6 +431,36 @@ export default function BookingsPage({ selectedPropertyId }) {
           </ErrorBoundary>
         )}
       </div>
+
+          </>
+        )}
+        aside={(
+          <>
+            <section className="v7-hero p-5" aria-label="ממתינות לאישור">
+              <p className="text-[15px] font-medium text-white/85">ממתינות לאישור</p>
+              <div className="mt-3 flex items-end justify-between gap-3">
+                <span className="v5-num text-[44px] font-extrabold leading-none text-white">{counts.pending}</span>
+                <AvatarStack names={bookings.filter((b) => b.status === 'PENDING').map((b) => b.guest_name || 'אורח')} size={34} max={3} ringClass="ring-brand-600" />
+              </div>
+              <button type="button" onClick={() => void setUrlState({ tab: 'pending', page: 1 })} className="press mt-5 inline-flex h-11 w-full items-center justify-center rounded-full bg-white text-[14px] font-bold text-brand-700 hover:bg-[#F4F3FF]">
+                להצגת הממתינות
+              </button>
+            </section>
+            <section className="d-card p-5" aria-label="פעולות">
+              <h2 className="text-[15px] font-bold text-navy-900">עוד פעולות</h2>
+              <div className="mt-3 grid gap-2">
+                <button type="button" onClick={() => setFiltersOpen(true)} className="press flex min-h-[48px] items-center gap-3 rounded-[16px] bg-[#F3F4F9] px-4 text-[14px] font-semibold text-navy-900 hover:bg-[#E9EBF3]">
+                  <SlidersHorizontal className="h-[18px] w-[18px] text-ink-400" strokeWidth={1.75} />סינון לפי תאריך, מצב או יחידה
+                </button>
+                <button type="button" onClick={handleExport} className="press flex min-h-[48px] items-center gap-3 rounded-[16px] bg-[#F3F4F9] px-4 text-[14px] font-semibold text-navy-900 hover:bg-[#E9EBF3]">
+                  <Download className="h-[18px] w-[18px] text-ink-400" strokeWidth={1.75} />ייצוא לקובץ CSV
+                </button>
+              </div>
+            </section>
+          </>
+        )}
+        asideOnPhone={false}
+      />
 
       <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
         <DialogContent className="sm:max-w-md">
@@ -493,6 +553,6 @@ export default function BookingsPage({ selectedPropertyId }) {
           />
         </DialogContent>
       </Dialog>
-    </Page>
+    </DPage>
   );
 }

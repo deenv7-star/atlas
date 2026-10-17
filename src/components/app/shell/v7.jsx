@@ -68,7 +68,7 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
         <div className="lg:hidden">
           <UserMenu user={user} onLogout={onLogout}>
             <button type="button" aria-label="החשבון שלי" className="press inline-flex h-11 w-11 items-center justify-center rounded-full">
-              <GuestAvatar name={user?.full_name || user?.email || ''} size={40} ring />
+              <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={40} ring />
             </button>
           </UserMenu>
         </div>
@@ -100,7 +100,7 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
           <UserMenu user={user} onLogout={onLogout}>
             <button type="button" className="press flex h-11 items-center gap-2.5 rounded-full bg-white py-1 pe-1 ps-4 shadow-[0_1px_2px_rgba(27,38,86,0.05)] ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]" aria-label="החשבון שלי">
               <span className="max-w-[140px] truncate text-[14px] font-semibold text-navy-900">{user?.full_name || 'החשבון שלי'}</span>
-              <GuestAvatar name={user?.full_name || user?.email || ''} size={36} />
+              <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} />
             </button>
           </UserMenu>
         </div>

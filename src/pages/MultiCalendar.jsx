@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { addDays, subDays, startOfDay } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { CalendarRange, ChevronLeft, ChevronRight, Plus, RefreshCw } from 'lucide-react';
+import { CalendarRange, ChevronLeft, ChevronRight, Plus, RefreshCw, ArrowUpLeft, GanttChart, ListTodo } from 'lucide-react';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { SegmentedControl, EmptyState as DsEmptyState, fmtMoney } from '@/components/ds';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,11 @@ import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
-import { UnitTile, guestInitials } from '@/components/app/atoms';
+import { UnitPhoto, GuestAvatar, guestInitials } from '@/components/app/atoms';
+import { DPage, DSplit, DTitle, Tag } from '@/components/app/DSplit';
+import { isActiveBooking, checkOutOf } from '@/lib/stay/bookings';
+import { nightsBetween, formatDayHe } from '@/lib/stay/format';
+import { checkInTime, checkOutTime } from '@/components/today/TodayBoard';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#EF5B5B' },
@@ -82,12 +86,85 @@ function ChannelDot({ channel, size = 8 }) {
   return <span className="inline-block rounded-full flex-shrink-0" style={{ width: size, height: size, backgroundColor: ch.color }} />;
 }
 
+const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+/** What happens in every unit on one day: departures (morning), stays, arrivals (afternoon), free units. */
+function buildAgenda(rawBookings, properties, day) {
+  const rows = [];
+  for (const prop of properties) {
+    const mine = (rawBookings || []).filter((b) => b.property_id === prop.id && isActiveBooking(b) && b.check_in_date);
+    const out = mine.find((b) => checkOutOf(b) === day);
+    const inn = mine.find((b) => b.check_in_date === day);
+    const stay = mine.find((b) => b.check_in_date < day && checkOutOf(b) > day);
+    if (out) rows.push({ key: `o-${out.id}`, order: 0, time: checkOutTime(out, prop.raw), kind: 'out', booking: out, prop });
+    if (stay) {
+      const n = Math.max(1, nightsBetween(stay.check_in_date, checkOutOf(stay)));
+      rows.push({ key: `s-${stay.id}`, order: 1, time: 'כל היום', kind: 'stay', booking: stay, prop, night: nightsBetween(stay.check_in_date, day) + 1, nights: n });
+    }
+    if (inn) rows.push({ key: `i-${inn.id}`, order: 2, time: checkInTime(inn, prop.raw), kind: 'in', booking: inn, prop });
+    if (!stay && !inn) rows.push({ key: `f-${prop.id}`, order: 3, time: 'פנויה', kind: 'free', prop });
+  }
+  return rows.sort((a, b) => a.order - b.order || String(a.time).localeCompare(String(b.time)));
+}
+
+const KIND = {
+  out: { tag: 'יציאה', tone: 'lilac' },
+  stay: { tag: 'בשהייה', tone: 'indigo' },
+  in: { tag: 'כניסה', tone: 'sky' },
+  free: { tag: 'פנויה הלילה', tone: 'slate' },
+};
+
+function AgendaList({ rows, onAdd, dayLabel }) {
+  if (!rows.length) return <p className="d-card px-5 py-8 text-center text-[15px] text-ink-600">אין יחידות להצגה.</p>;
+  return (
+    <ol className="space-y-3" aria-label={`מה קורה ב${dayLabel}`}>
+      {rows.map((r) => {
+        const k = KIND[r.kind];
+        const b = r.booking;
+        return (
+          <li key={r.key} className="d-line flex gap-3">
+            <div className="flex w-[56px] shrink-0 flex-col items-center pt-5">
+              <span className={cn('text-center text-[14px] font-bold leading-tight', /^\d/.test(r.time) ? 'tabular text-navy-900' : 'text-[12px] font-medium text-ink-400')}>{r.time === 'פנויה' ? '' : r.time}</span>
+            </div>
+            {r.kind === 'free' ? (
+              <div className="flex min-h-[76px] min-w-0 flex-1 items-center gap-3 rounded-[22px] border-2 border-dashed border-[#DDE0EC] px-4 py-3">
+                <UnitPhoto property={r.prop.raw} className="h-11 w-11" rounded="rounded-[14px]" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[15px] font-bold text-navy-900">{r.prop.name}</p>
+                  <p className="text-[13px] text-ink-400">{k.tag}</p>
+                </div>
+                <Button variant="secondary" className="h-11 px-4 text-[14px]" onClick={() => onAdd(r.prop)}><Plus />הזמנה</Button>
+              </div>
+            ) : (
+              <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press d-card d-lift flex min-w-0 flex-1 flex-col p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <Tag tone={k.tone}>{k.tag}</Tag>
+                  <span aria-hidden className="v7-arrow inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#F3F4F9] text-navy-900"><ArrowUpLeft className="h-4 w-4" strokeWidth={1.9} /></span>
+                </div>
+                <div className="mt-2.5 flex items-center gap-3">
+                  <GuestAvatar name={b.guest_name || 'אורח'} size={40} />
+                  <div className="min-w-0">
+                    <p className="truncate text-[16px] font-bold text-navy-900">{b.guest_name || 'אורח'}</p>
+                    <p className="truncate text-[13px] text-ink-400">{r.prop.name}{r.kind === 'stay' ? ` · לילה ${r.night} מתוך ${r.nights}` : b.nights ? ` · ${b.nights} לילות` : ''}</p>
+                  </div>
+                </div>
+              </Link>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export default function MultiCalendar({ selectedPropertyId }) {
   const { view: viewMode, date: urlDate, propertyId: urlPropertyId, setUrlState } = useCalendarUrlState();
   const [channelFilter, setChannelFilter] = useState('all');
   const [hoveredBooking, setHoveredBooking] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [syncing, setSyncing] = useState(false);
+  const [selDay, setSelDay] = useState(() => isoOf(startOfDay(new Date())));
+  const [phoneGrid, setPhoneGrid] = useState(false);
 
   const effectivePropertyId = urlPropertyId ?? selectedPropertyId ?? null;
   const filters = useMemo(
@@ -114,6 +191,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
     beds: p.beds || 2,
     raw: p,
   })), [rawProperties]);
+
+  const agenda = useMemo(() => buildAgenda(rawBookings, properties, selDay), [rawBookings, properties, selDay]);
+  const selLabel = formatDayHe(selDay);
 
   const totalDays = viewMode === 'week' ? 14 : viewMode === 'day' ? 7 : 30;
 
@@ -240,24 +320,28 @@ export default function MultiCalendar({ selectedPropertyId }) {
   const rangeLabel = `${formatHebrewDate(days[0])} – ${formatHebrewDate(days[days.length - 1])}`;
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-6 md:px-10 md:pt-9 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
-      <header className={cn('v5-rise mb-5 flex flex-row items-end justify-between gap-3 md:mb-6')}>
-        <div>
-          <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">לוח שנה</h1>
-          <p className="mt-2 hidden text-[15px] text-ink-400 md:block">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" onClick={handleSync} aria-label="סנכרון ערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
-            <RefreshCw className={cn(syncing && 'animate-spin')} />
-            <span className="hidden sm:inline">סנכרון ערוצים</span>
-          </Button>
-        </div>
-      </header>
+    <DPage className="[--cal-unit-w:104px] md:[--cal-unit-w:156px]">
+      <DTitle
+        sub={<span className="hidden md:inline">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</span>}
+        action={(
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setPhoneGrid((v) => !v)} aria-pressed={phoneGrid} className="press inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 text-[14px] font-semibold text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.05)] lg:hidden">
+              {phoneGrid ? <ListTodo className="h-[18px] w-[18px]" strokeWidth={1.75} /> : <GanttChart className="h-[18px] w-[18px]" strokeWidth={1.75} />}
+              {phoneGrid ? 'יומן' : 'ציר זמן'}
+            </button>
+            <Button variant="outline" onClick={handleSync} aria-label="סנכרון ערוצים" className="h-11 w-11 rounded-full border-0 bg-white px-0 shadow-[0_1px_2px_rgba(27,38,86,0.05)] lg:w-auto lg:px-5">
+              <RefreshCw className={cn(syncing && 'animate-spin')} />
+              <span className="hidden lg:inline">סנכרון ערוצים</span>
+            </Button>
+          </div>
+        )}
+      >
+        לוח<br className="lg:hidden" /> שנה
+      </DTitle>
 
       {!bookingsLoading && !propertiesLoading && properties.length === 0 ? (
-        <div className="v7-card">
+        <div className="d-card">
           <DsEmptyState
-            photo="/demo/units/unit-2.webp"
             icon={CalendarRange}
             title="הוסיפו את הנכס הראשון"
             description="אחרי שתוסיפו יחידות, כל הזמנה מכל ערוץ תופיע כאן על ציר אחד."
@@ -266,31 +350,70 @@ export default function MultiCalendar({ selectedPropertyId }) {
         </div>
       ) : null}
 
-      {/* Phones: date chip strip. Tapping a day starts the view there. */}
-      <nav aria-label="בחירת יום" className="v7-strip -mx-5 mb-3 flex scroll-px-5 gap-2 overflow-x-auto px-5 pb-3 md:hidden">
+      <DSplit
+        asideLabel={`יומן ${selLabel}`}
+        asideOnPhone={false}
+        aside={properties.length ? (
+          <section className="px-1">
+            <h2 className="text-[19px] font-extrabold text-navy-900">{selDay === isoOf(startOfDay(new Date())) ? 'היום ביחידות' : selLabel}</h2>
+            <p className="mb-4 text-[13px] text-ink-400">יציאות, שהיות וכניסות לפי שעה</p>
+            <AgendaList rows={agenda} dayLabel={selLabel} onAdd={(p) => openNewAt(p, new Date(`${selDay}T12:00:00`))} />
+          </section>
+        ) : null}
+        main={(
+          <>
+      {/* date chip strip: picks the day for the agenda (phones: the list below, desktop: the side panel) */}
+      <div role="group" aria-label="בחירת יום" className="d-strip -mx-5 mb-4 flex scroll-px-5 gap-2 overflow-x-auto px-5 pb-3 lg:mx-0 lg:grid lg:grid-cols-[repeat(14,minmax(0,1fr))] lg:gap-1.5 lg:px-0">
         {stripDays.map((d) => {
-          const on = isToday(d);
-          const first = d.toDateString() === anchorDate.toDateString();
+          const iso = isoOf(d);
+          const on = iso === selDay;
           return (
             <button
-              key={d.toISOString()}
+              key={iso}
               type="button"
-              onClick={() => void setUrlState({ date: on ? null : d })}
-              aria-pressed={first}
-              aria-label={`${HEB_DAYS[d.getDay()]} ${d.getDate()}`}
+              onClick={() => setSelDay(iso)}
+              aria-pressed={on}
+              aria-label={`${isToday(d) ? 'היום, ' : ''}${formatDayHe(iso)}`}
               className={cn(
-                'press flex h-[64px] w-[50px] shrink-0 flex-col items-center justify-center gap-1 rounded-full',
-                on ? 'bg-brand-600 text-white shadow-[0_10px_20px_-8px_rgba(62,43,241,0.6)]'
-                  : first ? 'bg-navy-900 text-white' : 'bg-white text-navy-900 ring-1 ring-inset ring-[#E8EAF2]',
+                'press flex h-[78px] w-[56px] shrink-0 flex-col items-center justify-center gap-1 rounded-full transition-colors duration-150 lg:w-auto',
+                on ? 'bg-brand-600 text-white shadow-[0_12px_22px_-10px_rgba(62,43,241,0.75)]' : 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.05)] hover:bg-[#FAFAFD]',
               )}
             >
-              <span className={cn('text-[12px] font-medium', on || first ? 'text-white/80' : 'text-ink-400')}>{HEB_DAYS[d.getDay()]}</span>
-              <span className="text-[17px] font-bold leading-none tabular">{d.getDate()}</span>
+              <span className={cn('text-[12px] font-medium', on ? 'text-white/80' : 'text-ink-400')}>{isToday(d) ? 'היום' : HEB_DAYS[d.getDay()]}</span>
+              <span className="text-[19px] font-bold leading-none tabular">{d.getDate()}</span>
             </button>
           );
         })}
-      </nav>
+      </div>
 
+      {properties.length > 1 ? (
+        <div role="group" aria-label="יחידה" className="d-strip -mx-5 scroll-px-5 mb-4 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
+          {[{ id: null, name: 'כל היחידות' }, ...properties].map((p) => {
+            const on = (urlPropertyId ?? null) === p.id;
+            return (
+              <button
+                key={p.id ?? 'all'}
+                type="button"
+                aria-pressed={on}
+                onClick={() => void setUrlState({ propertyId: p.id })}
+                className={cn('press inline-flex h-11 shrink-0 items-center gap-2 rounded-full text-[14px] font-semibold', p.id ? 'pe-4 ps-1.5' : 'px-4', on ? 'bg-navy-900 text-white' : 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.05)]')}
+              >
+                {p.id ? <UnitPhoto property={p.raw} className="h-8 w-8" rounded="rounded-full" /> : null}
+                {p.name}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {/* phones: the day's agenda (default) */}
+      {properties.length && !phoneGrid ? (
+        <div className="lg:hidden">
+          <AgendaList rows={agenda} dayLabel={selLabel} onAdd={(p) => openNewAt(p, new Date(`${selDay}T12:00:00`))} />
+        </div>
+      ) : null}
+
+      <div className={cn(!phoneGrid && 'hidden lg:block')}>
       {/* Toolbar */}
       <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-2">
@@ -325,7 +448,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
         <SkeletonCalendar className="mb-6" totalDays={totalDays} viewMode={viewMode === 'month' ? 'month' : 'week'} propertyRowCount={Math.max(properties.length, 3)} />
       ) : properties.length ? (
         <ErrorBoundary section="calendar-view" variant="inline" resetKey={`${viewMode}-${anchorDate.toISOString()}-${totalDays}-${effectivePropertyId ?? 'all'}`}>
-          <div className="v5-rise mb-6 overflow-hidden v7-card">
+          <div className="v5-rise mb-4 overflow-hidden d-card">
             <div className="overflow-x-auto overscroll-x-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
               <div style={{ minWidth: minW, display: 'grid', gridTemplateColumns: `${UNIT_W} repeat(${totalDays}, ${COL_W})` }}>
                 <div className="sticky right-0 z-20 flex items-end border-b border-l border-line bg-white px-4 pb-2.5 pt-3 text-[13px] font-medium text-ink-400">יחידה</div>
@@ -347,7 +470,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   return (
                     <React.Fragment key={prop.id}>
                       <div className="sticky right-0 z-10 flex min-h-[68px] items-center gap-3 border-b border-l border-line bg-white px-2.5 md:px-3">
-                        <UnitTile property={prop.raw} className="hidden h-9 w-9 text-[14px] md:inline-flex" rounded="rounded-[9px]" />
+                        <UnitPhoto property={prop.raw} className="hidden h-10 w-10 md:block" rounded="rounded-[12px]" />
                         <div className="min-w-0">
                           <div className="truncate text-[15px] font-medium text-navy-900">{prop.name}</div>
                           <div className="hidden truncate text-[12px] text-ink-400 md:block">{prop.raw?.max_guests ? `עד ${prop.raw.max_guests} אורחים` : prop.type}</div>
@@ -426,6 +549,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
         </ErrorBoundary>
       ) : null}
 
+      </div>
+
       {hoveredBooking && (
         <div className="pointer-events-none fixed z-50 hidden md:block" style={{ left: tooltipPos.x, top: tooltipPos.y - 8, transform: 'translate(-50%, -100%)' }}>
           <div className="min-w-[200px] rounded-[12px] border border-line bg-white px-4 py-3 text-right text-navy-900 shadow-[var(--shadow-pop)]" dir="rtl">
@@ -444,7 +569,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
       {properties.length ? (
         <div>
-          <section className="v5-rise overflow-hidden v7-card">
+          <section className="v5-rise mt-4 overflow-hidden d-card lg:mt-0">
             <div className="flex items-center justify-between px-5 pt-5">
               <div>
                 <h2 className="text-[15px] font-semibold text-navy-900">לילות פנויים בין הזמנות</h2>
@@ -459,7 +584,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   const prop = properties.find((p) => p.name === gap.property);
                   return (
                     <li key={gap.id} className="v5-row flex min-h-[64px] items-center gap-3 rounded-[10px] px-3">
-                      <UnitTile property={prop?.raw} className="h-10 w-10 text-[15px]" />
+                      <UnitPhoto property={prop?.raw} className="h-11 w-11" rounded="rounded-[14px]" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-medium text-navy-900">{gap.property}</div>
                         <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {gap.nights} לילות</div>
@@ -479,6 +604,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
         </div>
       ) : null}
-    </div>
+          </>
+        )}
+      />
+    </DPage>
   );
 }
