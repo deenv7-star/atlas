@@ -83,11 +83,11 @@ export default function BalancesPage({ user, orgId }) {
       />
 
       {data.isLoading ? (
-        <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[14px]" />)}</div>
+        <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[22px]" />)}</div>
       ) : (
         <>
           <div className="stat-row mb-4">
-            <StatTile label="יתרות פתוחות" value={formatMoney(totals.open)} hint={`${rows.filter((r) => r.balance.balance > 0).length} הזמנות`} />
+            <StatTile hero label="יתרות פתוחות" value={formatMoney(totals.open)} hint={`${rows.filter((r) => r.balance.balance > 0).length} הזמנות`} />
             <StatTile label="באיחור" value={formatMoney(totals.overdue)} hint={`${totals.overdueCount} הזמנות`} tone={totals.overdueCount ? 'danger' : undefined} />
             <StatTile label="מקדמות שהתקבלו" value={formatMoney(totals.deposits)} hint="בהזמנות פעילות" />
           </div>
@@ -111,14 +111,14 @@ export default function BalancesPage({ user, orgId }) {
               <div key={booking.id} className={`px-5 py-3 ${i ? 'border-t' : ''}`} style={{ borderColor: 'var(--line)' }}>
                 <div className="flex min-h-[64px] items-center gap-4">
                   <div className="flex-1 min-w-0">
-                    <Link to={`/booking/${booking.id}`} className="block truncate text-[16px] font-semibold hover:underline underline-offset-4" style={{ color: 'var(--ink-900)' }}>{booking.guest_name || 'אורח'}</Link>
+                    <Link to={`/booking/${booking.id}`} className="flex min-h-[44px] items-center truncate text-[16px] font-semibold hover:underline underline-offset-4" style={{ color: 'var(--ink-900)' }}>{booking.guest_name || 'אורח'}</Link>
                     <p className="ab-meta mt-0.5 truncate">
                       {unit} · {formatRangeHe(booking.check_in_date, checkOutOf(booking))}
                       {balance.balance > 0 && balance.dueDate ? ` · עד ${formatDayHe(balance.dueDate, { weekday: false })}` : ''}
                     </p>
                   </div>
                   <div className="shrink-0 text-left">
-                    <Money value={balance.balance} className="block whitespace-nowrap text-[16px] font-semibold" style={{ color: balance.overdue ? 'var(--status-danger)' : 'var(--ink-900)' }} />
+                    <Money value={balance.balance} className="block whitespace-nowrap text-[16px] font-semibold" style={{ color: balance.overdue ? 'var(--st-red-fg)' : 'var(--ink-900)' }} />
                     <span className="ab-faint">{balance.balance > 0 ? (balance.overdue ? 'באיחור' : 'יתרה') : 'שולם'}</span>
                   </div>
                   {balance.balance > 0 ? (

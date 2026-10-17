@@ -139,11 +139,11 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden" dir="rtl">
-      <div className="mx-auto w-full max-w-[1400px] flex-shrink-0 px-5 pt-6 md:px-10 md:pt-10">
+      <div className="mx-auto w-full max-w-[var(--page-max,1200px)] flex-shrink-0 px-5 pt-3 md:px-10 md:pt-5">
         <PageHeader title="הודעות" subtitle="WhatsApp, SMS ומייל לאורחים וללידים, במקום אחד." className="!mb-4 md:!mb-5" />
       </div>
-      <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col overflow-hidden md:mb-6 md:px-8">
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[14px] md:border md:shadow-card">
+      <div className="mx-auto flex min-h-0 w-full max-w-[var(--page-max,1200px)] flex-1 flex-col overflow-hidden md:mb-6 md:px-10">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[22px] md:border md:shadow-card">
       {/* Threads list */}
       <div className={cn(
         'flex w-full flex-shrink-0 flex-col border-line bg-white md:w-80 md:border-l lg:w-96',
@@ -157,7 +157,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
               onChange={e => setSearchTerm(e.target.value)}
               placeholder="חיפוש לפי שם אורח"
               aria-label="חיפוש שיחה"
-              className="pr-10"
+              className="rounded-full pr-10"
             />
           </div>
         </div>
@@ -236,7 +236,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                 return (
                   <div key={i} className={cn('flex', isOutbound ? 'justify-start' : 'justify-end')}>
                     <div className={cn(
-                      'max-w-[80%] rounded-[14px] px-3.5 py-2.5 text-[15px] lg:max-w-md',
+                      'max-w-[80%] rounded-[22px] px-3.5 py-2.5 text-[15px] lg:max-w-md',
                       isOutbound
                         ? 'rounded-tr-[6px] bg-brand-600 text-white'
                         : 'rounded-tl-[6px] border border-line bg-white text-navy-900'

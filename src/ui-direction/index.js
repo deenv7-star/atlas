@@ -1,2 +1,2 @@
-/** App shell + dashboard (v5, Mercury-like light direction). */
-export { Sidebar, Header, TabBar, shellClass, DashboardView } from './a';
+/** App shell + dashboard: v8 direction C, "bento command center" (floating sidebar, bento home). */
+export { Sidebar, Header, TabBar, shellClass, DashboardView } from './c';

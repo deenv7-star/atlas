@@ -6,6 +6,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Sunrise, Sun, Sunset, Moon } from 'lucide-react';
 import { unitPhoto } from '@/lib/stay/unitPhoto';
+import { demoPortrait } from '@/lib/demoPeople';
 import { cn } from '@/lib/utils';
 
 /* ── Unit photo ────────────────────────────────────────────────────────────── */
@@ -45,11 +46,14 @@ export function UnitTile({ property, name, className, rounded = 'rounded-[10px]'
   );
 }
 
-/* ── Guest initials: three cool tints only (indigo, slate, periwinkle), stable per name ── */
+/* ── Guest initials: cool palette only (indigo, sky, mint, lilac, slate, periwinkle), stable per name ── */
 const TINTS = [
-  { bg: '#EEF0FF', fg: '#3E2BF1' }, // indigo
-  { bg: '#EEF1F6', fg: '#3A4469' }, // slate
-  { bg: '#E9EEFB', fg: '#2B3F9E' }, // periwinkle
+  { bg: '#E7E5FE', fg: '#3E2BF1' }, // indigo
+  { bg: '#DDEEFC', fg: '#1557A0' }, // sky
+  { bg: '#DCF4EA', fg: '#0F6E4C' }, // mint
+  { bg: '#EEE6FD', fg: '#6233C9' }, // lilac
+  { bg: '#E6E9F2', fg: '#3A4469' }, // slate
+  { bg: '#E2E8FB', fg: '#2B3F9E' }, // periwinkle
 ];
 function tintFor(name) {
   let h = 0;
@@ -64,8 +68,25 @@ export function guestInitials(name = '') {
   const second = parts.length > 1 ? (parts[parts.length - 1].replace(/^ו/, '')[0] || '') : '';
   return (first + second).toUpperCase();
 }
-export function GuestAvatar({ name = '', size = 36, className, ring = false }) {
+/**
+ * Guest / owner avatar. A real photo when the record has one (src / avatar_url), a demo portrait in the
+ * demo workspace, otherwise cool initials. `photo={false}` forces initials.
+ */
+export function GuestAvatar({ name = '', size = 36, className, ring = false, src, photo = true, owner = false }) {
   const t = tintFor(name || '?');
+  const [failed, setFailed] = useState(false);
+  const url = photo && !failed ? (src || demoPortrait(name, { owner })) : null;
+  if (url) {
+    return (
+      <span
+        aria-hidden
+        className={cn('relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-[#E6E9F2]', ring && 'ring-[3px] ring-white', className)}
+        style={{ width: size, height: size }}
+      >
+        <img src={url} alt="" width={size} height={size} loading="lazy" decoding="async" draggable={false} onError={() => setFailed(true)} className="h-full w-full object-cover" />
+      </span>
+    );
+  }
   return (
     <span
       aria-hidden
@@ -73,6 +94,22 @@ export function GuestAvatar({ name = '', size = 36, className, ring = false }) {
       style={{ width: size, height: size, background: t.bg, color: t.fg, fontSize: Math.round(size * 0.38) }}
     >
       {guestInitials(name)}
+    </span>
+  );
+}
+
+/** Overlapping avatars ("+3"). */
+export function AvatarStack({ names = [], size = 32, max = 4, className, ringClass = 'ring-white', showRest = true }) {
+  const shown = names.slice(0, max);
+  const rest = names.length - shown.length;
+  return (
+    <span className={cn('inline-flex items-center', className)} aria-hidden>
+      {shown.map((n, i) => (
+        <GuestAvatar key={`${n}-${i}`} name={n} size={size} ring className={cn(ringClass, i ? '-ms-2.5' : '')} />
+      ))}
+      {rest > 0 && showRest ? (
+        <span className={cn('-ms-2.5 inline-flex items-center justify-center rounded-full bg-navy-900 text-[12px] font-bold text-white ring-[3px] tabular', ringClass)} style={{ width: size, height: size }}>+{rest}</span>
+      ) : null}
     </span>
   );
 }
