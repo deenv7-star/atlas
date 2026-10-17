@@ -47,6 +47,7 @@
   transition: top 420ms cubic-bezier(.32, .72, 0, 1), left 420ms cubic-bezier(.32, .72, 0, 1), opacity 200ms;
   animation: ta-card-in 360ms cubic-bezier(.2, .8, .2, 1);
 }
+.ta-card:focus { outline: none; }
 .ta-card--wait { opacity: .0; pointer-events: none; }
 @keyframes ta-card-in { from { opacity: 0; transform: translateY(10px) scale(.98); } }
 

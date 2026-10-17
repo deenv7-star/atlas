@@ -76,18 +76,21 @@ export default function TourView({ step, idx, total, steps, rect, ready, reduced
   // focus the main button on every step (the card is a modal dialog)
   useEffect(() => {
     if (!ready) return;
-    const t = setTimeout(() => primaryRef.current?.focus({ preventScroll: true }), reduced ? 0 : 160);
+    // focus the card itself (not a button), so touch users never see a focus ring; Tab then reaches the buttons
+    const t = setTimeout(() => cardRef.current?.focus({ preventScroll: true }), reduced ? 0 : 160);
     return () => clearTimeout(t);
   }, [idx, ready, reduced]);
 
   // keep Tab inside the card
   const onKeyDown = (e) => {
-    if (e.key !== 'Tab' || !cardRef.current) return;
+    if (!cardRef.current) return;
+    if (e.key === 'Enter' && document.activeElement === cardRef.current) { e.preventDefault(); onNext(); return; }
+    if (e.key !== 'Tab') return;
     const f = [...cardRef.current.querySelectorAll('button:not([disabled])')];
     if (!f.length) return;
     const a = f[0];
     const z = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+    if (e.shiftKey && (document.activeElement === a || document.activeElement === cardRef.current)) { e.preventDefault(); z.focus(); }
     else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
   };
 
@@ -107,6 +110,7 @@ export default function TourView({ step, idx, total, steps, rect, ready, reduced
         ref={cardRef}
         role="dialog"
         aria-modal="true"
+        tabIndex={-1}
         aria-labelledby="ta-title"
         aria-describedby="ta-text"
         className={cn('ta-card', pos.centered && 'ta-card--center', !ready && 'ta-card--wait')}
