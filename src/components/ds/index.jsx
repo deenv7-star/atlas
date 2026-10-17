@@ -230,7 +230,7 @@ export function StatTile({ label, value, hint, tone = 'brand', className, loadin
       <span className="flex items-center justify-between gap-2">
         <span className={cn('flex min-w-0 items-center gap-2 truncate text-[14px] font-medium', hero ? 'text-white/80' : 'text-ink-400')}>
           {label}
-          {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
+          {attention ? <span role="img" aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
         </span>
         {to ? <CardArrow onHero={hero} className="-me-1 -mt-1" /> : null}
       </span>

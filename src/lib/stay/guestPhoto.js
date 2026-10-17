@@ -49,5 +49,5 @@ export function partnerPhoto(name) {
   const p = m[1].toLowerCase();
   const pool = FEMALE.has(p) ? W : MALE.has(p) ? M : null;
   if (!pool) return null;
-  return `/demo/guests/${pool[(hash(name) + 5) % pool.length]}.webp`;
+  return `/demo/guests/${pool[(hash(p) * 7 + 3) % pool.length]}.webp`;
 }

@@ -1,0 +1,71 @@
+/*
+ * ATLAS v8 F · soft layered glass (brand/refs-app-deen.md: glass health dashboard, Dei bento, fitness photo tile).
+ * A lilac-sky canvas under translucent white layers. One solid-indigo card per screen. Cool tints only;
+ * amber stays the tiny attention dot. Motion is gentle (rise, ring draw, slow photo drift) and off under
+ * prefers-reduced-motion.
+ */
+html[data-ui='f']:root {
+  --canvas: #EEF0FB;
+  --r-card: 28px;
+  --page-max: 1240px;
+  --f-glass: rgba(255, 255, 255, 0.62);
+  --f-glass-strong: rgba(255, 255, 255, 0.82);
+  --f-edge: rgba(255, 255, 255, 0.85);
+  --f-shadow: 0 1px 1px rgba(27, 38, 86, 0.03), 0 18px 44px -22px rgba(48, 40, 160, 0.28);
+}
+html[data-ui='f'] body { background-color: #EEF0FB; }
+/* the canvas: two soft cool washes (lilac top-end, sky start), fixed behind the scroll */
+.f-canvas {
+  background-color: #EEF0FB;
+  background-image:
+    radial-gradient(900px 520px at 88% -8%, rgba(196, 186, 255, 0.55), rgba(196, 186, 255, 0) 70%),
+    radial-gradient(800px 600px at -6% 38%, rgba(178, 214, 255, 0.5), rgba(178, 214, 255, 0) 70%),
+    radial-gradient(700px 500px at 60% 110%, rgba(205, 196, 255, 0.4), rgba(205, 196, 255, 0) 70%);
+  background-attachment: fixed;
+}
+html[data-ui='f'] .v7-card { background: var(--f-glass); border: 1px solid var(--f-edge); box-shadow: var(--f-shadow); -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%); border-radius: var(--r-card); }
+.f-glass {
+  background: var(--f-glass); border: 1px solid var(--f-edge); border-radius: var(--r-card); box-shadow: var(--f-shadow);
+  -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%);
+}
+.f-layer { background: var(--f-glass-strong); border: 1px solid rgba(255, 255, 255, 0.95); border-radius: 22px; box-shadow: 0 1px 2px rgba(27, 38, 86, 0.04); }
+.f-pillnav { background: rgba(255, 255, 255, 0.84); border: 1px solid var(--f-edge); box-shadow: 0 1px 1px rgba(27, 38, 86, 0.03), 0 14px 36px -18px rgba(48, 40, 160, 0.3); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); }
+.f-indigo { position: relative; isolation: isolate; overflow: hidden; background: #3E2BF1; color: #fff; border-radius: var(--r-card); box-shadow: 0 1px 2px rgba(42, 26, 201, 0.25), 0 22px 44px -18px rgba(62, 43, 241, 0.6); }
+.f-indigo::after { content: ''; position: absolute; z-index: -1; width: 340px; height: 340px; border-radius: 50%; inset-inline-start: -140px; top: -170px; border: 1px solid rgba(255, 255, 255, 0.16); }
+.f-indigo::before { content: ''; position: absolute; z-index: -1; width: 220px; height: 220px; border-radius: 50%; inset-inline-end: -70px; bottom: -110px; border: 1px solid rgba(255, 255, 255, 0.12); }
+
+.f-lift { transition: transform 280ms var(--ease-out), box-shadow 280ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .f-lift:hover { transform: translateY(-3px); box-shadow: 0 1px 1px rgba(27, 38, 86, 0.03), 0 26px 50px -22px rgba(48, 40, 160, 0.38); }
+  .f-lift:hover .v7-arrow { transform: rotate(45deg); }
+}
+
+/* photo tile: a very slow drift so the property feels present */
+.f-photo img { transform: scale(1.04); animation: f-drift 16s ease-in-out infinite alternate; }
+@keyframes f-drift { from { transform: scale(1.04) translate3d(0, 0, 0); } to { transform: scale(1.1) translate3d(-1.5%, -1%, 0); } }
+
+/* ring breathes once after drawing */
+@keyframes f-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+.f-breathe { animation: f-breathe 5s ease-in-out 1.2s infinite; transform-origin: center; }
+
+/* sparkline draws itself */
+.f-spark path.f-line { stroke-dasharray: 600; stroke-dashoffset: 600; animation: f-draw 1200ms var(--ease-out) 200ms forwards; }
+@keyframes f-draw { to { stroke-dashoffset: 0; } }
+
+/* calendar pill bars */
+.f-bar { transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .f-bar:hover { transform: translateY(-1px) scale(1.01); box-shadow: 0 10px 22px -12px rgba(62, 43, 241, 0.55); } }
+
+.f-prog { height: 6px; border-radius: 999px; background: rgba(62, 43, 241, 0.1); overflow: hidden; }
+.f-prog > span { display: block; height: 100%; border-radius: inherit; background: #3E2BF1; transform-origin: right; animation: f-fill 900ms var(--ease-out) both; }
+@keyframes f-fill { from { transform: scaleX(0); } }
+
+.f-bub { max-width: 84%; border-radius: 20px; padding: 10px 14px; font-size: 14px; line-height: 1.5; }
+.f-bub-out { background: #3E2BF1; color: #fff; border-end-end-radius: 6px; margin-inline-start: auto; }
+.f-bub-in { background: rgba(255, 255, 255, 0.92); color: #1B2656; border-end-start-radius: 6px; box-shadow: 0 1px 2px rgba(27, 38, 86, 0.05); }
+
+@media (prefers-reduced-motion: reduce) {
+  .f-photo img, .f-breathe, .f-spark path.f-line, .f-prog > span { animation: none !important; }
+  .f-spark path.f-line { stroke-dashoffset: 0 !important; }
+  .f-lift, .f-lift:hover, .f-bar, .f-bar:hover { transition: none !important; transform: none !important; }
+}
