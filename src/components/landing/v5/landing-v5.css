@@ -610,7 +610,7 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
 /* ---------- cookie bar (CookieConsent keeps .lp-cookie) ---------- */
 .lp-cookie { position: fixed; z-index: 50; inset-inline: 12px; bottom: 12px; max-width: 520px; margin-inline: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 12px 10px 16px; border-radius: 16px; background: #fff; color: #1b2656; border: 1px solid #e6e8f0; font-family: 'Heebo', system-ui, sans-serif; font-size: 15px; box-shadow: 0 12px 32px rgba(27, 38, 86, 0.14); animation: l5-up 300ms cubic-bezier(0.23, 1, 0.32, 1) both; }
 .lp-cookie p { margin: 0; flex: 1 1 220px; }
-.lp-cookie a { color: #3e2bf1; text-underline-offset: 3px; }
+.lp-cookie a { color: #3e2bf1; text-decoration: underline; text-underline-offset: 3px; }
 .lp-cookie-actions { display: flex; gap: 6px; }
 .lp-cookie button { min-height: 44px; padding: 0 16px; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer; border: 0; background: transparent; color: #4a5578; }
 .lp-cookie button.ok { background: #3e2bf1; color: #fff; }
