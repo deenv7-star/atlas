@@ -77,10 +77,12 @@ const LayoutWrapper = ({ children, currentPageName }) => (
 const S = ({ children }) => <Suspense fallback={<PublicFallback />}>{children}</Suspense>;
 
 // Fallback when DB update failed: allow through if user just completed onboarding (localStorage flag)
-function hasOnboardingBypass() {
+function hasOnboardingBypass(user) {
   try {
-    const ts = parseInt(localStorage.getItem('onboarding_just_completed') || '0', 10);
-    return !!(ts && Date.now() - ts < 10 * 60 * 1000);
+    const raw = localStorage.getItem('onboarding_just_completed') || '';
+    let uid = '', ts = 0;
+    try { ({ uid = '', ts = 0 } = JSON.parse(raw) || {}); } catch { /* older plain-timestamp flag: not tied to a user, ignore */ }
+    return !!(user?.id && uid === user.id && ts && Date.now() - ts < 10 * 60 * 1000);
   } catch { return false; }
 }
 
@@ -102,7 +104,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   }
   // New orgs go through onboarding once, also when they arrive via /login after confirming their email.
   // Existing orgs are never forced: auth.me() marks an org that already has units / bookings / leads as done.
-  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass()) {
+  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass(user)) {
     return <Navigate to="/onboarding" replace />;
   }
   return children;
@@ -149,7 +151,7 @@ const AuthenticatedApp = () => {
         path="/register"
         element={
           isAuthenticated
-            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/dashboard' : '/onboarding')} replace />
+            ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass(user) ? '/dashboard' : '/onboarding')} replace />
             : <S><Register /></S>
         }
       />
