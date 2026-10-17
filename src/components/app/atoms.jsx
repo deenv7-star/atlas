@@ -6,6 +6,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Sunrise, Sun, Sunset, Moon } from 'lucide-react';
 import { unitPhoto } from '@/lib/stay/unitPhoto';
+import { guestPhoto } from '@/lib/stay/guestPhoto';
 import { cn } from '@/lib/utils';
 
 /* ── Unit photo ────────────────────────────────────────────────────────────── */
@@ -67,15 +68,43 @@ export function guestInitials(name = '') {
   const second = parts.length > 1 ? (parts[parts.length - 1].replace(/^ו/, '')[0] || '') : '';
   return (first + second).toUpperCase();
 }
-export function GuestAvatar({ name = '', size = 36, className, ring = false }) {
+export function GuestAvatar({ name = '', size = 36, className, ring = false, record, photo }) {
   const t = tintFor(name || '?');
+  const [failed, setFailed] = useState(false);
+  const src = photo === false ? null : (photo || guestPhoto(name, record));
+  const box = { width: size, height: size };
+  if (src && !failed) {
+    return (
+      <span aria-hidden className={cn('relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-[#E6E9F2]', ring && 'ring-[3px] ring-white', className)} style={box}>
+        <img src={src} alt="" width={size} height={size} loading="lazy" decoding="async" draggable={false} onError={() => setFailed(true)} className="h-full w-full object-cover" />
+      </span>
+    );
+  }
   return (
     <span
       aria-hidden
       className={cn('inline-flex shrink-0 select-none items-center justify-center rounded-full font-bold leading-none', ring && 'ring-[3px] ring-white', className)}
-      style={{ width: size, height: size, background: t.bg, color: t.fg, fontSize: Math.round(size * 0.38) }}
+      style={{ ...box, background: t.bg, color: t.fg, fontSize: Math.round(size * 0.38) }}
     >
       {guestInitials(name)}
+    </span>
+  );
+}
+
+/** Overlapping faces (a couple, today's arrivals). `names` order = visual order; `max` then "+n". */
+export function AvatarStack({ names = [], size = 32, max = 4, className, extra }) {
+  const shown = names.slice(0, max);
+  const rest = names.length - shown.length;
+  return (
+    <span className={cn('inline-flex items-center', className)} aria-hidden>
+      {shown.map((n, i) => (
+        <GuestAvatar key={`${n}-${i}`} name={n} size={size} ring className={i ? '-ms-2.5' : ''} />
+      ))}
+      {rest > 0 || extra ? (
+        <span className="-ms-2.5 inline-flex items-center justify-center rounded-full bg-[#EEF0F8] text-[12px] font-bold text-navy-900 ring-[3px] ring-white tabular" style={{ width: size, height: size }}>
+          {extra || `+${rest}`}
+        </span>
+      ) : null}
     </span>
   );
 }
