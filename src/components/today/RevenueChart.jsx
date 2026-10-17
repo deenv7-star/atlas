@@ -3,7 +3,7 @@
  * grid, no y-axis noise) and the mini sparkline used in the KPI card. Time reads left-to-right like every
  * finance chart (newest month on the right, where the eye lands in RTL).
  */
-import React, { useId, useMemo } from 'react';
+import React, { useId } from 'react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceDot } from 'recharts';
 import { formatMoney } from '@/lib/stay/format';
 import { isActiveBooking } from '@/lib/stay/bookings';
