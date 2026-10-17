@@ -443,7 +443,7 @@ export default function OnboardingA({ user, again = false }) {
     }
   })();
 
-  const primaryLabel = s.id === 'hello' ? 'מתחילים' : s.id === 'channels' ? 'סיום' : 'המשך';
+  const primaryLabel = s.id === 'hello' ? 'מתחילים' : 'המשך';
   const variants = {
     enter: (k) => ({ opacity: 0, x: k > 0 ? -28 : 28 }),
     center: { opacity: 1, x: 0, transition: { duration: 0.28, ease: EASE } },
