@@ -101,7 +101,7 @@ export function AvatarStack({ names = [], size = 32, max = 4, className, extra }
         <GuestAvatar key={`${n}-${i}`} name={n} size={size} ring className={i ? '-ms-2.5' : ''} />
       ))}
       {rest > 0 || extra ? (
-        <span className="-ms-2.5 inline-flex items-center justify-center rounded-full bg-[#EEF0F8] text-[12px] font-bold text-navy-900 ring-[3px] ring-white tabular" style={{ width: size, height: size }}>
+        <span className="-ms-2.5 inline-flex items-center justify-center rounded-full bg-[#EEF0F8] text-[12px] font-bold text-navy-900 ring-[3px] ring-white tabular" style={{ width: size, height: size }} dir="ltr">
           {extra || `+${rest}`}
         </span>
       ) : null}
