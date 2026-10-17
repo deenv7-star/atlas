@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { base44 } from '@/api/base44Client';
 import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 import { queryClientInstance } from '@/lib/query-client';
+import { setActiveOrg } from '@/lib/onboarding/orgSettings';
 
 const AuthContext = createContext();
 
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }) => {
   const hydrateUser = useCallback(async () => {
     try {
       const currentUser = await base44.auth.me();
+      setActiveOrg(currentUser?.organization_id);
       setUser(currentUser);
       setIsAuthenticated(true);
       setAuthError(null);
