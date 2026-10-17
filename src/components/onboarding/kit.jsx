@@ -230,3 +230,150 @@ export function depositLine(dep, price) {
 
 export const CHECKIN_TIMES = ['14:00', '15:00', '16:00'];
 export const CHECKOUT_TIMES = ['10:00', '11:00', '12:00'];
+
+/* ── added for the full first-run setup (location, photos, links, verify, multi-select) ── */
+
+let settlementsCache = null;
+function loadSettlements() {
+  if (!settlementsCache) {
+    settlementsCache = fetch('/data/il-settlements.json').then((r) => (r.ok ? r.json() : [])).catch(() => []);
+  }
+  return settlementsCache;
+}
+const norm = (v) => String(v || '').replace(/["'״׳`-]/g, '').replace(/\s+/g, ' ').trim();
+
+/**
+ * Settlement picker: type two letters, tap your settlement. Source: the official list of Israeli
+ * settlements (data.gov.il, יישובים). Anything not on the list can still be typed and kept.
+ */
+export function SettlementInput({ value, onChange, autoFocus }) {
+  const id = useId();
+  const [q, setQ] = useState(value || '');
+  const [list, setList] = useState([]);
+  const [open, setOpen] = useState(false);
+  React.useEffect(() => { let alive = true; loadSettlements().then((l) => { if (alive) setList(l); }); return () => { alive = false; }; }, []);
+  React.useEffect(() => { setQ(value || ''); }, [value]);
+  const nq = norm(q);
+  const matches = nq.length < 2 ? [] : list
+    .filter(([n]) => norm(n).includes(nq))
+    .sort((a, b) => (norm(a[0]).startsWith(nq) ? 0 : 1) - (norm(b[0]).startsWith(nq) ? 0 : 1) || a[0].length - b[0].length)
+    .slice(0, 6);
+  const exact = list.some(([n]) => n === value);
+  return (
+    <div className="relative flex flex-col gap-2">
+      <label htmlFor={id} className="text-[16px] font-semibold text-navy-900">יישוב</label>
+      <input id={id} className="ob-input" value={q} autoFocus={autoFocus} autoComplete="off" placeholder="מתחילים להקליד, למשל: ראש פינה"
+        role="combobox" aria-expanded={open && matches.length > 0} aria-controls={`${id}-list`} aria-autocomplete="list"
+        onChange={(e) => { setQ(e.target.value); onChange(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 150)} />
+      {open && matches.length > 0 && !(exact && matches.length === 1) ? (
+        <ul id={`${id}-list`} role="listbox" className="ob-fade overflow-hidden rounded-[18px] bg-white shadow-[0_2px_4px_rgba(27,38,86,0.06),0_18px_36px_-14px_rgba(27,38,86,0.25)]">
+          {matches.map(([n, region]) => (
+            <li key={n + region} role="option" aria-selected={n === value}>
+              <button type="button" className="ob-press flex min-h-[56px] w-full items-center justify-between gap-3 border-b border-[#F0F2F7] px-5 text-start last:border-0"
+                onMouseDown={(e) => e.preventDefault()} onClick={() => { onChange(n); setQ(n); setOpen(false); }}>
+                <span className="text-[18px] font-semibold text-navy-900">{n}</span>
+                {region ? <span className="text-[14px] text-ink-400">{region}</span> : null}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {exact ? <p className="flex items-center gap-1.5 text-[15px] font-medium text-[#0F6E4C]"><Check className="h-4 w-4" strokeWidth={2.5} aria-hidden />{value}</p> : null}
+    </div>
+  );
+}
+
+/** Big gallery uploader: one huge "add photos" tile, multiple at once from phone or gallery; the first is the main photo. */
+export function PhotoGallery({ photos = [], onChange, max = 8 }) {
+  const ref = useRef(null);
+  const [over, setOver] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const add = async (files) => {
+    const list = Array.from(files || []).filter((f) => /^image\//.test(f.type)).slice(0, Math.max(0, max - photos.length));
+    if (!list.length) return;
+    setBusy(true);
+    const out = [];
+    for (const f of list) { try { out.push(await fileToDataUrl(f, 960, 0.72)); } catch { /* skip that one */ } }
+    setBusy(false);
+    onChange([...photos, ...out].slice(0, max));
+  };
+  const remove = (k) => onChange(photos.filter((_, n) => n !== k));
+  const main = (k) => onChange([photos[k], ...photos.filter((_, n) => n !== k)]);
+  return (
+    <div className="flex flex-col gap-3">
+      <button type="button" onClick={() => ref.current?.click()}
+        onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
+        onDrop={(e) => { e.preventDefault(); setOver(false); add(e.dataTransfer.files); }}
+        className={cn('ob-press flex min-h-[132px] w-full flex-col items-center justify-center gap-2 rounded-[24px] border-2 border-dashed px-4 text-center',
+          over ? 'border-brand-600 bg-brand-50' : 'border-[#C9C3FB] bg-white')} disabled={photos.length >= max}>
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-600 text-white shadow-[0_8px_18px_-8px_rgba(62,43,241,0.7)]">
+          {busy ? <span className="h-6 w-6 animate-spin rounded-full border-[3px] border-white/40 border-t-white motion-reduce:animate-none" /> : <ImagePlus className="h-7 w-7" strokeWidth={1.9} aria-hidden />}
+        </span>
+        <span className="text-[19px] font-bold text-navy-900">{photos.length ? 'עוד תמונות' : 'הוספת תמונות מהטלפון'}</span>
+        <span className="text-[15px] text-ink-400">אפשר לבחור כמה ביחד{photos.length ? ` · ${photos.length} מתוך ${max}` : ''}</span>
+      </button>
+      <input ref={ref} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => { add(e.target.files); e.target.value = ''; }} />
+      {photos.length ? (
+        <ul className="grid grid-cols-3 gap-2.5">
+          {photos.map((src, k) => (
+            <li key={src.slice(-24) + k} className="ob-pop relative aspect-square overflow-hidden rounded-[16px] bg-[#E9ECF4]" style={{ animationDelay: `${k * 40}ms` }}>
+              <img src={src} alt={k === 0 ? 'התמונה הראשית' : `תמונה ${k + 1}`} className="h-full w-full object-cover" />
+              {k === 0 ? <span className="absolute bottom-1.5 start-1.5 rounded-full bg-white/95 px-2 py-0.5 text-[12px] font-bold text-navy-900">ראשית</span>
+                : <button type="button" onClick={() => main(k)} className="absolute bottom-0 start-0 flex h-11 items-end px-1.5 pb-1.5" aria-label={`לקבוע את תמונה ${k + 1} כראשית`}><span className="rounded-full bg-white/85 px-2 py-0.5 text-[12px] font-semibold text-navy-900">לראשית</span></button>}
+              <button type="button" onClick={() => remove(k)} className="absolute end-0 top-0 flex h-11 w-11 items-start justify-end p-1.5" aria-label={`הסרת תמונה ${k + 1}`}>
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/95 text-navy-900 shadow"><X className="h-4 w-4" strokeWidth={2.5} aria-hidden /></span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+/** Multi-select big chips (checkbox semantics). */
+export function MultiChips({ options, value = [], onChange, label }) {
+  return (
+    <div role="group" aria-label={label} className="flex flex-wrap gap-2.5">
+      {options.map((o) => {
+        const on = value.includes(o.value);
+        return (
+          <button key={o.value} type="button" role="checkbox" aria-checked={on} className="ob-chip ob-press gap-2"
+            onClick={() => onChange(on ? value.filter((v) => v !== o.value) : [...value, o.value])}>
+            {on ? <Check className="h-[18px] w-[18px]" strokeWidth={3} aria-hidden /> : null}{o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Phone check without an SMS provider: send yourself a WhatsApp from ATLAS and confirm it arrived.
+ * (Real SMS one-time codes need an SMS provider on the Supabase project.)
+ */
+export function VerifyPhone({ phone, verified, onVerified }) {
+  const digits = String(phone || '').replace(/[^\d]/g, '');
+  const intl = digits.startsWith('0') ? `972${digits.slice(1)}` : digits;
+  const [sent, setSent] = useState(false);
+  if (verified) {
+    return <p className="flex min-h-[52px] items-center gap-2 rounded-[16px] bg-[var(--st-mint-bg)] px-4 text-[16px] font-semibold text-[var(--st-mint-fg)]"><Check className="h-5 w-5" strokeWidth={2.5} aria-hidden />המספר אומת</p>;
+  }
+  return (
+    <div className="flex flex-col gap-2.5 rounded-[20px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_8px_22px_-12px_rgba(27,38,86,0.16)]">
+      <p className="text-[16px] font-semibold text-navy-900">רוצים לוודא שהמספר נכון?</p>
+      {!sent ? (
+        <a href={`https://wa.me/${intl}?text=${encodeURIComponent('בדיקה מ-ATLAS: המספר שלי נכון.')}`} target="_blank" rel="noreferrer" onClick={() => setSent(true)}
+          className="ob-press inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-[#1FA855] px-5 text-[17px] font-bold text-white" aria-disabled={digits.length < 9}>
+          שליחת הודעת בדיקה לעצמי
+        </a>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className="ob-chip ob-press" onClick={onVerified}><Check className="me-1.5 h-5 w-5" strokeWidth={2.5} aria-hidden />קיבלתי, הכל טוב</button>
+          <button type="button" className="ob-ghost ob-press" onClick={() => setSent(false)}>לא הגיע</button>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -17,17 +17,58 @@ import { base44 } from '@/api/base44Client';
 import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 import { readOrgSettings, writeOrgSettings, setActiveOrg } from './orgSettings';
 
-export const COMPLEX_TYPES = [
-  { value: 'zimmer', label: 'צימרים', unit: 'צימר', photo: '/demo/units/unit-6.webp', line: 'ג׳קוזי, שקט, זוגות' },
-  { value: 'villa', label: 'וילה', unit: 'וילה', photo: '/demo/units/unit-3.webp', line: 'בית שלם, משפחות וקבוצות' },
-  { value: 'cabin', label: 'בקתות', unit: 'בקתה', photo: '/demo/units/unit-2.webp', line: 'עץ, טבע, כמה בקתות' },
-  { value: 'guesthouse', label: 'בית הארחה', unit: 'חדר', photo: '/demo/units/unit-4.webp', line: 'חדרים בבניין אחד' },
+/**
+ * Business types (Deen 18.10: every kind of hospitality, not only zimmers). Wording downstream adapts:
+ * unit / units = what one bookable thing is called; single = one bookable place (skips "how many").
+ */
+export const BUSINESS_TYPES = [
+  { value: 'zimmer', label: 'צימר', unit: 'צימר', units: 'צימרים', single: true, photo: '/demo/units/unit-6.webp', line: 'צימר אחד' },
+  { value: 'zimmer_complex', label: 'מתחם צימרים', unit: 'צימר', units: 'יחידות', photo: '/demo/units/unit-2.webp', line: 'כמה צימרים במקום אחד' },
+  { value: 'villa', label: 'וילה', unit: 'וילה', units: 'וילות', single: true, photo: '/demo/units/unit-3.webp', line: 'בית שלם לאורחים' },
+  { value: 'hotel', label: 'מלון', unit: 'חדר', units: 'חדרים', photo: '/demo/types/hotel.webp', line: 'חדרים, קבלה, צוות' },
+  { value: 'boutique', label: 'מלון בוטיק', unit: 'חדר', units: 'חדרים', photo: '/demo/types/boutique.webp', line: 'מעט חדרים, הרבה אופי' },
+  { value: 'guesthouse', label: 'בית הארחה', unit: 'חדר', units: 'חדרים', photo: '/demo/units/unit-4.webp', line: 'חדרים בבית אחד' },
+  { value: 'apartments', label: 'דירות נופש', unit: 'דירה', units: 'דירות', photo: '/demo/types/apartments.webp', line: 'דירה אחת או כמה' },
 ];
-export const OTHER_TYPE = { value: 'other', label: 'משהו אחר', unit: 'יחידה', photo: '', line: '' };
+export const OTHER_TYPE = { value: 'other', label: 'משהו אחר', unit: 'יחידה', units: 'יחידות', photo: '/demo/complex-pool.webp', line: 'כל סוג אירוח אחר' };
+export const COMPLEX_TYPES = BUSINESS_TYPES; // older name
 
 export function typeInfo(value) {
-  return COMPLEX_TYPES.find((t) => t.value === value) || OTHER_TYPE;
+  return BUSINESS_TYPES.find((t) => t.value === value) || OTHER_TYPE;
 }
+
+export const OWNER_ROLES = [
+  { value: 'owner', label: 'הבעלים', line: 'המקום שלי' },
+  { value: 'manager', label: 'מנהל/ת', line: 'מנהל/ת בשביל הבעלים' },
+  { value: 'family', label: 'בן/בת משפחה', line: 'עוזר/ת בעסק המשפחתי' },
+  { value: 'staff', label: 'צוות', line: 'קבלה, ניקיון או תחזוקה' },
+];
+
+/** Where bookings come from today (characterization; also decides which links / connections to offer). */
+export const CHANNELS_TODAY = [
+  { value: 'phone', label: 'טלפון ווואטסאפ' },
+  { value: 'booking', label: 'Booking.com' },
+  { value: 'airbnb', label: 'Airbnb' },
+  { value: 'website', label: 'אתר משלי' },
+  { value: 'social', label: 'פייסבוק ואינסטגרם' },
+  { value: 'portals', label: 'אתרי צימרים' },
+];
+
+export const LINK_FIELDS = [
+  { key: 'website', label: 'אתר', placeholder: 'www.example.co.il' },
+  { key: 'instagram', label: 'אינסטגרם', placeholder: 'instagram.com/…' },
+  { key: 'facebook', label: 'פייסבוק', placeholder: 'facebook.com/…' },
+  { key: 'maps', label: 'גוגל מפות', placeholder: 'maps.app.goo.gl/…' },
+  { key: 'booking', label: 'הדף שלכם ב-Booking', placeholder: 'booking.com/hotel/il/…' },
+  { key: 'airbnb', label: 'הדף שלכם ב-Airbnb', placeholder: 'airbnb.com/rooms/…' },
+];
+
+export const PAY_METHODS = [
+  { value: 'bit', label: 'ביט / פייבוקס' },
+  { value: 'transfer', label: 'העברה בנקאית' },
+  { value: 'cash', label: 'מזומן' },
+  { value: 'card', label: 'כרטיס אשראי' },
+];
 
 export const DEFAULT_PRICE = 800;
 export const DEFAULT_GUESTS = 2;
@@ -53,8 +94,16 @@ export const EMPTY_DRAFT = {
   ownerPhoto: '',
   businessName: '',
   businessPhone: '',
+  ownerRole: '',
+  phoneVerified: false,
   type: '',
+  settlement: '',
+  street: '',
+  photos: [],
   coverPhoto: '',
+  channelsToday: [],
+  links: { website: '', instagram: '', facebook: '', maps: '', booking: '', airbnb: '' },
+  payMethods: ['bit', 'transfer'],
   units: [],
   createdUnitIds: [],
   checkIn: '15:00',
@@ -110,6 +159,9 @@ export async function loadExisting(user) {
     if (org) {
       out.businessName = org.name && org.name !== 'My Organization' ? org.name : '';
       out.businessPhone = org.phone || '';
+      const addr = String(org.address || '').split(',').map((x) => x.trim()).filter(Boolean);
+      if (addr.length) { out.settlement = addr[addr.length - 1]; out.street = addr.slice(0, -1).join(', '); }
+      out.links = { ...out.links, website: org.website || '' };
     }
   } catch { /* first run: nothing yet */ }
   try {
@@ -125,7 +177,7 @@ export async function loadExisting(user) {
       existing: true,
     }));
     const t = list.find((p) => p.type)?.type;
-    if (t) out.type = COMPLEX_TYPES.some((c) => c.value === t) ? t : 'other';
+    if (t) out.type = BUSINESS_TYPES.some((c) => c.value === t) ? t : 'other';
   } catch { /* ignore */ }
   try {
     const syncs = await base44.entities.CalendarSync.list({}, { limit: 200 });
@@ -138,6 +190,12 @@ export async function loadExisting(user) {
   out.waGreeting = s.wa_greeting || '';
   out.deposit = s.deposit || 'none';
   out.coverPhoto = s.cover_photo || '';
+  out.photos = Array.isArray(s.photos) && s.photos.length ? s.photos : (s.cover_photo ? [s.cover_photo] : []);
+  out.ownerRole = s.owner_role || '';
+  out.phoneVerified = !!s.phone_verified;
+  out.channelsToday = Array.isArray(s.channels_today) ? s.channels_today : [];
+  out.links = { ...out.links, ...(s.links || {}), website: out.links.website || s.links?.website || '' };
+  if (Array.isArray(s.pay_methods)) out.payMethods = s.pay_methods;
   if (!out.type && s.complex_type) out.type = s.complex_type;
   return out;
 }
@@ -180,9 +238,13 @@ async function updateProfile(patch) {
   await base44.auth.updateMe(patch.profile_image ? { ...patch, avatar_url: patch.profile_image } : patch);
 }
 
-/** Marks onboarding as started (step >= 2), so auth.me() no longer auto-completes it once units exist. */
-export async function saveStep(step) {
-  try { await updateProfile({ onboarding_step: Math.max(2, step) }); } catch { /* progress only */ }
+/**
+ * Onboarding v1 progress lives in profiles.onboarding_step as 10 + chapter (the old wizard used 1-7), so
+ * auth.me() can tell "started the new setup" from an old account and stop auto-completing it once units exist.
+ */
+export const STEP_BASE = 10;
+export async function saveStep(chapter) {
+  try { await updateProfile({ onboarding_step: STEP_BASE + Math.max(0, chapter) }); } catch { /* progress only */ }
 }
 
 export async function saveOwner(d) {
@@ -192,11 +254,19 @@ export async function saveOwner(d) {
   await updateProfile(patch);
 }
 
+export function addressOf(d) {
+  return [d.street.trim(), d.settlement.trim()].filter(Boolean).join(', ');
+}
+
+/** Name, phone, address, website → organizations; the rest of the business profile → orgSettings. */
 export async function saveBusiness(user, d) {
   const orgId = user?.organization_id;
-  const patch = { name: (d.businessName.trim() || 'המתחם שלי').slice(0, 50) };
+  const patch = { name: (d.businessName.trim() || 'העסק שלי').slice(0, 50) };
   const phone = (d.businessPhone || d.ownerPhone).trim();
   if (phone) patch.phone = phone.slice(0, 20);
+  const address = addressOf(d);
+  if (address) patch.address = address.slice(0, 255);
+  if (d.links?.website?.trim()) patch.website = d.links.website.trim().slice(0, 255);
   if (orgId) {
     try {
       await base44.entities.Organization.update(orgId, patch);
@@ -206,7 +276,18 @@ export async function saveBusiness(user, d) {
     }
   }
   if (!isSupabaseConfigured) await base44.auth.updateMe({ organization_name: patch.name });
-  await writeOrgSettings(orgId, { complex_type: d.type || '', cover_photo: d.coverPhoto || '' });
+  const photos = (d.photos || []).filter(Boolean).slice(0, 8);
+  await writeOrgSettings(orgId, {
+    complex_type: d.type || '',
+    owner_role: d.ownerRole || '',
+    phone_verified: !!d.phoneVerified,
+    settlement: d.settlement.trim(),
+    photos,
+    cover_photo: photos[0] || d.coverPhoto || '',
+    channels_today: d.channelsToday || [],
+    links: { ...(d.links || {}) },
+    pay_methods: d.payMethods || [],
+  });
 }
 
 /**
@@ -225,6 +306,8 @@ export async function saveUnits(d) {
       base_price: Math.max(0, Number(u.price) || 0) || null,
       type: d.type || null,
     };
+    const address = addressOf(d);
+    if (address) row.address = address.slice(0, 255);
     if (u.photo && u.photo.startsWith('data:')) row.images = [u.photo];
     if (u.id) {
       await base44.entities.Property.update(u.id, row);
@@ -254,6 +337,7 @@ export async function saveHosting(user, d) {
     host_phone: (d.businessPhone || d.ownerPhone).trim(),
     wa_greeting: d.waGreeting.trim(),
     deposit: d.deposit,
+    pay_methods: d.payMethods || [],
   });
 }
 
@@ -286,7 +370,7 @@ export async function saveChannels(d) {
 }
 
 export async function finishOnboarding(user) {
-  const patch = { onboarding_completed: true, onboarding_step: 6 };
+  const patch = { onboarding_completed: true, onboarding_step: STEP_BASE + 9 };
   if (!user?.trial_ends_at) {
     // same 14-day trial the previous onboarding started (only when none is set yet)
     const trialEnd = new Date();

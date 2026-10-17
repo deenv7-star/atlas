@@ -469,8 +469,8 @@ const supabaseAuth = {
 
     // טריגר handle_new_user נותן organization_id כבר בהרשמה, אז דגל false לבד לא אומר "חדש".
     // אם כבר יש נכסים/הזמנות/לידים בארגון — נחשב אונבורדינג כהושלם לניתוב (ותיקים שלא סומנו ב-DB).
-    // …unless the owner already started the new onboarding (step >= 2): then its own units must not end it early.
-    if (!onboarding_completed && orgId && (parseInt(profile?.onboarding_step, 10) || 1) < 2) {
+    // …unless the owner already started onboarding v1 (step >= 10): then its own units must not end it early.
+    if (!onboarding_completed && orgId && (parseInt(profile?.onboarding_step, 10) || 1) < 10) {
       try {
         const [pRes, bRes, lRes] = await Promise.all([
           supabase.from('properties').select('id', { count: 'exact', head: true }).eq('org_id', orgId),
