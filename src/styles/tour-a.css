@@ -65,7 +65,7 @@
 .ta-arrow--bottom { bottom: -6px; }
 
 .ta-top { display: flex; align-items: center; gap: 6px; margin-inline-end: -8px; }
-.ta-count { font-size: 13px; font-weight: 600; color: #8C93AB; font-variant-numeric: tabular-nums; margin-inline-end: auto; white-space: nowrap; }
+.ta-count { font-size: 13px; font-weight: 600; color: #5B6380; font-variant-numeric: tabular-nums; margin-inline-end: auto; white-space: nowrap; }
 .ta-voice {
   display: inline-flex;
   align-items: center;
