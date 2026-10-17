@@ -496,7 +496,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
         ref={bodyScrollRef}
         className={cn(virtualScroll && 'max-h-[min(70vh,640px)] overflow-y-auto', 'overflow-x-auto lg:overflow-x-hidden')}
       >
-        <div role="table" className="w-full min-w-0">
+        <div role="table" className="w-full min-w-[var(--atlas-tmin)] lg:min-w-0" style={{ '--atlas-tmin': `${Math.max(leafHeaders.length, 1) * 108}px` } as React.CSSProperties}>
           <div
             role="rowgroup"
             className={cn(
@@ -510,13 +510,13 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
                   <div
                     key={header.id}
                     role="columnheader"
-                    className="group relative flex min-w-0 items-center px-2 py-2.5 text-start"
+                    className="group relative flex min-w-0 items-center px-2 py-0 text-start"
                   >
                     {header.isPlaceholder ? null : (
                       <button
                         type="button"
                         className={cn(
-                          'flex min-w-0 flex-1 items-center truncate text-start font-semibold text-gray-700',
+                          'flex min-h-[44px] min-w-0 flex-1 items-center truncate text-start font-semibold text-gray-700',
                           header.column.getCanSort() && 'cursor-pointer select-none hover:text-gray-900',
                         )}
                         onClick={header.column.getToggleSortingHandler()}
@@ -533,7 +533,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
                         onMouseDown={header.getResizeHandler()}
                         onTouchStart={header.getResizeHandler()}
                         className={cn(
-                          'absolute end-0 top-0 z-10 flex h-full w-3 cursor-col-resize touch-none select-none items-center justify-center pe-1 opacity-0 hover:opacity-100',
+                          'absolute end-0 top-0 z-10 flex h-full w-3 cursor-col-resize [@media(pointer:coarse)]:hidden touch-none select-none items-center justify-center pe-1 opacity-0 hover:opacity-100',
                           header.column.getIsResizing() && 'opacity-100',
                         )}
                       >

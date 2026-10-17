@@ -217,7 +217,7 @@ export default function DataSecurity() {
           <div className="flex gap-6 text-sm">
             <Link to="/privacy" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">פרטיות</Link>
             <Link to="/terms" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">תנאי שימוש</Link>
-            <Link to="/sla" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">SLA</Link>
+            <Link to="/sla" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center px-1 text-ink-400 hover:text-navy-900 transition-colors">SLA</Link>
           </div>
           <p className="text-ink-400 text-sm">© {new Date().getFullYear()} ATLAS. כל הזכויות שמורות</p>
         </div>

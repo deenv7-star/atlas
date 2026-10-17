@@ -55,7 +55,7 @@ export default function Status() {
               <code className="text-xs bg-white px-1 py-0.5 rounded border">/api/ready</code>
               {' (דורשות גישה לשרת ה־API).'}
             </p>
-            <Link to={createPageUrl('ApiDocs')} className="inline-flex items-center gap-1 text-sm font-medium text-brand-600 mt-3 hover:underline">
+            <Link to={createPageUrl('ApiDocs')} className="inline-flex min-h-[44px] items-center gap-1 text-sm font-medium text-brand-600 mt-1 hover:underline">
               תיעוד API
               <ExternalLink className="w-3.5 h-3.5" />
             </Link>

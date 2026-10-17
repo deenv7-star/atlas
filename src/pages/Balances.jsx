@@ -111,7 +111,7 @@ export default function BalancesPage({ user, orgId }) {
               <div key={booking.id} className={`px-5 py-3 ${i ? 'border-t' : ''}`} style={{ borderColor: 'var(--line)' }}>
                 <div className="flex min-h-[64px] items-center gap-4">
                   <div className="flex-1 min-w-0">
-                    <Link to={`/booking/${booking.id}`} className="block truncate text-[16px] font-semibold hover:underline underline-offset-4" style={{ color: 'var(--ink-900)' }}>{booking.guest_name || 'אורח'}</Link>
+                    <Link to={`/booking/${booking.id}`} className="flex min-h-[44px] items-center truncate text-[16px] font-semibold hover:underline underline-offset-4" style={{ color: 'var(--ink-900)' }}>{booking.guest_name || 'אורח'}</Link>
                     <p className="ab-meta mt-0.5 truncate">
                       {unit} · {formatRangeHe(booking.check_in_date, checkOutOf(booking))}
                       {balance.balance > 0 && balance.dueDate ? ` · עד ${formatDayHe(balance.dueDate, { weekday: false })}` : ''}
