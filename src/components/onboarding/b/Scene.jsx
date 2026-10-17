@@ -115,8 +115,8 @@ export function Scene({ d, lit = false, compact = false, onUnit, onAdd, activeKe
       <svg className="pointer-events-none absolute bottom-[34%] end-4 -z-10 h-12 w-12" viewBox="-20 -32 40 52" aria-hidden><Tree x={0} y={0} s={0.9} /></svg>
 
       {/* the sign: business name + settlement */}
-      <div className="absolute start-4 top-4 z-10 flex max-w-[70%] flex-col items-start gap-1.5">
-        <span className={cn('ob-pop inline-flex max-w-full items-center rounded-[12px] px-3.5 py-2 text-[17px] font-extrabold shadow-[0_6px_16px_-8px_rgba(27,38,86,0.4)] transition-colors duration-500',
+      <div className={cn('absolute z-10 flex max-w-[60%] flex-col items-start gap-1.5', compact ? 'start-4 top-4' : 'start-6 top-6')}>
+        <span className={cn('ob-pop inline-flex max-w-full items-center rounded-[12px] px-3.5 py-2 font-extrabold', compact ? 'text-[17px]' : 'px-5 py-3 text-[24px]', ' shadow-[0_6px_16px_-8px_rgba(27,38,86,0.4)] transition-colors duration-500',
           lit ? 'bg-white text-navy-900' : d.businessName ? 'bg-navy-900 text-white' : 'border-2 border-dashed border-[#C9CEE0] bg-white/60 text-ink-400')} key={d.businessName ? 'n' : 'e'}>
           <span className="truncate">{d.businessName || (d.type ? t.label : 'השם של העסק')}</span>
         </span>
@@ -129,9 +129,9 @@ export function Scene({ d, lit = false, compact = false, onUnit, onAdd, activeKe
 
       {/* photos pinned like prints */}
       {d.photos?.length ? (
-        <div className="absolute end-3 top-3 z-10 flex" aria-hidden>
+        <div className={cn('absolute z-10 flex', compact ? 'end-3 top-3' : 'end-6 top-6')} aria-hidden>
           {d.photos.slice(0, 3).map((p, k) => (
-            <span key={k} className="ob-pop -ms-4 block h-14 w-14 overflow-hidden rounded-[10px] border-[3px] border-white bg-white shadow-[0_6px_14px_-6px_rgba(27,38,86,0.45)] first:ms-0"
+            <span key={k} className={cn('ob-pop block overflow-hidden border-white bg-white shadow-[0_6px_14px_-6px_rgba(27,38,86,0.45)] first:ms-0', compact ? '-ms-4 h-14 w-14 rounded-[10px] border-[3px]' : '-ms-8 h-28 w-28 rounded-[14px] border-[5px]')}
               style={{ transform: `rotate(${[-6, 4, -2][k]}deg)`, animationDelay: `${k * 60}ms` }}>
               <img src={p} alt="" className="h-full w-full object-cover" />
             </span>

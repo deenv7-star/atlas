@@ -50,15 +50,15 @@ export function TimeDial({ value, onChange, label, color = '#3E2BF1', min = 6 * 
             return (
               <g key={h}>
                 <line x1={110 + 74 * Math.cos(a)} y1={110 + 74 * Math.sin(a)} x2={110 + (big ? 66 : 70) * Math.cos(a)} y2={110 + (big ? 66 : 70) * Math.sin(a)} stroke="#B3B9CF" strokeWidth={big ? 2.5 : 1.5} strokeLinecap="round" />
-                {big ? <text x={110 + 54 * Math.cos(a)} y={110 + 54 * Math.sin(a) + 4} textAnchor="middle" fontSize="12" fontWeight="600" fill="#646B85">{h}</text> : null}
+                {big ? <text x={110 + 57 * Math.cos(a)} y={110 + 57 * Math.sin(a) + 4} textAnchor="middle" fontSize="12" fontWeight="600" fill="#646B85">{h}</text> : null}
               </g>
             );
           })}
-          <line x1="110" y1="110" x2={110 + 60 * Math.cos(rad)} y2={110 + 60 * Math.sin(rad)} stroke={color} strokeWidth="3" strokeLinecap="round" />
+          <line x1={110 + 44 * Math.cos(rad)} y1={110 + 44 * Math.sin(rad)} x2={110 + 78 * Math.cos(rad)} y2={110 + 78 * Math.sin(rad)} stroke={color} strokeWidth="3" strokeLinecap="round" />
           <circle cx={hx} cy={hy} r="15" fill={color} stroke="#fff" strokeWidth="4" />
         </svg>
         <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="rounded-full bg-white/90 px-2 text-[34px] font-extrabold tabular-nums text-navy-900">{value}</span>
+          <span className="rounded-full bg-white px-1 text-[28px] font-extrabold leading-none tabular-nums text-navy-900">{value}</span>
         </span>
       </div>
       <div className="flex items-center gap-3">
