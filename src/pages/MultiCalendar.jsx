@@ -363,7 +363,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
         main={(
           <>
       {/* date chip strip: picks the day for the agenda (phones: the list below, desktop: the side panel) */}
-      <div role="group" aria-label="בחירת יום" className="d-strip -mx-5 scroll-px-5 mb-4 flex scroll-px-5 gap-2 overflow-x-auto px-5 pb-3 lg:mx-0 lg:px-0">
+      <div role="group" aria-label="בחירת יום" className="d-strip -mx-5 mb-4 flex scroll-px-5 gap-2 overflow-x-auto px-5 pb-3 lg:mx-0 lg:grid lg:grid-cols-[repeat(14,minmax(0,1fr))] lg:gap-1.5 lg:px-0">
         {stripDays.map((d) => {
           const iso = isoOf(d);
           const on = iso === selDay;
@@ -375,7 +375,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
               aria-pressed={on}
               aria-label={`${isToday(d) ? 'היום, ' : ''}${formatDayHe(iso)}`}
               className={cn(
-                'press flex h-[78px] w-[56px] shrink-0 flex-col items-center justify-center gap-1 rounded-full transition-colors duration-150',
+                'press flex h-[78px] w-[56px] shrink-0 flex-col items-center justify-center gap-1 rounded-full transition-colors duration-150 lg:w-auto',
                 on ? 'bg-brand-600 text-white shadow-[0_12px_22px_-10px_rgba(62,43,241,0.75)]' : 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.05)] hover:bg-[#FAFAFD]',
               )}
             >
