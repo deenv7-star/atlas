@@ -383,7 +383,8 @@ export async function finishOnboarding(user) {
   } catch (e) {
     console.warn('[Onboarding] finish:', e?.message);
   }
-  try { localStorage.setItem('onboarding_just_completed', String(Date.now())); } catch { /* ignore */ }
+  // Keyed to this user: a flag left by someone else in the same browser must never let a new account skip onboarding.
+  try { localStorage.setItem('onboarding_just_completed', JSON.stringify({ uid: user?.id || '', ts: Date.now() })); } catch { /* ignore */ }
   clearDraft(user?.id);
 }
 
