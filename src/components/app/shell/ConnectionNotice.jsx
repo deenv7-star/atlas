@@ -38,7 +38,7 @@ export default function ConnectionNotice() {
     setState(null);
   };
   return (
-    <div role="status" aria-live="polite" className="mx-auto mt-3 flex w-[calc(100%-2rem)] max-w-[1200px] items-center gap-3 rounded-[14px] border border-line bg-white px-4 py-3 shadow-[0_1px_2px_rgba(20,23,26,.06),0_4px_16px_rgba(20,23,26,.06)] md:w-[calc(100%-4rem)]">
+    <div role="status" aria-live="polite" className="mx-auto mt-3 flex w-[calc(100%-2rem)] max-w-[1200px] items-center gap-3 v7-card px-4 py-3 shadow-[0_1px_2px_rgba(20,23,26,.06),0_4px_16px_rgba(20,23,26,.06)] md:w-[calc(100%-4rem)]">
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-[#FFF4E0] text-[#B26A00]"><WifiOff className="h-5 w-5" strokeWidth={1.5} aria-hidden /></span>
       <div className="min-w-0 flex-1">
         <p className="text-[15px] font-bold text-navy-900">{state === 'failed' ? 'לא הצלחנו לטעון את הנתונים' : 'הטעינה לוקחת יותר מהרגיל'}</p>

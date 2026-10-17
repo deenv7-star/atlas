@@ -70,7 +70,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
         <motion.div
           ref={mergedRef}
           className={cn(
-            "fixed z-50 grid w-full gap-4 bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-sheet max-h-[92dvh] overflow-y-auto inset-x-0 bottom-0 rounded-t-[20px] data-[state=open]:slide-in-from-bottom-full sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-lg sm:rounded-[20px] sm:border sm:border-line sm:p-6 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[0.98] max-sm:!w-full max-sm:!max-w-none max-sm:!left-0 max-sm:!right-0 max-sm:!top-auto max-sm:!rounded-b-none max-sm:!rounded-t-[20px]",
+            "fixed z-50 grid w-full gap-4 bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-sheet max-h-[92dvh] overflow-y-auto inset-x-0 bottom-0 rounded-t-[28px] data-[state=open]:slide-in-from-bottom-full sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-lg sm:rounded-[24px] sm:border sm:border-line sm:p-6 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[0.98] max-sm:!w-full max-sm:!max-w-none max-sm:!left-0 max-sm:!right-0 max-sm:!top-auto max-sm:!rounded-b-none max-sm:!rounded-t-[28px]",
             className
           )}
           style={sheetMode ? { x: 0, y: 0 } : { x: '-50%', y: '-50%' }}

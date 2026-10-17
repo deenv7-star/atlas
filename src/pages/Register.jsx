@@ -139,7 +139,7 @@ export default function Register() {
     <AuthShell photo={WELCOME_PHOTO_2} caption="כל ההזמנות מכל הערוצים, בלוח אחד ופשוט.">
       <div>
         <div className="mb-8">
-          <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">פותחים חשבון</h1>
+          <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">פותחים חשבון</h1>
           <p className="mt-1.5 text-[15px] text-ink-400">14 ימים חינם, אחר כך מחליטים.</p>
         </div>
 

@@ -28,7 +28,7 @@ module.exports = {
   		},
   		colors: {
   			brand, navy: { 900: '#1B2656', DEFAULT: '#1B2656' }, ink: { 600: '#4A5578', 400: '#646B85', 300: '#9CA3B4' }, attention: '#F8B040',
-  			canvas: '#F7F8FB', surface: '#FFFFFF', line: '#E6E8F0',
+  			canvas: 'var(--canvas)', surface: '#FFFFFF', line: '#E8EAF2',
   			channel: { booking: '#1B2656', airbnb: '#EF5B5B', direct: '#3E2BF1', other: '#8C93AB' },
   			success, danger, warning: amber,
   			purple: brand, violet: brand, indigo: brand, blue: brand, sky: brand, teal: brand, cyan: brand, fuchsia: brand,

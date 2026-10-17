@@ -17,7 +17,7 @@ import { CalendarDays, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
-  Page, PageHeader, ChannelDot, fmtMoney, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, monthShort, dayNum,
+  Page, PageHeader, ChannelDot, ChannelBadge, fmtMoney, fmtShort, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows,
 } from '@/components/ds';
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
@@ -27,7 +27,7 @@ import { bookingFormToPayload } from '@/lib/entityPayloads';
 import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
-import { Rise } from '@/components/app/atoms';
+import { Rise, GuestAvatar } from '@/components/app/atoms';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -307,7 +307,7 @@ export default function BookingsPage({ selectedPropertyId }) {
               value={search}
               onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
               placeholder="חיפוש לפי שם אורח"
-              className="pr-10"
+              className="rounded-full pr-10"
               aria-label="חיפוש לפי שם אורח"
             />
           </div>
@@ -319,7 +319,7 @@ export default function BookingsPage({ selectedPropertyId }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[14px] border border-line bg-white shadow-card">
+      <div className="v7-card overflow-hidden">
         {isError ? (
           <div className="p-4"><ErrorFallback /></div>
         ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
@@ -336,26 +336,29 @@ export default function BookingsPage({ selectedPropertyId }) {
         ) : (
           <ErrorBoundary section="bookings-table" variant="inline" resetKey={`${effectivePropertyId ?? 'all'}|${tab}|${search}|${page}|${pageSize}`}>
             {/* Phones: cards. Desktop: the full table with bulk actions. */}
-            <ul className="divide-y divide-line">
+            <div aria-hidden className="hidden h-11 grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px] items-center gap-4 border-b border-[#EEF0F5] px-6 text-[12px] font-semibold text-ink-400 md:grid">
+              <span>אורח</span><span>תאריכים</span><span>ערוץ</span><span className="text-left">סכום</span><span>מצב</span>
+            </div>
+            <ul className="divide-y divide-[#EEF0F5]">
               {isLoading ? (
                 <li className="p-4"><SkelRows rows={5} /></li>
               ) : paged.map((b, idx) => (
                 <Rise as="li" i={Math.min(idx, 8)} key={b.id}>
-                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press v5-row flex min-h-[72px] items-center gap-3.5 px-4 py-3 md:gap-4 md:px-5">
-                    {/* date block: day + month, the row's anchor */}
-                    <span className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-[10px] border border-line bg-[#FAFBFC] leading-none">
-                      <span className="v5-num text-[17px] font-bold text-navy-900">{dayNum(b.check_in_date)}</span>
-                      <span className="mt-1 text-[12px] font-medium text-ink-400">{monthShort(b.check_in_date)}</span>
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[15px] font-medium text-navy-900">{b.guest_name || 'אורח'}</span>
-                      <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
-                        <ChannelDot source={b.booking_source || b.source} className="h-1.5 w-1.5" />
-                        <span className="truncate">{propName(b.property_id) || b.property_name} · {b.nights || 1} לילות</span>
+                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press v7-row flex min-h-[76px] items-center gap-3.5 px-4 py-3 md:grid md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px] md:gap-4 md:px-6">
+                    <span className="flex min-w-0 flex-1 items-center gap-3.5">
+                      <GuestAvatar name={b.guest_name || 'אורח'} size={44} />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[15px] font-semibold text-navy-900">{b.guest_name || 'אורח'}</span>
+                        <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
+                          <ChannelDot source={b.booking_source || b.source} className="h-1.5 w-1.5 md:hidden" />
+                          <span className="truncate">{propName(b.property_id) || b.property_name}<span className="md:hidden"> · {fmtShort(b.check_in_date)}</span> · {b.nights || 1} לילות</span>
+                        </span>
                       </span>
                     </span>
-                    <span className="hidden w-[96px] shrink-0 text-left text-[15px] font-semibold tabular text-navy-900 md:block">{fmtMoney(b.total_price)}</span>
-                    <StatusPill status={b.status} />
+                    <span className="hidden truncate text-[14px] font-medium tabular text-navy-900 md:block">{fmtShort(b.check_in_date)} – {fmtShort(b.check_out_date)}</span>
+                    <span className="hidden md:block"><ChannelBadge source={b.booking_source || b.source} /></span>
+                    <span className="hidden text-left text-[15px] font-bold tabular text-navy-900 md:block">{fmtMoney(b.total_price)}</span>
+                    <span className="shrink-0"><StatusPill status={b.status} /></span>
                   </Link>
                 </Rise>
               ))}
