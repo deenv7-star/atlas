@@ -9,6 +9,7 @@ import { BookingForm } from '@/components/forms/BookingForm';
 import { emptyBookingFormValues } from '@/components/forms/atlasFormSchemas';
 import { useCreateBooking, useProperties } from '@/data/entities';
 import { useToast } from '@/components/ui/AtlasToast';
+import { bookingFormToPayload } from '@/lib/entityPayloads';
 
 const QuickBookingContext = createContext({ open: () => {} });
 
@@ -58,7 +59,7 @@ export function QuickBookingProvider({ children }) {
             properties={properties.map((p) => ({ id: p.id, name: p.name }))}
             enableRouteGuard={false}
             onSubmit={async (data) => {
-              await createMutation.mutateAsync({ ...data });
+              await createMutation.mutateAsync(bookingFormToPayload(data));
               success('ההזמנה נשמרה');
             }}
             onCancel={close}
