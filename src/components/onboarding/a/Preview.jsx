@@ -32,14 +32,14 @@ function Ring({ on, children, className }) {
 }
 
 function coverOf(d) {
-  return d.coverPhoto || d.units.find((u) => u.photo)?.photo || typeInfo(d.type).photo || '/demo/complex-pool.webp';
+  return d.photos?.[0] || d.coverPhoto || d.units.find((u) => u.photo)?.photo || typeInfo(d.type).photo || '/demo/complex-pool.webp';
 }
 
-function Calendar({ d, focus, compact = false }) {
+function Calendar({ d, focus, compact = false, tall = false }) {
   const days = Array.from({ length: compact ? 5 : 7 }, (_, i) => addDays(todayISO(), i));
   const units = d.units.length ? d.units : [];
   return (
-    <Ring on={focus === 'units'} className="v7-card min-w-0 p-4">
+    <Ring on={focus === 'units'} className={cn('v7-card min-w-0 p-4', tall && 'h-full p-5')}>
       <div className="mb-3 flex items-center justify-between">
         <p className="text-[14px] font-bold text-navy-900">לוח שנה</p>
         <p className="text-[12px] text-ink-400">השבוע</p>
@@ -51,27 +51,28 @@ function Calendar({ d, focus, compact = false }) {
         ))}
         {units.length === 0 ? (
           <p className="col-span-full rounded-[12px] bg-[#F6F7FB] px-3 py-4 text-center text-[13px] text-ink-400">כאן יופיעו היחידות שלכם</p>
-        ) : units.slice(0, compact ? 3 : 6).map((u, r) => (
+        ) : units.slice(0, compact ? 3 : 8).map((u, r) => (
           <React.Fragment key={u.key}>
-            <span className="ob-pop flex min-w-0 items-center gap-1.5 truncate text-[12px] font-semibold text-navy-900" style={{ animationDelay: `${r * 60}ms` }}>
-              <span className="h-5 w-5 shrink-0 overflow-hidden rounded-[6px] bg-[#E4E1FD]">
+            <span className={cn('ob-pop flex min-w-0 items-center gap-1.5 truncate font-semibold text-navy-900', tall ? 'text-[13px]' : 'text-[12px]')} style={{ animationDelay: `${r * 60}ms` }}>
+              <span className={cn('shrink-0 overflow-hidden rounded-[6px] bg-[#E4E1FD]', tall ? 'h-7 w-7' : 'h-5 w-5')}>
                 {u.photo || typeInfo(d.type).photo ? <img src={u.photo || typeInfo(d.type).photo} alt="" className="h-full w-full object-cover" /> : null}
               </span>
               <span className="truncate">{u.name || 'יחידה'}</span>
             </span>
             {days.map((day, c) => (
-              <span key={day} className="ob-pop h-6 rounded-[7px] bg-[#F1EFFE]" style={{ animationDelay: `${r * 60 + c * 18}ms` }} />
+              <span key={day} className={cn('ob-pop rounded-[8px] bg-[#F1EFFE]', tall ? 'h-9' : 'h-6')} style={{ animationDelay: `${r * 60 + c * 18}ms` }} />
             ))}
           </React.Fragment>
         ))}
       </div>
-      {units.length > (compact ? 3 : 6) ? <p className="mt-2 text-[12px] text-ink-400">ועוד {units.length - (compact ? 3 : 6)}</p> : null}
+      {units.length > (compact ? 3 : 8) ? <p className="mt-2 text-[12px] text-ink-400">ועוד {units.length - (compact ? 3 : 8)}</p> : null}
     </Ring>
   );
 }
 
 function Hosting({ d, focus }) {
   const on = Object.entries(d.channels || {}).filter(([, c]) => c.on && Object.values(c.links || {}).some(Boolean)).map(([k]) => k);
+  const today = (d.channelsToday || []).filter((v) => !['booking', 'airbnb'].includes(v));
   return (
     <Ring on={focus === 'hosting' || focus === 'channels' || focus === 'wa'} className="v7-card p-4">
       <p className="mb-3 text-[14px] font-bold text-navy-900">היום</p>
@@ -93,7 +94,8 @@ function Hosting({ d, focus }) {
             <span key={k} className="ob-pop inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold text-white" style={{ background: PROVIDERS[k].color }}>
               <Check className="h-3 w-3" strokeWidth={3} aria-hidden />{PROVIDERS[k].label}
             </span>
-          )) : <span className="rounded-full bg-[#F1EFFE] px-2.5 py-1 text-[11px] font-semibold text-brand-600">ישיר</span>}
+          )) : null}
+          <span className="rounded-full bg-[#F1EFFE] px-2.5 py-1 text-[11px] font-semibold text-brand-600">ישיר{today.includes('phone') ? ' · טלפון' : ''}</span>
         </div>
       </div>
     </Ring>
@@ -113,8 +115,8 @@ export function PreviewFull({ d, focus, className }) {
         <Ring on={focus === 'business'} className="flex items-center gap-2.5 bg-[#F6F7FB] p-2">
           <span className="h-10 w-10 shrink-0 overflow-hidden rounded-[12px] bg-[#E4E1FD]"><img src={coverOf(d)} alt="" className="h-full w-full object-cover" /></span>
           <span className="min-w-0">
-            <span className="block truncate text-[13px] font-bold text-navy-900">{d.businessName || 'המתחם שלי'}</span>
-            <span className="block text-[11px] text-ink-400">{n ? `${n} ${n === 1 ? 'יחידה' : 'יחידות'}` : t.label}</span>
+            <span className="block truncate text-[13px] font-bold text-navy-900">{d.businessName || 'העסק שלי'}</span>
+            <span className="block text-[11px] text-ink-400">{n ? `${n} ${n === 1 ? 'יחידה' : 'יחידות'}` : (d.type ? t.label : 'עוד לא הוגדר')}</span>
           </span>
         </Ring>
         <nav className="flex flex-col gap-1">
@@ -131,28 +133,31 @@ export function PreviewFull({ d, focus, className }) {
             : <GuestAvatar name={d.ownerName || 'א'} size={48} ring photo={false} />}
           <div className="min-w-0">
             <p className="truncate text-[22px] font-extrabold tracking-[-0.01em] text-navy-900">{g}{name ? `, ${name}` : ''}</p>
-            <p className="text-[13px] text-ink-400">{formatDayHe(todayISO())}{d.businessName ? ` · ${d.businessName}` : ''}</p>
+            <p className="text-[13px] text-ink-400">{formatDayHe(todayISO())}{d.businessName ? ` · ${d.businessName}` : ''}{d.settlement ? `, ${d.settlement}` : ''}</p>
           </div>
         </Ring>
         <div className="grid grid-cols-5 gap-4">
-          <div className="v7-hero col-span-3 flex min-h-[150px] flex-col justify-between p-5">
+          <div className="v7-hero col-span-3 flex min-h-[200px] flex-col justify-between p-6 xl:min-h-[230px]">
             <p className="text-[14px] font-medium text-white/85">הכנסות החודש</p>
             <div>
-              <p className="text-[36px] font-extrabold leading-none tracking-[-0.03em] tabular-nums">{formatMoney(0)}</p>
+              <p className="text-[44px] font-extrabold leading-none tracking-[-0.03em] tabular-nums">{formatMoney(0)}</p>
               <p className="mt-2 text-[12px] text-white/85">החודש הראשון שלכם{n ? ` · עד ${formatMoney(d.units.reduce((s, u) => s + (Number(u.price) || 0), 0))} ללילה מלא` : ''}</p>
             </div>
           </div>
           <Ring on={focus === 'business' || focus === 'type'} className="col-span-2">
-            <div className="c-photo flex h-full min-h-[150px] flex-col justify-end p-3.5 text-white">
+            <div className="c-photo flex h-full min-h-[200px] flex-col justify-end p-4 text-white xl:min-h-[230px]">
               <img src={coverOf(d)} alt="" />
-              <p className="text-[15px] font-bold leading-tight drop-shadow">{d.businessName || t.label || 'המתחם שלכם'}</p>
-              <p className="text-[12px] text-white/85">{n ? `${n} פנויות הלילה` : 'מוכן לאורחים הראשונים'}</p>
+              <p className="text-[15px] font-bold leading-tight drop-shadow">{d.businessName || (d.type ? t.label : '') || 'העסק שלכם'}</p>
+              <p className="text-[12px] text-white/85">{d.settlement ? `${d.settlement} · ` : ''}{n ? `${n} ${typeInfo(d.type).single ? 'פנוי הלילה' : 'פנויות הלילה'}` : 'מוכן לאורחים הראשונים'}</p>
+              {d.photos?.length > 1 ? (
+                <div className="mt-2 flex gap-1">{d.photos.slice(1, 5).map((p, k) => <span key={k} className="ob-pop h-7 w-7 overflow-hidden rounded-[8px] ring-2 ring-white/70"><img src={p} alt="" className="h-full w-full object-cover" /></span>)}</div>
+              ) : null}
             </div>
           </Ring>
         </div>
-        <div className="grid min-h-0 grid-cols-5 gap-4">
-          <div className="col-span-3 min-w-0"><Calendar d={d} focus={focus} /></div>
-          <div className="col-span-2"><Hosting d={d} focus={focus} /></div>
+        <div className="grid min-h-0 flex-1 grid-cols-5 gap-4">
+          <div className="col-span-3 min-w-0"><Calendar d={d} focus={focus} tall /></div>
+          <div className="col-span-2 [&>div]:h-full"><Hosting d={d} focus={focus} /></div>
         </div>
       </div>
     </div>
@@ -171,12 +176,20 @@ export function PreviewCompact({ d, focus }) {
         {d.ownerPhoto ? <img src={d.ownerPhoto} alt="" className="h-9 w-9 rounded-full object-cover" /> : <GuestAvatar name={d.ownerName || 'א'} size={36} photo={false} />}
         <div className="min-w-0 flex-1">
           <p className={cn('truncate text-[15px] font-extrabold text-navy-900 transition-colors', focus === 'owner' && 'text-brand-600')}>{g}{name ? `, ${name}` : ''}</p>
-          <p className={cn('truncate text-[12px] text-ink-400', focus === 'business' && 'font-semibold text-brand-600')}>{d.businessName || t.label || 'המתחם שלכם'}</p>
+          <p className={cn('truncate text-[12px] text-ink-400', focus === 'business' && 'font-semibold text-brand-600')}>{d.businessName || (d.type ? t.label : '') || 'העסק שלכם'}{d.settlement ? ` · ${d.settlement}` : ''}</p>
         </div>
         <span className="h-9 w-14 shrink-0 overflow-hidden rounded-[10px] bg-[#E4E1FD]"><img src={coverOf(d)} alt="" className="h-full w-full object-cover" /></span>
       </div>
       <div className="flex gap-1.5 overflow-hidden px-3.5 pb-3 pt-2.5">
-        {focus === 'hosting' || focus === 'wa' || focus === 'channels' || focus === 'deposit' ? (
+        {focus === 'channels' ? (
+          <>
+            {(d.channelsToday || []).length ? (d.channelsToday || []).slice(0, 3).map((v, k) => (
+              <span key={v} className="ob-pop inline-flex h-8 items-center rounded-full bg-[#F1EFFE] px-3 text-[12px] font-semibold text-brand-700" style={{ animationDelay: `${k * 50}ms` }}>
+                {{ phone: 'טלפון', booking: 'Booking', airbnb: 'Airbnb', website: 'אתר', social: 'רשתות', portals: 'אתרי צימרים' }[v]}
+              </span>
+            )) : <span className="inline-flex h-8 items-center rounded-full bg-[#F6F7FB] px-3 text-[12px] text-ink-400">ערוצי ההזמנות יופיעו כאן</span>}
+          </>
+        ) : focus === 'hosting' || focus === 'wa' || focus === 'deposit' ? (
           <>
             <span className="ob-pop inline-flex h-8 items-center gap-1.5 rounded-full bg-[var(--st-mint-bg)] px-3 text-[12px] font-semibold text-[var(--st-mint-fg)]"><LogIn className="h-3.5 w-3.5" aria-hidden />כניסה {d.checkIn}</span>
             <span className="ob-pop inline-flex h-8 items-center gap-1.5 rounded-full bg-[var(--st-sky-bg)] px-3 text-[12px] font-semibold text-[var(--st-sky-fg)]"><LogOut className="h-3.5 w-3.5" aria-hidden />יציאה {d.checkOut}</span>
@@ -188,7 +201,7 @@ export function PreviewCompact({ d, focus }) {
         )) : (
           <span className="inline-flex h-8 items-center rounded-full bg-[#F6F7FB] px-3 text-[12px] text-ink-400">היחידות יופיעו כאן</span>
         )}
-        {n > 4 && !(focus === 'hosting' || focus === 'wa' || focus === 'channels' || focus === 'deposit') ? <span className="inline-flex h-8 items-center px-1 text-[12px] text-ink-400">+{n - 4}</span> : null}
+        {n > 4 && !['hosting', 'wa', 'channels', 'deposit'].includes(focus) ? <span className="inline-flex h-8 items-center px-1 text-[12px] text-ink-400">+{n - 4}</span> : null}
       </div>
     </div>
   );
