@@ -198,7 +198,7 @@ export function Team() {
               <tbody>
                 {(data || []).map((m) => (
                   <tr key={m.user_id}>
-                    <td className="a-cell-main">{m.full_name || '—'}{m.email === me?.email ? <span className="a-muted"> · אתם</span> : null}</td>
+                    <td><span className="a-cell-main">{m.full_name || '—'}{m.email === me?.email ? <span className="a-muted"> · אתם</span> : null}</span></td>
                     <td className="a-muted"><span className="adm-ltr">{m.email}</span></td>
                     <td>{can('owner') ? <RoleSelect member={m} meEmail={me?.email} /> : <Pill tone={m.role === 'owner' ? 'brand' : 'gray'}>{ROLES[m.role]?.label}</Pill>}</td>
                     <td className="a-muted">{relTime(m.last_sign_in_at)}</td>
