@@ -1,0 +1,101 @@
+/* Landing v7 K / L shared: type, faces, white button, bold pricing, indigo final CTA.
+   ATLAS colours only: indigo #3E2BF1 used boldly, navy #1B2656 text, white / #F7F8FB,
+   cool sky / lilac / mint tints. No warm surfaces, no dark sections (solid indigo is the bold colour). */
+
+.kl {
+  --sky-50: #e6f2ff;
+  --sky-200: #bfe0ff;
+  --lilac-50: #efecff;
+  --lilac-200: #d9d3ff;
+  --mint-50: #e8f7f1;
+  --mint-200: #bfe9d6;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --r-box: 28px;
+}
+@media (min-width: 900px) { .kl { --r-box: 36px; } }
+
+/* ---------- type ---------- */
+.kl-head { max-width: 820px; margin-bottom: 36px; }
+.kl-head.is-center { margin-inline: auto; text-align: center; }
+@media (min-width: 900px) { .kl-head { margin-bottom: 52px; } }
+.kl-h2 { font-size: 36px; line-height: 1.04; font-weight: 800; letter-spacing: -0.045em; color: var(--navy); text-wrap: balance; }
+.kl-h2 .is-ind { color: var(--indigo); }
+.kl-h2.is-sm { font-size: 28px; margin-bottom: 24px; }
+@media (min-width: 900px) { .kl-h2 { font-size: 56px; } .kl-h2.is-sm { font-size: 36px; margin-bottom: 32px; } }
+@media (min-width: 1200px) { .kl-h2 { font-size: 64px; } }
+.kl-txt { font-size: 17px; line-height: 1.6; color: var(--ink); margin-top: 14px; max-width: 34em; text-wrap: pretty; }
+.kl-head.is-center .kl-txt { margin-inline: auto; }
+@media (min-width: 900px) { .kl-txt { font-size: 19px; } }
+.kl-cap { margin-top: 16px; font-size: 13px; color: var(--ink-2); text-align: center; }
+
+/* ---------- faces ---------- */
+.klf { width: var(--s); height: var(--s); border-radius: 50%; object-fit: cover; display: block; flex: none; box-shadow: 0 0 0 2px #fff; background: var(--indigo-100); }
+
+/* ---------- white button (on indigo / photos) ---------- */
+.l5-btn.is-white { background: #fff; color: var(--indigo); box-shadow: 0 1px 2px rgba(10, 8, 80, 0.2), 0 10px 24px -10px rgba(10, 8, 80, 0.45); }
+@media (hover: hover) and (pointer: fine) { .l5-btn.is-white:hover { background: #f1efff; } }
+
+/* ---------- pricing ---------- */
+.klp-seg { display: flex; width: max-content; margin: 0 auto 32px; padding: 4px; border-radius: 999px; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+.klp-seg button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: transparent; font-size: 15px; font-weight: 700; color: var(--ink); cursor: pointer; transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out), box-shadow 220ms var(--ease-out); }
+.klp-seg button[aria-pressed='true'] { background: var(--indigo); color: #fff; box-shadow: 0 6px 16px -6px rgba(62, 43, 241, 0.6); }
+.klp-plans { display: grid; gap: 14px; max-width: 1120px; margin-inline: auto; align-items: stretch; }
+.klp-plan { position: relative; display: flex; flex-direction: column; padding: 28px 24px; border-radius: 28px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.klp-plan.is-pop { background: var(--indigo); color: #fff; box-shadow: 0 30px 60px -28px rgba(62, 43, 241, 0.7); }
+.klp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.klp-plan h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.klp-tag { display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); font-size: 13px; font-weight: 700; color: #fff; }
+.klp-desc { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
+.klp-plan.is-pop .klp-desc { color: rgba(255, 255, 255, 0.82); }
+.klp-price { display: flex; align-items: baseline; gap: 8px; margin: 18px 0 22px; }
+.klp-price b { font-size: 56px; line-height: 1; font-weight: 800; letter-spacing: -0.05em; }
+.klp-price span { font-size: 14px; color: var(--ink-2); }
+.klp-plan.is-pop .klp-price span { color: rgba(255, 255, 255, 0.82); }
+.klp-feat { display: grid; gap: 10px; margin-top: 22px; }
+.klp-feat li { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.klp-feat svg { color: var(--indigo); flex: none; }
+.klp-plan.is-pop .klp-feat svg { color: #fff; }
+@media (max-width: 899px) { .klp-plan:not(.is-pop) .klp-feat { display: none; } .klp-price { margin: 14px 0 18px; } .klp-plan.is-pop { order: -1; } }
+@media (min-width: 900px) {
+  .klp-plans { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .klp-plan { padding: 40px 34px; }
+  .klp-plan.is-pop { transform: translateY(-12px); }
+}
+.klp-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 32px; margin-top: 36px; }
+.klp-trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--navy); }
+.klp-trust svg { color: var(--indigo); }
+
+/* ---------- final CTA ---------- */
+.klx { padding: 24px 0 72px; }
+@media (min-width: 900px) { .klx { padding: 40px 0 112px; } }
+.klx-box { position: relative; overflow: hidden; isolation: isolate; border-radius: var(--r-box); background: var(--indigo); color: #fff; text-align: center; padding: 120px 22px 56px; }
+.klx-box::before { content: ''; position: absolute; inset: -40% -10% auto; height: 120%; z-index: -1; background: radial-gradient(50% 50% at 50% 50%, rgba(140, 200, 255, 0.35), rgba(140, 200, 255, 0) 70%); }
+.klx-h { font-size: 40px; line-height: 1.02; font-weight: 800; letter-spacing: -0.05em; text-wrap: balance; }
+.klx-sub { font-size: 17px; line-height: 1.55; color: rgba(255, 255, 255, 0.88); margin: 18px auto 28px; max-width: 30em; }
+.klx-cta { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.klx-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 20px; border-radius: 12px; font-size: 17px; font-weight: 700; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4); transition: background-color 200ms var(--ease-out); }
+.klx-link .l5-mk-whatsapp { color: #fff; }
+@media (hover: hover) and (pointer: fine) { .klx-link:hover { background: rgba(255, 255, 255, 0.1); } }
+.klx-note { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 14px; color: rgba(255, 255, 255, 0.86); }
+.klx-faces { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.klx-face { position: absolute; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.22), 0 14px 30px -12px rgba(10, 8, 80, 0.6); animation: l7-bob 7s ease-in-out infinite; animation-delay: calc(var(--i) * -1.2s); }
+.klx-face.is-1 { inset-block-start: 26px; inset-inline-start: 12%; }
+.klx-face.is-2 { inset-block-start: 18px; inset-inline-end: 14%; width: 56px; height: 56px; }
+.klx-face.is-3 { inset-block-start: 40px; inset-inline-start: 44%; width: 48px; height: 48px; }
+.klx-face.is-4, .klx-face.is-5, .klx-face.is-6 { display: none; }
+@media (min-width: 900px) {
+  .klx-box { padding: 120px 40px 104px; }
+  .klx-h { font-size: 80px; }
+  .klx-sub { font-size: 20px; }
+  .klx-face.is-1 { inset-block-start: 90px; inset-inline-start: 7%; width: 88px; height: 88px; }
+  .klx-face.is-2 { inset-block-start: 64px; inset-inline-end: 9%; width: 72px; height: 72px; }
+  .klx-face.is-3 { inset-block-start: auto; inset-block-end: 70px; inset-inline-start: 15%; width: 64px; height: 64px; }
+  .klx-face.is-4 { display: block; inset-block-end: 90px; inset-inline-end: 13%; width: 84px; height: 84px; }
+  .klx-face.is-5 { display: block; inset-block-start: 40px; inset-inline-start: 30%; width: 48px; height: 48px; }
+  .klx-face.is-6 { display: block; inset-block-start: 44px; inset-inline-end: 31%; width: 52px; height: 52px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .klx-face, .klp-seg button { animation: none !important; transition: none !important; }
+}
+.kl .klp-plan.is-pop h3, .kl .klx-h { color: #fff; }
