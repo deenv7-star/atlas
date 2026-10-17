@@ -212,7 +212,7 @@ function GuestPagesScreen({ user, orgId }) {
         title="דף אורח והזמנה ישירה"
         subtitle="דף אישי לכל אורח עם כל פרטי השהייה, ודף הזמנה ישירה לכל יחידה."
       />
-      {data.isLoading ? <Skeleton className="h-64 rounded-[14px]" /> : properties.length === 0 ? (
+      {data.isLoading ? <Skeleton className="h-64 rounded-[22px]" /> : properties.length === 0 ? (
         <div className="ab-card p-6 text-center">
           <p className="font-bold">עוד אין יחידות במערכת.</p>
           <p className="ab-meta mt-1">הוסיפו נכס בהגדרות כדי ליצור דפים לאורחים.</p>

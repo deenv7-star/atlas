@@ -247,21 +247,21 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
             value={searchTerm}
             onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
             placeholder="חיפוש לפי שם, טלפון או אימייל"
-            className="pr-10"
+            className="rounded-full pr-10"
             aria-label="חיפוש לידים"
           />
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[14px] border border-line bg-white">
+      <div className="v7-card overflow-hidden">
         {isLoading ? <div className="p-4"><SkelRows rows={5} /></div> : sorted.length ? (
-          <ul className="divide-y divide-line">
+          <ul className="divide-y divide-[#EEF0F5]">
             {paged.map((l, idx) => (
               <Rise as="li" i={Math.min(idx, 8)} key={l.id}>
-                <Link to={`${createPageUrl('LeadDetail')}/${l.id}`} className="press flex min-h-[76px] items-center gap-4 px-5 py-3 hover:bg-neutral-50 active:bg-neutral-50">
+                <Link to={`${createPageUrl('LeadDetail')}/${l.id}`} className="press v7-row flex min-h-[76px] items-center gap-4 px-5 py-3 md:px-6">
                   <GuestAvatar name={l.full_name || 'ליד'} size={44} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[16px] font-bold text-navy-900">{l.full_name || 'ללא שם'}</span>
+                    <span className="block truncate text-[15px] font-semibold text-navy-900">{l.full_name || 'ללא שם'}</span>
                     <span className="block truncate text-[13px] text-ink-400">
                       {l.check_in_date ? `מבקש ${fmtShort(l.check_in_date)}` : 'בלי תאריכים'}{l.nights ? ` · ${l.nights} לילות` : ''}
                     </span>
@@ -283,7 +283,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         ) : null}
       </div>
 
-      <div className={cn("overflow-hidden rounded-[14px] border border-line bg-white shadow-card", sorted.length || isLoading ? "hidden" : "")}>
+      <div className={cn("v7-card overflow-hidden", sorted.length || isLoading ? "hidden" : "")}>
         {isError ? (
           <div className="p-4 text-center text-sm text-red-600">שגיאה בטעינת הלידים</div>
         ) : sorted.length === 0 && !isLoading ? (

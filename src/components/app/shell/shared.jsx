@@ -105,7 +105,7 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) 
           {groups.map((g) => (
             <div key={g.id}>
               {g.label ? <p className="mb-1.5 px-3 text-[13px] font-medium text-ink-400">{g.label}</p> : null}
-              <div className="overflow-hidden rounded-[14px] border border-line bg-white">
+              <div className="overflow-hidden v7-card">
                 {g.items.map((item, i) => {
                   const Icon = item.icon;
                   const active = isActive(item.page);
@@ -131,7 +131,7 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) 
           <button
             type="button"
             onClick={onLogout}
-            className="press flex min-h-[52px] w-full items-center justify-center rounded-[14px] border border-line bg-white text-[16px] font-medium text-danger-600"
+            className="press flex min-h-[52px] w-full items-center justify-center v7-card text-[16px] font-medium text-danger-600"
           >
             יציאה מהחשבון
           </button>

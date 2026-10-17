@@ -111,7 +111,7 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
             onChange={e => setSearchTerm(e.target.value)}
             placeholder="חיפוש לפי שם אורח"
             aria-label="חיפוש ביקורת"
-            className="pr-10"
+            className="rounded-full pr-10"
           />
         </div>
         <SegmentedControl

@@ -230,7 +230,7 @@ export default function InvoicesPage({ orgId }) {
               placeholder="חיפוש לפי שם או מספר..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pr-10"
+              className="rounded-full pr-10"
             />
           </div>
 

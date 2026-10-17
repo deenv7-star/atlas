@@ -123,7 +123,7 @@ export default function SettingsPage({ user }) {
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Tab list */}
-        <div className="-mx-4 flex gap-1 overflow-x-auto px-4 md:mx-0 md:w-52 md:flex-col md:px-0 flex-shrink-0 [scrollbar-width:none]">
+        <div className="v7-strip -mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1 md:mx-0 md:w-56 md:flex-col md:px-0 flex-shrink-0">
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
@@ -131,13 +131,13 @@ export default function SettingsPage({ user }) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "press flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-[10px] px-3.5 text-[15px] text-right min-h-[44px]",
+                  "press flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full px-4 text-[15px] text-right min-h-[44px]",
                   activeTab === tab.id
-                    ? "bg-[#EEF0FF] font-medium text-brand-700"
-                    : "font-medium text-ink-600 hover:bg-[#F5F6F9] hover:text-navy-900"
+                    ? "bg-navy-900 font-semibold text-white shadow-[0_6px_14px_-6px_rgba(27,38,86,0.5)]"
+                    : "bg-white font-medium text-ink-600 ring-1 ring-inset ring-[#E8EAF2] hover:text-navy-900 md:bg-transparent md:ring-0 md:hover:bg-white"
                 )}
               >
-                <Icon className={cn("h-[18px] w-[18px] flex-shrink-0", activeTab === tab.id ? "text-brand-600" : "text-ink-300")} strokeWidth={1.5} />
+                <Icon className={cn("h-[18px] w-[18px] flex-shrink-0", activeTab === tab.id ? "text-white" : "text-ink-400")} strokeWidth={1.6} />
                 {tab.label}
               </button>
             );
@@ -156,9 +156,9 @@ export default function SettingsPage({ user }) {
               <CardContent className="space-y-5">
                 {/* Avatar */}
                 <div className="flex items-center gap-4">
-                  <Avatar className="w-16 h-16 ring-2 ring-brand-600/20">
+                  <Avatar className="w-16 h-16 ring-4 ring-white shadow-card">
                     <AvatarImage src={user?.profile_image} />
-                    <AvatarFallback className="bg-brand-600/15 text-brand-600 text-lg font-semibold">
+                    <AvatarFallback className="bg-[#E7E5FE] text-brand-600 text-lg font-bold">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>

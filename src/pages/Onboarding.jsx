@@ -547,7 +547,7 @@ export default function Onboarding() {
       case 0:
         return (
           <div className="text-center py-4">
-            <span className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-50 text-brand-600"><Home className="h-7 w-7" strokeWidth={1.5} /></span>
+            <span className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#ECEAFE] text-brand-600"><Home className="h-7 w-7" strokeWidth={1.5} /></span>
             <h2 className="mb-2 text-[26px] font-bold leading-tight tracking-[-0.02em] text-navy-900">ברוכים הבאים ל-ATLAS</h2>
             <p className="mb-6 text-[15px] leading-relaxed text-ink-600">שתי דקות, והמתחם שלכם מוכן לקבל הזמנות.</p>
 
@@ -573,7 +573,7 @@ export default function Onboarding() {
 
             <Button
               onClick={goNext}
-              className="w-full h-12 text-base font-bold rounded-[10px] gap-2 transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] bg-brand-600 text-white [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
+              className="w-full h-12 text-base font-bold rounded-full gap-2 transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] bg-brand-600 text-white [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
             >
               מתחילים
               <ArrowLeft className="w-5 h-5" />
@@ -761,7 +761,7 @@ export default function Onboarding() {
               <Button
                 onClick={handleSaveOrgAndProperty}
                 disabled={!combinedValid || saving}
-                className="flex-1 h-12 text-base font-bold rounded-[10px] gap-2 bg-brand-600 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
+                className="flex-1 h-12 text-base font-bold rounded-full gap-2 bg-brand-600 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
               >
                 {saving ? <Loader2 className="w-5 h-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden /> : <ArrowLeft className="w-5 h-5" />}
                 {saving ? 'שומר...' : 'הבא'}
@@ -888,7 +888,7 @@ export default function Onboarding() {
             <Button
               onClick={handleFinish}
               disabled={saving}
-              className="w-full h-12 text-base font-bold rounded-[10px] gap-2 bg-brand-600 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
+              className="w-full h-12 text-base font-bold rounded-full gap-2 bg-brand-600 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
             >
               {saving ? <Loader2 className="w-5 h-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden /> : <ArrowLeft className="w-5 h-5" />}
               {saving ? 'מעביר...' : 'כניסה ללוח הבקרה'}
