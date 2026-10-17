@@ -363,7 +363,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
         main={(
           <>
       {/* date chip strip: picks the day for the agenda (phones: the list below, desktop: the side panel) */}
-      <div role="group" aria-label="בחירת יום" className="d-strip -mx-5 mb-4 flex scroll-px-5 gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
+      <div role="group" aria-label="בחירת יום" className="d-strip -mx-5 scroll-px-5 mb-4 flex scroll-px-5 gap-2 overflow-x-auto px-5 pb-3 lg:mx-0 lg:px-0">
         {stripDays.map((d) => {
           const iso = isoOf(d);
           const on = iso === selDay;
@@ -387,7 +387,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
       </div>
 
       {properties.length > 1 ? (
-        <div role="group" aria-label="יחידה" className="d-strip -mx-5 mb-4 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
+        <div role="group" aria-label="יחידה" className="d-strip -mx-5 scroll-px-5 mb-4 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
           {[{ id: null, name: 'כל היחידות' }, ...properties].map((p) => {
             const on = (urlPropertyId ?? null) === p.id;
             return (

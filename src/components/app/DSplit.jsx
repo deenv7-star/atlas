@@ -80,7 +80,9 @@ export function ProgressRing({ pct = 0, size = 44, stroke = 5, color = '#3E2BF1'
     <span className="relative inline-flex shrink-0 items-center justify-center" style={{ width: size, height: size }} role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : true}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" aria-hidden>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={stroke} />
-        {v > 0 ? <circle className="d-arc" cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - v / 100)} style={{ '--c': c }} /> : null}
+        {v > 0
+          ? <circle className="d-arc" cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - v / 100)} style={{ '--c': c }} />
+          : <circle cx={size - stroke / 2} cy={size / 2} r={stroke / 2} fill={color} />}
       </svg>
       {children ? <span className="absolute inset-0 flex items-center justify-center" aria-hidden>{children}</span> : null}
     </span>

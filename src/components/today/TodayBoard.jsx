@@ -8,7 +8,7 @@
  */
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ChevronLeft, Clock, ArrowUpLeft, ListChecks, Wallet, CalendarDays, MessageSquare } from 'lucide-react';
+import { Check, ChevronLeft, Clock, ArrowUpLeft, ListChecks, CheckCheck, Hourglass, Wallet, CalendarDays, MessageSquare } from 'lucide-react';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
 import { todayISO, addDays, formatDayHe } from '@/lib/stay/format';
@@ -98,7 +98,7 @@ function DayStrip({ day, sel, onSelect, bookings }) {
     busy.add(checkOutOf(b));
   }
   return (
-    <div role="group" aria-label="בחירת יום" className="d-strip -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:grid lg:grid-cols-7 lg:px-0">
+    <div role="group" aria-label="בחירת יום" className="d-strip -mx-5 scroll-px-5 flex gap-2 overflow-x-auto px-5 pb-3 lg:mx-0 lg:grid lg:grid-cols-7 lg:px-0">
       {days.map((d, k) => {
         const dt = new Date(`${d}T12:00:00`);
         const on = d === sel;
@@ -256,12 +256,12 @@ export default function TodayBoard({ user, orgId }) {
         </ProgressRing>
         <ul className="min-w-0 flex-1 space-y-2.5 text-[14px]">
           {[
-            { label: 'משימות היום', value: tasks.length },
-            { label: 'בוצעו', value: doneCount },
-            { label: 'נשארו', value: tasks.length - doneCount },
+            { label: isToday ? 'משימות היום' : 'משימות', value: tasks.length, Icon: ListChecks },
+            { label: 'בוצעו', value: doneCount, Icon: CheckCheck },
+            { label: 'נשארו', value: tasks.length - doneCount, Icon: Hourglass },
           ].map((r) => (
             <li key={r.label} className="flex items-center gap-2.5">
-              <span aria-hidden className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-white/15"><ListChecks className="h-4 w-4 text-white" strokeWidth={1.75} /></span>
+              <span aria-hidden className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-white/15"><r.Icon className="h-4 w-4 text-white" strokeWidth={1.75} /></span>
               <span className="tabular text-[17px] font-bold text-white">{r.value}</span>
               <span className="truncate text-white/80">{r.label}</span>
             </li>
@@ -332,7 +332,7 @@ export default function TodayBoard({ user, orgId }) {
         <h2 className="text-[20px] font-extrabold tracking-[-0.01em] text-navy-900">{isToday ? 'המשימות של היום' : formatDayHe(sel)}</h2>
         <Link to="/calendar" className="press inline-flex h-11 items-center rounded-full px-2 text-[14px] font-semibold text-brand-600 hover:text-brand-700">ללוח השנה</Link>
       </div>
-      <div role="group" aria-label="סינון משימות" className="d-strip -mx-5 mb-4 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
+      <div role="group" aria-label="סינון משימות" className="d-strip -mx-5 scroll-px-5 mb-4 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
         {counts.map((c) => (
           <CountChip key={c.key} on={filter === c.key} count={c.n} onClick={() => setFilter(c.key)} aria-pressed={filter === c.key}>{c.label}</CountChip>
         ))}

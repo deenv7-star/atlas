@@ -338,7 +338,7 @@ export default function BookingsPage({ selectedPropertyId }) {
         asideLabel="סיכום וסינון"
         main={(
           <>
-      <div role="group" aria-label="סינון לפי מצב" className="d-strip -mx-5 mb-3 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
+      <div role="group" aria-label="סינון לפי מצב" className="d-strip -mx-5 scroll-px-5 mb-3 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
         {[
           { value: 'all', label: 'הכל', n: counts.total },
           { value: 'active', label: 'פעילות', n: counts.confirmed },
