@@ -178,7 +178,7 @@ export default function OnboardingA({ user, again = false }) {
               {OWNER_ROLES.map((r, k) => {
                 const Icon = [Crown, Briefcase, HeartHandshake, UserRound][k];
                 return (
-                  <button key={r.value} type="button" role="radio" aria-checked={d.ownerRole === r.value} className="ob-choice ob-press ob-pop items-start gap-3 p-4" style={{ animationDelay: `${k * 50}ms` }}
+                  <button key={r.value} type="button" role="radio" aria-checked={d.ownerRole === r.value} className="ob-choice ob-press ob-pop flex-col items-start gap-3 p-4" style={{ animationDelay: `${k * 50}ms` }}
                     onClick={() => { update({ ownerRole: r.value }); clearTimeout(autoNext.current); autoNext.current = setTimeout(() => go(step(i, 1)), 420); }}>
                     <span className={cn('flex h-12 w-12 items-center justify-center rounded-[14px]', d.ownerRole === r.value ? 'bg-brand-600 text-white' : 'bg-brand-50 text-brand-600')}><Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden /></span>
                     <span className="flex flex-col"><span className="text-[19px] font-bold text-navy-900">{r.label}</span><span className="text-[14px] text-ink-400">{r.line}</span></span>
@@ -217,7 +217,7 @@ export default function OnboardingA({ user, again = false }) {
             <div role="radiogroup" aria-label="סוג העסק" className="grid grid-cols-2 gap-3">
               {[...BUSINESS_TYPES, OTHER_TYPE].map((t, k) => (
                 <button key={t.value} type="button" role="radio" aria-checked={d.type === t.value}
-                  className="ob-choice ob-press ob-pop" style={{ animationDelay: `${k * 40}ms` }}
+                  className="ob-choice ob-press ob-pop flex-col" style={{ animationDelay: `${k * 40}ms` }}
                   onClick={() => {
                     update((cur) => {
                       const info = typeInfo(t.value);
