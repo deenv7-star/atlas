@@ -68,7 +68,7 @@ export function renderTemplate(key, ctx) {
         `כניסה מ-${info.check_in_time}, יציאה עד ${info.check_out_time}.`,
         bal ? `יתרה לתשלום: ${bal}.` : '',
         link ? `כל הפרטים לשהייה נמצאים כאן: ${link}` : '',
-        'נשמח לארח אתכם.',
+        (info.closing_line || 'נשמח לארח אתכם.').trim(),
       ].filter(Boolean).join('\n') + sign;
 
     case 'arrival_eve':

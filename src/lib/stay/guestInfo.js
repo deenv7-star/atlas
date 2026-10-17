@@ -1,5 +1,6 @@
 /** Per-property guest information (stored in properties.guest_info jsonb, migration 008). */
 import { isSupabaseConfigured } from '@/api/supabaseClient';
+import { readOrgSettings } from '@/lib/onboarding/orgSettings';
 
 export const GUEST_INFO_DEFAULTS = {
   check_in_time: '15:00',
@@ -11,6 +12,7 @@ export const GUEST_INFO_DEFAULTS = {
   host_name: '',
   host_phone: '',
   navigation_query: '',
+  closing_line: '',
 };
 
 export function guestInfoOf(property) {
@@ -19,7 +21,16 @@ export function guestInfoOf(property) {
   if (typeof raw === 'string') {
     try { info = JSON.parse(raw); } catch { info = {}; }
   }
-  return { ...GUEST_INFO_DEFAULTS, ...(info && typeof info === 'object' ? info : {}) };
+  // the owner's own business defaults (set in onboarding) sit between the built-in defaults and the unit's own info
+  const org = readOrgSettings();
+  const orgDefaults = {};
+  if (org.check_in_time) orgDefaults.check_in_time = org.check_in_time;
+  if (org.check_out_time) orgDefaults.check_out_time = org.check_out_time;
+  if (org.host_name) orgDefaults.host_name = org.host_name;
+  if (org.host_phone) orgDefaults.host_phone = org.host_phone;
+  if (org.wa_greeting) orgDefaults.closing_line = org.wa_greeting;
+  const own = info && typeof info === 'object' ? Object.fromEntries(Object.entries(info).filter(([, v]) => v !== '' && v != null)) : {};
+  return { ...GUEST_INFO_DEFAULTS, ...orgDefaults, ...own };
 }
 
 export function navigationTarget(property) {

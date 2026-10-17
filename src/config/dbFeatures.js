@@ -17,6 +17,8 @@ export const DB_FEATURES = {
   guestPages: !isSupabaseConfigured || LEVEL >= 8,
   directBooking: !isSupabaseConfigured || LEVEL >= 8,
   expenses: !isSupabaseConfigured || LEVEL >= 9,
+  /** organizations.settings jsonb (migration 010): business defaults from onboarding sync across devices */
+  orgSettings: isSupabaseConfigured && LEVEL >= 10,
 };
 
 /** True for "relation/column/function does not exist" style errors from PostgREST / Postgres. */

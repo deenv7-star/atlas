@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
+import { Link } from 'react-router-dom';
+import { Wand2 } from 'lucide-react';
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -218,6 +220,19 @@ export default function SettingsPage({ user }) {
 
           {/* Organization Tab */}
           {activeTab === 'organization' && (
+            <>
+            <div className="v7-card mb-5 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Wand2 className="h-5 w-5" strokeWidth={1.75} /></span>
+                <div>
+                  <p className="text-[16px] font-bold text-navy-900">הגדרת העסק</p>
+                  <p className="mt-0.5 text-[14px] text-ink-600">השם, היחידות, שעות הכניסה, וואטסאפ והערוצים, במסלול הקצר.</p>
+                </div>
+              </div>
+              <Button asChild variant="outline" className="h-11 shrink-0 rounded-full px-5">
+                <Link to="/onboarding?again=1">פתיחת ההגדרה</Link>
+              </Button>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle className="text-[18px] font-bold">פרטי הארגון</CardTitle>
@@ -282,6 +297,7 @@ export default function SettingsPage({ user }) {
                 </div>
               </CardContent>
             </Card>
+            </>
           )}
 
           {/* Notifications Tab */}
