@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/AtlasToast';
 import { Users, Plus, Search } from 'lucide-react';
 import { exportToCSV, LEAD_COLUMNS } from '@/lib/csvExport';
 import { GuestsTable } from '@/components/tables/GuestsTable';
@@ -67,7 +67,7 @@ function leadEntityToGuestFormValues(lead) {
 }
 
 export default function LeadsPage({ user: _user, selectedPropertyId }) {
-  const { toast } = useToast();
+  const { success, error: toastError } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
   const filters = useMemo(() => (selectedPropertyId ? { property_id: selectedPropertyId } : {}), [selectedPropertyId]);
@@ -168,18 +168,18 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
     const data = leadFormToPayload(formData);
     if (editingLead) {
       await updateMutation.mutateAsync({ id: editingLead.id, data });
-      toast({ title: 'הליד עודכן' });
+      success('הליד עודכן');
     } else {
       await createMutation.mutateAsync(data);
-      toast({ title: 'ליד נוצר בהצלחה' });
+      success('ליד נוצר בהצלחה');
     }
   };
 
   const handleDelete = id => {
     if (!confirm('למחוק ליד זה?')) return;
     deleteMutation.mutate(id, {
-      onSuccess: () => toast({ title: 'הליד נמחק' }),
-      onError: () => toast({ title: 'שגיאה במחיקת הליד', variant: 'destructive' }),
+      onSuccess: () => success('הליד נמחק'),
+      onError: () => toastError('שגיאה במחיקת הליד'),
     });
   };
 
@@ -189,7 +189,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       await updateMutation.mutateAsync({ id: row.id, data: { status } }).catch(() => {});
       done++;
     }
-    toast({ title: `עודכנו ${done} לידים ל-${STATUS_MAP[status]?.label || status}` });
+    success(`עודכנו ${done} לידים ל-${STATUS_MAP[status]?.label || status}`);
   };
 
   const handleBulkDeleteRows = (rows) => {
@@ -201,7 +201,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       ...l, property_name: properties.find(p => p.id === l.property_id)?.name || '',
     }));
     exportToCSV(data, 'leads', LEAD_COLUMNS);
-    toast({ title: `יוצאו ${data.length} לידים ל-CSV` });
+    success(`יוצאו ${data.length} לידים ל-CSV`);
   };
 
   const setStatusTagFilter = (value) => {
