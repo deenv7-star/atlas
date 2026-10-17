@@ -152,6 +152,7 @@ function UnitSwitcher({ properties, selectedPropertyId, onPropertyChange }) {
 
 export function Header({ user, selectedPropertyId, onPropertyChange, onOpenCommandPalette, onLogout }) {
   const properties = useShellProperties(user);
+  const quick = useQuickBooking();
   const name = firstName(user?.full_name || '') || '';
   const greeting = `${dayPart().greeting}${name ? `, ${name}` : ''}`;
   return (
@@ -170,12 +171,12 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="press hidden h-12 w-[300px] items-center gap-2.5 rounded-full bg-white px-5 text-[14px] text-ink-400 shadow-[0_1px_2px_rgba(27,38,86,0.05)] hover:text-navy-900 lg:inline-flex"
+          className="press hidden h-12 w-[280px] items-center gap-2.5 rounded-full bg-white px-5 text-[14px] text-ink-400 shadow-[0_1px_2px_rgba(27,38,86,0.05)] hover:text-navy-900 xl:inline-flex 2xl:w-[320px]"
         >
           <Search className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
           חיפוש אורח, הזמנה או יחידה
         </button>
-        <IconButton label="חיפוש" onClick={onOpenCommandPalette} className="ring-0 lg:hidden">
+        <IconButton label="חיפוש" onClick={onOpenCommandPalette} className="ring-0 xl:hidden">
           <Search strokeWidth={1.75} />
         </IconButton>
         <div className="hidden lg:block">
@@ -187,6 +188,14 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
         <IconButton as={Link} to={createPageUrl('Settings')} label="הגדרות" className="hidden ring-0 lg:inline-flex">
           <Settings strokeWidth={1.75} />
         </IconButton>
+        <button
+          type="button"
+          onClick={() => quick.open()}
+          className="press hidden h-12 shrink-0 items-center gap-1.5 rounded-full bg-brand-600 pe-5 ps-4 text-[14px] font-bold text-white shadow-[0_10px_22px_-10px_rgba(62,43,241,0.75)] hover:bg-brand-500 lg:inline-flex"
+        >
+          <Plus className="h-[18px] w-[18px]" strokeWidth={2.25} />
+          הזמנה חדשה
+        </button>
       </div>
     </header>
   );

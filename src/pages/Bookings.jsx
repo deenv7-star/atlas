@@ -281,7 +281,8 @@ export default function BookingsPage({ selectedPropertyId }) {
         subtitle="כל ההזמנות מכל הערוצים, במקום אחד."
         actions={
           <>
-            <Button onClick={openNew} className="hidden md:inline-flex">
+            {/* desktop: "הזמנה חדשה" lives in the header; tablets keep it here */}
+            <Button onClick={openNew} className="hidden md:inline-flex lg:hidden">
               <Plus strokeWidth={2.25} />
               הזמנה חדשה
             </Button>
@@ -413,7 +414,7 @@ export default function BookingsPage({ selectedPropertyId }) {
                   <Button type="button" variant="outline" size="sm" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
                   <Button type="button" variant="outline" size="sm" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
                   <select
-                    className="h-10 rounded-[10px] border border-line bg-white px-2 text-[14px]"
+                    className="h-11 rounded-[10px] border border-line bg-white px-2 text-[14px]"
                     value={String(pageSize)}
                     onChange={(e) => void setUrlState({ pageSize: Number(e.target.value), page: 1 })}
                     aria-label="הזמנות בעמוד"

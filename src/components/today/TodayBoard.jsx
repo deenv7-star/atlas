@@ -254,7 +254,7 @@ export default function TodayBoard({ user, orgId }) {
     { label: board.departures.length === 1 ? 'יציאה' : 'יציאות', value: board.departures.length },
     { label: 'ניקיון', value: openCleanings },
   ];
-  const sm = 'h-10 px-4 text-[14px]';
+  const sm = 'h-11 px-4 text-[14px]';
   const pill = (label, onClick) => <Button variant="secondary" className={sm} onClick={onClick}>{label}</Button>;
 
   const groups = [
@@ -420,7 +420,7 @@ export default function TodayBoard({ user, orgId }) {
             </p>
           ) : null}
         </div>
-        <Link to="/calendar" className="press inline-flex h-10 shrink-0 items-center gap-1 rounded-full bg-[#F1F1F8] px-3.5 text-[13px] font-semibold text-navy-900 hover:bg-[#E8E8F2]">
+        <Link to="/calendar" className="press inline-flex h-11 shrink-0 items-center gap-1 rounded-full bg-[#F1F1F8] px-3.5 text-[13px] font-semibold text-navy-900 hover:bg-[#E8E8F2]">
           לוח שנה
           <ChevronLeft className="h-4 w-4" strokeWidth={1.75} />
         </Link>

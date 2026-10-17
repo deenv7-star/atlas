@@ -404,7 +404,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                                 <span className="min-w-0 flex-1">
                                   <span className="block truncate font-semibold">{isBlocked ? 'חסום' : pos.span > 1 || viewMode !== 'month' ? booking.guest : guestInitials(booking.guest)}</span>
                                   {!isBlocked && pos.span > 1 ? (
-                                    <span className="flex items-center gap-1 truncate text-[12px] text-ink-400">
+                                    <span className="flex items-center gap-1 truncate text-[12px] text-ink-600">
                                       <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: ch?.color }} />
                                       {pending ? 'ממתינה לאישור' : `${booking.nights} לילות`}
                                     </span>
