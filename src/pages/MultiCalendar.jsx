@@ -133,7 +133,7 @@ function AgendaList({ rows, onAdd, dayLabel }) {
                   <p className="truncate text-[15px] font-bold text-navy-900">{r.prop.name}</p>
                   <p className="text-[13px] text-ink-400">{k.tag}</p>
                 </div>
-                <Button variant="secondary" className="h-10 px-4 text-[14px]" onClick={() => onAdd(r.prop)}><Plus />הזמנה</Button>
+                <Button variant="secondary" className="h-11 px-4 text-[14px]" onClick={() => onAdd(r.prop)}><Plus />הזמנה</Button>
               </div>
             ) : (
               <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press d-card d-lift flex min-w-0 flex-1 flex-col p-4">

@@ -215,7 +215,7 @@ export default function TodayBoard({ user, orgId }) {
   };
 
   const prop = (id) => data.propertyById.get(id) || null;
-  const sm = 'h-10 px-4 text-[14px]';
+  const sm = 'h-11 px-4 text-[14px]';
   const pill = (label, onClick) => <Button variant="secondary" className={sm} onClick={onClick}>{label}</Button>;
 
   /* tasks: one card per arrival, departure and cleaning */
@@ -275,7 +275,7 @@ export default function TodayBoard({ user, orgId }) {
     <Rise i={2} as="section" aria-label="החודש" className="d-card p-5">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-[16px] font-bold text-navy-900">החודש</h2>
-        <Link to="/payments" className="press inline-flex h-10 items-center gap-1 rounded-full bg-[#F3F4F9] px-3.5 text-[13px] font-semibold text-navy-900 hover:bg-[#E9EBF3]">כספים<ChevronLeft className="h-4 w-4" strokeWidth={1.75} /></Link>
+        <Link to="/payments" className="press inline-flex h-11 items-center gap-1 rounded-full bg-[#F3F4F9] px-3.5 text-[13px] font-semibold text-navy-900 hover:bg-[#E9EBF3]">כספים<ChevronLeft className="h-4 w-4" strokeWidth={1.75} /></Link>
       </div>
       <div className="mt-4 flex items-end justify-between gap-4">
         <div className="min-w-0">
@@ -330,7 +330,7 @@ export default function TodayBoard({ user, orgId }) {
     <section aria-label="המשימות" className="mt-6">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-[20px] font-extrabold tracking-[-0.01em] text-navy-900">{isToday ? 'המשימות של היום' : formatDayHe(sel)}</h2>
-        <Link to="/calendar" className="press inline-flex h-10 items-center rounded-full px-2 text-[14px] font-semibold text-brand-600 hover:text-brand-700">ללוח השנה</Link>
+        <Link to="/calendar" className="press inline-flex h-11 items-center rounded-full px-2 text-[14px] font-semibold text-brand-600 hover:text-brand-700">ללוח השנה</Link>
       </div>
       <div role="group" aria-label="סינון משימות" className="d-strip -mx-5 mb-4 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
         {counts.map((c) => (

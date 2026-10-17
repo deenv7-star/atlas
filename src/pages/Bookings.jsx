@@ -416,7 +416,7 @@ export default function BookingsPage({ selectedPropertyId }) {
                   <Button type="button" variant="outline" size="sm" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
                   <Button type="button" variant="outline" size="sm" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
                   <select
-                    className="h-10 rounded-[10px] border border-line bg-white px-2 text-[14px]"
+                    className="h-11 rounded-[10px] border border-line bg-white px-2 text-[14px]"
                     value={String(pageSize)}
                     onChange={(e) => void setUrlState({ pageSize: Number(e.target.value), page: 1 })}
                     aria-label="הזמנות בעמוד"
