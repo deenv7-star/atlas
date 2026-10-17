@@ -1,0 +1,119 @@
+/* Landing v8 shared (M / N). ATLAS colours only: indigo #3E2BF1 bold, navy #1B2656 text,
+   white / #F7F8FB, cool sky / lilac / mint tints. Amber only as a tiny dot. No warm surfaces,
+   no dark or black sections (solid indigo is the bold surface). Heebo. */
+
+.v8 {
+  --sky: #e6f2ff;
+  --sky-2: #cfe6ff;
+  --lilac: #efecff;
+  --lilac-2: #ddd7ff;
+  --mint: #e8f7f1;
+  --mint-2: #c9eedd;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --r-box: 28px;
+  --sh-pop: 0 2px 4px rgba(27, 38, 86, 0.06), 0 18px 40px -14px rgba(27, 38, 86, 0.32), 0 40px 80px -40px rgba(62, 43, 241, 0.45);
+  background: var(--white);
+}
+@media (min-width: 900px) { .v8 { --r-box: 40px; } }
+
+/* ---------- type ---------- */
+.v8-head { max-width: 860px; margin-bottom: 36px; }
+.v8-head.is-center { margin-inline: auto; text-align: center; }
+@media (min-width: 900px) { .v8-head { margin-bottom: 52px; } }
+.v8-h2 { font-size: 38px; line-height: 1.02; font-weight: 800; letter-spacing: -0.045em; color: var(--navy); text-wrap: balance; }
+.v8-h2 .is-ind { color: var(--indigo); }
+@media (min-width: 900px) { .v8-h2 { font-size: 60px; } }
+@media (min-width: 1200px) { .v8-h2 { font-size: 68px; } }
+.v8-txt { font-size: 17px; line-height: 1.6; color: var(--ink); margin-top: 14px; max-width: 34em; text-wrap: pretty; }
+.v8-head.is-center .v8-txt { margin-inline: auto; }
+@media (min-width: 900px) { .v8-txt { font-size: 19px; } }
+.v8-cap { font-size: 13px; color: var(--ink-2); }
+
+/* ---------- faces ---------- */
+.v8f { width: var(--s); height: var(--s); border-radius: 50%; object-fit: cover; display: block; flex: none; box-shadow: 0 0 0 2px #fff; background: var(--indigo-100); }
+.v8-stack { display: inline-flex; }
+.v8-stack .v8f + .v8f { margin-inline-start: -10px; }
+
+/* ---------- white button ---------- */
+.l5-btn.is-white { background: #fff; color: var(--indigo); box-shadow: 0 1px 2px rgba(10, 8, 80, 0.2), 0 10px 24px -10px rgba(10, 8, 80, 0.45); }
+@media (hover: hover) and (pointer: fine) { .l5-btn.is-white:hover { background: #f1efff; } }
+
+/* ---------- WhatsApp bubble card ---------- */
+.v8-wa { width: 300px; padding: 12px 12px 14px; border-radius: 22px; background: #fff; box-shadow: var(--sh-pop); color: var(--navy); }
+.v8-wa-top { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 10px; }
+.v8-wa-top small { margin-inline-start: auto; font-size: 12.5px; color: var(--ink-2); }
+.v8-wa-ic { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #e7f9ee; }
+.v8-wa-msg { position: relative; padding: 10px 14px 24px; border-radius: 18px 18px 6px 18px; background: var(--indigo); color: #fff; font-size: 14.5px; line-height: 1.5; }
+.v8-wa-meta { position: absolute; inset-block-end: 6px; inset-inline-end: 12px; display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: rgba(255, 255, 255, 0.78); }
+.v8-wa-meta svg { color: #9fdcff; }
+
+/* ---------- iPhone ---------- */
+.v8-ip { --w: 300px; position: relative; width: var(--w); aspect-ratio: 390 / 812; padding: calc(var(--w) * 0.034); border-radius: calc(var(--w) * 0.16); background: linear-gradient(145deg, #c9ccd6, #8e93a3 18%, #5d6273 50%, #9da2b1 82%, #d6d9e2); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.5), 0 2px 4px rgba(27, 38, 86, 0.18), 0 40px 80px -24px rgba(27, 38, 86, 0.45), 0 60px 120px -50px rgba(62, 43, 241, 0.55); }
+.v8-ip::before { content: ''; position: absolute; inset: calc(var(--w) * 0.012); border-radius: calc(var(--w) * 0.15); background: #10121a; }
+.v8-ip-btn { position: absolute; width: 4px; border-radius: 3px; background: linear-gradient(90deg, #7b8090, #b9bdc9); }
+.v8-ip-btn.is-a { inset-inline-end: -3px; top: 17%; height: 5%; }
+.v8-ip-btn.is-b { inset-inline-end: -3px; top: 25%; height: 9%; }
+.v8-ip-btn.is-c { inset-inline-end: -3px; top: 36%; height: 9%; }
+.v8-ip-btn.is-d { inset-inline-start: -3px; top: 30%; height: 13%; }
+.v8-ip-scr { position: relative; z-index: 1; height: 100%; border-radius: calc(var(--w) * 0.125); overflow: hidden; background: #f4f5fa; display: flex; flex-direction: column; isolation: isolate; }
+.v8-ip-status { position: relative; flex: none; height: calc(var(--w) * 0.12); display: flex; align-items: center; justify-content: space-between; padding: 0 calc(var(--w) * 0.085); font-size: calc(var(--w) * 0.044); font-weight: 700; color: var(--navy); background: #f4f5fa; direction: ltr; }
+.v8-ip-island { position: absolute; left: 50%; top: calc(var(--w) * 0.03); width: 34%; height: calc(var(--w) * 0.088); translate: -50% 0; border-radius: 99px; background: #05060a; }
+.v8-ip-bat { width: calc(var(--w) * 0.075); height: calc(var(--w) * 0.036); border-radius: 3px; box-shadow: inset 0 0 0 1.5px var(--navy); position: relative; }
+.v8-ip-bat::after { content: ''; position: absolute; inset: 2.5px 5px 2.5px 2.5px; border-radius: 1.5px; background: var(--navy); }
+.v8-ip-view { position: relative; flex: 1; overflow: hidden; }
+.v8-ip-view img { position: absolute; inset: 0 0 auto; width: 100%; height: auto; display: block; opacity: 0; transform: translateY(18px) scale(0.985); transition: opacity 420ms var(--ease-out), transform 520ms var(--ease-out); }
+.v8-ip-view img.is-on { opacity: 1; transform: none; }
+
+/* ---------- pricing ---------- */
+.v8p { padding: 88px 0; }
+@media (min-width: 900px) { .v8p { padding: 128px 0; } }
+.v8p.is-sky { background: var(--sky); }
+.v8p-seg { display: flex; width: max-content; margin: 0 auto 32px; padding: 4px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.v8p-seg button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: transparent; font-size: 15px; font-weight: 700; color: var(--ink); cursor: pointer; transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out); }
+.v8p-seg button[aria-pressed='true'] { background: var(--indigo); color: #fff; }
+.v8p-plans { display: grid; gap: 14px; max-width: 1120px; margin-inline: auto; align-items: stretch; }
+.v8p-plan { position: relative; display: flex; flex-direction: column; padding: 28px 24px; border-radius: 28px; background: #fff; box-shadow: inset 0 0 0 1px var(--line), var(--sh-1); }
+.v8p-plan.is-pop { background: var(--indigo); color: #fff; box-shadow: 0 30px 60px -28px rgba(62, 43, 241, 0.7); }
+.v8p-plan.is-pop h3 { color: #fff; }
+.v8p-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.v8p-plan h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.v8p-tag { display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); font-size: 13px; font-weight: 700; color: #fff; }
+.v8p-desc { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
+.v8p-plan.is-pop .v8p-desc { color: rgba(255, 255, 255, 0.85); }
+.v8p-price { display: flex; align-items: baseline; gap: 8px; margin: 18px 0 22px; }
+.v8p-price b { font-size: 56px; line-height: 1; font-weight: 800; letter-spacing: -0.05em; }
+.v8p-price span { font-size: 14px; color: var(--ink-2); }
+.v8p-plan.is-pop .v8p-price span { color: rgba(255, 255, 255, 0.85); }
+.v8p-feat { display: grid; gap: 10px; margin-top: 22px; }
+.v8p-feat li { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.v8p-feat svg { color: var(--indigo); flex: none; }
+.v8p-plan.is-pop .v8p-feat svg { color: #fff; }
+@media (max-width: 899px) { .v8p-plan:not(.is-pop) .v8p-feat { display: none; } .v8p-price { margin: 14px 0 18px; } .v8p-plan.is-pop { order: -1; } }
+@media (min-width: 900px) {
+  .v8p-plans { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .v8p-plan { padding: 40px 34px; }
+  .v8p-plan.is-pop { transform: translateY(-12px); }
+}
+.v8p-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 32px; margin-top: 36px; }
+.v8p-trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--navy); }
+.v8p-trust svg { color: var(--indigo); }
+
+/* ---------- final CTA bits ---------- */
+.v8x-cta { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.v8x-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 20px; border-radius: 12px; font-size: 17px; font-weight: 700; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45); transition: background-color 200ms var(--ease-out); }
+.v8x-link .l5-mk-whatsapp { color: #fff; }
+@media (hover: hover) and (pointer: fine) { .v8x-link:hover { background: rgba(255, 255, 255, 0.1); } }
+.v8x-note { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; font-size: 14px; color: rgba(255, 255, 255, 0.9); }
+
+.v8-credits { text-align: center; font-size: 13px; color: var(--ink-2); padding: 0 24px 24px; }
+.v8 .l5-faq-sec { padding: 88px 0; }
+@media (min-width: 900px) { .v8 .l5-faq-sec { padding: 120px 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .v8 *, .v8 *::before, .v8 *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+}
+
+/* the app's global body{overflow-x:hidden} turns <body> into a scroll container and breaks
+   position: sticky; on these pages the viewport scrolls and .l5 clips horizontal overflow. */
+html:has(.v8) { overflow-x: hidden; overflow-y: auto; }
+body:has(.v8) { overflow: visible; }
