@@ -57,7 +57,7 @@ export function ErrorFallbackInline({ error, reset, section, componentStack }: F
 /** Full-area fallback for severe crashes (e.g. layout outlet). */
 export function ErrorFallbackPage({ error, reset, section, componentStack }: FallbackRenderProps) {
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/80 p-6" dir="rtl">
+    <div className="flex min-h-[50vh] flex-col items-center justify-center bg-slate-50 p-6" dir="rtl">
       <div className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-8 text-center shadow-lg">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
           <AlertCircle className="h-7 w-7 text-red-500" aria-hidden />
@@ -67,7 +67,7 @@ export function ErrorFallbackPage({ error, reset, section, componentStack }: Fal
           לא הצלחנו להציג את העמוד. אפשר לחזור לדשבורד או לנסות לטעון את החלק מחדש.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-          <Button type="button" className="bg-[#00D1C1] font-semibold text-[#0B1220] hover:bg-[#00b8aa]" onClick={reset}>
+          <Button type="button" className="bg-brand-600 font-semibold text-white hover:bg-brand-500" onClick={reset}>
             נסה שוב
           </Button>
           <Button type="button" variant="outline" asChild>

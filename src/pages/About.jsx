@@ -22,7 +22,7 @@ export default function About() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+      <section className="pt-32 pb-20 px-4 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -47,11 +47,11 @@ export default function About() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <Target className="w-16 h-16 text-[#00D1C1] mb-6" />
+              <Target className="w-16 h-16 text-brand-600 mb-6" />
               <h2 className="text-3xl font-bold text-gray-900 mb-4">המשימה שלנו</h2>
               <p className="text-lg text-gray-600 leading-relaxed mb-4">
                 אנחנו ב-ATLAS מאמינים בניהול פשוט, יעיל ומבוסס טכנולוגיה. המשימה שלנו היא לאפשר לכל בעל נכס ליהנות ממערכת ניהול שבעבר הייתה שמורה רק לשחקנים גדולים - ולהפוך את ניהול הנכסים לפשוט, אוטומטי ושקוף.
@@ -61,13 +61,13 @@ export default function About() {
               </p>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-br from-[#00D1C1]/10 to-purple-100 rounded-3xl p-12 flex items-center justify-center"
+              className="bg-[#3E2BF1]/10 to-brand-100 rounded-3xl p-12 flex items-center justify-center"
             >
               <div className="text-center">
-                <div className="text-6xl font-bold text-[#00D1C1] mb-4">50+</div>
+                <div className="text-6xl font-bold text-brand-600 mb-4">50+</div>
                 <div className="text-xl text-gray-700">נכסים מנוהלים בגרסת בטא</div>
               </div>
             </motion.div>
@@ -80,7 +80,7 @@ export default function About() {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">המייסד</h2>
           <div className="flex flex-col items-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00D1C1] to-indigo-500 flex items-center justify-center text-white text-3xl font-bold mb-4 shadow-lg">
+            <div className="w-24 h-24 rounded-full bg-[#3E2BF1] flex items-center justify-center text-white text-3xl font-bold mb-4 shadow-lg">
               ?
             </div>
             <p className="text-lg text-gray-600 text-center max-w-xl">
@@ -102,7 +102,7 @@ export default function About() {
               viewport={{ once: true }}
               className="bg-white rounded-2xl p-8"
             >
-              <Users className="w-12 h-12 text-[#00D1C1] mb-4" />
+              <Users className="w-12 h-12 text-brand-600 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-3">מוקד בלקוח</h3>
               <p className="text-gray-600">אנחנו מאמינים שכל בעל נכס ראוי לכלים מקצועיים שיעזרו לו לנהל את העסק בצורה הטובה ביותר.</p>
             </motion.div>
@@ -113,7 +113,7 @@ export default function About() {
               transition={{ delay: 0.1 }}
               className="bg-white rounded-2xl p-8"
             >
-              <Shield className="w-12 h-12 text-[#00D1C1] mb-4" />
+              <Shield className="w-12 h-12 text-brand-600 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-3">שקיפות מלאה</h3>
               <p className="text-gray-600">כל המידע זמין ונגיש - אתם יודעים בדיוק מה קורה עם הנכסים שלכם בכל רגע נתון.</p>
             </motion.div>
@@ -124,7 +124,7 @@ export default function About() {
               transition={{ delay: 0.2 }}
               className="bg-white rounded-2xl p-8"
             >
-              <Globe className="w-12 h-12 text-[#00D1C1] mb-4" />
+              <Globe className="w-12 h-12 text-brand-600 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-3">חדשנות מתמדת</h3>
               <p className="text-gray-600">אנחנו משקיעים בפיתוח מתמיד כדי להבטיח שתמיד תהיה לכם הטכנולוגיה המתקדמת ביותר.</p>
             </motion.div>
@@ -135,7 +135,7 @@ export default function About() {
               transition={{ delay: 0.3 }}
               className="bg-white rounded-2xl p-8"
             >
-              <Heart className="w-12 h-12 text-[#00D1C1] mb-4" />
+              <Heart className="w-12 h-12 text-brand-600 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-3">פותח בישראל 🇮🇱</h3>
               <p className="text-gray-600">המערכת פותחה בישראל, בעברית, עבור שוק האירוח הישראלי. אנחנו כאן בשבילכם.</p>
             </motion.div>
@@ -148,8 +148,8 @@ export default function About() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
               <h2 className="text-3xl font-bold text-gray-900 mb-6">הבעיה</h2>
@@ -161,8 +161,8 @@ export default function About() {
               </p>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
               <h2 className="text-3xl font-bold text-gray-900 mb-6">הפתרון</h2>
@@ -178,40 +178,39 @@ export default function About() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-[#0B1220] to-[#1a2744]">
+      <section className="py-20 px-4 bg-[#F4F3FF]">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-6">
             מוכנים להצטרף?
           </h2>
-          <p className="text-xl text-white/70 mb-8">
+          <p className="text-xl text-ink-600 mb-8">
             הצטרפו למנהלי מתחמים שכבר עובדים עם ATLAS
           </p>
-          <Link to="/register">
-            <Button
-              size="lg"
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] font-semibold px-10 py-6 text-lg rounded-xl"
-            >
-              התחילו עכשיו
-            </Button>
-          </Link>
+          <Button
+            asChild
+            size="lg"
+            className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-10 py-6 text-lg rounded-xl"
+          >
+            <Link to="/register">התחילו עכשיו</Link>
+          </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-[#0B1220] border-t border-white/10">
+      <footer className="py-12 px-4 bg-white border-t border-line">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Logo variant="light" />
-            <div className="flex gap-6 text-white/60 text-sm">
-              <Link to={createPageUrl('Privacy')} className="hover:text-white transition-colors">
+            <Logo  />
+            <div className="flex gap-6 text-ink-400 text-sm">
+              <Link to={createPageUrl('Privacy')} className="hover:text-navy-900 transition-colors">
                 מדיניות פרטיות
               </Link>
-              <Link to={createPageUrl('Terms')} className="hover:text-white transition-colors">
+              <Link to={createPageUrl('Terms')} className="hover:text-navy-900 transition-colors">
                 תנאי שימוש
               </Link>
             </div>
-            <p className="text-white/40 text-sm">
-              © 2025 ATLAS. כל הזכויות שמורות
+            <p className="text-ink-400 text-sm">
+              © {new Date().getFullYear()} ATLAS. כל הזכויות שמורות
             </p>
           </div>
         </div>

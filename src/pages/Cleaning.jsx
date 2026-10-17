@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { PageHeader, SkelLine } from '@/components/ds';
 import {
   useCleaningTasks,
   useCreateCleaningTask,
@@ -46,7 +47,7 @@ import { cn } from '@/lib/utils';
 import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 
 const statusColors = {
-  OPEN: 'bg-blue-100 text-blue-700 border-blue-200',
+  OPEN: 'bg-brand-100 text-brand-700 border-brand-100',
   IN_PROGRESS: 'bg-yellow-100 text-yellow-700 border-yellow-200',
   DONE: 'bg-green-100 text-green-700 border-green-200'
 };
@@ -94,8 +95,15 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
   };
 
   const handleMaintenanceSubmit = async (data) => {
+    const { assigned_to_name, ...rest } = data;
+    const assignee = (assigned_to_name || '').trim() || null;
     await createMutation.mutateAsync({
-      ...data,
+      ...rest,
+      // cleaning_tasks has assigned_to / cleaner_name, not assigned_to_name
+      assigned_to: assignee,
+      cleaner_name: assignee,
+      scheduled_date: rest.scheduled_for ? String(rest.scheduled_for).slice(0, 10) : null,
+      scheduled_for: rest.scheduled_for ? new Date(rest.scheduled_for).toISOString() : null,
       org_id: orgId,
       property_id: selectedPropertyId,
       status: 'OPEN',
@@ -144,12 +152,12 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-[#00D1C1]" />
+              <Sparkles className="h-5 w-5 text-brand-600" />
               <div>
                 <p className="font-medium text-sm">
                   {task.scheduled_for && format(parseISO(task.scheduled_for), 'HH:mm')}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-ink-600">
                   {task.scheduled_for && format(parseISO(task.scheduled_for), 'EEEE d/M', { locale: he })}
                 </p>
               </div>
@@ -159,22 +167,22 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             </Badge>
           </div>
 
-          {task.assigned_to_name && (
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+          {(task.assigned_to_name || task.cleaner_name || task.assigned_to) && (
+            <div className="flex items-center gap-2 text-sm text-ink-600 mb-2">
               <User className="h-4 w-4" />
-              <span>{task.assigned_to_name}</span>
+              <span>{task.assigned_to_name || task.cleaner_name || task.assigned_to}</span>
             </div>
           )}
 
           {totalItems > 0 && (
             <div className="mt-3">
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-ink-600 mb-1">
                 <span>התקדמות</span>
                 <span>{completedItems}/{totalItems}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
-                  className="bg-[#00D1C1] h-2 rounded-full transition-all"
+                  className="bg-brand-600 h-2 rounded-full transition-[background-color,border-color,color,box-shadow,transform]"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -192,7 +200,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Icon className={`h-5 w-5 ${color}`} />
-          <h3 className="font-semibold text-[#0B1220]">{title}</h3>
+          <h3 className="font-semibold text-[#1B2656]">{title}</h3>
           <Badge variant="outline" className="text-xs">{tasks.length}</Badge>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -205,73 +213,53 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
   };
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-indigo-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">ניהול ניקיון</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-12">נהל משימות ניקיון לכל הנכסים. הקצה משימות לצוות, עקוב אחר סטטוס ותזמן ניקיונות.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-12">טיפ: משימות חדשות נוצרות אוטומטית לפי הזמנות צ'ק-אאוט</p>
-      </div>
-
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-[#0B1220]">משימות ניקיון</h1>
-          <p className="text-gray-500">צור משימות ניקיון והקצה אותן לצוות. צוות הניקיון יכול להתחבר ולראות רק את המשימות שלו, לסמן צ'קליסטים ולעדכן סטטוס.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-[150px] rounded-xl">
-              <SelectValue placeholder="סטטוס" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">כל הסטטוסים</SelectItem>
-              {Object.entries(statusLabels).map(([key, label]) => (
-                <SelectItem key={key} value={key}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button 
-            onClick={() => setIsCreateOpen(true)}
-            className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            משימה חדשה
-          </Button>
-        </div>
-      </div>
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
+      <PageHeader
+        title="ניקיון"
+        subtitle="משימות ניקיון לכל יחידה. הצוות רואה רק את המשימות שלו."
+        className="!mb-0"
+        actions={
+          <>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-[160px]" aria-label="סינון לפי סטטוס">
+                <SelectValue placeholder="סטטוס" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">כל הסטטוסים</SelectItem>
+                {Object.entries(statusLabels).map(([key, label]) => (
+                  <SelectItem key={key} value={key}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={() => setIsCreateOpen(true)}>
+              <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              משימה חדשה
+            </Button>
+          </>
+        }
+      />
 
       {/* Tasks Grid */}
       {isLoading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <Card key={i} className="border-0 shadow-sm rounded-2xl animate-pulse">
-              <CardContent className="p-4">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-100 rounded w-1/2"></div>
-              </CardContent>
-            </Card>
+            <SkelLine key={i} className="h-[132px] rounded-[14px]" />
           ))}
         </div>
       ) : filteredTasks.length === 0 ? (
         <Card className="border-0 shadow-sm rounded-2xl">
           <CardContent className="p-12">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
-                <ClipboardList className="w-8 h-8 text-gray-300" />
+              <div className="w-16 h-16 rounded-2xl bg-canvas flex items-center justify-center mx-auto mb-4">
+                <ClipboardList className="w-8 h-8 text-neutral-300" />
               </div>
-              <p className="text-base font-semibold text-gray-700 mb-2">אין משימות ניקיון</p>
-              <p className="text-sm text-gray-500 mb-6 max-w-sm mx-auto">
-                צור את משימת הניקיון הראשונה שלך. משימות נוצרות אוטומטית מהזמנות צ'ק-אאוט, או שתוכל ליצור ידנית.
+              <p className="text-[17px] font-bold text-navy-900 mb-1.5">אין משימות ניקיון</p>
+              <p className="text-[15px] text-ink-600 mb-6 max-w-sm mx-auto">
+                משימה נוצרת לבד בכל יציאה של אורחים. אפשר גם להוסיף ידנית.
               </p>
               <Button
                 onClick={() => setIsCreateOpen(true)}
-                size="lg"
-                className="gap-2 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220] font-semibold rounded-xl"
+
               >
                 <Plus className="w-4 h-4" />
                 משימת ניקיון חדשה
@@ -296,19 +284,19 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             title="היום" 
             tasks={groupedTasks.today} 
             icon={Calendar} 
-            color="text-blue-500" 
+            color="text-brand-500" 
           />
           <TaskGroup 
             title="מחר" 
             tasks={groupedTasks.tomorrow} 
             icon={Calendar} 
-            color="text-purple-500" 
+            color="text-brand-500" 
           />
           <TaskGroup 
             title="קרוב" 
             tasks={groupedTasks.upcoming} 
             icon={Calendar} 
-            color="text-gray-500" 
+            color="text-ink-600" 
           />
         </div>
         </ErrorBoundary>
@@ -321,17 +309,17 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             <>
               <SheetHeader>
                 <SheetTitle className="text-right flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-[#00D1C1]" />
+                  <Sparkles className="h-5 w-5 text-brand-600" />
                   משימת ניקיון
                 </SheetTitle>
               </SheetHeader>
               
               <div className="mt-6 space-y-6">
                 {/* Info */}
-                <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <div className="bg-canvas rounded-xl p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-gray-400" />
+                      <Calendar className="h-4 w-4 text-ink-400" />
                       <span>
                         {selectedTask.scheduled_for && format(parseISO(selectedTask.scheduled_for), 'EEEE, d MMMM yyyy בשעה HH:mm', { locale: he })}
                       </span>
@@ -340,10 +328,10 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                       {statusLabels[selectedTask.status]}
                     </Badge>
                   </div>
-                  {selectedTask.assigned_to_name && (
+                  {(selectedTask.assigned_to_name || selectedTask.cleaner_name || selectedTask.assigned_to) && (
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-400" />
-                      <span>{selectedTask.assigned_to_name}</span>
+                      <User className="h-4 w-4 text-ink-400" />
+                      <span>{selectedTask.assigned_to_name || selectedTask.cleaner_name || selectedTask.assigned_to}</span>
                     </div>
                   )}
                 </div>
@@ -384,7 +372,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                 {selectedTask.checklist && selectedTask.checklist.length > 0 && (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
-                      <ClipboardList className="h-5 w-5 text-gray-400" />
+                      <ClipboardList className="h-5 w-5 text-ink-400" />
                       <h3 className="font-semibold">רשימת בדיקה</h3>
                     </div>
                     <div className="space-y-2">
@@ -392,7 +380,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                         <div
                           key={index}
                           className={cn(
-                            'flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors',
+                            'flex items-center gap-3 p-3 bg-canvas rounded-xl cursor-pointer hover:bg-neutral-100 transition-colors',
                             updateMutation.isPending &&
                               updateMutation.variables?.id === selectedTask.id &&
                               'motion-safe:animate-pulse ring-[0.5px] ring-amber-400/80',
@@ -400,7 +388,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                           onClick={() => handleChecklistToggle(selectedTask.id, index, selectedTask.checklist)}
                         >
                           <Checkbox checked={item.done} />
-                          <span className={item.done ? 'line-through text-gray-400' : ''}>
+                          <span className={item.done ? 'line-through text-ink-400' : ''}>
                             {item.item}
                           </span>
                         </div>
@@ -413,8 +401,8 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                 {selectedTask.notes && (
                   <div className="space-y-2">
                     <h3 className="font-semibold">הערות</h3>
-                    <div className="bg-gray-50 rounded-xl p-4">
-                      <p className="text-sm text-gray-600 whitespace-pre-wrap">{selectedTask.notes}</p>
+                    <div className="bg-canvas rounded-xl p-4">
+                      <p className="text-sm text-ink-600 whitespace-pre-wrap">{selectedTask.notes}</p>
                     </div>
                   </div>
                 )}

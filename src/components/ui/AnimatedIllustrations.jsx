@@ -29,7 +29,7 @@ export function DashboardIllustration({ width = 400, height = 320 }) {
       <rect x="20" y="20" width="360" height="280" rx="20" fill="white" stroke="#E2E8F0" strokeWidth="1.5" />
 
       {/* ── Header bar ─────────────────────────────────────── */}
-      <rect x="20" y="20" width="360" height="44" rx="20" fill="#0B1220" />
+      <rect x="20" y="20" width="360" height="44" rx="20" fill="#1B2656" />
       <rect x="38" y="34" width="6" height="6" rx="3" fill="#ff5f56" />
       <rect x="52" y="34" width="6" height="6" rx="3" fill="#ffbd2e" />
       <rect x="66" y="34" width="6" height="6" rx="3" fill="#27c93f" />
@@ -45,10 +45,10 @@ export function DashboardIllustration({ width = 400, height = 320 }) {
 
       {/* ── Stat cards row ─────────────────────────────────── */}
       {[
-        { x: 38,  color: '#00D1C1', label: '₪24,800', sub: '+18%' },
-        { x: 140, color: '#6366f1', label: '14',      sub: 'active' },
-        { x: 242, color: '#f59e0b', label: '4.9★',   sub: 'rating' },
-        { x: 344, color: '#10b981', label: '98%',     sub: 'happy'  },
+        { x: 38,  color: '#3E2BF1', label: '₪24,800', sub: '+18%' },
+        { x: 140, color: '#3E2BF1', label: '14',      sub: 'active' },
+        { x: 242, color: '#f59e0b', label: '4.9',   sub: 'rating' },
+        { x: 344, color: '#22B07D', label: '98%',     sub: 'happy'  },
       ].map((card, i) => (
         <motion.g
           key={i}
@@ -75,11 +75,11 @@ export function DashboardIllustration({ width = 400, height = 320 }) {
         return (
           <motion.g key={i}>
             {/* BG bar */}
-            <rect x={x} y={148} width="30" height="72" rx="6" fill="#F4F6FB" />
+            <rect x={x} y={148} width="30" height="72" rx="6" fill="#F7F8FB" />
             {/* Fill bar */}
             <motion.rect
               x={x} y={220} width="30" rx="6"
-              fill={i === 3 ? '#00D1C1' : '#0B1220'}
+              fill={i === 3 ? '#3E2BF1' : '#1B2656'}
               opacity={i === 3 ? 1 : 0.12 + i * 0.08}
               variants={{
                 hidden: { height: 0, y: 220 },
@@ -94,7 +94,7 @@ export function DashboardIllustration({ width = 400, height = 320 }) {
             <motion.text
               x={x + 15} y={y - 4}
               textAnchor="middle"
-              fill={i === 3 ? '#00D1C1' : '#9ca3af'}
+              fill={i === 3 ? '#3E2BF1' : '#9ca3af'}
               fontSize="8"
               fontWeight="600"
               variants={{
@@ -111,7 +111,7 @@ export function DashboardIllustration({ width = 400, height = 320 }) {
       {/* ── Trend line ─────────────────────────────────────── */}
       <motion.path
         d="M53 210 L97 192 L141 218 L185 176 L229 199 L273 185 L317 204"
-        stroke="#00D1C1"
+        stroke="#3E2BF1"
         strokeWidth="2"
         fill="none"
         strokeLinecap="round"
@@ -130,13 +130,13 @@ export function DashboardIllustration({ width = 400, height = 320 }) {
         }}
       >
         <rect x="38" y="240" width="200" height="42" rx="10" fill="#F8FAFF" stroke="#E2E8F0" strokeWidth="1" />
-        <circle cx="58" cy="261" r="8" fill="rgba(0,209,193,0.15)" />
+        <circle cx="58" cy="261" r="8" fill="rgba(62, 43, 241,0.15)" />
         <rect x="72" y="255" width="80" height="5" rx="2.5" fill="#E2E8F0" />
         <rect x="72" y="265" width="50" height="4" rx="2" fill="#E2E8F0" />
         <rect x="185" y="250" width="40" height="14" rx="7" fill="rgba(16,185,129,0.12)" />
-        <text x="205" y="261" textAnchor="middle" fill="#10b981" fontSize="8" fontWeight="700">Done</text>
+        <text x="205" y="261" textAnchor="middle" fill="#22B07D" fontSize="8" fontWeight="700">Done</text>
 
-        <rect x="252" y="240" width="108" height="42" rx="10" fill="#0B1220" />
+        <rect x="252" y="240" width="108" height="42" rx="10" fill="#1B2656" />
         <text x="306" y="264" textAnchor="middle" fill="white" fontSize="10" fontWeight="700">+ New Booking</text>
       </motion.g>
     </motion.svg>
@@ -159,7 +159,7 @@ export function RocketIllustration({ size = 200 }) {
         <motion.circle
           key={i}
           cx={x} cy={y} r={1.5}
-          fill="#00D1C1"
+          fill="#3E2BF1"
           variants={{
             hidden: { opacity: 0 },
             visible: { opacity: [0, 1, 0.5], transition: { delay: i * 0.15, duration: 1.5, repeat: Infinity, repeatType: 'reverse' } },
@@ -186,20 +186,20 @@ export function RocketIllustration({ size = 200 }) {
         {/* Main body */}
         <motion.path
           d="M100 40 C88 40 80 55 80 80 L80 130 C80 135 86 140 100 140 C114 140 120 135 120 130 L120 80 C120 55 112 40 100 40z"
-          fill="linear-gradient(180deg,#0B1220,#1e2d4a)"
-          stroke="#00D1C1"
+          fill="linear-gradient(180deg,#1B2656,#1e2d4a)"
+          stroke="#3E2BF1"
           strokeWidth="1"
           variants={{
             hidden: { pathLength: 0, opacity: 0 },
             visible: { pathLength: 1, opacity: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
           }}
         />
-        <path d="M100 40 C88 40 80 55 80 80 L80 130 C80 135 86 140 100 140 C114 140 120 135 120 130 L120 80 C120 55 112 40 100 40z" fill="#0B1220" />
+        <path d="M100 40 C88 40 80 55 80 80 L80 130 C80 135 86 140 100 140 C114 140 120 135 120 130 L120 80 C120 55 112 40 100 40z" fill="#1B2656" />
 
         {/* Nose cone */}
         <motion.path
           d="M100 20 C95 25 85 35 80 50 L120 50 C115 35 105 25 100 20z"
-          fill="#00D1C1"
+          fill="#3E2BF1"
           variants={{
             hidden: { opacity: 0, y: -10 },
             visible: { opacity: 1, y: 0, transition: { delay: 0.2 } },
@@ -210,21 +210,21 @@ export function RocketIllustration({ size = 200 }) {
         <motion.circle
           cx="100" cy="85" r="12"
           fill="rgba(99,102,241,0.20)"
-          stroke="#6366f1"
+          stroke="#3E2BF1"
           strokeWidth="2"
-          animate={{ boxShadow: ['0 0 0px #6366f1', '0 0 16px #6366f155', '0 0 0px #6366f1'] }}
+          animate={{ boxShadow: ['0 0 0px #3E2BF1', '0 0 16px #3E2BF155', '0 0 0px #3E2BF1'] }}
           transition={{ duration: 2, repeat: Infinity }}
         />
         <circle cx="100" cy="85" r="6" fill="rgba(99,102,241,0.35)" />
 
         {/* Left fin */}
-        <path d="M80 120 L65 140 L80 135z" fill="#00D1C1" opacity="0.8" />
+        <path d="M80 120 L65 140 L80 135z" fill="#3E2BF1" opacity="0.8" />
         {/* Right fin */}
-        <path d="M120 120 L135 140 L120 135z" fill="#00D1C1" opacity="0.8" />
+        <path d="M120 120 L135 140 L120 135z" fill="#3E2BF1" opacity="0.8" />
 
         {/* Stripes */}
-        <rect x="80" y="105" width="40" height="4" rx="2" fill="rgba(0,209,193,0.30)" />
-        <rect x="80" y="113" width="40" height="3" rx="1.5" fill="rgba(0,209,193,0.20)" />
+        <rect x="80" y="105" width="40" height="4" rx="2" fill="rgba(62, 43, 241,0.30)" />
+        <rect x="80" y="113" width="40" height="3" rx="1.5" fill="rgba(62, 43, 241,0.20)" />
       </motion.g>
     </motion.svg>
   );
@@ -244,8 +244,8 @@ export function SuccessIllustration({ size = 180 }) {
       {/* Background circles */}
       <motion.circle
         cx="90" cy="90" r="75"
-        fill="rgba(0,209,193,0.06)"
-        stroke="rgba(0,209,193,0.15)"
+        fill="rgba(62, 43, 241,0.06)"
+        stroke="rgba(62, 43, 241,0.15)"
         strokeWidth="1"
         variants={{
           hidden: { scale: 0, opacity: 0 },
@@ -254,7 +254,7 @@ export function SuccessIllustration({ size = 180 }) {
       />
       <motion.circle
         cx="90" cy="90" r="58"
-        fill="rgba(0,209,193,0.10)"
+        fill="rgba(62, 43, 241,0.10)"
         variants={{
           hidden: { scale: 0, opacity: 0 },
           visible: { scale: 1, opacity: 1, transition: { delay: 0.1, duration: 0.5 } },
@@ -264,13 +264,13 @@ export function SuccessIllustration({ size = 180 }) {
       {/* Center circle */}
       <motion.circle
         cx="90" cy="90" r="40"
-        fill="linear-gradient(135deg,#00D1C1,#00a8a0)"
+        fill="linear-gradient(135deg,#3E2BF1,#00a8a0)"
         variants={{
           hidden: { scale: 0 },
           visible: { scale: 1, transition: { delay: 0.2, type: 'spring', stiffness: 300, damping: 15 } },
         }}
       />
-      <circle cx="90" cy="90" r="40" fill="#00D1C1" />
+      <circle cx="90" cy="90" r="40" fill="#3E2BF1" />
 
       {/* Check path */}
       <motion.path
@@ -293,7 +293,7 @@ export function SuccessIllustration({ size = 180 }) {
         <motion.circle
           key={i}
           cx={x} cy={y} r="4"
-          fill="#00D1C1"
+          fill="#3E2BF1"
           variants={{
             hidden: { scale: 0, opacity: 0 },
             visible: {
@@ -311,12 +311,12 @@ export function SuccessIllustration({ size = 180 }) {
 /* ── Data Flow Illustration ──────────────────────────────────── */
 export function DataFlowIllustration({ width = 360, height = 200 }) {
   const nodes = [
-    { x: 40,  y: 100, label: 'Source', color: '#6366f1' },
-    { x: 160, y: 60,  label: 'Process', color: '#00D1C1' },
+    { x: 40,  y: 100, label: 'Source', color: '#3E2BF1' },
+    { x: 160, y: 60,  label: 'Process', color: '#3E2BF1' },
     { x: 160, y: 140, label: 'Filter', color: '#f59e0b' },
-    { x: 280, y: 100, label: 'Output', color: '#10b981' },
-    { x: 320, y: 50,  label: 'API', color: '#00D1C1', small: true },
-    { x: 320, y: 150, label: 'DB', color: '#6366f1', small: true },
+    { x: 280, y: 100, label: 'Output', color: '#22B07D' },
+    { x: 320, y: 50,  label: 'API', color: '#3E2BF1', small: true },
+    { x: 320, y: 150, label: 'DB', color: '#3E2BF1', small: true },
   ];
   const edges = [
     [nodes[0], nodes[1]], [nodes[0], nodes[2]],
@@ -394,7 +394,7 @@ export function DataFlowIllustration({ width = 360, height = 200 }) {
 }
 
 /* ── Wave Background ─────────────────────────────────────────── */
-export function WaveBackground({ color = '#00D1C1', opacity = 0.08, height = 120 }) {
+export function WaveBackground({ color = '#3E2BF1', opacity = 0.08, height = 120 }) {
   return (
     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height, overflow: 'hidden', pointerEvents: 'none' }}>
       <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 // Note: user prop is injected by Layout via React.cloneElement
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Page, PageHeader, Card, fmtMoney } from '@/components/ds';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Check, Zap, Crown, Rocket, ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Check, Zap, Crown, Rocket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { PRICING_PLANS } from '@/config/pricing';
@@ -39,118 +38,62 @@ export default function SubscriptionPage({ user }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8" dir="rtl">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-[#0B1220] mb-4">
-            בחר את התוכנית המתאימה לך
-          </h1>
-          <p className="text-xl text-gray-600">
-            התחל עם ניסיון חינם ל-14 יום • ביטול בכל עת
-          </p>
-        </motion.div>
+    <Page className="space-y-6">
+      <PageHeader title="מנוי" subtitle="14 יום ניסיון חינם. אפשר להחליף תוכנית או לבטל בכל רגע." className="!mb-0" />
 
-        {/* Plans Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {PLANS.map((plan, i) => {
-            const Icon = plan.icon;
-            const isCurrent = currentPlan === plan.id;
-            
-            return (
-              <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+      <div className="grid gap-4 md:grid-cols-3">
+        {PLANS.map((plan) => {
+          const Icon = plan.icon;
+          const isCurrent = currentPlan === plan.id;
+          return (
+            <Card key={plan.id} className={cn('flex h-full flex-col p-5 md:p-6', plan.popular && 'border-brand-600 ring-1 ring-brand-600')}>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="ds-icon-square"><Icon className="h-5 w-5" strokeWidth={1.75} /></span>
+                  <h2 className="text-[18px] font-bold text-navy-900">{plan.name}</h2>
+                </div>
+                {isCurrent ? (
+                  <span className="inline-flex h-6 items-center rounded-full bg-success-50 px-2.5 text-[13px] font-bold text-success-600">התוכנית שלכם</span>
+                ) : plan.popular ? (
+                  <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">הכי נבחרת</span>
+                ) : null}
+              </div>
+              <p className="mt-4 text-navy-900">
+                <span className="tabular text-[36px] font-bold tracking-[-0.02em]">{fmtMoney(plan.price)}</span>
+                <span className="text-[15px] text-ink-400"> לחודש</span>
+              </p>
+              <p className="text-[13px] text-ink-400">{plan.propertyLimit === Infinity ? 'נכסים ללא הגבלה' : `עד ${plan.propertyLimit} נכסים`}</p>
+              <ul className="mb-6 mt-5 flex-1 space-y-2.5">
+                {plan.features.map((feature, j) => (
+                  <li key={j} className="flex items-start gap-2 text-[15px] text-ink-600">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" strokeWidth={2} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button
+                className="w-full"
+                variant={plan.popular && !isCurrent ? 'default' : 'outline'}
+                onClick={() => !isCurrent && handleSelectPlan(plan.id)}
+                disabled={isCurrent}
               >
-                <Card className={`relative h-full ${plan.popular ? 'border-2 border-[#00D1C1] shadow-xl' : 'border'}`}>
-                  {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-[#00D1C1] text-[#0B1220] text-sm px-4 py-1">
-                        🔥 הכי פופולרי
-                      </Badge>
-                    </div>
-                  )}
-                  
-                  <CardHeader className="text-center pb-4">
-                    <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl ${plan.popular ? 'bg-gradient-to-br from-[#00D1C1] to-[#00B8A9]' : 'bg-gray-100'} flex items-center justify-center`}>
-                      <Icon className={`h-7 w-7 ${plan.popular ? 'text-white' : 'text-gray-600'}`} />
-                    </div>
-                    <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
-                    <div className="mb-4">
-                      <span className="text-5xl font-bold text-[#0B1220]">₪{plan.price}</span>
-                      <span className="text-gray-500">/חודש</span>
-                    </div>
-                    {isCurrent && (
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                        התוכנית הנוכחית שלך
-                      </Badge>
-                    )}
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, j) => (
-                        <li key={j} className="flex items-start gap-2 text-gray-600">
-                          <Check className="h-5 w-5 text-[#00D1C1] flex-shrink-0 mt-0.5" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    <Button 
-                      className={`w-full rounded-xl ${plan.popular 
-                        ? 'bg-gradient-to-r from-[#00D1C1] to-[#00B8A9] hover:opacity-90 text-white' 
-                        : 'bg-[#0B1220] hover:bg-[#1a2744] text-white'} ${isCurrent ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      onClick={() => !isCurrent && handleSelectPlan(plan.id)}
-                      disabled={isCurrent}
-                    >
-                      {isCurrent ? 'התוכנית הנוכחית' : 'בחר תוכנית'}
-                      {!isCurrent && <ArrowLeft className="mr-2 h-4 w-4" />}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Trust Badges */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center space-y-4"
-        >
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-green-500" />
-              ניסיון חינם 14 יום
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-green-500" />
-              ביטול בכל עת
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-green-500" />
-              ללא התחייבות
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-green-500" />
-              תשלום מאובטח
-            </div>
-          </div>
-          
-          <p className="text-gray-400 text-sm">
-            יש שאלות? <a href="mailto:support@atlas-app.co.il" className="text-[#00D1C1] hover:underline">צור קשר עם התמיכה</a>
-          </p>
-        </motion.div>
+                {isCurrent ? 'התוכנית הנוכחית' : `בחירת ${plan.name}`}
+              </Button>
+            </Card>
+          );
+        })}
       </div>
-    </div>
+
+      <div className="flex flex-col items-center gap-3 pt-2 text-center">
+        <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[14px] text-ink-600">
+          {['ניסיון חינם 14 יום', 'ביטול בכל רגע', 'ללא התחייבות', 'תשלום מאובטח'].map((t) => (
+            <li key={t} className="flex items-center gap-1.5"><Check className="h-4 w-4 text-success-600" strokeWidth={2} />{t}</li>
+          ))}
+        </ul>
+        <p className="text-[14px] text-ink-400">
+          שאלות? <a href="mailto:support@atlas-il.com" className="inline-flex min-h-11 items-center font-medium text-brand-600 hover:underline">כתבו לנו</a>
+        </p>
+      </div>
+    </Page>
   );
 }

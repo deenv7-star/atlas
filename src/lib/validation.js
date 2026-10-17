@@ -24,7 +24,7 @@ const PHONE_REGEX = /^(\+972|0)(5[0-9]|7[2-9])[0-9]{7}$/;
 export function validatePhone(value) {
   const v = (value || '').replace(/\s|-/g, '');
   if (!v) return { valid: false, error: 'שדה חובה' };
-  if (!PHONE_REGEX.test(v)) return { valid: false, error: 'מספר טלפון לא תקין — לדוגמה: 050-1234567' };
+  if (!PHONE_REGEX.test(v)) return { valid: false, error: 'מספר טלפון לא תקין: לדוגמה: 050-1234567' };
   return { valid: true };
 }
 

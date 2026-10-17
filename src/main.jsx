@@ -4,18 +4,19 @@ import App from '@/App.jsx'
 import BackendNotConfigured from '@/components/common/BackendNotConfigured'
 import { isProductionBackendConfigured } from '@/lib/backendConfig'
 import '@/index.css'
+import '@/ui-direction/flag'
 
 // Minimal fallback when app crashes (no external deps)
 function CrashFallback({ error }) {
   return (
     <div dir="rtl" style={{
       minHeight: '100vh', padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Heebo', sans-serif", background: '#F4F6FB', textAlign: 'center'
+      fontFamily: "'Heebo', sans-serif", background: '#F7F8FB', textAlign: 'center'
     }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700, color: '#0B1220', marginBottom: 12 }}>אופס! משהו השתבש</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1B2656', marginBottom: 12 }}>אופס! משהו השתבש</h1>
       <p style={{ color: '#6B7280', marginBottom: 20, maxWidth: 400 }}>אירעה שגיאה בטעינת האפליקציה.</p>
       {error && <pre style={{ background: '#FEE2E2', padding: 12, borderRadius: 8, fontSize: 12, overflow: 'auto', maxWidth: '100%', marginBottom: 20 }}>{String(error)}</pre>}
-      <button onClick={() => window.location.href = '/'} style={{ padding: '12px 24px', background: '#00D1C1', color: '#0B1220', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>חזור לדף הבית</button>
+      <button onClick={() => window.location.href = '/'} style={{ padding: '12px 24px', background: '#3E2BF1', color: '#FFFFFF', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>חזור לדף הבית</button>
       <button onClick={() => window.location.reload()} style={{ marginTop: 12, padding: '12px 24px', background: 'white', color: '#374151', border: '1px solid #E5E7EB', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>רענן</button>
     </div>
   )

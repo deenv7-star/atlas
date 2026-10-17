@@ -16,13 +16,26 @@ const DialogPortal = DialogPrimitive.Portal
 const DialogClose = DialogPrimitive.Close
 
 const springOpen = { type: 'spring', stiffness: 400, damping: 28 }
-const tweenExit = { duration: 0.12, ease: [0.23, 1, 0.32, 1] }
+const tweenExit = { duration: 0.16, ease: [0.2, 0.8, 0.2, 1] }
+const sheetSpring = { type: 'spring', stiffness: 420, damping: 40, mass: 0.9 }
+/** Below 640px dialogs become iOS-style bottom sheets (thumb reach, native feel). */
+function useSheetMode() {
+  const get = () => typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches
+  const [m, setM] = React.useState(get)
+  React.useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)')
+    const on = () => setM(mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+  return m
+}
 
 const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:duration-200 data-[state=closed]:duration-100",
+      "fixed inset-0 z-50 bg-navy-900/40 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:duration-200 data-[state=closed]:duration-100",
       className
     )}
     {...props} />
@@ -30,6 +43,7 @@ const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => {
+  const sheetMode = useSheetMode()
   const [uiState, setUiState] = React.useState('open')
   const innerRef = React.useRef(null)
 
@@ -56,23 +70,26 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
         <motion.div
           ref={mergedRef}
           className={cn(
-            "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg sm:rounded-lg",
+            "fixed z-50 grid w-full gap-4 bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-sheet max-h-[92dvh] overflow-y-auto inset-x-0 bottom-0 rounded-t-[20px] data-[state=open]:slide-in-from-bottom-full sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-lg sm:rounded-[20px] sm:border sm:border-line sm:p-6 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[0.98] max-sm:!w-full max-sm:!max-w-none max-sm:!left-0 max-sm:!right-0 max-sm:!top-auto max-sm:!rounded-b-none max-sm:!rounded-t-[20px]",
             className
           )}
-          style={{ x: '-50%', y: '-50%' }}
-          initial={{ opacity: 0, scale: 0.96, x: '-50%', y: '-50%' }}
+          style={sheetMode ? { x: 0, y: 0 } : { x: '-50%', y: '-50%' }}
+          initial={sheetMode ? { opacity: 1, y: '100%', x: 0 } : { opacity: 0, scale: 0.97, x: '-50%', y: '-50%' }}
           animate={
-            uiState === 'open'
-              ? { opacity: 1, scale: 1, x: '-50%', y: '-50%' }
-              : { opacity: 0, scale: 0.96, x: '-50%', y: '-50%' }
+            sheetMode
+              ? (uiState === 'open' ? { opacity: 1, y: 0, x: 0 } : { opacity: 1, y: '100%', x: 0 })
+              : (uiState === 'open'
+                ? { opacity: 1, scale: 1, x: '-50%', y: '-50%' }
+                : { opacity: 0, scale: 0.97, x: '-50%', y: '-50%' })
           }
-          transition={uiState === 'open' ? springOpen : tweenExit}
+          transition={uiState === 'open' ? (sheetMode ? sheetSpring : springOpen) : tweenExit}
         >
+          <div aria-hidden className="mx-auto -mt-2 mb-1 h-1.5 w-10 rounded-full bg-neutral-300 sm:hidden" />
           {children}
           <DialogPrimitive.Close
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+            className="absolute left-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-600 hover:bg-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 disabled:pointer-events-none">
+            <X className="h-5 w-5" />
+            <span className="sr-only">סגירה</span>
           </DialogPrimitive.Close>
         </motion.div>
       </DialogPrimitive.Content>
@@ -86,7 +103,7 @@ const DialogHeader = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)}
+    className={cn("flex flex-col space-y-1.5 text-start pe-12", className)}
     {...props} />
 )
 DialogHeader.displayName = "DialogHeader"
@@ -96,7 +113,7 @@ const DialogFooter = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end gap-2", className)}
     {...props} />
 )
 DialogFooter.displayName = "DialogFooter"

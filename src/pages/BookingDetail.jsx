@@ -6,7 +6,7 @@ import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
 import BookingDetails from '@/components/bookings/BookingDetails';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
-import { SkeletonBookingDetailSheet } from '@/components/skeletons/atlas-skeletons';
+import { SkelLine } from '@/components/ds';
 
 export default function BookingDetail({ orgId }) {
   const { id } = useParams();
@@ -20,8 +20,13 @@ export default function BookingDetail({ orgId }) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-end w-full min-h-[40vh]">
-        <SkeletonBookingDetailSheet />
+      <div className="mx-auto w-full max-w-[880px] px-4 pt-6 md:px-8" role="status" aria-busy="true" aria-label="טוען הזמנה">
+        <SkelLine className="h-6 w-24" />
+        <SkelLine className="mt-4 h-[260px] rounded-[14px]" />
+        <div className="mt-4 grid gap-4 md:grid-cols-[1.3fr_1fr]">
+          <SkelLine className="h-[220px] rounded-[14px]" />
+          <SkelLine className="h-[220px] rounded-[14px]" />
+        </div>
       </div>
     );
   }
@@ -36,8 +41,8 @@ export default function BookingDetail({ orgId }) {
 
   if (!booking) {
     return (
-      <div className="p-6 text-center text-gray-500">
-        הזמנה לא נמצאה
+      <div className="p-10 text-center text-[16px] text-ink-600">
+        ההזמנה לא נמצאה. ייתכן שנמחקה.
       </div>
     );
   }

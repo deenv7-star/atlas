@@ -1,4 +1,7 @@
+import AuthShell from '@/components/app/AuthShell';
+import { WELCOME_PHOTO_2 } from '@/lib/stay/unitPhoto';
 import React, { useState, useEffect, useCallback } from 'react';
+import { Navigate } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
@@ -32,7 +35,7 @@ const ONBOARDING_STEP_LABELS = [
   'ברוכים הבאים',
   'פרטי מתחם ונכס',
   'בחירת תוכנית',
-  'סיום — כניסה לדשבורד',
+  'סיום',
 ];
 
 /* Emil: snappy press feedback, strong ease-out */
@@ -124,10 +127,7 @@ export default function Onboarding() {
   }, []);
 
   useEffect(() => {
-    if (user?.onboarding_completed) {
-      window.location.replace('/dashboard');
-      return;
-    }
+    if (user?.onboarding_completed) return;
     if (user?.onboarding_step && !loaded) {
       const s = Math.min(Math.max(0, user.onboarding_step - 1), TOTAL_STEPS - 1);
       setStep(s);
@@ -547,11 +547,9 @@ export default function Onboarding() {
       case 0:
         return (
           <div className="text-center py-4">
-            <div className="flex items-center justify-center gap-2 mb-5">
-              <img src="/atlas-logo-final.png" alt="ATLAS" style={{ height: 56, width: 'auto', objectFit: 'contain' }} />
-            </div>
-            <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight mb-2">ברוך הבא ל-ATLAS!</h2>
-            <p className="text-sm text-zinc-600 mb-6 leading-relaxed">בואו נגדיר את המתחם שלך תוך 2 דקות</p>
+            <span className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-50 text-brand-600"><Home className="h-7 w-7" strokeWidth={1.5} /></span>
+            <h2 className="mb-2 text-[26px] font-bold leading-tight tracking-[-0.02em] text-navy-900">ברוכים הבאים ל-ATLAS</h2>
+            <p className="mb-6 text-[15px] leading-relaxed text-ink-600">שתי דקות, והמתחם שלכם מוכן לקבל הזמנות.</p>
 
             <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
               {['חינם ל-14 יום', 'ללא כרטיס אשראי', 'ביטול בכל עת'].map((t, i) => (
@@ -565,9 +563,9 @@ export default function Onboarding() {
                     damping: 30,
                     delay: reduceMotion ? 0 : 0.05 * i,
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-teal-500/8 border border-teal-600/15 text-teal-800"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line bg-canvas px-3 text-[13px] font-medium text-ink-600"
                 >
-                  <Check className="w-3 h-3 shrink-0" strokeWidth={2.5} />
+                  <Check className="h-3.5 w-3.5 shrink-0 text-success-600" strokeWidth={2.5} />
                   {t}
                 </motion.span>
               ))}
@@ -575,9 +573,9 @@ export default function Onboarding() {
 
             <Button
               onClick={goNext}
-              className="w-full h-12 text-base font-bold rounded-xl gap-2 transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] bg-zinc-900 text-white [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
+              className="w-full h-12 text-base font-bold rounded-[10px] gap-2 transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] bg-brand-600 text-white [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
             >
-              בואו נתחיל!
+              מתחילים
               <ArrowLeft className="w-5 h-5" />
             </Button>
 
@@ -621,9 +619,9 @@ export default function Onboarding() {
                 }
               }}
               disabled={saving}
-              className="w-full mt-3 text-sm font-medium text-zinc-500 hover:text-teal-700 transition-colors duration-200 ease-out py-2 cursor-pointer hover:underline focus:outline-none focus:ring-2 focus:ring-teal-500/25 rounded"
+              className="mt-2 min-h-11 w-full rounded-[10px] text-[15px] font-medium text-ink-600 transition-colors duration-150 hover:text-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
             >
-              יש לי חשבון קיים — מעבר לדאשבורד
+              כבר הגדרתי, למסך היום
             </button>
           </div>
         );
@@ -646,11 +644,11 @@ export default function Onboarding() {
         return (
           <div className="space-y-5">
             <div className="text-center mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-teal-500/8 border border-teal-600/15">
-                <Building2 className="w-6 h-6 text-teal-700" strokeWidth={2} />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-brand-50 border border-brand-100">
+                <Building2 className="w-6 h-6 text-brand-600" strokeWidth={2} />
               </div>
-              <h2 className="text-xl font-extrabold text-zinc-900 tracking-tight">הגדרת המתחם והנכס הראשון</h2>
-              <p className="text-sm text-zinc-600 mt-1 leading-relaxed">פרטי הארגון והנכס הראשון</p>
+              <h2 className="text-xl font-bold text-navy-900 tracking-tight">הגדרת המתחם והנכס הראשון</h2>
+              <p className="text-sm text-ink-600 mt-1 leading-relaxed">פרטי הארגון והנכס הראשון</p>
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm font-semibold text-gray-700">שם הארגון *</Label>
@@ -707,8 +705,8 @@ export default function Onboarding() {
             </div>
             <div className="border-t border-gray-100 pt-4 mt-4">
               <div className="flex items-center gap-2 mb-3">
-                <Home className="w-5 h-5 text-teal-600" strokeWidth={2} />
-                <h3 className="text-sm font-semibold text-zinc-800">נכס ראשון</h3>
+                <Home className="w-5 h-5 text-brand-600" strokeWidth={2} />
+                <h3 className="text-sm font-semibold text-navy-900">נכס ראשון</h3>
               </div>
               <div className="space-y-1.5">
                 <Label className="text-sm font-semibold text-gray-700">שם הנכס *</Label>
@@ -756,14 +754,14 @@ export default function Onboarding() {
               </div>
             </div>
             <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold transition-transform duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50">
+              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold transition-transform duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-canvas">
                 <ArrowRight className="w-4 h-4" />
                 חזור
               </Button>
               <Button
                 onClick={handleSaveOrgAndProperty}
                 disabled={!combinedValid || saving}
-                className="flex-1 h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
+                className="flex-1 h-12 text-base font-bold rounded-[10px] gap-2 bg-brand-600 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
               >
                 {saving ? <Loader2 className="w-5 h-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden /> : <ArrowLeft className="w-5 h-5" />}
                 {saving ? 'שומר...' : 'הבא'}
@@ -778,11 +776,11 @@ export default function Onboarding() {
         return (
           <div className="space-y-5">
             <div className="text-center mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-teal-500/8 border border-teal-600/15">
-                <Crown className="w-6 h-6 text-teal-700" strokeWidth={2} />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-brand-50 border border-brand-100">
+                <Crown className="w-6 h-6 text-brand-600" strokeWidth={2} />
               </div>
-              <h2 className="text-xl font-extrabold text-zinc-900 tracking-tight">בחר את התוכנית שמתאימה לך</h2>
-              <p className="text-sm text-zinc-600 mt-1 leading-relaxed">כל התוכניות כוללות 14 יום ניסיון חינם</p>
+              <h2 className="text-xl font-bold text-navy-900 tracking-tight">בחר את התוכנית שמתאימה לך</h2>
+              <p className="text-sm text-ink-600 mt-1 leading-relaxed">כל התוכניות כוללות 14 יום ניסיון חינם</p>
             </div>
             <div className="space-y-3">
               {PLANS.map(plan => (
@@ -793,44 +791,44 @@ export default function Onboarding() {
                   whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                   transition={EMIL_TAP}
                   className={cn(
-                    'w-full text-right p-4 rounded-xl border-2 transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50/80',
+                    'w-full text-right p-4 rounded-xl border-2 transition-[background-color] duration-150 atlas-ease-out-trans [@media(hover:hover)_and_(pointer:fine)]:hover:bg-canvas/80',
                     selectedPlanKey === plan.key
                       ? 'border-teal-600/50 bg-teal-500/6 shadow-sm'
                       : plan.recommended
                         ? 'border-teal-500/25 bg-teal-500/[0.03]'
-                        : 'border-zinc-100 bg-white',
+                        : 'border-line bg-white',
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-extrabold text-zinc-900">{plan.name}</span>
+                        <span className="font-bold text-navy-900">{plan.name}</span>
                         {plan.recommended && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-500/10 border border-teal-600/20 text-teal-800">מומלץ</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-500/10 border border-teal-600/20 text-brand-700">מומלץ</span>
                         )}
                       </div>
-                      <p className="text-xs mt-0.5 text-zinc-600 font-normal leading-relaxed">{plan.desc}</p>
+                      <p className="text-xs mt-0.5 text-ink-600 font-normal leading-relaxed">{plan.desc}</p>
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {plan.features.slice(0, 3).map(f => (
-                          <span key={f} className="text-[10px] px-2 py-0.5 rounded-full text-zinc-600 bg-zinc-100">{f}</span>
+                          <span key={f} className="text-[10px] px-2 py-0.5 rounded-full text-ink-600 bg-neutral-100">{f}</span>
                         ))}
                       </div>
                     </div>
                     <div className="text-left flex-shrink-0 mr-2">
-                      <div className="text-lg font-extrabold text-zinc-900 atlas-tabular">₪{plan.price}</div>
-                      <div className="text-[10px] text-zinc-500">לחודש</div>
+                      <div className="text-lg font-bold text-navy-900 atlas-tabular">₪{plan.price}</div>
+                      <div className="text-[10px] text-ink-600">לחודש</div>
                     </div>
                   </div>
                 </motion.button>
               ))}
             </div>
             <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold transition-transform duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-50">
+              <Button variant="outline" onClick={goBack} className="h-12 px-5 rounded-xl border-gray-200 gap-2 font-semibold transition-transform duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-canvas">
                 <ArrowRight className="w-4 h-4" />
                 חזור
               </Button>
             </div>
-            <button onClick={handleSkipPlan} disabled={saving} className="w-full text-center text-sm text-gray-400 hover:text-gray-600 transition-colors duration-150 atlas-ease-out-trans disabled:opacity-50 [@media(hover:hover)_and_(pointer:fine)]:hover:text-zinc-600">
+            <button onClick={handleSkipPlan} disabled={saving} className="w-full text-center text-sm text-gray-400 hover:text-gray-600 transition-colors duration-150 atlas-ease-out-trans disabled:opacity-50 [@media(hover:hover)_and_(pointer:fine)]:hover:text-ink-600">
               אדלג לעכשיו →
             </button>
           </div>
@@ -845,11 +843,11 @@ export default function Onboarding() {
                 <defs>
                   <linearGradient id="successCircleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#34D399" stopOpacity="1" />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#22B07D" stopOpacity="1" />
                   </linearGradient>
                   <linearGradient id="successGlow" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#34D399" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity="0.05" />
+                    <stop offset="100%" stopColor="#22B07D" stopOpacity="0.05" />
                   </linearGradient>
                 </defs>
                 <circle cx="60" cy="60" r="54" fill="url(#successGlow)" />
@@ -857,30 +855,30 @@ export default function Onboarding() {
                 <path d="M38 60 L52 74 L82 44" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               </svg>
             </div>
-            <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight mb-2">המתחם שלך מוכן!</h2>
-            <p className="text-sm text-zinc-600 mb-6 leading-relaxed">הכל מוגדר ומוכן לשימוש</p>
+            <h2 className="text-2xl font-bold text-navy-900 tracking-tight mb-2">המתחם שלך מוכן!</h2>
+            <p className="text-sm text-ink-600 mb-6 leading-relaxed">הכל מוגדר ומוכן לשימוש</p>
 
             {(createdOrgName || createdPropertyName) && (
-              <div className="rounded-xl p-4 mb-6 space-y-2 text-right bg-zinc-50 border border-zinc-100">
+              <div className="rounded-xl p-4 mb-6 space-y-2 text-right bg-canvas border border-line">
                 {createdOrgName && (
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-teal-500/8 border border-teal-600/15">
-                      <Building2 className="w-3.5 h-3.5 text-teal-700" strokeWidth={2} />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-brand-50 border border-brand-100">
+                      <Building2 className="w-3.5 h-3.5 text-brand-600" strokeWidth={2} />
                     </div>
                     <div>
-                      <p className="text-[10px] text-zinc-500">ארגון</p>
-                      <p className="text-sm font-semibold text-zinc-900">{createdOrgName}</p>
+                      <p className="text-[10px] text-ink-600">ארגון</p>
+                      <p className="text-sm font-semibold text-navy-900">{createdOrgName}</p>
                     </div>
                   </div>
                 )}
                 {createdPropertyName && (
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-teal-500/8 border border-teal-600/15">
-                      <Home className="w-3.5 h-3.5 text-teal-700" strokeWidth={2} />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-brand-50 border border-brand-100">
+                      <Home className="w-3.5 h-3.5 text-brand-600" strokeWidth={2} />
                     </div>
                     <div>
-                      <p className="text-[10px] text-zinc-500">נכס</p>
-                      <p className="text-sm font-semibold text-zinc-900">{createdPropertyName}</p>
+                      <p className="text-[10px] text-ink-600">נכס</p>
+                      <p className="text-sm font-semibold text-navy-900">{createdPropertyName}</p>
                     </div>
                   </div>
                 )}
@@ -890,7 +888,7 @@ export default function Onboarding() {
             <Button
               onClick={handleFinish}
               disabled={saving}
-              className="w-full h-12 text-base font-bold rounded-xl gap-2 bg-zinc-900 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-zinc-800"
+              className="w-full h-12 text-base font-bold rounded-[10px] gap-2 bg-brand-600 text-white transition-[transform,background-color] duration-150 atlas-ease-out-trans active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-brand-500"
             >
               {saving ? <Loader2 className="w-5 h-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden /> : <ArrowLeft className="w-5 h-5" />}
               {saving ? 'מעביר...' : 'כניסה ללוח הבקרה'}
@@ -903,83 +901,34 @@ export default function Onboarding() {
     }
   };
 
+  if (user?.onboarding_completed) return <Navigate to="/dashboard" replace />;
+
   return (
-    <div
-      className="min-h-[100dvh] flex items-center justify-center p-4 relative overflow-hidden"
-      dir="rtl"
-      style={{ fontFamily: "'Heebo', sans-serif", background: '#FFFFFF' }}
-      onKeyDown={handleKeyDown}
-    >
-      {/* Subtle gradient blobs — decorative only (Emil: no a11y noise) */}
-      <div className="pointer-events-none" aria-hidden>
-        <div className="atlas-onb-blob atlas-onb-blob-1" />
-        <div className="atlas-onb-blob atlas-onb-blob-2" />
-        <div className="atlas-onb-blob atlas-onb-blob-3" />
-      </div>
+    <AuthShell wide onKeyDown={handleKeyDown} photo={WELCOME_PHOTO_2} caption="עוד דקה והצימר שלכם מוכן לקבל הזמנות.">
+      <div className="w-full">
 
-      <div className="w-full max-w-[520px] relative z-10">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <img
-            src="/atlas-logo-final.png"
-            alt="ATLAS"
-            style={{ height: 56, width: 'auto', objectFit: 'contain' }}
-          />
-        </div>
-
-        {/* Progress — spring-driven fill + step chips (vertical step motion = RTL-safe) */}
-        <div
-          className="mb-4"
-          role="group"
-          aria-label={`התקדמות בהגדרה, שלב ${step + 1} מתוך ${TOTAL_STEPS}`}
-        >
-          <div
-            className="relative h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(progress)}
-            aria-label={`אחוז השלמה ${Math.round(progress)}%`}
-          >
-            <motion.div
-              className="absolute inset-y-0 left-0 right-0 rounded-full"
-              initial={false}
-              animate={{ scaleX: progress / 100 }}
-              transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 100, damping: 24, mass: 0.82 }}
-              style={{
-                transformOrigin: '100% 50%',
-                background: 'linear-gradient(90deg, #00D1C1 0%, #089b8e 100%)',
-              }}
-              aria-hidden
-            />
+        <div className="mb-4" role="group" aria-label={`התקדמות בהגדרה, שלב ${step + 1} מתוך ${TOTAL_STEPS}`}>
+          <div className="flex items-center justify-between gap-3 text-[13px]">
+            <span className="font-bold text-navy-900">{ONBOARDING_STEP_LABELS[step]}</span>
+            <span className="tabular text-ink-400">שלב {step + 1} מתוך {TOTAL_STEPS}</span>
           </div>
-          <div className="flex justify-center gap-1.5 mt-3" aria-hidden>
+          <div className="mt-2 grid grid-cols-4 gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
             {Array.from({ length: TOTAL_STEPS }, (_, i) => (
-              <motion.span
-                key={i}
-                layout
-                className={cn(
-                  'h-1.5 rounded-full',
-                  i === step ? 'w-7 bg-teal-600' : 'w-1.5 bg-zinc-200',
-                )}
-                transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-              />
+              <span key={i} className="h-1.5 overflow-hidden rounded-full bg-line">
+                <motion.span
+                  className="block h-full rounded-full bg-brand-600"
+                  initial={false}
+                  animate={{ scaleX: i <= step ? 1 : 0 }}
+                  style={{ transformOrigin: '100% 50%' }}
+                  transition={reduceMotion ? { duration: 0 } : { duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
+                />
+              </span>
             ))}
           </div>
-          <p className="text-xs mt-2 text-center text-zinc-500 font-medium tabular-nums">
-            שלב {step + 1} מתוך {TOTAL_STEPS}
-            {ONBOARDING_STEP_LABELS[step] ? (
-              <span className="block text-[13px] text-zinc-600 font-semibold mt-1 tabular-nums">
-                {ONBOARDING_STEP_LABELS[step]}
-              </span>
-            ) : null}
-          </p>
         </div>
 
-        {/* Card — app style */}
-        <div
-          className="rounded-[20px] p-8 overflow-hidden bg-white border border-zinc-100 shadow-[0_4px_24px_rgba(15,23,42,0.06)]"
-        >
+        {/* Step body sits straight on the warm frame */}
+        <div className="pt-2">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={step}
@@ -1007,33 +956,6 @@ export default function Onboarding() {
           </AnimatePresence>
         </div>
       </div>
-
-      <style>{`
-        .atlas-onb-blob {
-          position: absolute;
-          border-radius: 50%;
-          pointer-events: none;
-        }
-        .atlas-onb-blob-1 {
-          width: 600px; height: 600px;
-          background: radial-gradient(circle, #5EEAD4 0%, transparent 70%);
-          opacity: 0.09;
-          top: -120px; right: -150px;
-        }
-        .atlas-onb-blob-2 {
-          width: 500px; height: 500px;
-          background: radial-gradient(circle, #94A3B8 0%, transparent 70%);
-          opacity: 0.05;
-          top: 40%; left: -180px;
-        }
-        .atlas-onb-blob-3 {
-          width: 400px; height: 400px;
-          background: radial-gradient(circle, #99F6E4 0%, transparent 70%);
-          opacity: 0.06;
-          bottom: -80px; left: 50%;
-          transform: translateX(-50%);
-        }
-      `}</style>
-    </div>
+    </AuthShell>
   );
 }

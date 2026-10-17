@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -15,7 +16,7 @@ export default function Changelog() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/"><img src="/atlas-logo-final.png" alt="ATLAS" className="h-10" /></Link>
+            <Link to="/"><div className="mb-6 flex justify-center"><Wordmark size={30} /></div></Link>
             <Link to={createPageUrl('Landing')}>
               <Button variant="ghost">חזרה</Button>
             </Link>
@@ -30,16 +31,16 @@ export default function Changelog() {
 
           <div className="space-y-8">
             {entries.map((e, i) => (
-              <div key={i} className="border-r-4 border-[#00D1C1] pr-6">
+              <div key={i} className="border-r-4 border-brand-600 pr-6">
                 <div className="flex items-center gap-2 mb-2">
-                  <FileText className="w-5 h-5 text-[#00D1C1]" />
+                  <FileText className="w-5 h-5 text-brand-600" />
                   <span className="text-sm font-semibold text-gray-500">{e.date}</span>
                 </div>
                 <h2 className="text-xl font-bold text-gray-900 mb-3">{e.title}</h2>
                 <ul className="space-y-1 text-gray-600">
                   {e.items.map((item, j) => (
                     <li key={j} className="flex items-center gap-2">
-                      <ArrowRight className="w-4 h-4 text-[#00D1C1] flex-shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-brand-600 flex-shrink-0" />
                       {item}
                     </li>
                   ))}

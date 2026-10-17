@@ -11,7 +11,7 @@ import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 const PROVIDER_CONFIGS = {
   MORNING: {
     title: 'Morning (מורנינג)',
-    icon: '☀️',
+    icon: 'M',
     color: 'bg-[#00A6ED]',
     fields: [
       { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'xxxxx...', required: true },
@@ -22,7 +22,7 @@ const PROVIDER_CONFIGS = {
   },
   GREEN_INVOICE: {
     title: 'Green Invoice',
-    icon: '📊',
+    icon: 'G',
     color: 'bg-green-600',
     fields: [
       { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'xxxxx...', required: true },
@@ -33,7 +33,7 @@ const PROVIDER_CONFIGS = {
   },
   QUICKBOOKS: {
     title: 'QuickBooks',
-    icon: '💼',
+    icon: 'Q',
     color: 'bg-[#2CA01C]',
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'ABxxxxx', required: true },
@@ -45,7 +45,7 @@ const PROVIDER_CONFIGS = {
   },
   ZOHO_BOOKS: {
     title: 'Zoho Books',
-    icon: '🧾',
+    icon: 'Z',
     color: 'bg-orange-600',
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'xxxxx', required: true },
@@ -57,8 +57,8 @@ const PROVIDER_CONFIGS = {
   },
   XERO: {
     title: 'Xero',
-    icon: '📈',
-    color: 'bg-blue-700',
+    icon: 'X',
+    color: 'bg-brand-700',
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'xxxxx', required: true },
       { key: 'client_secret', label: 'Client Secret', type: 'password', placeholder: 'xxxxx...', required: true }
@@ -68,7 +68,7 @@ const PROVIDER_CONFIGS = {
   },
   HASHAVSHEVET: {
     title: 'חשבשבת (HashavShevet)',
-    icon: '🧮',
+    icon: 'ח',
     color: 'bg-gray-700',
     fields: [
       { key: 'license_key', label: 'License Key', type: 'password', placeholder: 'xxxxx...', required: true },
@@ -97,7 +97,7 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
     setTestResult({
       success,
       message: success 
-        ? 'החיבור עבד בהצלחה! החשבונאות מסונכרנת ✓' 
+        ? 'החיבור עבד בהצלחה! החשבונאות מסונכרנת ' 
         : 'שגיאה בחיבור. בדוק את פרטי החשבון ונסה שוב.'
     });
     setTesting(false);
@@ -138,10 +138,10 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="text-sm text-blue-900 flex items-start gap-2">
+          <Alert className="bg-brand-50 border-brand-100">
+            <AlertDescription className="text-sm text-navy-900 flex items-start gap-2">
               <span>{config.helpText}</span>
-              <a href={config.helpUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 flex-shrink-0">
+              <a href={config.helpUrl} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-700 flex-shrink-0">
                 <ExternalLink className="h-4 w-4" />
               </a>
             </AlertDescription>
@@ -159,10 +159,10 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
             </div>
           ))}
 
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-canvas rounded-lg">
             <div>
               <Label className="font-medium">סנכרון אוטומטי</Label>
-              <p className="text-xs text-gray-500">סנכרן חשבוניות וקבלות אוטומטית</p>
+              <p className="text-xs text-ink-600">סנכרן חשבוניות וקבלות אוטומטית</p>
             </div>
             <Switch checked={autoSync} onCheckedChange={setAutoSync} />
           </div>
@@ -184,7 +184,7 @@ export default function AccountingSetupDialog({ open, onOpenChange, provider, on
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>ביטול</Button>
-          <Button onClick={handleSave} disabled={!testResult?.success} className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]">שמור והפעל</Button>
+          <Button onClick={handleSave} disabled={!testResult?.success} className="bg-brand-600 hover:bg-brand-500 text-white">שמור והפעל</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -12,7 +12,7 @@ const EXACT = {
   },
   '/register': {
     title: 'הרשמה | ATLAS',
-    description: 'פתיחת חשבון ATLAS — ניהול מתחמי נופש ואירוח בישראל.',
+    description: 'פתיחת חשבון ATLAS: ניהול מתחמי נופש ואירוח בישראל.',
   },
   '/verify-email': {
     title: 'אימות אימייל | ATLAS',
@@ -31,15 +31,15 @@ const EXACT = {
     description: 'סיום ההרשמה והגדרת הארגון ב-ATLAS.',
   },
   '/dashboard': {
-    title: 'דשבורד | ATLAS',
-    description: 'סקירת הזמנות, לידים, תשלומים וביצועים — ATLAS.',
+    title: 'היום | ATLAS',
+    description: 'סקירת הזמנות, לידים, תשלומים וביצועים: ATLAS.',
   },
   '/about': {
     title: 'אודות ATLAS',
     description: 'מי אנחנו ומהי חזון הפלטפורמה לניהול נכסי אירוח בישראל.',
   },
   '/contact': {
-    title: 'צור קשר | ATLAS',
+    title: 'יצירת קשר | ATLAS',
     description: 'יצירת קשר עם צוות ATLAS לתמיכה ומכירות.',
   },
   '/privacy': {
@@ -80,7 +80,7 @@ const EXACT = {
   },
   '/how-it-works': {
     title: 'איך זה עובד | ATLAS',
-    description: 'איך ATLAS מסנכרנת ערוצי הזמנה ומונעת הזמנות כפולות — זרימת נתונים וכללי התנגשות.',
+    description: 'איך ATLAS מסנכרנת ערוצי הזמנה ומונעת הזמנות כפולות: זרימת נתונים וכללי התנגשות.',
   },
   '/pricing': {
     title: 'תמחור ותוכניות | ATLAS',
@@ -88,7 +88,7 @@ const EXACT = {
       'תמחור ATLAS לניהול צימרים ומתחמי נופש: חבילה בסיסית, מתקדמת ו-Enterprise. השוואת תכונות, מחירים להמחשה וצור קשר להצעה.',
   },
   '/billing': {
-    title: 'חיוב | ATLAS',
+    title: 'חיובים | ATLAS',
     description: 'ניהול חיוב ותשלומים ב-ATLAS.',
   },
   '/subscription': {
@@ -118,14 +118,21 @@ const SEGMENT_TITLE = {
   cleaning: 'ניקיון | ATLAS',
   contracts: 'חוזים | ATLAS',
   automations: 'אוטומציות | ATLAS',
-  integrations: 'אינטגרציות | ATLAS',
-  'ai-assistant': 'AI עוזר | ATLAS',
-  'revenue-intelligence': 'מודיעין הכנסות | ATLAS',
+  integrations: 'ערוצים וחיבורים | ATLAS',
+  'ai-assistant': 'עוזר AI | ATLAS',
+  'revenue-intelligence': 'ניתוח הכנסות | ATLAS',
   'owner-reports': 'דוחות בעלים | ATLAS',
   'guest-journey': 'מסע אורח | ATLAS',
-  'guest-portal': 'פורטל אורחים | ATLAS',
-  'dynamic-pricing': 'תמחור דינאמי | ATLAS',
-  'expense-tracker': 'מעקב הוצאות | ATLAS',
+  'guest-portal': 'דף אורח והזמנה ישירה | ATLAS',
+  'dynamic-pricing': 'תמחור דינמי | ATLAS',
+  'expense-tracker': 'הוצאות | ATLAS',
+  today: 'היום | ATLAS',
+  balances: 'יתרות | ATLAS',
+  'monthly-report': 'דוח חודשי | ATLAS',
+  subscription: 'מנוי | ATLAS',
+  billing: 'חיובים | ATLAS',
+  g: 'פרטי השהייה | ATLAS',
+  book: 'הזמנה ישירה | ATLAS',
   'service-requests': 'בקשות שירות | ATLAS',
 };
 

@@ -133,7 +133,7 @@ export function MaintenanceRequestForm({
               'relative rounded-xl gap-1.5 font-semibold',
               fm.state === 'success'
                 ? 'bg-emerald-600 hover:bg-emerald-600 text-white'
-                : 'bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220]',
+                : 'bg-brand-600 hover:bg-[#00B8A9] text-white',
             ].join(' ')}
           >
             {(fm.state === 'dirty' || fm.state === 'error') && (

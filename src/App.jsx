@@ -17,16 +17,26 @@ import { createPageUrl } from '@/utils';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
 import { isPlatformAdminViewer } from '@/lib/platformAdmin';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import VerifyEmail from '@/pages/VerifyEmail';
-import ResetPassword from '@/pages/ResetPassword';
-import UpdatePassword from '@/pages/UpdatePassword';
-import Onboarding from '@/pages/Onboarding';
+// Code-split: the landing page should not download the app shell or the auth screens.
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const VerifyEmail = lazy(() => import('@/pages/VerifyEmail'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
+const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const AppLayout = lazy(() => import('./Layout.jsx'));
+
+const GuestStayPage = lazy(() => import('@/pages/GuestStay'));
+const BookDirectPage = lazy(() => import('@/pages/BookDirect'));
+const MonthlyReportPrintPage = lazy(() => import('@/pages/MonthlyReportPrint'));
+
+function PublicFallback() {
+  return <div className="min-h-[100dvh]" style={{ background: '#F7F8FB' }} />;
+}
 
 const DevSkeletonsPage = import.meta.env.DEV ? lazy(() => import('@/pages/DevSkeletons')) : null;
 
-const { Pages, Layout } = pagesConfig;
+const { Pages } = pagesConfig;
 
 const EXPLICIT_PROTECTED_KEYS = new Set([
   'Dashboard',
@@ -48,9 +58,23 @@ function LegacyLeadDetailRedirect() {
   return <Navigate to={`/lead/${id}`} replace />;
 }
 
-const LayoutWrapper = ({ children, currentPageName }) => Layout ?
-  <Layout currentPageName={currentPageName}>{children}</Layout>
-  : <>{children}</>;
+const PUBLIC_LAYOUT_PAGES = new Set(['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans']);
+
+function AppFallback() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center" style={{ background: '#F7F8FB' }} role="status" aria-busy="true" aria-label="טוען">
+      <div className="h-8 w-8 rounded-full border-[3px] border-[#E6E8F0] border-t-[#3E2BF1] motion-safe:animate-spin" />
+    </div>
+  );
+}
+
+/** Public pages render bare (lazy page + Suspense); app pages load the shell lazily. */
+const LayoutWrapper = ({ children, currentPageName }) => (
+  PUBLIC_LAYOUT_PAGES.has(currentPageName)
+    ? <Suspense fallback={<PublicFallback />}>{children}</Suspense>
+    : <Suspense fallback={<AppFallback />}><AppLayout currentPageName={currentPageName}>{children}</AppLayout></Suspense>
+);
+const S = ({ children }) => <Suspense fallback={<PublicFallback />}>{children}</Suspense>;
 
 // Fallback when DB update failed: allow through if user just completed onboarding (localStorage flag)
 function hasOnboardingBypass() {
@@ -76,7 +100,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+        <div className="h-8 w-8 rounded-full border-[3px] border-[#E6E8F0] border-t-[#3E2BF1] motion-safe:animate-spin" aria-label="טוען" role="status"></div>
       </div>
     );
   }
@@ -95,7 +119,7 @@ const PlatformAdminRoute = ({ children }) => {
   if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+        <div className="h-8 w-8 rounded-full border-[3px] border-[#E6E8F0] border-t-[#3E2BF1] motion-safe:animate-spin" aria-label="טוען" role="status"></div>
       </div>
     );
   }
@@ -124,7 +148,7 @@ const AuthenticatedApp = () => {
         element={
           isAuthenticated
             ? <Navigate to="/dashboard" replace />
-            : <Login />
+            : <S><Login /></S>
         }
       />
       <Route
@@ -132,15 +156,15 @@ const AuthenticatedApp = () => {
         element={
           isAuthenticated
             ? <Navigate to={(user?.onboarding_completed || hasOnboardingBypass() ? '/dashboard' : '/onboarding')} replace />
-            : <Register />
+            : <S><Register /></S>
         }
       />
       <Route
         path="/verify-email"
-        element={<VerifyEmail />}
+        element={<S><VerifyEmail /></S>}
       />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/update-password" element={<UpdatePassword />} />
+      <Route path="/reset-password" element={<S><ResetPassword /></S>} />
+      <Route path="/update-password" element={<S><UpdatePassword /></S>} />
 
       {/* Public static pages — no auth required */}
       <Route path="/about" element={<LayoutWrapper currentPageName="About"><Pages.About /></LayoutWrapper>} />
@@ -157,12 +181,18 @@ const AuthenticatedApp = () => {
       <Route path="/how-it-works" element={<LayoutWrapper currentPageName="HowItWorks"><Pages.HowItWorks /></LayoutWrapper>} />
       <Route path="/pricing" element={<LayoutWrapper currentPageName="PricingPlans"><Pages.PricingPlans /></LayoutWrapper>} />
 
+      {/* Public guest page per booking + direct-booking page per property (no login) */}
+      <Route path="/g/:token" element={<Suspense fallback={<PublicFallback />}><GuestStayPage /></Suspense>} />
+      <Route path="/book/:slug" element={<Suspense fallback={<PublicFallback />}><BookDirectPage /></Suspense>} />
+      {/* Print / PDF view of the monthly accountant report (no app chrome) */}
+      <Route path="/monthly-report/print" element={<ProtectedRoute><Suspense fallback={<PublicFallback />}><MonthlyReportPrintPage /></Suspense></ProtectedRoute>} />
+
       {/* Onboarding — requires auth but NOT onboarding_completed (user lands here after verification) */}
       <Route
         path="/onboarding"
         element={
           <ProtectedRoute requireOnboarding={false}>
-            <Onboarding />
+            <S><Onboarding /></S>
           </ProtectedRoute>
         }
       />

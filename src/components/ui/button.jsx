@@ -3,28 +3,30 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils"
+// v5: 10px radius everywhere (brand: inputs/buttons 10), springy press via .press
+const RADIUS = "rounded-[10px]"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 select-none",
+  `press inline-flex items-center justify-center gap-2 whitespace-nowrap ${RADIUS} text-[15px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-[18px] [&_svg]:shrink-0 select-none touch-manipulation`,
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+          "bg-brand-600 text-white shadow-[0_1px_2px_rgba(42,26,201,0.28),inset_0_1px_0_rgba(255,255,255,0.14)] hover:bg-brand-500 active:bg-brand-700",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-danger-500 text-white hover:bg-danger-600",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-line bg-white text-navy-900 shadow-[0_1px_2px_rgba(16,24,64,0.05)] hover:bg-[#F9FAFC] hover:border-[#D9DCE6]",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-[#EEF0FF] text-brand-700 hover:bg-brand-100",
+        ghost: "text-navy-900 hover:bg-[#F3F4F8]",
+        link: "text-brand-600 underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        default: "h-11 px-5",
+        sm: "h-10 px-3.5 text-sm",
+        lg: "h-12 px-6 text-base",
+        icon: "h-11 w-11",
       },
     },
     defaultVariants: {

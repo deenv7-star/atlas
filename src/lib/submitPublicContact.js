@@ -20,8 +20,8 @@ export async function submitPublicContact(payload) {
 }
 
 export function buildContactMailto({ name, email, phone, subject, message }) {
-  const to = 'support@atlas-app.co.il';
-  const subj = encodeURIComponent(`ATLAS — ${subject || 'פנייה מהאתר'}`);
+  const to = 'support@atlas-il.com';
+  const subj = encodeURIComponent(`ATLAS: ${subject || 'פנייה מהאתר'}`);
   const body = encodeURIComponent(
     `שם: ${name}\nאימייל: ${email}\nטלפון: ${phone || '—'}\nנושא: ${subject || '—'}\n\n${message}`
   );

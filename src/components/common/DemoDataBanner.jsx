@@ -8,7 +8,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Info } from 'lucide-react';
 
-export default function DemoDataBanner({ message = 'נתוני דוגמה — הנתונים המוצגים הם לצורך המחשה בלבד.', actionLabel, actionLink }) {
+export default function DemoDataBanner({ message = 'נתוני דוגמה: הנתונים המוצגים הם לצורך המחשה בלבד.', actionLabel, actionLink }) {
   return (
     <div
       className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-sm mb-4"

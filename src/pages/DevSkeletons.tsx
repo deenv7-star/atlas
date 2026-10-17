@@ -19,7 +19,7 @@ export default function DevSkeletons() {
     <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-10 pb-24" dir="rtl">
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">Skeleton system</h1>
-        <p className="text-sm text-gray-500">תצוגה מקדימה לפיתוח — לא מוצגת בפרודקשן.</p>
+        <p className="text-sm text-gray-500">תצוגה מקדימה לפיתוח: לא מוצגת בפרודקשן.</p>
       </div>
 
       <section className="space-y-3">

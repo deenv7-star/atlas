@@ -23,12 +23,12 @@ export default function Terms() {
       </nav>
 
       <main className="max-w-4xl mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold text-[#0B1220] mb-4">תנאי שימוש - ATLAS</h1>
+        <h1 className="text-3xl font-bold text-[#1B2656] mb-4">תנאי שימוש - ATLAS</h1>
         <p className="text-gray-500 mb-8">עדכון אחרון: מרץ 2025</p>
         
         <div className="prose prose-lg max-w-none text-gray-700 space-y-8">
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">1. קבלת התנאים</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">1. קבלת התנאים</h2>
             <p className="leading-relaxed mb-3">
               בגישה לפלטפורמת ATLAS ובשימוש בה, אתם מצהירים כי קראתם, הבנתם ומסכימים להיות מחויבים על ידי 
               תנאי שימוש אלה וכל החוקים והתקנות החלים. אם אינכם מסכימים לתנאים אלה, אינכם רשאים להשתמש 
@@ -40,7 +40,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">2. תיאור השירות</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">2. תיאור השירות</h2>
             <p className="leading-relaxed mb-3">
               ATLAS היא פלטפורמת תוכנה כשירות (SaaS) מבוססת ענן לניהול נכסי אירוח לטווח קצר. השירות כולל:
             </p>
@@ -60,7 +60,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">3. רישום וחשבון משתמש</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">3. רישום וחשבון משתמש</h2>
             <p className="leading-relaxed mb-3">
               <strong>3.1 דרישות רישום:</strong> כדי להשתמש בפלטפורמה, עליכם ליצור חשבון ולספק מידע מדויק, 
               שלם ועדכני. אתם מתחייבים לעדכן את פרטי החשבון באופן שוטף.
@@ -79,7 +79,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">4. תשלום, חיוב ומנוי</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">4. תשלום, חיוב ומנוי</h2>
             <p className="leading-relaxed mb-3">
               <strong>4.1 תוכניות מנוי:</strong> השירות מוצע במספר תוכניות מנוי חודשיות. כל תוכנית כוללת 
               מספר מוגדר של נכסים ותכונות כמפורט בדף התמחור.
@@ -107,7 +107,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">5. שימוש מותר ואיסורים</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">5. שימוש מותר ואיסורים</h2>
             <p className="leading-relaxed mb-3">
               <strong>5.1 שימוש מותר:</strong> תוכלו להשתמש בשירות אך ורק למטרות חוקיות ובהתאם לתנאי שימוש אלה.
             </p>
@@ -129,7 +129,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">6. קניין רוחני</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">6. קניין רוחני</h2>
             <p className="leading-relaxed mb-3">
               <strong>6.1 בעלות על השירות:</strong> הפלטפורמה, כל התכנים, התכונות, הפונקציונליות, 
               הקוד המקור והעיצוב הם בבעלותנו הבלעדית ומוגנים בחוקי זכויות יוצרים וקניין רוחני.
@@ -146,7 +146,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">7. פרטיות ואבטחת מידע</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">7. פרטיות ואבטחת מידע</h2>
             <p className="leading-relaxed mb-3">
               <strong>7.1 איסוף ושימוש במידע:</strong> אנו אוספים ומשתמשים במידע אישי בהתאם למדיניות 
               הפרטיות שלנו. השימוש בפלטפורמה מהווה הסכמה למדיניות זו.
@@ -162,7 +162,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">8. הגבלת אחריות וכתבי שיפוי</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">8. הגבלת אחריות וכתבי שיפוי</h2>
             <p className="leading-relaxed mb-3">
               <strong>8.1 אחריות מוגבלת:</strong> הפלטפורמה מסופקת "כמות שהיא" ו"כפי שזמינה". איננו 
               מבטיחים שהשירות יהיה ללא הפרעות, מאובטח לחלוטין או נקי מטעויות.
@@ -182,7 +182,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">9. שינויים בתנאים</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">9. שינויים בתנאים</h2>
             <p className="leading-relaxed mb-3">
               אנו שומרים לעצמנו את הזכות לעדכן או לשנות תנאי שימוש אלה בכל עת. שינויים מהותיים 
               יפורסמו באתר ו/או יישלחו אליכם בדואר אלקטרוני לפחות 30 יום לפני כניסתם לתוקף.
@@ -194,7 +194,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">10. סיום השירות</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">10. סיום השירות</h2>
             <p className="leading-relaxed mb-3">
               <strong>10.1 סיום על ידי המשתמש:</strong> תוכלו לסיים את השימוש בשירות בכל עת על ידי 
               ביטול המנוי דרך הגדרות החשבון או מחיקת החשבון.
@@ -210,7 +210,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">11. דין וסמכות שיפוט</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">11. דין וסמכות שיפוט</h2>
             <p className="leading-relaxed mb-3">
               תנאי שימוש אלה יהיו כפופים לחוקי מדינת ישראל ויתפרשו על פיהם, ללא התייחסות לכללי 
               ברירת הדין.
@@ -222,7 +222,7 @@ export default function Terms() {
           </section>
 
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">12. הוראות כלליות</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">12. הוראות כלליות</h2>
             <p className="leading-relaxed mb-3">
               <strong>12.1 הסכם שלם:</strong> תנאי שימוש אלה יחד עם מדיניות הפרטיות מהווים את 
               ההסכם השלם בינינו לבינכם.
@@ -241,14 +241,14 @@ export default function Terms() {
             </p>
           </section>
 
-          <section className="bg-[#00D1C1]/5 rounded-2xl p-6 border border-[#00D1C1]/20">
-            <h2 className="text-2xl font-bold text-[#0B1220] mb-4">13. יצירת קשר ותמיכה</h2>
+          <section className="bg-brand-600/5 rounded-2xl p-6 border border-brand-600/20">
+            <h2 className="text-2xl font-bold text-[#1B2656] mb-4">13. יצירת קשר ותמיכה</h2>
             <p className="leading-relaxed mb-3">
               לשאלות, בקשות תמיכה או כל נושא הקשור לתנאי שימוש אלה, אנא צרו קשר:
             </p>
             <div className="space-y-2 text-sm">
-              <p><strong>דואר אלקטרוני:</strong> legal@atlas-app.co.il</p>
-              <p><strong>תמיכה טכנית:</strong> support@atlas-app.co.il</p>
+              <p><strong>דואר אלקטרוני:</strong> legal@atlas-il.com</p>
+              <p><strong>תמיכה טכנית:</strong> support@atlas-il.com</p>
               <p><strong>כתובת:</strong> רח' הרצל 1, תל אביב, ישראל</p>
             </div>
           </section>
@@ -257,7 +257,7 @@ export default function Terms() {
 
       <footer className="py-8 px-4 border-t bg-white mt-12">
         <div className="max-w-4xl mx-auto text-center text-gray-500 text-sm">
-          © 2025 ATLAS. כל הזכויות שמורות.
+          © {new Date().getFullYear()} ATLAS. כל הזכויות שמורות.
         </div>
       </footer>
     </div>

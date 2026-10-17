@@ -7,7 +7,6 @@
  * Suspense ב-Layout.jsx (דפים ציבוריים ומאובטחים) עם PageLoader — טעינת lazy().
  */
 import { lazy } from 'react';
-import __Layout from './Layout.jsx';
 
 const AIAssistant        = lazy(() => import('./pages/AIAssistant'));
 const ApiDocs            = lazy(() => import('./pages/ApiDocs'));
@@ -25,7 +24,8 @@ const Dashboard          = lazy(() => import('./pages/Dashboard'));
 const DataSecurity       = lazy(() => import('./pages/DataSecurity'));
 const DynamicPricing     = lazy(() => import('./pages/DynamicPricing'));
 const GuestJourney       = lazy(() => import('./pages/GuestJourney'));
-const GuestPortal        = lazy(() => import('./pages/GuestPortal'));
+// /guest-portal now opens the working guest-page + direct-booking settings (was a static mock).
+const GuestPortal        = lazy(() => import('./pages/GuestPages'));
 const GuestService       = lazy(() => import('./pages/GuestService'));
 const HowItWorks         = lazy(() => import('./pages/HowItWorks'));
 const MultiCalendar      = lazy(() => import('./pages/MultiCalendar'));
@@ -52,6 +52,9 @@ const Onboarding         = lazy(() => import('./pages/Onboarding'));
 const PlatformAdmin      = lazy(() => import('./pages/PlatformAdmin'));
 const Register           = lazy(() => import('./pages/Register'));
 const VerifyEmail        = lazy(() => import('./pages/VerifyEmail'));
+const Today              = lazy(() => import('./pages/Today'));
+const Balances           = lazy(() => import('./pages/Balances'));
+const MonthlyReport      = lazy(() => import('./pages/MonthlyReport'));
 
 export const PAGES = {
   AIAssistant, ApiDocs, About, Accessibility, Automations,
@@ -64,10 +67,10 @@ export const PAGES = {
   Payments, PricingPlans, Privacy, RevenueIntelligence,
   Reviews, ServiceRequests, SLA, Status, Settings,
   Subscription, Terms,
+  Today, Balances, MonthlyReport,
 };
 
 export const pagesConfig = {
   mainPage: 'Landing',
   Pages: PAGES,
-  Layout: __Layout,
 };

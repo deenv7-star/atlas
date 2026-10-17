@@ -1,0 +1,100 @@
+/*
+ * ATLAS v5 — premium light layer on top of brand.css (brand/direction-v5.md).
+ * Cool palette only: white surfaces on #F7F8FB, indigo #3E2BF1 as the single strong accent,
+ * navy #1B2656 text, hairlines #E6E8F0. Amber exists only as the tiny "needs attention" dot.
+ */
+:root {
+  --line: #e6e8f0;
+  --line-strong: #d9dce6;
+  --meta: #646b85;
+  --brand-tint: #eef0ff;
+  --brand-tint-2: #f4f3ff;
+  --attention: #f8b040;
+
+  --r-card: 14px;
+  --r-sheet: 20px;
+  --shadow-card: 0 0 0 1px rgba(16, 24, 64, 0.02), 0 1px 2px rgba(16, 24, 64, 0.04), 0 2px 6px rgba(16, 24, 64, 0.03);
+  --shadow-raised: 0 1px 2px rgba(16, 24, 64, 0.05), 0 8px 24px rgba(16, 24, 64, 0.08);
+  --shadow-pop: 0 2px 4px rgba(16, 24, 64, 0.04), 0 16px 40px rgba(16, 24, 64, 0.12);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* kept so older call sites resolve to cool values */
+  --today: var(--brand-600);
+  --today-50: var(--brand-tint);
+  --today-ink: var(--brand-700);
+  --tint-brand: var(--brand-tint-2);
+  --tint-amber: var(--brand-tint-2);
+  --tint-sage: var(--brand-tint-2);
+  --amber-50: #f3f4f8;
+  --warning-50: #f3f4f8;
+}
+
+body { background-color: var(--canvas); }
+
+/* Springy press (Emil: transform only, 160ms, scale .97) */
+.press {
+  transition: transform 160ms var(--ease-out), background-color 150ms var(--ease-out),
+    box-shadow 200ms var(--ease-out), color 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+.press:active { transform: scale(0.97); }
+
+/* Staggered fade-up 8px, 380ms ease-out; delay per --i */
+@keyframes v5-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.v4-rise, .v5-rise {
+  animation: v5-rise 380ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+/* Unit thumbnails: neutral daylight, never warm */
+.v5-cool { filter: saturate(0.32) contrast(1.04) brightness(1.04); }
+.v5-cool-wrap { position: relative; }
+.v5-cool-wrap::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: rgba(62, 43, 241, 0.06); mix-blend-mode: multiply; border-radius: inherit;
+}
+
+/* Rows: hairline separators, quiet hover */
+.v5-row { transition: background-color 150ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .v5-row:hover { background-color: #f9fafc; }
+  .v4-lift { transition: box-shadow 220ms var(--ease-out), transform 220ms var(--ease-out); }
+  .v4-lift:hover { box-shadow: var(--shadow-raised); }
+}
+
+.v4-rail { scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.v4-rail::-webkit-scrollbar { display: none; }
+.v4-rail > * { scroll-snap-align: start; }
+
+/* Calendar: today column = indigo hairlines + faint indigo wash */
+.v4-today-col { background: rgba(62, 43, 241, 0.035); box-shadow: inset 1px 0 0 rgba(62, 43, 241, 0.45), inset -1px 0 0 rgba(62, 43, 241, 0.45); }
+
+/* B: subtle indigo header band, full-bleed behind the page title */
+.v5-band { position: relative; isolation: isolate; }
+.v5-band::before {
+  content: ''; position: absolute; z-index: -1; inset: -120px -100vmax 0;
+  background: linear-gradient(180deg, #f1f0ff 0%, #f5f5ff 70%, rgba(247, 248, 251, 0) 100%);
+  border-bottom: 1px solid rgba(62, 43, 241, 0.08);
+}
+
+/* Shimmer skeleton (light) */
+.atlas-skeleton, .skeleton {
+  background-color: #eef0f5 !important;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0)) !important;
+}
+
+/* Number styling: tight, tabular */
+.v5-num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
+/* Recharts: crisp axis text, no focus outline box */
+.v5-chart .recharts-cartesian-axis-tick-value { font-family: var(--font-sans); font-size: 12px; fill: #8b91a3; }
+.v5-chart .recharts-surface:focus, .v5-chart .recharts-wrapper:focus { outline: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-rise, .v5-rise { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .v4-lift, .v5-row { transition: none !important; }
+  .press:active { transform: none; }
+}

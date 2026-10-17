@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -29,6 +30,7 @@ export default function VerifyEmail() {
   }, [isAuthenticated, user?.onboarding_completed, navigate]);
 
   useEffect(() => {
+    if (!supabase) return undefined;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         navigate('/onboarding', { replace: true });
@@ -41,6 +43,7 @@ export default function VerifyEmail() {
     if (!email || countdown > 0) return;
     setResending(true);
     try {
+      if (!supabase) throw new Error('no backend');
       await supabase.auth.resend({ type: 'signup', email });
       setResent(true);
       setCountdown(60);
@@ -53,22 +56,17 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>
       <div className="w-full max-w-[440px] text-center">
         {/* Logo */}
-        <img
-          src="/atlas-logo-final.png"
-          alt="ATLAS"
-          className="mx-auto mb-10"
-          style={{ height: 56, width: 'auto', objectFit: 'contain' }}
-        />
+        <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
 
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 p-8">
           {/* Animated mail icon */}
           <div className="relative w-20 h-20 mx-auto mb-6">
-            <div className="absolute inset-0 bg-indigo-100 rounded-full animate-ping opacity-20" />
-            <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <div className="absolute inset-0 bg-brand-100 rounded-full animate-ping opacity-20" />
+            <div className="relative w-20 h-20 rounded-full bg-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/30">
               <Mail className="w-9 h-9 text-white" />
             </div>
           </div>
@@ -81,7 +79,7 @@ export default function VerifyEmail() {
           </p>
 
           {email && (
-            <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 font-semibold text-sm px-4 py-2 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 bg-brand-50 text-brand-700 font-semibold text-sm px-4 py-2 rounded-full mb-6">
               <Mail className="w-3.5 h-3.5" />
               {email}
             </div>
@@ -114,7 +112,7 @@ export default function VerifyEmail() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          <Link to="/login" className="text-indigo-500 hover:text-indigo-700 font-medium transition-colors">
+          <Link to="/login" className="text-brand-500 hover:text-brand-700 font-medium transition-colors">
             חזרה להתחברות
           </Link>
         </p>

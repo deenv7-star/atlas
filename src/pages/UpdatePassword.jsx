@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/app/shell/shared';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -19,6 +20,7 @@ export default function UpdatePassword() {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    if (!supabase) return undefined;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         // User clicked reset link
@@ -51,6 +53,7 @@ export default function UpdatePassword() {
 
     setIsLoading(true);
     try {
+      if (!supabase) throw new Error('אין חיבור לשרת כרגע. נסו שוב מאוחר יותר.');
       const { error } = await supabase.auth.updateUser({ password: form.password });
       if (error) throw error;
       atlasToastApi.success('הסיסמה עודכנה בהצלחה');
@@ -70,7 +73,7 @@ export default function UpdatePassword() {
     <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#FFFFFF' }}>
       <div className="w-full max-w-[440px]">
         <div className="text-center mb-10">
-          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-6" style={{ height: 56, width: 'auto' }} />
+          <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           <h1 className="text-2xl font-extrabold text-gray-900">סיסמה חדשה</h1>
           <p className="text-gray-500 text-sm mt-2">בחר סיסמה חזקה חדשה</p>
         </div>
@@ -91,7 +94,7 @@ export default function UpdatePassword() {
                   autoFocus
                   maxLength={128}
                 />
-                <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -119,7 +122,7 @@ export default function UpdatePassword() {
                   className={cn("h-12 rounded-xl text-base pl-10", touched.confirmPassword && errors.confirmPassword && "border-red-500")}
                   maxLength={128}
                 />
-                <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                   {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -132,7 +135,7 @@ export default function UpdatePassword() {
           </form>
         </div>
         <p className="text-center text-sm text-gray-500 mt-6">
-          <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">חזרה להתחברות</Link>
+          <Link to="/login" className="text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
         </p>
       </div>
     </div>

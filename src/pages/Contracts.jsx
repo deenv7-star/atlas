@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PageHeader, EmptyState } from '@/components/ds';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -46,8 +47,8 @@ import { he } from 'date-fns/locale';
 import ReactQuill from 'react-quill';
 
 const statusColors = {
-  DRAFT: 'bg-gray-100 text-gray-700 border-gray-200',
-  SENT: 'bg-blue-100 text-blue-700 border-blue-200',
+  DRAFT: 'bg-neutral-100 text-ink-600 border-line',
+  SENT: 'bg-brand-100 text-brand-700 border-brand-100',
   SIGNED: 'bg-green-100 text-green-700 border-green-200'
 };
 
@@ -209,32 +210,23 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 <ol>
   <li>השוכר מתחייב לשמור על הנכס בצורה נאותה.</li>
   <li>אסור לעשן בנכס.</li>
-  <li>שעת צ'ק-אין: 15:00, שעת צ'ק-אאוט: 11:00</li>
+  <li>שעת כניסה: 15:00, שעת יציאה: 11:00</li>
 </ol>
 <p style="margin-top: 40px;">חתימת השוכר: _________________</p>
 <p>תאריך: _________________</p>
 `;
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-indigo-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">חוזים</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">נהל חוזי שכירות והסכמים עם אורחים. צור חוזים חדשים ועקוב אחר חתימות.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: שלח חוזה לחתימה דיגיטלית ישירות מהמערכת</p>
-      </div>
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
+      <PageHeader title="חוזים" subtitle="חוזים לאורחים ותבניות לחתימה דיגיטלית." className="!mb-0" />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="rounded-xl">
-          <TabsTrigger value="contracts" className="rounded-lg gap-2">
+        <TabsList>
+          <TabsTrigger value="contracts" className="gap-2">
             <FileText className="h-4 w-4" />
             חוזים
           </TabsTrigger>
-          <TabsTrigger value="templates" className="rounded-lg gap-2">
+          <TabsTrigger value="templates" className="gap-2">
             <Edit className="h-4 w-4" />
             תבניות
           </TabsTrigger>
@@ -245,10 +237,9 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
           <div className="flex justify-end mb-4">
             <Button 
               onClick={() => setIsSendDialogOpen(true)}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
             >
-              <Plus className="h-4 w-4" />
-              צור חוזה
+              <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              חוזה חדש
             </Button>
           </div>
 
@@ -256,7 +247,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
           <Card className="border-0 shadow-sm rounded-2xl overflow-hidden hidden md:block">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-canvas">
                   <TableHead className="text-right">הזמנה</TableHead>
                   <TableHead className="text-right">תבנית</TableHead>
                   <TableHead className="text-right">סטטוס</TableHead>
@@ -268,17 +259,17 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 {contractsLoading ? (
                   [...Array(3)].map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell><div className="h-4 bg-gray-200 rounded w-24"></div></TableCell>
-                      <TableCell><div className="h-4 bg-gray-200 rounded w-32"></div></TableCell>
-                      <TableCell><div className="h-6 bg-gray-200 rounded w-16"></div></TableCell>
-                      <TableCell><div className="h-4 bg-gray-200 rounded w-20"></div></TableCell>
-                      <TableCell><div className="h-8 bg-gray-200 rounded w-24"></div></TableCell>
+                      <TableCell><div className="atlas-skeleton h-4 rounded w-24"></div></TableCell>
+                      <TableCell><div className="atlas-skeleton h-4 rounded w-32"></div></TableCell>
+                      <TableCell><div className="atlas-skeleton h-6 rounded w-16"></div></TableCell>
+                      <TableCell><div className="atlas-skeleton h-4 rounded w-20"></div></TableCell>
+                      <TableCell><div className="atlas-skeleton h-8 rounded w-24"></div></TableCell>
                     </TableRow>
                   ))
                 ) : contracts.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-gray-500">
-                      אין חוזים עדיין
+                    <TableCell colSpan={5} className="p-0">
+                      <EmptyState compact icon={FileText} title="אין עדיין חוזים" description="שלחו לאורח חוזה לחתימה דיגיטלית, הוא חותם מהטלפון." action={<Button onClick={() => setIsSendDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />חוזה חדש</Button>} />
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -290,9 +281,9 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                         <TableCell>
                           <div>
                             <p className="font-medium">{booking?.guest_name || '-'}</p>
-                            {booking?.checkin_date && (
-                              <p className="text-xs text-gray-500">
-                                {format(parseISO(booking.check_in_date), 'd/M/yy')}
+                            {(booking?.check_in_date || booking?.checkin_date) && (
+                              <p className="text-xs text-ink-600">
+                                {format(parseISO(booking.check_in_date || booking.checkin_date), 'd/M/yy')}
                               </p>
                             )}
                           </div>
@@ -306,7 +297,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                             {statusLabels[contract.status]}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-sm text-gray-500">
+                        <TableCell className="text-sm text-ink-600">
                           {format(parseISO(contract.created_date), 'd/M/yy', { locale: he })}
                         </TableCell>
                         <TableCell>
@@ -357,10 +348,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                   </Card>
                 ))
                 ) : contracts.length === 0 ? (
-                <Card className="border-0 shadow-sm rounded-2xl">
-                  <CardContent className="p-8 text-center text-gray-500">
-                    אין חוזים עדיין
-                  </CardContent>
+                <Card>
+                  <EmptyState compact icon={FileText} title="אין עדיין חוזים" description="שלחו לאורח חוזה לחתימה דיגיטלית, הוא חותם מהטלפון." action={<Button onClick={() => setIsSendDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />חוזה חדש</Button>} />
                 </Card>
                 ) : (
                 contracts.map(contract => {
@@ -371,10 +360,10 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <h3 className="font-semibold text-[#0B1220] mb-0.5">{booking?.guest_name || '-'}</h3>
-                            {booking?.checkin_date && (
-                              <p className="text-xs text-gray-500">
-                                {format(parseISO(booking.check_in_date), 'd/M/yy')}
+                            <h3 className="font-semibold text-[#1B2656] mb-0.5">{booking?.guest_name || '-'}</h3>
+                            {(booking?.check_in_date || booking?.checkin_date) && (
+                              <p className="text-xs text-ink-600">
+                                {format(parseISO(booking.check_in_date || booking.checkin_date), 'd/M/yy')}
                               </p>
                             )}
                           </div>
@@ -385,12 +374,12 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                             {statusLabels[contract.status]}
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-600 mb-3">{template?.name || '-'}</p>
+                        <p className="text-sm text-ink-600 mb-3">{template?.name || '-'}</p>
                         <div className="flex gap-2">
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="flex-1 rounded-xl"
+                            className="flex-1 rounded-[10px]"
                             onClick={() => {
                               setSelectedContract(contract);
                               setIsPreviewOpen(true);
@@ -402,7 +391,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                           {contract.status === 'DRAFT' && (
                             <Button 
                               size="sm" 
-                              className="flex-1 bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+                              className="flex-1 bg-brand-600 hover:bg-brand-500 text-white rounded-[10px]"
                               onClick={() => updateContractMutation.mutate({ id: contract.id, data: { status: 'SENT' } })}
                             >
                               <Send className="h-3 w-3 ml-1" />
@@ -458,7 +447,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             <Button 
               variant="outline"
               onClick={() => document.getElementById('import-contract').click()}
-              className="rounded-xl gap-2"
+              className="rounded-[10px] gap-2"
             >
               <Upload className="h-4 w-4" />
               ייבא מקובץ
@@ -469,7 +458,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 setNewTemplate({ ...newTemplate, content: defaultContractContent });
                 setIsTemplateDialogOpen(true);
               }}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl gap-2"
+              className="bg-brand-600 hover:bg-brand-500 text-white rounded-[10px] gap-2"
             >
               <Plus className="h-4 w-4" />
               תבנית חדשה
@@ -481,13 +470,13 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
               [...Array(3)].map((_, i) => (
                 <Card key={i} className="border-0 shadow-sm rounded-2xl animate-pulse">
                   <CardContent className="p-6">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+                    <div className="atlas-skeleton h-4 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-neutral-100 rounded w-1/2"></div>
                   </CardContent>
                 </Card>
               ))
             ) : templates.length === 0 ? (
-              <div className="col-span-full text-center py-12 text-gray-500">
+              <div className="col-span-full text-center py-12 text-ink-600">
                 אין תבניות חוזה עדיין. צור תבנית ראשונה!
               </div>
             ) : (
@@ -496,8 +485,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-[#00D1C1]" />
-                        <h3 className="font-semibold text-[#0B1220]">{template.name}</h3>
+                        <FileText className="h-5 w-5 text-brand-600" />
+                        <h3 className="font-semibold text-[#1B2656]">{template.name}</h3>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-4">
@@ -514,7 +503,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                         size="sm" 
                         variant="outline" 
                         className="rounded-lg text-red-600 hover:bg-red-50"
-                        onClick={() => deleteTemplateMutation.mutate(template.id)}
+                        aria-label={`מחיקת התבנית ${template.name || ''}`}
+                        onClick={() => { if (window.confirm('למחוק את התבנית?')) deleteTemplateMutation.mutate(template.id); }}
                       >
                         <Trash2 className="h-3 w-3" />
                       </Button>
@@ -540,32 +530,32 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
               <Input 
                 value={newTemplate.name}
                 onChange={(e) => setNewTemplate({ ...newTemplate, name: e.target.value })}
-                className="mt-1 rounded-xl"
+                className="mt-1 rounded-[10px]"
                 placeholder="לדוגמה: חוזה שכירות סטנדרטי"
               />
             </div>
             <div>
               <Label>תוכן החוזה</Label>
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-xs text-ink-600 mb-2">
                 משתנים: {'{guest_name}'}, {'{checkin_date}'}, {'{checkout_date}'}, {'{total_amount}'}, {'{guests_count}'}
               </p>
               <ReactQuill 
                 value={newTemplate.content}
                 onChange={(value) => setNewTemplate({ ...newTemplate, content: value })}
-                className="mt-1 rounded-xl"
+                className="mt-1 rounded-[10px]"
                 style={{ direction: 'rtl' }}
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsTemplateDialogOpen(false)} className="rounded-xl">
+            <Button variant="outline" onClick={() => setIsTemplateDialogOpen(false)} className="rounded-[10px]">
               ביטול
             </Button>
             <Button 
               onClick={handleSaveTemplate}
               disabled={!newTemplate.name || !newTemplate.content || createTemplateMutation.isPending || updateTemplateMutation.isPending}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+              className="bg-brand-600 hover:bg-brand-500 text-white rounded-[10px]"
             >
               {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? 'שומר...' : 'שמור'}
             </Button>
@@ -587,7 +577,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 value={newContract.booking_id} 
                 onValueChange={(value) => setNewContract({ ...newContract, booking_id: value })}
               >
-                <SelectTrigger className="mt-1 rounded-xl">
+                <SelectTrigger className="mt-1 rounded-[10px]">
                   <SelectValue placeholder="בחר הזמנה" />
                 </SelectTrigger>
                 <SelectContent>
@@ -605,7 +595,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 value={newContract.template_id} 
                 onValueChange={(value) => setNewContract({ ...newContract, template_id: value })}
               >
-                <SelectTrigger className="mt-1 rounded-xl">
+                <SelectTrigger className="mt-1 rounded-[10px]">
                   <SelectValue placeholder="בחר תבנית" />
                 </SelectTrigger>
                 <SelectContent>
@@ -620,13 +610,13 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsSendDialogOpen(false)} className="rounded-xl">
+            <Button variant="outline" onClick={() => setIsSendDialogOpen(false)} className="rounded-[10px]">
               ביטול
             </Button>
             <Button 
               onClick={() => createContractMutation.mutate(newContract)}
               disabled={!newContract.booking_id || !newContract.template_id || createContractMutation.isPending}
-              className="bg-[#00D1C1] hover:bg-[#00B8A9] text-[#0B1220] rounded-xl"
+              className="bg-brand-600 hover:bg-brand-500 text-white rounded-[10px]"
             >
               {createContractMutation.isPending ? 'יוצר...' : 'צור חוזה'}
             </Button>
@@ -643,14 +633,14 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
           
           {selectedContract && (
             <div 
-              className="prose prose-sm max-w-none p-4 bg-white border rounded-xl" 
+              className="prose prose-sm max-w-none p-4 bg-white border rounded-[10px]" 
               dir="rtl"
               dangerouslySetInnerHTML={{ __html: selectedContract.content }}
             />
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPreviewOpen(false)} className="rounded-xl">
+            <Button variant="outline" onClick={() => setIsPreviewOpen(false)} className="rounded-[10px]">
               סגור
             </Button>
           </DialogFooter>

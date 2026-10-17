@@ -12,13 +12,13 @@ export default function BackendNotConfigured() {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: "'Heebo', sans-serif",
-        background: '#F4F6FB',
+        background: '#F7F8FB',
         textAlign: 'center',
         maxWidth: 560,
         margin: '0 auto'
       }}
     >
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0B1220', marginBottom: 12 }}>
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1B2656', marginBottom: 12 }}>
         נדרשת הגדרת שרת
       </h1>
       <p style={{ color: '#6B7280', lineHeight: 1.7, marginBottom: 16 }}>
@@ -30,15 +30,15 @@ export default function BackendNotConfigured() {
         {' '}לכתובת API מפורשת.
       </p>
       <p style={{ color: '#9CA3AF', fontSize: 14, marginBottom: 24 }}>
-        אם מופיע המסך הזה בטעות — בדוק שיש proxy ל־API או הגדר <code style={{ background: '#FEF3C7', padding: '2px 6px', borderRadius: 4 }}>VITE_ALLOW_LOCAL_DEMO=true</code>
+        אם מופיע המסך הזה בטעות, בדוק שיש proxy ל־API או הגדר <code style={{ background: '#FEF3C7', padding: '2px 6px', borderRadius: 4 }}>VITE_ALLOW_LOCAL_DEMO=true</code>
         {' '}לפיתוח. רק פריסת סטטיק בלי API: <code style={{ background: '#FEE2E2', padding: '2px 6px', borderRadius: 4 }}>VITE_DISABLE_RELATIVE_API=true</code>
       </p>
       <a
         href="/"
         style={{
           padding: '12px 24px',
-          background: '#00D1C1',
-          color: '#0B1220',
+          background: '#3E2BF1',
+          color: '#1B2656',
           borderRadius: 8,
           fontWeight: 600,
           textDecoration: 'none'

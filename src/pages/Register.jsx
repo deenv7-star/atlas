@@ -1,3 +1,5 @@
+import AuthShell from '@/components/app/AuthShell';
+import { WELCOME_PHOTO_2 } from '@/lib/stay/unitPhoto';
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
@@ -123,7 +125,7 @@ export default function Register() {
 
   if (isLoadingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30" dir="rtl">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50" dir="rtl">
         <div
           className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"
           role="status"
@@ -134,22 +136,21 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif" }}>
-      <div className="w-full max-w-[440px]">
-        <div className="text-center mb-10">
-          <img src="/atlas-logo-final.png" alt="ATLAS" className="mx-auto mb-6" style={{ height: 56, width: 'auto', objectFit: 'contain' }} />
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">התחל לנהל חכם יותר</h1>
-          <p className="text-gray-500 text-sm mt-2">צור חשבון חינמי ותתחיל לנהל את המתחם שלך</p>
+    <AuthShell photo={WELCOME_PHOTO_2} caption="כל ההזמנות מכל הערוצים, בלוח אחד ופשוט.">
+      <div>
+        <div className="mb-8">
+          <h1 className="text-[26px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900 md:text-[28px]">פותחים חשבון</h1>
+          <p className="mt-1.5 text-[15px] text-ink-400">14 ימים חינם, אחר כך מחליטים.</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 p-8">
+        <div>
           {emailExists ? (
             <div className="space-y-4">
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
                 <p className="text-amber-800 font-semibold">כתובת המייל הזו כבר רשומה במערכת</p>
               </div>
               <Link to={`/login?email=${encodeURIComponent(form.email)}`}>
-                <Button className="w-full h-12 bg-[#111827] hover:bg-black text-white font-bold rounded-xl gap-2">
+                <Button className="w-full h-12 text-[16px] font-bold gap-2">
                   התחבר עם מייל זה
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
@@ -199,7 +200,7 @@ export default function Register() {
                     autoComplete="new-password"
                     maxLength={128}
                   />
-                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   {touched.password && (errors.password ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.password && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}
@@ -233,7 +234,7 @@ export default function Register() {
                     autoComplete="new-password"
                     maxLength={128}
                   />
-                  <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
+                  <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   {touched.confirmPassword && (errors.confirmPassword ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.confirmPassword && form.password === form.confirmPassword && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}
@@ -241,9 +242,9 @@ export default function Register() {
                 {touched.confirmPassword && errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
               </div>
 
-              <Button type="submit" disabled={!canSubmit || isLoading} className="w-full h-12 bg-[#111827] hover:bg-black text-white font-bold rounded-xl gap-2">
+              <Button type="submit" disabled={!canSubmit || isLoading} className="w-full h-12 text-[16px] font-bold gap-2">
                 {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
-                {isLoading ? 'יוצר חשבון...' : 'צור חשבון חינמי'}
+                {isLoading ? 'יוצר חשבון...' : 'פתיחת חשבון'}
               </Button>
             </form>
           )}
@@ -254,11 +255,11 @@ export default function Register() {
           </div>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          יש לך חשבון?{' '}
-          <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">התחבר</Link>
+        <p className="mt-8 text-center text-[15px] text-ink-600">
+          כבר יש לכם חשבון?{' '}
+          <Link to="/login" className="font-bold text-brand-600 hover:underline">כניסה</Link>
         </p>
       </div>
-    </div>
+    </AuthShell>
   );
 }

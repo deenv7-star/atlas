@@ -1,27 +1,19 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { isUuid } from '@/lib/entityPayloads';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import { PageHeader, EmptyState, SkelRows, Avatar } from '@/components/ds';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  MessageSquare, Send, Search, X,
+  MessageSquare, Send, Search, ChevronRight,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { STALE_LIVE_MS } from '@/lib/queryStaleTimes';
-
-const CHANNEL_ICONS = {
-  whatsapp: '💬',
-  email: '📧',
-  sms: '📱',
-  airbnb: '🏠',
-  booking: '🔵',
-};
 
 const CHANNEL_LABELS = {
   whatsapp: 'WhatsApp',
@@ -110,15 +102,26 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
 
   const handleSend = () => {
     if (!replyText.trim() || !currentThread) return;
+    const lastMsg = currentThread.messages?.[currentThread.messages.length - 1] || {};
     sendMutation.mutate({
       guest_name: currentThread.guest_name,
-      booking_id: currentThread.key,
+      // thread key falls back to guest name when there is no booking — only send real ids
+      booking_id: isUuid(currentThread.key) ? currentThread.key : (lastMsg.booking_id || null),
+      lead_id: lastMsg.lead_id || null,
+      property_id: lastMsg.property_id || null,
+      recipient: lastMsg.recipient || null,
       body: replyText.trim(),
       channel: currentThread.channel,
       direction: 'outbound',
       status: 'sent',
     });
   };
+
+  // Desktop shows list + conversation side by side: open the newest thread instead of an empty pane.
+  useEffect(() => {
+    if (selectedThread || typeof window === 'undefined' || window.innerWidth < 768) return;
+    if (filteredThreads?.length) setSelectedThread(filteredThreads[0].key);
+  }, [filteredThreads, selectedThread]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -127,137 +130,119 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
     }
   };
 
+  const CHANNEL_TONE = { whatsapp: 'bg-success-50 text-success-600', sms: 'bg-brand-50 text-brand-700', email: 'bg-neutral-100 text-ink-600', airbnb: 'bg-danger-50 text-danger-600', booking: 'bg-neutral-100 text-navy-900' };
+  const ChannelTag = ({ channel }) => (
+    <span className={cn('inline-flex h-5 shrink-0 items-center rounded-full px-1.5 text-[12px] font-bold leading-none', CHANNEL_TONE[channel] || 'bg-neutral-100 text-ink-600')}>
+      {CHANNEL_LABELS[channel] || 'הודעה'}
+    </span>
+  );
+
   return (
-    <div className="h-full flex flex-col overflow-hidden animate-fade-in" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-4 mx-4 mt-4 flex-shrink-0">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <MessageSquare className="w-5 h-5 text-indigo-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">הודעות</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">כל ההודעות לאורחים וללידים במקום אחד. שלח הודעות WhatsApp, מייל או SMS ישירות מכאן.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: תוכל לשלוח הודעות מוכנות מראש כדי לחסוך זמן</p>
+    <div className="flex h-full flex-col overflow-hidden" dir="rtl">
+      <div className="mx-auto w-full max-w-[1400px] flex-shrink-0 px-5 pt-6 md:px-10 md:pt-10">
+        <PageHeader title="הודעות" subtitle="WhatsApp, SMS ומייל לאורחים וללידים, במקום אחד." className="!mb-4 md:!mb-5" />
       </div>
-      <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
+      <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col overflow-hidden md:mb-6 md:px-8">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[14px] md:border md:shadow-card">
       {/* Threads list */}
       <div className={cn(
-        "flex flex-col border-l border-gray-100 bg-white transition-all",
-        "w-full md:w-72 lg:w-80 flex-shrink-0",
-        selectedThread && "hidden md:flex"
+        'flex w-full flex-shrink-0 flex-col border-line bg-white md:w-80 md:border-l lg:w-96',
+        selectedThread && 'hidden md:flex'
       )}>
-        {/* Header */}
-        <div className="p-3 border-b border-gray-100">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-base font-semibold text-gray-800 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-[#00D1C1]" />
-              הודעות
-            </h1>
-            <Badge className="bg-[#00D1C1]/10 text-[#00D1C1] text-xs border-0">
-              {logs.length} הודעות
-            </Badge>
-          </div>
+        <div className="border-b border-line px-4 pb-3 pt-1 md:pt-4">
           <div className="relative">
-            <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" strokeWidth={1.5} aria-hidden />
             <Input
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              placeholder="חפש שיחה..."
-              className="h-8 pr-8 text-sm bg-gray-50 border-0"
+              placeholder="חיפוש לפי שם אורח"
+              aria-label="חיפוש שיחה"
+              className="pr-10"
             />
           </div>
         </div>
 
-        {/* Threads */}
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
-            <div className="p-3 space-y-2">
-              {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-14 rounded-lg" />)}
-            </div>
+            <div className="p-4"><SkelRows rows={5} /></div>
           ) : filteredThreads.length === 0 ? (
-            <div className="text-center py-10">
-              <MessageSquare className="w-10 h-10 text-gray-200 mx-auto mb-2" />
-              <p className="text-sm text-gray-400">אין שיחות</p>
-            </div>
+            <EmptyState compact icon={MessageSquare} title={searchTerm ? 'לא נמצאו שיחות' : 'אין עדיין הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'הודעות שנשלחות לאורחים מהזמנה או מליד יופיעו כאן.'} />
           ) : (
-            filteredThreads.map(thread => (
-              <button
-                key={thread.key}
-                onClick={() => setSelectedThread(thread.key)}
-                className={cn(
-                  "w-full flex items-start gap-2.5 px-3 py-2.5 border-b border-gray-50 hover:bg-gray-50 transition-colors text-right",
-                  selectedThread === thread.key && "bg-[#00D1C1]/5"
-                )}
-              >
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-50 to-blue-100 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-teal-600">
-                  {(thread.guest_name || 'א')[0]}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-800 truncate">{thread.guest_name}</p>
-                    <div className="flex items-center gap-1">
-                      {thread.unread > 0 && (
-                        <span className="w-4 h-4 bg-[#00D1C1] rounded-full text-[10px] text-white flex items-center justify-center flex-shrink-0">
-                          {thread.unread}
+            filteredThreads.map(thread => {
+              const last = thread.messages[thread.messages.length - 1];
+              const active = selectedThread === thread.key;
+              return (
+                <button
+                  key={thread.key}
+                  type="button"
+                  onClick={() => setSelectedThread(thread.key)}
+                  className={cn(
+                    'flex min-h-[72px] w-full items-start gap-3 border-b border-line px-4 py-3 text-right transition-colors duration-150 hover:bg-canvas',
+                    active && 'bg-brand-50 hover:bg-brand-50'
+                  )}
+                >
+                  <Avatar name={thread.guest_name} className="h-10 w-10" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="truncate text-[15px] font-bold text-navy-900">{thread.guest_name}</p>
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        {thread.unread > 0 && (
+                          <span className="tabular inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-[12px] font-bold text-white">{thread.unread}</span>
+                        )}
+                        <span className="tabular text-[13px] text-ink-400">
+                          {thread.last_date ? format(parseISO(thread.last_date), 'HH:mm', { locale: he }) : ''}
                         </span>
-                      )}
-                      <span className="text-[10px] text-gray-400 flex-shrink-0">
-                        {thread.last_date ? format(parseISO(thread.last_date), 'HH:mm', { locale: he }) : ''}
-                      </span>
+                      </div>
+                    </div>
+                    <div className="mt-1 flex items-center gap-1.5">
+                      <ChannelTag channel={thread.channel} />
+                      <p className="truncate text-[14px] text-ink-600">{last?.body || 'הודעה'}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs">{CHANNEL_ICONS[thread.channel] || '💬'}</span>
-                    <p className="text-xs text-gray-400 truncate">
-                      {thread.messages[thread.messages.length - 1]?.body || 'הודעה'}
-                    </p>
-                  </div>
-                </div>
-              </button>
-            ))
+                </button>
+              );
+            })
           )}
         </div>
       </div>
 
       {/* Chat window */}
       {selectedThread ? (
-        <div className="flex-1 flex flex-col min-w-0 bg-gray-50">
-          {/* Chat header */}
-          <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 flex-col bg-canvas">
+          <div className="flex items-center gap-3 border-b border-line bg-white px-4 py-3">
             <button
+              type="button"
               onClick={() => setSelectedThread(null)}
-              className="md:hidden p-1 text-gray-400 hover:text-gray-600"
+              aria-label="חזרה לרשימת השיחות"
+              className="press -mr-2 inline-flex h-11 w-11 items-center justify-center rounded-[10px] text-ink-600 hover:bg-neutral-100 md:hidden"
             >
-              <X className="w-4 h-4" />
+              <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
             </button>
-            <div className="w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-sm font-semibold text-teal-600">
-              {(currentThread?.guest_name || 'א')[0]}
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-800">{currentThread?.guest_name}</p>
-              <p className="text-xs text-gray-400">
+            <Avatar name={currentThread?.guest_name} className="h-10 w-10" />
+            <div className="min-w-0">
+              <p className="truncate text-[15px] font-bold text-navy-900">{currentThread?.guest_name}</p>
+              <p className="truncate text-[13px] text-ink-400">
                 {CHANNEL_LABELS[currentThread?.channel] || 'הודעה'}
                 {currentThread?.property_name && ` · ${currentThread.property_name}`}
               </p>
             </div>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 space-y-3 overflow-y-auto p-4 md:p-6">
             {currentThread?.messages
               .sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0))
               .map((msg, i) => {
                 const isOutbound = msg.direction === 'outbound';
                 return (
-                  <div key={i} className={cn("flex", isOutbound ? "justify-start" : "justify-end")}>
+                  <div key={i} className={cn('flex', isOutbound ? 'justify-start' : 'justify-end')}>
                     <div className={cn(
-                      "max-w-xs lg:max-w-sm px-3 py-2 rounded-2xl text-sm",
+                      'max-w-[80%] rounded-[14px] px-3.5 py-2.5 text-[15px] lg:max-w-md',
                       isOutbound
-                        ? "bg-white text-gray-800 shadow-sm rounded-tr-sm"
-                        : "bg-[#00D1C1] text-[#0B1220] rounded-tl-sm"
+                        ? 'rounded-tr-[6px] bg-brand-600 text-white'
+                        : 'rounded-tl-[6px] border border-line bg-white text-navy-900'
                     )}>
-                      <p className="leading-relaxed">{msg.body}</p>
-                      <p className={cn("text-[10px] mt-0.5", isOutbound ? "text-gray-400" : "text-[#0B1220]/50")}>
+                      <p className="whitespace-pre-wrap leading-relaxed">{msg.body}</p>
+                      <p className={cn('tabular mt-1 text-[12px]', isOutbound ? 'text-white/85' : 'text-ink-400')}>
                         {msg.created_at ? format(parseISO(msg.created_at), 'HH:mm') : ''}
                       </p>
                     </div>
@@ -267,39 +252,35 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Reply box */}
-          <div className="bg-white border-t border-gray-100 p-3">
+          <div className="border-t border-line bg-white p-3 pb-[calc(12px+env(safe-area-inset-bottom))] md:pb-3">
             <div className="flex items-end gap-2">
               <Textarea
                 value={replyText}
                 onChange={e => setReplyText(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="כתוב הודעה... (Enter לשליחה)"
+                placeholder="כתיבת הודעה"
+                aria-label="כתיבת הודעה"
                 rows={1}
-                className="flex-1 text-sm resize-none min-h-[36px] max-h-[120px] border-gray-200"
+                className="max-h-[120px] min-h-[44px] flex-1 resize-none text-[15px]"
               />
               <Button
                 onClick={handleSend}
                 disabled={!replyText.trim() || sendMutation.isPending}
-                className="flex-shrink-0 h-9 w-9 p-0 bg-[#00D1C1] hover:bg-[#00b8aa] text-[#0B1220]"
+                size="icon"
+                aria-label="שליחה"
+                className="shrink-0"
               >
-                {sendMutation.isPending ? (
-                  <div className="w-4 h-4 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
+                <Send className="h-[18px] w-[18px] -scale-x-100" strokeWidth={1.5} />
               </Button>
             </div>
           </div>
         </div>
       ) : (
-        <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50">
-          <div className="text-center">
-            <MessageSquare className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-            <p className="text-sm text-gray-400">בחר שיחה להצגה</p>
-          </div>
+        <div className="hidden flex-1 items-center justify-center bg-canvas md:flex">
+          <EmptyState compact icon={MessageSquare} title="בחרו שיחה" description="ההודעות עם האורח יופיעו כאן." />
         </div>
       )}
+      </div>
       </div>
     </div>
   );

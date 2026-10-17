@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import FinanceTabs from '@/components/app/FinanceTabs';
+import { PageHeader, EmptyState, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import {
-  FileText, Plus, Send, Eye, Pencil, Trash2,
+import { FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Plus, Send, Eye, Pencil, Trash2,
   Search, Clock, CheckCircle2, XCircle, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,11 +34,11 @@ import { format } from 'date-fns';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
 const statusConfig = {
-  DRAFT: { label: 'טיוטה', color: 'bg-gray-100 text-gray-700', icon: Clock },
-  SENT: { label: 'נשלח', color: 'bg-blue-100 text-blue-700', icon: Send },
+  DRAFT: { label: 'טיוטה', color: 'bg-neutral-100 text-ink-600', icon: Clock },
+  SENT: { label: 'נשלח', color: 'bg-brand-100 text-brand-700', icon: Send },
   PAID: { label: 'שולם', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   OVERDUE: { label: 'באיחור', color: 'bg-red-100 text-red-700', icon: AlertCircle },
-  CANCELLED: { label: 'בוטל', color: 'bg-gray-100 text-gray-700', icon: XCircle }
+  CANCELLED: { label: 'בוטל', color: 'bg-neutral-100 text-ink-600', icon: XCircle }
 };
 
 const typeConfig = {
@@ -206,39 +208,24 @@ export default function InvoicesPage({ orgId }) {
   });
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-2xl border border-indigo-100/50 p-5 mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-indigo-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">חשבוניות</h1>
-        </div>
-        <p className="text-gray-600 text-sm leading-relaxed mr-[3.25rem]">צור, נהל ושלח חשבוניות ללקוחות. כל החשבוניות מרוכזות כאן עם סטטוס תשלום.</p>
-        <p className="text-indigo-500 text-xs mt-1 mr-[3.25rem]">💡 טיפ: חשבוניות נוצרות אוטומטית כשהזמנה מאושרת</p>
-      </div>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-      >
-        <div className="flex-1" />
-        <Button
-          onClick={() => {
-            setEditingInvoice(null);
-            setShowCreateDialog(true);
-          }}
-          className="bg-[#00D1C1] hover:bg-[#00D1C1]/90 text-white w-full sm:w-auto"
-        >
-          <Plus className="w-4 h-4 ml-2" />
-          חשבונית חדשה
-        </Button>
-      </motion.div>
+    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
+      <FinanceTabs className="!mb-0" />
+      <PageHeader
+        title="חשבוניות"
+        subtitle="חשבוניות וקבלות ללקוחות, במקום אחד."
+        className="!mb-0"
+        actions={
+          <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
+            <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            חשבונית חדשה
+          </Button>
+        }
+      />
 
-      <Card className="p-4 sm:p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <Card className="p-4 sm:p-5">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="relative">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-400" />
             <Input
               placeholder="חיפוש לפי שם או מספר..."
               value={searchTerm}
@@ -248,7 +235,7 @@ export default function InvoicesPage({ orgId }) {
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="סינון לפי סטטוס">
               <SelectValue placeholder="סטטוס" />
             </SelectTrigger>
             <SelectContent>
@@ -260,7 +247,7 @@ export default function InvoicesPage({ orgId }) {
           </Select>
 
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="סינון לפי סוג מסמך">
               <SelectValue placeholder="סוג מסמך" />
             </SelectTrigger>
             <SelectContent>
@@ -272,7 +259,40 @@ export default function InvoicesPage({ orgId }) {
           </Select>
         </div>
 
-        <div className="overflow-x-auto">
+        {isLoading ? (
+          <div className="mt-5"><SkelRows rows={4} avatar={false} /></div>
+        ) : filteredInvoices.length === 0 ? (
+          <EmptyState
+            compact
+            icon={FileText}
+            title={rawInvoices.length === 0 ? 'אין עדיין חשבוניות' : 'לא נמצאו חשבוניות'}
+            description={rawInvoices.length === 0 ? 'חשבונית שנוצרת להזמנה תופיע כאן, מוכנה לשליחה.' : 'נסו חיפוש או סינון אחר.'}
+            action={rawInvoices.length === 0 ? (
+              <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
+                <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                חשבונית חדשה
+              </Button>
+            ) : null}
+          />
+        ) : (
+        <>
+        <ul className="mt-4 divide-y divide-line md:hidden">
+          {filteredInvoices.map((invoice) => (
+            <li key={invoice.id}>
+              <button type="button" onClick={() => handlePreview(invoice)} className="flex min-h-[64px] w-full items-center justify-between gap-3 py-3 text-right">
+                <div className="min-w-0">
+                  <p className="truncate text-[15px] font-bold text-navy-900">{invoice.guest_name || 'לקוח'}</p>
+                  <p className="truncate text-[13px] text-ink-400">{typeConfig[invoice.type] || 'חשבונית'} · {invoice.invoice_number}{invoice.issue_date ? ` · ${fmtShort(invoice.issue_date)}` : ''}</p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="tabular text-[15px] font-bold text-navy-900">{fmtMoney(invoice.total_amount || 0)}</span>
+                  <span className={cn('inline-flex h-6 items-center rounded-full px-2.5 text-[13px] font-medium', statusConfig[invoice.status]?.color)}>{statusConfig[invoice.status]?.label}</span>
+                </div>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4 hidden overflow-x-auto md:block">
           <Table>
             <TableHeader>
               <TableRow>
@@ -286,19 +306,7 @@ export default function InvoicesPage({ orgId }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
-                    <div className="text-gray-400">טוען...</div>
-                  </TableCell>
-                </TableRow>
-              ) : filteredInvoices.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
-                    <div className="text-gray-400">אין חשבוניות</div>
-                  </TableCell>
-                </TableRow>
-              ) : (
+              {(
                 filteredInvoices.map((invoice) => {
                   const StatusIcon = statusConfig[invoice.status]?.icon || Clock;
                   const issueDate = invoice.issue_date
@@ -320,30 +328,34 @@ export default function InvoicesPage({ orgId }) {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
+                            aria-label="תצוגה מקדימה"
                             onClick={() => handlePreview(invoice)}
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
+                            aria-label="עריכה"
                             onClick={() => handleEdit(invoice)}
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
+                            aria-label="שליחה במייל"
                             onClick={() => handleSendEmail(invoice)}
                             disabled={!(invoice.guest_email || invoice.customer_email)}
                           >
                             <Send className="w-4 h-4" />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
+                            aria-label="מחיקה"
                             onClick={() => {
                               if (confirm('למחוק את החשבונית?')) {
                                 deleteMutation.mutate(invoice.id);
@@ -361,6 +373,8 @@ export default function InvoicesPage({ orgId }) {
             </TableBody>
           </Table>
         </div>
+        </>
+        )}
       </Card>
 
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>

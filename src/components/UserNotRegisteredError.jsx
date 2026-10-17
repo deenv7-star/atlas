@@ -26,15 +26,15 @@ const UserNotRegisteredError = () => {
             <p className="font-medium text-gray-700">מה ניתן לעשות?</p>
             <ul className="space-y-1.5">
               <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D1C1] flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-600 flex-shrink-0" />
                 ודא שנכנסת עם החשבון הנכון
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D1C1] flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-600 flex-shrink-0" />
                 פנה למנהל המערכת לקבלת הרשאה
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00D1C1] flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-600 flex-shrink-0" />
                 נסה להתנתק ולהתחבר מחדש
               </li>
             </ul>

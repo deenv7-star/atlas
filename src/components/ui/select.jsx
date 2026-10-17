@@ -3,7 +3,6 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 
 import { cn } from "@/lib/utils"
 
@@ -13,24 +12,11 @@ const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
 
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = React.useState(false);
-  
-  React.useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-  
-  return isMobile;
-}
-
 const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      "flex h-11 w-full items-center justify-between whitespace-nowrap rounded-[10px] border border-line bg-white px-3.5 py-2 text-[15px] text-navy-900 ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
       className
     )}
     {...props}>
@@ -63,45 +49,17 @@ const SelectScrollDownButton = React.forwardRef(({ className, ...props }, ref) =
 SelectScrollDownButton.displayName =
   SelectPrimitive.ScrollDownButton.displayName
 
+// The old mobile branch rendered SelectItems inside a vaul Drawer, outside Radix's
+// SelectContent context, and opened whenever ANY element had data-state="open"
+// (e.g. a dialog). On phones that threw "SelectItem must be used within SelectContent"
+// and took down the whole app. Radix's own content works on touch, so use it everywhere.
 const SelectContent = React.forwardRef(({ className, children, position = "popper", ...props }, ref) => {
-  const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = React.useState(false);
-  
-  React.useEffect(() => {
-    const handleOpenChange = () => {
-      const trigger = document.querySelector('[data-state="open"]');
-      setIsOpen(!!trigger);
-    };
-    
-    const observer = new MutationObserver(handleOpenChange);
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-    
-    return () => observer.disconnect();
-  }, []);
-  
-  if (isMobile) {
-    return (
-      <SelectPrimitive.Portal>
-        <Drawer open={isOpen} onOpenChange={setIsOpen}>
-          <DrawerContent className="max-h-[60vh]">
-            <DrawerHeader>
-              <DrawerTitle>בחר אפשרות</DrawerTitle>
-            </DrawerHeader>
-            <div className="p-4 overflow-y-auto">
-              {children}
-            </div>
-          </DrawerContent>
-        </Drawer>
-      </SelectPrimitive.Portal>
-    );
-  }
-  
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         ref={ref}
         className={cn(
-          "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+          "relative z-50 max-h-[min(24rem,var(--radix-select-content-available-height))] min-w-[8rem] overflow-hidden rounded-[12px] border border-line bg-white shadow-raised text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className
@@ -133,7 +91,7 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex w-full cursor-default select-none items-center rounded-[8px] min-h-11 md:min-h-10 py-2 pl-2 pr-8 text-[15px] outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}>

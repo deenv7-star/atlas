@@ -1,3 +1,4 @@
+import { ChannelBadge } from '@/components/ds';
 import React, { useCallback, useMemo, useState } from 'react';
 import type { ColumnDef, OnChangeFn, SortingState } from '@tanstack/react-table';
 import { format, parseISO } from 'date-fns';
@@ -6,13 +7,13 @@ import { AtlasTable, type AtlasCsvColumn, actionsColumn, bookingStatusColumn, cu
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
 
 const STATUS_OPTIONS = [
-  { value: 'PENDING', label: 'ממתין', color: 'bg-amber-100 text-amber-700' },
-  { value: 'APPROVED', label: 'מאושר', color: 'bg-emerald-100 text-emerald-700' },
-  { value: 'CONFIRMED', label: 'מאושר סופית', color: 'bg-green-100 text-green-700' },
-  { value: 'CHECKED_IN', label: 'נכנס', color: 'bg-blue-100 text-blue-700' },
-  { value: 'CHECKED_OUT', label: 'יצא', color: 'bg-gray-100 text-gray-600' },
-  { value: 'CANCELLED', label: 'בוטל', color: 'bg-red-100 text-red-600' },
-  { value: 'WAITLIST', label: 'המתנה', color: 'bg-purple-100 text-purple-700' },
+  { value: 'PENDING', label: 'ממתינה', color: 'bg-warning-50 text-warning-700' },
+  { value: 'APPROVED', label: 'מאושרת', color: 'bg-success-50 text-success-700' },
+  { value: 'CONFIRMED', label: 'מאושרת', color: 'bg-success-50 text-success-700' },
+  { value: 'CHECKED_IN', label: 'בשהייה', color: 'bg-brand-50 text-brand-700' },
+  { value: 'CHECKED_OUT', label: 'הסתיימה', color: 'bg-neutral-100 text-ink-600' },
+  { value: 'CANCELLED', label: 'בוטלה', color: 'bg-danger-50 text-danger-700' },
+  { value: 'WAITLIST', label: 'המתנה', color: 'bg-neutral-100 text-ink-600' },
 ] as const;
 
 const STATUS_BADGE_MAP = Object.fromEntries(STATUS_OPTIONS.map((s) => [s.value, { label: s.label, className: s.color }]));
@@ -78,18 +79,15 @@ export function BookingsTable(props: BookingsTableProps): React.ReactElement {
 
   const columns = useMemo<ColumnDef<BookingRow, unknown>[]>(() => {
     return [
-      {
-        id: 'shortId',
-        accessorKey: 'id',
-        header: 'מס׳',
-        size: 72,
-        minSize: 64,
-        cell: ({ getValue }) => {
-          const id = String(getValue() ?? '');
-          return <span className="font-mono text-[11px] text-gray-500">{id.slice(0, 8)}</span>;
-        },
-      },
       guestNameColumn<BookingRow>(),
+      {
+        id: 'channel',
+        accessorFn: (r) => (r as { booking_source?: string }).booking_source || 'direct',
+        header: 'ערוץ',
+        size: 120,
+        minSize: 96,
+        cell: ({ getValue }) => <ChannelBadge source={String(getValue())} />,
+      },
       {
         id: 'property',
         accessorFn: (r) => propertyName(r.property_id),
@@ -98,8 +96,8 @@ export function BookingsTable(props: BookingsTableProps): React.ReactElement {
         minSize: 88,
         cell: ({ getValue }) => <span className="truncate text-sm text-gray-700">{String(getValue())}</span>,
       },
-      dateColumn<BookingRow>('check_in_date', 'צ׳ק-אין', formatHeDate),
-      dateColumn<BookingRow>('check_out_date', 'צ׳ק-אאוט', formatHeDate),
+      dateColumn<BookingRow>('check_in_date', 'כניסה', formatHeDate),
+      dateColumn<BookingRow>('check_out_date', 'יציאה', formatHeDate),
       currencyColumn<BookingRow>('total_price', 'סכום'),
       bookingStatusColumn<BookingRow>(STATUS_BADGE_MAP, 'status'),
       actionsColumn<BookingRow>('actions', 'פעולות', (row) => {

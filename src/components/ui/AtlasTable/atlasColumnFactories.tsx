@@ -26,7 +26,7 @@ export function bookingStatusColumn<T extends { status?: string | null }>(
       const v = String(getValue() ?? '');
       const cfg = statusMap[v] ?? statusMap.PENDING ?? { label: v || '—', className: 'bg-gray-100 text-gray-600' };
       return (
-        <span className={cn('inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold', cfg.className)}>{cfg.label}</span>
+        <span className={cn('inline-flex h-6 items-center rounded-full px-2.5 text-[13px] font-medium', cfg.className)}>{cfg.label}</span>
       );
     },
   };
@@ -47,12 +47,12 @@ export function guestNameColumn<
       const initial = name.trim().charAt(0) || 'א';
       return (
         <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 text-xs font-bold text-indigo-800">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-bold text-brand-800">
             {initial}
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-gray-900">{name}</p>
-            {email ? <p className="truncate text-[11px] text-gray-500">{email}</p> : null}
+            {email ? <p className="truncate text-[13px] text-ink-400">{email}</p> : null}
           </div>
         </div>
       );
@@ -75,12 +75,12 @@ export function guestLeadNameColumn<
       const initial = String(name).trim().charAt(0) || '?';
       return (
         <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-fuchsia-100 text-xs font-bold text-purple-800">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-bold text-brand-800">
             {initial}
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-gray-900">{name}</p>
-            {email ? <p className="truncate text-[11px] text-gray-500">{email}</p> : null}
+            {email ? <p className="truncate text-[13px] text-ink-400">{email}</p> : null}
           </div>
         </div>
       );
@@ -99,7 +99,7 @@ export function currencyColumn<T extends object>(field: keyof T & string, header
       const raw = getValue();
       const n = typeof raw === 'number' ? raw : parseFloat(String(raw ?? ''));
       const formatted = Number.isFinite(n) ? n.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) : '—';
-      return <span className="block text-start font-mono text-sm font-semibold tabular-nums text-gray-900">₪{formatted}</span>;
+      return <span className="block text-start text-[15px] font-bold tabular-nums text-navy-900">₪{formatted}</span>;
     },
   };
 }
