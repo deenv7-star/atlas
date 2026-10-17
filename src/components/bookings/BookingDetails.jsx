@@ -20,11 +20,16 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { deleteBookingWithUndo } from '@/components/ui/AtlasToast';
 import { createPageUrl } from '@/utils';
-import { GuestAvatar } from '@/components/app/atoms';
-import { Page, StatusPill, channelOf, fmtDay, fmtShort, fmtMoney } from '@/components/ds';
+import { GuestAvatar, UnitPhoto } from '@/components/app/atoms';
+import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
+import { balanceOf } from '@/lib/stay/bookings';
+import { todayISO, firstName as firstNameOf } from '@/lib/stay/format';
+import { cn } from '@/lib/utils';
+import { useBookings } from '@/data/entities';
+import { Page, StatusPill, channelOf, fmtShort, fmtMoney } from '@/components/ds';
 import {
   Phone,
   Mail,
@@ -39,7 +44,8 @@ import {
   Receipt,
   ChevronRight,
   Pencil,
-  Trash2
+  Trash2,
+  Send
 } from 'lucide-react';
 import { parseISO, differenceInDays } from 'date-fns';
 
@@ -87,6 +93,8 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   const { data: allProperties = [] } = useProperties();
   const unitName = booking.property_name || allProperties.find((p) => p.id === booking.property_id)?.name || 'יחידה';
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [composerOpen, setComposerOpen] = useState(false);
+  const { data: siblings = [] } = useBookings({}, '-created_at', 200);
 
   // Fetch payments for this booking
   const { data: payments = [] } = useQuery({
@@ -209,23 +217,37 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   const waNumber = phoneDigits.startsWith('0') ? `972${phoneDigits.slice(1)}` : phoneDigits;
   const ch = channelOf(booking.booking_source);
 
+  const property = allProperties.find((p) => p.id === booking.property_id) || null;
+  const bal = balanceOf(booking, payments);
+  const paidPct = bal.total > 0 ? Math.min(100, Math.round((bal.paid / bal.total) * 100)) : 0;
+  const thread = [...messages].sort((a, b) => String(a.sent_at || a.created_at || '').localeCompare(String(b.sent_at || b.created_at || '')));
+  const worklist = [...siblings]
+    .filter((b) => !['CANCELLED'].includes(b.status) && b.check_out_date >= todayISO())
+    .sort((a, b) => String(a.check_in_date).localeCompare(String(b.check_in_date)))
+    .slice(0, 7);
+  if (!worklist.some((b) => b.id === booking.id)) worklist.unshift(booking);
+  const msgTime = (m) => {
+    const d = new Date(m.sent_at || m.created_at || Date.now());
+    return `${fmtShort(d)} · ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  };
+  const actions = [
+    booking.guest_phone ? { key: 'wa', label: 'וואטסאפ', icon: MessageSquare, primary: true, onClick: () => setComposerOpen(true) } : null,
+    booking.guest_phone ? { key: 'tel', label: 'שיחה', icon: Phone, href: `tel:${booking.guest_phone}` } : null,
+    booking.guest_email ? { key: 'mail', label: 'אימייל', icon: Mail, href: `mailto:${booking.guest_email}` } : null,
+    { key: 'edit', label: 'עריכה', icon: Pencil, onClick: () => navigate(`${createPageUrl('Bookings')}?openBookingId=${encodeURIComponent(booking.id)}`) },
+  ].filter(Boolean);
+
   return (
     <>
-      <Page className="max-w-[880px]">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <button type="button" onClick={onClose} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-full px-3 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
+      <Page className="max-w-[var(--page-max,1280px)] md:px-8">
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <button type="button" onClick={onClose} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-full px-3 text-[15px] font-semibold text-brand-600 hover:bg-brand-50">
             <ChevronRight className="h-5 w-5" />
             הזמנות
           </button>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" className="h-11" onClick={() => navigate(`${createPageUrl('Bookings')}?openBookingId=${encodeURIComponent(booking.id)}`)}>
-              <Pencil />
-              עריכה
-            </Button>
-            <Button variant="ghost" size="icon" className="h-11 w-11 text-ink-600 hover:text-danger-600" aria-label="מחיקת הזמנה" onClick={() => setConfirmDelete(true)}>
-              <Trash2 />
-            </Button>
-          </div>
+          <Button variant="ghost" size="icon" className="h-11 w-11 rounded-full text-ink-600 hover:text-danger-600" aria-label="מחיקת הזמנה" onClick={() => setConfirmDelete(true)}>
+            <Trash2 />
+          </Button>
         </div>
         <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
           <DialogContent className="max-w-[420px]" dir="rtl">
@@ -240,128 +262,143 @@ export default function BookingDetails({ booking, onClose, orgId }) {
           </DialogContent>
         </Dialog>
 
-        {/* Guest + stay */}
-        <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
-          <section className="v7-card p-5 shadow-card md:p-6">
-            <div className="flex items-start gap-4">
-              <GuestAvatar name={booking.guest_name || 'אורח'} size={64} />
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="truncate text-[30px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900">{booking.guest_name}</h1>
-                  <StatusPill status={booking.status} />
+        <div className="grid gap-4 lg:grid-cols-[272px_minmax(0,1fr)_330px] lg:gap-5">
+          {/* Worklist: who else is coming, the open one highlighted (CRM ref) */}
+          <aside aria-label="הזמנות קרובות" className="hidden lg:block">
+            <div className="sticky top-[92px] rounded-[26px] bg-[#EBEDF5] p-2.5">
+              <p className="px-3 pb-2 pt-2 text-[13px] font-bold text-ink-600">רשימת עבודה</p>
+              <ul className="space-y-1.5">
+                {worklist.map((b) => {
+                  const on = b.id === booking.id;
+                  return (
+                    <li key={b.id}>
+                      <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} aria-current={on ? 'page' : undefined} className="e-work-item press flex min-h-[64px] items-center gap-3 rounded-[18px] px-3 py-2.5">
+                        <GuestAvatar name={b.guest_name || 'אורח'} record={b} size={40} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[14px] font-bold text-navy-900">{b.guest_name || 'אורח'}</span>
+                          <span className="block truncate text-[12px] text-ink-400">{b.property_name || allProperties.find((p) => p.id === b.property_id)?.name} · {fmtShort(b.check_in_date)}</span>
+                        </span>
+                        {on ? <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-brand-600" /> : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </aside>
+
+          {/* Main: the guest */}
+          <div className="contents lg:block lg:min-w-0 lg:space-y-4">
+            <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
+              <section className="v7-card relative order-1 overflow-hidden p-5 md:p-7 lg:order-none">
+                <div className="flex flex-col items-center gap-4 text-center md:flex-row md:items-center md:text-start">
+                  <GuestAvatar name={booking.guest_name || 'אורח'} record={booking} size={104} ring className="shadow-[0_14px_30px_-14px_rgba(27,38,86,0.45)]" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+                      <h1 className="text-[30px] font-extrabold leading-tight tracking-[-0.025em] text-navy-900 md:text-[34px]">{booking.guest_name}</h1>
+                      <StatusPill status={booking.status} />
+                    </div>
+                    <p className="mt-1.5 flex flex-wrap items-center justify-center gap-x-2 text-[15px] text-ink-600 md:justify-start">
+                      <span>{unitName}</span>
+                      <span aria-hidden className="text-ink-300">·</span>
+                      <span>{(booking.adults || 2) + (booking.children || 0)} אורחים</span>
+                      <span aria-hidden className="text-ink-300">·</span>
+                      <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full" style={{ background: ch.color }} />{ch.label}</span>
+                    </p>
+                    {booking.guest_phone || booking.guest_email ? (
+                      <p className="mt-1 text-[14px] text-ink-400"><span dir="ltr">{[booking.guest_phone, booking.guest_email].filter(Boolean).join(' · ')}</span></p>
+                    ) : null}
+                  </div>
                 </div>
-                <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[15px] text-ink-600">
-                  <span>{unitName}</span>
-                  <span aria-hidden>·</span>
-                  <span>{booking.adults || 2} אורחים</span>
-                  <span aria-hidden>·</span>
-                  <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full" style={{ background: ch.color }} />{ch.label}</span>
-                </p>
-              </div>
-            </div>
+                <div className="mt-5 flex items-start justify-center gap-4 md:hidden">
+                  {actions.map((a) => {
+                    const Icon = a.icon;
+                    const circle = cn('inline-flex h-14 w-14 items-center justify-center rounded-full', a.primary ? 'bg-brand-600 text-white shadow-[0_10px_22px_-10px_rgba(62,43,241,0.7)]' : 'bg-[#F1F2F7] text-navy-900');
+                    const inner = <><span className={circle}><Icon className="h-[22px] w-[22px]" strokeWidth={1.75} aria-hidden /></span><span className="text-[12px] font-semibold text-navy-900">{a.label}</span></>;
+                    const cls = 'press flex w-[64px] flex-col items-center gap-1.5';
+                    return a.href ? <a key={a.key} href={a.href} className={cls}>{inner}</a> : <button key={a.key} type="button" onClick={a.onClick} className={cls}>{inner}</button>;
+                  })}
+                </div>
+                <div className="mt-5 hidden flex-wrap items-center justify-start gap-3 md:flex md:ps-[120px]">
+                  {actions.map((a) => {
+                    const Icon = a.icon;
+                    const cls = cn('press inline-flex h-12 items-center gap-2 rounded-full px-5 text-[15px] font-semibold', a.primary ? 'bg-brand-600 text-white shadow-[0_10px_22px_-10px_rgba(62,43,241,0.7)] hover:bg-brand-500' : 'bg-[#F1F2F7] text-navy-900 hover:bg-[#E8EAF2]');
+                    return a.href
+                      ? <a key={a.key} href={a.href} className={cls}><Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />{a.label}</a>
+                      : <button key={a.key} type="button" onClick={a.onClick} className={cls}><Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />{a.label}</button>;
+                  })}
+                </div>
+              </section>
+            </ErrorBoundary>
 
-            <div className="mt-5 grid grid-cols-3 gap-2 rounded-[18px] bg-[#F2F3F8] p-3 text-center md:gap-4 md:p-4">
-              <div>
-                <p className="text-[13px] text-ink-400">כניסה</p>
-                <p className="mt-0.5 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_in_date)}</span><span className="sm:hidden">{fmtShort(booking.check_in_date)}</span></p>
+            {/* Conversation (WhatsApp / SMS / email log) */}
+            <section className="v7-card order-4 p-5 md:p-6 lg:order-none" aria-labelledby="e-thread">
+              <div className="flex items-center justify-between gap-2">
+                <h2 id="e-thread" className="text-[18px] font-bold text-navy-900">שיחה עם האורח</h2>
+                <span className="text-[13px] text-ink-400">{thread.length ? `${thread.length} הודעות` : ''}</span>
               </div>
-              <div className="border-x border-line">
-                <p className="text-[13px] text-ink-400">לילות</p>
-                <p className="mt-0.5 text-[16px] font-bold tabular text-navy-900">{nights || booking.nights || 1}</p>
-              </div>
-              <div>
-                <p className="text-[13px] text-ink-400">יציאה</p>
-                <p className="mt-0.5 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_out_date)}</span><span className="sm:hidden">{fmtShort(booking.check_out_date)}</span></p>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {thread.length ? (
+                <ol className="mt-4 space-y-3">
+                  {thread.map((m) => {
+                    const inbound = m.direction === 'inbound';
+                    return (
+                      <li key={m.id} className={cn('flex items-end gap-2', inbound ? '' : 'flex-row-reverse')}>
+                        {inbound ? <GuestAvatar name={booking.guest_name || 'אורח'} record={booking} size={30} /> : null}
+                        <div className={cn('e-bub', inbound ? 'e-bub-in' : 'e-bub-out')}>
+                          {m.subject && !inbound ? <p className="mb-0.5 text-[12px] font-semibold opacity-80">{m.subject}</p> : null}
+                          <p className="whitespace-pre-wrap">{m.body || m.content}</p>
+                          <p className={cn('mt-1 text-[11px] tabular', inbound ? 'text-ink-600' : 'text-white/90')}>{msgTime(m)}{m.channel && m.channel !== 'whatsapp' ? ` · ${m.channel === 'sms' ? 'SMS' : 'אימייל'}` : ''}</p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
+              ) : (
+                <p className="mt-3 text-[15px] text-ink-600">עוד לא נשלחו הודעות לאורח הזה.</p>
+              )}
               {booking.guest_phone ? (
-                <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noreferrer" className="press inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-brand-600 text-[15px] font-bold text-white hover:bg-brand-500">
-                  <MessageSquare className="h-5 w-5" />
-                  וואטסאפ
-                </a>
+                <button type="button" onClick={() => setComposerOpen(true)} className="press mt-4 flex h-12 w-full items-center gap-3 rounded-full bg-[#F4F5F9] pe-1.5 ps-5 text-[14px] text-ink-400 hover:bg-[#EEF0F6]">
+                  <span className="flex-1 text-start">הודעה בוואטסאפ ל{firstNameOf(booking.guest_name)}</span>
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-white"><Send className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden /></span>
+                </button>
               ) : null}
-              {booking.guest_phone ? (
-                <a href={`tel:${booking.guest_phone}`} className="press inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-line bg-white text-[15px] font-bold text-navy-900 hover:bg-neutral-50">
-                  <Phone className="h-5 w-5" />
-                  <span dir="ltr">{booking.guest_phone}</span>
-                </a>
-              ) : null}
-              {booking.guest_email ? (
-                <a href={`mailto:${booking.guest_email}`} className="press col-span-2 inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-line bg-white text-[15px] font-medium text-navy-900 hover:bg-neutral-50 sm:col-span-1">
-                  <Mail className="h-5 w-5" />
-                  אימייל
-                </a>
-              ) : null}
-            </div>
-          </section>
-        </ErrorBoundary>
+            </section>
 
-        <div className="mt-4 grid gap-4 md:grid-cols-[1.3fr_1fr]">
-          {/* Money */}
-          <section className="v7-card p-5 shadow-card">
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="text-[18px] font-bold text-navy-900">תשלומים</h2>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => navigate(`/invoices?booking=${booking.id}`)}>
-                  <Receipt />
-                  חשבונית
-                </Button>
-                <Button size="sm" variant="secondary" onClick={() => setIsPaymentDialogOpen(true)}>
-                  <Plus />
-                  תשלום
-                </Button>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <div className="rounded-[12px] bg-neutral-50 p-3">
-                <p className="text-[13px] text-ink-400">סך ההזמנה</p>
-                <p className="mt-0.5 text-[18px] font-bold tabular text-navy-900">{fmtMoney(booking.total_price)}</p>
-              </div>
-              <div className="rounded-[12px] bg-success-50 p-3">
-                <p className="text-[13px] text-success-700">שולם</p>
-                <p className="mt-0.5 text-[18px] font-bold tabular text-success-700">{fmtMoney(totalPaid)}</p>
-              </div>
-              <div className="rounded-[12px] bg-warning-50 p-3">
-                <p className="text-[13px] text-warning-700">יתרה</p>
-                <p className="mt-0.5 text-[18px] font-bold tabular text-warning-700">{fmtMoney(totalDue || outstanding)}</p>
-              </div>
-            </div>
-            {payments.length > 0 ? (
-              <ul className="mt-3 divide-y divide-line">
-                {payments.map((payment) => (
-                  <li key={payment.id} className="flex min-h-[60px] items-center justify-between gap-3 py-2">
-                    <div className="min-w-0">
-                      <p className="text-[15px] font-semibold text-navy-900">
-                        {payment.type === 'DEPOSIT' ? 'מקדמה' : payment.type === 'BALANCE' ? 'יתרה' : payment.type === 'FULL' ? 'תשלום מלא' : 'תשלום'}
-                      </p>
-                      <p className="text-[13px] text-ink-400">
-                        {METHOD_LABEL[String(payment.method || '').toLowerCase()] || 'אחר'}
-                        {payment.due_date && ` · עד ${fmtShort(payment.due_date)}`}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-bold tabular text-navy-900">{fmtMoney(payment.amount)}</span>
-                      {payment.status === 'DUE' ? (
-                        <Button size="sm" variant="outline" onClick={() => markPaidMutation.mutate(payment.id)}>סימון כשולם</Button>
-                      ) : (
-                        <StatusPill status={payment.status} label={paymentStatusLabels[payment.status]} />
-                      )}
-                    </div>
+            <section className="v7-card order-6 p-5 md:p-6 lg:order-none" aria-labelledby="e-progress">
+              <h2 id="e-progress" className="text-[18px] font-bold text-navy-900">התקדמות</h2>
+              <ol className="mt-4 flex flex-wrap gap-2">
+                {timelineItems.map((item, i) => (
+                  <li key={i} className={cn('inline-flex h-10 items-center gap-2 rounded-full px-3.5 text-[14px]', item.done ? 'bg-[var(--st-mint-bg)] font-semibold text-[var(--st-mint-fg)]' : 'bg-[#F1F2F7] text-ink-600')}>
+                    {item.done ? <CheckCircle2 className="h-[17px] w-[17px]" aria-hidden /> : <item.icon className="h-[17px] w-[17px]" strokeWidth={1.5} aria-hidden />}
+                    {item.label}
+                    <span className="sr-only">{item.done ? ' (בוצע)' : ' (עוד לא)'}</span>
                   </li>
                 ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-[15px] text-ink-600">עדיין לא נרשם תשלום להזמנה הזו.</p>
-            )}
-          </section>
+              </ol>
+            </section>
+          </div>
 
-          <div className="grid content-start gap-4">
-            <section className="v7-card p-5 shadow-card">
-              <Label className="text-[14px] font-medium text-ink-600">מצב ההזמנה</Label>
+          {/* Side: tinted cards */}
+          <div className="contents lg:grid lg:content-start lg:gap-4">
+            <section className="e-side e-tint-lilac order-2 p-5 lg:order-none" aria-labelledby="e-stay">
+              <div className="flex items-center justify-between">
+                <h2 id="e-stay" className="text-[15px] font-bold text-[var(--st-lilac-fg)]">השהייה</h2>
+                <UnitPhoto property={property} className="h-11 w-11" rounded="rounded-[14px]" />
+              </div>
+              <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[18px] bg-white/80 p-3.5 text-center">
+                <div>
+                  <p className="text-[12px] text-ink-400">כניסה</p>
+                  <p className="mt-0.5 text-[15px] font-bold text-navy-900">{fmtShort(booking.check_in_date)}</p>
+                </div>
+                <span className="inline-flex h-9 min-w-9 items-center justify-center rounded-full bg-[var(--st-lilac-bg)] px-2 text-[13px] font-bold tabular text-[var(--st-lilac-fg)]">{nights || booking.nights || 1}<span className="sr-only"> לילות</span></span>
+                <div>
+                  <p className="text-[12px] text-ink-400">יציאה</p>
+                  <p className="mt-0.5 text-[15px] font-bold text-navy-900">{fmtShort(booking.check_out_date)}</p>
+                </div>
+              </div>
+              <Label className="mt-4 block text-[13px] font-semibold text-ink-600" htmlFor="e-status">מצב ההזמנה</Label>
               <Select value={booking.status} onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}>
-                <SelectTrigger className="mt-2" aria-label="מצב ההזמנה">
+                <SelectTrigger id="e-status" className="mt-2 h-12 rounded-full border-0 bg-white" aria-label="מצב ההזמנה">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -372,29 +409,79 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               </Select>
             </section>
 
-            <section className="v7-card p-5 shadow-card">
-              <h2 className="text-[18px] font-bold text-navy-900">התקדמות</h2>
-              <ol className="mt-3 space-y-1">
-                {timelineItems.map((item, i) => (
-                  <li key={i} className="flex min-h-[40px] items-center gap-3">
-                    <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${item.done ? 'bg-success-50 text-success-600' : 'bg-neutral-100 text-ink-400'}`}>
-                      {item.done ? <CheckCircle2 className="h-[18px] w-[18px]" /> : <item.icon className="h-[18px] w-[18px]" strokeWidth={1.5} />}
-                    </span>
-                    <span className={`text-[15px] ${item.done ? 'font-semibold text-navy-900' : 'text-ink-600'}`}>{item.label}</span>
-                  </li>
-                ))}
-              </ol>
+            <section className="e-side e-tint-mint order-3 p-5 lg:order-none" aria-labelledby="e-pay">
+              <div className="flex items-center justify-between gap-2">
+                <h2 id="e-pay" className="text-[15px] font-bold text-[var(--st-mint-fg)]">תשלומים</h2>
+                <span className="text-[13px] font-semibold tabular text-[var(--st-mint-fg)]">{paidPct}%</span>
+              </div>
+              <p className="mt-3 flex items-baseline gap-2">
+                <span className="text-[30px] font-extrabold leading-none tabular text-navy-900">{fmtMoney(totalPaid)}</span>
+                <span className="text-[14px] text-ink-400">מתוך {fmtMoney(booking.total_price)}</span>
+              </p>
+              <div className="e-prog mt-3 bg-white/80" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={paidPct} aria-label="שולם מתוך ההזמנה">
+                <span style={{ width: `${Math.max(3, paidPct)}%` }} />
+              </div>
+              {(totalDue || outstanding) > 0 ? (
+                <p className="mt-2 text-[13px] font-semibold text-[var(--st-red-fg)]">יתרה {fmtMoney(totalDue || outstanding)}</p>
+              ) : <p className="mt-2 text-[13px] font-semibold text-[var(--st-mint-fg)]">הכל שולם</p>}
+              {payments.length > 0 ? (
+                <ul className="mt-3 space-y-2">
+                  {payments.map((payment) => (
+                    <li key={payment.id} className="flex min-h-[60px] items-center justify-between gap-2 rounded-[16px] bg-white/85 px-3.5 py-2">
+                      <div className="min-w-0">
+                        <p className="text-[14px] font-semibold text-navy-900">
+                          {payment.type === 'DEPOSIT' ? 'מקדמה' : payment.type === 'BALANCE' ? 'יתרה' : payment.type === 'FULL' ? 'תשלום מלא' : 'תשלום'} · <span className="tabular">{fmtMoney(payment.amount)}</span>
+                        </p>
+                        <p className="text-[12px] text-ink-400">
+                          {METHOD_LABEL[String(payment.method || '').toLowerCase()] || 'אחר'}
+                          {payment.due_date && ` · עד ${fmtShort(payment.due_date)}`}
+                        </p>
+                      </div>
+                      {payment.status === 'DUE' || payment.status === 'PENDING' ? (
+                        <Button size="sm" variant="outline" className="h-11 rounded-full bg-white" onClick={() => markPaidMutation.mutate(payment.id)}>סימון כשולם</Button>
+                      ) : (
+                        <StatusPill status={payment.status} label={paymentStatusLabels[payment.status]} />
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-3 text-[14px] text-ink-600">עדיין לא נרשם תשלום.</p>
+              )}
+              <div className="mt-3 flex gap-2">
+                <Button variant="outline" className="h-11 flex-1 rounded-full border-0 bg-white" onClick={() => setIsPaymentDialogOpen(true)}>
+                  <Plus />
+                  תשלום
+                </Button>
+                <Button variant="outline" className="h-11 flex-1 rounded-full border-0 bg-white" onClick={() => navigate(`/invoices?booking=${booking.id}`)}>
+                  <Receipt />
+                  חשבונית
+                </Button>
+              </div>
             </section>
 
-            {booking.notes ? (
-              <section className="v7-card p-5 shadow-card">
-                <h2 className="text-[18px] font-bold text-navy-900">הערות</h2>
-                <p className="mt-2 whitespace-pre-wrap text-[15px] text-ink-600">{booking.notes}</p>
-              </section>
-            ) : null}
+            <section className="e-side e-tint-sky order-5 p-5 lg:order-none" aria-labelledby="e-notes">
+              <h2 id="e-notes" className="text-[15px] font-bold text-[var(--st-sky-fg)]">הערות</h2>
+              {booking.notes ? (
+                <p className="mt-2 whitespace-pre-wrap text-[15px] leading-relaxed text-navy-900">{booking.notes}</p>
+              ) : (
+                <button type="button" onClick={() => navigate(`${createPageUrl('Bookings')}?openBookingId=${encodeURIComponent(booking.id)}`)} className="press mt-2 inline-flex h-11 items-center text-[14px] font-semibold text-[var(--st-sky-fg)]">הוספת הערה</button>
+              )}
+            </section>
           </div>
         </div>
       </Page>
+
+      <WhatsAppComposer
+        open={composerOpen}
+        onOpenChange={setComposerOpen}
+        booking={booking}
+        property={property}
+        balance={bal}
+        orgId={orgId}
+        orgName=""
+        onSent={() => queryClient.invalidateQueries({ queryKey: ['messages', booking.id] })}
+      />
 
       {/* Add Payment Dialog */}
       <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>

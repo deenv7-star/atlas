@@ -56,7 +56,7 @@ function Kpi({ i, label, attention, to, children, className, hero = false, ariaL
       <div className="flex items-start justify-between gap-2">
         <p className={cn('flex items-center gap-2 pt-1.5 text-[14px] font-medium', hero ? 'text-white/85' : 'text-ink-400')}>
           <span>{label}</span>
-          {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
+          {attention ? <span role="img" aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
         </p>
         {to ? <CardArrow onHero={hero} /> : null}
       </div>
@@ -93,7 +93,7 @@ function DayRow({ property, guest, time, title, detail, attention, action, i }) 
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-semibold text-navy-900">{title}</p>
         <p className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
-          {attention ? <span aria-label="דחוף" className="h-1.5 w-1.5 shrink-0 rounded-full bg-attention" /> : null}
+          {attention ? <span role="img" aria-label="דחוף" className="h-1.5 w-1.5 shrink-0 rounded-full bg-attention" /> : null}
           {time && time !== '—' ? <span className="tabular font-medium text-ink-600">{time}</span> : null}
           {time && time !== '—' && detail ? <span aria-hidden className="text-ink-300">·</span> : null}
           <span className="truncate">{detail}</span>

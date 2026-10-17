@@ -1,2 +1,2 @@
-/** App shell + dashboard (v5, Mercury-like light direction). */
-export { Sidebar, Header, TabBar, shellClass, DashboardView } from './a';
+/** App shell + dashboard (v8 E: guest-centric CRM, slim floating pill rail with labels). */
+export { Sidebar, Header, TabBar, shellClass, DashboardView } from './e';

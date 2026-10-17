@@ -14,7 +14,8 @@ import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
-import { UnitTile, guestInitials } from '@/components/app/atoms';
+import { UnitPhoto, GuestAvatar, Rise } from '@/components/app/atoms';
+import { fmtShort } from '@/components/ds';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#EF5B5B' },
@@ -49,10 +50,15 @@ function transformBookings(rawBookings, properties) {
         endDate,
         nights,
         amount: parseFloat(b.total_price) || 0,
+        raw: b,
+        inHouse: b.status === 'CHECKED_IN' || (['APPROVED', 'CONFIRMED'].includes(b.status) && b.check_in_date <= todayKey() && (b.check_out_date || '') > todayKey()),
+        done: b.status === 'CHECKED_OUT',
         status: b.status === 'CANCELLED' ? 'בוטל' : ['APPROVED','CONFIRMED','CHECKED_IN'].includes(b.status) ? 'מאושר' : 'ממתין',
       };
     });
 }
+
+const todayKey = () => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
 
 const HEB_DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
 
@@ -214,6 +220,15 @@ export default function MultiCalendar({ selectedPropertyId }) {
       .sort((a, b) => a.startDate - b.startDate);
   }, [bookings, properties]);
 
+  const upcoming = useMemo(() => {
+    const t = startOfDay(new Date());
+    const end = addDays(t, 14);
+    return bookings
+      .filter((b) => b.status !== 'בוטל' && !b.done && b.startDate >= t && b.startDate <= end)
+      .sort((x, y) => x.startDate - y.startDate)
+      .slice(0, 4);
+  }, [bookings]);
+
   const totalGapRevenue = gaps.reduce((s, g) => s + g.potentialRevenue, 0);
 
   const channelMix = useMemo(() => {
@@ -240,7 +255,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
   const rangeLabel = `${formatHebrewDate(days[0])} – ${formatHebrewDate(days[days.length - 1])}`;
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-6 md:px-10 md:pt-9 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
+    <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-3 md:px-8 md:pt-5 [--cal-unit-w:112px] md:[--cal-unit-w:184px]" dir="rtl">
       <header className={cn('v5-rise mb-5 flex flex-row items-end justify-between gap-3 md:mb-6')}>
         <div>
           <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">לוח שנה</h1>
@@ -346,8 +361,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   const propBookings = getBookingsForProperty(prop.id);
                   return (
                     <React.Fragment key={prop.id}>
-                      <div className="sticky right-0 z-10 flex min-h-[68px] items-center gap-3 border-b border-l border-line bg-white px-2.5 md:px-3">
-                        <UnitTile property={prop.raw} className="hidden h-9 w-9 text-[14px] md:inline-flex" rounded="rounded-[9px]" />
+                      <div className="sticky right-0 z-10 flex min-h-[76px] items-center gap-3 border-b border-l border-line bg-white px-2.5 md:px-3.5">
+                        <UnitPhoto property={prop.raw} className="hidden h-11 w-11 md:block" rounded="rounded-[14px]" />
                         <div className="min-w-0">
                           <div className="truncate text-[15px] font-medium text-navy-900">{prop.name}</div>
                           <div className="hidden truncate text-[12px] text-ink-400 md:block">{prop.raw?.max_guests ? `עד ${prop.raw.max_guests} אורחים` : prop.type}</div>
@@ -355,7 +370,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                       </div>
                       <div
                         className="relative border-b border-line"
-                        style={{ gridColumn: '2 / -1', display: 'grid', gridTemplateColumns: `repeat(${totalDays}, ${COL_W})`, minHeight: 68 }}
+                        style={{ gridColumn: '2 / -1', display: 'grid', gridTemplateColumns: `repeat(${totalDays}, ${COL_W})`, minHeight: 76 }}
                       >
                         {days.map((d, i) => (
                           <button
@@ -382,24 +397,31 @@ export default function MultiCalendar({ selectedPropertyId }) {
                             <Link
                               key={booking.id}
                               to={`${createPageUrl('BookingDetail')}/${booking.id}`}
-                              className={cn('press absolute top-[12px] z-10 block', optimisticEntityClassName(booking.id))}
+                              className={cn('press e-bar absolute top-[12px] z-10 block rounded-[16px]', optimisticEntityClassName(booking.id))}
                               style={{ right: `calc(${(pos.start / totalDays) * 100}% + 2px)`, width: `calc(${(pos.span / totalDays) * 100}% - 4px)` }}
                               onMouseEnter={(e) => handleBookingHover(e, booking)}
                               onMouseLeave={() => setHoveredBooking(null)}
                               aria-label={`${booking.guest || 'הזמנה'}, ${ch.label}, ${booking.nights} לילות`}
                             >
-                              {/* v5: indigo-tint bar; the channel is only the thin coloured start edge */}
+                              {/* v8 E: status-tinted bar (sky confirmed, mint in house, lilac dashed pending), guest face at the start, channel edge */}
                               <span
                                 className={cn(
-                                  'relative flex h-[44px] flex-col justify-center overflow-hidden rounded-[10px] pe-2.5 ps-3.5 text-[13px] leading-tight transition-[background-color,box-shadow] duration-150 hover:shadow-[0_2px_8px_rgba(62,43,241,0.12)]',
-                                  isBlocked ? 'bg-[repeating-linear-gradient(45deg,#F1F2F6,#F1F2F6_6px,#E9EBF1_6px,#E9EBF1_12px)] text-ink-400'
-                                    : pending ? 'border border-dashed border-brand-300 bg-white text-navy-900'
-                                      : 'border border-[rgba(62,43,241,0.10)] bg-[#EEF0FF] text-navy-900 hover:bg-[#E6E8FF]',
+                                  'relative flex h-[52px] items-center gap-2 overflow-hidden rounded-[16px] pe-2.5 ps-2 text-[13px] leading-tight',
+                                  isBlocked ? 'bg-[repeating-linear-gradient(45deg,#F1F2F6,#F1F2F6_6px,#E9EBF1_6px,#E9EBF1_12px)] ps-3 text-ink-400'
+                                    : pending ? 'border border-dashed border-[#B7ABF7] bg-[#F6F4FF] text-navy-900'
+                                      : booking.inHouse ? 'bg-[#E1F5EC] text-navy-900'
+                                        : booking.done ? 'bg-[#EEF0F5] text-ink-600'
+                                          : 'bg-[#E6F0FC] text-navy-900',
                                 )}
                               >
-                                {isBlocked ? null : <span aria-hidden className="absolute inset-y-[6px] start-[5px] w-[3px] rounded-full" style={{ background: ch?.color }} />}
-                                <span className="truncate font-semibold">{isBlocked ? 'חסום' : pos.span > 1 || viewMode !== 'month' ? booking.guest : guestInitials(booking.guest)}</span>
-                                {!isBlocked && pos.span > 1 ? <span className="truncate text-[12px] text-ink-400">{pending ? 'ממתינה לאישור' : `${booking.nights} לילות`}</span> : null}
+                                {isBlocked ? null : <span aria-hidden className="absolute inset-y-[10px] start-0 w-[3px] rounded-e-full" style={{ background: ch?.color }} />}
+                                {isBlocked ? null : <GuestAvatar name={booking.guest} record={booking.raw} size={pos.span > 1 || viewMode !== 'month' ? 34 : 28} ring />}
+                                {isBlocked || pos.span > 1 || viewMode !== 'month' ? (
+                                  <span className="flex min-w-0 flex-col">
+                                    <span className="truncate font-bold">{isBlocked ? 'חסום' : booking.guest}</span>
+                                    {!isBlocked && pos.span > 1 ? <span className="truncate text-[12px] text-ink-400">{pending ? 'ממתינה לאישור' : booking.inHouse ? 'בשהייה' : `${booking.nights} לילות`}</span> : null}
+                                  </span>
+                                ) : null}
                               </span>
                             </Link>
                           );
@@ -443,7 +465,33 @@ export default function MultiCalendar({ selectedPropertyId }) {
       )}
 
       {properties.length ? (
-        <div>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Rise as="section" i={2} aria-labelledby="e-upcoming" className="v7-card overflow-hidden">
+            <div className="flex items-center justify-between px-5 pt-5">
+              <div>
+                <h2 id="e-upcoming" className="text-[15px] font-semibold text-navy-900">מגיעים בקרוב</h2>
+                <p className="text-[13px] text-ink-400">הכניסות הבאות בכל היחידות</p>
+              </div>
+            </div>
+            {upcoming.length === 0 ? (
+              <p className="px-5 pb-5 pt-3 text-[15px] text-ink-600">אין כניסות בשבועיים הקרובים.</p>
+            ) : (
+              <ul className="px-2 pb-2 pt-2">
+                {upcoming.map((b) => (
+                  <li key={b.id}>
+                    <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press v7-row flex min-h-[64px] items-center gap-3 rounded-[16px] px-3">
+                      <GuestAvatar name={b.guest} record={b.raw} size={40} />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[15px] font-semibold text-navy-900">{b.guest || 'אורח'}</span>
+                        <span className="block truncate text-[13px] text-ink-400">{properties.find((p) => p.id === b.propertyId)?.name} · {b.nights} לילות</span>
+                      </span>
+                      <span className="shrink-0 rounded-full bg-[#EEF0F8] px-3 py-1 text-[13px] font-semibold text-navy-900">{isToday(b.startDate) ? 'היום' : fmtShort(b.startDate)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Rise>
           <section className="v5-rise overflow-hidden v7-card">
             <div className="flex items-center justify-between px-5 pt-5">
               <div>
@@ -459,7 +507,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                   const prop = properties.find((p) => p.name === gap.property);
                   return (
                     <li key={gap.id} className="v5-row flex min-h-[64px] items-center gap-3 rounded-[10px] px-3">
-                      <UnitTile property={prop?.raw} className="h-10 w-10 text-[15px]" />
+                      <UnitPhoto property={prop?.raw} className="h-11 w-11" rounded="rounded-[14px]" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-medium text-navy-900">{gap.property}</div>
                         <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {gap.nights} לילות</div>
