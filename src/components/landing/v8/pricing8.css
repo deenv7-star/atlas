@@ -1,0 +1,139 @@
+/* Landing pricing v1 (18.10.2026). Builds on .v8p in shared8.css. Brand: indigo #3E2BF1, navy, white/canvas. */
+
+/* plan order is always 1 → 2 → 3; the recommended plan is marked only by its badge + indigo card */
+.v8p-plan { min-width: 0; }
+.v8p-limit {
+  display: inline-flex; align-self: flex-start; align-items: center; min-height: 30px; margin-top: 12px;
+  padding: 0 12px; border-radius: 999px; background: var(--indigo-50, #f1effe); color: var(--indigo);
+  font-size: 15px; font-weight: 800;
+}
+.v8p-plan.is-pop .v8p-limit { background: rgba(255, 255, 255, 0.16); color: #fff; }
+.v8p-desc { margin-top: 10px; line-height: 1.45; }
+.v8p-lead { margin-top: 24px; font-size: 15px; font-weight: 800; color: var(--navy); }
+.v8p-plan.is-pop .v8p-lead { color: #fff; }
+.v8p-lead + .v8p-feat { margin-top: 12px; }
+.v8p-feat li { align-items: flex-start; line-height: 1.45; }
+.v8p-feat li svg { margin-top: 3px; }
+.v8p-feat li span { min-width: 0; overflow-wrap: anywhere; }
+
+/* "everything in Starter" disclosure inside plans 2 and 3 */
+.v8p-more { margin-top: 14px; border-top: 1px solid var(--line); }
+.v8p-plan.is-pop .v8p-more { border-top-color: rgba(255, 255, 255, 0.22); }
+.v8p-more summary, .v8p-diff summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px;
+  cursor: pointer; list-style: none; font-weight: 700;
+}
+.v8p-more summary { font-size: 15px; color: var(--ink-2); }
+.v8p-plan.is-pop .v8p-more summary { color: rgba(255, 255, 255, 0.9); }
+.v8p-more summary::-webkit-details-marker, .v8p-diff summary::-webkit-details-marker { display: none; }
+.v8p-more summary svg, .v8p-diff summary svg { flex: none; transition: transform 200ms var(--ease-out); }
+.v8p-more[open] summary svg, .v8p-diff[open] summary svg { transform: rotate(180deg); }
+.v8p-more .v8p-feat { margin-top: 4px; padding-bottom: 4px; }
+.v8p-more summary:focus-visible, .v8p-diff summary:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; border-radius: 8px; }
+
+/* comparison accordion */
+.v8p-diff {
+  max-width: 880px; margin: 28px auto 0; padding: 0 20px; border-radius: 20px; background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line), var(--sh-1);
+}
+.v8p-diff summary { min-height: 60px; font-size: 17px; color: var(--navy); }
+.v8p-diff-body { padding: 0 0 20px; }
+.v8p-diff-note { margin-bottom: 12px; font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+
+/* compact table: label column + three narrow plan columns, fits 320px without scrolling */
+.v8p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 14px; }
+.v8p-table tbody th { overflow-wrap: anywhere; }
+.v8p-table thead th, .v8p-table td { overflow-wrap: normal; word-break: keep-all; }
+.v8p-table thead th { padding: 10px 2px; font-size: 14px; font-weight: 800; color: var(--navy); text-align: center; vertical-align: bottom; }
+.v8p-table thead th:first-child { width: 40%; }
+.v8p-table thead th.is-pop { color: var(--indigo); }
+.v8p-mini { display: block; margin-top: 2px; font-size: 11px; font-weight: 700; color: var(--indigo); }
+.v8p-table tbody th { padding: 10px 6px 10px 0; text-align: start; font-weight: 500; color: var(--ink); line-height: 1.4; }
+.v8p-table tbody td { padding: 10px 2px; text-align: center; vertical-align: middle; color: var(--navy); font-weight: 700; }
+.v8p-table tbody tr { border-top: 1px solid var(--line); }
+.v8p-table tbody tr.is-key th, .v8p-table tbody tr.is-key td { font-weight: 800; color: var(--navy); }
+.v8p-table tbody tr.is-key td { color: var(--indigo); }
+.v8p-table td svg { display: inline-block; color: var(--indigo); }
+@media (max-width: 359px) {
+  .v8p-diff { padding: 0 14px; }
+  .v8p-table { font-size: 13px; }
+  .v8p-table thead th { font-size: 13px; }
+  .v8p-table thead th:first-child { width: 38%; }
+}
+@media (min-width: 640px) {
+  .v8p-table { font-size: 15px; }
+  .v8p-table thead th:first-child { width: 46%; }
+}
+
+/* trial + cancellation */
+.v8p-terms { display: grid; justify-items: center; gap: 6px; margin-top: 24px; text-align: center; }
+.v8p-terms p { display: inline-flex; align-items: flex-start; gap: 8px; font-size: 15px; color: var(--ink); line-height: 1.45; }
+.v8p-terms svg { flex: none; margin-top: 3px; color: var(--indigo); }
+
+@media (min-width: 900px) {
+  .v8p-plans { align-items: start; }
+  .v8p-diff { margin-top: 40px; padding: 0 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v8p-more summary svg, .v8p-diff summary svg { transition: none; }
+}
+
+/* ================= version B: one question, one plan, one table ================= */
+.v8pb-ask { display: grid; justify-items: center; gap: 12px; margin: 0 auto 20px; }
+.v8pb-q { font-size: 18px; font-weight: 800; color: var(--navy); }
+.v8pb-seg {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; max-width: 480px; padding: 4px;
+  border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line);
+}
+.v8pb-seg button {
+  min-height: 48px; padding: 0 8px; border: 0; border-radius: 999px; background: transparent; cursor: pointer;
+  font-size: 15px; font-weight: 700; color: var(--navy); white-space: nowrap;
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+.v8pb-seg button[aria-checked='true'] { background: var(--indigo); color: #fff; }
+.v8pb-seg button:focus-visible, .v8pb-bill button:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+.v8pb-seg button:active, .v8pb-bill button:active { transform: scale(0.98); }
+
+.v8pb-card {
+  max-width: 960px; margin: 0 auto; padding: 24px 20px; border-radius: 28px; background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line), 0 1px 2px rgba(27, 38, 86, 0.05), 0 24px 48px -32px rgba(27, 38, 86, 0.28);
+}
+.v8pb-card.is-pop { box-shadow: inset 0 0 0 2px var(--indigo), 0 24px 48px -28px rgba(62, 43, 241, 0.45); }
+.v8pb-card .v8p-tag { background: var(--indigo-50, #f1effe); color: var(--indigo); }
+.v8pb-card h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); }
+.v8pb-in { display: grid; gap: 8px; animation: v8pb-in 220ms var(--ease-out); }
+@keyframes v8pb-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.v8pb-main { display: flex; flex-direction: column; min-width: 0; }
+.v8pb-main .v8p-price { margin: 16px 0 14px; }
+.v8pb-bill { display: flex; gap: 4px; align-self: flex-start; margin-bottom: 16px; padding: 3px; border-radius: 999px; background: var(--canvas); }
+.v8pb-bill button {
+  min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; cursor: pointer;
+  font-size: 14px; font-weight: 700; color: var(--ink-2);
+}
+.v8pb-bill button[aria-pressed='true'] { background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(27, 38, 86, 0.12); }
+.v8pb-list { min-width: 0; padding-top: 8px; border-top: 1px solid var(--line); }
+.v8pb-list .v8p-lead { margin-top: 16px; }
+.v8pb-list .v8p-feat li.is-key { font-weight: 800; color: var(--indigo); }
+
+.v8pb-compare { max-width: 880px; margin: 32px auto 0; padding: 20px; border-radius: 20px; background: #fff; box-shadow: inset 0 0 0 1px var(--line), var(--sh-1); }
+.v8pb-h3 { font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.v8pb .v8p-table th.is-sel, .v8pb .v8p-table td.is-sel { background: var(--indigo-50, #f1effe); }
+.v8pb .v8p-table thead th.is-sel { border-radius: 12px 12px 0 0; }
+@media (max-width: 359px) {
+  .v8pb-seg button { font-size: 14px; padding: 0 4px; }
+  .v8pb-card { padding: 20px 16px; }
+  .v8pb-compare { padding: 16px 14px; }
+  .v8pb-bill button { padding: 0 10px; font-size: 13px; }
+}
+@media (min-width: 900px) {
+  .v8pb-ask { margin-bottom: 28px; }
+  .v8pb-card { padding: 40px; }
+  .v8pb-in { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 48px; align-items: start; }
+  .v8pb-list { padding-top: 0; padding-inline-start: 48px; border-top: 0; border-inline-start: 1px solid var(--line); }
+  .v8pb-list .v8p-lead { margin-top: 0; }
+  .v8pb-compare { margin-top: 40px; padding: 28px 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v8pb-in { animation: none; }
+  .v8pb-seg button, .v8pb-bill button { transition: none; }
+}

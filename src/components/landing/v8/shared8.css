@@ -88,7 +88,7 @@
 .v8p-feat li { display: flex; align-items: center; gap: 10px; font-size: 15px; }
 .v8p-feat svg { color: var(--indigo); flex: none; }
 .v8p-plan.is-pop .v8p-feat svg { color: #fff; }
-@media (max-width: 899px) { .v8p-plan:not(.is-pop) .v8p-feat { display: none; } .v8p-price { margin: 14px 0 18px; } .v8p-plan.is-pop { order: -1; } }
+@media (max-width: 899px) { .v8p-price { margin: 14px 0 18px; } }
 @media (min-width: 900px) {
   .v8p-plans { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .v8p-plan { padding: 40px 34px; }

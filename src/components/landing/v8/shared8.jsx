@@ -5,9 +5,8 @@
  * graded, in public/landing-v8/ph. Every name, booking and amount is example data, labelled on the page.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, MessageCircle, MapPin, ShieldCheck, CheckCheck } from 'lucide-react';
-import { PRICING_PLANS } from '@/config/pricing';
-import { fmt, prefersReducedMotion } from '../v5/motion';
+import { Check, CheckCheck } from 'lucide-react';
+import { prefersReducedMotion } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { WHATSAPP_URL, CTA_NOTE } from '../v5/content';
 import { SignupButton } from '../v5/LandingV5';
@@ -139,51 +138,8 @@ export function useCycle(n, ms = 2200) {
 }
 
 /* ---------------- pricing ---------------- */
-const TRUST = [
-  { I: MessageCircle, t: 'תמיכה בעברית, בוואטסאפ' },
-  { I: MapPin, t: 'נבנתה בישראל' },
-  { I: ShieldCheck, t: 'מידע מוצפן ומגובה' },
-];
-
-export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '' }) {
-  const [yearly, setYearly] = useState(false);
-  return (
-    <section id="pricing" className={`v8p ${tone}`} aria-labelledby="pricing-title">
-      <div className="l5-wrap">
-        <div className="v8-head is-center" data-reveal>
-          <h2 id="pricing-title" className="v8-h2">{title}</h2>
-          <p className="v8-txt">כל מסלול מתחיל בניסיון חינם עם כל המערכת. בוחרים לפי מספר הנכסים.</p>
-        </div>
-        <div className="v8p-seg" role="group" aria-label="תקופת חיוב" data-reveal>
-          <button type="button" aria-pressed={!yearly} onClick={() => setYearly(false)}>חודשי</button>
-          <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)}>שנתי · חוסכים 20%</button>
-        </div>
-        <ul className="v8p-plans" data-reveal>
-          {PRICING_PLANS.map((p) => (
-            <li key={p.key} className={`v8p-plan${p.popular ? ' is-pop' : ''}`}>
-              <div className="v8p-top">
-                <h3>{p.nameHe}</h3>
-                {p.popular && <span className="v8p-tag">הכי פופולרי</span>}
-              </div>
-              <p className="v8p-desc">{p.desc}</p>
-              <p className="v8p-price">
-                <b className="num" dir="ltr">₪{fmt(yearly ? p.priceYearly : p.price)}</b>
-                <span>לחודש{yearly ? ', בחיוב שנתי' : ''}</span>
-              </p>
-              <SignupButton plan={p.key} className={`is-block${p.popular ? ' is-white' : ' is-quiet'}`} />
-              <ul className="v8p-feat">
-                {p.features.map((f) => <li key={f}><Check size={16} strokeWidth={2.6} aria-hidden="true" />{f}</li>)}
-              </ul>
-            </li>
-          ))}
-        </ul>
-        <ul className="v8p-trust" data-reveal>
-          {TRUST.map(({ I, t }) => <li key={t}><I size={18} strokeWidth={1.8} aria-hidden="true" />{t}</li>)}
-        </ul>
-      </div>
-    </section>
-  );
-}
+// Lives in ./Pricing8.jsx (pricing v1, 18.10.2026); re-exported so LandingM keeps its import.
+export { Pricing8 } from './Pricing8';
 
 export function CtaLinks() {
   return (
