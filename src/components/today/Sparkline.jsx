@@ -24,7 +24,7 @@ export function Sparkline({ values, width = 120, height = 36, className, color =
         </linearGradient>
       </defs>
       <path d={area} fill={`url(#sp-${id})`} />
-      <path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      <path className="f-line" d={line} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
       <circle cx={last[0]} cy={last[1]} r="2.75" fill={dot} stroke={color} strokeWidth="1.75" />
     </svg>
   );
