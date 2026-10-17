@@ -3,6 +3,8 @@ import { isUuid } from '@/lib/entityPayloads';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Input } from '@/components/ui/input';
 import { PageHeader, EmptyState, SkelRows, Avatar } from '@/components/ds';
 import { Textarea } from '@/components/ui/textarea';
@@ -140,12 +142,12 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
   return (
     <div className="flex h-full flex-col overflow-hidden" dir="rtl">
       <div className="mx-auto w-full max-w-[var(--page-max,1200px)] flex-shrink-0 px-5 pt-3 md:px-10 md:pt-5">
-        <PageHeader title="הודעות" subtitle="WhatsApp, SMS ומייל לאורחים וללידים, במקום אחד." className="!mb-4 md:!mb-5" />
+        <PageHeader title="הודעות" help="messages.page" tour="messages-page" subtitle="וואטסאפ, SMS ומייל לאורחים, במקום אחד." className="!mb-4 md:!mb-5" />
       </div>
       <div className="mx-auto flex min-h-0 w-full max-w-[var(--page-max,1200px)] flex-1 flex-col overflow-hidden md:mb-6 md:px-10">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[22px] md:border md:shadow-card">
       {/* Threads list */}
-      <div className={cn(
+      <div data-tour="messages-list" className={cn(
         'flex w-full flex-shrink-0 flex-col border-line bg-white md:w-80 md:border-l lg:w-96',
         selectedThread && 'hidden md:flex'
       )}>
@@ -166,7 +168,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
           {isLoading ? (
             <div className="p-4"><SkelRows rows={5} /></div>
           ) : filteredThreads.length === 0 ? (
-            <EmptyState compact icon={MessageSquare} title={searchTerm ? 'לא נמצאו שיחות' : 'אין עדיין הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'הודעות שנשלחות לאורחים מהזמנה או מליד יופיעו כאן.'} />
+            <EmptyState compact icon={MessageSquare} title={searchTerm ? 'לא נמצאו שיחות' : 'עוד לא נשלחו הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'פותחים הזמנה ולוחצים "שליחה בוואטסאפ". השיחה תופיע כאן.'} action={searchTerm ? null : <Button asChild><Link to={createPageUrl('Bookings')}>להזמנות</Link></Button>} />
           ) : (
             filteredThreads.map(thread => {
               const last = thread.messages[thread.messages.length - 1];
@@ -277,7 +279,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
         </div>
       ) : (
         <div className="hidden flex-1 items-center justify-center bg-canvas md:flex">
-          <EmptyState compact icon={MessageSquare} title="בחרו שיחה" description="ההודעות עם האורח יופיעו כאן." />
+          <EmptyState compact icon={MessageSquare} title="בחרו שיחה מהרשימה" description="לוחצים על שם של אורח כדי לראות את ההודעות ולכתוב לו." />
         </div>
       )}
       </div>

@@ -6,6 +6,7 @@
  *          today's arrivals / departures / cleaning with guest photos and one action pill per row.
  * Three numbers max on top. Check-in / check-out times: booking, then the unit's guest info, then 15:00 / 11:00.
  */
+import HelpHint from '@/components/help/HelpHint';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ChevronLeft, LogIn, LogOut, Sparkles, ArrowUpLeft } from 'lucide-react';
@@ -53,11 +54,31 @@ function Done({ children = 'בוצע' }) {
 
 
 /* ── bento parts ───────────────────────────────────────────────────────────── */
-function Tile({ i, to, ariaLabel, className, children, hero = false }) {
+function Tile({ i, to, ariaLabel, className, children, hero = false, help }) {
   const cls = cn('v5-rise group relative flex min-w-0 flex-col', hero ? 'v7-hero' : 'v7-card', to && 'press v7-lift', className);
+  if (to && help) {
+    // A "?" can't live inside a link: the whole tile stays one big link (stretched underneath),
+    // and the "?" sits above it.
+    return (
+      <div className={cls} style={{ '--i': i }}>
+        <Link to={to} aria-label={ariaLabel} className="absolute inset-0 z-0 rounded-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2" />
+        {children}
+      </div>
+    );
+  }
   return to
     ? <Link to={to} className={cls} style={{ '--i': i }} aria-label={ariaLabel}>{children}</Link>
     : <div className={cls} style={{ '--i': i }}>{children}</div>;
+}
+
+/** Tile title + its "?" (kept above the stretched link). */
+function TileTitle({ help, onHero = false, className, children }) {
+  return (
+    <p className={cn('pointer-events-none relative z-[1] flex items-center gap-0.5 pt-2', className)}>
+      <span>{children}</span>
+      {help ? <span className="pointer-events-auto"><HelpHint id={help} tone={onHero ? 'onHero' : 'plain'} /></span> : null}
+    </p>
+  );
 }
 
 function Money({ value, className, onHero = false }) {
@@ -308,12 +329,12 @@ export default function TodayBoard({ user, orgId }) {
 
   /* ── blocks ── */
   const hero = (
-    <Tile i={1} hero to="/payments" ariaLabel="הכנסות החודש, למסך הכספים" className="col-span-2 min-h-[196px] p-5 md:p-6 lg:col-span-5 lg:min-h-[214px]">
-      <div className="flex items-start justify-between gap-2">
-        <p className="pt-2 text-[15px] font-medium text-white/85">הכנסות החודש</p>
+    <Tile i={1} hero to="/payments" help="today.revenue" ariaLabel="הכנסות החודש, למסך הכספים" className="col-span-2 min-h-[196px] p-5 md:p-6 lg:col-span-5 lg:min-h-[214px]">
+      <div className="pointer-events-none flex items-start justify-between gap-2">
+        <TileTitle help="today.revenue" onHero className="text-[15px] font-medium text-white/85">הכנסות החודש</TileTitle>
         <CardArrow onHero />
       </div>
-      <div className="mt-auto pt-4">
+      <div className="pointer-events-none mt-auto pt-4">
         <Money onHero value={kpi.thisMonth} className="text-[44px] leading-none tracking-[-0.035em] md:text-[48px]" />
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <p className="flex items-center gap-2 text-[13px] text-white/85">
@@ -332,12 +353,12 @@ export default function TodayBoard({ user, orgId }) {
   );
 
   const donut = (
-    <Tile i={2} to="/calendar" ariaLabel={`תפוסה ${kpi.occupancy}% החודש, ללוח השנה`} className="min-h-[196px] p-4 md:p-5 lg:col-span-3 lg:min-h-[214px]">
-      <div className="flex items-start justify-between gap-2">
-        <p className="pt-2 text-[15px] font-semibold text-navy-900">תפוסה</p>
+    <Tile i={2} to="/calendar" help="today.occupancy" ariaLabel={`תפוסה ${kpi.occupancy}% החודש, ללוח השנה`} className="min-h-[196px] p-4 md:p-5 lg:col-span-3 lg:min-h-[214px]">
+      <div className="pointer-events-none flex items-start justify-between gap-2">
+        <TileTitle help="today.occupancy" className="text-[15px] font-semibold text-navy-900">תפוסה</TileTitle>
         <CardArrow />
       </div>
-      <div className="mt-auto flex flex-col items-center gap-2.5 pt-1 2xl:flex-row 2xl:justify-between">
+      <div className="pointer-events-none mt-auto flex flex-col items-center gap-2.5 pt-1 2xl:flex-row 2xl:justify-between">
         <Donut value={kpi.occupancy} size={108} stroke={14} label={`תפוסה ${kpi.occupancy}% החודש`} />
         <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[12px] text-ink-400 2xl:flex-col 2xl:items-start" aria-hidden>
           <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand-600" /><span className="tabular font-bold text-navy-900">{kpi.nights}</span> מוזמנות</span>
@@ -377,7 +398,7 @@ export default function TodayBoard({ user, orgId }) {
     <Rise i={4} as="section" aria-label="הכנסות" className="v7-card flex h-full min-w-0 flex-col overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5 md:px-6 md:pt-6">
         <div>
-          <h2 className="text-[17px] font-bold text-navy-900">הכנסות</h2>
+          <h2 className="flex items-center gap-0.5 text-[17px] font-bold text-navy-900">הכנסות<HelpHint id="today.chart" /></h2>
           <p className="mt-1.5 flex items-baseline gap-2">
             <Money value={chartTotal} className="text-[26px] leading-none" />
             <span className="text-[13px] text-ink-400">{rangeLabel}</span>
@@ -398,7 +419,7 @@ export default function TodayBoard({ user, orgId }) {
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
             <p className="text-[15px] font-semibold text-navy-900">הגרף יתמלא עם ההזמנות הבאות</p>
-            <p className="mt-1 text-[13px] text-ink-400">אחרי כמה הזמנות תראו כאן את המגמה.</p>
+            <p className="mt-1 text-[13px] text-ink-400">כל הזמנה שתוסיפו תופיע כאן כעמודה של הכנסה.</p>
           </div>
         )}
       </div>
@@ -406,10 +427,10 @@ export default function TodayBoard({ user, orgId }) {
   );
 
   const today = (
-    <Rise i={5} as="section" aria-label="היום" className="v7-card flex h-full min-w-0 flex-col overflow-hidden">
+    <Rise i={5} as="section" aria-label="היום" data-tour="today-board" className="v7-card flex h-full min-w-0 flex-col overflow-hidden">
       <div className="flex min-h-[64px] items-center justify-between gap-3 px-5 pt-3 md:px-6">
         <div className="min-w-0">
-          <h2 className="text-[17px] font-bold text-navy-900">היום במתחם</h2>
+          <h2 className="flex items-center gap-0.5 text-[17px] font-bold text-navy-900">היום במתחם<HelpHint id="today.board" /></h2>
           {!data.isLoading ? (
             <p className="mt-0.5 truncate text-[13px] text-ink-400">
               {counts.map((c, idx) => (
@@ -432,7 +453,7 @@ export default function TodayBoard({ user, orgId }) {
             <Check className="h-5 w-5" strokeWidth={2.25} />
           </span>
           <p className="mt-3 text-[15px] font-semibold text-navy-900">הכל מוכן להיום</p>
-          <p className="mt-1 text-[13px] text-ink-400">אין כניסות, יציאות או ניקיונות.</p>
+          <p className="mt-1 text-[13px] text-ink-400">אין היום כניסות, יציאות או ניקיונות. אפשר לנוח.</p>
         </div>
       ) : (
         <ul className="px-2 pb-1 md:px-3">

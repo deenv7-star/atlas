@@ -1,3 +1,4 @@
+import HelpHint from '@/components/help/HelpHint';
 import React, { useState, useEffect } from 'react';
 import { PageHeader, SkelLine } from '@/components/ds';
 import { integrationToPayload } from '@/lib/entityPayloads';
@@ -312,7 +313,7 @@ export default function IntegrationsPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader title="ערוצים וחיבורים" subtitle="יומנים, תשלומים, הודעות וחשבונאות. כל חיבור חוסך עבודה ידנית." className="!mb-0" />
+      <PageHeader title="ערוצים וחיבורים" help="integrations.page" subtitle="מחברים פעם אחת את Booking, Airbnb ושאר הכלים, ומשם הכל קורה לבד." className="!mb-0" />
       <Tabs defaultValue="calendars">
         <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
           <TabsList className="inline-flex w-max justify-start">
@@ -345,14 +346,14 @@ export default function IntegrationsPage() {
           <div className="bg-brand-50 border border-brand-100 rounded-lg p-4 flex gap-3">
             <Info className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-navy-900">
-              <p className="font-medium mb-1">סנכרוני יומנים אוטומטיים</p>
-              <p>כשמחברים יומן, הוא מסונכרן אוטומטית כל 30 דקות. אפשר גם לסנכרן ידנית בכל רגע.</p>
+              <p className="font-medium mb-1">ההזמנות מ-Booking ו-Airbnb נכנסות ללוח לבד</p>
+              <p>מדביקים פעם אחת את קישור היומן (iCal) של כל יחידה. משם הלוח מתעדכן לבד כל 30 דקות.</p>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex-1">
-              <h2 className="text-lg font-medium mb-3">סנכרון יומנים</h2>
+              <h2 className="mb-3 flex items-center gap-1 text-lg font-medium">חיבור יומנים<HelpHint id="integrations.ical" /></h2>
               {calendarSyncs.length > 0 && (
                 <Select value={filterPropertyId} onValueChange={setFilterPropertyId}>
                   <SelectTrigger aria-label="סינון לפי נכס" className="w-full sm:w-48">

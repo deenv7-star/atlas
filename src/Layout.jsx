@@ -10,6 +10,7 @@ import { QuickBookingProvider } from '@/components/app/QuickBooking';
 import { SkelLine } from '@/components/ds';
 import ConnectionNotice from '@/components/app/shell/ConnectionNotice';
 import { Sidebar, Header, TabBar, shellClass } from '@/ui-direction';
+import TourHost from '@/components/tour/TourHost';
 
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans'];
 
@@ -105,6 +106,7 @@ function LayoutContent({ children, currentPageName }) {
           </div>
           <IOSInstallBanner />
         </div>
+        <TourHost user={user} />
       </div>
     </QuickBookingProvider>
   );

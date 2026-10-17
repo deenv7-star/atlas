@@ -1,3 +1,4 @@
+import HelpHint from '@/components/help/HelpHint';
 import React, { useState, useMemo, useCallback } from 'react';
 import { addDays, subDays, startOfDay } from 'date-fns';
 import { Link } from 'react-router-dom';
@@ -243,10 +244,11 @@ export default function MultiCalendar({ selectedPropertyId }) {
     <div className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-6 md:px-10 md:pt-9 [--cal-unit-w:104px] md:[--cal-unit-w:168px]" dir="rtl">
       <header className={cn('v5-rise mb-5 flex flex-row items-end justify-between gap-3 md:mb-6')}>
         <div>
-          <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">לוח שנה</h1>
+          <h1 className="flex items-center gap-1 text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">לוח שנה<HelpHint id="calendar.page" /></h1>
           <p className="mt-2 hidden text-[15px] text-ink-400 md:block">נוגעים במשבצת פנויה כדי להוסיף הזמנה.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1">
+          <HelpHint id="calendar.sync" />
           <Button variant="outline" onClick={handleSync} aria-label="סנכרון ערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
             <RefreshCw className={cn(syncing && 'animate-spin')} />
             <span className="hidden sm:inline">סנכרון ערוצים</span>
@@ -326,7 +328,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
         <SkeletonCalendar className="mb-6" totalDays={totalDays} viewMode={viewMode === 'month' ? 'month' : 'week'} propertyRowCount={Math.max(properties.length, 3)} />
       ) : properties.length ? (
         <ErrorBoundary section="calendar-view" variant="inline" resetKey={`${viewMode}-${anchorDate.toISOString()}-${totalDays}-${effectivePropertyId ?? 'all'}`}>
-          <div className="v5-rise mb-6 overflow-hidden v7-card">
+          <div className="v5-rise mb-6 overflow-hidden v7-card" data-tour="calendar-grid">
             <div className="overflow-x-auto overscroll-x-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
               <div style={{ minWidth: minW, display: 'grid', gridTemplateColumns: `${UNIT_W} repeat(${totalDays}, ${COL_W})` }}>
                 <div className="sticky right-0 z-20 flex items-end border-b border-l border-line bg-white px-4 pb-2.5 pt-3 text-[13px] font-medium text-ink-400">יחידה</div>
