@@ -70,7 +70,7 @@ body { background-color: var(--canvas); }
 /* Floating sidebar / rail tooltips (B) */
 .v7-tt { position: relative; }
 .v7-tt > .v7-tt-label {
-  position: absolute; z-index: 60; inset-inline-start: calc(100% + 12px); top: 50%; transform: translate(-4px, -50%);
+  position: absolute; z-index: 60; inset-inline-start: calc(100% + 26px); top: 50%; transform: translate(-4px, -50%);
   white-space: nowrap; pointer-events: none; opacity: 0;
   background: #1B2656; color: #fff; font-size: 13px; font-weight: 500; line-height: 1; padding: 8px 10px; border-radius: 999px;
   transition: opacity 140ms var(--ease-out), transform 140ms var(--ease-out);
