@@ -1,6 +1,6 @@
 import React from 'react';
-import LandingB from '@/components/landing/v7/LandingB';
+import LandingE from '@/components/landing/v7/LandingE';
 
 export default function Landing() {
-  return <LandingB />;
+  return <LandingE />;
 }
