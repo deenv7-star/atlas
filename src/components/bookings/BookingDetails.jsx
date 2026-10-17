@@ -24,7 +24,12 @@ import { useNavigate } from 'react-router-dom';
 import { deleteBookingWithUndo } from '@/components/ui/AtlasToast';
 import { createPageUrl } from '@/utils';
 import { GuestAvatar } from '@/components/app/atoms';
-import { Page, StatusPill, channelOf, fmtDay, fmtShort, fmtMoney } from '@/components/ds';
+import { StatusPill, channelOf, fmtDay, fmtShort, fmtMoney } from '@/components/ds';
+import { DPage, DSplit, Tag, ProgressRing } from '@/components/app/DSplit';
+import { checkInTime, checkOutTime } from '@/components/today/TodayBoard';
+import { cn } from '@/lib/utils';
+import { todayISO, nightsBetween } from '@/lib/stay/format';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {
   Phone,
   Mail,
@@ -35,11 +40,14 @@ import {
   Sparkles,
   FileText,
   Plus,
-  CheckCircle2,
   Receipt,
   ChevronRight,
   Pencil,
-  Trash2
+  Trash2,
+  MoreHorizontal,
+  Check,
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { parseISO, differenceInDays } from 'date-fns';
 
@@ -208,24 +216,39 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   const phoneDigits = String(booking.guest_phone || '').replace(/[^0-9]/g, '');
   const waNumber = phoneDigits.startsWith('0') ? `972${phoneDigits.slice(1)}` : phoneDigits;
   const ch = channelOf(booking.booking_source);
+  const outstandingNow = totalDue || outstanding;
+  const paidPct = Number(booking.total_price) > 0 ? Math.min(100, Math.round((totalPaid / Number(booking.total_price)) * 100)) : 0;
+  const doneCount = timelineItems.filter((t) => t.done).length;
+  const unitProp = allProperties.find((p) => p.id === booking.property_id);
+  const inTime = checkInTime(booking, unitProp);
+  const outTime = checkOutTime(booking, unitProp);
+  const today0 = todayISO();
+  const stayPct = !booking.check_in_date || today0 < booking.check_in_date ? 0 : today0 >= (booking.check_out_date || '') ? 100 : Math.round(((nightsBetween(booking.check_in_date, today0) + 1) / Math.max(1, nights || 1)) * 100);
 
   return (
     <>
-      <Page className="max-w-[880px]">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <button type="button" onClick={onClose} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-full px-3 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
+      <DPage className="max-w-[1180px]">
+        {/* app bar: round back, title, round ⋯ (edit / delete) */}
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <button type="button" onClick={onClose} aria-label="חזרה להזמנות" className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.05)] hover:bg-[#FAFAFD]">
             <ChevronRight className="h-5 w-5" />
-            הזמנות
           </button>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" className="h-11" onClick={() => navigate(`${createPageUrl('Bookings')}?openBookingId=${encodeURIComponent(booking.id)}`)}>
-              <Pencil />
-              עריכה
-            </Button>
-            <Button variant="ghost" size="icon" className="h-11 w-11 text-ink-600 hover:text-danger-600" aria-label="מחיקת הזמנה" onClick={() => setConfirmDelete(true)}>
-              <Trash2 />
-            </Button>
-          </div>
+          <p className="text-[15px] font-semibold text-navy-900">פרטי הזמנה</p>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" aria-label="עוד פעולות" className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.05)] hover:bg-[#FAFAFD]">
+                <MoreHorizontal className="h-5 w-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52 rounded-[16px]" dir="rtl">
+              <DropdownMenuItem className="min-h-11 gap-2.5 text-[15px]" onSelect={() => navigate(`${createPageUrl('Bookings')}?openBookingId=${encodeURIComponent(booking.id)}`)}>
+                <Pencil className="h-[18px] w-[18px] text-ink-600" />עריכה
+              </DropdownMenuItem>
+              <DropdownMenuItem className="min-h-11 gap-2.5 text-[15px] text-danger-600 focus:text-danger-700" onSelect={() => setConfirmDelete(true)}>
+                <Trash2 className="h-[18px] w-[18px]" />מחיקת הזמנה
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
           <DialogContent className="max-w-[420px]" dir="rtl">
@@ -240,161 +263,161 @@ export default function BookingDetails({ booking, onClose, orgId }) {
           </DialogContent>
         </Dialog>
 
-        {/* Guest + stay */}
-        <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
-          <section className="v7-card p-5 shadow-card md:p-6">
-            <div className="flex items-start gap-4">
-              <GuestAvatar name={booking.guest_name || 'אורח'} size={64} />
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="truncate text-[30px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900">{booking.guest_name}</h1>
-                  <StatusPill status={booking.status} />
+        <DSplit
+          asideLabel="תשלום ומצב"
+          main={(
+            <div className="space-y-4">
+              <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
+                <section className="v5-rise">
+                  <div className="flex items-center gap-4">
+                    <GuestAvatar name={booking.guest_name || 'אורח'} size={68} ring className="shadow-[0_8px_20px_-10px_rgba(27,38,86,0.5)]" />
+                    <div className="min-w-0 flex-1">
+                      <h1 className="text-[28px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[36px]">{booking.guest_name}</h1>
+                      <p className="mt-1 flex items-center gap-1.5 truncate text-[14px] text-ink-400">
+                        <span aria-hidden className="h-2 w-2 shrink-0 rounded-full" style={{ background: ch.color }} />
+                        {unitName} · {ch.label}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <StatusPill status={booking.status} />
+                    <Tag tone="slate">{booking.adults || 2} אורחים</Tag>
+                    <Tag tone={outstandingNow > 0 ? 'lilac' : 'mint'}>{outstandingNow > 0 ? `יתרה ${fmtMoney(outstandingNow)}` : 'שולם במלואו'}</Tag>
+                  </div>
+                </section>
+              </ErrorBoundary>
+
+              {/* stay */}
+              <section className="v5-rise d-card p-4 md:p-5" aria-label="השהייה">
+                <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+                  <div className="rounded-[20px] bg-[#F3F4F9] p-3.5">
+                    <p className="flex items-center gap-1.5 text-[12px] font-medium text-ink-400"><LogIn className="h-3.5 w-3.5" aria-hidden />כניסה</p>
+                    <p className="mt-1 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_in_date)}</span><span className="sm:hidden">{fmtShort(booking.check_in_date)}</span></p>
+                    <p className="mt-0.5 text-[13px] tabular text-ink-600">מ־{inTime}</p>
+                  </div>
+                  <ProgressRing pct={stayPct} size={64} stroke={6} label={`${nights || booking.nights || 1} לילות`}>
+                    <span className="flex flex-col items-center leading-none"><span className="tabular text-[18px] font-extrabold text-navy-900">{nights || booking.nights || 1}</span><span className="mt-0.5 text-[10px] text-ink-400">לילות</span></span>
+                  </ProgressRing>
+                  <div className="rounded-[20px] bg-[#F3F4F9] p-3.5">
+                    <p className="flex items-center gap-1.5 text-[12px] font-medium text-ink-400"><LogOut className="h-3.5 w-3.5" aria-hidden />יציאה</p>
+                    <p className="mt-1 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_out_date)}</span><span className="sm:hidden">{fmtShort(booking.check_out_date)}</span></p>
+                    <p className="mt-0.5 text-[13px] tabular text-ink-600">עד {outTime}</p>
+                  </div>
                 </div>
-                <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[15px] text-ink-600">
-                  <span>{unitName}</span>
-                  <span aria-hidden>·</span>
-                  <span>{booking.adults || 2} אורחים</span>
-                  <span aria-hidden>·</span>
-                  <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full" style={{ background: ch.color }} />{ch.label}</span>
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 grid grid-cols-3 gap-2 rounded-[18px] bg-[#F2F3F8] p-3 text-center md:gap-4 md:p-4">
-              <div>
-                <p className="text-[13px] text-ink-400">כניסה</p>
-                <p className="mt-0.5 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_in_date)}</span><span className="sm:hidden">{fmtShort(booking.check_in_date)}</span></p>
-              </div>
-              <div className="border-x border-line">
-                <p className="text-[13px] text-ink-400">לילות</p>
-                <p className="mt-0.5 text-[16px] font-bold tabular text-navy-900">{nights || booking.nights || 1}</p>
-              </div>
-              <div>
-                <p className="text-[13px] text-ink-400">יציאה</p>
-                <p className="mt-0.5 text-[16px] font-bold text-navy-900"><span className="hidden sm:inline">{fmtDay(booking.check_out_date)}</span><span className="sm:hidden">{fmtShort(booking.check_out_date)}</span></p>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {booking.guest_phone ? (
-                <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noreferrer" className="press inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-brand-600 text-[15px] font-bold text-white hover:bg-brand-500">
-                  <MessageSquare className="h-5 w-5" />
-                  וואטסאפ
-                </a>
-              ) : null}
-              {booking.guest_phone ? (
-                <a href={`tel:${booking.guest_phone}`} className="press inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-line bg-white text-[15px] font-bold text-navy-900 hover:bg-neutral-50">
-                  <Phone className="h-5 w-5" />
-                  <span dir="ltr">{booking.guest_phone}</span>
-                </a>
-              ) : null}
-              {booking.guest_email ? (
-                <a href={`mailto:${booking.guest_email}`} className="press col-span-2 inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-line bg-white text-[15px] font-medium text-navy-900 hover:bg-neutral-50 sm:col-span-1">
-                  <Mail className="h-5 w-5" />
-                  אימייל
-                </a>
-              ) : null}
-            </div>
-          </section>
-        </ErrorBoundary>
-
-        <div className="mt-4 grid gap-4 md:grid-cols-[1.3fr_1fr]">
-          {/* Money */}
-          <section className="v7-card p-5 shadow-card">
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="text-[18px] font-bold text-navy-900">תשלומים</h2>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => navigate(`/invoices?booking=${booking.id}`)}>
-                  <Receipt />
-                  חשבונית
-                </Button>
-                <Button size="sm" variant="secondary" onClick={() => setIsPaymentDialogOpen(true)}>
-                  <Plus />
-                  תשלום
-                </Button>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <div className="rounded-[12px] bg-neutral-50 p-3">
-                <p className="text-[13px] text-ink-400">סך ההזמנה</p>
-                <p className="mt-0.5 text-[18px] font-bold tabular text-navy-900">{fmtMoney(booking.total_price)}</p>
-              </div>
-              <div className="rounded-[12px] bg-success-50 p-3">
-                <p className="text-[13px] text-success-700">שולם</p>
-                <p className="mt-0.5 text-[18px] font-bold tabular text-success-700">{fmtMoney(totalPaid)}</p>
-              </div>
-              <div className="rounded-[12px] bg-warning-50 p-3">
-                <p className="text-[13px] text-warning-700">יתרה</p>
-                <p className="mt-0.5 text-[18px] font-bold tabular text-warning-700">{fmtMoney(totalDue || outstanding)}</p>
-              </div>
-            </div>
-            {payments.length > 0 ? (
-              <ul className="mt-3 divide-y divide-line">
-                {payments.map((payment) => (
-                  <li key={payment.id} className="flex min-h-[60px] items-center justify-between gap-3 py-2">
-                    <div className="min-w-0">
-                      <p className="text-[15px] font-semibold text-navy-900">
-                        {payment.type === 'DEPOSIT' ? 'מקדמה' : payment.type === 'BALANCE' ? 'יתרה' : payment.type === 'FULL' ? 'תשלום מלא' : 'תשלום'}
-                      </p>
-                      <p className="text-[13px] text-ink-400">
-                        {METHOD_LABEL[String(payment.method || '').toLowerCase()] || 'אחר'}
-                        {payment.due_date && ` · עד ${fmtShort(payment.due_date)}`}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-bold tabular text-navy-900">{fmtMoney(payment.amount)}</span>
-                      {payment.status === 'DUE' ? (
-                        <Button size="sm" variant="outline" onClick={() => markPaidMutation.mutate(payment.id)}>סימון כשולם</Button>
-                      ) : (
-                        <StatusPill status={payment.status} label={paymentStatusLabels[payment.status]} />
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-[15px] text-ink-600">עדיין לא נרשם תשלום להזמנה הזו.</p>
-            )}
-          </section>
-
-          <div className="grid content-start gap-4">
-            <section className="v7-card p-5 shadow-card">
-              <Label className="text-[14px] font-medium text-ink-600">מצב ההזמנה</Label>
-              <Select value={booking.status} onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}>
-                <SelectTrigger className="mt-2" aria-label="מצב ההזמנה">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(statusLabels).map(([key, label]) => (
-                    <SelectItem key={key} value={key}>{label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </section>
-
-            <section className="v7-card p-5 shadow-card">
-              <h2 className="text-[18px] font-bold text-navy-900">התקדמות</h2>
-              <ol className="mt-3 space-y-1">
-                {timelineItems.map((item, i) => (
-                  <li key={i} className="flex min-h-[40px] items-center gap-3">
-                    <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${item.done ? 'bg-success-50 text-success-600' : 'bg-neutral-100 text-ink-400'}`}>
-                      {item.done ? <CheckCircle2 className="h-[18px] w-[18px]" /> : <item.icon className="h-[18px] w-[18px]" strokeWidth={1.5} />}
-                    </span>
-                    <span className={`text-[15px] ${item.done ? 'font-semibold text-navy-900' : 'text-ink-600'}`}>{item.label}</span>
-                  </li>
-                ))}
-              </ol>
-            </section>
-
-            {booking.notes ? (
-              <section className="v7-card p-5 shadow-card">
-                <h2 className="text-[18px] font-bold text-navy-900">הערות</h2>
-                <p className="mt-2 whitespace-pre-wrap text-[15px] text-ink-600">{booking.notes}</p>
+                <div className="mt-4 flex items-center gap-2">
+                  {booking.guest_phone ? (
+                    <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noreferrer" className="press inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-brand-600 px-6 text-[15px] font-bold text-white shadow-[0_10px_22px_-10px_rgba(62,43,241,0.7)] hover:bg-brand-500">
+                      <MessageSquare className="h-5 w-5" />
+                      שליחה בוואטסאפ
+                    </a>
+                  ) : null}
+                  {booking.guest_phone ? (
+                    <a href={`tel:${booking.guest_phone}`} aria-label={`שיחה ל־${booking.guest_phone}`} className="press inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F3F4F9] text-navy-900 hover:bg-[#E9EBF3]">
+                      <Phone className="h-[18px] w-[18px]" />
+                    </a>
+                  ) : null}
+                  {booking.guest_email ? (
+                    <a href={`mailto:${booking.guest_email}`} aria-label="אימייל" className="press inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F3F4F9] text-navy-900 hover:bg-[#E9EBF3]">
+                      <Mail className="h-[18px] w-[18px]" />
+                    </a>
+                  ) : null}
+                </div>
               </section>
-            ) : null}
-          </div>
-        </div>
-      </Page>
+
+              {/* checklist (the task-app "to do") */}
+              <section className="v5-rise d-card p-4 md:p-5" aria-label="התקדמות">
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-[17px] font-bold text-navy-900">מה כבר מוכן</h2>
+                  <Tag tone={doneCount === timelineItems.length ? 'mint' : 'indigo'}>{doneCount} מתוך {timelineItems.length}</Tag>
+                </div>
+                <ul className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-2 sm:grid-cols-2">
+                  {timelineItems.map((item, i) => (
+                    <li key={i} className="flex min-h-[52px] items-center gap-3 rounded-[18px] bg-[#F7F8FB] px-3.5">
+                      <span aria-hidden className={cn('inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full', item.done ? 'bg-[var(--st-mint-fg)] text-white' : 'border-2 border-[#D5D9E6] bg-white')}>
+                        {item.done ? <Check className="h-4 w-4" strokeWidth={2.75} /> : null}
+                      </span>
+                      <item.icon className="h-[18px] w-[18px] shrink-0 text-ink-400" strokeWidth={1.6} aria-hidden />
+                      <span className={cn('flex-1 text-[15px]', item.done ? 'font-semibold text-navy-900' : 'text-ink-600')}>{item.label}<span className="sr-only">{item.done ? ', בוצע' : ', עוד לא'}</span></span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              {booking.notes ? (
+                <section className="v5-rise d-card p-4 md:p-5">
+                  <h2 className="text-[17px] font-bold text-navy-900">הערות</h2>
+                  <p className="mt-2 whitespace-pre-wrap text-[15px] text-ink-600">{booking.notes}</p>
+                </section>
+              ) : null}
+            </div>
+          )}
+          aside={(
+            <>
+              <section className="v5-rise d-card p-5" aria-label="תשלומים">
+                <div className="flex items-center gap-4">
+                  <ProgressRing pct={paidPct} size={84} stroke={9} track="#E8F7F1" color="#22B07D" label={`שולם ${paidPct}%`}>
+                    <span className="tabular text-[18px] font-extrabold text-navy-900" dir="ltr">{paidPct}<span className="text-[0.6em] text-ink-400">%</span></span>
+                  </ProgressRing>
+                  <div className="min-w-0">
+                    <p className="text-[13px] text-ink-400">{outstandingNow > 0 ? 'יתרה לתשלום' : 'שולם במלואו'}</p>
+                    <p className="v5-num text-[28px] font-extrabold leading-tight text-navy-900">{fmtMoney(outstandingNow > 0 ? outstandingNow : totalPaid)}</p>
+                    <p className="text-[13px] text-ink-400">מתוך {fmtMoney(booking.total_price)}</p>
+                  </div>
+                </div>
+                {payments.length > 0 ? (
+                  <ul className="mt-4 space-y-2">
+                    {payments.map((payment) => (
+                      <li key={payment.id} className="flex min-h-[60px] items-center justify-between gap-3 rounded-[18px] bg-[#F7F8FB] px-3.5 py-2">
+                        <div className="min-w-0">
+                          <p className="text-[15px] font-semibold text-navy-900">
+                            {payment.type === 'DEPOSIT' ? 'מקדמה' : payment.type === 'BALANCE' ? 'יתרה' : payment.type === 'FULL' ? 'תשלום מלא' : 'תשלום'}
+                            <span className="ms-2 tabular font-bold">{fmtMoney(payment.amount)}</span>
+                          </p>
+                          <p className="text-[13px] text-ink-400">
+                            {METHOD_LABEL[String(payment.method || '').toLowerCase()] || 'אחר'}
+                            {payment.due_date && ` · עד ${fmtShort(payment.due_date)}`}
+                          </p>
+                        </div>
+                        {payment.status === 'DUE' ? (
+                          <Button size="sm" variant="secondary" onClick={() => markPaidMutation.mutate(payment.id)}>סימון כשולם</Button>
+                        ) : (
+                          <StatusPill status={payment.status} label={paymentStatusLabels[payment.status]} />
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-4 text-[15px] text-ink-600">עדיין לא נרשם תשלום להזמנה הזו.</p>
+                )}
+                <div className="mt-4 flex gap-2">
+                  <Button variant="secondary" className="h-11 flex-1 rounded-full" onClick={() => setIsPaymentDialogOpen(true)}>
+                    <Plus />
+                    רישום תשלום
+                  </Button>
+                  <Button variant="ghost" className="h-11 rounded-full" onClick={() => navigate(`/invoices?booking=${booking.id}`)}>
+                    <Receipt />
+                    חשבונית
+                  </Button>
+                </div>
+              </section>
+
+              <section className="v5-rise d-card p-5">
+                <Label className="text-[13px] font-medium text-ink-400">מצב ההזמנה</Label>
+                <Select value={booking.status} onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}>
+                  <SelectTrigger className="mt-1.5 h-12 rounded-full" aria-label="מצב ההזמנה">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(statusLabels).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </section>
+            </>
+          )}
+        />
+      </DPage>
 
       {/* Add Payment Dialog */}
       <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
