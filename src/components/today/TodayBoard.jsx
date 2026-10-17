@@ -336,12 +336,12 @@ export default function TodayBoard({ user, orgId }) {
         <p className="pt-2 text-[15px] font-semibold text-navy-900">תפוסה</p>
         <CardArrow />
       </div>
-      <div className="mt-auto flex flex-col items-center gap-3 pt-1 lg:flex-row lg:items-center lg:justify-between lg:gap-2">
-        <Donut value={kpi.occupancy} size={118} stroke={15} label={`תפוסה ${kpi.occupancy}% החודש`} />
-        <ul className="w-full space-y-1.5 text-[13px] lg:w-auto" aria-hidden>
-          <li className="flex items-center justify-between gap-3 lg:justify-start"><span className="inline-flex items-center gap-1.5 text-ink-400"><span className="h-2 w-2 rounded-full bg-brand-600" />מוזמנות</span><span className="tabular font-bold text-navy-900">{kpi.nights}</span></li>
-          <li className="flex items-center justify-between gap-3 lg:justify-start"><span className="inline-flex items-center gap-1.5 text-ink-400"><span className="h-2 w-2 rounded-full bg-[#ECEAFE] ring-1 ring-inset ring-[#D9D5FB]" />פנויות</span><span className="tabular font-bold text-navy-900">{Math.max(0, kpi.units * kpi.daysInMonth - kpi.nights)}</span></li>
-        </ul>
+      <div className="mt-auto flex flex-col items-center gap-2.5 pt-1 2xl:flex-row 2xl:justify-between">
+        <Donut value={kpi.occupancy} size={108} stroke={14} label={`תפוסה ${kpi.occupancy}% החודש`} />
+        <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[12px] text-ink-400 2xl:flex-col 2xl:items-start" aria-hidden>
+          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand-600" /><span className="tabular font-bold text-navy-900">{kpi.nights}</span> מוזמנות</span>
+          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#DCD8FC]" /><span className="tabular font-bold text-navy-900">{Math.max(0, kpi.units * kpi.daysInMonth - kpi.nights)}</span> פנויות</span>
+        </p>
       </div>
     </Tile>
   );
