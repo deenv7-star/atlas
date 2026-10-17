@@ -166,7 +166,7 @@ function FinalCta() {
             <p>14 ימי ניסיון חינם, בלי כרטיס אשראי. ההגדרה לוקחת 10 דקות.</p>
             <div className="l7-cta">
               <SignupButton className="is-lg l6-btn-white" />
-              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="l6-btn-glass is-lg">וואטסאפ{' '}<span dir="ltr" className="num">{PHONE_DISPLAY}</span></a>
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="l6-btn-glass is-lg">וואטסאפ{'\u00a0'}<span dir="ltr" className="num">{PHONE_DISPLAY}</span></a>
             </div>
           </div>
           <div className="l7-final-media">
