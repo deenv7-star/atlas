@@ -1,6 +1,6 @@
 import React from 'react';
-import WorldA from '@/components/landing/v6/WorldA';
+import LandingB from '@/components/landing/v7/LandingB';
 
 export default function Landing() {
-  return <WorldA />;
+  return <LandingB />;
 }
