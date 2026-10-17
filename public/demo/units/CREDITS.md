@@ -6,3 +6,4 @@ Unit cover photos, free Unsplash License (https://unsplash.com/license). Resized
 - unit-5.webp, ../welcome.webp: https://unsplash.com/photos/cozy-a-frame-cabin-living-room-with-nature-view-Mll-2jMQXpA
 - unit-6.webp: https://unsplash.com/photos/a-hot-tub-sitting-next-to-a-body-of-water-3KZ2zIcV0g8
 - ../welcome-2.webp: same as unit-2
+- ../complex-pool.webp (v8 C home photo tile, demo workspace): https://www.pexels.com/photo/swimming-pool-beside-green-trees-14546304/ (Pexels License), lightly cooled

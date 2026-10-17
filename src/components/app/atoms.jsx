@@ -99,16 +99,16 @@ export function GuestAvatar({ name = '', size = 36, className, ring = false, src
 }
 
 /** Overlapping avatars ("+3"). */
-export function AvatarStack({ names = [], size = 32, max = 4, className }) {
+export function AvatarStack({ names = [], size = 32, max = 4, className, ringClass = 'ring-white', showRest = true }) {
   const shown = names.slice(0, max);
   const rest = names.length - shown.length;
   return (
     <span className={cn('inline-flex items-center', className)} aria-hidden>
       {shown.map((n, i) => (
-        <GuestAvatar key={`${n}-${i}`} name={n} size={size} ring className={i ? '-ms-2.5' : ''} />
+        <GuestAvatar key={`${n}-${i}`} name={n} size={size} ring className={cn(ringClass, i ? '-ms-2.5' : '')} />
       ))}
-      {rest > 0 ? (
-        <span className="-ms-2.5 inline-flex items-center justify-center rounded-full bg-navy-900 text-[12px] font-bold text-white ring-[3px] ring-white tabular" style={{ width: size, height: size }}>+{rest}</span>
+      {rest > 0 && showRest ? (
+        <span className={cn('-ms-2.5 inline-flex items-center justify-center rounded-full bg-navy-900 text-[12px] font-bold text-white ring-[3px] tabular', ringClass)} style={{ width: size, height: size }}>+{rest}</span>
       ) : null}
     </span>
   );

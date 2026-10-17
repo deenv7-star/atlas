@@ -13,11 +13,11 @@ import { BookingsTable } from '@/components/tables/BookingsTable';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { CalendarDays, Plus, Search, SlidersHorizontal } from 'lucide-react';
+import { CalendarDays, Plus, Search, SlidersHorizontal, Download, ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
-  Page, PageHeader, ChannelDot, ChannelBadge, fmtMoney, fmtShort, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows,
+  Page, PageHeader, ChannelDot, ChannelBadge, fmtMoney, fmtShort, EmptyState as DsEmptyState, StatusPill, SkelRows,
 } from '@/components/ds';
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
@@ -27,7 +27,7 @@ import { bookingFormToPayload } from '@/lib/entityPayloads';
 import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
-import { Rise, GuestAvatar } from '@/components/app/atoms';
+import { Rise, GuestAvatar, AvatarStack } from '@/components/app/atoms';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -278,7 +278,7 @@ export default function BookingsPage({ selectedPropertyId }) {
     <Page>
       <PageHeader
         title="הזמנות"
-        subtitle={`${counts.total} הזמנות · ${counts.confirmed} פעילות · ${counts.pending} ממתינות לאישור`}
+        subtitle="כל ההזמנות מכל הערוצים, במקום אחד."
         actions={
           <>
             <Button onClick={openNew} className="hidden md:inline-flex">
@@ -289,34 +289,60 @@ export default function BookingsPage({ selectedPropertyId }) {
         }
       />
 
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <SegmentedControl
-          ariaLabel="סינון לפי מצב"
-          value={tab}
-          onChange={(v) => void setUrlState({ tab: v, page: 1 })}
-          options={[
-            { value: 'all', label: 'הכל' },
-            { value: 'active', label: 'פעילות' },
-            { value: 'pending', label: 'ממתינות' },
-          ]}
-        />
-        <div className="flex gap-2">
-          <div className="relative flex-1 lg:w-[320px] lg:flex-none">
-            <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
-            <Input
-              value={search}
-              onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
-              placeholder="חיפוש לפי שם אורח"
-              className="rounded-full pr-10"
-              aria-label="חיפוש לפי שם אורח"
-            />
-          </div>
-          <Button variant={filtersActive ? 'secondary' : 'outline'} onClick={() => setFiltersOpen(true)} aria-label="סינון">
-            <SlidersHorizontal />
-            <span className="hidden sm:inline">סינון</span>
-            {filtersActive ? <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1 text-[12px] text-white">{statusFilterArr.length + (dateFrom || dateTo ? 1 : 0) + (urlPropertyId ? 1 : 0)}</span> : null}
-          </Button>
+      {/* v8 C: the three filters are bento tiles. The chosen one is the screen's single solid-indigo tile. */}
+      <div role="tablist" aria-label="סינון לפי מצב" className="mb-4 grid grid-cols-3 gap-2.5 md:gap-4">
+        {[
+          { value: 'all', label: 'כל ההזמנות', short: 'הכל', count: counts.total, names: bookings.map((b) => b.guest_name) },
+          { value: 'active', label: 'פעילות', short: 'פעילות', count: counts.confirmed, names: bookings.filter((b) => bookingMatchesTab('active', b)).map((b) => b.guest_name) },
+          { value: 'pending', label: 'ממתינות לאישור', short: 'ממתינות', count: counts.pending, names: bookings.filter((b) => bookingMatchesTab('pending', b)).map((b) => b.guest_name), attention: counts.pending > 0 },
+        ].map((t, i) => {
+          const on = tab === t.value;
+          return (
+            <button
+              key={t.value}
+              type="button"
+              role="tab"
+              aria-selected={on}
+              onClick={() => void setUrlState({ tab: t.value, page: 1 })}
+              className={cn(
+                'v5-rise press v7-lift relative flex min-h-[104px] flex-col justify-between overflow-hidden rounded-[22px] p-3.5 text-right md:min-h-[128px] md:p-5',
+                on ? 'v7-hero' : 'v7-card',
+              )}
+              style={{ '--i': i }}
+            >
+              <span className={cn('flex items-center gap-1.5 text-[13px] font-medium md:text-[15px]', on ? 'text-white/85' : 'text-ink-400')}>
+                <span className="md:hidden">{t.short}</span><span className="hidden md:inline">{t.label}</span>
+                {t.attention && !on ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
+              </span>
+              <span className="flex items-end justify-between gap-2">
+                <span className={cn('v5-num text-[28px] font-extrabold leading-none tracking-[-0.03em] md:text-[36px]', on ? 'text-white' : 'text-navy-900')}>{t.count}</span>
+                {t.names.length ? <AvatarStack names={t.names.filter(Boolean)} size={30} max={3} showRest={false} ringClass={on ? 'ring-brand-600' : 'ring-white'} className="hidden md:inline-flex" /> : null}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mb-4 flex items-center gap-2">
+        <div className="relative flex-1 md:max-w-[360px]">
+          <Search className="pointer-events-none absolute right-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
+          <Input
+            value={search}
+            onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
+            placeholder="חיפוש לפי שם אורח"
+            className="h-12 rounded-full border-0 bg-white pr-11 shadow-[0_1px_2px_rgba(27,38,86,0.05)]"
+            aria-label="חיפוש לפי שם אורח"
+          />
         </div>
+        <Button variant={filtersActive ? 'secondary' : 'outline'} onClick={() => setFiltersOpen(true)} aria-label="סינון" className="h-12 rounded-full border-0 bg-white px-4 shadow-[0_1px_2px_rgba(27,38,86,0.05)]">
+          <SlidersHorizontal />
+          <span className="hidden sm:inline">סינון</span>
+          {filtersActive ? <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1 text-[12px] text-white">{statusFilterArr.length + (dateFrom || dateTo ? 1 : 0) + (urlPropertyId ? 1 : 0)}</span> : null}
+        </Button>
+        <Button variant="ghost" onClick={handleExport} className="hidden h-12 rounded-full px-4 text-ink-600 md:inline-flex">
+          <Download />
+          ייצוא
+        </Button>
       </div>
 
       <div className="v7-card overflow-hidden">
@@ -336,15 +362,15 @@ export default function BookingsPage({ selectedPropertyId }) {
         ) : (
           <ErrorBoundary section="bookings-table" variant="inline" resetKey={`${effectivePropertyId ?? 'all'}|${tab}|${search}|${page}|${pageSize}`}>
             {/* Phones: cards. Desktop: the full table with bulk actions. */}
-            <div aria-hidden className="hidden h-11 grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px] items-center gap-4 border-b border-[#EEF0F5] px-6 text-[12px] font-semibold text-ink-400 md:grid">
-              <span>אורח</span><span>תאריכים</span><span>ערוץ</span><span className="text-left">סכום</span><span>מצב</span>
+            <div aria-hidden className="hidden h-12 grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px_24px] items-center gap-4 border-b border-[#F0F0F6] bg-[#FAFAFD] px-6 text-[12px] font-semibold text-ink-400 md:grid">
+              <span>אורח</span><span>תאריכים</span><span>ערוץ</span><span className="text-left">סכום</span><span>מצב</span><span />
             </div>
-            <ul className="divide-y divide-[#EEF0F5]">
+            <ul className="divide-y divide-[#F0F0F6]">
               {isLoading ? (
                 <li className="p-4"><SkelRows rows={5} /></li>
               ) : paged.map((b, idx) => (
                 <Rise as="li" i={Math.min(idx, 8)} key={b.id}>
-                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press v7-row flex min-h-[76px] items-center gap-3.5 px-4 py-3 md:grid md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px] md:gap-4 md:px-6">
+                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press c-row flex min-h-[76px] items-center gap-3.5 px-4 py-3 md:grid md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px_24px] md:gap-4 md:px-6">
                     <span className="flex min-w-0 flex-1 items-center gap-3.5">
                       <GuestAvatar name={b.guest_name || 'אורח'} size={44} />
                       <span className="min-w-0 flex-1">
@@ -359,6 +385,7 @@ export default function BookingsPage({ selectedPropertyId }) {
                     <span className="hidden md:block"><ChannelBadge source={b.booking_source || b.source} /></span>
                     <span className="hidden text-left text-[15px] font-bold tabular text-navy-900 md:block">{fmtMoney(b.total_price)}</span>
                     <span className="shrink-0"><StatusPill status={b.status} /></span>
+                    <ChevronLeft aria-hidden className="hidden h-4 w-4 text-ink-300 md:block" strokeWidth={1.75} />
                   </Link>
                 </Rise>
               ))}
