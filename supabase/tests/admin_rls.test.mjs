@@ -1,7 +1,7 @@
 // Run: npm i --no-save @electric-sql/pglite && node supabase/tests/admin_rls.test.mjs
 // Real Postgres (PGlite) + a Supabase-like auth stub: applies 001-007 then 011 and checks every role boundary.
 // Exits 1 on any failure.
-// Applies 001..007 + 010 + 011 to PGlite (real Postgres 17 in WASM) with a Supabase-like auth stub,
+// Applies 001..007 + 010 + 011 + 012 to PGlite (real Postgres 17 in WASM) with a Supabase-like auth stub,
 // then checks what an anonymous user, a normal customer, support, admin and owner can and cannot do.
 import { PGlite } from '@electric-sql/pglite';
 import { uuid_ossp } from '@electric-sql/pglite/contrib/uuid_ossp';
@@ -54,6 +54,9 @@ await db.exec(fs.readFileSync(M + '011_platform_admin.sql', 'utf8').replace(/not
 log(true, 'migration 011 applies cleanly on top of 001-007');
 const again = await db.exec(fs.readFileSync(M + '011_platform_admin.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, '')).then(() => true, (e) => e.message);
 log(again === true, 'migration 011 is re-runnable (idempotent)', again === true ? '' : again);
+const m012 = fs.readFileSync(M + '012_admin_units_from_properties.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, '');
+log(await db.exec(m012).then(() => true, (e) => e.message) === true, 'migration 012 applies cleanly on top of 011');
+log(await db.exec(m012).then(() => true, () => false), 'migration 012 is re-runnable');
 const boot = (await db.query('select email, role from public.platform_admins order by email')).rows;
 log(boot.length === 2 && boot.find((r) => r.email === 'deenv7@gmail.com')?.role === 'owner' && boot.find((r) => r.email.startsWith('qa+'))?.role === 'admin', 'bootstrap: deenv7 = owner, QA = admin, nobody else', JSON.stringify(boot));
 
@@ -158,6 +161,17 @@ log(['team.add','trial.extend','plan.change','account.suspend','account.reactiva
 // user deletion still works (no FK from audit log)
 const del = await db.query(`delete from auth.users where id='${U.sup}'`).then(() => true, (e) => e.message);
 log(del === true, 'deleting an auth user still works after admin actions (audit keeps actor_email)', del === true ? '' : del);
+// 012: an org with properties but no legacy units rows reports its properties as units
+const DORG = await orgOf(U.deen);
+await db.query(`insert into public.properties (org_id, name, max_guests) values ($1,'הזית',2),($1,'התאנה',4),($1,'הגפן',6)`, [DORG]);
+const dl = await as(U.deen, 'select units_count, properties_count from public.admin_list_customers() where org_id=$1', [DORG]);
+log(dl.ok && dl.rows[0].units_count === 3 && dl.rows[0].properties_count === 3, '012: properties-only org shows 3 units', JSON.stringify(dl.rows || dl.err));
+const dd = await as(U.deen, `select public.admin_get_customer('${DORG}') d`);
+log(dd.ok && dd.rows[0].d.units.length === 3 && dd.rows[0].d.units.some((u) => u.name === 'הזית' && u.max_guests === 2), '012: customer page lists the properties as units', dd.err || '');
+const cl = await as(U.deen, 'select units_count from public.admin_list_customers() where org_id=$1', [CORG]);
+log(cl.ok && cl.rows[0].units_count === 2, '012: org with legacy units rows keeps its units count', JSON.stringify(cl.rows || cl.err));
+const fnAnon = (await db.query(`select has_function_privilege('anon','public.admin_list_customers()','execute') a, has_function_privilege('authenticated','public.admin_list_customers()','execute') u`)).rows[0];
+log(fnAnon.a === false && fnAnon.u === true, '012: grants unchanged after replace (anon no, authenticated yes)', JSON.stringify(fnAnon));
 // grants check: no admin_* function executable by anon
 const anonFns = (await db.query(`select p.proname from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and (p.proname like 'admin\\_%' or p.proname in ('is_platform_admin','my_account_status')) and has_function_privilege('anon', p.oid, 'execute')`)).rows;
 log(anonFns.length === 0, 'anon has EXECUTE on no admin function', anonFns.map((r) => r.proname).join(','));
