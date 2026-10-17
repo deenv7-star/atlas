@@ -1,6 +1,6 @@
 /**
  * Admin data layer. Two backends with the same shape:
- *  - Supabase: only the SECURITY DEFINER RPCs from migration 010 (each checks platform_admins).
+ *  - Supabase: only the SECURITY DEFINER RPCs from migration 011 (each checks platform_admins).
  *  - Local demo: sample data from demoData.js, mutations persisted in localStorage.
  */
 import { supabase } from '@/api/supabaseClient';
@@ -111,7 +111,7 @@ const demoApi = {
     return wait({
       db_time: nowIso(),
       db_version: 'הדגמה',
-      schema: { guest_pages_008: false, expenses_009: false, platform_admin_010: true },
+      schema: { guest_pages_008: false, expenses_009: false, org_settings_010: false, platform_admin_011: true },
       counts: { organizations: d.customers.length, users: d.customers.length + d.team.length, bookings: d.customers.reduce((s, c) => s + c.bookings_count, 0), signins_24h: d.customers.filter((c) => Date.now() - new Date(c.last_active_at) < 864e5).length },
       audit_events_24h: d.audit.filter((a) => Date.now() - new Date(a.created_at) < 864e5).length,
       failed_charges_30d: d.charges.filter((x) => x.status === 'failed' && Date.now() - new Date(x.created_at) < 30 * 864e5).length,

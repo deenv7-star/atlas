@@ -24,7 +24,7 @@ const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
-// Platform admin console (/admin): its own shell, gated by the database (migration 010).
+// Platform admin console (/admin): its own shell, gated by the database (migration 011).
 const AdminRoot = lazy(() => import('@/admin/AdminRoot'));
 
 const GuestStayPage = lazy(() => import('@/pages/GuestStay'));

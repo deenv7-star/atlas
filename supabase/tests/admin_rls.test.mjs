@@ -1,7 +1,7 @@
 // Run: npm i --no-save @electric-sql/pglite && node supabase/tests/admin_rls.test.mjs
-// Real Postgres (PGlite) + a Supabase-like auth stub: applies 001-007 then 010 and checks every role boundary.
+// Real Postgres (PGlite) + a Supabase-like auth stub: applies 001-007 then 011 and checks every role boundary.
 // Exits 1 on any failure.
-// Applies 001..007 + 010 to PGlite (real Postgres 17 in WASM) with a Supabase-like auth stub,
+// Applies 001..007 + 011 to PGlite (real Postgres 17 in WASM) with a Supabase-like auth stub,
 // then checks what an anonymous user, a normal customer, support, admin and owner can and cannot do.
 import { PGlite } from '@electric-sql/pglite';
 import { uuid_ossp } from '@electric-sql/pglite/contrib/uuid_ossp';
@@ -31,10 +31,10 @@ const orgOf = async (uid) => (await db.query('select organization_id from public
 const CORG = await orgOf(U.cust);
 await db.query(`insert into public.units (org_id, name) values ($1,'צימר 1'),($1,'צימר 2')`, [CORG]);
 await db.query(`insert into public.bookings (org_id, guest_name, guest_phone, check_in_date, total_price) values ($1,'דנה לוי','0501234567', current_date, 1200)`, [CORG]);
-await db.exec(fs.readFileSync(M + '010_platform_admin.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, ''));
-log(true, 'migration 010 applies cleanly on top of 001-007');
-const again = await db.exec(fs.readFileSync(M + '010_platform_admin.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, '')).then(() => true, (e) => e.message);
-log(again === true, 'migration 010 is re-runnable (idempotent)', again === true ? '' : again);
+await db.exec(fs.readFileSync(M + '011_platform_admin.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, ''));
+log(true, 'migration 011 applies cleanly on top of 001-007');
+const again = await db.exec(fs.readFileSync(M + '011_platform_admin.sql', 'utf8').replace(/notify pgrst[^;]*;/gi, '')).then(() => true, (e) => e.message);
+log(again === true, 'migration 011 is re-runnable (idempotent)', again === true ? '' : again);
 const boot = (await db.query('select email, role from public.platform_admins order by email')).rows;
 log(boot.length === 2 && boot.find((r) => r.email === 'deenv7@gmail.com')?.role === 'owner' && boot.find((r) => r.email.startsWith('qa+'))?.role === 'admin', 'bootstrap: deenv7 = owner, QA = admin, nobody else', JSON.stringify(boot));
 
