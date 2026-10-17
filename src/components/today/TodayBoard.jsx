@@ -21,6 +21,7 @@ import { UnitPhoto, CountUp, Rise, GuestAvatar, AvatarStack } from '@/components
 import { unitPhoto, uploadedPhoto } from '@/lib/stay/unitPhoto';
 import { DEMO_PEOPLE } from '@/lib/demoPeople';
 import { guestInfoOf } from '@/lib/stay/guestInfo';
+import { readOrgSettings } from '@/lib/onboarding/orgSettings';
 import { monthlyRevenue } from '@/components/today/RevenueChart';
 import BarChart from '@/components/today/BarChart';
 import { Button } from '@/components/ui/button';
@@ -302,7 +303,7 @@ export default function TodayBoard({ user, orgId }) {
   const monthGuests = (data.bookings || []).filter((b) => isActiveBooking(b) && String(b.check_in_date).slice(0, 7) === day.slice(0, 7)).map((b) => b.guest_name || 'אורח');
   const firstProp = (data.properties || [])[0];
   // demo workspace: an aerial pool in a green garden (cool, calm). Real workspaces: their own first photo.
-  const photo = DEMO_PEOPLE ? '/demo/complex-pool.webp' : (uploadedPhoto(firstProp) || unitPhoto(firstProp) || '/demo/complex-pool.webp');
+  const photo = DEMO_PEOPLE && !readOrgSettings().cover_photo ? '/demo/complex-pool.webp' : (readOrgSettings().cover_photo || uploadedPhoto(firstProp) || unitPhoto(firstProp) || '/demo/complex-pool.webp');
   const free = Math.max(0, tonight.units - tonight.occupied);
 
   /* ── blocks ── */

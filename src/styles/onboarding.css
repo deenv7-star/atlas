@@ -1,0 +1,96 @@
+/* Onboarding v1, shared by both designs. Brand tokens from brand/atlas-brand.md; motion per Emil Kowalski:
+   strong ease-out, under 300ms for UI, press scale .97, never from scale(0), exit faster than enter. */
+.ob {
+  --ob-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --ob-inout: cubic-bezier(0.77, 0, 0.175, 1);
+  --ob-ring: 0 0 0 3px rgba(62, 43, 241, 0.22);
+  min-height: 100dvh;
+  background: var(--canvas, #F2F3F8);
+  color: #1B2656;
+  font-feature-settings: 'tnum' 1;
+}
+.ob :focus-visible { outline: 3px solid #3E2BF1; outline-offset: 2px; border-radius: 12px; }
+
+.ob-press { transition: transform 160ms var(--ob-ease), background-color 160ms var(--ob-ease), box-shadow 200ms var(--ob-ease), color 160ms var(--ob-ease), border-color 160ms var(--ob-ease); }
+.ob-press:active:not(:disabled) { transform: scale(0.97); }
+
+.ob-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 56px; padding: 0 28px; border-radius: 999px;
+  background: #3E2BF1; color: #fff; font-size: 18px; font-weight: 700;
+  box-shadow: 0 1px 2px rgba(42, 26, 201, 0.25), 0 12px 28px -12px rgba(62, 43, 241, 0.6);
+}
+@media (hover: hover) and (pointer: fine) { .ob-primary:hover:not(:disabled) { background: #5545F0; } }
+.ob-primary:disabled { background: #C9C3FB; box-shadow: none; cursor: not-allowed; }
+
+.ob-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; min-width: 48px; padding: 0 18px; border-radius: 999px;
+  color: #4A5578; font-size: 16px; font-weight: 600; background: transparent;
+}
+@media (hover: hover) and (pointer: fine) { .ob-ghost:hover { background: rgba(27, 38, 86, 0.06); color: #1B2656; } }
+
+.ob-input {
+  width: 100%; min-height: 60px; padding: 0 20px; border-radius: 16px;
+  background: #fff; border: 1.5px solid #E1E4EE; font-size: 20px; font-weight: 500; color: #1B2656;
+  transition: border-color 160ms var(--ob-ease), box-shadow 200ms var(--ob-ease);
+}
+.ob-input::placeholder { color: #9CA3B4; font-weight: 400; }
+.ob-input:focus { outline: none; border-color: #3E2BF1; box-shadow: var(--ob-ring); }
+.ob-input[aria-invalid='true'] { border-color: #EF5B5B; }
+
+.ob-choice {
+  position: relative; display: flex; overflow: hidden; text-align: start;
+  background: #fff; border-radius: 22px; border: 2px solid transparent;
+  box-shadow: 0 1px 2px rgba(27, 38, 86, 0.05), 0 8px 24px -10px rgba(27, 38, 86, 0.14);
+}
+.ob-choice[aria-checked='true'], .ob-choice[aria-pressed='true'] { border-color: #3E2BF1; box-shadow: var(--ob-ring), 0 12px 28px -12px rgba(62, 43, 241, 0.35); }
+@media (hover: hover) and (pointer: fine) { .ob-choice:hover { box-shadow: 0 2px 4px rgba(27, 38, 86, 0.06), 0 18px 36px -14px rgba(27, 38, 86, 0.22); } }
+.ob-choice img { transition: transform 500ms var(--ob-ease); }
+@media (hover: hover) and (pointer: fine) { .ob-choice:hover img { transform: scale(1.04); } }
+
+.ob-chip {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 52px; min-width: 76px; padding: 0 18px;
+  border-radius: 999px; background: #fff; border: 1.5px solid #E1E4EE; font-size: 18px; font-weight: 600; color: #1B2656;
+}
+.ob-chip[aria-checked='true'] { background: #1B2656; border-color: #1B2656; color: #fff; }
+
+.ob-round {
+  display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 999px;
+  background: #fff; border: 1.5px solid #E1E4EE; color: #1B2656;
+}
+.ob-round:disabled { opacity: 0.4; }
+
+/* the WhatsApp phone preview: real WhatsApp-like chat, not a cartoon */
+.ob-wa { background: #EFE7DE; border-radius: 22px; padding: 14px; }
+.ob-wa-bubble {
+  position: relative; max-width: 92%; margin-inline-start: auto; background: #D9FDD3; color: #111B21;
+  border-radius: 12px 0 12px 12px; padding: 10px 12px 18px; font-size: 15px; line-height: 1.45; white-space: pre-line;
+  box-shadow: 0 1px 1px rgba(11, 20, 26, 0.12);
+}
+.ob-wa-time { position: absolute; bottom: 4px; inset-inline-end: 10px; font-size: 11px; color: #54656F; }
+
+/* soft "pop in" used for units appearing (scale from .9, not 0) */
+@keyframes ob-pop { from { opacity: 0; transform: translateY(6px) scale(0.92); } to { opacity: 1; transform: none; } }
+.ob-pop { animation: ob-pop 320ms var(--ob-ease) both; }
+@keyframes ob-fade { from { opacity: 0; } to { opacity: 1; } }
+.ob-fade { animation: ob-fade 260ms var(--ob-ease) both; }
+
+/* iCal how-to: three frames that loop slowly (copy link → paste here) */
+/* each frame is hidden until its own slot (fill-mode backwards keeps the delayed ones at opacity 0) */
+@keyframes ob-how { 0% { opacity: 0; transform: translateY(4px); } 4%, 29% { opacity: 1; transform: none; } 33%, 100% { opacity: 0; transform: translateY(-4px); } }
+.ob-how > * { opacity: 0; animation: ob-how 7.5s var(--ob-ease) infinite backwards; }
+.ob-how > *:nth-child(2) { animation-delay: 2.5s; }
+.ob-how > *:nth-child(3) { animation-delay: 5s; }
+@keyframes ob-cursor { 0% { transform: translate(18px, 14px); } 60%, 100% { transform: translate(0, 0); } }
+.ob-cursor { animation: ob-cursor 1.6s var(--ob-ease) infinite alternate; }
+
+.ob-scroll-hide { scrollbar-width: none; }
+.ob-scroll-hide::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ob *, .ob *::before, .ob *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: 1ms !important; }
+  .ob-how { gap: 14px; }
+  .ob-how > * { animation: none !important; opacity: 1 !important; transform: none !important; grid-row: auto !important; }
+  .ob-press:active:not(:disabled) { transform: none; }
+}

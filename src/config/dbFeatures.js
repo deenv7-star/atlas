@@ -7,7 +7,11 @@
  * screens show a calm "בקרוב" state instead of firing requests that would fail.
  * Local demo mode (no Supabase) has every feature.
  *
- * After applying a migration, raise VITE_DB_SCHEMA_LEVEL (or the default below) to turn it on.
+ * After applying 008 / 009, raise VITE_DB_SCHEMA_LEVEL (or the default below) to turn them on.
+ *
+ * 010 (organizations.settings) and 011 (platform admin) do NOT use the level: they are detected at
+ * runtime (orgSettings.js probes the column, AdminGate asks admin_whoami), so they work on a database
+ * that has 010/011 but not 008/009, and fall back calmly where they are missing.
  */
 import { isSupabaseConfigured } from '@/api/supabaseClient';
 

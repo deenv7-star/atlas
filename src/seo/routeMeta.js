@@ -102,6 +102,7 @@ const EXACT = {
 };
 
 const PREFIX = [
+  { test: /^\/admin(\/|$)/, title: 'ניהול ATLAS' },
   { test: /^\/booking\/.+/, title: 'פרטי הזמנה | ATLAS' },
   { test: /^\/lead\/.+/, title: 'פרטי ליד | ATLAS' },
 ];
