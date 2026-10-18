@@ -72,7 +72,9 @@ function ChangePassword({ user }) {
       // Re-authenticate with the current password before changing it.
       const { error: reauthErr } = await supabase.auth.signInWithPassword({ email: user?.email, password: current });
       if (reauthErr) {
-        setErrors({ current: 'הסיסמה הנוכחית שגויה' });
+        // Only a real credentials refusal means the password is wrong; a timeout / rate limit / network error is not the user's fault.
+        if (reauthErr.code === 'invalid_credentials' || (reauthErr.status === 400 && /invalid/i.test(reauthErr.message || ''))) setErrors({ current: 'הסיסמה הנוכחית שגויה' });
+        else atlasToastApi.error(reauthErr.status === 429 ? 'יותר מדי ניסיונות. חכו דקה ונסו שוב.' : 'השרת לא ענה בזמן. הסיסמה לא שונתה, נסו שוב בעוד רגע.');
         return;
       }
       const { error } = await supabase.auth.updateUser({ password: next });

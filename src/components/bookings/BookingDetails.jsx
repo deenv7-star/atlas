@@ -259,6 +259,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   };
   const ch = channelOf(booking.booking_source);
   const outstandingNow = totalDue || outstanding;
+  const noPrice = !(Number(booking.total_price) > 0) && totalPaid === 0 && !(outstandingNow > 0);
   const paidPct = Number(booking.total_price) > 0 ? Math.min(100, Math.round((totalPaid / Number(booking.total_price)) * 100)) : 0;
   const doneCount = timelineItems.filter((t) => t.done).length;
 
@@ -370,11 +371,11 @@ export default function BookingDetails({ booking, onClose, orgId }) {
           {/* the one indigo tile: what is still owed */}
           <section className="v5-rise v7-hero flex flex-col p-5 md:p-6 lg:col-span-5" style={{ '--i': 1 }} aria-label="תשלום">
             <div className="flex items-start justify-between gap-3">
-              <p className="pt-1 text-[15px] font-medium text-white/85">{outstandingNow > 0 ? 'יתרה לתשלום' : 'שולם במלואו'}</p>
-              <PaidRing pct={paidPct} />
+              <p className="pt-1 text-[15px] font-medium text-white/85">{noPrice ? 'עוד אין מחיר להזמנה' : outstandingNow > 0 ? 'יתרה לתשלום' : 'שולם במלואו'}</p>
+              {noPrice ? null : <PaidRing pct={paidPct} />}
             </div>
-            <p className="v5-num mt-2 text-[44px] font-extrabold leading-none tracking-[-0.03em] text-white">{fmtMoney(outstandingNow > 0 ? outstandingNow : totalPaid)}</p>
-            <p className="mt-2 text-[14px] text-white/85">{outstandingNow > 0 ? `שולמו ${fmtMoney(totalPaid)} מתוך ${fmtMoney(booking.total_price)}` : 'כל התשלומים של ההזמנה התקבלו'}</p>
+            <p className="v5-num mt-2 text-[44px] font-extrabold leading-none tracking-[-0.03em] text-white">{noPrice ? '—' : fmtMoney(outstandingNow > 0 ? outstandingNow : totalPaid)}</p>
+            <p className="mt-2 text-[14px] text-white/85">{noPrice ? 'מוסיפים מחיר ב״עריכה״, ואז רואים כאן מה שולם ומה נשאר.' : outstandingNow > 0 ? `שולמו ${fmtMoney(totalPaid)} מתוך ${fmtMoney(booking.total_price)}` : 'כל התשלומים של ההזמנה התקבלו'}</p>
             <div className="mt-auto flex gap-2 pt-5">
               <button type="button" onClick={() => setIsPaymentDialogOpen(true)} className="press inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full bg-white text-[14px] font-bold text-brand-700 hover:bg-[#F4F3FF]">
                 <Plus className="h-4 w-4" strokeWidth={2.25} />
