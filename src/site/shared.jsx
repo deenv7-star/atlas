@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LEGAL, SUBPROCESSORS, WHATSAPP_URL, legalValue } from '@/config/legal';
+import { LEGAL, SUBPROCESSORS, WHATSAPP_URL, BUSINESS_LINE, legalValue } from '@/config/legal';
 import { Markdown, parseMd, tocFromBlocks, mdToText, Placeholder } from '@/site/lib/md';
 import { POSTS } from '@/site/content/posts';
 
@@ -275,6 +275,7 @@ export function ContactDetails() {
     legalValue('BUSINESS_PHONE') && { label: 'טלפון', value: <a href={`tel:${LEGAL.BUSINESS_PHONE}`} dir="ltr">{LEGAL.BUSINESS_PHONE}</a> },
     legalValue('SUPPORT_EMAIL') && { label: 'מייל', value: <a href={`mailto:${LEGAL.SUPPORT_EMAIL}`} dir="ltr">{LEGAL.SUPPORT_EMAIL}</a> },
     legalValue('BUSINESS_ADDRESS') && { label: 'כתובת למכתבים', value: <Placeholder name="BUSINESS_ADDRESS" /> },
+    BUSINESS_LINE && { label: 'פרטי העסק', value: <span>{BUSINESS_LINE}</span> },
     { label: 'טופס פנייה', value: <a href="#c-form">כתבו לנו כאן</a> },
   ].filter(Boolean);
   return (
