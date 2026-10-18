@@ -12,6 +12,7 @@ import {
   AlertTriangle, ChevronDown, ArrowDownToLine, ArrowUpFromLine, Info,
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import HelpHint from '@/components/help/HelpHint';
 import { PageHeader, SegmentedControl, SkelLine, Card, StatusPill } from '@/components/ds';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -193,7 +194,7 @@ function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, 
       </div>
       <div className="grid grid-cols-1 gap-5 p-5 md:grid-cols-2 md:px-6 [&>*]:min-w-0">
         <div className="min-w-0 space-y-3">
-          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowDownToLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייבוא: הזמנות מהערוצים אל ATLAS</h3>
+          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowDownToLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייבוא: הזמנות מהערוצים אל ATLAS<HelpHint id="integrations.ical" /></h3>
           {syncs.length ? (
             <ul className="space-y-2">
               {syncs.map((s) => <SyncRow key={s.id} sync={s} onSync={onSync} syncing={syncingId === s.id || syncingId === 'all'} onToggle={onToggle} onDelete={onDelete} />)}
@@ -353,6 +354,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
     <div className="mx-auto w-full max-w-[1200px] space-y-6 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader
         title="ערוצים וחיבורים"
+        help="integrations.page"
         subtitle="סנכרון יומנים עם Airbnb ו-Booking.com, והמצב האמיתי של כל חיבור."
         className="!mb-0"
         actions={tab === 'calendars' && DB_FEATURES.realCore && syncs.length ? (
