@@ -255,7 +255,10 @@ function ProviderStatus({ items }) {
 export default function IntegrationsPage({ orgId: orgIdProp, user }) {
   const qc = useQueryClient();
   const [params, setParams] = useSearchParams();
-  const tab = params.get('tab') || 'calendars';
+  // ?tab= deep links (the help bot links messaging / accounting too): aliases map to our four tabs.
+  const TAB_ALIAS = { messaging: 'messages', whatsapp: 'messages', accounting: 'invoices', pms: 'calendars', ical: 'calendars' };
+  const rawTab = params.get('tab') || 'calendars';
+  const tab = ['calendars', 'messages', 'payments', 'invoices'].includes(TAB_ALIAS[rawTab] || rawTab) ? (TAB_ALIAS[rawTab] || rawTab) : 'calendars';
   const setTab = (t) => setParams((p) => { const n = new URLSearchParams(p); n.set('tab', t); return n; }, { replace: true });
   const orgId = orgIdProp ?? user?.organization_id ?? user?.org_id ?? null;
   const [syncingId, setSyncingId] = useState(null);
