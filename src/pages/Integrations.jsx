@@ -89,12 +89,12 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
   const conflicts = Array.isArray(sync.conflicts) ? sync.conflicts : [];
   const [confirm, setConfirm] = useState(false);
   return (
-    <li className="rounded-[18px] border border-[#ECEEF4] p-3" data-sync-id={sync.id}>
-      <div className="flex items-center gap-3">
+    <li className="min-w-0 rounded-[18px] border border-[#ECEEF4] p-3" data-sync-id={sync.id}>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span aria-hidden className={cn('inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] text-[15px] font-bold', p.tone)}>{p.short}</span>
-        <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-2 truncate text-[15px] font-semibold text-navy-900">
-            {sync.label || p.name}
+        <div className="min-w-[160px] flex-1">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] font-semibold text-navy-900">
+            <span className="min-w-0 truncate">{sync.label || p.name}</span>
             <StatusPill tone={error ? 'red' : paused ? 'slate' : conflicts.length ? 'amber' : 'mint'} label={error ? 'שגיאה' : paused ? 'מושהה' : conflicts.length ? 'התנגשות' : 'פעיל'} />
           </p>
           <p className="mt-0.5 truncate text-[13px] text-ink-400">
@@ -102,7 +102,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
             {sync.last_success_at ? <> · <span className="tabular">{sync.events_count || 0}</span> תאריכים תפוסים בערוץ</> : null}
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="ms-auto flex shrink-0 items-center gap-1">
           <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={() => onSync(sync)} disabled={syncing} aria-label={`סנכרון ${p.name} עכשיו`}>
             <RefreshCw className={cn('h-4 w-4 text-ink-400', syncing && 'animate-spin')} strokeWidth={1.75} />
           </Button>
@@ -118,7 +118,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
         </p>
       ) : null}
       {conflicts.length ? (
-        <div role="alert" className="mt-2 rounded-[12px] bg-[#FFF6E5] px-3 py-2 text-[13px] text-[#8A5A00]">
+        <div role="alert" className="mt-2 break-words rounded-[12px] bg-[#FFF6E5] px-3 py-2 text-[13px] text-[#8A5A00]">
           <p className="flex items-center gap-2 font-semibold"><AlertTriangle className="h-4 w-4" strokeWidth={1.75} />{conflicts.length === 1 ? 'הזמנה כפולה אפשרית' : `${conflicts.length} הזמנות כפולות אפשריות`}</p>
           <ul className="mt-1 space-y-1">
             {conflicts.slice(0, 5).map((c) => (
@@ -191,8 +191,8 @@ function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, 
           </p>
         </div>
       </div>
-      <div className="grid gap-5 p-5 md:grid-cols-2 md:px-6">
-        <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-5 p-5 md:grid-cols-2 md:px-6 [&>*]:min-w-0">
+        <div className="min-w-0 space-y-3">
           <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowDownToLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייבוא: הזמנות מהערוצים אל ATLAS</h3>
           {syncs.length ? (
             <ul className="space-y-2">

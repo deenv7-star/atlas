@@ -176,7 +176,7 @@ export default function DynamicPricing() {
                           className={cn('flex min-h-[58px] flex-col items-center justify-center rounded-[12px] px-0.5 py-1', KIND_STYLE[n.kind], past && 'opacity-40')}
                           data-kind={n.kind}
                         >
-                          <span className="text-[11px] leading-none text-ink-400">{dnum}</span>
+                          <span className="text-[11px] leading-none text-ink-600">{dnum}</span>
                           <span className="tabular mt-1 text-[12px] font-bold leading-none md:text-[14px]">{n.kind === 'booked' ? 'תפוס' : n.price ? `₪${n.price.toLocaleString('he-IL')}` : ''}</span>
                           {n.label && n.kind !== 'booked' ? <span className="mt-1 max-w-full truncate text-[10px] leading-none">{n.label}</span> : null}
                         </li>
