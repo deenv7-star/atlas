@@ -584,7 +584,10 @@ const supabaseAuth = {
       throw e;
     }
     // The auth user no longer exists: drop the local session without calling the server.
-    try { await supabase.auth.signOut({ scope: 'local' }); } catch { /* ignore */ }
+    // Drop the stored session directly: signOut() would call /logout for a user that no longer exists (403).
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
+    } catch { /* ignore */ }
     return data || { ok: true };
   },
 

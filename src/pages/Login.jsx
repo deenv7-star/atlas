@@ -31,9 +31,6 @@ export default function Login() {
     if (prefilledEmail) setForm(f => ({ ...f, email: prefilledEmail }));
   }, [prefilledEmail]);
 
-  useEffect(() => {
-    if (successMsg) atlasToastApi.success(decodeURIComponent(successMsg));
-  }, [successMsg]);
 
   const set = (field) => (e) => {
     setForm(f => ({ ...f, [field]: e.target.value }));
@@ -118,6 +115,11 @@ export default function Login() {
       <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">ברוכים השבים</h1>
       <p className="mt-1.5 text-[15px] text-ink-400">נכנסים, ורואים מה קורה היום בצימר.</p>
 
+      {successMsg ? (
+        <p role="status" className="mt-6 rounded-[12px] border border-[#CDEBD9] bg-[#EEF9F2] px-4 py-3 text-[15px] font-medium text-[#14532D]">
+          {successMsg}
+        </p>
+      ) : null}
       <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
         <div className="space-y-2">
           <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">אימייל</Label>
