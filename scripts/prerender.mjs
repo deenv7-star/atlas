@@ -230,7 +230,7 @@ async function main() {
 
   const missing = mod.missingLegalKeys();
   if (missing.length) {
-    console.warn(`[prerender] legal placeholders still empty in src/config/legal.js (shown as {{KEY}} on the site): ${missing.join(', ')}`);
+    console.warn(`[prerender] legal placeholders still empty in src/config/legal.js (hidden or shown as "יעודכן בקרוב" on the site; run npm run check:legal): ${missing.join(', ')}`);
   }
   fs.rmSync(SSR_OUT, { recursive: true, force: true });
 }

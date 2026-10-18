@@ -32,7 +32,7 @@
 .s-root img { max-width: 100%; height: auto; display: block; }
 .s-root a { color: var(--s-indigo); text-underline-offset: 3px; }
 /* Tailwind preflight strips link underlines; links inside running text must keep one (WCAG 1.4.1) */
-.s-prose a, .s-sources a, .s-topics a, .a-topics a, .b-topics a, .s-dl a, .s-note a, .s-table a { text-decoration: underline; text-decoration-thickness: 1px; }
+.s-prose a, .s-quote a, .a-summary a, .b-summary a, .s-sources a, .s-topics a, .a-topics a, .b-topics a, .s-dl a, .s-note a, .s-table a { text-decoration: underline; text-decoration-thickness: 1px; }
 .s-root :focus-visible { outline: 3px solid var(--s-indigo); outline-offset: 2px; border-radius: 6px; }
 .s-root ::selection { background: var(--s-indigo-100); }
 
@@ -43,6 +43,7 @@
 .s-wm { display: inline-flex; align-items: baseline; gap: 2px; font-weight: 800; font-size: 22px; letter-spacing: 0.02em; color: var(--s-navy); line-height: 1; }
 .s-wm i { width: 7px; height: 7px; border-radius: 2px; background: var(--s-indigo); display: inline-block; }
 
+.s-soon { color: inherit; opacity: .8; font-style: normal; }
 .s-ph { background: #fff3d6; color: #6b4a00; border: 1px dashed #c98a12; border-radius: 6px; padding: 0 6px; font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 0.85em; direction: ltr; unicode-bidi: isolate; white-space: nowrap; }
 
 /* buttons */
@@ -140,3 +141,6 @@
   .s-prose { font-size: 17px; }
   .s-prose h2 { font-size: 23px; }
 }
+
+.s-hp { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.s-form-done p { margin: 0 0 .75rem; }

@@ -2,72 +2,107 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://atlas-il.com/</loc>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-10-18</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://atlas-il.com/register</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://atlas-il.com/pricing</loc>
+    <lastmod>2026-10-18</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://atlas-il.com/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <loc>https://atlas-il.com/register</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://atlas-il.com/about</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://atlas-il.com/changelog</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://atlas-il.com/status</loc>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-10-18</lastmod>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://atlas-il.com/contact</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://atlas-il.com/privacy</loc>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-18</lastmod>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://atlas-il.com/terms</loc>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-18</lastmod>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://atlas-il.com/guest-service</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://atlas-il.com/data-security</loc>
-    <changefreq>yearly</changefreq>
+    <loc>https://atlas-il.com/cancellation</loc>
+    <lastmod>2026-10-18</lastmod>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://atlas-il.com/accessibility</loc>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-18</lastmod>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://atlas-il.com/sla</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
+    <loc>https://atlas-il.com/cookies</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://atlas-il.com/api-docs</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://atlas-il.com/data-processing</loc>
+    <lastmod>2026-10-18</lastmod>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/data-security</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog/ical-sync-booking-airbnb</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog/dynamic-pricing-zimmer</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog/whatsapp-guest-messages</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog/zimmer-income-expenses-vat</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog/direct-bookings-no-commission</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog/cleaning-turnover-checklist</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog/guest-reviews</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-il.com/blog/zimmer-licensing-israel</loc>
+    <lastmod>2026-10-18</lastmod>
+    <priority>0.8</priority>
   </url>
 </urlset>

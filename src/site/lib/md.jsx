@@ -6,6 +6,14 @@
  * Supported: ## / ### headings (auto ids, or "## Title {#id}"), paragraphs, - lists,
  * 1. lists, - [ ] checklists, > callouts ("> **בקצרה:** ..."), | tables |, **bold**,
  * [links](/path), {{PLACEHOLDER}} tokens from src/config/legal.js.
+ *
+ * Missing business details never show as {{KEY}} on the site:
+ *   {?text with {{KEY}}?}  renders only when every {{KEY}} inside is filled in.
+ *   {+KEY text+}           renders only when KEY is filled in.
+ *   {!KEY text!}           renders only while KEY is still empty (a graceful fallback).
+ *   A bare {{KEY}} that is still empty renders as "יעודכן בקרוב".
+ *   A paragraph or list item left empty by these rules is dropped (and an emptied list with it).
+ * `npm run check:legal` keeps listing what is missing.
  */
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -27,9 +35,25 @@ function headingParts(raw) {
   return { text: raw, id: slugifyHe(raw) };
 }
 
+export const SOON = 'יעודכן בקרוב';
+
+/** Resolves {?…?} and {!KEY …!} segments against src/config/legal.js. */
+export function resolveOptional(text) {
+  return String(text)
+    .replace(/\{\?([\s\S]*?)\?\}/g, (_, inner) => {
+      const keys = [...inner.matchAll(/\{\{([A-Z_]+)\}\}/g)].map((x) => x[1]);
+      return keys.every((k) => !(k in LEGAL) || legalValue(k) !== null) ? inner : '';
+    })
+    .replace(/\{\+([A-Z_]+)\s([\s\S]*?)\+\}/g, (_, key, inner) => (legalValue(key) !== null ? inner : ''))
+    .replace(/\{!([A-Z_]+)\s([\s\S]*?)!\}/g, (_, key, inner) => (legalValue(key) === null ? inner : ''));
+}
+
+const isBlank = (t) => !String(t).replace(/\*\*|[\s:.,]/g, '').trim();
+const listItem = (t) => !isBlank(t.replace(/^\*\*[^*]+\*\*:?/, ''));
+
 /** Parse markdown into a flat block list. */
 export function parseMd(src) {
-  const lines = String(src).replace(/\r/g, '').split('\n');
+  const lines = String(src).replace(/\r/g, '').split('\n').map(resolveOptional);
   const blocks = [];
   let i = 0;
   while (i < lines.length) {
@@ -59,24 +83,24 @@ export function parseMd(src) {
     if (/^- \[[ x]\] /.test(line)) {
       const items = [];
       while (i < lines.length && /^- \[[ x]\] /.test(lines[i])) { items.push(lines[i].replace(/^- \[[ x]\] /, '')); i += 1; }
-      blocks.push({ type: 'check', items });
+      if (items.filter(listItem).length) blocks.push({ type: 'check', items: items.filter(listItem) });
       continue;
     }
     if (/^- /.test(line)) {
       const items = [];
       while (i < lines.length && /^- /.test(lines[i])) { items.push(lines[i].replace(/^- /, '')); i += 1; }
-      blocks.push({ type: 'ul', items });
+      if (items.filter(listItem).length) blocks.push({ type: 'ul', items: items.filter(listItem) });
       continue;
     }
     if (/^\d+\. /.test(line)) {
       const items = [];
       while (i < lines.length && /^\d+\. /.test(lines[i])) { items.push(lines[i].replace(/^\d+\. /, '')); i += 1; }
-      blocks.push({ type: 'ol', items });
+      if (items.filter(listItem).length) blocks.push({ type: 'ol', items: items.filter(listItem) });
       continue;
     }
     const buf = [];
     while (i < lines.length && lines[i].trim() && !/^(#{2,4}\s|>|\||- |\d+\. )/.test(lines[i])) { buf.push(lines[i].trim()); i += 1; }
-    blocks.push({ type: 'p', text: buf.join(' ') });
+    if (!isBlank(buf.join(' '))) blocks.push({ type: 'p', text: buf.join(' ') });
   }
   return blocks;
 }
@@ -86,10 +110,10 @@ export function tocFromBlocks(blocks) {
 }
 
 export function stripInline(text) {
-  return String(text)
+  return resolveOptional(text)
     .replace(/\*\*(.+?)\*\*/g, '$1')
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\{\{([A-Z_]+)\}\}/g, (_, k) => legalValue(k) ?? `{{${k}}}`);
+    .replace(/\{\{([A-Z_]+)\}\}/g, (_, k) => legalValue(k) ?? (k in LEGAL ? SOON : `{{${k}}}`));
 }
 
 /** Plain-text version of a markdown document (word counts, llms-full.txt). */
@@ -114,7 +138,7 @@ export function Inline({ text }) {
   let last = 0;
   let m;
   let k = 0;
-  const s = nbHyphen(text);
+  const s = nbHyphen(resolveOptional(text));
   INLINE_RE.lastIndex = 0;
   while ((m = INLINE_RE.exec(s))) {
     if (m.index > last) out.push(s.slice(last, m.index));
@@ -134,12 +158,12 @@ export function Inline({ text }) {
   return <>{out}</>;
 }
 
-/** Renders a value from src/config/legal.js, or a highlighted {{KEY}} when it is still empty. */
+/** Renders a value from src/config/legal.js, or a quiet "יעודכן בקרוב" while it is still empty. */
 export function Placeholder({ name }) {
   const v = legalValue(name);
   if (v !== null) return <>{v}</>;
   if (!(name in LEGAL)) return <>{`{{${name}}}`}</>;
-  return <mark className="s-ph" title="פרט שעוד לא מולא (src/config/legal.js)">{`{{${name}}}`}</mark>;
+  return <span className="s-soon" data-missing={name}>{SOON}</span>;
 }
 
 export function Markdown({ source, blocks: given }) {

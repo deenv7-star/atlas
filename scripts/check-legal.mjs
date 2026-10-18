@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Lists the business / legal details still missing in src/config/legal.js (rendered as {{KEY}} on the site). */
+/** Lists the business / legal details still missing in src/config/legal.js (left out of the site, or shown as "יעודכן בקרוב", until filled). */
 import { LEGAL, REQUIRED_FOR_LAUNCH } from '../src/config/legal.js';
 
 const missing = REQUIRED_FOR_LAUNCH.filter((k) => LEGAL[k] === null || LEGAL[k] === undefined || LEGAL[k] === '');

@@ -7,7 +7,7 @@
 ## הצדדים {#parties}
 
 - **בעל השליטה**: הלקוח, בעל החשבון ב-ATLAS.
-- **המחזיק**: {{BUSINESS_NAME}}, {{BUSINESS_ID}}, המפעילה את ATLAS.
+- **המחזיק**: {?{{BUSINESS_NAME}}, {{BUSINESS_ID}}, ?}המפעיל של ATLAS{!BUSINESS_NAME  (פרטי הישות המשפטית יעודכנו בקרוב)!}.
 
 ## איזה מידע ולאיזו מטרה {#data}
 

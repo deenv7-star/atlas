@@ -37,9 +37,11 @@ ATLAS פועלת להנגשת האתר והמערכת לאנשים עם מוגב
 
 ## רכז הנגישות {#coordinator}
 
-- שם: {{ACCESSIBILITY_COORDINATOR_NAME}}
-- טלפון: {{ACCESSIBILITY_COORDINATOR_PHONE}}
-- מייל: {{ACCESSIBILITY_COORDINATOR_EMAIL}}
+- {?שם: {{ACCESSIBILITY_COORDINATOR_NAME}}?}
+- {?טלפון: {{ACCESSIBILITY_COORDINATOR_PHONE}}?}
+- {?מייל: {{ACCESSIBILITY_COORDINATOR_EMAIL}}?}
+
+{!ACCESSIBILITY_COORDINATOR_NAME פרטי רכז הנגישות יעודכנו בקרוב. עד אז, כל פנייה בנושא נגישות מגיעה ישירות אלינו בוואטסאפ {{WHATSAPP_DISPLAY}} או דרך [עמוד יצירת הקשר](/contact), ונענה עליה.!}
 
 ## דיווח על בעיית נגישות או בקשה להנגשה {#report}
 
@@ -47,7 +49,7 @@ ATLAS פועלת להנגשת האתר והמערכת לאנשים עם מוגב
 
 - וואטסאפ: {{WHATSAPP_DISPLAY}}
 - [טופס יצירת קשר](/contact), נושא "נגישות"
-- מייל: {{ACCESSIBILITY_COORDINATOR_EMAIL}}
+- {?מייל: {{ACCESSIBILITY_COORDINATOR_EMAIL}}?}
 
 נחזור אליכם בהקדם, ונעדכן כשהבעיה תוקנה.
 

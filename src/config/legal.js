@@ -2,8 +2,9 @@
  * Legal + business details for every public page (privacy, terms, accessibility,
  * cookies, cancellation, data processing, security, about, contact, footer, JSON-LD).
  *
- * ONE place to fill in. A value left as `null` renders on the site as a visible
- * placeholder ({{KEY}}, highlighted) so nothing is silently invented.
+ * ONE place to fill in. A value left as `null` is never invented and never shown as {{KEY}}:
+ * the sentence or list line that needs it is left out, or it reads "יעודכן בקרוב"
+ * (see src/site/lib/md.jsx for the {?…?} / {+KEY …+} / {!KEY …!} rules).
  * `npm run check:legal` lists what is still missing (it also runs after `npm run build`).
  *
  * Nothing here was guessed. Known facts carry a comment saying where they come from.

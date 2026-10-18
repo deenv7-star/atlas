@@ -17,9 +17,9 @@ ATLAS נבנתה כדי שכל זה יהיה במסך אחד, בעברית, בש
 
 ## מי אנחנו {#who}
 
-ATLAS נוסדה על ידי {{FOUNDER_NAME}}, {{FOUNDER_ROLE}}. {{FOUNDER_BIO}}
+ATLAS נוסדה על ידי {{FOUNDER_NAME}}, {{FOUNDER_ROLE}}.{? {{FOUNDER_BIO}}?}
 
-המערכת מפותחת בישראל, ומופעלת על ידי {{BUSINESS_NAME}}.
+המערכת מפותחת בישראל{?, ומופעלת על ידי {{BUSINESS_NAME}}?}.
 
 ## עובדות בקצרה {#facts}
 

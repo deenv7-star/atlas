@@ -182,17 +182,22 @@ export function WhatsAppButton({ className = '', text, children = 'כתבו לנ
   );
 }
 
-/* ---------------- contact form: validates, then opens WhatsApp with the message (no fake submit) ---------------- */
+/* ---------------- contact form: saved to contact_messages (Supabase), WhatsApp stays one tap away ---------------- */
 const TOPICS = ['שאלה לפני הרשמה', 'תמיכה בשימוש', 'ביטול מנוי', 'פרטיות ומידע אישי', 'נגישות', 'אחר'];
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 export function ContactForm({ className = '' }) {
-  const [form, setForm] = useState({ name: '', phone: '', topic: TOPICS[0], message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', topic: TOPICS[0], message: '', website: '' });
   const [errors, setErrors] = useState({});
+  const [state, setState] = useState({ status: 'idle', error: '' });
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const submit = (e) => {
+  const waText = () => `שלום ATLAS,\nשם: ${form.name.trim()}\n${form.phone.trim() ? `טלפון: ${form.phone.trim()}\n` : ''}נושא: ${form.topic}\n\n${form.message.trim()}`;
+  const submit = async (e) => {
     e.preventDefault();
+    if (state.status === 'sending') return;
     const err = {};
     if (!form.name.trim()) err.name = 'כתבו שם, כדי שנדע איך לפנות אליכם.';
+    if (!EMAIL_RE.test(form.email.trim())) err.email = 'כתבו אימייל תקין, כדי שנוכל לענות לכם.';
     if (!form.message.trim()) err.message = 'כתבו במה נוכל לעזור.';
     setErrors(err);
     if (Object.keys(err).length) {
@@ -200,19 +205,43 @@ export function ContactForm({ className = '' }) {
       if (first) first.focus();
       return;
     }
-    const text = `שלום ATLAS,\nשם: ${form.name.trim()}\n${form.phone.trim() ? `טלפון: ${form.phone.trim()}\n` : ''}נושא: ${form.topic}\n\n${form.message.trim()}`;
-    window.open(`${WHATSAPP_URL}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    setState({ status: 'sending', error: '' });
+    try {
+      const { submitPublicContact } = await import('@/lib/submitPublicContact');
+      const res = await submitPublicContact({
+        name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim() || undefined,
+        subject: form.topic, message: form.message.trim(), website: form.website,
+      });
+      if (res.ok || res.status === 204) setState({ status: 'sent', error: '' });
+      else setState({ status: 'error', error: (res.data && typeof res.data.error === 'string' && res.data.error) || 'לא הצלחנו לשלוח את ההודעה.' });
+    } catch {
+      setState({ status: 'error', error: 'לא הצלחנו לשלוח את ההודעה.' });
+    }
   };
+  if (state.status === 'sent') {
+    return (
+      <div className={`s-form s-form-done ${className}`} role="status">
+        <p><strong>ההודעה התקבלה. תודה!</strong></p>
+        <p>נחזור אליכם בהקדם לאימייל שכתבתם. ממהרים? אפשר לכתוב לנו גם בוואטסאפ.</p>
+        <WhatsAppButton>לוואטסאפ</WhatsAppButton>
+      </div>
+    );
+  }
   return (
     <form className={`s-form ${className}`} onSubmit={submit} noValidate>
       <div className="s-field">
         <label htmlFor="cf-name">שם</label>
-        <input id="cf-name" name="name" autoComplete="name" value={form.name} onChange={set('name')} aria-invalid={!!errors.name} aria-describedby={errors.name ? 'cf-name-e' : undefined} />
+        <input id="cf-name" name="name" autoComplete="name" maxLength={120} value={form.name} onChange={set('name')} aria-invalid={!!errors.name} aria-describedby={errors.name ? 'cf-name-e' : undefined} />
         {errors.name && <p className="s-err" id="cf-name-e">{errors.name}</p>}
       </div>
       <div className="s-field">
+        <label htmlFor="cf-email">אימייל</label>
+        <input id="cf-email" name="email" type="email" inputMode="email" autoComplete="email" dir="ltr" maxLength={200} value={form.email} onChange={set('email')} aria-invalid={!!errors.email} aria-describedby={errors.email ? 'cf-email-e' : undefined} />
+        {errors.email && <p className="s-err" id="cf-email-e">{errors.email}</p>}
+      </div>
+      <div className="s-field">
         <label htmlFor="cf-phone">טלפון <span className="s-opt">(לא חובה)</span></label>
-        <input id="cf-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" dir="ltr" value={form.phone} onChange={set('phone')} />
+        <input id="cf-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" dir="ltr" maxLength={40} value={form.phone} onChange={set('phone')} />
       </div>
       <div className="s-field">
         <label htmlFor="cf-topic">נושא</label>
@@ -222,11 +251,20 @@ export function ContactForm({ className = '' }) {
       </div>
       <div className="s-field">
         <label htmlFor="cf-message">ההודעה</label>
-        <textarea id="cf-message" name="message" rows={5} value={form.message} onChange={set('message')} aria-invalid={!!errors.message} aria-describedby={errors.message ? 'cf-message-e' : 'cf-hint'} />
+        <textarea id="cf-message" name="message" rows={5} maxLength={5000} value={form.message} onChange={set('message')} aria-invalid={!!errors.message} aria-describedby={errors.message ? 'cf-message-e' : 'cf-hint'} />
         {errors.message && <p className="s-err" id="cf-message-e">{errors.message}</p>}
       </div>
-      <p className="s-hint" id="cf-hint">הטופס פותח וואטסאפ עם ההודעה שכתבתם. בודקים ולוחצים שליחה.</p>
-      <button type="submit" className="s-btn s-btn-primary"><WhatsAppIcon /> <span>המשך לשליחה בוואטסאפ</span></button>
+      <div className="s-hp" aria-hidden="true">
+        <label htmlFor="cf-website">אתר</label>
+        <input id="cf-website" name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={set('website')} />
+      </div>
+      <p className="s-hint" id="cf-hint">ההודעה נשמרת אצלנו ונענה לאימייל שכתבתם.</p>
+      {state.status === 'error' && (
+        <p className="s-err" role="alert">{state.error} אפשר גם <a href={`${WHATSAPP_URL}?text=${encodeURIComponent(waText())}`} target="_blank" rel="noopener noreferrer">לשלוח את אותה הודעה בוואטסאפ<span className="s-sr"> (נפתח בוואטסאפ)</span></a>.</p>
+      )}
+      <button type="submit" className="s-btn s-btn-primary" disabled={state.status === 'sending'} aria-busy={state.status === 'sending'}>
+        <span>{state.status === 'sending' ? 'שולחים…' : 'שליחה'}</span>
+      </button>
     </form>
   );
 }
@@ -234,10 +272,11 @@ export function ContactForm({ className = '' }) {
 export function ContactDetails() {
   const rows = [
     { label: 'וואטסאפ', value: <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" dir="ltr">{LEGAL.WHATSAPP_DISPLAY}<span className="s-sr"> (נפתח בוואטסאפ)</span></a> },
-    { label: 'טלפון', value: legalValue('BUSINESS_PHONE') ? <a href={`tel:${LEGAL.BUSINESS_PHONE}`} dir="ltr">{LEGAL.BUSINESS_PHONE}</a> : <Placeholder name="BUSINESS_PHONE" /> },
-    { label: 'מייל', value: legalValue('SUPPORT_EMAIL') ? <a href={`mailto:${LEGAL.SUPPORT_EMAIL}`} dir="ltr">{LEGAL.SUPPORT_EMAIL}</a> : <Placeholder name="SUPPORT_EMAIL" /> },
-    { label: 'כתובת למכתבים', value: <Placeholder name="BUSINESS_ADDRESS" /> },
-  ];
+    legalValue('BUSINESS_PHONE') && { label: 'טלפון', value: <a href={`tel:${LEGAL.BUSINESS_PHONE}`} dir="ltr">{LEGAL.BUSINESS_PHONE}</a> },
+    legalValue('SUPPORT_EMAIL') && { label: 'מייל', value: <a href={`mailto:${LEGAL.SUPPORT_EMAIL}`} dir="ltr">{LEGAL.SUPPORT_EMAIL}</a> },
+    legalValue('BUSINESS_ADDRESS') && { label: 'כתובת למכתבים', value: <Placeholder name="BUSINESS_ADDRESS" /> },
+    { label: 'טופס פנייה', value: <a href="#c-form">כתבו לנו כאן</a> },
+  ].filter(Boolean);
   return (
     <dl className="s-dl">
       {rows.map((r) => (

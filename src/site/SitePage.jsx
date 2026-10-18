@@ -12,7 +12,7 @@ import * as D from '@/site/design';
 function ArticleRoute({ slug }) {
   const post = getPost(slug);
   const body = useArticleBody(slug);
-  useSiteReady(!!(post && body));
+  useSiteReady(!post || !!body);
   if (!post) return <D.NotFound />;
   if (!body) return <D.ArticleSkeleton post={post} />;
   return <D.Article post={post} body={body} />;
