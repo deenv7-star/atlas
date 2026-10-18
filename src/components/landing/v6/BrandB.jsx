@@ -32,7 +32,7 @@ function Hero() {
             <span className="l5-h1-line is-ind" style={{ '--i': 2 }}>על טייס אוטומטי.</span>
           </h1>
           <p className="l6b-lead l5-in" style={{ '--i': 3 }}>
-            הזמנות מכל הערוצים בלוח אחד, וואטסאפ לאורחים שיוצא לבד ומקדמות שנגבות בזמן. בעברית.
+            הזמנות מכל הערוצים בלוח אחד, וואטסאפ לאורחים שמוכן מראש ונשלח בלחיצה, ומעקב מקדמות ויתרות. בעברית.
           </p>
           <div className="l6b-cta l5-in" style={{ '--i': 4 }}>
             <SignupButton className="is-lg" />
@@ -160,11 +160,11 @@ function Bento() {
         </div>
         <ul className="l6b-bento">
           <li className="l6b-tile is-indigo is-w7" data-reveal>
-            <div className="l6b-tile-txt"><h3>וואטסאפ שיוצא לבד</h3><p>אישור, הוראות הגעה ובקשה לביקורת. בזמן, בשמכם.</p></div>
+            <div className="l6b-tile-txt"><h3>וואטסאפ מוכן מראש</h3><p>אישור, הוראות הגעה ובקשה לביקורת. מוכן בזמן, נשלח בלחיצה.</p></div>
             <div className="l6b-tile-ui" aria-hidden="true"><WhatsAppCard stage={3} /></div>
           </li>
           <li className="l6b-tile is-sky is-w5" data-reveal style={{ '--d': '80ms' }}>
-            <div className="l6b-tile-txt"><h3>מקדמות ויתרות בזמן</h3><p>מקדמה עם ההזמנה, תזכורת ליתרה לבד.</p></div>
+            <div className="l6b-tile-txt"><h3>מקדמות ויתרות במעקב</h3><p>מה שולם, מה פתוח, ותזכורת ליתרה בלחיצה.</p></div>
             <div className="l6b-tile-ui" aria-hidden="true"><Payments className="l5-card" /></div>
           </li>
           <li className="l6b-tile is-white is-w4" data-reveal>
@@ -176,7 +176,7 @@ function Bento() {
             <div className="l6b-tile-ui" aria-hidden="true"><ReportMini /></div>
           </li>
           <li className="l6b-tile is-cabin is-w4" data-reveal style={{ '--d': '160ms' }}>
-            <div className="l6b-tile-txt"><h3>עמוד הזמנה משלכם</h3><p>הזמנות ישירות בלי עמלות, עם תשלום מקדמה.</p></div>
+            <div className="l6b-tile-txt"><h3>עמוד הזמנה משלכם</h3><p>בקשות הזמנה ישירות, בלי עמלות.</p></div>
             <img src={`${IMG}/cabin.webp`} alt="" aria-hidden="true" loading="lazy" decoding="async" width="640" height="440" className="l6b-cabin" />
           </li>
         </ul>

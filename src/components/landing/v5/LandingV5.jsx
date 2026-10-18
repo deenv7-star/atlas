@@ -125,7 +125,7 @@ function HeroA() {
           <div className="l5-stage-m">
             <div className={`l5-m-toast${waStage >= 2 ? ' is-on' : ''}`}>
               <Mark ch="whatsapp" size={20} />
-              <span><b>נשלח לנועה בוואטסאפ</b><small>הוראות הגעה · נשלח אוטומטית</small></span>
+              <span><b>נשלח לנועה בוואטסאפ</b><small>הוראות הגעה · נשלח בלחיצה</small></span>
             </div>
             <div className="l5-layer l5-m-today" style={{ '--i': 0 }}>
               <div className="l5-card l5-m-card"><TodayBoard /></div>
@@ -143,11 +143,11 @@ function HeroA() {
 /* ---------------- A: bento ---------------- */
 const BENTO = [
   { k: 'sync', span: 'w7', title: 'לוח אחד לכל הערוצים', line: 'Airbnb, Booking.com והזמנות ישירות נכנסים ללוח אחד ומתעדכנים לבד.', ui: <SyncMini /> },
-  { k: 'wa', span: 'w5', title: 'וואטסאפ שיוצא לבד', line: 'אישור, הוראות הגעה ובקשה לביקורת. בזמן, בשם שלכם.', ui: <WhatsAppCard stage={3} className="is-flat" /> },
+  { k: 'wa', span: 'w5', title: 'וואטסאפ מוכן מראש', line: 'אישור, הוראות הגעה ובקשה לביקורת מוכנים בזמן. שולחים בלחיצה.', ui: <WhatsAppCard stage={3} className="is-flat" /> },
   { k: 'today', span: 'w5', title: 'היום, במבט אחד', line: 'מי נכנס, מי יוצא ומה צריך לנקות. בלי לחפש.', ui: <div className="l5-card is-flat"><TodayBoard rows={undefined} title={false} /></div> },
-  { k: 'pay', span: 'w7', title: 'מקדמות ויתרות בזמן', line: 'מקדמה נגבית עם ההזמנה, ותזכורת ליתרה יוצאת לבד.', ui: <Payments className="l5-card is-flat" /> },
+  { k: 'pay', span: 'w7', title: 'מקדמות ויתרות במעקב', line: 'רואים מה שולם ומה פתוח, ותזכורת ליתרה בלחיצה.', ui: <Payments className="l5-card is-flat" /> },
   { k: 'report', span: 'w6', title: 'דוח לרואה החשבון', line: 'כל ההכנסות של החודש, מסודרות. שולחים בלחיצה.', ui: <ReportMini /> },
-  { k: 'direct', span: 'w6', title: 'עמוד הזמנה ישירה', line: 'עמוד משלכם להזמנות בלי עמלות, עם תשלום מקדמה.', ui: <DirectPageMini /> },
+  { k: 'direct', span: 'w6', title: 'עמוד הזמנה ישירה', line: 'עמוד משלכם לבקשות הזמנה, בלי עמלות.', ui: <DirectPageMini /> },
 ];
 
 function Bento() {
@@ -210,8 +210,8 @@ function Value() {
         </div>
         <ul className="l5-caps" data-reveal>
           <li><CircleOff size={20} strokeWidth={1.75} aria-hidden="true" /><b>אפס הזמנות כפולות</b><span>כל הערוצים על אותו לוח</span></li>
-          <li><MessageCircle size={20} strokeWidth={1.75} aria-hidden="true" /><b>שעות שחוזרות אליכם</b><span>ההודעות יוצאות לבד</span></li>
-          <li><Wallet size={20} strokeWidth={1.75} aria-hidden="true" /><b>כסף בזמן</b><span>מקדמה עם כל הזמנה</span></li>
+          <li><MessageCircle size={20} strokeWidth={1.75} aria-hidden="true" /><b>שעות שחוזרות אליכם</b><span>ההודעות מוכנות מראש</span></li>
+          <li><Wallet size={20} strokeWidth={1.75} aria-hidden="true" /><b>כל שקל במעקב</b><span>מקדמות ויתרות</span></li>
         </ul>
       </div>
     </section>
