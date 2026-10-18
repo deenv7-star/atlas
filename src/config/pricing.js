@@ -1,7 +1,35 @@
 /**
  * Centralized pricing configuration - single source of truth for ATLAS
- * Used across: Landing, Onboarding, Subscription, Billing, PricingSection
+ * Used across: Landing, Onboarding, Subscription, Billing, PricingSection, admin fallback.
+ *
+ * Tiers decided by Deen (18.10.2026): the plans differ ONLY by the number of complexes (מתחמים).
+ * Every plan includes the whole system. Feature lines below list only what the app really does
+ * today (checked against src/pages, 18.10.2026). Do not add a line for something the app does not do.
+ *
+ * `complexes`  = how many מתחמים the plan covers (null = unlimited). This is the limit we sell.
+ * `properties` = legacy per-property limit still read by Subscription/Billing/admin (max_properties).
+ *                Kept unchanged on purpose until the app and platform_plans count complexes
+ *                (see qa/pricing-v1/report.md, "DB/admin mismatch").
  */
+
+/** What every plan includes (same list for all three, shown on the landing). */
+export const INCLUDED_FEATURES = [
+  'לוח שנה אחד לכל היחידות',
+  'כל ההזמנות במקום אחד, לפי ערוץ: Booking.com, Airbnb וישיר',
+  'התראה כשהזמנות חופפות',
+  'מסך ״היום״: כניסות, יציאות וניקיון',
+  'ניהול לידים ופניות',
+  'הודעות וואטסאפ בלחיצה, בנוסח מוכן בעברית',
+  'מעקב תשלומים, מקדמות ויתרות',
+  'משימות ניקיון',
+  'דוח חודשי לרואה החשבון, להורדה ולהדפסה',
+  'תמיכה בעברית, בוואטסאפ',
+];
+
+export const TRIAL_DAYS = 14;
+export const TRIAL_LINE = '14 יום ניסיון חינם עם כל המערכת, בלי כרטיס אשראי.';
+export const CANCEL_LINE = 'בלי התחייבות: מפסיקים מתי שרוצים.';
+
 export const PRICING_PLANS = [
   {
     key: 'starter',
@@ -9,9 +37,12 @@ export const PRICING_PLANS = [
     nameHe: 'מתחיל',
     price: 399,
     priceYearly: 319,
+    complexes: 1,
+    limit: 'מתחם אחד',
     properties: 3,
-    desc: 'למתחמים קטנים עד 3 נכסים',
-    features: ['עד 3 נכסים', 'ניהול הזמנות', 'ניהול לידים', 'תשלומים בסיסיים'],
+    desc: 'למי שמנהל מתחם אחד: צימר, וילה או בקתות',
+    features: ['מתחם אחד', 'כל המערכת כלולה', 'תמיכה בעברית בוואטסאפ'],
+    adds: [],
     popular: false,
   },
   {
@@ -20,9 +51,12 @@ export const PRICING_PLANS = [
     nameHe: 'מקצועי',
     price: 699,
     priceYearly: 559,
+    complexes: 5,
+    limit: 'עד 5 מתחמים',
     properties: 10,
-    desc: 'לעסקים צומחים עד 10 נכסים',
-    features: ['עד 10 נכסים', 'כל תכונות Starter', 'אוטומציות חכמות', 'חוזים דיגיטליים', 'כל האינטגרציות'],
+    desc: 'למי שמנהל כמה מתחמים, עד חמישה',
+    features: ['עד 5 מתחמים', 'כל המערכת כלולה', 'תמיכה בעברית בוואטסאפ'],
+    adds: ['עד 5 מתחמים במקום מתחם אחד'],
     popular: true,
   },
   {
@@ -31,9 +65,12 @@ export const PRICING_PLANS = [
     nameHe: 'עסקי',
     price: 999,
     priceYearly: 799,
+    complexes: null,
+    limit: 'מתחמים ללא הגבלה',
     properties: null,
-    desc: 'לרשתות ומתחמים גדולים',
-    features: ['נכסים ללא הגבלה', 'כל תכונות Pro', 'API מותאם', 'מנהל חשבון אישי', 'תמיכה 24/7'],
+    desc: 'לרשתות ולחברות ניהול עם הרבה מתחמים',
+    features: ['מתחמים ללא הגבלה', 'כל המערכת כלולה', 'תמיכה בעברית בוואטסאפ'],
+    adds: ['מתחמים ללא הגבלה'],
     popular: false,
   },
 ];
