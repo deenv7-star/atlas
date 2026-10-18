@@ -35,9 +35,9 @@ export function render404() {
   );
 }
 
-/** Landing JSON-LD. FAQPage mirrors the 5 questions the landing actually shows (<Faq limit={5} />). */
+/** Landing JSON-LD. FAQPage mirrors every question the landing actually shows (<Faq /> renders all of FAQ). */
 export function landingLd() {
-  return graph([organizationLd(), websiteLd(), softwareLd(), faqLd(FAQ.slice(0, 5), 'https://atlas-il.com/')]);
+  return graph([organizationLd(), websiteLd(), softwareLd(), faqLd(FAQ, 'https://atlas-il.com/')]);
 }
 
 export { siteMeta, siteRoutes, notFoundMeta, POSTS, SITE_PAGES, mdToText, missingLegalKeys, ATLAS_ONE_LINER, FAQ, PRICING_PLANS };
