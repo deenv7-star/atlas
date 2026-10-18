@@ -1,14 +1,16 @@
 /**
- * Landing trust section, version B "מה שרואים, זה מה שמקבלים" (bold).
- * A solid indigo stage carries the headline and the six promises as a numbered list, each linking to
- * where it is written in the terms / policies. Below: a "works today / not yet" pair.
+ * Landing trust section, version B "בלי הפתעות" (bold): a solid indigo band with a bento of four
+ * large visual tiles (huge "14", WhatsApp cancel chat, export files, lock + facts), animated once on reveal.
+ * Each tile has a 2-5 word label and links to where it is written.
  * A real customer quote shows ONLY when src/config/testimonials.js holds one (empty today).
- * No founder letter, no personal framing, no reviews, ratings, counts or logos.
+ * No reviews, ratings, customer counts, logos or founder content.
  */
 import React from 'react';
-import { Check, Minus, ArrowUpLeft } from 'lucide-react';
+import { ArrowUpLeft } from 'lucide-react';
 import { visibleTestimonials } from '@/config/testimonials';
-import { PROMISES, DOES, NOT_YET } from './trust-content';
+import { TRUST } from './trust-content';
+import { MOCKS } from './TrustMocks';
+import './trust-mocks.css';
 import './trust-b.css';
 
 function Quotes() {
@@ -32,44 +34,29 @@ export default function TrustB() {
     <section id="trust" className="tb" aria-labelledby="trust-title">
       <div className="l7-inset">
         <div className="tb-stage">
-          <div className="tb-copy" data-reveal>
-            <p className="tb-eyebrow">התחייבויות ATLAS</p>
-            <h2 id="trust-title" className="tb-h">מה שרואים, <span>זה מה שמקבלים.</span></h2>
-            <p className="tb-p">שש התחייבויות שכתובות גם בתנאי השימוש ובמדיניות. לחצו על כל אחת ותראו איפה.</p>
+          <div className="tb-head" data-reveal>
+            <h2 id="trust-title" className="tb-h">בלי הפתעות. <span>הכל כתוב בתקנון.</span></h2>
           </div>
 
-          <ol className="tb-promises">
-            {PROMISES.map(({ I, t, d, href, src, ext }, i) => (
-              <li key={t} className="tb-pr" data-reveal style={{ '--d': `${(i % 3) * 60}ms` }}>
-                <div className="tb-pr-top">
-                  <span className="tb-pr-n num" dir="ltr">{String(i + 1).padStart(2, '0')}</span>
-                  <I size={22} strokeWidth={1.8} aria-hidden="true" />
-                </div>
-                <h3 className="tb-pr-t">{t}</h3>
-                <p className="tb-pr-d">{d}</p>
-                <a className="tb-pr-src" href={href} {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
-                  {ext ? 'לכתוב עכשיו' : `כתוב ב${src}`}<ArrowUpLeft size={14} strokeWidth={2.2} aria-hidden="true" />
-                </a>
-              </li>
-            ))}
-          </ol>
+          <ul className="tb-grid">
+            {TRUST.map(({ k, label, href, src }, i) => {
+              const Mock = MOCKS[k];
+              return (
+                <li key={k} className={`tb-tile is-${k}`} data-reveal style={{ '--d': `${i * 70}ms` }}>
+                  <div className="tb-vis tm-box"><Mock /></div>
+                  <div className="tb-foot">
+                    <h3 className="tb-t">{label}</h3>
+                    <a className="tb-src" href={href}>
+                      {`בכתב ${src}`}<span className="l5-sr">{`: ${label}`}</span><ArrowUpLeft size={13} strokeWidth={2.4} aria-hidden="true" />
+                    </a>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
-
-      <div className="l5-wrap">
-        <Quotes />
-
-        <div className="tb-honest">
-          <div className="tb-col is-yes" data-reveal>
-            <h3 className="tb-col-h"><Check size={18} strokeWidth={2.8} aria-hidden="true" />עובד היום</h3>
-            <ul>{DOES.map((t) => <li key={t}>{t}</li>)}</ul>
-          </div>
-          <div className="tb-col is-no" data-reveal style={{ '--d': '80ms' }}>
-            <h3 className="tb-col-h"><Minus size={18} strokeWidth={2.8} aria-hidden="true" />עוד לא, ואנחנו אומרים את זה מראש</h3>
-            <ul>{NOT_YET.map((t) => <li key={t}>{t}</li>)}</ul>
-          </div>
-        </div>
-      </div>
+      <div className="l5-wrap"><Quotes /></div>
     </section>
   );
 }
