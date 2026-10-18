@@ -125,7 +125,7 @@ const SEGMENT_TITLE = {
   'owner-reports': 'דוחות בעלים | ATLAS',
   'guest-journey': 'מסע אורח | ATLAS',
   'guest-portal': 'דף אורח והזמנה ישירה | ATLAS',
-  'dynamic-pricing': 'תמחור דינמי | ATLAS',
+  'dynamic-pricing': 'תמחור חגים וסופ״ש | ATLAS',
   'expense-tracker': 'הוצאות | ATLAS',
   today: 'היום | ATLAS',
   balances: 'יתרות | ATLAS',

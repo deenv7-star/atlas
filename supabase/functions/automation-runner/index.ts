@@ -112,6 +112,13 @@ async function quietWindows(db: SupabaseClient, fromISO: string, toISO: string):
   return out;
 }
 
+/** A message due inside a quiet window (candle lighting → havdalah) moves to 20 minutes after havdalah. */
+export function deferForQuiet(due: Date, windows: Window[]): { due: Date; reason: string | null } {
+  const w = windows.find((x) => due.getTime() >= x.from && due.getTime() < x.to);
+  return w ? { due: new Date(w.to + 20 * 60_000), reason: w.reason } : { due, reason: null };
+}
+export { quietWindows };
+
 // ── senders (pluggable) ─────────────────────────────────────────────────────
 type QueueItem = { id: string; org_id: string; booking_id: string; template_key: string; recipient: string | null };
 interface Sender { id: string; enabledFor(orgId: string): Promise<boolean>; send(item: QueueItem): Promise<{ ok: boolean; providerId?: string; error?: string }> }
@@ -200,8 +207,8 @@ async function runOrg(db: SupabaseClient, orgId: string, windows: Window[], now:
       const original = new Date(due);
       let reason: string | null = null;
       if (respectShabbat) {
-        const w = windows.find((x) => due.getTime() >= x.from && due.getTime() < x.to);
-        if (w) { due = new Date(w.to + 20 * 60_000); reason = w.reason; }
+        const d = deferForQuiet(due, windows);
+        due = d.due; reason = d.reason;
       }
       if (due.getTime() < nowMs - LOOKBACK || due.getTime() > nowMs + LOOKAHEAD) continue;
       const key = `${r.id}:${b.id}:${anchor}`;
@@ -266,7 +273,7 @@ async function runOrg(db: SupabaseClient, orgId: string, windows: Window[], now:
   return out;
 }
 
-Deno.serve(async (req) => {
+if (import.meta.main) Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   const db = createClient(URL_, SERVICE, { auth: { persistSession: false } });

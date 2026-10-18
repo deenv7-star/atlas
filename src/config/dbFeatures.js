@@ -1,13 +1,9 @@
 /**
  * Which database-backed features the connected backend supports.
  *
- * The live Supabase project is at migration 007. Migrations 008 (guest pages + direct booking:
- * bookings.guest_token, properties.guest_info/public_slug/booking_page_enabled, public RPCs) and
- * 009 (expenses table) are not applied yet, so on Supabase those features stay off and their
- * screens show a calm "בקרוב" state instead of firing requests that would fail.
- * Local demo mode (no Supabase) has every feature.
- *
- * After applying 008 / 009, raise VITE_DB_SCHEMA_LEVEL (or the default below) to turn them on.
+ * The live Supabase project has 008 (guest pages + direct booking), 009 (expenses), 010–013 and 014/015
+ * (real core: iCal sync, message queue, check-in, pricing rules, pg_cron). Local demo mode (no Supabase) has
+ * every feature except the server-only real core.
  *
  * 010 (organizations.settings) and 011 (platform admin) do NOT use the level: they are detected at
  * runtime (orgSettings.js probes the column, AdminGate asks admin_whoami), so they work on a database

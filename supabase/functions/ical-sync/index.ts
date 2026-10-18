@@ -36,6 +36,8 @@ function todayIL(): string {
 
 function guestNameFor(ev: IcsEvent, label: string): string {
   const s = ev.summary.trim();
+  // Booking.com exports every reservation AND every manual closure as "CLOSED - Not available": we can't tell them apart.
+  if (label === "Booking.com" && /closed|not available/i.test(s)) return `תפוס ב-${label}`;
   if (/not available|closed|blocked|unavailable|חסום/i.test(s)) return `חסום ב-${label}`;
   if (!s || /^reserved$|^booked$|^reservation$/i.test(s) || /airbnb/i.test(s)) return `אורח ${label}`;
   return s.slice(0, 80);

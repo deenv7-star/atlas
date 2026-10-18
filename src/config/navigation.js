@@ -53,7 +53,7 @@ export const NAV_GROUPS = [
     label: 'ניתוח',
     items: [
       { page: 'RevenueIntelligence', label: 'הכנסות', icon: BarChart3 },
-      { page: 'DynamicPricing', label: 'תמחור דינמי', icon: Tags },
+      { page: 'DynamicPricing', label: 'תמחור חגים', icon: Tags },
       { page: 'OwnerReports', label: 'דוחות בעלים', icon: FileBarChart },
     ],
   },
