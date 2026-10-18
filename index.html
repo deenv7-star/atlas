@@ -54,6 +54,28 @@
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />
 
+    <!-- Landing hero: preload the exact photo the hero <picture> picks and its fonts, on "/" only -->
+    <script>
+      (function () {
+        if (location.pathname !== '/') return;
+        var p = window.matchMedia && matchMedia('(max-aspect-ratio: 2/3)').matches;
+        var l = document.createElement('link');
+        l.rel = 'preload'; l.as = 'image'; l.type = 'image/avif'; l.setAttribute('fetchpriority', 'high');
+        l.setAttribute('imagesrcset', p
+          ? '/landing-hero/pool-p480.avif 480w, /landing-hero/pool-p720.avif 720w'
+          : '/landing-hero/pool-960.avif 960w, /landing-hero/pool-1280.avif 1280w, /landing-hero/pool-1920.avif 1920w');
+        l.setAttribute('imagesizes', '100vw');
+        document.head.appendChild(l);
+        // the hero's Hebrew weights, so the bottom-anchored headline never re-flows on a font swap (CLS)
+        ['800', '400', '700'].forEach(function (w) {
+          var f = document.createElement('link');
+          f.rel = 'preload'; f.as = 'font'; f.type = 'font/woff2'; f.crossOrigin = 'anonymous';
+          f.href = '/fonts/heebo/heebo-hebrew-' + w + '-normal.woff2';
+          document.head.appendChild(f);
+        });
+      })();
+    </script>
+
     <!-- JSON-LD Schema -->
     <script type="application/ld+json">
     {
