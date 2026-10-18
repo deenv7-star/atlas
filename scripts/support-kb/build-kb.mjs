@@ -23,7 +23,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const KB = path.join(ROOT, 'supabase/functions/support-chat/kb');
 const args = Object.fromEntries(process.argv.slice(2).map((a) => { const [k, v] = a.replace(/^--/, '').split('='); return [k, v ?? true]; }));
-const LEVEL = Number(args.level || process.env.VITE_DB_SCHEMA_LEVEL || 7);
+const LEVEL = Number(args.level || process.env.VITE_DB_SCHEMA_LEVEL || 15); // live DB is at 015 (src/config/dbFeatures.js LIVE_LEVEL)
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
 /* ── 1. generated files ─────────────────────────────────────────────────── */
