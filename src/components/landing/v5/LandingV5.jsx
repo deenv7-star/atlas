@@ -266,7 +266,14 @@ export function Pricing() {
   );
 }
 
-export function Faq({ limit = FAQ.length }) {
+const TRIAL_LINE_SHORT = 'כל המערכת פתוחה לכם, בלי כרטיס אשראי ובלי התחייבות.';
+
+/**
+ * FAQ accordion. `openFirst` opens the first answer on load (it carries the strongest benefit), and
+ * `cta` adds a closing "try it yourself" card under the list, so the last thing read is the free trial.
+ * Older landings call <Faq /> without either and render exactly as before.
+ */
+export function Faq({ limit = FAQ.length, openFirst = false, cta = false }) {
   return (
     <section id="faq" className="l5-sec l5-faq-sec" aria-labelledby="faq-title">
       <div className="l5-wrap l5-faq-grid">
@@ -280,8 +287,8 @@ export function Faq({ limit = FAQ.length }) {
           </a>
         </div>
         <div className="l5-faq" data-reveal>
-          {FAQ.slice(0, limit).map((f) => (
-            <details key={f.q}>
+          {FAQ.slice(0, limit).map((f, i) => (
+            <details key={f.q} open={openFirst && i === 0 ? true : undefined}>
               <summary>
                 <span>{f.q}</span>
                 <span className="l5-plus" aria-hidden="true"><Plus size={18} strokeWidth={2} /></span>
@@ -289,6 +296,15 @@ export function Faq({ limit = FAQ.length }) {
               <p>{f.a}</p>
             </details>
           ))}
+          {cta && (
+            <div className="l5-faq-cta">
+              <div className="l5-faq-cta-txt">
+                <h3 className="l5-faq-cta-h">הכי פשוט לבדוק בעצמכם.</h3>
+                <p>{TRIAL_LINE_SHORT}</p>
+              </div>
+              <SignupButton className="is-lg" />
+            </div>
+          )}
         </div>
       </div>
     </section>

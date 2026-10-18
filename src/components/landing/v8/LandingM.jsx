@@ -247,7 +247,7 @@ export default function LandingM() {
         <Blocks />
         <Facts />
         <Pricing8 />
-        <Faq />
+        <Faq openFirst cta />
         <Final />
       </main>
       <Credits8 />
