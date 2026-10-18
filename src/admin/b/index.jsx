@@ -5,6 +5,7 @@ import Shell from './Shell';
 import { Overview, Customers, CustomerDetail } from './pagesCustomers';
 import { Payments, Plans, Team, Health, Audit } from './pagesSystem';
 import { Support } from './pagesSupport';
+import { Inbox } from './pagesInbox';
 
 export default function AdminAppB() {
   return (
@@ -14,6 +15,7 @@ export default function AdminAppB() {
         <Route path="customers" element={<Customers />} />
         <Route path="customers/:id" element={<CustomerDetail />} />
         <Route path="support" element={<Support />} />
+        <Route path="inbox" element={<Inbox />} />
         <Route path="payments" element={<Payments />} />
         <Route path="plans" element={<Plans />} />
         <Route path="team" element={<Team />} />

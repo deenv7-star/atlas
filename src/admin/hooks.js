@@ -4,6 +4,7 @@ import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { adminApi } from './api';
 import { DEFAULT_PLANS, can } from './config';
 import { computeOverview } from './metrics';
+import { heMessage } from './ui';
 
 export const AdminCtx = createContext({ me: null, role: null });
 export function useAdmin() {
@@ -52,7 +53,7 @@ export function useAdminAction(fn, success) {
       const msg = typeof success === 'function' ? success(vars) : success;
       if (msg) atlasToastApi.success(msg);
     },
-    onError: (e) => atlasToastApi.error(e?.message || 'הפעולה לא הצליחה'),
+    onError: (e) => atlasToastApi.error(heMessage(e, 'הפעולה לא הצליחה. נסו שוב בעוד רגע.')),
   });
 }
 

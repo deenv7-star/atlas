@@ -96,6 +96,7 @@ export const ADMIN_NAV = [
   { to: '/admin', key: 'overview', label: 'סקירה', end: true },
   { to: '/admin/customers', key: 'customers', label: 'לקוחות' },
   { to: '/admin/support', key: 'support', label: 'תמיכה' },
+  { to: '/admin/inbox', key: 'inbox', label: 'פניות מהאתר' },
   { to: '/admin/payments', key: 'payments', label: 'מנויים ותשלומים' },
   { to: '/admin/plans', key: 'plans', label: 'חבילות ומחירים' },
   { to: '/admin/team', key: 'team', label: 'צוות והרשאות' },

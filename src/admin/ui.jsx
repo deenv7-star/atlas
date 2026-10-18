@@ -17,6 +17,11 @@ export function date(iso, { year = false, weekday = false } = {}) {
   const core = `${d.getDate()} ב${MONTHS[d.getMonth()]}${year || d.getFullYear() !== new Date().getFullYear() ? ` ${d.getFullYear()}` : ''}`;
   return weekday ? `יום ${DAYS[d.getDay()]}, ${core}` : core;
 }
+/** Only Hebrew text reaches the screen: a raw English error (network, library) becomes the fallback. */
+export const heMessage = (e, fallback = 'הפעולה לא הצליחה. נסו שוב בעוד רגע.') => {
+  const m = String(e?.message || '');
+  return /[\u0590-\u05FF]/.test(m) ? m : fallback;
+};
 export const pct = (x) => (x == null ? '—' : `${Math.round(x * 100)}%`);
 
 export function Pill({ tone = 'gray', children, className = '' }) {

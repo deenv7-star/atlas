@@ -9,12 +9,13 @@ import { supabase } from '@/api/supabaseClient';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { demoStore } from '@/support/demoStore';
 import { ADMIN_DEMO, SUPPORT_ADMIN_READY } from './config';
+import { heMessage } from './ui';
 
 const MISSING = (e) => ['42P01', 'PGRST205', 'PGRST202', '42883'].includes(String(e?.code || '')) || /does not exist|could not find|schema cache/i.test(String(e?.message || ''));
 async function rpc(fn, args) {
   const { data, error } = await supabase.rpc(fn, args || {});
   if (error) {
-    const e = new Error(MISSING(error) ? 'התמיכה עוד לא הופעלה במסד הנתונים (020).' : /42501|required/.test(`${error.code} ${error.message}`) ? 'אין לכם הרשאה לפעולה הזו' : 'הפעולה לא הצליחה. נסו שוב בעוד רגע.');
+    const e = new Error(MISSING(error) ? 'התמיכה עוד לא הופעלה במסד הנתונים.' : /42501|required/.test(`${error.code} ${error.message}`) ? 'אין לכם הרשאה לפעולה הזו' : 'הפעולה לא הצליחה. נסו שוב בעוד רגע.');
     e.missing = MISSING(error);
     throw e;
   }
@@ -79,8 +80,8 @@ export function useSupportActions() {
   const qc = useQueryClient();
   const refresh = () => qc.invalidateQueries({ queryKey: ['admin', 'support'] });
   return {
-    reply: useMutation({ mutationFn: ({ convId, body }) => supportAdminApi.reply(convId, body), onSuccess: refresh, onError: (e) => atlasToastApi.error(e.message) }),
-    setStatus: useMutation({ mutationFn: ({ convId, status }) => supportAdminApi.setStatus(convId, status), onSuccess: (_d, v) => { refresh(); atlasToastApi.success(v.status === 'closed' ? 'השיחה נסגרה' : 'השיחה נפתחה מחדש'); }, onError: (e) => atlasToastApi.error(e.message) }),
+    reply: useMutation({ mutationFn: ({ convId, body }) => supportAdminApi.reply(convId, body), onSuccess: refresh, onError: (e) => atlasToastApi.error(heMessage(e, 'התשובה לא נשלחה. נסו שוב בעוד רגע.')) }),
+    setStatus: useMutation({ mutationFn: ({ convId, status }) => supportAdminApi.setStatus(convId, status), onSuccess: (_d, v) => { refresh(); atlasToastApi.success(v.status === 'closed' ? 'השיחה נסגרה' : 'השיחה נפתחה מחדש'); }, onError: (e) => atlasToastApi.error(heMessage(e)) }),
     markRead: useMutation({ mutationFn: (convId) => supportAdminApi.markRead(convId), onSuccess: refresh }),
   };
 }
