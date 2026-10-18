@@ -103,7 +103,7 @@ export default function GuestService() {
                 <CheckCircle2 className="h-10 w-10 text-white" />
               </motion.div>
               <h2 className="text-2xl font-bold text-navy-900 mb-3">הבקשה נשלחה</h2>
-              <p className="text-[#64748B] leading-relaxed">
+              <p className="text-[#475569] leading-relaxed">
                 הבקשה הגיעה למארחים, והם יחזרו אליכם בהקדם.
               </p>
             </CardContent>
@@ -137,7 +137,7 @@ export default function GuestService() {
         <div className="mb-8 text-center">
           <div className="flex justify-center"><Wordmark size={28} /></div>
           <h1 className="text-3xl font-bold text-navy-900 mt-6 mb-2">שירות חדרים</h1>
-          <p className="text-[#64748B]">יש בעיה או צורך? נשמח לעזור</p>
+          <p className="text-[#475569]">יש בעיה או צורך? נשמח לעזור</p>
         </div>
 
         <Card className="shadow-card border-[#E5E7EB]">
@@ -255,7 +255,7 @@ export default function GuestService() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-[#64748B] mt-6">
+        <p className="text-center text-sm text-[#475569] mt-6">
           הבקשה עוברת ישירות למארחים של השהייה שלכם
         </p>
       </div>
