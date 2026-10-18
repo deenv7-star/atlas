@@ -1,8 +1,9 @@
 # Legal and trust pages: sources and open points
 
 Written 18.10.2026 for the public pages under `src/site/content/pages/*.md`.
-Every business detail that is not known yet is a `{{PLACEHOLDER}}` in `src/config/legal.js`
-(`npm run check:legal` lists them). **A lawyer should review all of these pages before they go live.**
+Every business detail that is not known yet is `null` in `src/config/legal.js`
+(`npm run check:legal` lists them). On the live site a missing detail is never shown as `{{KEY}}`:
+the sentence or list line that needs it is left out, or it reads "יעודכן בקרוב" (rules in `src/site/lib/md.jsx`). **A lawyer should review all of these pages before they go live.**
 
 ## Laws and official guidance used
 

@@ -38,7 +38,7 @@ export const BEFORE_AFTER = {
 
 export const TRUST = [
   { key: 'secure', text: 'מידע מוצפן ומאובטח' },
-  { key: 'backup', text: 'גיבוי אוטומטי' },
+  { key: 'backup', text: 'ייצוא הנתונים בכל רגע' }, // was 'גיבוי אוטומטי': PITR is off and no backups are listed (18.10.2026)
   { key: 'support', text: 'תמיכה בעברית, בוואטסאפ' },
   { key: 'cancel', text: 'ביטול בכל עת' },
 ];
