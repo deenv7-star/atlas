@@ -179,12 +179,12 @@ Deno.serve(async (req) => {
     const jwt = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
     if (!jwt) return json({ error: "unauthorized" }, 401);
     const userDb = createClient(URL_, ANON, { global: { headers: { Authorization: `Bearer ${jwt}` } }, auth: { persistSession: false } });
-    const { data: u, error: uErr } = await userDb.auth.getUser(jwt);
-    if (uErr || !u?.user) return json({ error: "unauthorized" }, 401);
+    // No auth.getUser() round trip (it can take 10-20 s under load): PostgREST verifies the JWT
+    // signature itself, and RLS limits the rows to the caller's own org. A bad/expired JWT errors here.
     let q = userDb.from("calendar_syncs").select("id"); // RLS: own org only
     if (body.sync_id) q = q.eq("id", body.sync_id);
     const { data, error } = await q.limit(200);
-    if (error) return json({ error: "forbidden" }, 403);
+    if (error) return json({ error: /jwt|token|auth/i.test(`${error.code} ${error.message}`) ? "unauthorized" : "forbidden" }, /jwt|token|auth/i.test(`${error.code} ${error.message}`) ? 401 : 403);
     ids = (data || []).map((r) => r.id);
     if (!ids.length) return json({ ok: true, results: [] });
   }
