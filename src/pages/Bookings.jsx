@@ -279,6 +279,8 @@ export default function BookingsPage({ selectedPropertyId }) {
     <Page>
       <PageHeader
         title="הזמנות"
+        help="bookings.page"
+        tour="bookings-page"
         subtitle="כל ההזמנות מכל הערוצים, במקום אחד."
         actions={
           <>
@@ -347,14 +349,14 @@ export default function BookingsPage({ selectedPropertyId }) {
         </Button>
       </div>
 
-      <div className="v7-card overflow-hidden">
+      <div className="v7-card overflow-hidden" data-tour="bookings-list">
         {isError ? (
           <div className="p-4"><ErrorFallback /></div>
         ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
           <DsEmptyState
             icon={CalendarDays}
             title={hasQuery ? 'לא נמצאו הזמנות' : 'עדיין אין הזמנות'}
-            description={hasQuery ? 'נסו חיפוש אחר או נקו את הסינון.' : 'הזמנה ראשונה לוקחת פחות מדקה: שם, תאריכים וערוץ.'}
+            description={hasQuery ? 'נסו חיפוש אחר או נקו את הסינון.' : 'מוסיפים הזמנה ראשונה בפחות מדקה: שם האורח, תאריכים ומאיפה הגיע.'}
             action={hasQuery ? (
               <Button variant="outline" onClick={() => void setUrlState({ search: '', tab: 'all', status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי הסינון</Button>
             ) : (

@@ -2,6 +2,7 @@
  * ATLAS design-system primitives. Every page composes from these so type, spacing,
  * radius, color and states stay identical across the app (tokens: src/styles/brand.css).
  */
+import HelpHint from '@/components/help/HelpHint';
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { CountUp, GuestAvatar } from '@/components/app/atoms';
@@ -168,11 +169,14 @@ export function Page({ children, className, wide = false }) {
   );
 }
 
-export function PageHeader({ title, subtitle, actions, children, className }) {
+export function PageHeader({ title, subtitle, actions, children, className, help, tour }) {
   return (
-    <header className={cn('v5-rise mb-7 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between', className)}>
+    <header data-tour={tour} className={cn('v5-rise mb-7 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between', className)}>
       <div className="min-w-0">
-        <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">{title}</h1>
+        <h1 className="flex items-center gap-1 text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">
+          <span className="min-w-0">{title}</span>
+          {help ? <HelpHint id={help} /> : null}
+        </h1>
         {subtitle ? <p className="mt-2 text-[15px] text-ink-400">{subtitle}</p> : null}
         {children}
       </div>
@@ -189,7 +193,7 @@ export function Card({ as: Comp = 'div', className, children, ...rest }) {
   );
 }
 
-export function Section({ title, subtitle, action, children, className, bodyClassName, icon: Icon }) {
+export function Section({ title, subtitle, action, children, className, bodyClassName, icon: Icon, help }) {
   return (
     <Card className={cn('overflow-hidden', className)}>
       {(title || action) && (
@@ -197,7 +201,7 @@ export function Section({ title, subtitle, action, children, className, bodyClas
           <div className="flex min-w-0 items-center gap-2.5">
             
             <div className="min-w-0">
-              <h2 className="truncate text-[17px] font-bold text-navy-900">{title}</h2>
+              <h2 className="flex min-w-0 items-center gap-0.5 text-[17px] font-bold text-navy-900"><span className="truncate">{title}</span>{help ? <HelpHint id={help} /> : null}</h2>
               {subtitle ? <p className="truncate text-[13px] text-ink-400">{subtitle}</p> : null}
             </div>
           </div>
@@ -219,7 +223,7 @@ function AnimatedValue({ value }) {
   return <CountUp value={n} format={(x) => `${m[1]}${x.toLocaleString('en-US')}${m[3]}`} />;
 }
 
-export function StatTile({ label, value, hint, tone = 'brand', className, loading, icon: Icon, attention, to, hero = false, delta }) {
+export function StatTile({ label, value, hint, tone = 'brand', className, loading, icon: Icon, attention, to, hero = false, delta, help }) {
   const valueCls = hero ? 'text-white' : tone === 'danger' ? 'text-[var(--st-red-fg)]' : 'text-navy-900';
   const Comp = to ? Link : 'div';
   return (
@@ -232,6 +236,7 @@ export function StatTile({ label, value, hint, tone = 'brand', className, loadin
           {label}
           {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
         </span>
+        {help && !to ? <HelpHint id={help} tone={hero ? 'onHero' : 'plain'} /> : null}
         {to ? <CardArrow onHero={hero} className="-me-1 -mt-1" /> : null}
       </span>
       {loading ? (

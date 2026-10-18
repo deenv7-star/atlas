@@ -3,6 +3,7 @@
  * One question per screen in a warm guide voice, big tappable answers, and the owner's own app
  * building itself beside (desktop) or above (phones) as they answer. 4 short chapters + a calm reveal.
  */
+import HelpHint from '@/components/help/HelpHint';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, Plus, Trash2, Loader2, Users, Home, Sparkles, Link2, MessageCircle, Clock, Wallet, MapPin, Images, Globe, Instagram, Facebook, Map as MapIcon, Crown, Briefcase, HeartHandshake, UserRound } from 'lucide-react';
@@ -460,6 +461,7 @@ export default function OnboardingA({ user, again = false }) {
               <Ghost onClick={back} aria-label="חזרה" className="!h-12 !w-12 !px-0"><ArrowRight className="h-6 w-6" aria-hidden /></Ghost>
             ) : <span className="flex h-12 items-center"><Wordmark size={20} /></span>}
             {s.chapter >= 0 && !reveal ? <Progress chapter={s.chapter} screenInChapter={idxInChapter} screensInChapter={inChapter.length} /> : <span className="flex-1" />}
+            <HelpHint id={`onb.${s.id}`} />
             {s.optional && !reveal ? <Ghost onClick={() => go(step(i, 1), { skip: true })}>אחר כך</Ghost> : null}
           </header>
 

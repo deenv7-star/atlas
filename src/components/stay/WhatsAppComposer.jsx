@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { MessageCircle, Phone } from 'lucide-react';
 import { StaySheet } from './StaySheet';
+import HelpHint from '@/components/help/HelpHint';
 import { Btn } from './StayUI';
 import { TEMPLATES, renderTemplate, normalizePhone, templateByKey } from '@/lib/stay/whatsapp';
 import { formatRangeHe } from '@/lib/stay/format';
@@ -59,7 +60,7 @@ export function WhatsAppComposer({ open, onOpenChange, booking: bookingProp, pro
     <StaySheet
       open={open}
       onOpenChange={onOpenChange}
-      title={`הודעה ל${booking.guest_name || 'אורח'}`}
+      title={<span className="inline-flex items-center gap-0.5">{`הודעה ל${booking.guest_name || 'אורח'}`}<HelpHint id="messages.whatsapp" /></span>}
       description={`${property?.name || booking.property_name || ''}${booking.check_in_date ? ` · ${formatRangeHe(booking.check_in_date, booking.check_out_date)}` : ''}`}
       footer={(
         <>

@@ -17,7 +17,9 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
 import { Link } from 'react-router-dom';
-import { Wand2 } from 'lucide-react';
+import { Wand2, Compass } from 'lucide-react';
+import HelpHint from '@/components/help/HelpHint';
+import { startTour } from '@/lib/tour/tourState';
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -127,7 +129,18 @@ export default function SettingsPage({ user }) {
 
   return (
     <Page className="max-w-[1000px]">
-      <PageHeader title="הגדרות" subtitle="החשבון, המתחם, ההתראות והאבטחה." />
+      <PageHeader title="הגדרות" help="settings.page" subtitle="הפרטים שלכם, פרטי העסק, ההתראות והאבטחה." />
+
+      <div data-tour="settings-tour" className="v7-card mb-6 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Compass className="h-5 w-5" strokeWidth={1.75} /></span>
+          <div className="min-w-0">
+            <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">סיור במערכת<HelpHint id="settings.tour" /></p>
+            <p className="mt-0.5 text-[14px] text-ink-600">דקה אחת על המסכים העיקריים, עם הסבר קולי אם רוצים.</p>
+          </div>
+        </div>
+        <Button variant="outline" className="h-11 shrink-0 rounded-full px-5" onClick={() => startTour(0)}>התחלת הסיור</Button>
+      </div>
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Tab list */}
@@ -231,7 +244,7 @@ export default function SettingsPage({ user }) {
               <div className="flex items-start gap-3">
                 <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Wand2 className="h-5 w-5" strokeWidth={1.75} /></span>
                 <div>
-                  <p className="text-[16px] font-bold text-navy-900">הגדרת העסק</p>
+                  <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">הגדרת העסק<HelpHint id="settings.setup" /></p>
                   <p className="mt-0.5 text-[14px] text-ink-600">השם, היחידות, שעות הכניסה, וואטסאפ והערוצים, במסלול הקצר.</p>
                 </div>
               </div>

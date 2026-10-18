@@ -369,6 +369,8 @@ export async function saveChannels(d) {
   return saved;
 }
 
+import { markTourPending } from '@/lib/tour/tourState';
+
 export async function finishOnboarding(user) {
   const patch = { onboarding_completed: true, onboarding_step: STEP_BASE + 9 };
   if (!user?.trial_ends_at) {
@@ -386,6 +388,8 @@ export async function finishOnboarding(user) {
   // Keyed to this user: a flag left by someone else in the same browser must never let a new account skip onboarding.
   try { localStorage.setItem('onboarding_just_completed', JSON.stringify({ uid: user?.id || '', ts: Date.now() })); } catch { /* ignore */ }
   clearDraft(user?.id);
+  // the guided tour opens on the first visit to the app (per user, saved on the account)
+  try { await markTourPending(user); } catch { /* the tour can always be opened from Settings */ }
 }
 
 /** Hebrew-friendly phone check: 9-10 digits, Israeli mobile or landline, or an international number. */

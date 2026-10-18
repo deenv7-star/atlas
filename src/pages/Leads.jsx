@@ -220,6 +220,8 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
     <Page>
       <PageHeader
         title="לידים"
+        help="leads.page"
+        tour="leads-page"
         subtitle={`${counts.new} חדשים · ${counts.contacted} בטיפול · ${counts.won} נסגרו להזמנה`}
         actions={
           <>
@@ -254,7 +256,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         </div>
       </div>
 
-      <div className="v7-card overflow-hidden">
+      <div className="v7-card overflow-hidden" data-tour="leads-list">
         {isLoading ? <div className="p-4"><SkelRows rows={5} /></div> : sorted.length ? (
           <ul className="divide-y divide-[#EEF0F5]">
             {paged.map((l, idx) => (
@@ -284,14 +286,14 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         ) : null}
       </div>
 
-      <div className={cn("v7-card overflow-hidden", sorted.length || isLoading ? "hidden" : "")}>
+      <div data-tour="leads-list" className={cn("v7-card overflow-hidden", sorted.length || isLoading ? "hidden" : "")}>
         {isError ? (
-          <div className="p-4 text-center text-sm text-red-600">שגיאה בטעינת הלידים</div>
+          <div className="p-4 text-center text-sm text-red-600">לא הצלחנו לטעון את הלידים. בדקו את החיבור לאינטרנט ורעננו את הדף.</div>
         ) : sorted.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Users}
             title={searchTerm || tags.length ? 'לא נמצאו לידים' : 'עדיין אין לידים'}
-            description={searchTerm || tags.length ? 'נסו חיפוש אחר.' : 'כל פנייה מוואטסאפ, טלפון או מהאתר נכנסת לכאן, ומכאן הופכת להזמנה.'}
+            description={searchTerm || tags.length ? 'נסו חיפוש אחר.' : 'מישהו שאל על חופשה בטלפון או בוואטסאפ? רושמים אותו כאן, ומכאן הוא הופך להזמנה.'}
             action={!searchTerm && !tags.length ? <Button onClick={openNew}><Plus strokeWidth={2.25} />ליד חדש</Button> : null}
           />
         ) : (

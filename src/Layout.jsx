@@ -10,6 +10,7 @@ import { QuickBookingProvider } from '@/components/app/QuickBooking';
 import { SkelLine } from '@/components/ds';
 import ConnectionNotice from '@/components/app/shell/ConnectionNotice';
 import { Sidebar, Header, TabBar, shellClass } from '@/ui-direction';
+import TourHost from '@/components/tour/TourHost';
 
 // Help bot + human handoff (supabase/functions/support-chat). Lazy: not part of the first paint.
 const SupportWidget = React.lazy(() => import('@/support/SupportWidget'));
@@ -111,6 +112,7 @@ function LayoutContent({ children, currentPageName }) {
           </ErrorBoundary>
           <IOSInstallBanner />
         </div>
+        <TourHost user={user} />
       </div>
     </QuickBookingProvider>
   );

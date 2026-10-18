@@ -12,7 +12,8 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { ChevronLeft, LogOut, Settings, CreditCard } from 'lucide-react';
+import { ChevronLeft, LogOut, Settings, CreditCard, Compass } from 'lucide-react';
+import { startTour } from '@/lib/tour/tourState';
 
 export function Wordmark({ className, inverted = false, size = 22 }) {
   return (
@@ -81,6 +82,9 @@ export function UserMenu({ user, onLogout, children, align = 'end', side }) {
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
           <Link to={createPageUrl('Subscription')}><CreditCard className="h-[18px] w-[18px] text-ink-600" />מנוי</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => startTour(0)} className="min-h-11 gap-2.5 text-[15px]">
+          <Compass className="h-[18px] w-[18px] text-ink-600" />סיור במערכת
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onLogout} className="min-h-11 gap-2.5 text-[15px] text-danger-600 focus:text-danger-700">
