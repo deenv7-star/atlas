@@ -598,6 +598,7 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
 .l5-ftr-links { display: flex; flex-wrap: wrap; gap: 0 8px; }
 .l5-ftr-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 14px; color: var(--ink); }
 .l5-ftr-links a:hover { color: var(--navy); }
+.l5-ftr-contact a { color: var(--indigo, #3e2bf1); font-weight: 600; }
 .l5-ftr-copy { font-size: 13px; color: var(--ink-2); margin-inline-start: auto; }
 
 /* one-shot entrance done: remove animations so a resize/re-layout can never replay them */
@@ -615,6 +616,22 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
 .lp-cookie button { min-height: 44px; padding: 0 16px; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer; border: 0; background: transparent; color: #4a5578; }
 .lp-cookie button.ok { background: #3e2bf1; color: #fff; }
 .lp-cookie button:focus-visible { outline: 2px solid #3e2bf1; outline-offset: 2px; }
+/* phones: one compact row (≤ ~8% of the screen) */
+@media (max-width: 640px) {
+  .lp-cookie { inset-inline: 8px; bottom: 8px; flex-wrap: nowrap; gap: 8px; padding: 6px 6px 6px 12px; font-size: 13px; line-height: 1.35; border-radius: 14px; }
+  .lp-cookie p { flex: 1 1 auto; min-width: 0; }
+  .lp-cookie button { padding: 0 12px; }
+  .lm-sticky.is-on ~ .lp-cookie { bottom: 80px; }
+}
+/* sticky mobile CTA (landing) */
+.lm-sticky { display: none; }
+@media (max-width: 767px) {
+  .lm-sticky { display: block; position: fixed; z-index: 45; inset-inline: 0; bottom: 0; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid #e6e8f0; transform: translateY(110%); transition: transform 260ms cubic-bezier(0.23, 1, 0.32, 1); }
+  .lm-sticky.is-on { transform: translateY(0); }
+  .lm-sticky a { display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 14px; background: #3e2bf1; color: #fff; font-family: 'Heebo', system-ui, sans-serif; font-size: 16px; font-weight: 700; text-decoration: none; }
+  .lm-sticky a:focus-visible { outline: 2px solid #1b2656; outline-offset: 2px; }
+}
+@media (prefers-reduced-motion: reduce) { .lm-sticky { transition: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   html:has(.l5) { scroll-behavior: auto; }

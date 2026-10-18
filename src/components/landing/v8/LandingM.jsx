@@ -10,7 +10,8 @@
  * All screens are real ATLAS screens in demo mode; every name, booking and amount is example data
  * and is labelled as such. No testimonials, logos or customer counts.
  */
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Check, CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
 import CookieConsent from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
@@ -276,6 +277,35 @@ function Final() {
   );
 }
 
+/* ---------------- sticky mobile CTA: after the hero, hidden again at the final CTA / footer ---------------- */
+function StickyCta() {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const hero = document.querySelector('.lm-hero');
+    const ends = [...document.querySelectorAll('.lm-x, .l5-ftr')];
+    if (!hero || typeof IntersectionObserver === 'undefined') return undefined;
+    let heroVisible = true;
+    const endVisible = new Set();
+    const update = () => setOn(!heroVisible && endVisible.size === 0);
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.target === hero) heroVisible = e.isIntersecting;
+        else if (e.isIntersecting) endVisible.add(e.target);
+        else endVisible.delete(e.target);
+      }
+      update();
+    });
+    io.observe(hero);
+    ends.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div className={`lm-sticky${on ? ' is-on' : ''}`} aria-hidden={on ? undefined : 'true'}>
+      <Link to="/register" tabIndex={on ? 0 : -1}>התחילו 14 יום חינם</Link>
+    </div>
+  );
+}
+
 export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
@@ -294,6 +324,7 @@ export default function LandingM() {
       </main>
       <Credits8 />
       <Footer />
+      <StickyCta />
       <CookieConsent revealAfter=".lm-hero" />
     </div>
   );
