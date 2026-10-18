@@ -20,8 +20,8 @@ export const LEGAL = {
   /* ---- Contact ---- */
   SUPPORT_EMAIL: null, // atlas-il.com has no inbound mail (no MX record) as of 18.10.2026
   PRIVACY_EMAIL: null, // may be the same inbox as SUPPORT_EMAIL
-  WHATSAPP_NUMBER_INTL: '972545380085', // number already published on the site (landing v5 content.js). Verify it is Deen's.
-  WHATSAPP_DISPLAY: '054-538-0085',
+  WHATSAPP_NUMBER_INTL: '972525979520', // number already published on the site (landing v5 content.js). Verify it is Deen's.
+  WHATSAPP_DISPLAY: '052-597-9520',
 
   /* ---- Accessibility (תקנה 35ה) ---- */
   ACCESSIBILITY_COORDINATOR_NAME: null,

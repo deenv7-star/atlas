@@ -20,7 +20,7 @@ export default function AccountSuspended({ reason }) {
         </p>
         <div className="mt-6 flex flex-col gap-3">
           <a
-            href="https://wa.me/972545380085"
+            href="https://wa.me/972525979520"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex h-12 items-center justify-center rounded-full bg-[#3E2BF1] px-6 text-[15px] font-semibold text-white"

@@ -16,8 +16,8 @@ export const SUPPORT_DEMO = !isSupabaseConfigured;
 export const SUPPORT_DEMO_URL = import.meta.env.VITE_SUPPORT_DEMO_URL || '';
 
 /** Human channel that always works, even before 020 is applied. Same number as the landing page. */
-export const SUPPORT_WHATSAPP = '972545380085';
-export const SUPPORT_WHATSAPP_DISPLAY = '054-538-0085';
+export const SUPPORT_WHATSAPP = '972525979520';
+export const SUPPORT_WHATSAPP_DISPLAY = '052-597-9520';
 export const waSupportLink = (text = '') => `https://wa.me/${SUPPORT_WHATSAPP}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
 
 /** Suggested questions per screen (first one is the most likely). */

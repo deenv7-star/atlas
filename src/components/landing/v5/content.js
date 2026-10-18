@@ -4,8 +4,8 @@
  * amber only as a tiny "today" dot. No photos. No invented customer numbers or testimonials:
  * every number on the page is example data inside the product UI or a real price from pricing.js.
  */
-export const WHATSAPP_URL = 'https://wa.me/972545380085';
-export const PHONE_DISPLAY = '054-538-0085';
+export const WHATSAPP_URL = 'https://wa.me/972525979520';
+export const PHONE_DISPLAY = '052-597-9520';
 export const CTA_SIGNUP = '14 ימי ניסיון חינם';
 
 export const CTA_NOTE = 'בלי כרטיס אשראי';
