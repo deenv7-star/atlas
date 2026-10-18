@@ -575,10 +575,17 @@ const supabaseAuth = {
     return this.me();
   },
 
-  async deleteAccount() {
-    // Supabase does not expose a client-side delete-user API.
-    // This should be implemented as a server-side edge function.
-    throw new Error('Account deletion requires a server-side function.');
+  /** Real deletion: public.delete_my_account (migration 013b, SECURITY DEFINER, typed confirmation). */
+  async deleteAccount({ confirm } = {}) {
+    const { data, error } = await supabase.rpc('delete_my_account', { p_confirm: confirm || '' });
+    if (error) {
+      const e = new Error(/[\u0590-\u05FF]/.test(error.message || '') ? error.message : 'המחיקה לא בוצעה. שום דבר לא נמחק.');
+      e.code = error.code;
+      throw e;
+    }
+    // The auth user no longer exists: drop the local session without calling the server.
+    try { await supabase.auth.signOut({ scope: 'local' }); } catch { /* ignore */ }
+    return data || { ok: true };
   },
 
   redirectToLogin(returnUrl) {

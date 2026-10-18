@@ -20,6 +20,8 @@ import { Link } from 'react-router-dom';
 import { Wand2, Compass } from 'lucide-react';
 import HelpHint from '@/components/help/HelpHint';
 import { startTour } from '@/lib/tour/tourState';
+import SecuritySettings from '@/components/settings/SecuritySettings';
+import { readOrgSettings, writeOrgSettings } from '@/lib/onboarding/orgSettings';
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -84,13 +86,27 @@ export default function SettingsPage({ user }) {
     }
   }, [org]);
 
-  const [notifSettings, setNotifSettings] = useState({
+  // Saved in organizations.settings (migration 010), not just a toast.
+  const [notifSettings, setNotifSettings] = useState(() => ({
     new_booking: true,
     new_lead: true,
     payment_received: true,
     new_review: false,
     system_updates: true,
-  });
+    ...(readOrgSettings(user?.organization_id)?.notification_prefs || {}),
+  }));
+  const [savingNotif, setSavingNotif] = useState(false);
+  const saveNotif = async () => {
+    setSavingNotif(true);
+    try {
+      await writeOrgSettings(user?.organization_id, { notification_prefs: notifSettings });
+      toast({ title: 'העדפות ההתראות נשמרו' });
+    } catch {
+      toast({ title: 'לא הצלחנו לשמור. נסו שוב.', variant: 'destructive' });
+    } finally {
+      setSavingNotif(false);
+    }
+  };
 
   const saveProfileMutation = useMutation({
     mutationFn: async () => {
@@ -172,7 +188,7 @@ export default function SettingsPage({ user }) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-[18px] font-bold">פרטים אישיים</CardTitle>
-                <CardDescription>עדכן את פרטי הפרופיל שלך</CardDescription>
+                <CardDescription>עדכנו את פרטי הפרופיל שלכם</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
                 {/* Avatar */}
@@ -255,7 +271,7 @@ export default function SettingsPage({ user }) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-[18px] font-bold">פרטי הארגון</CardTitle>
-                <CardDescription>מידע על העסק שלך</CardDescription>
+                <CardDescription>המידע על העסק שלכם</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -324,15 +340,15 @@ export default function SettingsPage({ user }) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-[18px] font-bold">הגדרות התראות</CardTitle>
-                <CardDescription>בחר אילו התראות תרצה לקבל</CardDescription>
+                <CardDescription>בחרו על מה תרצו לקבל התראות</CardDescription>
               </CardHeader>
               <CardContent className="space-y-1">
                 {[
-                  { key: 'new_booking', label: 'הזמנה חדשה', desc: 'קבל התראה כשמתווספת הזמנה חדשה' },
-                  { key: 'new_lead', label: 'ליד חדש', desc: 'קבל התראה על לידים חדשים' },
-                  { key: 'payment_received', label: 'תשלום התקבל', desc: 'קבל התראה על תשלומים שהתקבלו' },
-                  { key: 'new_review', label: 'ביקורת חדשה', desc: 'קבל התראה על ביקורות חדשות' },
-                  { key: 'system_updates', label: 'עדכוני מערכת', desc: 'קבל עדכונים על שיפורים ותכונות' },
+                  { key: 'new_booking', label: 'הזמנה חדשה', desc: 'כשנכנסת הזמנה חדשה' },
+                  { key: 'new_lead', label: 'ליד חדש', desc: 'כשמגיעה פנייה חדשה' },
+                  { key: 'payment_received', label: 'תשלום התקבל', desc: 'כשמתקבל תשלום' },
+                  { key: 'new_review', label: 'ביקורת חדשה', desc: 'כשנכתבת ביקורת חדשה' },
+                  { key: 'system_updates', label: 'עדכוני מערכת', desc: 'שיפורים ויכולות חדשות' },
                 ].map(item => (
                   <div key={item.key} className="flex items-center justify-between py-3 border-b border-line last:border-0">
                     <div>
@@ -348,11 +364,12 @@ export default function SettingsPage({ user }) {
                 ))}
                 <div className="pt-3 flex justify-end">
                   <Button
-                    onClick={() => toast({ title: 'הגדרות ההתראות נשמרו' })}
+                    onClick={saveNotif}
+                    disabled={savingNotif}
                     className="gap-2"
                   >
                     <Save className="w-4 h-4" />
-                    שמור
+                    {savingNotif ? 'שומרים…' : 'שמירה'}
                   </Button>
                 </div>
               </CardContent>
@@ -361,49 +378,13 @@ export default function SettingsPage({ user }) {
 
           {/* Security Tab */}
           {activeTab === 'security' && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-[18px] font-bold">אבטחה</CardTitle>
-                <CardDescription>נהל את אבטחת החשבון שלך</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-4 bg-emerald-50 rounded-xl flex items-start gap-3">
-                  <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Shield className="w-4 h-4 text-emerald-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-emerald-800">החשבון שלך מאובטח</p>
-                    <p className="text-xs text-emerald-600 mt-0.5">הגישה מנוהלת דרך ספק הזהות שלך</p>
-                  </div>
-                </div>
-                <Separator />
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-ink-600">פעולות אבטחה</p>
-                  <Button variant="outline" className="w-full justify-start gap-2">
-                    <Shield className="w-4 h-4 text-ink-400" />
-                    אפשר אימות דו-שלבי
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2 text-red-600 border-red-200 hover:bg-red-50"
-                    onClick={async () => {
-                      if (confirm('האם אתה בטוח שברצונך למחוק את החשבון? פעולה זו בלתי הפיכה.')) {
-                        try {
-                          await base44.auth.deleteAccount?.();
-                        } catch (e) {
-                          // proceed to logout even if deleteAccount is unavailable
-                        }
-                        await logout(false);
-                        window.location.href = '/';
-                      }
-                    }}
-                  >
-                    <AlertCircle className="w-4 h-4" />
-                    מחק חשבון
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <SecuritySettings
+              user={user}
+              onDeleted={async () => {
+                try { await logout(false); } catch { /* session is already gone */ }
+                window.location.href = '/login?success=' + encodeURIComponent('החשבון נמחק. תודה שהייתם איתנו.');
+              }}
+            />
           )}
         </div>
       </div>
