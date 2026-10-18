@@ -79,14 +79,14 @@ export function CompareTable() {
   );
 }
 
-export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '' }) {
+export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2' }) {
   const [yearly, setYearly] = useState(false);
   const first = PRICING_PLANS[0];
   return (
     <section id="pricing" className={`v8p v8pa ${tone}`} aria-labelledby="pricing-title">
       <div className="l5-wrap">
         <div className="v8-head is-center" data-reveal>
-          <h2 id="pricing-title" className="v8-h2">{title}</h2>
+          <H id="pricing-title" className="v8-h2">{title}</H>
           <p className="v8-txt">כל החבילות כוללות את כל המערכת. ההבדל הוא רק במספר המתחמים.</p>
         </div>
         <div className="v8p-seg" role="group" aria-label="תקופת חיוב" data-reveal>

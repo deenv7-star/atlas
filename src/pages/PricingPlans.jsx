@@ -23,7 +23,7 @@ export default function PricingPlans() {
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <V7Header links={NAV} />
       <main id="main" className="pt-[72px]">
-        <Pricing8 title="מחירים. פשוט, לפי מספר המתחמים." />
+        <Pricing8 as="h1" title="מחירים. פשוט, לפי מספר המתחמים." />
         <Faq limit={5} />
       </main>
       <Footer />
