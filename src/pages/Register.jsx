@@ -13,6 +13,8 @@ import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimi
 import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
+import TermsConsent from '@/components/legal/TermsConsent';
+import { TERMS_VERSION } from '@/config/consent';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -25,6 +27,10 @@ export default function Register() {
   const [form, setForm] = useState({ email: '', password: '', confirmPassword: '' });
   const [touched, setTouched] = useState({ email: false, password: false, confirmPassword: false });
   const [errors, setErrors] = useState({});
+  // Upay/Bit requirement: an active, unchecked-by-default consent to the terms + privacy policy.
+  const [agreed, setAgreed] = useState(false);
+  const [consentError, setConsentError] = useState(false);
+  const onConsent = (v) => { setAgreed(v); if (v) setConsentError(false); };
 
   const set = (field) => (e) => {
     setForm(f => ({ ...f, [field]: e.target.value }));
@@ -63,6 +69,11 @@ export default function Register() {
     e.preventDefault();
     setTouched({ email: true, password: true, confirmPassword: true });
     if (!validate()) return;
+    if (!agreed) {
+      setConsentError(true);
+      document.getElementById('terms-consent')?.focus();
+      return;
+    }
 
     const rl = checkRateLimit(form.email);
     if (!rl.allowed) {
@@ -78,6 +89,8 @@ export default function Register() {
         password: form.password,
         full_name: '',
         organization_name: '',
+        terms_accepted_at: new Date().toISOString(),
+        terms_version: TERMS_VERSION,
       });
       clearAttempts(form.email);
 
@@ -243,6 +256,8 @@ export default function Register() {
                 </div>
                 {touched.confirmPassword && errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
               </div>
+
+              <TermsConsent checked={agreed} onChange={onConsent} error={consentError} />
 
               <Button type="submit" disabled={!canSubmit || isLoading} className="w-full h-12 text-[16px] font-bold gap-2">
                 {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}

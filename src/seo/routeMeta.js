@@ -47,7 +47,7 @@ const EXACT = {
     description: 'מדיניות הפרטיות של ATLAS.',
   },
   '/terms': {
-    title: 'תנאי שימוש | ATLAS',
+    title: 'תקנון ותנאי שימוש | ATLAS',
     description: 'תנאי השימוש בשירות ATLAS.',
   },
   '/changelog': {

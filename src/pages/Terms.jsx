@@ -247,9 +247,9 @@ export default function Terms() {
               לשאלות, בקשות תמיכה או כל נושא הקשור לתנאי שימוש אלה, אנא צרו קשר:
             </p>
             <div className="space-y-2 text-sm">
-              <p><strong>דואר אלקטרוני:</strong> legal@atlas-il.com</p>
+              <p><strong>דואר אלקטרוני:</strong> support@atlas-il.com</p>
               <p><strong>תמיכה טכנית:</strong> atlas-il.com/contact</p>
-              <p><strong>כתובת:</strong> רח' הרצל 1, תל אביב, ישראל</p>
+              <p><strong>כתובת:</strong> המעגן 3, דירה 21, נהריה 2221622</p>
             </div>
           </section>
         </div>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Check, Crown, Zap, Rocket, CreditCard, Calendar, Receipt } from 'lucide-react';
 import { PRICING_PLANS } from '@/config/pricing';
 import { isSupabaseConfigured, LOCAL_API_URL } from '@/api/supabaseClient';
+import TermsConsent from '@/components/legal/TermsConsent';
 
 const PLANS = Object.fromEntries(
   PRICING_PLANS.map((p) => [
@@ -24,8 +25,18 @@ const PLANS = Object.fromEntries(
 export default function BillingPage({ user }) {
   const [loading, setLoading] = useState(false);
   const [stripeLoading, setStripeLoading] = useState(false);
+  // Upay/Bit requirement: active consent before any payment step.
+  const [agreed, setAgreed] = useState(false);
+  const [consentError, setConsentError] = useState(false);
+  const needConsent = (anchor) => {
+    if (agreed) return false;
+    setConsentError(true);
+    document.getElementById(anchor)?.focus();
+    return true;
+  };
 
   const goStripeCheckout = async () => {
+    if (needConsent('billing-consent')) return;
     const token = localStorage.getItem('atlas_jwt_token');
     if (!token) {
       window.alert('יש להתחבר מחדש');
@@ -80,6 +91,7 @@ export default function BillingPage({ user }) {
   const nextBillingDate = user?.next_billing_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
   const handleUpgrade = async (planId) => {
+    if (needConsent('billing-consent-up')) return;
     setLoading(true);
     try {
       await base44.auth.updateMe({ subscription_plan: planId });
@@ -142,6 +154,7 @@ export default function BillingPage({ user }) {
 
         {!isSupabaseConfigured && (
           <div className="mt-5 flex flex-wrap gap-2 border-t border-line pt-5">
+            <TermsConsent id="billing-consent" className="w-full" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
             <Button type="button" disabled={stripeLoading} onClick={goStripeCheckout}>
               {stripeLoading ? 'פותחים…' : 'הוספת אמצעי תשלום'}
             </Button>
@@ -155,6 +168,7 @@ export default function BillingPage({ user }) {
       {upgrades.length > 0 && (
         <section>
           <h2 className="mb-3 text-[20px] font-bold text-navy-900">שדרוג</h2>
+          <TermsConsent id="billing-consent-up" className="mb-4 max-w-[560px]" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
           <div className="grid gap-4 md:grid-cols-2">
             {upgrades.map(([key, p]) => (
               <Card key={key} className={cn('flex h-full flex-col p-5 md:p-6', p.popular && 'border-brand-600 ring-1 ring-brand-600')}>

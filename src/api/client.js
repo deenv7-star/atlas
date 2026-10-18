@@ -540,12 +540,13 @@ const supabaseAuth = {
     };
   },
 
-  async signUp({ email, password, full_name = '', organization_name = '' }) {
+  async signUp({ email, password, full_name = '', organization_name = '', terms_accepted_at, terms_version }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name, organization_name },
+        // terms_* = record of the active consent checkbox on /register (Upay/Bit requirement).
+        data: { full_name, organization_name, ...(terms_accepted_at ? { terms_accepted_at, terms_version } : {}) },
         // The confirmation link lands on the verify page, which shows "confirmed → continue" or "expired".
         emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/verify-email?confirmed=1` : undefined,
       },
