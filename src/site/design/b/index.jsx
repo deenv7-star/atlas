@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Clock, CalendarDays, ListTree } from 'lucide-react';
-import { LEGAL } from '@/config/legal';
+import { LEGAL, BUSINESS_LINE } from '@/config/legal';
 import { POSTS } from '@/site/content/posts';
 import { FOOTER_GROUPS } from '@/site/pages';
 import { ATLAS_ONE_LINER, crumbsFor } from '@/site/seo';
@@ -60,7 +60,7 @@ export function Footer() {
             </nav>
           ))}
         </div>
-        <p className="b-ftr-copy">© 2026 ATLAS · נבנתה בישראל</p>
+        <p className="b-ftr-copy">© 2026 ATLAS · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>
   );

@@ -12,6 +12,7 @@ import { AvailabilityCalendar } from '@/components/stay/AvailabilityCalendar';
 import { Wordmark, Btn } from '@/components/stay/StayUI';
 import '@/styles/atlas-brand.css';
 import { heCount } from '@/lib/hebrewCount';
+import TermsConsent from '@/components/legal/TermsConsent';
 
 function Shell({ children }) {
   return (
@@ -33,6 +34,8 @@ export default function BookDirectPage() {
   const [range, setRange] = useState({ ci: '', co: '' });
   const [form, setForm] = useState({ full_name: '', phone: '', email: '', adults: 2, children: 0, notes: '' });
   const [touched, setTouched] = useState(false);
+  // Upay/Bit requirement: active consent (unchecked by default) on every page we send to customers.
+  const [agreed, setAgreed] = useState(false);
   const submit = useMutation({ mutationFn: (payload) => submitDirectInquiry(slug, payload) });
 
   useEffect(() => {
@@ -64,13 +67,17 @@ export default function BookDirectPage() {
     phone: !PHONE_RE.test(form.phone.trim()) ? 'נא למלא טלפון תקין' : '',
     dates: !range.ci || !range.co ? 'נא לבחור תאריכי כניסה ויציאה בלוח' : '',
     guests: tooMany ? `עד ${property.max_guests} אורחים` : '',
+    consent: !agreed ? 'consent' : '',
   };
   const valid = !Object.values(errors).some(Boolean);
 
   const onSubmit = (e) => {
     e.preventDefault();
     setTouched(true);
-    if (!valid) return;
+    if (!valid) {
+      if (!errors.full_name && !errors.phone && !errors.dates && !errors.guests && errors.consent) document.getElementById('bd-consent')?.focus();
+      return;
+    }
     submit.mutate({ ...form, check_in_date: range.ci, check_out_date: range.co });
   };
 
@@ -153,6 +160,7 @@ export default function BookDirectPage() {
                 </div>
               </div>
               {submit.isError ? <p className="mt-3 text-[14px] font-bold" style={{ color: 'var(--status-danger)' }}>הפנייה לא נשלחה. נסו שוב בעוד רגע.</p> : null}
+              <TermsConsent id="bd-consent" className="mt-4" refundLine={false} checked={agreed} onChange={setAgreed} error={touched && !agreed} />
               <Btn type="submit" variant="primary" size="lg" icon={Send} className="w-full mt-4" disabled={submit.isPending}>
                 {submit.isPending ? 'שולח…' : 'שליחת בקשה להזמנה'}
               </Btn>

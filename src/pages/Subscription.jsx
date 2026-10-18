@@ -7,6 +7,8 @@ import { Check, Zap, Crown, Rocket } from 'lucide-react';
 import { PRICING_PLANS, TRIAL_LINE } from '@/config/pricing';
 import { submitPublicContact } from '@/lib/submitPublicContact';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
+import TermsConsent from '@/components/legal/TermsConsent';
+import { TERMS_VERSION } from '@/config/consent';
 
 const PLANS = PRICING_PLANS.map((p) => ({
   id: p.key,
@@ -23,6 +25,9 @@ export default function SubscriptionPage({ user }) {
   const [currentPlan, setCurrentPlan] = useState('starter');
   const [requested, setRequested] = useState('');
   const [busy, setBusy] = useState('');
+  // Upay/Bit requirement: active consent before any purchase step.
+  const [agreed, setAgreed] = useState(false);
+  const [consentError, setConsentError] = useState(false);
   const isTrial = !user?.subscription_status || user.subscription_status === 'trialing';
 
   useEffect(() => {
@@ -34,6 +39,11 @@ export default function SubscriptionPage({ user }) {
   // There is no self-serve billing yet. Choosing a plan sends a real request to the ATLAS team
   // (contact_messages, seen in the admin console) instead of pretending the plan changed.
   const handleSelectPlan = async (plan) => {
+    if (!agreed) {
+      setConsentError(true);
+      document.getElementById('sub-consent')?.focus();
+      return;
+    }
     setBusy(plan.id);
     try {
       const { ok, data } = await submitPublicContact({
@@ -41,7 +51,7 @@ export default function SubscriptionPage({ user }) {
         email: user?.email || '',
         phone: user?.phone || '',
         subject: `upgrade:${plan.id}`,
-        message: `בקשה לעבור לחבילת ${plan.name} (₪${plan.price} לחודש). ארגון: ${user?.organization_name || '—'} (${user?.organization_id || '—'}).`,
+        message: `בקשה לעבור לחבילת ${plan.name} (₪${plan.price} לחודש). ארגון: ${user?.organization_name || '—'} (${user?.organization_id || '—'}). הלקוח אישר את התקנון ומדיניות הפרטיות (גרסה ${TERMS_VERSION}) ב-${new Date().toISOString()}.`,
       });
       if (!ok) throw new Error(data?.error || '');
       setRequested(plan.id);
@@ -56,6 +66,8 @@ export default function SubscriptionPage({ user }) {
   return (
     <Page className="space-y-6">
       <PageHeader title="מנוי" subtitle={isTrial ? TRIAL_LINE : 'אפשר להחליף חבילה או לבטל בכל רגע.'} className="!mb-0" />
+
+      <TermsConsent id="sub-consent" className="max-w-[560px]" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
 
       <div className="grid gap-4 md:grid-cols-3">
         {PLANS.map((plan) => {
