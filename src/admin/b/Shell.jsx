@@ -1,11 +1,12 @@
 import { NavLink, Link } from 'react-router-dom';
-import { LayoutGrid, Users, CreditCard, Tags, ShieldCheck, Activity, ScrollText, ArrowUpRight } from 'lucide-react';
+import { LayoutGrid, Users, CreditCard, Tags, ShieldCheck, Activity, ScrollText, ArrowUpRight, LifeBuoy } from 'lucide-react';
 import { ADMIN_NAV, ROLES, ADMIN_DEMO } from '../config';
 import { useAdmin } from '../hooks';
 import { DemoBadge } from '../ui';
+import { useSupportUnread } from '../supportApi';
 
-const ICONS = { overview: LayoutGrid, customers: Users, payments: CreditCard, plans: Tags, team: ShieldCheck, health: Activity, audit: ScrollText };
-const SHORT = { overview: 'סקירה', customers: 'לקוחות', payments: 'תשלומים', plans: 'חבילות', team: 'צוות', health: 'תקינות', audit: 'יומן' };
+const ICONS = { support: LifeBuoy, overview: LayoutGrid, customers: Users, payments: CreditCard, plans: Tags, team: ShieldCheck, health: Activity, audit: ScrollText };
+const SHORT = { support: 'תמיכה', overview: 'סקירה', customers: 'לקוחות', payments: 'תשלומים', plans: 'חבילות', team: 'צוות', health: 'תקינות', audit: 'יומן' };
 
 function initialsOf(s) {
   return String(s || '').split(/\s+/).map((x) => x[0]).join('').slice(0, 2).toUpperCase();
@@ -14,6 +15,8 @@ function initialsOf(s) {
 export default function Shell({ children }) {
   const { me, role } = useAdmin();
   const name = me?.full_name || me?.email?.split('@')[0] || '';
+  const unread = useSupportUnread().data?.conversations || 0;
+  const badge = (key) => (key === 'support' && unread ? <span className="b-nav-badge" aria-label={`${unread} שיחות ממתינות`}>{unread}</span> : null);
   return (
     <div className="adm-root b-root" dir="rtl">
       <a href="#adm-main" className="b-skip">דילוג לתוכן</a>
@@ -32,6 +35,7 @@ export default function Shell({ children }) {
                   <NavLink to={n.to} end={n.end} className="b-nav-item">
                     <Icon size={20} strokeWidth={1.75} aria-hidden />
                     <span>{n.label}</span>
+                    {badge(n.key)}
                   </NavLink>
                 </li>
               );
@@ -51,7 +55,7 @@ export default function Shell({ children }) {
         </div>
         <nav aria-label="ניהול ATLAS, נייד" className="b-mnav">
           {ADMIN_NAV.map((n) => (
-            <NavLink key={n.key} to={n.to} end={n.end} className="b-mnav-item">{SHORT[n.key]}</NavLink>
+            <NavLink key={n.key} to={n.to} end={n.end} className="b-mnav-item">{SHORT[n.key]}{badge(n.key)}</NavLink>
           ))}
         </nav>
       </header>

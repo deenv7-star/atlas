@@ -15,6 +15,11 @@ import { PRICING_PLANS } from '@/config/pricing';
  * Set VITE_ADMIN_CONSOLE=off to turn the console off without touching the database.
  */
 export const ADMIN_DB_READY = !isSupabaseConfigured || String(import.meta.env.VITE_ADMIN_CONSOLE || '').toLowerCase() !== 'off';
+/**
+ * Support inbox (migration 020): detected at runtime like 010/011 (a missing table/function shows a
+ * calm "not enabled yet" card). VITE_SUPPORT_CHAT=off turns the widget and the inbox off.
+ */
+export const SUPPORT_ADMIN_READY = String(import.meta.env.VITE_SUPPORT_CHAT || '').toLowerCase() !== 'off';
 /** Local demo mode (no Supabase): sample data, persisted in this browser only. */
 export const ADMIN_DEMO = !isSupabaseConfigured;
 
@@ -24,7 +29,7 @@ export const DEMO_ADMIN_EMAILS = ['deenv7@gmail.com', 'qa+hark@atlas-il.com'];
 export const ROLES = {
   owner: { label: 'בעלים', rank: 3, desc: 'הכל, כולל מחירים וצוות' },
   admin: { label: 'מנהל', rank: 2, desc: 'לקוחות, מנויים ותשלומים' },
-  support: { label: 'תמיכה', rank: 1, desc: 'צפייה והערות בלבד' },
+  support: { label: 'תמיכה', rank: 1, desc: 'צפייה, הערות ומענה ללקוחות בתמיכה' },
 };
 export const can = (role, min) => (ROLES[role]?.rank || 0) >= (ROLES[min]?.rank || 99);
 
@@ -67,6 +72,9 @@ export const AUDIT_ACTIONS = {
   'team.add': 'הוספה לצוות',
   'team.role': 'שינוי הרשאה',
   'team.remove': 'הסרה מהצוות',
+  'support.reply': 'תשובה בתמיכה',
+  'support.closed': 'סגירת שיחת תמיכה',
+  'support.open': 'פתיחה מחדש של שיחת תמיכה',
 };
 
 /** Fallback plan list (same numbers as the landing) when the DB list is not loaded yet. */
@@ -87,6 +95,7 @@ export const DEFAULT_PLANS = PRICING_PLANS.map((p, i) => ({
 export const ADMIN_NAV = [
   { to: '/admin', key: 'overview', label: 'סקירה', end: true },
   { to: '/admin/customers', key: 'customers', label: 'לקוחות' },
+  { to: '/admin/support', key: 'support', label: 'תמיכה' },
   { to: '/admin/payments', key: 'payments', label: 'מנויים ותשלומים' },
   { to: '/admin/plans', key: 'plans', label: 'חבילות ומחירים' },
   { to: '/admin/team', key: 'team', label: 'צוות והרשאות' },

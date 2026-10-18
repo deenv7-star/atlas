@@ -11,6 +11,9 @@ import { SkelLine } from '@/components/ds';
 import ConnectionNotice from '@/components/app/shell/ConnectionNotice';
 import { Sidebar, Header, TabBar, shellClass } from '@/ui-direction';
 
+// Help bot + human handoff (supabase/functions/support-chat). Lazy: not part of the first paint.
+const SupportWidget = React.lazy(() => import('@/support/SupportWidget'));
+
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans'];
 
 function PageLoader() {
@@ -103,6 +106,9 @@ function LayoutContent({ children, currentPageName }) {
             </main>
             <TabBar user={user} onLogout={handleLogout} />
           </div>
+          <ErrorBoundary section="support-widget" variant="silent">
+            <Suspense fallback={null}><SupportWidget /></Suspense>
+          </ErrorBoundary>
           <IOSInstallBanner />
         </div>
       </div>

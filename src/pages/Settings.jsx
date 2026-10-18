@@ -27,7 +27,13 @@ const tabs = [
 ];
 
 export default function SettingsPage({ user }) {
-  const [activeTab, setActiveTab] = useState('profile');
+  // Deep links (?tab=organization) — used by the help bot's in-app links.
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      const t = new URLSearchParams(window.location.search).get('tab');
+      return tabs.some((x) => x.id === t) ? t : 'profile';
+    } catch { return 'profile'; }
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { logout } = useAuth();
