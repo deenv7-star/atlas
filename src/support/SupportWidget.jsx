@@ -174,6 +174,12 @@ export default function SupportWidget() {
     if (!isDesktop) document.documentElement.classList.add('sp-lock');
     return () => { clearTimeout(t); window.removeEventListener('keydown', onKey); document.documentElement.classList.remove('sp-lock'); };
   }, [open, isDesktop, close]);
+  // the guided tour owns the screen while it runs: close the chat (the launcher is hidden by CSS on html[data-tour-running])
+  useEffect(() => {
+    const onTour = (e) => { if (e?.detail?.active) setOpen(false); };
+    window.addEventListener('atlas:tour-active', onTour);
+    return () => window.removeEventListener('atlas:tour-active', onTour);
+  }, []);
   useEffect(() => { const el = inputRef.current; if (el) { el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 132)}px`; } }, [draft]);
 
   const send = useCallback(async (textIn, retryOf = null) => {

@@ -154,3 +154,6 @@ html.sp-lock, html.sp-lock body { overflow: hidden; }
   .sp-typing i { animation: none; opacity: 0.7; }
   .sp-launcher, .sp-icon, .sp-link, .sp-send, .sp-primary, .sp-human-btn, .sp-suggest button { transition: none; }
 }
+
+/* the guided tour owns the screen while it runs (TourHost sets html[data-tour-running]) */
+html[data-tour-running] .sp-launcher, html[data-tour-running] .sp-panel { display: none !important; }

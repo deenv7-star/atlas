@@ -140,6 +140,16 @@ export default function TourHost({ user }) {
     return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', upd); window.removeEventListener('scroll', upd, true); ro?.disconnect(); };
   }, [active, ready, idx]);
 
+  /* while the tour runs the help-chat launcher (bottom-left, above the tab bar) is hidden and its chat closed,
+     so the guide card never sits on top of it or under it */
+  useEffect(() => {
+    const root = document.documentElement;
+    if (active) root.setAttribute('data-tour-running', '');
+    else root.removeAttribute('data-tour-running');
+    window.dispatchEvent(new CustomEvent('atlas:tour-active', { detail: { active } }));
+    return () => root.removeAttribute('data-tour-running');
+  }, [active]);
+
   /* progress on the account (reload mid-way → continue) */
   useEffect(() => {
     if (active && user?.id) setTourState(user, { status: 'pending', step: idx });
