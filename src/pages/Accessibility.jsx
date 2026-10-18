@@ -123,7 +123,7 @@ export default function Accessibility() {
             </p>
             <div className="bg-brand-50/60 rounded-xl p-4">
               <p className="text-gray-700">
-                <span className="font-semibold">אימייל:</span> <a href="mailto:support@atlas-il.com" className="font-medium text-brand-600 underline-offset-2 hover:underline">support@atlas-il.com</a>
+                <span className="font-semibold">אימייל:</span> <a href="/contact" className="font-medium text-brand-600 underline-offset-2 hover:underline">atlas-il.com/contact</a>
               </p>
             </div>
             <p className="text-sm text-gray-500 mt-3">

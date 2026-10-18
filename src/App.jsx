@@ -10,7 +10,6 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, Navigate, useParams } from 'react-router-dom';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
-import PageNotFound from './lib/PageNotFound';
 import SeoManager from '@/components/seo/SeoManager';
 import ScrollToTop from '@/lib/ScrollToTop';
 import { createPageUrl } from '@/utils';
@@ -31,6 +30,9 @@ const AccountSuspended = lazy(() => import('@/components/common/AccountSuspended
 const GuestStayPage = lazy(() => import('@/pages/GuestStay'));
 const BookDirectPage = lazy(() => import('@/pages/BookDirect'));
 const MonthlyReportPrintPage = lazy(() => import('@/pages/MonthlyReportPrint'));
+// Public site (blog + legal + trust pages). Prerendered to static HTML at build (scripts/prerender.mjs).
+const SitePage = lazy(() => import('@/site/SitePage'));
+const SiteNotFound = lazy(() => import('@/site/SitePage').then((m) => ({ default: m.SiteNotFound })));
 
 function PublicFallback() {
   return <div className="min-h-[100dvh]" style={{ background: '#F7F8FB' }} />;
@@ -154,15 +156,20 @@ const AuthenticatedApp = () => {
       <Route path="/update-password" element={<S><UpdatePassword /></S>} />
 
       {/* Public static pages — no auth required */}
-      <Route path="/about" element={<LayoutWrapper currentPageName="About"><Pages.About /></LayoutWrapper>} />
+      <Route path="/about" element={<S><SitePage /></S>} />
       <Route path="/changelog" element={<LayoutWrapper currentPageName="Changelog"><Pages.Changelog /></LayoutWrapper>} />
       <Route path="/status" element={<LayoutWrapper currentPageName="Status"><Pages.Status /></LayoutWrapper>} />
-      <Route path="/privacy" element={<LayoutWrapper currentPageName="Privacy"><Pages.Privacy /></LayoutWrapper>} />
-      <Route path="/terms" element={<LayoutWrapper currentPageName="Terms"><Pages.Terms /></LayoutWrapper>} />
-      <Route path="/contact" element={<LayoutWrapper currentPageName="Contact"><Pages.Contact /></LayoutWrapper>} />
+      <Route path="/privacy" element={<S><SitePage /></S>} />
+      <Route path="/terms" element={<S><SitePage /></S>} />
+      <Route path="/contact" element={<S><SitePage /></S>} />
       <Route path="/guest-service" element={<LayoutWrapper currentPageName="GuestService"><Pages.GuestService /></LayoutWrapper>} />
-      <Route path="/data-security" element={<LayoutWrapper currentPageName="DataSecurity"><Pages.DataSecurity /></LayoutWrapper>} />
-      <Route path="/accessibility" element={<LayoutWrapper currentPageName="Accessibility"><Pages.Accessibility /></LayoutWrapper>} />
+      <Route path="/data-security" element={<S><SitePage /></S>} />
+      <Route path="/accessibility" element={<S><SitePage /></S>} />
+      <Route path="/cookies" element={<S><SitePage /></S>} />
+      <Route path="/cancellation" element={<S><SitePage /></S>} />
+      <Route path="/data-processing" element={<S><SitePage /></S>} />
+      <Route path="/blog" element={<S><SitePage /></S>} />
+      <Route path="/blog/:slug" element={<S><SitePage /></S>} />
       <Route path="/sla" element={<LayoutWrapper currentPageName="SLA"><Pages.SLA /></LayoutWrapper>} />
       <Route path="/api-docs" element={<LayoutWrapper currentPageName="ApiDocs"><Pages.ApiDocs /></LayoutWrapper>} />
       <Route path="/how-it-works" element={<LayoutWrapper currentPageName="HowItWorks"><Pages.HowItWorks /></LayoutWrapper>} />
@@ -273,7 +280,7 @@ const AuthenticatedApp = () => {
           />
         ))}
 
-      <Route path="*" element={<PageNotFound />} />
+      <Route path="*" element={<S><SiteNotFound /></S>} />
     </Routes>
   );
 };

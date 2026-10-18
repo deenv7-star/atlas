@@ -189,11 +189,11 @@ export default function DataSecurity() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <a
-              href="mailto:support@atlas-il.com?subject=בקשת%20מידע%20אבטחה%20(ATLAS)"
+              href="/contact?subject=בקשת%20מידע%20אבטחה%20(ATLAS)"
               className="inline-flex items-center gap-2 px-5 py-3 bg-brand-600 text-white rounded-lg font-semibold text-sm hover:bg-brand-500 transition-colors"
             >
               <Shield className="w-4 h-4" />
-              support@atlas-il.com
+              atlas-il.com/contact
             </a>
             <Link
               to="/contact"

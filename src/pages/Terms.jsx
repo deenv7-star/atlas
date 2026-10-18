@@ -248,7 +248,7 @@ export default function Terms() {
             </p>
             <div className="space-y-2 text-sm">
               <p><strong>דואר אלקטרוני:</strong> legal@atlas-il.com</p>
-              <p><strong>תמיכה טכנית:</strong> support@atlas-il.com</p>
+              <p><strong>תמיכה טכנית:</strong> atlas-il.com/contact</p>
               <p><strong>כתובת:</strong> רח' הרצל 1, תל אביב, ישראל</p>
             </div>
           </section>

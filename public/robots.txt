@@ -1,5 +1,15 @@
+# ATLAS: public pages are open to every crawler, including AI assistants (GPTBot, ClaudeBot,
+# PerplexityBot, Google-Extended). App screens behind login are not useful to index.
 User-agent: *
 Allow: /
+Disallow: /dashboard
 Disallow: /admin
+Disallow: /onboarding
+Disallow: /settings
+Disallow: /booking/
+Disallow: /lead/
+Disallow: /g/
+Disallow: /monthly-report/
+Disallow: /api/
 
 Sitemap: https://atlas-il.com/sitemap.xml

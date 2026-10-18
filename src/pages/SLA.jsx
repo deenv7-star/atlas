@@ -144,7 +144,7 @@ export default function SLA() {
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />
-                <p className="text-gray-600">אימייל: support@atlas-il.com (24/7)</p>
+                <p className="text-gray-600">פנייה: atlas-il.com/contact</p>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />

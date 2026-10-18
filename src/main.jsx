@@ -25,6 +25,26 @@ function CrashFallback({ error }) {
 const rootEl = document.getElementById('root')
 if (!rootEl) throw new Error('Root element not found')
 
+// Prerendered public pages (blog / legal, scripts/prerender.mjs) ship real HTML inside #root.
+// Keep that HTML on screen until the SPA has rendered the same page, then swap, so there is
+// no blank flash while the JS chunks load. Safety net: swap after 6 s regardless.
+const ssrEl = rootEl.querySelector('[data-ssr]')
+if (ssrEl) {
+  rootEl.parentNode.insertBefore(ssrEl, rootEl)
+  rootEl.hidden = true
+  let swapped = false
+  const swap = () => {
+    if (swapped) return
+    swapped = true
+    const y = window.scrollY
+    ssrEl.remove()
+    rootEl.hidden = false
+    if (y) window.scrollTo(0, y)
+  }
+  window.addEventListener('atlas:site-ready', swap, { once: true })
+  window.setTimeout(swap, 6000)
+}
+
 try {
   const root = ReactDOM.createRoot(rootEl)
   root.render(isProductionBackendConfigured() ? <App /> : <BackendNotConfigured />)

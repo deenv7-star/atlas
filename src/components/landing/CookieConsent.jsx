@@ -64,7 +64,7 @@ export default function CookieConsent({ revealAfter = null }) {
     <div className="lp-cookie" dir="rtl" role="region" aria-label="הסכמה לעוגיות">
       <p>
         אנחנו משתמשים בעוגיות כדי שהאתר יעבוד טוב יותר.{' '}
-        <Link to="/privacy">מדיניות הפרטיות</Link>
+        <Link to="/cookies">מדיניות העוגיות</Link>
       </p>
       <div className="lp-cookie-actions">
         <button type="button" className="no" onClick={() => choose('declined')}>לא תודה</button>

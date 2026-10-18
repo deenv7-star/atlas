@@ -1,4 +1,5 @@
 import { LOCAL_API_URL, supabase, isSupabaseConfigured } from '@/api/supabaseClient';
+import { LEGAL, WHATSAPP_URL } from '@/config/legal';
 
 /**
  * Public contact form.
@@ -22,7 +23,7 @@ export async function submitPublicContact(payload) {
     if (!error) return { ok: true, status: 201, data: {} };
     const msg = /[\u0590-\u05FF]/.test(error.message || '')
       ? error.message
-      : (error.code === '23514' ? 'חלק מהפרטים לא תקינים. בדקו את האימייל ואת אורך ההודעה.' : 'לא הצלחנו לשלוח. נסו שוב או כתבו ל־support@atlas-il.com');
+      : (error.code === '23514' ? 'חלק מהפרטים לא תקינים. בדקו את האימייל ואת אורך ההודעה.' : (LEGAL.SUPPORT_EMAIL ? `לא הצלחנו לשלוח. נסו שוב או כתבו ל־${LEGAL.SUPPORT_EMAIL}` : 'לא הצלחנו לשלוח. נסו שוב או כתבו לנו בוואטסאפ.'));
     return { ok: false, status: 400, data: { error: msg } };
   }
   const base = LOCAL_API_URL || '';
@@ -40,10 +41,9 @@ export async function submitPublicContact(payload) {
 }
 
 export function buildContactMailto({ name, email, phone, subject, message }) {
-  const to = 'support@atlas-il.com';
+  const text = `שם: ${name}\nאימייל: ${email}\nטלפון: ${phone || '—'}\nנושא: ${subject || '—'}\n\n${message}`;
+  // atlas-il.com has no inbound mail yet: without SUPPORT_EMAIL in src/config/legal.js, fall back to WhatsApp.
+  if (!LEGAL.SUPPORT_EMAIL) return `${WHATSAPP_URL}?text=${encodeURIComponent(text)}`;
   const subj = encodeURIComponent(`ATLAS: ${subject || 'פנייה מהאתר'}`);
-  const body = encodeURIComponent(
-    `שם: ${name}\nאימייל: ${email}\nטלפון: ${phone || '—'}\nנושא: ${subject || '—'}\n\n${message}`
-  );
-  return `mailto:${to}?subject=${subj}&body=${body}`;
+  return `mailto:${LEGAL.SUPPORT_EMAIL}?subject=${subj}&body=${encodeURIComponent(text)}`;
 }
