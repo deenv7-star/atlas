@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { PageHeader, StatTile } from '@/components/ds';
-import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { Sparkles, AlertTriangle, CheckCircle2 as CheckDone } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
