@@ -1,282 +1,88 @@
-import AuthShell from '@/components/app/AuthShell';
-import { WELCOME_PHOTO_2 } from '@/lib/stay/unitPhoto';
-import React, { useState, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/lib/AuthContext';
-import { base44 } from '@/api/base44Client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Shield, ArrowLeft, Check, X } from 'lucide-react';
-import { validateEmail, validatePassword, getPasswordStrength } from '@/lib/validation';
-import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimit';
-import { mapAuthErrorToHebrew } from '@/lib/authErrors';
-import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
-import { cn } from '@/lib/utils';
+/**
+ * /register, version A: split screen. The form on one side; on the other the owner's own system
+ * assembling as they type (LivePreview). Phones get a compact live card above the form.
+ * All sign-up logic lives in useRegister (unchanged behaviour: validation, rate limit, consent gate,
+ * duplicate email, Hebrew errors, verify-email / onboarding routing).
+ */
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { MotionConfig } from 'framer-motion';
+import { ArrowLeft, Shield, Loader2 } from 'lucide-react';
+import { Wordmark } from '@/components/app/shell/shared';
 import TermsConsent from '@/components/legal/TermsConsent';
-import { TERMS_VERSION } from '@/config/consent';
+import AuthField, { StrengthMeter } from '@/components/auth/AuthField';
+import { useRegister } from '@/lib/auth/useRegister';
+import { LivePreviewFull, LivePreviewCompact, levelOf } from '@/components/auth/a/LivePreview';
 
 export default function Register() {
-  const navigate = useNavigate();
-  const { loginUser, isLoadingAuth } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [emailExists, setEmailExists] = useState(false);
+  const r = useRegister();
+  const { form, set, touched, errors, handleBlur, isLoading, emailExists } = r;
+  const level = levelOf({ business: form.business.trim(), emailOk: r.emailOk, passwordOk: r.passwordOk, confirmOk: r.confirmOk, agreed: r.agreed });
 
-  const [form, setForm] = useState({ email: '', password: '', confirmPassword: '' });
-  const [touched, setTouched] = useState({ email: false, password: false, confirmPassword: false });
-  const [errors, setErrors] = useState({});
-  // Upay/Bit requirement: an active, unchecked-by-default consent to the terms + privacy policy.
-  const [agreed, setAgreed] = useState(false);
-  const [consentError, setConsentError] = useState(false);
-  const onConsent = (v) => { setAgreed(v); if (v) setConsentError(false); };
-
-  const set = (field) => (e) => {
-    setForm(f => ({ ...f, [field]: e.target.value }));
-    setEmailExists(false);
-    if (errors[field]) {
-      const v = field === 'email' ? validateEmail(e.target.value) : field === 'password' ? validatePassword(e.target.value) : { valid: e.target.value === form.password };
-      setErrors(e => ({ ...e, [field]: v.valid ? null : v.error }));
-    }
-  };
-
-  const validate = useCallback(() => {
-    const e = {};
-    const emailRes = validateEmail(form.email);
-    if (!emailRes.valid) e.email = emailRes.error;
-    const passRes = validatePassword(form.password);
-    if (!passRes.valid) e.password = passRes.error;
-    if (form.password !== form.confirmPassword) e.confirmPassword = 'הסיסמאות לא תואמות';
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  }, [form.email, form.password, form.confirmPassword]);
-
-  const handleBlur = (field) => () => {
-    setTouched(t => ({ ...t, [field]: true }));
-    if (field === 'email') {
-      const r = validateEmail(form.email);
-      setErrors(e => ({ ...e, email: r.valid ? null : r.error }));
-    } else if (field === 'password') {
-      const r = validatePassword(form.password);
-      setErrors(e => ({ ...e, password: r.valid ? null : r.error }));
-    } else if (field === 'confirmPassword') {
-      setErrors(e => ({ ...e, confirmPassword: form.password === form.confirmPassword ? null : 'הסיסמאות לא תואמות' }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setTouched({ email: true, password: true, confirmPassword: true });
-    if (!validate()) return;
-    if (!agreed) {
-      setConsentError(true);
-      document.getElementById('terms-consent')?.focus();
-      return;
-    }
-
-    const rl = checkRateLimit(form.email);
-    if (!rl.allowed) {
-      atlasToastApi.error(`נסו שוב בעוד ${rl.retryAfter} שניות`);
-      return;
-    }
-
-    setIsLoading(true);
-    setEmailExists(false);
-    try {
-      const data = await base44.auth.signUp({
-        email: form.email.trim(),
-        password: form.password,
-        full_name: '',
-        organization_name: '',
-        terms_accepted_at: new Date().toISOString(),
-        terms_version: TERMS_VERSION,
-      });
-      clearAttempts(form.email);
-
-      if (data?.user && !data?.session) {
-        atlasToastApi.success('נשלח מייל לאימות');
-        navigate('/verify-email', { state: { email: form.email.trim() }, replace: true });
-      } else if (data?.session) {
-        await loginUser(null);
-        navigate('/onboarding', { replace: true });
-      }
-    } catch (err) {
-      const msg = String(err?.message || '').toLowerCase();
-      const code = String(err?.code || '').toLowerCase();
-      const duplicate =
-        msg.includes('already registered') ||
-        msg.includes('already exists') ||
-        code === 'user_already_exists';
-      if (duplicate) {
-        setEmailExists(true);
-        recordAttempt(form.email);
-      } else {
-        recordAttempt(form.email);
-        const mapped = mapAuthErrorToHebrew(err);
-        if (mapped?.kind === 'toast') {
-          atlasToastApi.error(mapped.message);
-        } else {
-          const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err?.name === 'TypeError';
-          const isApiMissing = err?.status === 404 || msg.includes('http 404');
-          if (isApiMissing) {
-            atlasToastApi.error(
-              'השרת לא זמין כרגע. נסו שוב בעוד כמה דקות.'
-            );
-          } else {
-            atlasToastApi.error(isNetworkError ? 'אין חיבור. בדקו את האינטרנט ונסו שוב.' : (err?.message || 'אירעה שגיאה. נסו שוב.'));
-          }
-        }
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const passwordStrength = getPasswordStrength(form.password);
-  const canSubmit = form.email && form.password && form.confirmPassword && !errors.email && !errors.password && form.password === form.confirmPassword;
-
-  if (isLoadingAuth) {
+  if (r.isLoadingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50" dir="rtl">
-        <div
-          className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"
-          role="status"
-          aria-label="טוען"
-        />
+      <div className="flex min-h-screen items-center justify-center bg-[#F7F8FB]" dir="rtl">
+        <Loader2 className="h-7 w-7 animate-spin text-brand-600 motion-reduce:animate-none" role="status" aria-label="טוען" />
       </div>
     );
   }
 
   return (
-    <AuthShell photo={WELCOME_PHOTO_2} caption="כל ההזמנות מכל הערוצים, בלוח אחד ופשוט.">
-      <div>
-        <div className="mb-8">
-          <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">פותחים חשבון</h1>
-          <p className="mt-1.5 text-[15px] text-ink-400">14 ימים חינם, אחר כך מחליטים.</p>
-        </div>
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-[100dvh] bg-white lg:grid lg:grid-cols-[minmax(440px,1fr)_minmax(0,1.15fr)]" dir="rtl">
+        <main className="flex min-h-[100dvh] flex-col px-5 pb-8 pt-[max(18px,env(safe-area-inset-top))] sm:px-10 lg:px-14 xl:px-20">
+          <header className="flex h-12 items-center justify-between">
+            <Link to="/" aria-label="ATLAS, לדף הבית" className="inline-flex h-11 items-center"><Wordmark size={20} /></Link>
+            <p className="text-[14px] text-ink-600">
+              כבר רשומים? <Link to="/login" className="inline-flex h-11 items-center font-bold text-brand-600 hover:underline">כניסה</Link>
+            </p>
+          </header>
 
-        <div>
-          {emailExists ? (
-            <div className="space-y-4">
-              <div className="bg-[#EEF0FF] border border-[#D9DCFB] rounded-xl p-4 text-center">
-                <p className="text-navy-900 font-semibold">כתובת המייל הזו כבר רשומה במערכת</p>
-              </div>
-              <Link to={`/login?email=${encodeURIComponent(form.email)}`}>
-                <Button className="w-full h-12 text-[16px] font-bold gap-2">
-                  התחברו עם המייל הזה
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-1.5">
-                <Label htmlFor="email">כתובת אימייל</Label>
-                <div className="relative">
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="name@example.com"
-                    inputMode="email"
-                    dir="ltr"
-                    value={form.email}
-                    onChange={set('email')}
-                    onBlur={handleBlur('email')}
-                    className={cn(
-                      "h-12 rounded-xl text-base pr-10",
-                      touched.email && errors.email ? "border-red-500 focus:border-red-500" : "border-gray-200",
-                      touched.email && !errors.email && form.email ? "border-emerald-500" : ""
-                    )}
-                    autoComplete="email"
-                    autoFocus
-                    maxLength={255}
-                  />
-                  {touched.email && (errors.email ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.email && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}
+          <div className="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center py-6 lg:py-10">
+            <div className="mb-5 lg:hidden"><LivePreviewCompact business={form.business} level={level} /></div>
+
+            <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 sm:text-[36px]">בונים את המערכת שלכם</h1>
+            <p className="mt-2 text-[16px] text-ink-600">14 ימים חינם, אחר כך מחליטים. דקה אחת והיא מוכנה.</p>
+
+            {emailExists ? (
+              <div className="mt-8 space-y-4">
+                <div className="rounded-[16px] border border-[#D9DCFB] bg-brand-50 p-4 text-center" role="alert">
+                  <p className="font-semibold text-navy-900">כתובת המייל הזו כבר רשומה במערכת</p>
                 </div>
-                {touched.email && errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+                <Link to={`/login?email=${encodeURIComponent(form.email)}`} className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-brand-600 text-[16px] font-bold text-white">
+                  התחברו עם המייל הזה<ArrowLeft className="h-5 w-5" aria-hidden />
+                </Link>
+                <button type="button" onClick={() => r.setEmailExists(false)} className="flex h-11 w-full items-center justify-center text-[14px] font-semibold text-ink-600 hover:text-navy-900">מייל אחר</button>
               </div>
+            ) : (
+              <form onSubmit={r.submit} noValidate className="mt-7 flex flex-col gap-4">
+                <AuthField id="business" label="איך קוראים למתחם?" hint="לא חובה. אפשר גם אחר כך." value={form.business} onChange={set('business')} placeholder="למשל: צימרי הגליל" maxLength={50} autoComplete="organization" ok={form.business.trim().length >= 2} />
+                <AuthField id="email" label="אימייל" type="email" inputMode="email" dir="ltr" inputClassName="text-right" placeholder="name@example.com" autoComplete="email" maxLength={255}
+                  value={form.email} onChange={set('email')} onBlur={handleBlur('email')} error={touched.email ? errors.email : null} ok={touched.email && r.emailOk} />
+                <AuthField id="password" label="סיסמה" password placeholder="לפחות 8 תווים, ספרה ואות" autoComplete="new-password" maxLength={128}
+                  value={form.password} onChange={set('password')} onBlur={handleBlur('password')} error={touched.password ? errors.password : null}>
+                  <StrengthMeter strength={r.strength} value={form.password} />
+                </AuthField>
+                <AuthField id="confirmPassword" label="אימות סיסמה" password placeholder="הקלידו שוב את הסיסמה" autoComplete="new-password" maxLength={128}
+                  value={form.confirmPassword} onChange={set('confirmPassword')} onBlur={handleBlur('confirmPassword')} error={touched.confirmPassword ? errors.confirmPassword : null} />
 
-              <div className="space-y-1.5">
-                <Label htmlFor="password">סיסמה</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="לפחות 8 תווים, ספרה ואות"
-                    value={form.password}
-                    onChange={set('password')}
-                    onBlur={handleBlur('password')}
-                    className={cn(
-                      "h-12 rounded-xl text-base pl-10 pr-10",
-                      touched.password && errors.password ? "border-red-500" : "border-gray-200",
-                      touched.password && !errors.password && form.password ? "border-emerald-500" : ""
-                    )}
-                    autoComplete="new-password"
-                    maxLength={128}
-                  />
-                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-0.5 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                  {touched.password && (errors.password ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.password && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}
-                </div>
-                {form.password && (
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full transition-all" style={{ width: `${(passwordStrength.score / 5) * 100}%`, background: passwordStrength.color }} />
-                    </div>
-                    <span className="text-xs font-medium" style={{ color: passwordStrength.textColor }}>{passwordStrength.label}</span>
-                  </div>
-                )}
-                {touched.password && errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
-              </div>
+                <TermsConsent checked={r.agreed} onChange={r.onConsent} error={r.consentError} className="pt-1" />
 
-              <div className="space-y-1.5">
-                <Label htmlFor="confirmPassword">אימות סיסמה</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirm ? 'text' : 'password'}
-                    placeholder="הקלידו שוב את הסיסמה"
-                    value={form.confirmPassword}
-                    onChange={set('confirmPassword')}
-                    onBlur={handleBlur('confirmPassword')}
-                    className={cn(
-                      "h-12 rounded-xl text-base pr-10",
-                      touched.confirmPassword && errors.confirmPassword ? "border-red-500" : "border-gray-200",
-                      touched.confirmPassword && !errors.confirmPassword && form.confirmPassword && form.password === form.confirmPassword ? "border-emerald-500" : ""
-                    )}
-                    autoComplete="new-password"
-                    maxLength={128}
-                  />
-                  <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-0.5 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
-                    {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                  {touched.confirmPassword && (errors.confirmPassword ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.confirmPassword && form.password === form.confirmPassword && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}
-                </div>
-                {touched.confirmPassword && errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
-              </div>
+                <button type="submit" disabled={!r.canSubmit || isLoading} aria-busy={isLoading}
+                  className="mt-1 flex h-[56px] w-full items-center justify-center gap-2 rounded-[16px] bg-brand-600 text-[17px] font-bold text-white shadow-[0_1px_2px_rgba(42,26,201,0.3),0_14px_30px_-14px_rgba(62,43,241,0.7)] transition-[background-color,transform] duration-150 hover:bg-[#3322E0] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#C9C3FB] disabled:shadow-none motion-reduce:transition-none">
+                  {isLoading ? <><Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden />פותחים חשבון…</> : <>פתיחת חשבון<ArrowLeft className="h-5 w-5" aria-hidden /></>}
+                </button>
+              </form>
+            )}
 
-              <TermsConsent checked={agreed} onChange={onConsent} error={consentError} />
-
-              <Button type="submit" disabled={!canSubmit || isLoading} className="w-full h-12 text-[16px] font-bold gap-2">
-                {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
-                {isLoading ? 'פותחים חשבון…' : 'פתיחת חשבון'}
-              </Button>
-            </form>
-          )}
-
-          <div className="flex items-center justify-center gap-1.5 mt-6 text-gray-400">
-            <Shield className="w-3.5 h-3.5" />
-            <p className="text-xs">המידע שלכם מאובטח ומוצפן</p>
+            <p className="mt-6 flex items-center justify-center gap-1.5 text-[13px] text-ink-400"><Shield className="h-3.5 w-3.5" aria-hidden />המידע שלכם מאובטח ומוצפן</p>
           </div>
-        </div>
+        </main>
 
-        <p className="mt-8 text-center text-[15px] text-ink-600">
-          כבר יש לכם חשבון?{' '}
-          <Link to="/login" className="font-bold text-brand-600 hover:underline">כניסה</Link>
-        </p>
+        <aside className="sticky top-0 hidden h-[100dvh] p-4 lg:block">
+          <LivePreviewFull business={form.business} email={form.email} level={level} />
+        </aside>
       </div>
-    </AuthShell>
+    </MotionConfig>
   );
 }

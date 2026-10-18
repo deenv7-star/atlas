@@ -264,14 +264,15 @@ export function SettlementInput({ value, onChange, autoFocus }) {
     .sort((a, b) => (norm(a[0]).startsWith(nq) ? 0 : 1) - (norm(b[0]).startsWith(nq) ? 0 : 1) || a[0].length - b[0].length)
     .slice(0, 6);
   const exact = list.some(([n]) => n === value);
+  const listShown = open && matches.length > 0 && !(exact && matches.length === 1);
   return (
     <div className="relative flex flex-col gap-2">
       <label htmlFor={id} className="text-[16px] font-semibold text-navy-900">יישוב</label>
       <input id={id} className="ob-input" value={q} autoFocus={autoFocus} autoComplete="off" placeholder="מתחילים להקליד, למשל: ראש פינה"
-        role="combobox" aria-expanded={open && matches.length > 0} aria-controls={`${id}-list`} aria-autocomplete="list"
+        role="combobox" aria-expanded={listShown} aria-controls={listShown ? `${id}-list` : undefined} aria-autocomplete="list"
         onChange={(e) => { setQ(e.target.value); onChange(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 150)} />
-      {open && matches.length > 0 && !(exact && matches.length === 1) ? (
+      {listShown ? (
         <ul id={`${id}-list`} role="listbox" className="ob-fade overflow-hidden rounded-[18px] bg-white shadow-[0_2px_4px_rgba(27,38,86,0.06),0_18px_36px_-14px_rgba(27,38,86,0.25)]">
           {matches.map(([n, region]) => (
             <li key={n + region} role="option" aria-selected={n === value}>
