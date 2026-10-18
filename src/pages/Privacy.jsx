@@ -86,7 +86,7 @@ export default function Privacy() {
               <li>התנגדות: להתנגד לעיבוד למטרות שיווק</li>
             </ul>
             <p className="mt-3">
-              למימוש זכויותיכם, אנא צרו קשר בכתובת support@atlas-il.com. נענה בתוך 30 יום.
+              למימוש זכויותיכם, אנא צרו קשר בכתובת atlas-il.com/contact. נענה בתוך 30 יום.
             </p>
           </section>
 
@@ -104,7 +104,7 @@ export default function Privacy() {
               לשאלות בנוגע למדיניות פרטיות זו, מימוש זכויות או תלונות:
             </p>
             <p className="mt-2">
-              <strong>דוא"ל:</strong> support@atlas-il.com<br />
+              <strong>דוא"ל:</strong> atlas-il.com/contact<br />
               <strong>אתר:</strong> https://atlas-il.com<br />
               <strong>שעות תמיכה:</strong> ימים א׳-ה׳ 09:00–18:00
             </p>

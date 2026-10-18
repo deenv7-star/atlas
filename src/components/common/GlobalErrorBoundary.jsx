@@ -97,7 +97,7 @@ class GlobalErrorBoundary extends React.Component {
                 <p className="text-sm text-gray-500">
                   אם הבעיה נמשכת,{' '}
                   <a 
-                    href="mailto:support@atlas-il.com" 
+                    href="/contact" 
                     className="text-brand-600 hover:text-brand-500 font-medium underline"
                   >
                     פנייה לתמיכה

@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FOOTER_GROUPS } from '@/site/footerLinks';
+import { LEGAL } from '@/config/legal';
 import {
   ArrowLeft, ChevronLeft, Plus, Check, X, ShieldCheck, DatabaseBackup, MessageCircle, CircleOff,
   CalendarCheck, Wallet,
@@ -311,18 +313,23 @@ export function FinalCta({ title }) {
 export function Footer() {
   return (
     <footer className="l5-ftr">
-      <div className="l5-wrap l5-ftr-in">
-        <Wordmark small />
-        <nav aria-label="קישורים משפטיים" className="l5-ftr-links">
-          <Link to="/privacy">פרטיות</Link>
-          <Link to="/terms">תנאי שימוש</Link>
-          <Link to="/accessibility">נגישות</Link>
-          <Link to="/data-security">אבטחת מידע</Link>
-        </nav>
-        <nav aria-label="יצירת קשר" className="l5-ftr-links l5-ftr-contact">
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">וואטסאפ <span dir="ltr" className="num">{PHONE_DISPLAY}</span></a>
-          <Link to="/contact">צרו קשר</Link>
-        </nav>
+      <div className="l5-wrap">
+        <div className="l5-ftr-grid">
+          <div className="l5-ftr-brand">
+            <Wordmark small />
+            <p>מערכת ניהול בעברית לצימרים, וילות ומתחמי נופש.</p>
+            <a className="l5-ftr-wa" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+              <Mark ch="whatsapp" size={18} /> <span>וואטסאפ <span dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</span></span>
+              <span className="sr-only"> (נפתח בוואטסאפ)</span>
+            </a>
+          </div>
+          {FOOTER_GROUPS.filter((g) => g.title !== 'מוצר').map((g) => (
+            <nav key={g.title} aria-label={g.title} className="l5-ftr-col">
+              <p className="l5-ftr-h">{g.title}</p>
+              <ul>{g.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}</ul>
+            </nav>
+          ))}
+        </div>
         <p className="l5-ftr-copy">© {new Date().getFullYear()} ATLAS · נבנתה בישראל</p>
       </div>
     </footer>

@@ -162,9 +162,12 @@ export function getRouteMeta(pathname) {
       canonicalPath: path,
     };
   }
+  // Unknown path: the SPA renders the 404 page, which must not be indexed.
+  const known = /^\/(admin|onboarding|dev)(\/|$)/.test(path);
   return {
-    title: DEFAULT_PAGE_TITLE,
+    title: known ? DEFAULT_PAGE_TITLE : 'הדף לא נמצא | ATLAS',
     description: DEFAULT_DESCRIPTION,
     canonicalPath: path,
+    notFound: !known,
   };
 }
