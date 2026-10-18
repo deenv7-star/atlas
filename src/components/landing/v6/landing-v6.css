@@ -353,3 +353,6 @@
 html:has(.l6) { overflow-x: clip; overflow-y: visible; }
 html:has(.l6) body { overflow: visible; }
 .l6 .l6b-tile-ui .l5-bub, .l6 .l6-tile-ui .l5-bub { color: var(--navy); }
+
+/* Transparent wordmark follows the header's light/dark surface. */
+.l6-hdr:not(.is-light):not(.is-solid) .l5-wm img { filter: brightness(0) invert(1); }
