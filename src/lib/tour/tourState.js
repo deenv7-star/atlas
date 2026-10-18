@@ -14,6 +14,7 @@ export const TOUR_VERSION = 1;
 const KEY = (uid) => `atlas.tour.v${TOUR_VERSION}.${uid || 'anon'}`;
 const EVT = 'atlas:tour';
 const VOICE_KEY = 'atlas.tour.voice';
+let writes = Promise.resolve();
 
 function readLocal(uid) {
   try { const v = JSON.parse(localStorage.getItem(KEY(uid)) || 'null'); return v && typeof v === 'object' ? v : null; } catch { return null; }
@@ -45,7 +46,9 @@ export async function setTourState(user, patch) {
   const next = { v: TOUR_VERSION, status: null, step: 0, ...(readLocal(uid) || {}), ...patch, at: Date.now() };
   writeLocal(uid, next);
   if (isSupabaseConfigured && supabase) {
-    try { await supabase.auth.updateUser({ data: { atlas_tour: next } }); } catch { /* the local copy stays */ }
+    // one write at a time, in order: a slow "step 1" must never land after "step 2"
+    writes = writes.then(() => supabase.auth.updateUser({ data: { atlas_tour: next } })).catch(() => { /* the local copy stays */ });
+    await writes;
   }
   return next;
 }
