@@ -2,24 +2,11 @@
  * Trust section content (landing). Every line here was checked on 18.10.2026 against the code and
  * the public legal pages; the source of each claim is in its comment. Do not add a claim that is
  * not in those sources. No reviews, ratings, customer counts or logos (see src/config/testimonials.js).
+ * No founder letter / personal framing and no "we're new" copy (Deen, 18.10.2026): the section speaks
+ * only through written promises and the does / not-yet list.
  */
 import { CreditCard, DoorOpen, Download, ShieldCheck, Lock, MessageCircle } from 'lucide-react';
-import { LEGAL, WHATSAPP_URL } from '@/config/legal';
-
-export const FOUNDER = {
-  name: LEGAL.FOUNDER_NAME, // 'דין וינוקור'
-  role: `${LEGAL.FOUNDER_ROLE} ATLAS`,
-  photo: LEGAL.FOUNDER_PHOTO, // null → monogram, never a stock face
-  phone: LEGAL.WHATSAPP_DISPLAY, // 052-597-9520
-  tel: `tel:+${LEGAL.WHATSAPP_NUMBER_INTL}`,
-  wa: `${WHATSAPP_URL}?text=${encodeURIComponent('היי דין, ראיתי את ATLAS ורציתי לשאול')}`,
-  // DRAFT in Deen's voice: he must approve / rewrite before merge.
-  // Facts behind it: one beta complex uses ATLAS (memory, 16.10.2026); no paying customers yet.
-  letter: [
-    'היי, אני דין. בניתי את ATLAS אחרי שראיתי מקרוב איך מנהלים מתחם אירוח בין Booking, Airbnb, וואטסאפ, אקסל ופתקים, וכמה קל לפספס שם הזמנה או יתרה.',
-    'ATLAS בבטא, עם מתחם האירוח הראשון שעובד איתה. אין לנו עדיין מאות לקוחות להראות לכם, אז אני מציע משהו אחר: את הטלפון שלי. שאלה, בקשה או משהו שלא עובד? דברו איתי ישירות.',
-  ],
-};
+import { WHATSAPP_URL } from '@/config/legal';
 
 /** Promises that are also written in the terms / policies. `href` = where it is written. */
 export const PROMISES = [
