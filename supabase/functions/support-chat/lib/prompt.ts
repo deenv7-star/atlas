@@ -26,7 +26,12 @@ const SYN: Record<string, string> = {
   'whatsapp': 'וואטסאפ', 'חדר': 'יחידה', 'חדרים': 'יחידה', 'צימר': 'יחידה', 'צימרים': 'יחידה', 'נכס': 'יחידה', 'נכסים': 'יחידה',
   'יומן': 'לוח', 'ical': 'לוח', 'מנוי': 'מסלול', 'תוכנית': 'מסלול', 'לבטל': 'ביטול', 'סיסמא': 'סיסמה', 'מחיר': 'מחירים',
   'אקסל': 'csv', 'excel': 'csv', 'קבלה': 'חשבונית', 'נציג': 'נציג', 'הודעה': 'הודעות',
+  'מוסיפים': 'הוספה', 'להוסיף': 'הוספה', 'מוסיף': 'הוספה', 'הוספת': 'הוספה', 'מנקה': 'ניקיון', 'מנקים': 'ניקיון', 'מנקות': 'ניקיון',
+  'הזמנות': 'הזמנה', 'יחידות': 'יחידה', 'מבטלים': 'ביטול', 'לידים': 'ליד',
 };
+// Question words and fillers carry no topic; dropping them from the query stops short generic
+// sections (navigation, glossary) from winning on "איך"/"מה"/"את".
+const STOP = new Set(['איך','מה','איפה','מתי','למה','כמה','האם','את','של','על','עם','אני','אנחנו','לי','יש','אין','זה','זו','הזה','הזאת','רוצה','רוצים','צריך','אפשר','אם','גם','או','לא','כן','עושים','לעשות','שלי','שלנו','מישהו','בבקשה','היי','שלום','תודה','להם','הם','אתם','לכם','כל','עוד','רק','כבר','ואיך','ומה']);
 const PREFIXES = ['וכש', 'כש', 'וה', 'וב', 'ול', 'ומ', 'וש', 'ה', 'ב', 'ל', 'מ', 'ש', 'ו', 'כ'];
 export function tokens(s: string): string[] {
   const raw = s.toLowerCase().replace(/[^\p{L}\p{N}.\s]/gu, ' ').split(/\s+/).filter(Boolean);
@@ -44,10 +49,11 @@ export function tokens(s: string): string[] {
 }
 export function retrieve(kb: KB, query: string, k = 8): Chunk[] {
   const docs = kb.chunks.map((c) => tokens(`${c.heading} ${c.heading} ${c.keywords} ${c.text}`));
+  const heads = kb.chunks.map((c) => new Set(tokens(`${c.heading.split(' › ').pop()} ${c.keywords}`)));
   const N = docs.length, avg = docs.reduce((s, d) => s + d.length, 0) / N;
   const df = new Map<string, number>();
   for (const d of docs) for (const t of new Set(d)) df.set(t, (df.get(t) || 0) + 1);
-  const q = [...new Set(tokens(query))];
+  const q = [...new Set(tokens(query).filter((t) => !STOP.has(t)))];
   const scored = docs.map((d, i) => {
     const tf = new Map<string, number>();
     for (const t of d) tf.set(t, (tf.get(t) || 0) + 1);
@@ -56,7 +62,8 @@ export function retrieve(kb: KB, query: string, k = 8): Chunk[] {
       const f = tf.get(t) || 0;
       if (!f) continue;
       const idf = Math.log(1 + (N - (df.get(t) || 0) + 0.5) / ((df.get(t) || 0) + 0.5));
-      s += idf * (f * 2.2) / (f + 1.2 * (0.25 + 0.75 * d.length / avg));
+      s += idf * (f * 2.2) / (f + 1.2 * (0.25 + 0.75 * Math.max(d.length, avg * 0.7) / avg));
+      if (heads[i].has(t)) s += idf * 0.8; // the section is *about* this word, not just mentioning it
     }
     return { i, s };
   }).filter((x) => x.s > 0).sort((a, b) => b.s - a.s).slice(0, k);
