@@ -141,3 +141,6 @@
   .b-card { padding: 24px 20px; }
   .b-endcta-in { padding-block: 44px; }
 }
+
+/* Preserve the approved wordmark on the dark header. */
+.b-logo .s-wm img { filter: brightness(0) invert(1); }

@@ -1,3 +1,4 @@
+import BrandWordmark from '@/components/common/BrandWordmark';
 /** Shell building blocks shared by both layout directions. */
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -15,18 +16,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { ChevronLeft, LogOut, Settings, CreditCard, Compass } from 'lucide-react';
 import { startTour } from '@/lib/tour/tourState';
 
-export function Wordmark({ className, inverted = false, size = 22 }) {
-  return (
-    <span
-      className={cn('inline-flex items-center gap-1.5 font-extrabold leading-none', className)}
-      style={{ fontSize: size, letterSpacing: '0.02em', color: inverted ? '#fff' : 'var(--navy-900)' }}
-      dir="ltr"
-    >
-      ATLAS
-      <span aria-hidden className="inline-block rounded-full" style={{ width: size * 0.3, height: size * 0.3, background: inverted ? '#8F84FF' : 'var(--brand-600)' }} />
-    </span>
-  );
-}
+export function Wordmark(props) { return <BrandWordmark {...props} />; }
 
 /** Same query + cache key the header always used, so nothing new hits the backend. */
 export function useShellProperties(user) {

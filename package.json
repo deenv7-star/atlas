@@ -21,8 +21,8 @@
     "ops:backup": "bash ops/backup.sh",
     "ops:restore": "bash ops/restore.sh",
     "test:backend": "node --import ./server/tests/env-setup.js --test server/tests/*.test.js",
-    "generate:assets": "node scripts/generate-favicon.js && node scripts/generate-og-image.js",
-    "generate:icons": "node scripts/generate-icons.js && npx capacitor-assets generate --ios",
+    "generate:assets": "npm run generate:brand && node scripts/generate-og-image.js",
+    "generate:icons": "npm run generate:brand && npx capacitor-assets generate --ios",
     "lint:backend": "eslint server --quiet",
     "ops:verify-backup": "bash ops/verify-backup.sh",
     "typecheck:backend": "npm run check:backend",
@@ -33,7 +33,8 @@
     "test:unit": "TZ=Asia/Jerusalem node --test tests/unit/*.test.mjs",
     "kb:build": "node scripts/support-kb/build-kb.mjs",
     "kb:check": "node scripts/support-kb/build-kb.mjs --check",
-    "test:support-rls": "node supabase/tests/support_rls.test.mjs"
+    "test:support-rls": "node supabase/tests/support_rls.test.mjs",
+    "generate:brand": "node scripts/generate-brand-assets.mjs"
   },
   "dependencies": {
     "@base44/sdk": "^0.8.54",
