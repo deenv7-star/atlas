@@ -10,94 +10,22 @@
  * All screens are real ATLAS screens in demo mode; every name, booking and amount is example data
  * and is labelled as such. No testimonials, logos or customer counts.
  */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
 import CookieConsent from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
-import { Faq, Footer, SignupButton } from '../v5/LandingV5';
+import { Faq, Footer } from '../v5/LandingV5';
 import { V7Header, Chip } from '../v7/shared7';
-import { UI, PH, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8, useScrollProgress, usePointerTilt } from './shared8';
+import { UI, PH, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8, useScrollProgress } from './shared8';
 import '../v5/landing-v5.css';
 import '../v7/landing-v7.css';
 import './shared8.css';
 import './landing-v8m.css';
+import HeroPhoto from './HeroPhoto';
 
 const NAV = [['#features', 'המוצר'], ['#facts', 'למה ATLAS'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
-
-/* ---------------- hero: the dashboard on stage ---------------- */
-/** Widget rectangles inside the 1440×900 dashboard capture (fractions), so lifted layers line up exactly. */
-const POPS = [
-  { k: 'income', x: 0.475, y: 0.1122, w: 0.3083, h: 0.24, z: 120, d: 0 },
-  { k: 'occ', x: 0.2833, y: 0.1122, w: 0.1806, h: 0.24, z: 80, d: 1 },
-  { k: 'photo', x: 0.0278, y: 0.1122, w: 0.2444, h: 0.24, z: 56, d: 2 },
-];
-
-function Stage() {
-  return (
-    <div className="lm-stage" aria-hidden="true">
-      <div className="lm-floor"><i className="lm-glow" /><i className="lm-grid" /></div>
-      <div className="lm-rise">
-        <div className="lm-rig">
-          <div className="lm-screen">
-            <div className="lm-chrome"><i /><i /><i /><span>app.atlas-il.com/today</span></div>
-            <div className="lm-shot">
-              <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="eager" decoding="async" />
-              {POPS.map((p) => (
-                <i key={`s-${p.k}`} className="lm-slot" style={{ left: `${p.x * 100}%`, top: `${p.y * 100}%`, width: `${p.w * 100}%`, height: `${p.h * 100}%` }} />
-              ))}
-              {POPS.map((p) => (
-                <div key={p.k} className={`lm-pop is-${p.k}`} style={{ left: `${p.x * 100}%`, top: `${p.y * 100}%`, width: `${p.w * 100}%`, height: `${p.h * 100}%`, '--z': p.z, '--i': p.d }}>
-                  <img src={`${UI}/c-${p.k}.webp`} alt="" decoding="async" />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="lm-out is-wa" style={{ '--i': 3 }}><WaBubble /></div>
-          <div className="lm-out is-paid" style={{ '--i': 4 }}><img src={`${UI}/c-received.webp`} alt="" width="352" height="110" decoding="async" /></div>
-          <div className="lm-out is-faces" style={{ '--i': 5 }}>
-            <div className="lm-faces-card">
-              <FaceStack keys={['noa', 'tom', 'maya', 'adam']} size={40} />
-              <span><b>3 כניסות היום</b><small>האלון · הזית · הגפן</small></span>
-            </div>
-          </div>
-          <div className="lm-out is-bk" style={{ '--i': 6 }}>
-            <Chip av={FACES.shir.src} ch="booking" title="הזמנה חדשה מ-Booking.com" sub="שירן ג. · 2 לילות · הזית" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Hero() {
-  const ref = useRef(null);
-  usePointerTilt(ref);
-  const onP = useCallback((p, r, vh) => {
-    const s = Math.min(1, Math.max(0, -r.top / (vh * 0.75)));
-    ref.current?.style.setProperty('--s', s.toFixed(4));
-  }, []);
-  useScrollProgress(ref, { onProgress: onP });
-  return (
-    <section ref={ref} className="lm-hero" aria-labelledby="hero-title">
-      <div className="l5-wrap lm-hero-copy">
-        <h1 id="hero-title" className="lm-h1">
-          <span className="lm-h1-l">פחות ניהול.</span>
-          <span className="lm-h1-l is-ind">יותר אירוח.</span>
-        </h1>
-        <p className="lm-sub">הזמנות מ-Airbnb, Booking.com וישיר, וואטסאפ לאורחים ותשלומים. ATLAS מנהלת את הצימר, ואתם מארחים.</p>
-        <div className="lm-cta">
-          <SignupButton className="is-lg" />
-          <a href="#features" className="l5-btn-ghost is-lg">לראות את המערכת</a>
-        </div>
-        <p className="lm-note"><Check size={14} strokeWidth={2.6} aria-hidden="true" />בלי כרטיס אשראי · הגדרה תוך 10 דקות</p>
-      </div>
-      <Stage />
-      <p className="lm-hero-cap">מסך ״היום״ האמיתי של ATLAS, עם נתוני דוגמה.</p>
-    </section>
-  );
-}
 
 /* ---------------- channels strip ---------------- */
 function Channels() {
@@ -281,7 +209,7 @@ function Final() {
 function StickyCta() {
   const [on, setOn] = useState(false);
   useEffect(() => {
-    const hero = document.querySelector('.lm-hero');
+    const hero = document.querySelector('.ph-hero');
     const ends = [...document.querySelectorAll('.lm-x, .l5-ftr')];
     if (!hero || typeof IntersectionObserver === 'undefined') return undefined;
     let heroVisible = true;
@@ -310,11 +238,11 @@ export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
   return (
-    <div ref={root} className="l5 l7 v8 lm" dir="rtl" lang="he">
+    <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <V7Header links={NAV} />
       <main id="main">
-        <Hero />
+        <HeroPhoto />
         <Channels />
         <Blocks />
         <Facts />
@@ -325,7 +253,7 @@ export default function LandingM() {
       <Credits8 />
       <Footer />
       <StickyCta />
-      <CookieConsent revealAfter=".lm-hero" />
+      <CookieConsent revealAfter=".ph-hero" />
     </div>
   );
 }

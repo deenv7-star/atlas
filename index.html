@@ -54,6 +54,21 @@
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />
 
+    <!-- Landing hero photo: preload the exact file the hero <picture> picks, on "/" only -->
+    <script>
+      (function () {
+        if (location.pathname !== '/') return;
+        var p = window.matchMedia && matchMedia('(max-aspect-ratio: 2/3)').matches;
+        var l = document.createElement('link');
+        l.rel = 'preload'; l.as = 'image'; l.type = 'image/avif'; l.setAttribute('fetchpriority', 'high');
+        l.setAttribute('imagesrcset', p
+          ? '/landing-hero/pool-p480.avif 480w, /landing-hero/pool-p720.avif 720w'
+          : '/landing-hero/pool-960.avif 960w, /landing-hero/pool-1280.avif 1280w, /landing-hero/pool-1920.avif 1920w');
+        l.setAttribute('imagesizes', '100vw');
+        document.head.appendChild(l);
+      })();
+    </script>
+
     <!-- JSON-LD Schema -->
     <script type="application/ld+json">
     {

@@ -1,0 +1,87 @@
+/* Landing hero "כל המתחם. במבט אחד." — restored from landing v9 Q (ea07f10), static.
+   Palette: indigo #3E2BF1 the one strong colour, navy #1B2656 for scrims and card text. */
+
+.ph-hero {
+  --ph-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --ph-scrim: 13, 19, 56;
+  position: relative; isolation: isolate; overflow: hidden;
+  height: 100svh; min-height: 640px; max-height: 1100px;
+  background: #1b2656; color: #fff;
+}
+.ph-photo, .ph-photo img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ph-photo img { object-fit: cover; object-position: 50% 50%; max-width: none; user-select: none; }
+.ph-scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(0deg, rgba(var(--ph-scrim), 0.72) 0%, rgba(var(--ph-scrim), 0.38) 42%, rgba(var(--ph-scrim), 0) 66%), linear-gradient(180deg, rgba(var(--ph-scrim), 0.28), rgba(var(--ph-scrim), 0) 22%); }
+@media (min-width: 900px) {
+  .ph-scrim { background: linear-gradient(270deg, rgba(var(--ph-scrim), 0.66) 0%, rgba(var(--ph-scrim), 0.32) 40%, rgba(var(--ph-scrim), 0) 66%), linear-gradient(0deg, rgba(var(--ph-scrim), 0.3), rgba(var(--ph-scrim), 0) 36%); }
+}
+
+.ph-in { position: relative; z-index: 2; height: 100%; }
+.ph-copy { position: absolute; inset-inline: var(--gut); bottom: max(28px, 4svh); max-width: 640px; }
+.ph-h1 { margin: 0; color: #fff; font-size: clamp(46px, 7.2vw, 108px); line-height: 0.98; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance; text-shadow: 0 2px 30px rgba(var(--ph-scrim), 0.25); }
+.ph-sub { margin: 18px 0 0; max-width: 34ch; font-size: clamp(17px, 1.5vw, 21px); line-height: 1.5; color: rgba(255, 255, 255, 0.92); }
+.ph-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 26px; }
+.ph-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 58px; padding: 0 30px; border-radius: 999px;
+  background: var(--indigo); color: #fff; font-weight: 700; font-size: 18px; line-height: 1; white-space: nowrap;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 10px 24px -10px rgba(62, 43, 241, 0.7);
+  transition: background-color 180ms var(--ph-ease), transform 160ms var(--ph-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.ph-btn:active { transform: scale(0.97); background: var(--indigo-700); }
+.ph-btn-ar { transition: transform 200ms var(--ph-ease); }
+@media (hover: hover) and (pointer: fine) { .ph-btn:hover { background: var(--indigo-500); } .ph-btn:hover .ph-btn-ar { transform: translateX(-3px); } }
+.ph-ghost { display: inline-flex; align-items: center; min-height: 48px; padding: 0 6px; font-weight: 700; font-size: 17px; color: #fff; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 6px; text-decoration-color: rgba(255, 255, 255, 0.5); transition: text-decoration-color 160ms; }
+.ph-ghost:hover { text-decoration-color: #fff; }
+.ph-hero :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.ph-note { display: inline-flex; align-items: center; gap: 6px; margin: 12px 0 0; font-size: 14px; color: rgba(255, 255, 255, 0.9); }
+.ph-note svg { color: #8ff0c4; }
+@media (min-width: 900px) {
+  .ph-copy { inset-inline: max(var(--gut), calc((100vw - 1240px) / 2 + var(--gut))) auto; bottom: clamp(48px, 11svh, 120px); }
+}
+
+/* notifications */
+.ph-ntfs { position: absolute; inset-inline: var(--gut); top: 86px; display: grid; gap: 8px; justify-items: center; }
+.ph-ntf {
+  display: flex; align-items: center; gap: 12px; width: min(360px, 100%); padding: 12px 14px 12px 16px; border-radius: 20px;
+  background: rgba(255, 255, 255, 0.86); -webkit-backdrop-filter: saturate(1.8) blur(20px); backdrop-filter: saturate(1.8) blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 1px 2px rgba(27, 38, 86, 0.06), 0 18px 40px -16px rgba(27, 38, 86, 0.3);
+  color: var(--navy); text-align: start;
+  animation: ph-in 760ms var(--ph-ease) both; animation-delay: calc(450ms + var(--i) * 650ms);
+}
+.ph-ntf:nth-child(3) { display: none; }
+@media (min-height: 760px) { .ph-ntf:nth-child(3) { display: flex; } }
+@keyframes ph-in { from { opacity: 0; transform: translateY(-14px) scale(0.96); } }
+.ph-ntf-ic { flex: none; display: grid; place-items: center; }
+.ph-ntf-mk { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.ph-ntf-mk.is-whatsapp { background: #e9fbf0; box-shadow: none; color: var(--wa); }
+.ph-face { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; display: block; background: #efecff; }
+.ph-ntf-tx { display: grid; gap: 1px; min-width: 0; flex: 1; }
+.ph-ntf-tx b { font-size: 15px; font-weight: 700; line-height: 1.3; }
+.ph-ntf-tx small { font-size: 13.5px; color: var(--ink); line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ph-ntf-t { align-self: flex-start; font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+@media (min-width: 900px) {
+  .ph-ntfs { inset-inline: auto max(var(--gut), calc((100vw - 1240px) / 2 + var(--gut))); top: auto; bottom: clamp(48px, 11svh, 120px); width: 360px; justify-items: stretch; gap: 10px; }
+  .ph-ntf { width: 100%; }
+  .ph-ntf:nth-child(2) { transform: translateX(-28px); animation-name: ph-in2; }
+  @keyframes ph-in2 { from { opacity: 0; transform: translate(-28px, -14px) scale(0.96); } to { transform: translateX(-28px); } }
+}
+@media (prefers-reduced-motion: reduce) { .ph-ntf { animation: none; } .ph-btn, .ph-btn-ar { transition: none; } }
+
+/* the current header, as a glass pill floating over the photo (links and wordmark unchanged) */
+.lm.has-ph .l7-hdr { padding: 10px var(--gut) 0; pointer-events: none; background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.lm.has-ph .l7-hdr-in {
+  pointer-events: auto; max-width: 1240px; height: 60px; padding-block: 0; padding-inline: 18px 8px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6); -webkit-backdrop-filter: saturate(1.6) blur(18px); backdrop-filter: saturate(1.6) blur(18px);
+  border: 1px solid transparent; transition: background-color 240ms var(--ph-ease, ease), box-shadow 240ms var(--ph-ease, ease);
+}
+.lm.has-ph .l7-hdr.is-solid .l7-hdr-in { background: rgba(255, 255, 255, 0.92); border-color: rgba(255, 255, 255, 0.6); box-shadow: 0 1px 2px rgba(27, 38, 86, 0.05), 0 8px 24px -12px rgba(27, 38, 86, 0.18); }
+.lm.has-ph .l7-nav a, .lm.has-ph .l7-login { border-radius: 999px; }
+.lm.has-ph .l7-hdr-cta { border-radius: 999px; padding: 0 18px; }
+@media (max-width: 380px) { .lm.has-ph .l7-hdr-in { gap: 8px; padding-inline-start: 14px; } .lm.has-ph .l7-hdr-cta { padding: 0 14px; } }
+.lm.has-ph .l7-hdr-cta { white-space: nowrap; }
+@media (max-width: 899px) and (max-height: 699px) { .ph-ntf:nth-child(2) { display: none; } }
+
+/* the channels strip used to continue the old hero's lilac floor; give it its own top air */
+.lm.has-ph .lm-ch { padding-top: 28px; }
