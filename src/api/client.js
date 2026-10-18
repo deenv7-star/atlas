@@ -432,6 +432,14 @@ class SupabaseEntityCollection {
   }
 
   _wrapError(error, id) {
+    // bookings_no_overlap (014): the database refused a second booking on the same unit and nights.
+    if (error?.code === '23P01' || /bookings_no_overlap/.test(String(error?.message || ''))) {
+      const e = new Error('התאריכים האלה כבר תפוסים ביחידה הזו. בחרו תאריכים אחרים או יחידה אחרת.');
+      e.code = 'BOOKING_OVERLAP';
+      e.status = 409;
+      if (id) e.resourceId = id;
+      return e;
+    }
     const msg = error?.message || String(error);
     const err = new Error(msg);
     err.status = error?.code === 'PGRST116' ? 404 : 500;
@@ -812,20 +820,24 @@ const integrations = {
           /* fall through to browser key or message */
         }
       }
-      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-      if (!apiKey) {
-        return 'הגדר OPENAI_API_KEY בשרת (מומלץ) או VITE_OPENAI_API_KEY לפיתוח מקומי.';
+      // Supabase: the LLM runs in the ai-chat edge function; the OpenAI key never reaches the browser.
+      if (isSupabaseConfigured && supabase) {
+        const { data, error } = await supabase.functions.invoke('ai-chat', { body: { prompt, model } });
+        if (error || data?.error) {
+          let code = data?.error || '';
+          if (!code) { try { code = (await error.context?.json?.())?.error || ''; } catch { /* not json */ } }
+          const e = new Error(code === 'not_configured'
+            ? 'העוזר החכם עוד לא הופעל בחשבון הזה. הנתונים שלכם בטוחים, ופשוט אין עדיין מנוע AI מחובר.'
+            : code === 'rate_limited' ? 'יותר מדי שאלות בדקה האחרונה. נסו שוב עוד רגע.'
+            : 'העוזר החכם לא זמין כרגע. נסו שוב עוד מעט.');
+          e.code = code === 'not_configured' ? 'AI_NOT_CONFIGURED' : 'AI_ERROR';
+          throw e;
+        }
+        return data?.text ?? '';
       }
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-        body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 1024 }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error?.message || `OpenAI error ${res.status}`);
-      }
-      return (await res.json()).choices?.[0]?.message?.content ?? '';
+      const e = new Error('העוזר החכם זמין בחשבון מחובר.');
+      e.code = 'AI_NOT_CONFIGURED';
+      throw e;
     },
 
     async SendEmail({ to, subject, body } = {}) {
@@ -852,9 +864,8 @@ const integrations = {
           /* fall through */
         }
       }
-      console.info('[SendEmail stub]', { to, subject, body });
-      await new Promise((r) => setTimeout(r, 300));
-      return { success: true };
+      // No outgoing mail provider is connected: say so instead of pretending it was sent.
+      return { success: false, code: 'EMAIL_NOT_CONFIGURED', mailto: `mailto:${encodeURIComponent(to || '')}?subject=${encodeURIComponent(subject || '')}&body=${encodeURIComponent(body || '')}` };
     },
 
     async UploadFile({ file } = {}) {
@@ -882,9 +893,9 @@ const integrations = {
     },
 
     async ExtractDataFromUploadedFile({ file_url } = {}) {
-      console.info('[ExtractDataFromUploadedFile stub]', { file_url });
-      await new Promise(r => setTimeout(r, 300));
-      return { status: 'success', output: {} };
+      // Not implemented on the server yet: report it honestly so the screen can explain.
+      void file_url;
+      return { status: 'unsupported', output: null };
     },
   },
 };

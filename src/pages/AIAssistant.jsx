@@ -124,9 +124,9 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
       
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
-      const errorMessage = { 
-        role: 'assistant', 
-        content: 'אופס! משהו השתבש. בבקשה נסה שוב.' 
+      const errorMessage = {
+        role: 'assistant',
+        content: error?.code === 'AI_NOT_CONFIGURED' || error?.code === 'AI_ERROR' ? error.message : 'משהו השתבש. נסו שוב.',
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {

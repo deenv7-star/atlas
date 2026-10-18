@@ -60,6 +60,7 @@ export async function fetchGuestStay(token) {
     property: { name: property.name || b.property_name || '', address: property.address || '', guest_info: info, images: property.images || [] },
     host: { name: info.host_name || org.name, phone: info.host_phone || org.phone },
     money: { total: money.total, paid: money.paid, balance: money.balance, dueDate: money.dueDate },
+    checkin: { completed: !!b.checkin_completed_at, completed_at: b.checkin_completed_at || null, arrival_time: b.checkin?.arrival_time || null, id_name: b.checkin?.id_name || null, has_phone: String(b.guest_phone || '').replace(/\D/g, '').length >= 9 },
   };
 }
 
@@ -130,3 +131,40 @@ export async function submitDirectInquiry(slug, form) {
   return { ok: true };
 }
 
+
+/**
+ * Online check-in from the guest page (014): phone, name as on ID, arrival time, house rules, optional marketing consent.
+ * Saves onto the booking so the WhatsApp journey works even for Booking.com / Airbnb guests without a phone.
+ */
+export async function submitGuestCheckin(token, form) {
+  const payload = {
+    phone: String(form.phone || '').trim().slice(0, 30),
+    id_name: String(form.id_name || '').trim().slice(0, 120),
+    arrival_time: form.arrival_time || null,
+    guests: form.guests ? Math.max(1, Math.min(40, Number(form.guests) || 1)) : null,
+    rules_accepted: !!form.rules_accepted,
+    marketing_consent: !!form.marketing_consent,
+    notes: String(form.notes || '').trim().slice(0, 500),
+  };
+  const digits = payload.phone.replace(/\D/g, '');
+  if (digits.length < 9 || payload.id_name.length < 2) throw new Error('missing_fields');
+  if (!payload.rules_accepted) throw new Error('rules_not_accepted');
+  if (isSupabaseConfigured) {
+    await rpc('submit_guest_checkin', {
+      p_token: token, p_phone: payload.phone, p_id_name: payload.id_name, p_arrival_time: payload.arrival_time,
+      p_guests: payload.guests, p_rules_accepted: payload.rules_accepted, p_marketing_consent: payload.marketing_consent,
+      p_notes: payload.notes || null,
+    });
+    return { ok: true };
+  }
+  const bookings = await base44.entities.Booking.filter({}, '-created_date', 2000);
+  const b = bookings.find((x) => x.guest_token === token) || bookings.find((x) => x.id === token);
+  if (!b) throw new PublicNotFoundError();
+  const now = new Date().toISOString();
+  await base44.entities.Booking.update(b.id, {
+    guest_phone: payload.phone,
+    checkin: { ...payload, rules_accepted_at: now, marketing_consent_at: payload.marketing_consent ? now : null },
+    checkin_completed_at: now,
+  });
+  return { ok: true };
+}

@@ -8,4 +8,4 @@
  * 4. Real data takes precedence when available (future: fetch real, fallback to demo)
  */
 
-export const DEMO_DATA_PAGES = ['DynamicPricing'];
+export const DEMO_DATA_PAGES = []; // DynamicPricing reads real rules + the Hebrew calendar since 014

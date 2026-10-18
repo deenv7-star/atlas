@@ -67,7 +67,7 @@ export function renderTemplate(key, ctx) {
         `תאריכים: ${dates}.`,
         `כניסה מ-${info.check_in_time}, יציאה עד ${info.check_out_time}.`,
         bal ? `יתרה לתשלום: ${bal}.` : '',
-        link ? `כל הפרטים לשהייה נמצאים כאן: ${link}` : '',
+        link ? `כל הפרטים לשהייה, וצ'ק-אין קצר (טלפון ושעת הגעה), כאן: ${link}` : '',
         (info.closing_line || 'נשמח לארח אתכם.').trim(),
       ].filter(Boolean).join('\n') + sign;
 

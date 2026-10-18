@@ -1,7 +1,11 @@
 import HelpHint from '@/components/help/HelpHint';
 import React, { useState, useMemo, useCallback } from 'react';
 import { addDays, subDays, startOfDay } from 'date-fns';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { callEdge } from '@/lib/real/edge';
+import { DB_FEATURES } from '@/config/dbFeatures';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { CalendarRange, ChevronLeft, ChevronRight, Plus, RefreshCw } from 'lucide-react';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { SegmentedControl, EmptyState as DsEmptyState, fmtMoney } from '@/components/ds';
@@ -150,10 +154,33 @@ export default function MultiCalendar({ selectedPropertyId }) {
     void setUrlState({ date: addDays(anchorDate, totalDays) });
   }, [anchorDate, setUrlState, totalDays]);
 
-  const handleSync = useCallback(() => {
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  // Real channel sync (014): pulls every connected iCal feed on the server, then reloads the calendar.
+  const handleSync = useCallback(async () => {
+    if (!DB_FEATURES.realCore) { navigate('/integrations'); return; }
     setSyncing(true);
-    setTimeout(() => setSyncing(false), 2000);
-  }, []);
+    try {
+      const res = await callEdge('ical-sync', {});
+      const rs = res?.results || [];
+      if (!rs.length) {
+        atlasToastApi.success('עוד לא חיברתם ערוצים. מעבירים אתכם לחיבור Airbnb ו-Booking.com');
+        navigate('/integrations');
+        return;
+      }
+      const bad = rs.filter((r) => !r.ok).length;
+      const conf = rs.reduce((n, r) => n + (r.conflicts || 0), 0);
+      const added = rs.reduce((n, r) => n + (r.created || 0) + (r.updated || 0), 0);
+      if (bad || conf) atlasToastApi.error(`סונכרנו ${rs.length - bad} מתוך ${rs.length} ערוצים${conf ? `, ${conf} התנגשויות` : ''}. הפרטים במסך החיבורים`);
+      else atlasToastApi.success(added ? `הערוצים סונכרנו, ${added} עדכונים ביומן` : 'הערוצים סונכרנו, אין שינויים');
+    } catch (e) {
+      atlasToastApi.error(e.message || 'הסנכרון נכשל');
+    } finally {
+      setSyncing(false);
+      qc.invalidateQueries({ queryKey: ['bookings'] });
+      qc.invalidateQueries({ queryKey: ['calendar-syncs'] });
+    }
+  }, [navigate, qc]);
 
   const isToday = (d) => {
     const now = new Date();
@@ -250,7 +277,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
         </div>
         <div className="flex flex-wrap items-center gap-1">
           <HelpHint id="calendar.sync" />
-          <Button variant="outline" onClick={handleSync} aria-label="סנכרון ערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
+          <Button variant="outline" onClick={handleSync} disabled={syncing} aria-label="סנכרון ערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
             <RefreshCw className={cn(syncing && 'animate-spin')} />
             <span className="hidden sm:inline">סנכרון ערוצים</span>
           </Button>

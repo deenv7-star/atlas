@@ -413,34 +413,24 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             <input
               type="file"
               id="import-contract"
-              accept=".docx,.pdf,.txt"
+              accept=".txt,text/plain"
               className="hidden"
               onChange={async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
                 
+                // Plain-text contracts are read in the browser. Word/PDF extraction is not built yet: say so.
+                e.target.value = '';
+                if (!/\.txt$/i.test(file.name) && file.type !== 'text/plain') {
+                  window.alert('כרגע אפשר לייבא רק קובץ טקסט (.txt). מקובץ Word או PDF: העתיקו את הנוסח והדביקו בתבנית חדשה.');
+                  return;
+                }
                 try {
-                  const { file_url } = await base44.integrations.Core.UploadFile({ file });
-                  const extracted = await base44.integrations.Core.ExtractDataFromUploadedFile({
-                    file_url,
-                    json_schema: {
-                      type: "object",
-                      properties: {
-                        name: { type: "string" },
-                        content: { type: "string" }
-                      }
-                    }
-                  });
-                  
-                  if (extracted.status === 'success' && extracted.output) {
-                    setNewTemplate({
-                      name: extracted.output.name || file.name,
-                      content: extracted.output.content || ''
-                    });
-                    setIsTemplateDialogOpen(true);
-                  }
-                } catch (error) {
-                  alert('שגיאה בייבוא הקובץ');
+                  const content = await file.text();
+                  setNewTemplate({ name: file.name.replace(/\.txt$/i, ''), content: content.slice(0, 50000) });
+                  setIsTemplateDialogOpen(true);
+                } catch {
+                  window.alert('לא הצלחנו לקרוא את הקובץ');
                 }
               }}
             />

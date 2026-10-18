@@ -122,3 +122,6 @@ textarea.ab-input { padding: 10px 12px; min-height: 96px; line-height: 1.5; }
   .stat-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .stat-row > :nth-child(3):last-child { grid-column: auto; }
 }
+
+/* Toast close: the visible "x" stays 20px, the tap area reaches 44px (WCAG 2.5.5 / phones). */
+[data-sonner-toast] [data-close-button]::after { content: ""; position: absolute; inset: -12px; }

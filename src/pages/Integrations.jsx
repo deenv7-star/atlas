@@ -1,1007 +1,431 @@
-import HelpHint from '@/components/help/HelpHint';
-import React, { useState, useEffect } from 'react';
-import { PageHeader, SkelLine } from '@/components/ds';
-import { integrationToPayload } from '@/lib/entityPayloads';
+/**
+ * ערוצים וחיבורים: only what really works is shown as working.
+ *   יומנים (real, 013): per unit, import Airbnb / Booking.com / any iCal feed (server sync every 15 minutes + "סנכרן עכשיו"),
+ *            and an export feed to paste into each channel. Status, last sync, errors and conflicts come from the server.
+ *   הודעות / תשלומים / חשבוניות: an honest status per provider (what works today, what is coming, what it needs).
+ */
+import React, { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Switch } from '@/components/ui/switch';
-import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
-import CalendarSetupWizard from '@/components/integrations/CalendarSetupWizard';
-import MessagingSetupDialog from '@/components/integrations/MessagingSetupDialog';
-import PaymentSetupDialog from '@/components/integrations/PaymentSetupDialog';
-import AccountingSetupDialog from '@/components/integrations/AccountingSetupDialog';
-import PMSSetupDialog from '@/components/integrations/PMSSetupDialog';
-import { Calendar, CreditCard, MessageSquare, Settings2, RefreshCw, Plus, ExternalLink, Trash2, AlertCircle, Clock, Zap, Info
+import {
+  CalendarDays, RefreshCw, Trash2, Copy, Check, Plus,
+  AlertTriangle, ChevronDown, ArrowDownToLine, ArrowUpFromLine, Info,
 } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import HelpHint from '@/components/help/HelpHint';
+import { PageHeader, SegmentedControl, SkelLine, Card, StatusPill } from '@/components/ds';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { UnitPhoto } from '@/components/app/atoms';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
+import { DB_FEATURES } from '@/config/dbFeatures';
+import { callEdge, icalExportUrl, minutesAgoHe } from '@/lib/real/edge';
+import { formatDayHe } from '@/lib/stay/format';
+import { cn } from '@/lib/utils';
 
-const CALENDAR_PROVIDERS = {
-  GOOGLE: { name: 'Google Calendar', color: 'bg-brand-500', icon: 'G', infoUrl: 'https://support.google.com/calendar' },
-  OUTLOOK: { name: 'Outlook', color: 'bg-brand-600', icon: 'O', infoUrl: 'https://support.microsoft.com/en-us/outlook' },
-  AIRBNB: { name: 'Airbnb', color: 'bg-[#EF5B5B]', icon: 'A', infoUrl: 'https://www.airbnb.com/help' },
-  BOOKING_COM: { name: 'Booking.com', color: 'bg-brand-700', icon: 'B', infoUrl: 'https://www.booking.com/help' },
-  ICAL: { name: 'iCal (כללי)', color: 'bg-gray-600', icon: 'i', infoUrl: 'https://en.wikipedia.org/wiki/ICalendar' }
+const PROVIDERS = {
+  AIRBNB: { name: 'Airbnb', short: 'A', tone: 'bg-[#FFE8EA] text-[#C2273B]', channel: 'airbnb' },
+  BOOKING_COM: { name: 'Booking.com', short: 'B', tone: 'bg-[#E4ECFF] text-[#1D3FAE]', channel: 'booking' },
+  ICAL: { name: 'יומן אחר (iCal)', short: 'i', tone: 'bg-[#EEF0F6] text-ink-600', channel: '' },
+  GOOGLE: { name: 'Google Calendar', short: 'G', tone: 'bg-[#EEF0F6] text-ink-600', channel: 'google' },
+  OUTLOOK: { name: 'Outlook', short: 'O', tone: 'bg-[#EEF0F6] text-ink-600', channel: 'outlook' },
 };
 
-const SYNC_STATUS = {
-  ACTIVE: { label: 'פעיל', color: 'bg-green-500' },
-  PAUSED: { label: 'מושהה', color: 'bg-yellow-500' },
-  ERROR: { label: 'שגיאה', color: 'bg-red-500' }
-};
+function guessProvider(url) {
+  if (/airbnb\./i.test(url)) return 'AIRBNB';
+  if (/booking\.com/i.test(url)) return 'BOOKING_COM';
+  if (/google\.com/i.test(url)) return 'GOOGLE';
+  if (/outlook|office365|live\.com/i.test(url)) return 'OUTLOOK';
+  return 'ICAL';
+}
 
-const MESSAGING_PROVIDERS = {
-  WHATSAPP: { name: 'WhatsApp Business', color: 'bg-[#25D366]', icon: 'W' },
-  EMAIL_SMTP: { name: 'Email (SMTP)', color: 'bg-gray-600', icon: 'E' },
-  SMS_TWILIO: { name: 'SMS (Twilio)', color: 'bg-[#F22F46]', icon: 'S' },
-  SENDGRID: { name: 'SendGrid', color: 'bg-brand-500', icon: 'S' },
-  TELEGRAM: { name: 'Telegram Bot', color: 'bg-[#0088cc]', icon: 'T' }
-};
+function validUrl(raw) {
+  const v = String(raw || '').trim().replace(/^webcal:\/\//i, 'https://');
+  try {
+    const u = new URL(v);
+    return /^https?:$/.test(u.protocol) ? v : '';
+  } catch { return ''; }
+}
 
-const PAYMENT_PROVIDERS = {
-  STRIPE: { name: 'Stripe', color: 'bg-[#635BFF]', icon: 'S' },
-  PAYPAL: { name: 'PayPal', color: 'bg-[#003087]', icon: 'P' },
-  BIT: { name: 'Bit', color: 'bg-green-600', icon: 'B' },
-  TRANZILA: { name: 'Tranzila', color: 'bg-brand-600', icon: 'T' },
-  MESHULAM: { name: 'Meshulam', color: 'bg-orange-600', icon: 'M' },
-  CARDCOM: { name: 'Cardcom', color: 'bg-brand-600', icon: 'C' }
-};
-
-const ACCOUNTING_PROVIDERS = {
-  MORNING: { name: 'Morning', color: 'bg-[#00A6ED]', icon: 'M' },
-  GREEN_INVOICE: { name: 'Green Invoice', color: 'bg-green-600', icon: 'G' },
-  QUICKBOOKS: { name: 'QuickBooks', color: 'bg-[#2CA01C]', icon: 'Q' },
-  ZOHO_BOOKS: { name: 'Zoho Books', color: 'bg-orange-600', icon: 'Z' },
-  XERO: { name: 'Xero', color: 'bg-brand-700', icon: 'X' },
-  HASHAVSHEVET: { name: 'חשבשבת', color: 'bg-gray-700', icon: 'ח' }
-};
-
-const PMS_PROVIDERS = {
-  GUESTY: { name: 'Guesty', color: 'bg-[#5B21B6]', icon: 'G' },
-  HOSTAWAY: { name: 'Hostaway', color: 'bg-brand-600', icon: 'H' },
-  LODGIFY: { name: 'Lodgify', color: 'bg-orange-600', icon: 'L' },
-  CLOUDBEDS: { name: 'Cloudbeds', color: 'bg-green-600', icon: 'C' },
-  OPERA: { name: 'Opera PMS', color: 'bg-red-600', icon: 'O' },
-  MEWS: { name: 'Mews', color: 'bg-brand-600', icon: 'M' },
-  APALEO: { name: 'Apaleo', color: 'bg-brand-600', icon: 'A' },
-  CHANNELMANAGER: { name: 'Channel Manager', color: 'bg-pink-600', icon: 'C' }
-};
-
-export default function IntegrationsPage() {
-  const [user, setUser] = useState(null);
-  const [showWizard, setShowWizard] = useState(false);
-  const [selectedPropertyId, setSelectedPropertyId] = useState('');
-  const [filterPropertyId, setFilterPropertyId] = useState('all');
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  const [showMessagingDialog, setShowMessagingDialog] = useState(false);
-  const [selectedMessagingProvider, setSelectedMessagingProvider] = useState(null);
-  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
-  const [selectedPaymentProvider, setSelectedPaymentProvider] = useState(null);
-  const [showAccountingDialog, setShowAccountingDialog] = useState(false);
-  const [selectedAccountingProvider, setSelectedAccountingProvider] = useState(null);
-  const [showPMSDialog, setShowPMSDialog] = useState(false);
-  const [selectedPMSProvider, setSelectedPMSProvider] = useState(null);
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    let cancelled = false;
-    base44.auth.me()
-      .then(u => { if (!cancelled) setUser(u); })
-      .catch(err => console.error('Failed to fetch user in Integrations:', err));
-    return () => { cancelled = true; };
-  }, []);
-
-  const orgId = user?.organization_id ?? user?.org_id ?? null;
-
-  const { data: properties = [] } = useQuery({
-    queryKey: ['properties', orgId],
-    queryFn: () => base44.entities.Property.filter({ org_id: orgId }, '-created_at', 200),
-    enabled: !!orgId,
-  });
-
-  const { data: calendarSyncs = [], isLoading } = useQuery({
-    queryKey: ['calendar-syncs', orgId],
-    queryFn: () => base44.entities.CalendarSync.filter({ org_id: orgId }, '-created_at', 200),
-    enabled: !!orgId,
-  });
-
-  const { data: messagingIntegrations = [] } = useQuery({
-    queryKey: ['messaging-integrations', orgId],
-    queryFn: () => base44.entities.MessagingIntegration.filter({ org_id: orgId }, '-created_at', 200),
-    enabled: !!orgId,
-  });
-
-  const { data: paymentGateways = [] } = useQuery({
-    queryKey: ['payment-gateways', orgId],
-    queryFn: () => base44.entities.PaymentGateway.filter({ org_id: orgId }, '-created_at', 200),
-    enabled: !!orgId,
-  });
-
-  const { data: accountingIntegrations = [] } = useQuery({
-    queryKey: ['accounting-integrations', orgId],
-    queryFn: () => base44.entities.AccountingIntegration.filter({ org_id: orgId }, '-created_at', 200),
-    enabled: !!orgId,
-  });
-
-  const { data: pmsIntegrations = [] } = useQuery({
-    queryKey: ['pms-integrations', orgId],
-    queryFn: () => base44.entities.PMSIntegration.filter({ org_id: orgId }, '-created_at', 200),
-    enabled: !!orgId,
-  });
-
-  const createSyncMutation = useMutation({
-    mutationFn: (data) => base44.entities.CalendarSync.create({
-      ...data,
-      org_id: orgId,
-      property_id: selectedPropertyId,
-      sync_status: 'ACTIVE'
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
-      setShowWizard(false);
-      atlasToastApi.success('יומן נוסף בהצלחה!');
-    },
-    onError: () => atlasToastApi.error('שגיאה בהוספת היומן')
-  });
-
-  const deleteSyncMutation = useMutation({
-    mutationFn: (id) => base44.entities.CalendarSync.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
-      setDeleteConfirmId(null);
-      atlasToastApi.success('סנכרון הוסר בהצלחה');
-    },
-    onError: () => atlasToastApi.error('שגיאה בהסרת הסנכרון')
-  });
-
-  const toggleSyncMutation = useMutation({
-    mutationFn: ({ id, status }) => base44.entities.CalendarSync.update(id, { sync_status: status }),
-    onSuccess: (_, { status }) => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
-      atlasToastApi.success(status === 'ACTIVE' ? 'סנכרון הופעל' : 'סנכרון הושהה');
-    },
-    onError: () => atlasToastApi.error('שגיאה בעדכון הסנכרון')
-  });
-
-  const manualSyncMutation = useMutation({
-    mutationFn: (id) => base44.entities.CalendarSync.update(id, { last_sync_at: new Date().toISOString() }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-syncs'] });
-      atlasToastApi.success('סנכרון הופעל כעת...');
-    },
-    onError: () => atlasToastApi.error('שגיאה בסנכרון')
-  });
-
-  const createMessagingMutation = useMutation({
-    mutationFn: (data) => base44.entities.MessagingIntegration.create({
-      ...integrationToPayload(data),
-      org_id: orgId
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messaging-integrations'] });
-      setShowMessagingDialog(false);
-      setSelectedMessagingProvider(null);
-      atlasToastApi.success('אינטגרציה נוספה בהצלחה!');
-    },
-    onError: () => atlasToastApi.error('שגיאה בהוספת האינטגרציה')
-  });
-
-  const deleteMessagingMutation = useMutation({
-    mutationFn: (id) => base44.entities.MessagingIntegration.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messaging-integrations'] });
-      atlasToastApi.success('אינטגרציה הוסרה');
-    },
-    onError: () => atlasToastApi.error('שגיאה בהסרת האינטגרציה')
-  });
-
-  const handleDeleteMessaging = (id) => {
-    if (window.confirm('האם אתה בטוח שברצונך למחוק את האינטגרציה?')) {
-      deleteMessagingMutation.mutate(id);
-    }
+function CopyRow({ label, hint, value }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(value); setCopied(true); window.setTimeout(() => setCopied(false), 1600); atlasToastApi.success('הקישור הועתק'); }
+    catch { atlasToastApi.error('ההעתקה נחסמה בדפדפן. סמנו את הקישור והעתיקו ידנית'); }
   };
-
-  const handleConnectMessaging = (provider) => {
-    setSelectedMessagingProvider(provider);
-    setShowMessagingDialog(true);
-  };
-
-  const createPaymentMutation = useMutation({
-    mutationFn: (data) => base44.entities.PaymentGateway.create({
-      ...integrationToPayload(data),
-      org_id: orgId
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
-      setShowPaymentDialog(false);
-      setSelectedPaymentProvider(null);
-      atlasToastApi.success('שער תשלומים נוסף בהצלחה!');
-    },
-    onError: () => atlasToastApi.error('שגיאה בהוספת שער התשלומים')
-  });
-
-  const deletePaymentMutation = useMutation({
-    mutationFn: (id) => base44.entities.PaymentGateway.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
-      atlasToastApi.success('שער תשלומים הוסר');
-    },
-    onError: () => atlasToastApi.error('שגיאה בהסרת שער התשלומים')
-  });
-
-  const handleDeletePayment = (id) => {
-    if (window.confirm('האם אתה בטוח שברצונך למחוק את שער התשלומים?')) {
-      deletePaymentMutation.mutate(id);
-    }
-  };
-
-  const handleConnectPayment = (provider) => {
-    setSelectedPaymentProvider(provider);
-    setShowPaymentDialog(true);
-  };
-
-  const createAccountingMutation = useMutation({
-    mutationFn: (data) => base44.entities.AccountingIntegration.create({ ...integrationToPayload(data), org_id: orgId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accounting-integrations'] });
-      setShowAccountingDialog(false);
-      setSelectedAccountingProvider(null);
-      atlasToastApi.success('אינטגרציית חשבונאות נוספה!');
-    },
-    onError: () => atlasToastApi.error('שגיאה בהוספת אינטגרציה')
-  });
-
-  const deleteAccountingMutation = useMutation({
-    mutationFn: (id) => base44.entities.AccountingIntegration.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accounting-integrations'] });
-      atlasToastApi.success('אינטגרציה הוסרה');
-    },
-    onError: () => atlasToastApi.error('שגיאה')
-  });
-
-  const handleDeleteAccounting = (id) => {
-    if (window.confirm('האם אתה בטוח?')) deleteAccountingMutation.mutate(id);
-  };
-
-  const handleConnectAccounting = (provider) => {
-    setSelectedAccountingProvider(provider);
-    setShowAccountingDialog(true);
-  };
-
-  const createPMSMutation = useMutation({
-    mutationFn: (data) => base44.entities.PMSIntegration.create({ ...integrationToPayload(data), org_id: orgId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pms-integrations'] });
-      setShowPMSDialog(false);
-      setSelectedPMSProvider(null);
-      atlasToastApi.success('אינטגרציית PMS נוספה!');
-    },
-    onError: () => atlasToastApi.error('שגיאה')
-  });
-
-  const deletePMSMutation = useMutation({
-    mutationFn: (id) => base44.entities.PMSIntegration.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pms-integrations'] });
-      atlasToastApi.success('אינטגרציה הוסרה');
-    },
-    onError: () => atlasToastApi.error('שגיאה')
-  });
-
-  const handleDeletePMS = (id) => {
-    if (window.confirm('האם אתה בטוח?')) deletePMSMutation.mutate(id);
-  };
-
-  const handleConnectPMS = (provider) => {
-    setSelectedPMSProvider(provider);
-    setShowPMSDialog(true);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" role="status" aria-busy="true" aria-label="טוען">
-        <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
-        <SkelLine className="mt-6 h-[52px] w-full max-w-lg rounded-[12px]" /><SkelLine className="mt-6 h-48 rounded-[22px]" />
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader title="ערוצים וחיבורים" help="integrations.page" subtitle="יומנים, תשלומים, הודעות וחשבונאות. כל חיבור חוסך עבודה ידנית." className="!mb-0" />
-      <Tabs defaultValue={(() => {
-        // Deep links (?tab=payments) — used by the help bot's in-app links.
-        try { const t = new URLSearchParams(window.location.search).get('tab'); return ['calendars', 'payments', 'messaging', 'pms', 'accounting'].includes(t) ? t : 'calendars'; } catch { return 'calendars'; }
-      })()}>
-        <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-          <TabsList className="inline-flex w-max justify-start">
-            <TabsTrigger value="calendars" className="flex items-center gap-2 whitespace-nowrap">
-              <Calendar className="h-4 w-4" />
-              יומנים
-            </TabsTrigger>
-            <TabsTrigger value="payments" className="flex items-center gap-2 whitespace-nowrap">
-              <CreditCard className="h-4 w-4" />
-              תשלומים
-            </TabsTrigger>
-            <TabsTrigger value="messaging" className="flex items-center gap-2 whitespace-nowrap">
-              <MessageSquare className="h-4 w-4" />
-              הודעות
-            </TabsTrigger>
-            <TabsTrigger value="pms" className="flex items-center gap-2 whitespace-nowrap">
-              <Settings2 className="h-4 w-4" />
-              מערכות PMS
-            </TabsTrigger>
-            <TabsTrigger value="accounting" className="flex items-center gap-2 whitespace-nowrap">
-              <CreditCard className="h-4 w-4" />
-              חשבונאות
-            </TabsTrigger>
-          </TabsList>
-        </div>
-
-        {/* Calendars Tab */}
-        <TabsContent value="calendars" className="mt-6 space-y-6">
-          {/* Info Banner */}
-          <div className="bg-brand-50 border border-brand-100 rounded-lg p-4 flex gap-3">
-            <Info className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-navy-900">
-              <p className="font-medium mb-1">ההזמנות מ-Booking ו-Airbnb נכנסות ללוח לבד</p>
-              <p>מדביקים פעם אחת את קישור היומן (iCal) של כל יחידה. משם הלוח מתעדכן לבד כל 30 דקות.</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex-1">
-              <h2 className="mb-3 flex items-center gap-1 text-lg font-medium">חיבור יומנים<HelpHint id="integrations.ical" /></h2>
-              {calendarSyncs.length > 0 && (
-                <Select value={filterPropertyId} onValueChange={setFilterPropertyId}>
-                  <SelectTrigger aria-label="סינון לפי נכס" className="w-full sm:w-48">
-                    <SelectValue placeholder="סנן לפי נכס" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">כל הנכסים</SelectItem>
-                    {properties.map(p => (
-                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
-            <Button 
-              className="w-full sm:w-auto"
-              onClick={() => setShowWizard(true)}
-            >
-              <Plus className="h-4 w-4 ml-2" />
-              הוסף יומן
-            </Button>
-          </div>
-
-          <CalendarSetupWizard
-            open={showWizard}
-            onOpenChange={setShowWizard}
-            onSelect={(data) => {
-              createSyncMutation.mutate(data);
-            }}
-            properties={properties}
-            selectedPropertyId={selectedPropertyId}
-            onPropertyChange={setSelectedPropertyId}
-          />
-
-          {calendarSyncs.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="p-8 text-center">
-                <Calendar className="h-12 w-12 mx-auto mb-3 text-neutral-300" />
-                <p className="text-ink-600">אין יומנים מסונכרנים</p>
-                <p className="text-sm text-ink-400">הוסף יומן כדי להתחיל</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {calendarSyncs
-                .filter(sync => filterPropertyId === 'all' || sync.property_id === filterPropertyId)
-                .map((sync) => {
-                const provider = CALENDAR_PROVIDERS[sync.provider] || {};
-                const status = SYNC_STATUS[sync.sync_status] || SYNC_STATUS.ACTIVE;
-                const property = properties.find(p => p.id === sync.property_id);
-
-                return (
-                  <Card key={sync.id}>
-                    <CardContent className="p-4">
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                          <div className={`w-10 h-10 flex-shrink-0 rounded-lg ${provider.color} flex items-center justify-center text-white text-lg`}>
-                            {provider.icon}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="font-medium flex items-center gap-2 flex-wrap">
-                              <span className="truncate">{provider.name}</span>
-                              <Badge variant="outline" className="text-xs">
-                                {sync.sync_direction === 'IMPORT' ? 'ייבוא' : sync.sync_direction === 'EXPORT' ? 'ייצוא' : 'דו-כיווני'}
-                              </Badge>
-                            </div>
-                            <div className="text-xs text-ink-600">
-                              {property?.name}
-                            </div>
-                            <div className="text-xs text-ink-400 flex items-center gap-1 mt-1">
-                              <Clock className="h-3 w-3" />
-                              {sync.last_sync_at ? `סונכרן לפני ${Math.floor((new Date() - new Date(sync.last_sync_at)) / 60000)} דקות` : 'לא סונכרן עדיין'}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                          <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${status.color}`} />
-                            <span className="text-sm text-ink-600">{status.label}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              title="סנכרן עכשיו"
-                              onClick={() => manualSyncMutation.mutate(sync.id)}
-                              disabled={manualSyncMutation.isPending}
-                            >
-                              <RefreshCw className={`h-4 w-4 text-ink-400 ${manualSyncMutation.isPending ? 'animate-spin' : ''}`} />
-                            </Button>
-                            <Button asChild variant="ghost" size="icon" title="למידע נוסף">
-                              <a href={provider.infoUrl} target="_blank" rel="noopener noreferrer" aria-label="למידע נוסף">
-                                <ExternalLink className="h-4 w-4 text-ink-400" />
-                              </a>
-                            </Button>
-                            <Switch
-                              aria-label={sync.sync_status === 'ACTIVE' ? 'השהיית סנכרון' : 'הפעלת סנכרון'}
-                              checked={sync.sync_status === 'ACTIVE'}
-                              onCheckedChange={(checked) => 
-                                toggleSyncMutation.mutate({ id: sync.id, status: checked ? 'ACTIVE' : 'PAUSED' })
-                              }
-                            />
-                            <Dialog open={deleteConfirmId === sync.id} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
-                              <DialogTrigger asChild>
-                                <Button aria-label="מחיקה" variant="ghost" size="icon" onClick={() => setDeleteConfirmId(sync.id)}>
-                                  <Trash2 className="h-4 w-4 text-ink-400" />
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent dir="rtl">
-                                <DialogHeader>
-                                  <DialogTitle>מחיקת סנכרון</DialogTitle>
-                                </DialogHeader>
-                                <p className="text-ink-600">האם אתה בטוח שברצונך למחוק את הסנכרון של {provider.name}?</p>
-                                <div className="flex gap-2 justify-end mt-4">
-                                  <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>ביטול</Button>
-                                  <Button className="bg-red-600 hover:bg-red-700" onClick={() => deleteSyncMutation.mutate(sync.id)}>
-                                    מחוק
-                                  </Button>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          </div>
-                        </div>
-                      </div>
-                      {sync.error_message && (
-                        <div className="mt-3 p-2 bg-red-50 rounded text-red-600 text-sm flex items-center gap-2">
-                          <AlertCircle className="h-4 w-4" />
-                          {sync.error_message}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-        </TabsContent>
-
-        {/* Payments Tab */}
-        <TabsContent value="payments" className="mt-6 space-y-6">
-          <div className="bg-brand-50 border border-brand-100 rounded-lg p-4 flex gap-3">
-            <Zap className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-navy-900">
-              <p className="font-medium mb-1">קבל תשלומים בקלות</p>
-              <p>חבר Stripe, PayPal, Bit או כל שער תשלומים - קבל כסף ישירות מאורחים בכרטיס, Bit והעברה בנקאית.</p>
-            </div>
-          </div>
-
-          {/* Connected Payment Gateways */}
-          {paymentGateways.length > 0 && (
-            <div className="space-y-3 mb-6">
-              <h3 className="text-sm font-medium text-ink-600">שערי תשלומים מחוברים</h3>
-              {paymentGateways.map(gateway => {
-                const providerConfig = PAYMENT_PROVIDERS[gateway.provider] || {};
-                return (
-                  <Card key={gateway.id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-lg ${providerConfig.color} flex items-center justify-center text-white font-bold`}>
-                            {providerConfig.icon}
-                          </div>
-                          <div>
-                            <div className="font-medium">{gateway.name}</div>
-                            <div className="text-xs text-ink-600">{providerConfig.name} • {gateway.currency}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${
-                            gateway.status === 'ACTIVE' ? 'bg-green-500' : 
-                            gateway.status === 'ERROR' ? 'bg-red-500' : 'bg-gray-400'
-                          }`} />
-                          <span className="text-sm text-ink-600">
-                            {gateway.status === 'ACTIVE' ? 'פעיל' : 
-                             gateway.status === 'ERROR' ? 'שגיאה' : 'לא פעיל'}
-                          </span>
-                          <Button aria-label="מחיקה"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeletePayment(gateway.id)}
-                          >
-                            <Trash2 className="h-4 w-4 text-ink-400" />
-                          </Button>
-                        </div>
-                      </div>
-                      {gateway.error_message && (
-                        <div className="mt-2 p-2 bg-red-50 rounded text-red-600 text-xs flex items-center gap-2">
-                          <AlertCircle className="h-3 w-3" />
-                          {gateway.error_message}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#635BFF]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#635BFF] flex items-center justify-center text-white font-bold">S</div>
-                  Stripe
-                </CardTitle>
-                <CardDescription>כרטיס אשראי, Apple Pay, Google Pay ועוד</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectPayment('STRIPE')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#003087]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#003087] flex items-center justify-center text-white font-bold">P</div>
-                  PayPal
-                </CardTitle>
-                <CardDescription>תשלומים דרך חשבון PayPal</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectPayment('PAYPAL')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-green-600">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center text-white"></div>
-                  Bit
-                </CardTitle>
-                <CardDescription>תשלומים מהירים בביט</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectPayment('BIT')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-brand-600">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-brand-600 flex items-center justify-center text-white"></div>
-                  Tranzila
-                </CardTitle>
-                <CardDescription>עיבוד תשלומים ישראלי מוביל</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectPayment('TRANZILA')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-orange-600">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white"></div>
-                  Meshulam
-                </CardTitle>
-                <CardDescription>תשלומים מאובטחים ומהירים</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectPayment('MESHULAM')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-brand-600">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-brand-600 flex items-center justify-center text-white"></div>
-                  Cardcom
-                </CardTitle>
-                <CardDescription>שער תשלומים ישראלי מאובטח</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectPayment('CARDCOM')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Messaging Tab */}
-        <TabsContent value="messaging" className="mt-6 space-y-6">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex gap-3">
-            <Zap className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-green-900">
-              <p className="font-medium mb-1">שלח הודעות אוטומטיות</p>
-              <p>חבר WhatsApp Business, SMTP, Twilio או SendGrid - שלח הודעות אוטומטיות לאורחים בזמנים הנכונים.</p>
-            </div>
-          </div>
-
-          {/* Connected Integrations */}
-          {messagingIntegrations.length > 0 && (
-            <div className="space-y-3 mb-6">
-              <h3 className="text-sm font-medium text-ink-600">אינטגרציות מחוברות</h3>
-              {messagingIntegrations.map(integration => {
-                const providerConfig = MESSAGING_PROVIDERS[integration.provider] || {};
-                return (
-                  <Card key={integration.id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-lg ${providerConfig.color} flex items-center justify-center text-white text-lg`}>
-                            {providerConfig.icon}
-                          </div>
-                          <div>
-                            <div className="font-medium">{integration.name}</div>
-                            <div className="text-xs text-ink-600">{providerConfig.name}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${
-                            integration.status === 'ACTIVE' ? 'bg-green-500' : 
-                            integration.status === 'ERROR' ? 'bg-red-500' : 'bg-gray-400'
-                          }`} />
-                          <span className="text-sm text-ink-600">
-                            {integration.status === 'ACTIVE' ? 'פעיל' : 
-                             integration.status === 'ERROR' ? 'שגיאה' : 'לא פעיל'}
-                          </span>
-                          <Button aria-label="מחיקה"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteMessaging(integration.id)}
-                          >
-                            <Trash2 className="h-4 w-4 text-ink-400" />
-                          </Button>
-                        </div>
-                      </div>
-                      {integration.error_message && (
-                        <div className="mt-2 p-2 bg-red-50 rounded text-red-600 text-xs flex items-center gap-2">
-                          <AlertCircle className="h-3 w-3" />
-                          {integration.error_message}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#25D366]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#25D366] flex items-center justify-center text-white"></div>
-                  WhatsApp Business
-                </CardTitle>
-                <CardDescription>שלח הודעות אוטומטיות לאורחים דרך WhatsApp</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white"
-                  onClick={() => handleConnectMessaging('WHATSAPP')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-gray-600">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-600 flex items-center justify-center text-white"></div>
-                  Email (SMTP)
-                </CardTitle>
-                <CardDescription>שלח אימיילים אוטומטיים דרך SMTP</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectMessaging('EMAIL_SMTP')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#F22F46]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#F22F46] flex items-center justify-center text-white"></div>
-                  SMS (Twilio)
-                </CardTitle>
-                <CardDescription>שלח הודעות SMS דרך Twilio</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectMessaging('SMS_TWILIO')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-brand-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-brand-500 flex items-center justify-center text-white"></div>
-                  SendGrid
-                </CardTitle>
-                <CardDescription>שירות דיוור מתקדם עם אנליטיקס</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectMessaging('SENDGRID')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-[#0088cc]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#0088cc] flex items-center justify-center text-white"></div>
-                  Telegram Bot
-                </CardTitle>
-                <CardDescription>שלח הודעות דרך בוט Telegram</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleConnectMessaging('TELEGRAM')}
-                >
-                  <Plus className="h-4 w-4 ml-2" />
-                  חבר עכשיו
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Accounting Tab */}
-        <TabsContent value="accounting" className="mt-6 space-y-6">
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex gap-3">
-            <Zap className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-orange-900">
-              <p className="font-medium mb-1">ניהול פיננסי משולב</p>
-              <p>חבר Morning, Green Invoice או כל מערכת חשבונאות - סנכרן חשבוניות וקבלות אוטומטית.</p>
-            </div>
-          </div>
-
-          {accountingIntegrations.length > 0 && (
-            <div className="space-y-3 mb-6">
-              <h3 className="text-sm font-medium text-ink-600">מערכות חשבונאות מחוברות</h3>
-              {accountingIntegrations.map(integration => {
-                const providerConfig = ACCOUNTING_PROVIDERS[integration.provider] || {};
-                return (
-                  <Card key={integration.id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-lg ${providerConfig.color} flex items-center justify-center text-white text-lg`}>{providerConfig.icon}</div>
-                          <div>
-                            <div className="font-medium">{integration.name}</div>
-                            <div className="text-xs text-ink-600">{providerConfig.name}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${integration.status === 'ACTIVE' ? 'bg-green-500' : integration.status === 'ERROR' ? 'bg-red-500' : 'bg-gray-400'}`} />
-                          <Button aria-label="מחיקה" variant="ghost" size="icon" onClick={() => handleDeleteAccounting(integration.id)}><Trash2 className="h-4 w-4 text-ink-400" /></Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { provider: 'MORNING', title: 'Morning (מורנינג)', desc: 'חשבוניות וקבלות ישראליות' },
-              { provider: 'GREEN_INVOICE', title: 'Green Invoice', desc: 'מערכת חשבוניות דיגיטלית' },
-              { provider: 'QUICKBOOKS', title: 'QuickBooks', desc: 'תוכנת חשבונאות מקיפה' },
-              { provider: 'ZOHO_BOOKS', title: 'Zoho Books', desc: 'ניהול פיננסי מקוון' },
-              { provider: 'XERO', title: 'Xero', desc: 'חשבונאות מבוססת ענן' },
-              { provider: 'HASHAVSHEVET', title: 'חשבשבת', desc: 'הנהלת חשבונות ישראלית' }
-            ].map(({ provider, title, desc }) => {
-              const config = ACCOUNTING_PROVIDERS[provider];
-              return (
-                <Card key={provider} className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-neutral-300">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center text-white text-lg`}>{config.icon}</div>
-                      {title}
-                    </CardTitle>
-                    <CardDescription>{desc}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button className="w-full" onClick={() => handleConnectAccounting(provider)}>
-                      <Plus className="h-4 w-4 ml-2" />
-                      חבר עכשיו
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </TabsContent>
-
-        {/* PMS Tab */}
-        <TabsContent value="pms" className="mt-6 space-y-6">
-          <div className="bg-brand-50 border border-brand-100 rounded-lg p-4 flex gap-3">
-            <Zap className="h-5 w-5 text-brand-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-navy-900">
-              <p className="font-medium mb-1">סנכרון עם מערכות PMS</p>
-              <p>חבר Guesty, Hostaway, Cloudbeds או כל PMS - סנכרן הזמנות ואורחים אוטומטית.</p>
-            </div>
-          </div>
-
-          {pmsIntegrations.length > 0 && (
-            <div className="space-y-3 mb-6">
-              <h3 className="text-sm font-medium text-ink-600">מערכות PMS מחוברות</h3>
-              {pmsIntegrations.map(integration => {
-                const providerConfig = PMS_PROVIDERS[integration.provider] || {};
-                return (
-                  <Card key={integration.id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-lg ${providerConfig.color} flex items-center justify-center text-white font-bold`}>{providerConfig.icon}</div>
-                          <div>
-                            <div className="font-medium">{integration.name}</div>
-                            <div className="text-xs text-ink-600">{providerConfig.name}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${integration.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-400'}`} />
-                          <Button aria-label="מחיקה" variant="ghost" size="icon" onClick={() => handleDeletePMS(integration.id)}><Trash2 className="h-4 w-4 text-ink-400" /></Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { provider: 'GUESTY', title: 'Guesty', desc: 'PMS מלא ומתקדם' },
-              { provider: 'HOSTAWAY', title: 'Hostaway', desc: 'ניהול מתקדם של נכסים' },
-              { provider: 'LODGIFY', title: 'Lodgify', desc: 'ניהול ערוצי הפצה' },
-              { provider: 'CLOUDBEDS', title: 'Cloudbeds', desc: 'פלטפורמת ניהול מלונות' },
-              { provider: 'OPERA', title: 'Opera PMS', desc: 'מערכת ניהול מלונאית' },
-              { provider: 'MEWS', title: 'Mews', desc: 'Cloud Hotel Management' },
-              { provider: 'APALEO', title: 'Apaleo', desc: 'Open Hospitality Platform' },
-              { provider: 'CHANNELMANAGER', title: 'Channel Manager', desc: 'ניהול ערוצי הפצה מרוכז' }
-            ].map(({ provider, title, desc }) => {
-              const config = PMS_PROVIDERS[provider];
-              return (
-                <Card key={provider} className="hover:shadow-md transition-shadow border-2 border-transparent hover:border-neutral-300">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center text-white font-bold`}>{config.icon}</div>
-                      {title}
-                    </CardTitle>
-                    <CardDescription>{desc}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button className="w-full" onClick={() => handleConnectPMS(provider)}>
-                      <Plus className="h-4 w-4 ml-2" />
-                      חבר עכשיו
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      {/* Messaging Setup Dialog */}
-      <MessagingSetupDialog
-        open={showMessagingDialog}
-        onOpenChange={setShowMessagingDialog}
-        provider={selectedMessagingProvider}
-        onSave={(data) => createMessagingMutation.mutate(data)}
-      />
-
-      {/* Payment Setup Dialog */}
-      <PaymentSetupDialog
-        open={showPaymentDialog}
-        onOpenChange={setShowPaymentDialog}
-        provider={selectedPaymentProvider}
-        onSave={(data) => createPaymentMutation.mutate(data)}
-      />
-
-      {/* Accounting Setup Dialog */}
-      <AccountingSetupDialog
-        open={showAccountingDialog}
-        onOpenChange={setShowAccountingDialog}
-        provider={selectedAccountingProvider}
-        onSave={(data) => createAccountingMutation.mutate(data)}
-      />
-
-      {/* PMS Setup Dialog */}
-      <PMSSetupDialog
-        open={showPMSDialog}
-        onOpenChange={setShowPMSDialog}
-        provider={selectedPMSProvider}
-        onSave={(data) => createPMSMutation.mutate(data)}
-      />
+    <div className="flex flex-col gap-2 rounded-[16px] bg-[#F7F8FB] p-3 sm:flex-row sm:items-center">
+      <div className="min-w-0 flex-1">
+        <p className="text-[14px] font-semibold text-navy-900">{label}</p>
+        {hint ? <p className="text-[12px] text-ink-400">{hint}</p> : null}
+        <p className="mt-1 truncate text-[12px] text-ink-400" dir="ltr" style={{ textAlign: 'right' }}>{value}</p>
+      </div>
+      <Button type="button" variant="secondary" className="h-11 shrink-0 px-4" onClick={copy} aria-label={`העתקת ${label}`}>
+        {copied ? <Check className="h-4 w-4" strokeWidth={2} /> : <Copy className="h-4 w-4" strokeWidth={1.75} />}
+        {copied ? 'הועתק' : 'העתקה'}
+      </Button>
     </div>
   );
 }
+
+function Help({ children, title }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-[16px] border border-[#ECEEF4]">
+      <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="press flex min-h-[48px] w-full items-center gap-2 px-3 text-right text-[14px] font-semibold text-navy-900">
+        <Info className="h-4 w-4 shrink-0 text-brand-600" strokeWidth={1.75} />
+        <span className="flex-1">{title}</span>
+        <ChevronDown className={cn('h-4 w-4 text-ink-300 transition-transform duration-200', open && 'rotate-180')} strokeWidth={1.75} />
+      </button>
+      {open ? <div className="space-y-3 px-4 pb-4 text-[14px] leading-relaxed text-ink-600">{children}</div> : null}
+    </div>
+  );
+}
+
+function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
+  const p = PROVIDERS[sync.provider] || PROVIDERS.ICAL;
+  const paused = sync.sync_status === 'PAUSED';
+  const error = sync.sync_status === 'ERROR';
+  const conflicts = Array.isArray(sync.conflicts) ? sync.conflicts : [];
+  const [confirm, setConfirm] = useState(false);
+  return (
+    <li className="min-w-0 rounded-[18px] border border-[#ECEEF4] p-3" data-sync-id={sync.id}>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span aria-hidden className={cn('inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] text-[15px] font-bold', p.tone)}>{p.short}</span>
+        <div className="min-w-[160px] flex-1">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] font-semibold text-navy-900">
+            <span className="min-w-0 truncate">{sync.label || p.name}</span>
+            <StatusPill tone={error ? 'red' : paused ? 'slate' : conflicts.length ? 'amber' : 'mint'} label={error ? 'שגיאה' : paused ? 'מושהה' : conflicts.length ? 'התנגשות' : 'פעיל'} />
+          </p>
+          <p className="mt-0.5 truncate text-[13px] text-ink-400">
+            <span data-testid="sync-ago">{minutesAgoHe(sync.last_success_at || sync.last_sync_at)}</span>
+            {sync.last_success_at ? <> · <span className="tabular">{sync.events_count || 0}</span> תאריכים תפוסים בערוץ</> : null}
+          </p>
+        </div>
+        <div className="ms-auto flex shrink-0 items-center gap-1">
+          <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={() => onSync(sync)} disabled={syncing} aria-label={`סנכרון ${p.name} עכשיו`}>
+            <RefreshCw className={cn('h-4 w-4 text-ink-400', syncing && 'animate-spin')} strokeWidth={1.75} />
+          </Button>
+          <Switch checked={!paused} onCheckedChange={(v) => onToggle(sync, v)} aria-label={paused ? `הפעלת סנכרון ${p.name}` : `השהיית סנכרון ${p.name}`} />
+          <Button type="button" variant="ghost" size="icon" className="h-11 w-11" onClick={() => setConfirm(true)} aria-label={`הסרת ${p.name}`}>
+            <Trash2 className="h-4 w-4 text-ink-400" strokeWidth={1.75} />
+          </Button>
+        </div>
+      </div>
+      {sync.error_message && error ? (
+        <p role="alert" className="mt-2 flex items-start gap-2 rounded-[12px] bg-[var(--st-red-bg,#FDECEC)] px-3 py-2 text-[13px] text-[var(--st-red-fg,#B42318)]">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />{sync.error_message}
+        </p>
+      ) : null}
+      {conflicts.length ? (
+        <div role="alert" className="mt-2 break-words rounded-[12px] bg-[#FFF6E5] px-3 py-2 text-[13px] text-[#8A5A00]">
+          <p className="flex items-center gap-2 font-semibold"><AlertTriangle className="h-4 w-4" strokeWidth={1.75} />{conflicts.length === 1 ? 'הזמנה כפולה אפשרית' : `${conflicts.length} הזמנות כפולות אפשריות`}</p>
+          <ul className="mt-1 space-y-1">
+            {conflicts.slice(0, 5).map((c) => (
+              <li key={c.uid} data-testid="conflict">
+                {p.name}: {formatDayHe(c.start, { weekday: false })} עד {formatDayHe(c.end, { weekday: false })} חופף ל{c.with_guest ? `הזמנה של ${c.with_guest}` : 'הזמנה קיימת'}{c.with_source ? ` (${c.with_source})` : ''}. ATLAS לא דרס את ההזמנה הקיימת; בדקו בערוץ ובטלו אחת מהן.
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {confirm ? (
+        <div className="mt-2 flex flex-wrap items-center gap-2 rounded-[12px] bg-[#F7F8FB] px-3 py-2">
+          <p className="flex-1 text-[13px] text-ink-600">להפסיק לסנכרן את {p.name}? הזמנות שכבר נוספו יישארו ביומן.</p>
+          <Button type="button" variant="outline" className="h-11" onClick={() => setConfirm(false)}>ביטול</Button>
+          <Button type="button" className="h-11 bg-red-600 hover:bg-red-700" onClick={() => onDelete(sync)}>הסרה</Button>
+        </div>
+      ) : null}
+    </li>
+  );
+}
+
+function AddFeed({ property, onAdd, busy }) {
+  const [url, setUrl] = useState('');
+  const [provider, setProvider] = useState('');
+  const [err, setErr] = useState('');
+  const effective = provider || (url ? guessProvider(url) : 'AIRBNB');
+  const submit = (e) => {
+    e.preventDefault();
+    const v = validUrl(url);
+    if (!v) { setErr('הדביקו קישור מלא שמתחיל ב-https (קישור הייצוא מהערוץ, בדרך כלל נגמר ב-.ics)'); return; }
+    setErr('');
+    onAdd({ property, url: v, provider: effective }).then((ok) => { if (ok) { setUrl(''); setProvider(''); } });
+  };
+  return (
+    <form onSubmit={submit} className="space-y-2" aria-label={`חיבור יומן ל${property.name}`}>
+      <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="מאיזה ערוץ">
+        {['AIRBNB', 'BOOKING_COM', 'ICAL'].map((k) => (
+          <button
+            key={k} type="button" role="radio" aria-checked={effective === k} onClick={() => setProvider(k)}
+            className={cn('press inline-flex h-11 items-center rounded-full px-4 text-[14px] font-semibold', effective === k ? 'bg-navy-900 text-white' : 'bg-white text-ink-600 ring-1 ring-inset ring-[#E3E6EF]')}
+          >{PROVIDERS[k].name}</button>
+        ))}
+      </div>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Input
+          value={url} onChange={(e) => { setUrl(e.target.value); setErr(''); }} dir="ltr" inputMode="url" autoComplete="off"
+          placeholder="https://www.airbnb.com/calendar/ical/....ics" aria-label={`קישור ייצוא מ-${PROVIDERS[effective].name}`}
+          aria-invalid={!!err} className="h-12 min-h-12 text-left sm:flex-1"
+        />
+        <Button type="submit" className="h-12 shrink-0 px-5" disabled={busy || !url.trim()}>
+          {busy ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" strokeWidth={2} />}
+          {busy ? 'מחבר ומסנכרן…' : 'חיבור וסנכרון'}
+        </Button>
+      </div>
+      {err ? <p role="alert" className="text-[13px] text-[var(--st-red-fg,#B42318)]">{err}</p> : null}
+    </form>
+  );
+}
+
+function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, onAdd, adding }) {
+  const last = syncs.map((s) => s.last_success_at).filter(Boolean).sort().pop();
+  return (
+    <Card as="section" className="overflow-hidden" aria-label={`יומנים של ${property.name}`} data-unit-id={property.id}>
+      <div className="flex items-center gap-3 px-5 pt-5 md:px-6">
+        <UnitPhoto property={property} className="h-12 w-12" rounded="rounded-[14px]" />
+        <div className="min-w-0 flex-1">
+          <h2 className="truncate text-[17px] font-bold text-navy-900">{property.name}</h2>
+          <p className="truncate text-[13px] text-ink-400">
+            {syncs.length ? `${syncs.length} ${syncs.length === 1 ? 'ערוץ מחובר' : 'ערוצים מחוברים'} · ${minutesAgoHe(last)}` : 'עוד לא חובר ערוץ'}
+          </p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-5 p-5 md:grid-cols-2 md:px-6 [&>*]:min-w-0">
+        <div className="min-w-0 space-y-3">
+          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowDownToLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייבוא: הזמנות מהערוצים אל ATLAS<HelpHint id="integrations.ical" /></h3>
+          {syncs.length ? (
+            <ul className="space-y-2">
+              {syncs.map((s) => <SyncRow key={s.id} sync={s} onSync={onSync} syncing={syncingId === s.id || syncingId === 'all'} onToggle={onToggle} onDelete={onDelete} />)}
+            </ul>
+          ) : null}
+          <AddFeed property={property} onAdd={onAdd} busy={adding === property.id} />
+        </div>
+        <div className="space-y-3">
+          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowUpFromLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייצוא: הזמנות מ-ATLAS אל הערוצים</h3>
+          {property.ical_export_token ? (
+            <>
+              <CopyRow label="להדבקה ב-Airbnb" hint="כל ההזמנות חוץ מאלה שהגיעו מ-Airbnb" value={icalExportUrl(property, 'airbnb')} />
+              <CopyRow label="להדבקה ב-Booking.com" hint="כל ההזמנות חוץ מאלה שהגיעו מ-Booking" value={icalExportUrl(property, 'booking')} />
+              <CopyRow label="קישור כללי" hint="ל-Google Calendar או לכל ערוץ אחר" value={icalExportUrl(property)} />
+            </>
+          ) : <p className="text-[14px] text-ink-400">קישור הייצוא נוצר בשמירה הבאה של היחידה.</p>}
+        </div>
+      </div>
+      <div className="space-y-2 px-5 pb-5 md:px-6">
+        <Help title="איך מחברים את Airbnb">
+          <p><b>1. מ-Airbnb ל-ATLAS:</b> ב-Airbnb נכנסים ללוח השנה ← בוחרים את המודעה ← זמינות ← <i>חיבור לוחות שנה</i> ← <i>ייצוא לוח שנה</i>. מעתיקים את הקישור ומדביקים אותו למעלה ב"ייבוא".</p>
+          <p><b>2. מ-ATLAS ל-Airbnb:</b> באותו מסך בוחרים <i>ייבוא לוח שנה</i>, מדביקים את "להדבקה ב-Airbnb", ונותנים שם ATLAS.</p>
+        </Help>
+        <Help title="איך מחברים את Booking.com">
+          <p><b>1. מ-Booking ל-ATLAS:</b> ב-Extranet נכנסים ל<i>תעריפים וזמינות</i> ← <i>סנכרון לוחות שנה</i> ← בוחרים את סוג החדר ← <i>ייצוא לוח שנה</i>. מעתיקים ומדביקים למעלה.</p>
+          <p><b>2. מ-ATLAS ל-Booking:</b> באותו מסך <i>הוספת חיבור לוח שנה</i> ← מדביקים את "להדבקה ב-Booking.com".</p>
+        </Help>
+        <Help title="מה חשוב לדעת">
+          <p>ATLAS בודקת את הערוצים כל 15 דקות, ואפשר ללחוץ על סנכרון בכל רגע. הערוצים עצמם מושכים את היומן של ATLAS בקצב שלהם: Booking בערך כל שעתיים, Airbnb בערך כל 3 שעות. בחלון הזה עדיין אפשרית הזמנה כפולה, ולכן כשיש חפיפה ATLAS לא דורסת הזמנה קיימת ומסמנת התנגשות.</p>
+          <p>יומן iCal מעביר רק תאריכים תפוסים, בלי שם, טלפון או מחיר. כדי לקבל את הטלפון של האורח שלחו לו את קישור הצ'ק-אין מתוך ההזמנה.</p>
+        </Help>
+      </div>
+    </Card>
+  );
+}
+
+function ProviderStatus({ items }) {
+  return (
+    <ul className="space-y-3">
+      {items.map((it) => (
+        <li key={it.name}>
+          <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-start md:px-6">
+            <div className="min-w-0 flex-1">
+              <p className="flex flex-wrap items-center gap-2 text-[16px] font-bold text-navy-900">
+                {it.name}
+                <StatusPill tone={it.live ? 'mint' : 'slate'} label={it.live ? 'פעיל' : 'בקרוב'} />
+              </p>
+              <p className="mt-1.5 text-[14px] leading-relaxed text-ink-600">{it.text}</p>
+              {it.needs ? <p className="mt-1.5 text-[13px] text-ink-400">דורש חיבור: {it.needs}</p> : null}
+            </div>
+            {it.action ? <div className="shrink-0">{it.action}</div> : null}
+          </Card>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export default function IntegrationsPage({ orgId: orgIdProp, user }) {
+  const qc = useQueryClient();
+  const [params, setParams] = useSearchParams();
+  // ?tab= deep links (the help bot links messaging / accounting too): aliases map to our four tabs.
+  const TAB_ALIAS = { messaging: 'messages', whatsapp: 'messages', accounting: 'invoices', pms: 'calendars', ical: 'calendars' };
+  const rawTab = params.get('tab') || 'calendars';
+  const tab = ['calendars', 'messages', 'payments', 'invoices'].includes(TAB_ALIAS[rawTab] || rawTab) ? (TAB_ALIAS[rawTab] || rawTab) : 'calendars';
+  const setTab = (t) => setParams((p) => { const n = new URLSearchParams(p); n.set('tab', t); return n; }, { replace: true });
+  const orgId = orgIdProp ?? user?.organization_id ?? user?.org_id ?? null;
+  const [syncingId, setSyncingId] = useState(null);
+  const [adding, setAdding] = useState(null);
+
+  const propsQ = useQuery({
+    queryKey: ['properties', orgId],
+    queryFn: () => base44.entities.Property.filter(orgId ? { org_id: orgId } : {}, 'created_at', 200),
+    enabled: !!orgId,
+  });
+  const syncsQ = useQuery({
+    queryKey: ['calendar-syncs', orgId],
+    queryFn: () => base44.entities.CalendarSync.filter(orgId ? { org_id: orgId } : {}, 'created_at', 500),
+    enabled: !!orgId,
+    refetchInterval: 60_000,
+  });
+  const properties = propsQ.data || [];
+  const syncs = syncsQ.data || [];
+  const focusUnit = params.get('unit');
+  const ordered = useMemo(() => (focusUnit ? [...properties].sort((a, b) => (a.id === focusUnit ? -1 : b.id === focusUnit ? 1 : 0)) : properties), [properties, focusUnit]);
+
+  const refresh = () => {
+    qc.invalidateQueries({ queryKey: ['calendar-syncs'] });
+    qc.invalidateQueries({ queryKey: ['bookings'] });
+    qc.invalidateQueries({ queryKey: ['stay'] });
+  };
+
+  const report = (r) => {
+    if (!r) return;
+    if (!r.ok) { atlasToastApi.error('הסנכרון נכשל. הפרטים מופיעים ליד הערוץ'); return; }
+    const parts = [`נמצאו ${r.events} תאריכים תפוסים`];
+    if (r.created) parts.push(`${r.created} נוספו ליומן`);
+    if (r.cancelled) parts.push(`${r.cancelled} בוטלו בערוץ`);
+    if (r.conflicts) { atlasToastApi.error(`${parts.join(', ')}. ${r.conflicts} התנגשויות: בדקו את היחידה`); return; }
+    atlasToastApi.success(`${parts.join(', ')}.`);
+  };
+
+  const runSync = async (sync) => {
+    setSyncingId(sync ? sync.id : 'all');
+    try {
+      const res = await callEdge('ical-sync', sync ? { sync_id: sync.id } : {});
+      if (sync) report(res?.results?.[0]);
+      else {
+        const rs = res?.results || [];
+        const bad = rs.filter((r) => !r.ok).length;
+        const conf = rs.reduce((s, r) => s + (r.conflicts || 0), 0);
+        if (!rs.length) atlasToastApi.success('אין עדיין ערוצים מחוברים');
+        else if (bad || conf) atlasToastApi.error(`סונכרנו ${rs.length - bad} מתוך ${rs.length} ערוצים${conf ? `, ${conf} התנגשויות` : ''}`);
+        else atlasToastApi.success(`כל ${rs.length} הערוצים סונכרנו`);
+      }
+    } catch (e) {
+      atlasToastApi.error(e.message || 'הסנכרון נכשל');
+    } finally {
+      setSyncingId(null);
+      refresh();
+    }
+  };
+
+  const add = async ({ property, url, provider }) => {
+    setAdding(property.id);
+    try {
+      const created = await base44.entities.CalendarSync.create({
+        org_id: orgId, property_id: property.id, provider, ical_url: url, sync_direction: 'IMPORT', sync_status: 'ACTIVE', is_active: true,
+      });
+      qc.invalidateQueries({ queryKey: ['calendar-syncs'] });
+      const res = await callEdge('ical-sync', { sync_id: created.id });
+      report(res?.results?.[0]);
+      return true;
+    } catch (e) {
+      atlasToastApi.error(e.message || 'לא הצלחנו לחבר את היומן');
+      return false;
+    } finally {
+      setAdding(null);
+      refresh();
+    }
+  };
+
+  const toggle = useMutation({
+    mutationFn: ({ sync, on }) => base44.entities.CalendarSync.update(sync.id, { sync_status: on ? 'ACTIVE' : 'PAUSED' }),
+    onSuccess: (_, { on }) => { refresh(); atlasToastApi.success(on ? 'הסנכרון הופעל' : 'הסנכרון הושהה'); },
+    onError: () => atlasToastApi.error('לא הצלחנו לעדכן את הסנכרון'),
+  });
+  const remove = useMutation({
+    mutationFn: (sync) => base44.entities.CalendarSync.delete(sync.id),
+    onSuccess: () => { refresh(); atlasToastApi.success('הערוץ הוסר. ההזמנות שכבר נוספו נשארו ביומן'); },
+    onError: () => atlasToastApi.error('לא הצלחנו להסיר את הערוץ'),
+  });
+
+  const loading = propsQ.isLoading || syncsQ.isLoading;
+
+  return (
+    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
+      <PageHeader
+        title="ערוצים וחיבורים"
+        help="integrations.page"
+        subtitle="סנכרון יומנים עם Airbnb ו-Booking.com, והמצב האמיתי של כל חיבור."
+        className="!mb-0"
+        actions={tab === 'calendars' && DB_FEATURES.realCore && syncs.length ? (
+          <Button variant="outline" className="h-11" onClick={() => runSync(null)} disabled={!!syncingId}>
+            <RefreshCw className={cn('h-4 w-4', syncingId === 'all' && 'animate-spin')} strokeWidth={1.75} />
+            סנכרן עכשיו
+          </Button>
+        ) : null}
+      />
+      <SegmentedControl
+        ariaLabel="סוג חיבור"
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: 'calendars', label: 'יומנים' },
+          { value: 'messages', label: 'הודעות' },
+          { value: 'payments', label: 'תשלומים' },
+          { value: 'invoices', label: 'חשבוניות' },
+        ]}
+      />
+
+      {tab === 'calendars' ? (
+        !DB_FEATURES.realCore ? (
+          <Card className="p-6"><p className="text-[15px] text-ink-600">סנכרון יומנים רץ בשרת של ATLAS, ולכן הוא זמין בחשבון מחובר ולא במצב ההדגמה.</p></Card>
+        ) : loading ? (
+          <div className="space-y-3" role="status" aria-busy="true" aria-label="טוען"><SkelLine className="h-64 rounded-[24px]" /><SkelLine className="h-64 rounded-[24px]" /></div>
+        ) : properties.length === 0 ? (
+          <Card className="p-6 text-center"><p className="text-[16px] font-semibold text-navy-900">עוד אין יחידות</p><p className="mt-1 text-[14px] text-ink-400">הוסיפו יחידה ואז חברו לה את Airbnb או Booking.com.</p></Card>
+        ) : (
+          <div className="space-y-4">
+            {ordered.map((p) => (
+              <UnitChannels
+                key={p.id}
+                property={p}
+                syncs={syncs.filter((s) => s.property_id === p.id && String(s.sync_direction || '').toUpperCase() !== 'EXPORT')}
+                onSync={runSync}
+                syncingId={syncingId}
+                onToggle={(sync, on) => toggle.mutate({ sync, on })}
+                onDelete={(sync) => remove.mutate(sync)}
+                onAdd={add}
+                adding={adding}
+              />
+            ))}
+          </div>
+        )
+      ) : null}
+
+      {tab === 'messages' ? (
+        <ProviderStatus items={[
+          { name: 'WhatsApp בלחיצה אחת', live: true, text: 'ATLAS מכינה את ההודעות לפי מסע האורח (אישור, יום לפני, יום ההגעה, בקשת ביקורת) ושומרת על שקט בשבת ובחג. בלוח "היום" כל הודעה מוכנה נפתחת בוואטסאפ עם הטקסט, ושולחים בלחיצה.' },
+          { name: 'WhatsApp אוטומטי (Meta Cloud API)', live: false, text: 'שליחה בלי לגעת: ההודעות יוצאות לבד מהמספר העסקי של המתחם, עם תבניות מאושרות.', needs: 'חשבון WhatsApp Business מאומת אצל Meta ומספר ייעודי.' },
+          { name: 'SMS', live: false, text: 'גיבוי לאורחים בלי וואטסאפ.', needs: 'ספק SMS ישראלי (חבילת הודעות).' },
+          { name: 'אימייל יוצא', live: false, text: 'עד שיחובר שירות דיוור, "שליחה במייל" פותחת את תוכנת המייל שלכם עם הטקסט מוכן.', needs: 'שירות שליחת מיילים.' },
+        ]} />
+      ) : null}
+
+      {tab === 'payments' ? (
+        <ProviderStatus items={[
+          { name: 'תיעוד תשלומים ויתרות', live: true, text: 'רושמים מקדמה ויתרה לכל הזמנה, רואים מה פתוח במסך "יתרות", ושולחים תזכורת בוואטסאפ.' },
+          { name: 'קישור תשלום למקדמה (Grow / PayPlus)', live: false, text: 'האורח משלם בקישור, וההזמנה מתעדכנת ל"שולם" לבד.', needs: 'מסוף סליקה על שם העסק.' },
+        ]} />
+      ) : null}
+
+      {tab === 'invoices' ? (
+        <ProviderStatus items={[
+          { name: 'חשבונית ירוקה (Morning) / iCount', live: false, text: 'חשבונית מס/קבלה חוקית לכל תשלום, נשלחת לאורח לבד. מסמך חוקי מופק רק בתוכנה רשומה ברשות המסים, ולכן עד החיבור ATLAS רק מתעדת מספרי מסמכים שהופקו אצלכם.', needs: 'חשבון Morning או iCount עם גישת API.' },
+        ]} />
+      ) : null}
+
+      <p className="flex items-center gap-2 text-[13px] text-ink-400"><CalendarDays className="h-4 w-4" strokeWidth={1.75} aria-hidden />חיבור שמסומן "בקרוב" לא שולח ולא גובה כלום עדיין.</p>
+    </div>
+  );
+}
+

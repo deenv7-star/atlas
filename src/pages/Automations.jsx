@@ -1,305 +1,211 @@
-import React, { useState } from 'react';
-import { PageHeader, SkelLine } from '@/components/ds';
+/**
+ * אוטומציות = מסע האורח (014). Four steps the server really runs every 15 minutes (automation-runner):
+ * it prepares each message at the right time, keeps quiet on Shabbat and Yom Tov, and puts it in
+ * "לשלוח עכשיו" on the Today board, where one tap opens WhatsApp with the text ready.
+ * Older free-form rules stay listed; the ones the runner cannot execute say so.
+ */
+import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { MessageCircle, Moon, Trash2, ChevronDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { PageHeader, SkelLine, Card, StatusPill } from '@/components/ds';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Plus, Zap, Mail, MessageSquare, CreditCard, Sparkles, 
-  FileText, Bell, ChevronRight, Trash2,
-  Users, Calendar, CheckCircle, AlertTriangle
-} from 'lucide-react';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
+import { DB_FEATURES } from '@/config/dbFeatures';
+import { JOURNEY_STEPS, stepOfRule, ruleForStep } from '@/lib/real/journey';
+import { renderTemplate } from '@/lib/stay/whatsapp';
+import { todayISO, addDays } from '@/lib/stay/format';
+import { cn } from '@/lib/utils';
 
-const TRIGGERS = {
-  LEAD_CREATED: { label: 'ליד חדש נוצר', icon: Users, color: 'bg-brand-500' },
-  BOOKING_CREATED: { label: 'הזמנה נוצרה', icon: Calendar, color: 'bg-green-500' },
-  BOOKING_CONFIRMED: { label: 'הזמנה אושרה', icon: CheckCircle, color: 'bg-emerald-500' },
-  PAYMENT_RECEIVED: { label: 'תשלום התקבל', icon: CreditCard, color: 'bg-brand-500' },
-  PAYMENT_OVERDUE: { label: 'תשלום באיחור', icon: AlertTriangle, color: 'bg-red-500' },
-  CHECKIN_DAY: { label: 'יום כניסה', icon: Calendar, color: 'bg-brand-500' },
-  CHECKOUT_DAY: { label: 'יום יציאה', icon: Calendar, color: 'bg-brand-300' },
-  CLEANING_COMPLETED: { label: 'ניקיון הושלם', icon: Sparkles, color: 'bg-pink-500' },
-  BOOKING_CANCELLED: { label: 'הזמנה בוטלה', icon: AlertTriangle, color: 'bg-gray-500' },
-  REVIEW_RECEIVED: { label: 'ביקורת התקבלה', icon: MessageSquare, color: 'bg-brand-400' }
+const TEMPLATES_OK = new Set(['confirmation', 'arrival_eve', 'welcome', 'thanks_review', 'balance_reminder', 'checkin_link']);
+function runnable(rule) {
+  if (!['BOOKING_CONFIRMED', 'BOOKING_CREATED', 'CHECKIN_DAY', 'CHECKOUT_DAY'].includes(rule?.trigger)) return false;
+  const acts = Array.isArray(rule?.actions) ? rule.actions : [];
+  return acts.some((a) => a?.type === 'REQUEST_REVIEW' || (a?.type === 'SEND_WHATSAPP' && TEMPLATES_OK.has(a?.config?.template)));
+}
+
+const SAMPLE = {
+  booking: { guest_name: 'נועה לוי', check_in_date: addDays(todayISO(), 7), check_out_date: addDays(todayISO(), 9), guest_token: 'example' },
+  property: { name: 'הצימר שלכם', guest_info: { check_in_time: '15:00', check_out_time: '11:00', wifi_name: 'Atlas-Guest' } },
 };
 
-const ACTIONS = {
-  SEND_WHATSAPP: { label: 'שלח WhatsApp', icon: MessageSquare },
-  SEND_EMAIL: { label: 'שלח אימייל', icon: Mail },
-  CREATE_PAYMENT: { label: 'צור בקשת תשלום', icon: CreditCard },
-  CREATE_CLEANING: { label: 'צור משימת ניקיון', icon: Sparkles },
-  NOTIFY_OWNER: { label: 'התראה לבעלים', icon: Bell },
-  NOTIFY_CLEANER: { label: 'התראה למנקה', icon: Bell },
-  GENERATE_CONTRACT: { label: 'צור חוזה', icon: FileText },
-  REQUEST_REVIEW: { label: 'בקש ביקורת', icon: MessageSquare },
-  UPDATE_STATUS: { label: 'עדכן סטטוס', icon: CheckCircle }
-};
+function StepCard({ step, rule, onSave, busy, respectShabbat }) {
+  const on = !!rule?.is_active;
+  const cond = rule && !Array.isArray(rule.conditions) ? rule.conditions || {} : {};
+  const [time, setTime] = useState(cond.send_time || step.defaultTime || '');
+  const [preview, setPreview] = useState(false);
+  const text = useMemo(() => renderTemplate(step.template, { ...SAMPLE, orgName: '' }), [step.template]);
+  return (
+    <Card as="li" className="p-5 md:p-6" data-step={step.key}>
+      <div className="flex items-start gap-3">
+        <span className={cn('inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full', on ? 'bg-[#E9E7FE] text-brand-600' : 'bg-[#F1F3FA] text-ink-400')} aria-hidden>
+          <MessageCircle className="h-5 w-5" strokeWidth={1.75} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="flex flex-wrap items-center gap-2 text-[16px] font-bold text-navy-900">
+            {step.title}
+            {on ? <StatusPill tone="mint" label="פועל" /> : <StatusPill tone="slate" label="כבוי" />}
+          </p>
+          <p className="mt-1 text-[14px] text-ink-600">{step.why}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-[14px] text-ink-600">
+            <span>{step.when}</span>
+            {step.defaultTime ? (
+              <label className="inline-flex items-center gap-2">
+                <span>בשעה</span>
+                <Input
+                  type="time" value={time} step={900} aria-label={`שעת שליחה: ${step.title}`}
+                  onChange={(e) => setTime(e.target.value)}
+                  onBlur={() => { if (on && time && time !== cond.send_time) onSave(step, { on: true, sendTime: time }); }}
+                  className="h-11 w-[110px] tabular" dir="ltr"
+                />
+              </label>
+            ) : null}
+          </div>
+          <button type="button" onClick={() => setPreview((v) => !v)} aria-expanded={preview} className="press mt-2 inline-flex min-h-[44px] items-center gap-1 text-[14px] font-semibold text-brand-600">
+            {preview ? 'הסתרת ההודעה' : 'איך ההודעה נראית'}
+            <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', preview && 'rotate-180')} strokeWidth={1.75} />
+          </button>
+          {preview ? <p className="mt-1 whitespace-pre-line rounded-[16px] bg-[#E7F8EE] p-3 text-[14px] leading-relaxed text-navy-900">{text}</p> : null}
+        </div>
+        <Switch
+          checked={on} disabled={busy}
+          onCheckedChange={(v) => onSave(step, { on: v, sendTime: time, respectShabbat })}
+          aria-label={on ? `כיבוי: ${step.title}` : `הפעלה: ${step.title}`}
+        />
+      </div>
+    </Card>
+  );
+}
 
-const TEMPLATE_AUTOMATIONS = [
-  {
-    name: 'תזכורת תשלום מקדמה',
-    description: 'שלח תזכורת אם תשלום מקדמה לא התקבל 48 שעות לפני כניסה',
-    trigger: 'CHECKIN_DAY',
-    timing_offset_hours: -48,
-    conditions: [{ field: 'deposit_status', operator: 'equals', value: 'DUE' }],
-    actions: [{ type: 'SEND_WHATSAPP', config: { template: 'payment_reminder' } }]
-  },
-  {
-    name: 'הודעת אישור הזמנה',
-    description: 'שלח אישור מיידי לאורח עם פרטי ההזמנה',
-    trigger: 'BOOKING_CONFIRMED',
-    timing_offset_hours: 0,
-    actions: [{ type: 'SEND_WHATSAPP', config: { template: 'booking_confirmation' } }]
-  },
-  {
-    name: 'יצירת משימת ניקיון',
-    description: 'צור משימת ניקיון אוטומטית ביום יציאה',
-    trigger: 'CHECKOUT_DAY',
-    timing_offset_hours: 0,
-    actions: [{ type: 'CREATE_CLEANING', config: {} }, { type: 'NOTIFY_CLEANER', config: {} }]
-  },
-  {
-    name: 'בקשת ביקורת',
-    description: 'שלח בקשת ביקורת 24 שעות לאחר יציאה',
-    trigger: 'CHECKOUT_DAY',
-    timing_offset_hours: 24,
-    actions: [{ type: 'REQUEST_REVIEW', config: {} }]
-  }
-];
-
-export default function AutomationsPage({ user, orgId }) {
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [newRule, setNewRule] = useState({
-    name: '',
-    trigger: '',
-    actions: [],
-    timing_offset_hours: 0,
-    is_active: true
-  });
-  const queryClient = useQueryClient();
-
-  const { data: automations = [], isLoading } = useQuery({
+export default function AutomationsPage({ orgId }) {
+  const qc = useQueryClient();
+  const q = useQuery({
     queryKey: ['automations', orgId],
-    queryFn: () =>
-      orgId
-        ? base44.entities.AutomationRule.filter({ org_id: orgId }, '-created_date', 200)
-        : Promise.resolve([]),
+    queryFn: () => (orgId ? base44.entities.AutomationRule.filter({ org_id: orgId }, 'created_at', 200) : Promise.resolve([])),
     enabled: !!orgId,
   });
+  const rules = q.data || [];
+  const byStep = useMemo(() => {
+    const m = new Map();
+    for (const r of rules) { const s = stepOfRule(r); if (s && !m.has(s.key)) m.set(s.key, r); }
+    return m;
+  }, [rules]);
+  const others = rules.filter((r) => !stepOfRule(r));
+  const journeyRules = [...byStep.values()];
+  const respectShabbat = journeyRules.length ? journeyRules.every((r) => (r.conditions || {}).respect_shabbat !== false) : true;
+  const [busy, setBusy] = useState(false);
 
-  const createMutation = useMutation({
-    mutationFn: async (payload) => {
-      return base44.entities.AutomationRule.create({ ...payload, org_id: orgId });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['automations'] });
-      setShowCreateDialog(false);
-      setNewRule({ name: '', trigger: '', actions: [], timing_offset_hours: 0, is_active: true });
-    },
-  });
-
-  const toggleMutation = useMutation({
-    mutationFn: async ({ id, is_active }) => {
-      return base44.entities.AutomationRule.update(id, { is_active });
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['automations'] }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.AutomationRule.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['automations'] }),
-  });
-
-  const handleCreateFromTemplate = (template) => {
-    createMutation.mutate({
-      ...template,
-      is_active: true,
-      execution_count: 0
-    });
+  const save = async (step, { on, sendTime, respectShabbat: rs = respectShabbat }) => {
+    setBusy(true);
+    try {
+      const existing = byStep.get(step.key);
+      const payload = { ...ruleForStep(step, { sendTime, respectShabbat: rs }), is_active: on };
+      if (existing) await base44.entities.AutomationRule.update(existing.id, payload);
+      else await base44.entities.AutomationRule.create({ ...payload, org_id: orgId, execution_count: 0 });
+      atlasToastApi.success(on ? `${step.title}: פועל` : `${step.title}: כבוי`);
+    } catch {
+      atlasToastApi.error('לא הצלחנו לשמור');
+    } finally {
+      setBusy(false);
+      qc.invalidateQueries({ queryKey: ['automations'] });
+      qc.invalidateQueries({ queryKey: ['message_queue'] });
+    }
   };
 
-  if (isLoading) {
+  const setShabbat = async (v) => {
+    setBusy(true);
+    try {
+      await Promise.all(journeyRules.map((r) => base44.entities.AutomationRule.update(r.id, { conditions: { ...(r.conditions || {}), respect_shabbat: v } })));
+      atlasToastApi.success(v ? 'לא נשלח הודעות בשבת ובחג' : 'הודעות יישלחו גם בשבת ובחג');
+    } catch { atlasToastApi.error('לא הצלחנו לשמור'); }
+    finally { setBusy(false); qc.invalidateQueries({ queryKey: ['automations'] }); }
+  };
+
+  const turnAllOn = async () => {
+    for (const s of JOURNEY_STEPS) if (!byStep.get(s.key)?.is_active) await save(s, { on: true, sendTime: s.defaultTime });
+  };
+
+  const removeOther = useMutation({
+    mutationFn: (id) => base44.entities.AutomationRule.delete(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['automations'] }); atlasToastApi.success('האוטומציה נמחקה'); },
+  });
+  const toggleOther = useMutation({
+    mutationFn: ({ id, is_active }) => base44.entities.AutomationRule.update(id, { is_active }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['automations'] }),
+  });
+
+  if (q.isLoading) {
     return (
-      <div className="mx-auto w-full max-w-[1200px] px-5 pt-6 md:px-10 md:pt-10" role="status" aria-busy="true" aria-label="טוען">
-        <SkelLine className="h-8 w-40" /><SkelLine className="mt-3 h-4 w-72 max-w-full" />
-        <div className="mt-6 grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-24 rounded-[22px]" />)}</div>
+      <div className="mx-auto w-full max-w-[960px] px-5 pt-6 md:px-10 md:pt-10" role="status" aria-busy="true" aria-label="טוען">
+        <SkelLine className="h-8 w-40" /><div className="mt-6 space-y-3">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-28 rounded-[22px]" />)}</div>
       </div>
     );
   }
 
+  const allOn = JOURNEY_STEPS.every((s) => byStep.get(s.key)?.is_active);
+
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <PageHeader title="אוטומציות" subtitle="הודעות ומשימות שיוצאות לבד, בזמן הנכון." className="!mb-0" />
-      <div className="flex shrink-0">
-        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
-              אוטומציה חדשה
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg" dir="rtl">
-            <DialogHeader>
-              <DialogTitle>יצירת אוטומציה חדשה</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 mt-4">
-              <div>
-                <Label>שם האוטומציה</Label>
-                <Input 
-                  value={newRule.name}
-                  onChange={(e) => setNewRule({ ...newRule, name: e.target.value })}
-                  placeholder="לדוגמה: תזכורת תשלום"
-                />
-              </div>
-              <div>
-                <Label>טריגר</Label>
-                <Select value={newRule.trigger} onValueChange={(v) => setNewRule({ ...newRule, trigger: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="בחר טריגר" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(TRIGGERS).map(([key, { label }]) => (
-                      <SelectItem key={key} value={key}>{label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>תזמון (שעות לפני/אחרי)</Label>
-                <Input 
-                  type="number"
-                  value={newRule.timing_offset_hours}
-                  onChange={(e) => setNewRule({ ...newRule, timing_offset_hours: parseInt(e.target.value) || 0 })}
-                />
-                <p className="text-xs text-ink-600 mt-1">שלילי = לפני, חיובי = אחרי</p>
-              </div>
-              <div>
-                <Label>פעולות</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {Object.entries(ACTIONS).map(([key, { label, icon: Icon }]) => (
-                    <Button
-                      key={key}
-                      type="button"
-                      variant={newRule.actions.some(a => a.type === key) ? 'default' : 'outline'}
-                      size="sm"
-                      className="justify-start"
-                      onClick={() => {
-                        const exists = newRule.actions.some(a => a.type === key);
-                        setNewRule({
-                          ...newRule,
-                          actions: exists 
-                            ? newRule.actions.filter(a => a.type !== key)
-                            : [...newRule.actions, { type: key, config: {} }]
-                        });
-                      }}
-                    >
-                      <Icon className="h-4 w-4 ml-2" />
-                      {label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <Button 
-                className="w-full "
-                onClick={() => createMutation.mutate(newRule)}
-                disabled={!newRule.name || !newRule.trigger || newRule.actions.length === 0}
-              >
-                צור אוטומציה
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-      </div>
+    <div className="mx-auto w-full max-w-[960px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
+      <PageHeader
+        title="מסע האורח"
+        subtitle="ATLAS מכינה כל הודעה בזמן הנכון, ואתם שולחים בלחיצה מלוח היום."
+        className="!mb-0"
+        actions={!allOn ? <Button className="h-11" onClick={turnAllOn} disabled={busy}>הפעלת כל המסע</Button> : null}
+      />
 
-      {/* Template Suggestions */}
-      {automations.length === 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <span className="ds-icon-square"><Zap className="h-5 w-5" strokeWidth={1.75} /></span>
-              תבניות מוכנות
-            </CardTitle>
-            <CardDescription>בחרו תבנית והיא מתחילה לעבוד מיד.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-3">
-              {TEMPLATE_AUTOMATIONS.map((template, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleCreateFromTemplate(template)}
-                  type="button"
-                  className="press min-h-[72px] rounded-[12px] border border-line bg-white p-4 text-right transition-[background-color,border-color] duration-150 hover:border-brand-600 hover:bg-brand-50"
-                >
-                  <div className="text-[15px] font-bold text-navy-900">{template.name}</div>
-                  <div className="text-sm text-ink-600 mt-1">{template.description}</div>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {!DB_FEATURES.realCore ? (
+        <Card className="p-5"><p className="text-[14px] text-ink-600">מנוע האוטומציות רץ בשרת של ATLAS, ולכן הוא פועל בחשבון מחובר ולא במצב ההדגמה.</p></Card>
+      ) : null}
 
-      {/* Active Automations */}
-      <div className="space-y-3">
-        {automations.map((rule) => {
-          const trigger = TRIGGERS[rule.trigger] || {};
-          const TriggerIcon = trigger.icon || Zap;
-          
-          return (
-            <Card key={rule.id} className={`transition-[background-color,border-color,color,box-shadow,transform] ${!rule.is_active ? 'bg-canvas' : ''}`}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-lg ${trigger.color || 'bg-gray-500'} flex items-center justify-center`}>
-                      <TriggerIcon className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-medium flex items-center gap-2">
-                        {rule.name}
-                        {rule.timing_offset_hours !== 0 && (
-                          <Badge variant="outline" className="text-xs">
-                            {rule.timing_offset_hours > 0 ? '+' : ''}{rule.timing_offset_hours} שעות
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="text-sm text-ink-600 flex items-center gap-2 mt-1">
-                        <span>{trigger.label}</span>
-                        <ChevronRight className="h-3 w-3" />
-                        <span>{rule.actions?.map(a => ACTIONS[a.type]?.label).join(', ')}</span>
-                      </div>
-                    </div>
+      <Card className="flex items-center gap-3 p-5 md:px-6">
+        <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F1F3FA] text-navy-900" aria-hidden><Moon className="h-5 w-5" strokeWidth={1.75} /></span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[15px] font-bold text-navy-900">שקט בשבת ובחג</p>
+          <p className="text-[13px] text-ink-400">הודעה שמגיע זמנה בין הדלקת נרות לצאת השבת או החג תחכה ל-20 דקות אחרי ההבדלה (זמני ירושלים, Hebcal).</p>
+        </div>
+        <Switch checked={respectShabbat} disabled={busy || !journeyRules.length} onCheckedChange={setShabbat} aria-label="שקט בשבת ובחג" />
+      </Card>
+
+      <ol className="space-y-3" aria-label="שלבי המסע">
+        {JOURNEY_STEPS.map((s) => <StepCard key={s.key} step={s} rule={byStep.get(s.key)} onSave={save} busy={busy} respectShabbat={respectShabbat} />)}
+      </ol>
+
+      <Card className="p-5 md:px-6">
+        <p className="text-[15px] font-bold text-navy-900">איך זה נשלח היום</p>
+        <p className="mt-1 text-[14px] leading-relaxed text-ink-600">
+          כל 15 דקות ATLAS בודקת את ההזמנות ומכינה את ההודעות שהגיע זמנן. הן מחכות ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link> תחת "לשלוח עכשיו": לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח, ואחרי השליחה ההודעה מסומנת כנשלחה.
+          שליחה אוטומטית לגמרי, בלי לחיצה, תגיע עם חיבור WhatsApp Business API.
+        </p>
+      </Card>
+
+      {others.length ? (
+        <section aria-label="אוטומציות נוספות" className="space-y-2">
+          <h2 className="pt-2 text-[15px] font-bold text-navy-900">אוטומציות נוספות שנשמרו</h2>
+          <ul className="space-y-2">
+            {others.map((r) => {
+              const ok = runnable(r);
+              return (
+                <Card as="li" key={r.id} className="flex items-center gap-3 p-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="flex flex-wrap items-center gap-2 truncate text-[15px] font-semibold text-navy-900">
+                      {r.name || 'אוטומציה'}
+                      {ok ? <StatusPill tone="mint" label="רצה" /> : <StatusPill tone="slate" label="עוד לא נתמכת" />}
+                    </p>
+                    {!ok ? <p className="text-[13px] text-ink-400">הפעולה הזו עוד לא מבוצעת בשרת, ולכן לא תצא בפועל.</p> : null}
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-sm text-ink-600">
-                      {rule.execution_count || 0} הפעלות
-                    </div>
-                    <Switch
-                      aria-label={rule.is_active ? `כיבוי ${rule.name || 'אוטומציה'}` : `הפעלת ${rule.name || 'אוטומציה'}`}
-                      checked={rule.is_active}
-                      onCheckedChange={(checked) => toggleMutation.mutate({ id: rule.id, is_active: checked })}
-                    />
-                    <Button aria-label="מחיקת אוטומציה" 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => deleteMutation.mutate(rule.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-ink-400" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                  <Switch checked={!!r.is_active} onCheckedChange={(v) => toggleOther.mutate({ id: r.id, is_active: v })} aria-label={`הפעלה: ${r.name || 'אוטומציה'}`} />
+                  <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={`מחיקה: ${r.name || 'אוטומציה'}`} onClick={() => removeOther.mutate(r.id)}>
+                    <Trash2 className="h-4 w-4 text-ink-400" strokeWidth={1.75} />
+                  </Button>
+                </Card>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
     </div>
   );
 }
