@@ -1,16 +1,7 @@
 name: iOS — Build & Deploy
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'capacitor.config.json'
-      - 'package.json'
-      - 'fastlane/**'
-      - '.github/workflows/ios-deploy.yml'
-
+  # Auto-run on push disabled 18.10.2026: no iOS app at launch (Deen). Run manually when ready.
   workflow_dispatch:
     inputs:
       lane:
