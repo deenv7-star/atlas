@@ -28,7 +28,8 @@ Deno.serve(async (req) => {
   hits.set(u.user.id, list);
 
   const key = Deno.env.get("OPENAI_API_KEY");
-  if (!key) return json({ error: "not_configured" }, 503);
+  // 200 + error code: "not enabled yet" is a state, not a failure (no red console error in the app).
+  if (!key) return json({ error: "not_configured", text: null }, 200);
 
   let body: { prompt?: string; model?: string; system?: string } = {};
   try { body = await req.json(); } catch { /* */ }

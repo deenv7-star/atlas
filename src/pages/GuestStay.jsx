@@ -90,7 +90,7 @@ function CheckInCard({ token, booking, checkin, rules, onDone }) {
             <h2 className="ab-h3">הצ׳ק-אין הושלם</h2>
             <p className="ab-meta">{checkin.arrival_time ? `מחכים לכם בסביבות ${checkin.arrival_time}.` : 'תודה, קיבלנו את הפרטים.'}</p>
           </div>
-          <Btn variant="ghost" size="sm" onClick={() => setOpen(true)}>עדכון</Btn>
+          <Btn variant="ghost" size="sm" className="min-h-[44px]" onClick={() => setOpen(true)}>עדכון</Btn>
         </div>
       </section>
     );

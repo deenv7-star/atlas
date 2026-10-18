@@ -373,17 +373,22 @@ import { markTourPending } from '@/lib/tour/tourState';
 
 export async function finishOnboarding(user) {
   const patch = { onboarding_completed: true, onboarding_step: STEP_BASE + 9 };
-  if (!user?.trial_ends_at) {
-    // same 14-day trial the previous onboarding started (only when none is set yet)
-    const trialEnd = new Date();
-    trialEnd.setDate(trialEnd.getDate() + 14);
-    patch.trial_ends_at = trialEnd.toISOString();
-    patch.subscription_status = 'trialing';
-  }
-  try {
-    await updateProfile(patch);
-  } catch (e) {
-    console.warn('[Onboarding] finish:', e?.message);
+  if (isSupabaseConfigured && supabase) {
+    // Trial/billing columns are server-owned (013 tenant guard): the 14-day trial starts through start_my_trial().
+    try { await updateProfile(patch); } catch (e) { console.warn('[Onboarding] finish:', e?.message); }
+    if (!user?.trial_ends_at) {
+      const { error } = await supabase.rpc('start_my_trial');
+      if (error) console.warn('[Onboarding] trial:', error.message);
+    }
+  } else {
+    if (!user?.trial_ends_at) {
+      // local demo: same 14-day trial the previous onboarding started (only when none is set yet)
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 14);
+      patch.trial_ends_at = trialEnd.toISOString();
+      patch.subscription_status = 'trialing';
+    }
+    try { await updateProfile(patch); } catch (e) { console.warn('[Onboarding] finish:', e?.message); }
   }
   // Keyed to this user: a flag left by someone else in the same browser must never let a new account skip onboarding.
   try { localStorage.setItem('onboarding_just_completed', JSON.stringify({ uid: user?.id || '', ts: Date.now() })); } catch { /* ignore */ }

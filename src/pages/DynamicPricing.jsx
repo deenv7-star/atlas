@@ -51,7 +51,7 @@ const KIND_STYLE = {
   weekend: 'bg-[#F1F3FA] text-navy-900',
   gap: 'bg-[#E8F7EF] text-[#11603A] ring-1 ring-inset ring-[#CBEBD9]',
   base: 'bg-white text-navy-900 ring-1 ring-inset ring-[#EEF0F5]',
-  booked: 'bg-[#F7F8FB] text-ink-300',
+  booked: 'bg-[#F7F8FB] text-ink-600',
 };
 
 export default function DynamicPricing() {

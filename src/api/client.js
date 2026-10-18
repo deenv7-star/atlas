@@ -823,9 +823,9 @@ const integrations = {
       // Supabase: the LLM runs in the ai-chat edge function; the OpenAI key never reaches the browser.
       if (isSupabaseConfigured && supabase) {
         const { data, error } = await supabase.functions.invoke('ai-chat', { body: { prompt, model } });
-        if (error) {
-          let code = '';
-          try { code = (await error.context?.json?.())?.error || ''; } catch { /* not json */ }
+        if (error || data?.error) {
+          let code = data?.error || '';
+          if (!code) { try { code = (await error.context?.json?.())?.error || ''; } catch { /* not json */ } }
           const e = new Error(code === 'not_configured'
             ? 'העוזר החכם עוד לא הופעל בחשבון הזה. הנתונים שלכם בטוחים, ופשוט אין עדיין מנוע AI מחובר.'
             : code === 'rate_limited' ? 'יותר מדי שאלות בדקה האחרונה. נסו שוב עוד רגע.'

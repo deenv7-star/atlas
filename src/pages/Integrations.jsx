@@ -166,7 +166,7 @@ function AddFeed({ property, onAdd, busy }) {
         <Input
           value={url} onChange={(e) => { setUrl(e.target.value); setErr(''); }} dir="ltr" inputMode="url" autoComplete="off"
           placeholder="https://www.airbnb.com/calendar/ical/....ics" aria-label={`קישור ייצוא מ-${PROVIDERS[effective].name}`}
-          aria-invalid={!!err} className="h-12 flex-1 text-left"
+          aria-invalid={!!err} className="h-12 min-h-12 text-left sm:flex-1"
         />
         <Button type="submit" className="h-12 shrink-0 px-5" disabled={busy || !url.trim()}>
           {busy ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" strokeWidth={2} />}
