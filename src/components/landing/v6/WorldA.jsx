@@ -193,7 +193,7 @@ function FinalWorld() {
           <p className="l5-sub">14 ימי ניסיון חינם, בלי כרטיס אשראי. ההגדרה לוקחת 10 דקות.</p>
           <div className="l6a-final-cta">
             <SignupButton className="is-lg" />
-            <a href="https://wa.me/972545380085" target="_blank" rel="noopener noreferrer" className="l5-btn-ghost is-lg">וואטסאפ{' '}<span dir="ltr" className="num">054-538-0085</span></a>
+            <a href="https://wa.me/972525979520" target="_blank" rel="noopener noreferrer" className="l5-btn-ghost is-lg">וואטסאפ{' '}<span dir="ltr" className="num">052-597-9520</span></a>
           </div>
         </div>
       </div>

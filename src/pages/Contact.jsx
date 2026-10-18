@@ -130,7 +130,7 @@ export default function Contact() {
             ))}
 
             <a
-              href="https://wa.me/972545380085"
+              href="https://wa.me/972525979520"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 bg-[#14804A] text-white rounded-xl px-5 py-3.5 font-semibold hover:bg-[#106B3D] transition-colors mt-8 w-fit"
@@ -256,7 +256,7 @@ export default function Contact() {
                   לחלופין:{' '}
                   <a href="mailto:support@atlas-il.com" className="text-brand-600 font-medium hover:underline">support@atlas-il.com</a>
                   {' · '}
-                  <a href="https://wa.me/972545380085" className="text-brand-600 font-medium hover:underline" target="_blank" rel="noopener noreferrer">וואטסאפ</a>
+                  <a href="https://wa.me/972525979520" className="text-brand-600 font-medium hover:underline" target="_blank" rel="noopener noreferrer">וואטסאפ</a>
                 </p>
               </form>
             )}

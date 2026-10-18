@@ -196,7 +196,7 @@ function FinalB() {
           <p className="l6-indigo-sub">14 ימי ניסיון חינם, בלי כרטיס אשראי. ההגדרה לוקחת 10 דקות.</p>
           <div className="l6b-cta is-start">
             <SignupButton className="is-lg l6-btn-white" />
-            <a href="https://wa.me/972545380085" target="_blank" rel="noopener noreferrer" className="l6-btn-glass is-lg">וואטסאפ{' '}<span dir="ltr" className="num">054-538-0085</span></a>
+            <a href="https://wa.me/972525979520" target="_blank" rel="noopener noreferrer" className="l6-btn-glass is-lg">וואטסאפ{' '}<span dir="ltr" className="num">052-597-9520</span></a>
           </div>
         </div>
       </div>
