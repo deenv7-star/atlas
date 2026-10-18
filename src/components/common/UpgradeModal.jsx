@@ -12,9 +12,10 @@ const PLAN_LIMITS = {
 };
 
 const PLAN_NAMES = {
-  starter: 'Starter',
-  pro: 'Pro',
-  scale: 'Scale'
+  starter: 'מתחיל',
+  pro: 'מקצועי',
+  scale: 'עסקי',
+  business: 'עסקי'
 };
 
 export default function UpgradeModal({ open, onClose, currentPlan = 'starter', currentCount, entity = 'property' }) {
