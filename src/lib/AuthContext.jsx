@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 import { queryClientInstance } from '@/lib/query-client';
@@ -30,26 +30,40 @@ export const AuthProvider = ({ children }) => {
     setAuthError({ type: 'auth_required', message: 'Authentication required' });
   }, []);
 
-  const hydrateUser = useCallback(async () => {
-    try {
-      const [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
-      // Suspension is set by the platform admin (migration 011); null when unknown / not suspended.
-      const currentUser = me && status?.suspended
-        ? { ...me, account_suspended: true, account_suspended_reason: status.reason || '' }
-        : me;
-      setActiveOrg(currentUser?.organization_id);
-      syncOrgSettingsFromDb(currentUser?.organization_id); // background; local copy is used meanwhile
-      setUser(currentUser);
-      setIsAuthenticated(true);
-      setAuthError(null);
-      if (currentUser?.onboarding_completed) {
-        try { localStorage.removeItem('onboarding_just_completed'); } catch {}
+  // One in-flight hydration at a time: init, INITIAL_SESSION and SIGNED_IN often fire together,
+  // and each used to run auth.me() + profile + status again.
+  const inflightRef = useRef(null);
+  const lastUidRef = useRef(null);
+
+  const hydrateUser = useCallback(() => {
+    if (inflightRef.current) return inflightRef.current;
+    const run = (async () => {
+      try {
+        const [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
+        // Suspension is set by the platform admin (migration 011); null when unknown / not suspended.
+        const currentUser = me && status?.suspended
+          ? { ...me, account_suspended: true, account_suspended_reason: status.reason || '' }
+          : me;
+        setActiveOrg(currentUser?.organization_id);
+        syncOrgSettingsFromDb(currentUser?.organization_id); // background; local copy is used meanwhile
+        lastUidRef.current = currentUser?.id || null;
+        setUser(currentUser);
+        setIsAuthenticated(true);
+        setAuthError(null);
+        if (currentUser?.onboarding_completed) {
+          try { localStorage.removeItem('onboarding_just_completed'); } catch {}
+        }
+        return currentUser;
+      } catch {
+        lastUidRef.current = null;
+        clearSessionState();
+        return null;
+      } finally {
+        inflightRef.current = null;
       }
-      return currentUser;
-    } catch {
-      clearSessionState();
-      return null;
-    }
+    })();
+    inflightRef.current = run;
+    return run;
   }, [clearSessionState]);
 
   // ── initialise ─────────────────────────────────────────────────────────────
@@ -67,9 +81,17 @@ export const AuthProvider = ({ children }) => {
 
         // Supabase syncs the same session across tabs via storage; this listener
         // runs on sign-in, refresh, sign-out, and user metadata updates.
-        unsubscribe = base44.auth.onAuthStateChange(async (event, session) => {
+        // IMPORTANT: never await Supabase calls inside this callback. supabase-js holds its auth lock
+        // while listeners run, so awaiting getUser()/queries here deadlocks updateUser() (password
+        // reset spinner that never ends). Defer the work to the next tick instead.
+        unsubscribe = base44.auth.onAuthStateChange((event, session) => {
           if (event === 'SIGNED_OUT' || (event === 'INITIAL_SESSION' && !session)) {
+            lastUidRef.current = null;
             clearSessionState();
+            return;
+          }
+          // Token refresh / initial session for the user we already hydrated: nothing changed.
+          if ((event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') && session?.user?.id && session.user.id === lastUidRef.current) {
             return;
           }
           if (
@@ -79,8 +101,9 @@ export const AuthProvider = ({ children }) => {
             event === 'USER_UPDATED' ||
             event === 'PASSWORD_RECOVERY'
           ) {
+            if (event === 'SIGNED_IN' && session?.user?.id && session.user.id === lastUidRef.current) return;
             if (session != null || event === 'USER_UPDATED') {
-              await hydrateUser();
+              setTimeout(() => { void hydrateUser(); }, 0);
             }
           }
         });

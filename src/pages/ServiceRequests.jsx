@@ -4,7 +4,6 @@ import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { Sparkles, AlertTriangle, CheckCircle2 as CheckDone } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { createPageUrl } from '@/utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { Button } from '@/components/ui/button';
@@ -29,6 +28,7 @@ import PullToRefresh from '@/components/common/PullToRefresh';
 import { MaintenanceTable } from '@/components/tables/MaintenanceTable';
 import { useMaintenanceUrlState } from '@/hooks/url-state/useMaintenanceUrlState';
 import { ShareViewButton } from '@/components/ui/ShareViewButton';
+import GuestServiceLinkCard from '@/components/service/GuestServiceLinkCard';
 
 export default function ServiceRequests({ orgId, selectedPropertyId }) {
   const location = useLocation();
@@ -164,28 +164,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
         {/* Header & Stats */}
         <div className="space-y-5">
           <PageHeader title="בקשות שירות" subtitle="בקשות תחזוקה מאורחים ומהצוות." className="!mb-0" />
-          <div className="v7-card p-4 shadow-card">
-            <h3 className="mb-1 text-[15px] font-bold text-navy-900">קישור לטופס אורחים</h3>
-            <p className="mb-3 text-[14px] text-ink-600">שלחו לאורחים בהודעת הכניסה, או תלו בנכס.</p>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                readOnly
-                aria-label="קישור לטופס אורחים"
-                value={`${window.location.origin}${createPageUrl('GuestService')}`}
-                className="h-11 min-w-0 flex-1 rounded-[10px] border border-line bg-canvas px-3 text-[14px] text-navy-900"
-                dir="ltr"
-              />
-              <Button
-                onClick={() => {
-                  navigator.clipboard?.writeText(`${window.location.origin}${createPageUrl('GuestService')}`);
-                  atlasToastApi.success('הקישור הועתק');
-                }}
-              >
-                העתקה
-              </Button>
-            </div>
-          </div>
+          <GuestServiceLinkCard orgId={orgId} />
           
           <div className="stat-row">
             <StatTile label="חדשות" value={stats.new} icon={Sparkles} />

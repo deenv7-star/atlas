@@ -446,7 +446,19 @@ class SupabaseEntityCollection {
 
 const supabaseAuth = {
   async me() {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    // getSession() reads the stored (auto-refreshed) session without a network round-trip;
+    // RLS still guards every query, so the server-verified getUser() is only a fallback.
+    let user = null;
+    let error = null;
+    try {
+      const { data: { session } = {} } = await supabase.auth.getSession();
+      user = session?.user || null;
+    } catch { /* fall through */ }
+    if (!user) {
+      const r = await supabase.auth.getUser();
+      user = r.data?.user || null;
+      error = r.error;
+    }
     if (error || !user) {
       const err = new Error('Not authenticated');
       err.status = 401;

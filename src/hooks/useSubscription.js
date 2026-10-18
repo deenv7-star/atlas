@@ -1,27 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthContext';
 import { trialDaysLeft, defaultTrialEnd } from '@/lib/trial';
 
 export function useSubscription() {
   const { user, isAuthenticated } = useAuth();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['subscription', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      if (isSupabaseConfigured && supabase) {
-        const { data: profile } = await supabase.from('profiles').select('trial_ends_at, selected_plan, subscription_status').eq('id', user.id).single();
-        return profile;
-      }
-      return {
-        trial_ends_at: user?.trial_ends_at || null,
-        selected_plan: user?.selected_plan || 'trial',
-        subscription_status: user?.subscription_status || 'trialing',
-      };
-    },
-    enabled: Boolean(isAuthenticated && user?.id),
-  });
+  // auth.me() already selects trial_ends_at / selected_plan / subscription_status from profiles,
+  // so read them from the cached user instead of a second profiles round-trip on every page.
+  const data = user ? {
+    trial_ends_at: user.trial_ends_at || null,
+    selected_plan: user.selected_plan || 'trial',
+    subscription_status: user.subscription_status || 'trialing',
+  } : null;
+  const isLoading = !isAuthenticated && !user ? false : !user;
 
   // Fallback: 14-day trial from signup when trial_ends_at is missing (previously showed a red "0 days left" to brand-new users).
   const createdAt = user?.created_date || user?.created_at;
