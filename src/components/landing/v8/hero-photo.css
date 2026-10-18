@@ -85,3 +85,51 @@
 
 /* the channels strip used to continue the old hero's lilac floor; give it its own top air */
 .lm.has-ph .lm-ch { padding-top: 28px; }
+
+/* ================= version B: brighter photo, stronger legibility, tighter phones ================= */
+.ph-hero.is-b { background: #2a3566; }
+/* lighter overall (the photo files themselves carry a lifted daylight grade), denser right behind the words */
+.ph-hero.is-b .ph-scrim {
+  background:
+    linear-gradient(0deg, rgba(var(--ph-scrim), 0.82) 0%, rgba(var(--ph-scrim), 0.62) 30%, rgba(var(--ph-scrim), 0.22) 52%, rgba(var(--ph-scrim), 0) 64%),
+    linear-gradient(180deg, rgba(var(--ph-scrim), 0.34) 0%, rgba(var(--ph-scrim), 0) 20%);
+}
+.ph-hero.is-b .ph-h1 { text-shadow: 0 1px 2px rgba(var(--ph-scrim), 0.35), 0 4px 32px rgba(var(--ph-scrim), 0.4); }
+.ph-hero.is-b .ph-sub { color: #fff; text-shadow: 0 1px 12px rgba(var(--ph-scrim), 0.45); }
+.ph-hero.is-b .ph-note { color: #fff; text-shadow: 0 1px 8px rgba(var(--ph-scrim), 0.5); }
+.ph-hero.is-b .ph-ghost { text-decoration-color: rgba(255, 255, 255, 0.7); text-shadow: 0 1px 8px rgba(var(--ph-scrim), 0.5); }
+@media (min-width: 900px) {
+  .ph-hero.is-b .ph-scrim {
+    background:
+      radial-gradient(70% 85% at 100% 78%, rgba(var(--ph-scrim), 0.66) 0%, rgba(var(--ph-scrim), 0.36) 45%, rgba(var(--ph-scrim), 0) 75%),
+      linear-gradient(270deg, rgba(var(--ph-scrim), 0.3) 0%, rgba(var(--ph-scrim), 0) 55%),
+      linear-gradient(0deg, rgba(var(--ph-scrim), 0.26) 0%, rgba(var(--ph-scrim), 0) 30%),
+      linear-gradient(180deg, rgba(var(--ph-scrim), 0.22) 0%, rgba(var(--ph-scrim), 0) 16%);
+  }
+  .ph-hero.is-b .ph-ntf { background: rgba(255, 255, 255, 0.9); }
+}
+
+/* phones and small tablets: one column in the flow — header, cards, then the copy pinned to the bottom */
+@media (max-width: 899px) {
+  .ph-hero.is-b { min-height: 600px; }
+  .ph-hero.is-b .ph-in { display: flex; flex-direction: column; padding: 84px var(--gut) max(20px, 3svh); }
+  .ph-hero.is-b .ph-ntfs { position: static; order: 1; inset: auto; gap: 8px; justify-items: stretch; }
+  .ph-hero.is-b .ph-copy { position: static; order: 2; margin-top: auto; padding-top: 20px; max-width: none; }
+  .ph-hero.is-b .ph-ntf { width: 100%; max-width: 420px; padding: 10px 12px 10px 14px; gap: 10px; border-radius: 18px; background: rgba(255, 255, 255, 0.9); }
+  .ph-hero.is-b .ph-ntf:nth-child(2) { margin-inline-start: 16px; width: calc(100% - 16px); }
+  .ph-hero.is-b .ph-ntf-mk, .ph-hero.is-b .ph-face { width: 36px; height: 36px; border-radius: 11px; }
+  .ph-hero.is-b .ph-face { border-radius: 50%; }
+  .ph-hero.is-b .ph-ntf-tx b { font-size: 14.5px; }
+  .ph-hero.is-b .ph-ntf-tx small { font-size: 13px; }
+  .ph-hero.is-b .ph-h1 { font-size: clamp(46px, 13vw, 76px); }
+  .ph-hero.is-b .ph-sub { margin-top: 14px; font-size: 17px; max-width: 30ch; }
+  .ph-hero.is-b .ph-ctas { margin-top: 20px; gap: 6px 16px; }
+  .ph-hero.is-b .ph-btn { min-height: 56px; padding: 0 26px; }
+  .ph-hero.is-b .ph-note { margin-top: 10px; font-size: 13.5px; }
+  /* card count follows the room left above the copy (A's rules reset, then B's) */
+  .ph-hero.is-b .ph-ntf:nth-child(2), .ph-hero.is-b .ph-ntf:nth-child(3) { display: flex; }
+}
+@media (max-width: 899px) and (max-height: 799px) { .ph-hero.is-b .ph-ntf:nth-child(3) { display: none; } }
+@media (max-width: 899px) and (max-height: 679px) { .ph-hero.is-b .ph-ntf:nth-child(2) { display: none; } }
+@media (max-width: 899px) and (max-height: 579px) { .ph-hero.is-b .ph-ntfs { display: none; } }
+@media (max-width: 360px) { .ph-hero.is-b .ph-btn { padding: 0 20px; font-size: 17px; } .ph-hero.is-b .ph-h1 { font-size: 44px; } }

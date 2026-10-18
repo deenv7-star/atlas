@@ -8,6 +8,10 @@
  * The photo is art-directed: a 1:2 portrait crop for phones, the full 4:3 frame from tablets up,
  * AVIF first with a WebP fallback. The same files are preloaded from index.html for "/" only.
  * Every name and amount in the notifications is example data.
+ *
+ * Version B: a lighter daylight grade baked into the photo files, a scrim that is lighter overall but
+ * denser right behind the words, and on phones the cards sit in the flow above the copy, so they
+ * never cover the headline and the CTA stays above the fold.
  */
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -26,7 +30,7 @@ const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920]];
 const NTFS = [
   { ch: 'booking', title: 'הזמנה חדשה מ-Booking.com', sub: 'שירן ג. · הזית · 2 לילות', time: '08:12' },
   { ch: 'whatsapp', title: 'אישור נשלח בוואטסאפ', sub: 'משפחת לוי · עם הוראות הגעה', time: '09:00' },
-  { face: 'noa', title: 'נועה ל. שילמה מקדמה', sub: '‏₪1,250 · האלון · נרשם לבד', time: '10:24' },
+  { face: 'noa', title: 'נועה ל. שילמה מקדמה', sub: '‏₪1,250 · האלון · סומן כשולם', time: '10:24' },
 ];
 
 function Notif({ ch, face, title, sub, time, i }) {
@@ -45,7 +49,7 @@ function Notif({ ch, face, title, sub, time, i }) {
 
 export default function HeroPhoto() {
   return (
-    <section className="ph-hero" aria-labelledby="hero-title">
+    <section className="ph-hero is-b" aria-labelledby="hero-title">
       <picture className="ph-photo">
         <source media={PORTRAIT} type="image/avif" srcSet={set('avif', PORT)} sizes="100vw" />
         <source media={PORTRAIT} type="image/webp" srcSet={set('webp', PORT)} sizes="100vw" />
