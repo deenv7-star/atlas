@@ -27,7 +27,10 @@ Owner rule (Deen, 16.10.2026): one unified language, one unified branding, one c
 - Motion: 150-220ms, ease-out cubic-bezier(.2,.8,.2,1); press scale .98; respect prefers-reduced-motion.
 
 ## Logo
-- Wordmark "ATLAS" in Heebo 800, letter-spacing .02em, ink-900; optional --brand-600 mark (EasyList feel: navy wordmark + indigo). Same in landing header, app sidebar, login, guest pages, emails.
+- Use the approved sculpted lowercase `atlas` wordmark, outlined in `BrandWordmark` and `public/atlas-logo.svg`.
+- Website and app wordmarks contain lettering only: no standalone symbol and no trailing dot.
+- Keep light website surfaces and existing brand colors. Use inherited navy on light surfaces and white on dark surfaces.
+- Heebo remains the interface/body typeface; do not use it to recreate the custom logo.
 
 ## Voice (Hebrew)
 - Speak to the owner in plural "אתם" (landing) / imperative short verbs in app buttons ("הוסיפו הזמנה" → app buttons use infinitive-free short form: "הזמנה חדשה", "שמירה", "שליחה בוואטסאפ").
@@ -37,6 +40,6 @@ Owner rule (Deen, 16.10.2026): one unified language, one unified branding, one c
 - Empty states: one sentence why + one primary action.
 
 
-## Approved wordmark (18 October 2026)
+## Approved wordmark (19 October 2026)
 
-Use `BrandWordmark` for the supplied custom ATLAS lettering. The canonical transparent artwork is `public/atlas-logo.svg`; paths are outlined, with no font dependency. Use inherited dark colour on light surfaces and white on dark surfaces. Do not add a dot, reflection, background rectangle or replacement text. `public/favicon.svg` uses the same first A as the app monogram; regenerate raster icons using the existing asset scripts.
+Use `BrandWordmark` for the selected sculpted lowercase atlas lettering. The canonical transparent artwork is `public/atlas-logo.svg`; paths are outlined, with no font dependency. The shared component preserves the existing wordmark width with the new artwork's 1859:638 proportions. Do not add a symbol, dot, reflection, background rectangle or replacement text. This update changes the text wordmark only; app icons and favicons are separate assets.
