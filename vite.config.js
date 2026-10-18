@@ -29,6 +29,8 @@ export default defineConfig({
         // to an older release. Keep navigation responses only as an offline fallback.
         navigateFallback: null,
         cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,woff2}'],
         globIgnores: ['**/registerSW.js'],
         // Cache API calls for offline fallback
