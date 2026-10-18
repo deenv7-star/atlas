@@ -98,3 +98,23 @@ export const isLocalApiConfigured = Boolean(
   import.meta.env.VITE_API_URL ||
   (typeof window !== 'undefined' && !isSupabaseConfigured && !import.meta.env.PROD)
 );
+
+/**
+ * The signed-in user as stored by supabase-js ({ id, expiresAt }), read synchronously from storage
+ * without any network call. Used only to decide what to preload / which cached copy to show first;
+ * every real request is still authorised by the server (RLS).
+ */
+export function storedSessionUser() {
+  if (!supabase || typeof window === 'undefined') return null;
+  try {
+    const key = supabase.auth?.storageKey;
+    const raw = key ? window.localStorage.getItem(key) : null;
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    const sess = s?.currentSession || s;
+    const id = sess?.user?.id;
+    return id ? { id, expiresAt: Number(sess.expires_at) || 0 } : null;
+  } catch {
+    return null;
+  }
+}

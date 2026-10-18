@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
-import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
+import { supabase, isSupabaseConfigured, storedSessionUser } from '@/api/supabaseClient';
+import { clearPersistedQueries } from '@/lib/queryPersist';
 import { queryClientInstance } from '@/lib/query-client';
 import { setActiveOrg, syncOrgSettingsFromDb } from '@/lib/onboarding/orgSettings';
 import { fetchAccountStatus } from '@/lib/accountStatus';
@@ -10,6 +11,27 @@ const AuthContext = createContext();
 /** REST / demo auth keys — storage events sync other tabs when Supabase is off. */
 const REST_TOKEN_KEY = 'atlas_jwt_token';
 const LOCAL_USER_KEY = 'atlas_current_user';
+/** Last good auth.me() result for the stored session's user: paints the app at once on reload, then refreshed. */
+const ME_CACHE_KEY = 'atlas.me.v1';
+const ME_CACHE_MAX_AGE_MS = 7 * 24 * 3600_000;
+
+function readCachedMe() {
+  if (!isSupabaseConfigured) return null;
+  const uid = storedSessionUser()?.id;
+  if (!uid) return null;
+  try {
+    const c = JSON.parse(localStorage.getItem(ME_CACHE_KEY) || 'null');
+    if (!c || c.uid !== uid || !c.user || c.user.id !== uid || Date.now() - (c.at || 0) > ME_CACHE_MAX_AGE_MS) return null;
+    return c.user;
+  } catch { return null; }
+}
+function writeCachedMe(u) {
+  if (!isSupabaseConfigured || !u?.id) return;
+  try { localStorage.setItem(ME_CACHE_KEY, JSON.stringify({ uid: u.id, at: Date.now(), user: u })); } catch { /* quota / private mode */ }
+}
+function dropCachedMe() {
+  try { localStorage.removeItem(ME_CACHE_KEY); } catch { /* ignore */ }
+}
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser]                         = useState(null);
@@ -25,6 +47,8 @@ export const AuthProvider = ({ children }) => {
 
   const clearSessionState = useCallback(() => {
     queryClientInstance.clear();
+    clearPersistedQueries();
+    dropCachedMe();
     setUser(null);
     setIsAuthenticated(false);
     setAuthError({ type: 'auth_required', message: 'Authentication required' });
@@ -34,12 +58,21 @@ export const AuthProvider = ({ children }) => {
   // and each used to run auth.me() + profile + status again.
   const inflightRef = useRef(null);
   const lastUidRef = useRef(null);
+  const userRef = useRef(null);
 
   const hydrateUser = useCallback(() => {
     if (inflightRef.current) return inflightRef.current;
     const run = (async () => {
       try {
-        const [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
+        let me, status;
+        try {
+          [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
+        } catch (err) {
+          if (!err?.isTransient) throw err;
+          // Slow / failed profile read: keep the copy already on screen, or try once more.
+          if (userRef.current) return userRef.current;
+          [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
+        }
         // Suspension is set by the platform admin (migration 011); null when unknown / not suspended.
         const currentUser = me && status?.suspended
           ? { ...me, account_suspended: true, account_suspended_reason: status.reason || '' }
@@ -47,6 +80,8 @@ export const AuthProvider = ({ children }) => {
         setActiveOrg(currentUser?.organization_id);
         syncOrgSettingsFromDb(currentUser?.organization_id); // background; local copy is used meanwhile
         lastUidRef.current = currentUser?.id || null;
+        userRef.current = currentUser;
+        writeCachedMe(currentUser);
         setUser(currentUser);
         setIsAuthenticated(true);
         setAuthError(null);
@@ -56,6 +91,7 @@ export const AuthProvider = ({ children }) => {
         return currentUser;
       } catch {
         lastUidRef.current = null;
+        userRef.current = null;
         clearSessionState();
         return null;
       } finally {
@@ -75,9 +111,23 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingAuth(true);
 
       if (isSupabaseConfigured && supabase) {
-        // Restore session from storage (if the user was previously logged in)
-        await hydrateUser();
-        setIsLoadingAuth(false);
+        // Returning owner: show the app at once from the last good copy and refresh it in the background
+        // (profile + suspension status). Without a copy, wait for it as before.
+        const cached = readCachedMe();
+        if (cached) {
+          lastUidRef.current = cached.id;
+          userRef.current = cached;
+          setActiveOrg(cached.organization_id);
+          setUser(cached);
+          setIsAuthenticated(true);
+          setAuthError(null);
+          setIsLoadingAuth(false);
+          void hydrateUser();
+        } else {
+          // Restore session from storage (if the user was previously logged in)
+          await hydrateUser();
+          setIsLoadingAuth(false);
+        }
 
         // Supabase syncs the same session across tabs via storage; this listener
         // runs on sign-in, refresh, sign-out, and user metadata updates.

@@ -10,6 +10,15 @@ import { callEdge } from '@/lib/real/edge';
 
 export const QUEUE_KEY = ['message_queue'];
 let lastRun = 0;
+/** The runner refresh is throttled per device (not per page load), and waits until the board has its data. */
+const LAST_RUN_KEY = 'atlas.queue.lastRun';
+function readLastRun() {
+  try { return Math.max(lastRun, Number(localStorage.getItem(LAST_RUN_KEY)) || 0); } catch { return lastRun; }
+}
+function writeLastRun(t) {
+  lastRun = t;
+  try { localStorage.setItem(LAST_RUN_KEY, String(t)); } catch { /* ignore */ }
+}
 
 export function useMessageQueue({ orgId } = {}) {
   const qc = useQueryClient();
@@ -17,12 +26,16 @@ export function useMessageQueue({ orgId } = {}) {
   const started = useRef(false);
 
   useEffect(() => {
-    if (!enabled || started.current || Date.now() - lastRun < 4 * 60_000) return;
+    if (!enabled || started.current || Date.now() - readLastRun() < 4 * 60_000) return undefined;
     started.current = true;
-    lastRun = Date.now();
-    callEdge('automation-runner', {})
-      .catch(() => null)
-      .finally(() => qc.invalidateQueries({ queryKey: QUEUE_KEY }));
+    // Let the screen's own reads go first; the server also runs this every 15 minutes on its own.
+    const t = setTimeout(() => {
+      writeLastRun(Date.now());
+      callEdge('automation-runner', {})
+        .catch(() => null)
+        .finally(() => qc.invalidateQueries({ queryKey: QUEUE_KEY }));
+    }, 2500);
+    return () => { clearTimeout(t); started.current = false; };
   }, [enabled, qc]);
 
   const q = useQuery({

@@ -20,14 +20,16 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'script-defer',
-      includeAssets: ['favicon.svg', 'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'icons/*.png'],
+      // Only the small icons are precached; big images (1 MB logo svg, og images, 1024px icons) load on demand,
+      // so a phone's first visit is not spent downloading ~2.7 MB of pictures the app screens never show.
+      includeAssets: ['favicon.svg', 'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png'],
       manifest: false, // we manage our own manifest.json in public/
       workbox: {
         // SPA: direct visits to /api-docs, /changelog, etc. must resolve to index.html
         // (avoids blank pages / stuck loaders when the SW or host mishandles navigation).
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,woff2}'],
         // Cache API calls for offline fallback
         runtimeCaching: [
           {
