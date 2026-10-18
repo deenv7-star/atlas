@@ -1,6 +1,7 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster"
-import { OptimisticConflictModal } from '@/components/common/OptimisticConflictModal';
+import { useOptimisticConflictModalState } from '@/lib/optimistic/conflictModalState';
+import { preloadForInitialRoute } from '@/lib/appPreload';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AtlasToaster } from '@/components/ui/AtlasToast';
 import { QueryClientProvider } from '@tanstack/react-query'
@@ -41,6 +42,19 @@ function PublicFallback() {
 const DevSkeletonsPage = import.meta.env.DEV ? lazy(() => import('@/pages/DevSkeletons')) : null;
 
 const { Pages } = pagesConfig;
+
+// Signed-in owner reloading an app screen: fetch the shell + that screen's code now, in parallel with auth.
+preloadForInitialRoute();
+
+// The 409 conflict dialog (and its animation library) is only downloaded the first time it is needed.
+const OptimisticConflictModal = lazy(() => import('@/components/common/OptimisticConflictModal').then((m) => ({ default: m.OptimisticConflictModal })));
+function ConflictModalHost() {
+  const { open } = useOptimisticConflictModalState();
+  const [needed, setNeeded] = useState(false);
+  useEffect(() => { if (open) setNeeded(true); }, [open]);
+  if (!needed && !open) return null;
+  return <Suspense fallback={null}><OptimisticConflictModal /></Suspense>;
+}
 
 const EXPLICIT_PROTECTED_KEYS = new Set([
   'Dashboard',
@@ -300,7 +314,7 @@ function App() {
             </NuqsAdapter>
           </Router>
           <Toaster />
-          <OptimisticConflictModal />
+          <ConflictModalHost />
           <AtlasToaster />
         </QueryClientProvider>
       </AuthProvider>

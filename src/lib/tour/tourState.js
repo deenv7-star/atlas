@@ -59,6 +59,8 @@ function writeLocal(uid, v) {
 export async function getTourState(user) {
   const uid = user?.id;
   const local = readLocal(uid);
+  // Finished / skipped on this device: nothing to show, so no account read on every screen load.
+  if (local && (local.status === 'done' || local.status === 'skipped')) return local;
   if (isSupabaseConfigured && supabase) {
     try {
       const u = await authUser('GET');

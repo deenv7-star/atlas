@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
+import { restoreQueryCache, startQueryPersist } from '@/lib/queryPersist';
 
 /**
  * Default staleTime favors reference-style data. Pages that load live booking
@@ -15,3 +16,7 @@ export const queryClientInstance = new QueryClient({
 		},
 	},
 });
+
+// Show the signed-in owner's last data at once, then refresh it (stale-while-revalidate across reloads).
+restoreQueryCache(queryClientInstance);
+startQueryPersist(queryClientInstance);

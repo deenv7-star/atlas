@@ -11,6 +11,7 @@ import { SkelLine } from '@/components/ds';
 import ConnectionNotice from '@/components/app/shell/ConnectionNotice';
 import { Sidebar, Header, TabBar, shellClass } from '@/ui-direction';
 import TourHost from '@/components/tour/TourHost';
+import { prefetchMainPagesWhenIdle } from '@/lib/appPreload';
 
 // Help bot + human handoff (supabase/functions/support-chat). Lazy: not part of the first paint.
 const SupportWidget = React.lazy(() => import('@/support/SupportWidget'));
@@ -49,6 +50,12 @@ function LayoutContent({ children, currentPageName }) {
     }
     link.href = '/favicon.svg';
   }, []);
+
+  // Once the first screen is up, fetch the code of the other main screens in the background (idle time),
+  // so moving between them does not wait for a download.
+  useEffect(() => {
+    if (!isPublicPage) prefetchMainPagesWhenIdle();
+  }, [isPublicPage]);
 
   // The app is light-only. An old theme toggle (or OS dark mode) used to add `.dark`
   // and paint skeletons near-black; clear it once.

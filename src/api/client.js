@@ -474,7 +474,7 @@ const supabaseAuth = {
     }
 
     // Narrow columns + org embed (avoids pulling unused profile / org JSON)
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select(`
         id, email, full_name, phone, profile_image, organization_id,
@@ -483,6 +483,13 @@ const supabaseAuth = {
       `)
       .eq('id', user.id)
       .single();
+    // A slow / failed profile read (timeout, 5xx) must not be mistaken for "new owner, no profile":
+    // that used to send existing owners to onboarding. The caller keeps its last good copy instead.
+    if (profileError && profileError.code !== 'PGRST116') {
+      const e = new Error(profileError.message || 'profile read failed');
+      e.isTransient = true;
+      throw e;
+    }
 
     let onboarding_completed = Boolean(profile?.onboarding_completed);
     const orgId = profile?.organization_id || null;

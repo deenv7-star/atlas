@@ -13,6 +13,7 @@ import { getSafeReturnUrl } from '@/config/routes';
 import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
+import { preloadAppShell } from '@/lib/appPreload';
 
 export default function Login() {
   const { loginUser, isLoadingAuth } = useAuth();
@@ -30,6 +31,13 @@ export default function Login() {
   useEffect(() => {
     if (prefilledEmail) setForm(f => ({ ...f, email: prefilledEmail }));
   }, [prefilledEmail]);
+
+  // While the owner types, fetch the app shell + the screen they land on, so sign-in does not wait for it.
+  useEffect(() => {
+    const target = getSafeReturnUrl(searchParams.get('return')) || '/dashboard';
+    const t = setTimeout(() => preloadAppShell(String(target).split('?')[0]), 600);
+    return () => clearTimeout(t);
+  }, [searchParams]);
 
 
   const set = (field) => (e) => {
