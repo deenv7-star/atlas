@@ -179,12 +179,12 @@ Deno.serve(async (req) => {
     const jwt = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
     if (!jwt) return json({ error: "unauthorized" }, 401);
     const userDb = createClient(URL_, ANON, { global: { headers: { Authorization: `Bearer ${jwt}` } }, auth: { persistSession: false } });
-    const { data: u, error: uErr } = await userDb.auth.getUser(jwt);
-    if (uErr || !u?.user) return json({ error: "unauthorized" }, 401);
+    // No auth.getUser() round trip (it can take 10-20 s under load): PostgREST verifies the JWT
+    // signature itself, and RLS limits the rows to the caller's own org. A bad/expired JWT errors here.
     let q = userDb.from("calendar_syncs").select("id"); // RLS: own org only
     if (body.sync_id) q = q.eq("id", body.sync_id);
     const { data, error } = await q.limit(200);
-    if (error) return json({ error: "forbidden" }, 403);
+    if (error) return json({ error: /jwt|token|auth/i.test(`${error.code} ${error.message}`) ? "unauthorized" : "forbidden" }, /jwt|token|auth/i.test(`${error.code} ${error.message}`) ? 401 : 403);
     ids = (data || []).map((r) => r.id);
     if (!ids.length) return json({ ok: true, results: [] });
   }
@@ -196,13 +196,15 @@ Deno.serve(async (req) => {
   if (error) return json({ error: error.message }, 500);
 
   const run = isCron ? await db.from("job_runs").insert({ job: "ical-sync" }).select("id").single() : null;
-  const results = [];
-  for (const s of (syncs || []) as SyncRow[]) {
-    if (s.is_active === false) continue;
-    if (String(s.sync_direction || "").toUpperCase() === "EXPORT") continue;
-    if (isCron && s.sync_status === "PAUSED") continue;
-    results.push(await syncOne(db, s));
-  }
+  const todo = ((syncs || []) as SyncRow[]).filter((s) =>
+    s.is_active !== false && String(s.sync_direction || "").toUpperCase() !== "EXPORT" && !(isCron && s.sync_status === "PAUSED"));
+  // Feeds are independent: run them 8 at a time so one cron pass stays well inside the
+  // Edge Function wall-clock limit as the number of connected units grows.
+  const results: Awaited<ReturnType<typeof syncOne>>[] = new Array(todo.length);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(8, todo.length) }, async () => {
+    while (next < todo.length) { const i = next++; results[i] = await syncOne(db, todo[i]); }
+  }));
   if (run?.data?.id) {
     await db.from("job_runs").update({ finished_at: new Date().toISOString(), ok: results.every((r) => r.ok), detail: { count: results.length, results } }).eq("id", run.data.id);
   }

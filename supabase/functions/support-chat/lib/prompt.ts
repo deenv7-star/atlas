@@ -49,7 +49,8 @@ export function tokens(s: string): string[] {
 }
 export function retrieve(kb: KB, query: string, k = 8): Chunk[] {
   const docs = kb.chunks.map((c) => tokens(`${c.heading} ${c.heading} ${c.keywords} ${c.text}`));
-  const heads = kb.chunks.map((c) => new Set(tokens(`${c.heading.split(' › ').pop()} ${c.keywords}`)));
+  const heads = kb.chunks.map((c) => new Set(tokens(c.heading.split(' › ').pop() || '')));
+  const kws = kb.chunks.map((c) => new Set(tokens(c.keywords)));
   const N = docs.length, avg = docs.reduce((s, d) => s + d.length, 0) / N;
   const df = new Map<string, number>();
   for (const d of docs) for (const t of new Set(d)) df.set(t, (df.get(t) || 0) + 1);
@@ -63,7 +64,9 @@ export function retrieve(kb: KB, query: string, k = 8): Chunk[] {
       if (!f) continue;
       const idf = Math.log(1 + (N - (df.get(t) || 0) + 0.5) / ((df.get(t) || 0) + 0.5));
       s += idf * (f * 2.2) / (f + 1.2 * (0.25 + 0.75 * Math.max(d.length, avg * 0.7) / avg));
-      if (heads[i].has(t)) s += idf * 0.8; // the section is *about* this word, not just mentioning it
+      // the section is *about* this word, not just mentioning it: its own heading counts most,
+      // the file-wide keywords (shared by every section of that doc) a little
+      if (heads[i].has(t)) s += idf * 0.8; else if (kws[i].has(t)) s += idf * 0.3;
     }
     return { i, s };
   }).filter((x) => x.s > 0).sort((a, b) => b.s - a.s).slice(0, k);
