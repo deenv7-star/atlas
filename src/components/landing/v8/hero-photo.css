@@ -85,3 +85,56 @@
 
 /* the channels strip used to continue the old hero's lilac floor; give it its own top air */
 .lm.has-ph .lm-ch { padding-top: 28px; }
+
+/* ======================================================================================
+   Scroll motion (landing v9 Q, ea07f10): the photo shrinks into the real home screen.
+   ====================================================================================== */
+.ph-hero.is-scroll {
+  height: 230svh; min-height: 0; max-height: none; overflow: clip;
+  background: linear-gradient(180deg, #ffffff 0%, #f3f4ff 100%); color: var(--navy);
+}
+@media (min-width: 900px) { .ph-hero.is-scroll { height: 260svh; } }
+.ph-stage { position: sticky; top: 0; height: 100svh; min-height: 560px; overflow: hidden; }
+.ph-hero.is-scroll .ph-in { position: absolute; inset: 0; z-index: 2; height: auto; pointer-events: none; color: #fff; }
+.ph-hero.is-scroll .ph-copy, .ph-hero.is-scroll .ph-ntfs { pointer-events: auto; will-change: opacity, transform; }
+.ph-copy.is-gone .ph-ctas, .ph-copy.is-gone .ph-note { visibility: hidden; }
+
+.ph-clip { position: absolute; inset: 0; overflow: hidden; contain: layout paint; background: #1b2656; will-change: clip-path; --scrim: 1; }
+.ph-clip .ph-photo { display: contents; }
+.ph-clip .ph-photo img { inset: auto; right: auto; bottom: auto; transform-origin: 50% 50%; will-change: transform; }
+.ph-clip .ph-scrim { opacity: var(--scrim); }
+
+.ph-end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 84px var(--gut) 20px; }
+.ph-end::before { content: ''; position: absolute; inset: 30% -10% -20%; background: radial-gradient(50% 50% at 50% 50%, rgba(62, 43, 241, 0.12), rgba(62, 43, 241, 0) 70%); pointer-events: none; }
+.ph-end-head { position: relative; text-align: center; opacity: 0; }
+.ph-end-h { margin: 0; font-size: clamp(26px, 3.4vw, 44px); line-height: 1.1; font-weight: 800; letter-spacing: -0.025em; color: var(--navy); }
+.ph-end-h span { color: var(--indigo); }
+.ph-end-sub { margin: 6px 0 0; font-size: 15px; color: var(--ink); }
+.ph-end-dev { position: relative; }
+.ph-end-dev .ph-dev { opacity: 0; }
+.ph-end-dev .ph-win { width: min(1180px, 90vw, calc((100svh - 250px) * 1.6)); }
+.ph-end-dev .ph-phone { --w: min(310px, 80vw, calc((100svh - 230px) * 0.462)); }
+
+/* real-screen frames (ea07f10 shared9 Browser / Phone) */
+.ph-win { border-radius: 18px; background: #fff; overflow: hidden; box-shadow: 0 0 0 1px rgba(27, 38, 86, 0.05), 0 2px 4px rgba(27, 38, 86, 0.04), 0 30px 60px -20px rgba(27, 38, 86, 0.22), 0 60px 120px -40px rgba(62, 43, 241, 0.25); }
+.ph-win-bar { height: 34px; display: flex; align-items: center; gap: 7px; padding: 0 14px; direction: ltr; background: #fbfbfd; border-bottom: 1px solid var(--line); }
+.ph-win-bar i { width: 10px; height: 10px; border-radius: 50%; background: #e3e5ee; }
+.ph-win-bar span { margin: 0 auto; transform: translateX(-28px); font-size: 12px; color: #5d6585; background: #f1f2f7; padding: 3px 14px; border-radius: 999px; }
+.ph-win-shot { position: relative; aspect-ratio: 1440 / 900; background: var(--canvas); }
+.ph-win-shot > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ph-phone {
+  --w: 300px; width: var(--w); aspect-ratio: 390 / 844; padding: calc(var(--w) * 0.035); border-radius: calc(var(--w) * 0.165); flex: none;
+  background: linear-gradient(145deg, #f4f5f9, #c9ccd8 45%, #eef0f5);
+  box-shadow: 0 0 0 1px rgba(27, 38, 86, 0.1), 0 2px 4px rgba(27, 38, 86, 0.06), 0 30px 60px -18px rgba(27, 38, 86, 0.32), 0 60px 100px -40px rgba(62, 43, 241, 0.3);
+}
+.ph-phone-scr { position: relative; width: 100%; height: 100%; border-radius: calc(var(--w) * 0.135); overflow: hidden; background: #eeeef6; border: calc(var(--w) * 0.012) solid #0b0d18; }
+.ph-phone-scr > img { position: absolute; inset: 5.57% 0 0; width: 100%; height: 94.43%; object-fit: cover; display: block; }
+.ph-phone-status { position: absolute; z-index: 3; inset: 0 0 auto; height: 5.57%; display: flex; align-items: center; justify-content: space-between; padding: 0 9% 0 10%; direction: ltr; font-size: calc(var(--w) * 0.045); font-weight: 700; color: #0b0d18; background: #eeeef6; }
+.ph-phone-island { position: absolute; top: 22%; left: 50%; width: 31%; height: 70%; transform: translateX(-50%); border-radius: 999px; background: #0b0d18; }
+.ph-phone-bat { width: 7.5%; height: 34%; border-radius: 3px; border: 1.5px solid #0b0d18; position: relative; }
+.ph-phone-bat::after { content: ''; position: absolute; inset: 1.5px 3px 1.5px 1.5px; border-radius: 1px; background: #0b0d18; }
+
+/* reduced motion: photo hero, then the home screen as its own section */
+.ph-static-end { display: grid; justify-items: center; gap: 20px; padding: 72px var(--gut) 24px; text-align: center; background: linear-gradient(180deg, #fff, #f3f4ff); }
+.ph-static-end .ph-win { width: min(1180px, 100%); }
+.ph-static-end .ph-phone { --w: min(310px, 80vw); }
