@@ -226,7 +226,7 @@ function StageCard({ stage, theme, index, total, onToggle }) {
               onClick={() => onToggle(stage.id)}
               aria-label={stage.active ? 'כיבוי שלב' : 'הפעלת שלב'}
               aria-pressed={!!stage.active}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors"
             >
               {stage.active ? (
                 <ToggleRight className="w-7 h-7 text-emerald-500" />
