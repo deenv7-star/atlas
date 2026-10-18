@@ -2,7 +2,8 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { base44 } from '@/api/base44Client';
 import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 import { queryClientInstance } from '@/lib/query-client';
-import { setActiveOrg } from '@/lib/onboarding/orgSettings';
+import { setActiveOrg, syncOrgSettingsFromDb } from '@/lib/onboarding/orgSettings';
+import { fetchAccountStatus } from '@/lib/accountStatus';
 
 const AuthContext = createContext();
 
@@ -31,8 +32,13 @@ export const AuthProvider = ({ children }) => {
 
   const hydrateUser = useCallback(async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
+      // Suspension is set by the platform admin (migration 011); null when unknown / not suspended.
+      const currentUser = me && status?.suspended
+        ? { ...me, account_suspended: true, account_suspended_reason: status.reason || '' }
+        : me;
       setActiveOrg(currentUser?.organization_id);
+      syncOrgSettingsFromDb(currentUser?.organization_id); // background; local copy is used meanwhile
       setUser(currentUser);
       setIsAuthenticated(true);
       setAuthError(null);

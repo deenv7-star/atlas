@@ -45,6 +45,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { parseISO, differenceInDays } from 'date-fns';
+import { heCount } from '@/lib/hebrewCount';
 
 const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer: 'העברה', card: 'כרטיס', credit_card: 'כרטיס אשראי', bit: 'ביט', paybox: 'פייבוקס' };
 
@@ -273,7 +274,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
                     <StatusPill status={booking.status} />
                     <span>{unitName}</span>
                     <span aria-hidden className="text-ink-300">·</span>
-                    <span>{booking.adults || 2} אורחים</span>
+                    <span>{heCount(booking.adults || 2, 'guest')}</span>
                     <span aria-hidden className="text-ink-300">·</span>
                     <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full" style={{ background: ch.color }} />{ch.label}</span>
                   </p>

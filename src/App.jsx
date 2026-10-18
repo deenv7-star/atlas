@@ -16,7 +16,6 @@ import ScrollToTop from '@/lib/ScrollToTop';
 import { createPageUrl } from '@/utils';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
-import { isPlatformAdminViewer } from '@/lib/platformAdmin';
 // Code-split: the landing page should not download the app shell or the auth screens.
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
@@ -25,6 +24,9 @@ const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
+// Platform admin console (/admin): its own shell, gated by the database (migration 011).
+const AdminRoot = lazy(() => import('@/admin/AdminRoot'));
+const AccountSuspended = lazy(() => import('@/components/common/AccountSuspended'));
 
 const GuestStayPage = lazy(() => import('@/pages/GuestStay'));
 const BookDirectPage = lazy(() => import('@/pages/BookDirect'));
@@ -89,7 +91,7 @@ function hasOnboardingBypass(user) {
 // Redirects to /login if not authenticated; preserves return URL.
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
 
-const ProtectedRoute = ({ children, requireOnboarding = true }) => {
+const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = false }) => {
   const { isLoadingAuth, isAuthenticated, user } = useAuth();
   if (isLoadingAuth) {
     return (
@@ -104,23 +106,12 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   }
   // New orgs go through onboarding once, also when they arrive via /login after confirming their email.
   // Existing orgs are never forced: auth.me() marks an org that already has units / bookings / leads as done.
+  // Suspended by the ATLAS team (admin console, my_account_status()): billing stays reachable.
+  if (user?.account_suspended && !allowSuspended) {
+    return <S><AccountSuspended reason={user.account_suspended_reason} /></S>;
+  }
   if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass(user)) {
     return <Navigate to="/onboarding" replace />;
-  }
-  return children;
-};
-
-const PlatformAdminRoute = ({ children }) => {
-  const { isLoadingAuth, isAuthenticated, user } = useAuth();
-  if (isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="h-8 w-8 rounded-full border-[3px] border-[#E6E8F0] border-t-[#3E2BF1] motion-safe:animate-spin" aria-label="טוען" role="status"></div>
-      </div>
-    );
-  }
-  if (!isAuthenticated || !isPlatformAdminViewer(user)) {
-    return <Navigate to="/dashboard" replace />;
   }
   return children;
 };
@@ -225,20 +216,11 @@ const AuthenticatedApp = () => {
         />
       )}
       {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
-      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
-      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false}><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
-      <Route
-        path="/platform-admin"
-        element={
-          <ProtectedRoute requireOnboarding={false}>
-            <PlatformAdminRoute>
-              <LayoutWrapper currentPageName="PlatformAdmin">
-                <Pages.PlatformAdmin />
-              </LayoutWrapper>
-            </PlatformAdminRoute>
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false} allowSuspended><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
+      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
+      {/* Platform admin console. Access is checked server-side (admin_whoami + every admin_* RPC). */}
+      <Route path="/admin/*" element={<Suspense fallback={<PublicFallback />}><AdminRoot /></Suspense>} />
+      <Route path="/platform-admin" element={<Navigate to="/admin" replace />} />
       {/* Legacy routes — redirect to canonical lowercase paths */}
       {/* caseSensitive is required: React Router matches case-insensitively by default,
           so "/Bookings" -> "/bookings" also matched "/bookings" itself and rendered a blank page. */}

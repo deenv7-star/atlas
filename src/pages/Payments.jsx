@@ -20,6 +20,7 @@ import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
 import { PaymentForm } from '@/components/forms/PaymentForm';
 import { emptyPaymentFormValues } from '@/components/forms/atlasFormSchemas';
 import { Page, PageHeader, StatTile, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
+import { heCount } from '@/lib/hebrewCount';
 
 const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer: 'העברה', card: 'כרטיס', credit_card: 'כרטיס אשראי', bit: 'ביט', paybox: 'פייבוקס' };
 
@@ -177,7 +178,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   // ── CSV Export ───────────────────────────────────────────────────────────────
   const handleExport = () => {
     exportToCSV(filtered, 'payments', PAYMENT_COLUMNS);
-    toast({ title: `יוצאו ${filtered.length} תשלומים ל-CSV` });
+    toast({ title: `${filtered.length === 1 ? 'יוצא תשלום אחד' : `יוצאו ${filtered.length} תשלומים`} ל-CSV` });
   };
 
   return (
@@ -273,7 +274,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
               if (confirm('למחוק תשלום זה?')) deleteMutation.mutate(id);
             }}
             onBulkDelete={(rows) => {
-              if (!confirm(`למחוק ${rows.length} תשלומים?`)) return;
+              if (!confirm(`למחוק ${heCount(rows.length, 'payment')}?`)) return;
               rows.forEach((r) => deleteMutation.mutate(r.id));
             }}
           />

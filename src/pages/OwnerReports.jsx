@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PageHeader, StatTile } from '@/components/ds';
 import { FileBarChart, Send, Download, Users, Home, DollarSign, Percent, Mail, Calendar, CheckCircle, Clock, ChevronDown, Settings, Building2, Phone, CreditCard, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { heCount } from '@/lib/hebrewCount';
 
 const OWNERS = [
   {
@@ -137,7 +138,7 @@ export default function OwnerReports() {
                 </div>
                 <div>
                   <p className="font-semibold text-navy-900 text-sm">{owner.name}</p>
-                  <p className="text-xs text-ink-600">{owner.properties.length} נכסים</p>
+                  <p className="text-xs text-ink-600">{heCount(owner.properties.length, 'property')}</p>
                 </div>
               </div>
               <div className="flex justify-between text-xs">

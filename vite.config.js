@@ -4,7 +4,17 @@ import path from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
+// Build info for /admin → תקינות מערכת (Vercel sets VERCEL_GIT_* during builds).
+const ATLAS_BUILD = {
+  sha: process.env.VERCEL_GIT_COMMIT_SHA || null,
+  branch: process.env.VERCEL_GIT_COMMIT_REF || null,
+  message: (process.env.VERCEL_GIT_COMMIT_MESSAGE || '').split('\n')[0].slice(0, 120) || null,
+  env: process.env.VERCEL_ENV || null,
+  time: new Date().toISOString(),
+};
+
 export default defineConfig({
+  define: { __ATLAS_BUILD__: JSON.stringify(ATLAS_BUILD) },
   plugins: [
     react(),
     VitePWA({

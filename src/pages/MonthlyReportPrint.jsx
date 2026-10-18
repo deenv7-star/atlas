@@ -9,6 +9,7 @@ import { formatDayHe, todayISO } from '@/lib/stay/format';
 import { MonthlyReportBody } from '@/components/stay/MonthlyReportBody';
 import { Wordmark, Btn } from '@/components/stay/StayUI';
 import { parseMonthParam } from '@/pages/MonthlyReport';
+import { heCount } from '@/lib/hebrewCount';
 
 export default function MonthlyReportPrint() {
   const [params] = useSearchParams();
@@ -35,7 +36,7 @@ export default function MonthlyReportPrint() {
           <div className="min-w-0">
             <p className="ab-meta font-bold">דוח חודשי לרואה החשבון</p>
             <h1 className="ab-h1 mt-1">{report.label}</h1>
-            <p className="ab-meta mt-1">{user?.organization_name || ''}{user?.organization_name ? ' · ' : ''}{report.units} יחידות · הופק ב{formatDayHe(todayISO())}</p>
+            <p className="ab-meta mt-1">{user?.organization_name || ''}{user?.organization_name ? ' · ' : ''}{heCount(report.units, 'unit')} · הופק ב{formatDayHe(todayISO())}</p>
           </div>
           <div className="flex flex-col items-end gap-3">
             <Wordmark size={20} />

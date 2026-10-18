@@ -26,7 +26,8 @@
     "ios:init": "npm run build && npx cap add ios",
     "ios:sync": "npm run build && npx cap sync ios",
     "ios:open": "npx cap open ios",
-    "ios:run": "npm run build && npx cap sync ios && npx cap run ios"
+    "ios:run": "npm run build && npx cap sync ios && npx cap run ios",
+    "test:unit": "TZ=Asia/Jerusalem node --test tests/unit/*.test.mjs"
   },
   "dependencies": {
     "@base44/sdk": "^0.8.54",

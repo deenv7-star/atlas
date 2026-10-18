@@ -11,6 +11,7 @@ export default [
       "src/pages/**/*.{js,mjs,cjs,jsx}",
       "src/Layout.jsx",
       "src/ui-direction/**/*.{js,jsx}",
+      "src/admin/**/*.{js,jsx}",
     ],
     ignores: ["src/lib/**/*", "src/components/ui/**/*"],
     ...pluginJs.configs.recommended,
