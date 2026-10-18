@@ -27,6 +27,7 @@ import BarChart from '@/components/today/BarChart';
 import { Button } from '@/components/ui/button';
 import { SegmentedControl, SkelLine, DeltaPill, CardArrow } from '@/components/ds';
 import { cn } from '@/lib/utils';
+import { heCount } from '@/lib/hebrewCount';
 
 const HHMM = /^([01]?\d|2[0-3]):([0-5]\d)/;
 /** "15:00" from a booking/property time field ("15:00", "15:00:00", "1500"); '' when unusable. */
@@ -263,7 +264,7 @@ export default function TodayBoard({ user, orgId }) {
       key: 'in', label: 'כניסות', icon: LogIn,
       rows: board.arrivals.map(({ booking, unit }) => ({
         key: `in-${booking.id}`, guest: booking.guest_name || 'אורח', property: prop(booking.property_id), time: checkInTime(booking, prop(booking.property_id)),
-        title: booking.guest_name || 'אורח', detail: [unit, booking.nights ? `${booking.nights} לילות` : null].filter(Boolean).join(' · '),
+        title: booking.guest_name || 'אורח', detail: [unit, booking.nights ? heCount(booking.nights, 'night') : null].filter(Boolean).join(' · '),
         action: booking.status === 'CHECKED_IN'
           ? <Done>נכנסו</Done>
           : pill('נכנסו', () => setStatus(booking, 'CHECKED_IN', `${booking.guest_name || 'האורחים'} נכנסו`)),
@@ -350,13 +351,13 @@ export default function TodayBoard({ user, orgId }) {
   const photoTile = (
     <Link
       to="/calendar"
-      aria-label={`${user?.organization_name || 'המתחם'}: ${tonight.occupied} יחידות מאוכלסות הלילה, ${free} פנויות. ללוח השנה`}
+      aria-label={`${user?.organization_name || 'המתחם'}: ${tonight.occupied === 1 ? 'יחידה אחת מאוכלסת' : `${tonight.occupied} יחידות מאוכלסות`} הלילה, ${free} פנויות. ללוח השנה`}
       className="v5-rise c-photo press v7-lift flex min-h-[196px] flex-col justify-between p-3.5 text-white md:p-4 lg:col-span-4 lg:min-h-[214px]"
       style={{ '--i': 3 }}
     >
       <img src={photo} alt="" loading="eager" decoding="async" draggable={false} />
       <div className="flex items-start justify-between gap-2">
-        <span className="c-glass inline-flex h-8 items-center rounded-full px-3 text-[12px] font-semibold">{tonight.units} יחידות</span>
+        <span className="c-glass inline-flex h-8 items-center rounded-full px-3 text-[12px] font-semibold">{heCount(tonight.units, 'unit')}</span>
         <span aria-hidden className="v7-arrow c-glass inline-flex h-10 w-10 items-center justify-center rounded-full">
           <ArrowUpLeft className="h-[18px] w-[18px]" strokeWidth={2} />
         </span>
@@ -450,7 +451,7 @@ export default function TodayBoard({ user, orgId }) {
       <ul className="mt-auto space-y-0.5 border-t border-[#F0F0F6] px-2 py-2 md:px-3">
         {board.messages.length > 0 ? (
           <li>
-            <FoldLine open={showMessages} onClick={() => setShowMessages((v) => !v)} label={`${board.messages.length} הודעות מחכות לשליחה`} />
+            <FoldLine open={showMessages} onClick={() => setShowMessages((v) => !v)} label={board.messages.length === 1 ? 'הודעה אחת מחכה לשליחה' : `${board.messages.length} הודעות מחכות לשליחה`} />
             {showMessages ? (
               <ul>
                 {board.messages.map(({ booking, template, balance }, idx) => (

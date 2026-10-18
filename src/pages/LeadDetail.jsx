@@ -30,6 +30,7 @@ import { format, parseISO } from 'date-fns';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
+import { heCount } from '@/lib/hebrewCount';
 
 const statusLabels = {
   NEW: 'חדש',
@@ -208,7 +209,7 @@ export default function LeadDetail({ orgId }) {
         <Card className="border-0 shadow-sm rounded-2xl">
           <CardContent className="p-4 flex items-center gap-2 text-sm">
             <Users className="h-4 w-4 text-gray-400" />
-            <span>{lead.adults} אורחים</span>
+            <span>{heCount(lead.adults, 'guest')}</span>
           </CardContent>
         </Card>
       )}

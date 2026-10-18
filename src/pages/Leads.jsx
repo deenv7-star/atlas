@@ -21,6 +21,7 @@ import { emptyGuestFormValues } from '@/components/forms/atlasFormSchemas';
 import { leadFormToPayload } from '@/lib/entityPayloads';
 import { useGuestsUrlState } from '@/hooks/url-state/useGuestsUrlState';
 import { sortGuestLeads } from '@/hooks/url-state/leadTableSort';
+import { heCount } from '@/lib/hebrewCount';
 
 const STATUS_OPTIONS = [
   { value: 'NEW',        label: 'חדש',          color: 'bg-blue-100 text-blue-700 border-blue-200' },
@@ -189,7 +190,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       await updateMutation.mutateAsync({ id: row.id, data: { status } }).catch(() => {});
       done++;
     }
-    success(`עודכנו ${done} לידים ל-${STATUS_MAP[status]?.label || status}`);
+    success(`${done === 1 ? 'עודכן ליד אחד' : `עודכנו ${done} לידים`} ל-${STATUS_MAP[status]?.label || status}`);
   };
 
   const handleBulkDeleteRows = (rows) => {
@@ -201,7 +202,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       ...l, property_name: properties.find(p => p.id === l.property_id)?.name || '',
     }));
     exportToCSV(data, 'leads', LEAD_COLUMNS);
-    success(`יוצאו ${data.length} לידים ל-CSV`);
+    success(`${data.length === 1 ? 'יוצא ליד אחד' : `יוצאו ${data.length} לידים`} ל-CSV`);
   };
 
   const setStatusTagFilter = (value) => {
@@ -263,7 +264,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[15px] font-semibold text-navy-900">{l.full_name || 'ללא שם'}</span>
                     <span className="block truncate text-[13px] text-ink-400">
-                      {l.check_in_date ? `מבקש ${fmtShort(l.check_in_date)}` : 'בלי תאריכים'}{l.nights ? ` · ${l.nights} לילות` : ''}
+                      {l.check_in_date ? `מבקש ${fmtShort(l.check_in_date)}` : 'בלי תאריכים'}{l.nights ? ` · ${heCount(l.nights, 'night')}` : ''}
                     </span>
                   </span>
                   <StatusPill status={l.status} label={STATUS_MAP[l.status]?.label} />
@@ -274,7 +275,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         ) : null}
         {!isLoading && sorted.length > pageSize ? (
           <nav aria-label="עמודים" className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
-            <span className="text-[14px] text-ink-600 tabular">עמוד {page} מתוך {totalPages} · {sorted.length} לידים</span>
+            <span className="text-[14px] text-ink-600 tabular">עמוד {page} מתוך {totalPages} · {heCount(sorted.length, 'lead')}</span>
             <div className="flex items-center gap-2">
               <Button type="button" variant="outline" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
               <Button type="button" variant="outline" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
