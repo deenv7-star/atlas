@@ -25,13 +25,24 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png'],
       manifest: false, // we manage our own manifest.json in public/
       workbox: {
-        // SPA: direct visits to /api-docs, /changelog, etc. must resolve to index.html
-        // (avoids blank pages / stuck loaders when the SW or host mishandles navigation).
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//],
-        globPatterns: ['**/*.{js,css,html,woff2}'],
+        // Fetch current HTML on each navigation; a precached shell pins returning browsers
+        // to an older release. Keep navigation responses only as an offline fallback.
+        navigateFallback: null,
+        cleanupOutdatedCaches: true,
+        globPatterns: ['**/*.{js,css,woff2}'],
+        globIgnores: ['**/registerSW.js'],
         // Cache API calls for offline fallback
         runtimeCaching: [
+          {
+            urlPattern: ({ request, url }) => request.mode === 'navigate' &&
+              url.origin === self.location.origin && !url.pathname.startsWith('/api/'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'atlas-navigation-v1',
+              cacheableResponse: { statuses: [200] },
+              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 },
+            },
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
