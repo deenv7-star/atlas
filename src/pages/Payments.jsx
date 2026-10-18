@@ -164,7 +164,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
   const handlePaymentSubmit = async (data) => {
     if (!orgId) {
-      throw new Error('חסר ארגון, השלם הגדרה');
+      throw new Error('קודם צריך לסיים את הקמת העסק');
     }
     if (editingPayment) {
       await updateMutation.mutateAsync({ id: editingPayment.id, data: paymentFormToPayload(data) });
@@ -187,13 +187,15 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
       {!orgId && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 text-right">
-          <p className="font-semibold">תשלומים זמינים אחרי קישור ארגון</p>
-          <p className="text-amber-900/80 mt-1">רענן את הדף לאחר השלמת תהליך ההקמה.</p>
+          <p className="font-semibold">התשלומים יופיעו אחרי הקמת העסק</p>
+          <p className="text-amber-900/80 mt-1">אחרי שתסיימו את הקמת העסק, רעננו את הדף.</p>
         </div>
       )}
 
       <PageHeader
         title="תשלומים"
+        help="payments.page"
+        tour="payments-page"
         subtitle="מקדמות, יתרות ותשלומים שהתקבלו."
         actions={
           <>
@@ -206,10 +208,10 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       />
 
       <ErrorBoundary section="financial-summary" variant="inline" resetKey={orgId ?? 'no-org'}>
-        <div className="stat-row mb-5">
-          <StatTile hero label="התקבל" value={fmtMoney(stats.paid, { compact: true })} icon={CheckCircle2} tone="success" />
-          <StatTile label="ממתין לגבייה" value={fmtMoney(stats.pending, { compact: true })} icon={Clock} tone="amber" />
-          <StatTile label="באיחור" value={stats.overdue} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
+        <div className="stat-row mb-5" data-tour="payments-stats">
+          <StatTile hero label="התקבל" help="payments.received" value={fmtMoney(stats.paid, { compact: true })} icon={CheckCircle2} tone="success" />
+          <StatTile label="ממתין לגבייה" help="payments.pending" value={fmtMoney(stats.pending, { compact: true })} icon={Clock} tone="amber" />
+          <StatTile label="באיחור" help="payments.overdue" value={stats.overdue} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
         </div>
       </ErrorBoundary>
 
@@ -229,12 +231,12 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       {/* Financial / payments table */}
       <div className="v7-card overflow-hidden">
         {!orgId ? (
-          <div className="p-6 text-center text-sm text-gray-500">התחבר לארגון כדי לראות תשלומים</div>
+          <div className="p-6 text-center text-sm text-gray-500">התשלומים יופיעו כאן אחרי שתסיימו את הקמת העסק.</div>
         ) : filtered.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Wallet}
             title={searchTerm || statusFilter !== 'all' ? 'לא נמצאו תשלומים' : 'עדיין אין תשלומים'}
-            description={searchTerm || statusFilter !== 'all' ? 'נסו חיפוש אחר.' : 'מקדמה או יתרה שתרשמו כאן תופיע גם בהזמנה ובמסך היום.'}
+            description={searchTerm || statusFilter !== 'all' ? 'נסו חיפוש אחר.' : 'אורח שילם מקדמה או יתרה? לוחצים "תשלום חדש" ורושמים כמה. זה יופיע גם בהזמנה.'}
             action={!searchTerm && statusFilter === 'all' ? <Button onClick={openNew} disabled={!orgId}><Plus strokeWidth={2.25} />תשלום חדש</Button> : null}
           />
         ) : (
