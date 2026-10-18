@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
+import { heCount } from '@/lib/hebrewCount';
 import { MoreHorizontal, Search, Bell, Settings, Building2, Check, Plus, ArrowUpLeft, Gem } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -63,7 +64,7 @@ function WorkspaceCard({ user }) {
       <UnitPhoto property={properties[0]} className="h-11 w-11" rounded="rounded-[14px]" />
       <div className="min-w-0">
         <p className="truncate text-[14px] font-bold text-navy-900">{name || 'המתחם שלי'}</p>
-        <p className="truncate text-[12px] text-ink-400">{properties.length} {properties.length === 1 ? 'יחידה' : 'יחידות'}</p>
+        <p className="truncate text-[12px] text-ink-400">{heCount(properties.length, 'unit')}</p>
       </div>
     </div>
   );

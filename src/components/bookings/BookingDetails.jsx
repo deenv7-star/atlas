@@ -105,6 +105,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   const navigate = useNavigate();
   const { data: allProperties = [] } = useProperties();
   const unitName = booking.property_name || allProperties.find((p) => p.id === booking.property_id)?.name || 'יחידה';
+  const bookingUnitPhoto = unitPhoto(allProperties.find((p) => p.id === booking.property_id) || { id: booking.property_id });
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   // Fetch payments for this booking
@@ -383,11 +384,11 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             </section>
             <Link
               to={createPageUrl('MultiCalendar')}
-              className="v5-rise c-photo press v7-lift flex min-h-[168px] flex-col justify-end p-4 text-white"
+              className={cn('v5-rise c-photo press v7-lift flex min-h-[168px] flex-col justify-end p-4 text-white', !bookingUnitPhoto && 'c-photo--empty')}
               style={{ '--i': 3 }}
               aria-label={`${unitName}, ללוח השנה`}
             >
-              <img src={unitPhoto(allProperties.find((p) => p.id === booking.property_id) || { id: booking.property_id })} alt="" decoding="async" draggable={false} />
+              {bookingUnitPhoto ? <img src={bookingUnitPhoto} alt="" decoding="async" draggable={false} /> : null}
               <p className="text-[18px] font-bold leading-tight">{unitName}</p>
               <p className="mt-0.5 text-[13px] text-white/90">{fmtShort(booking.check_in_date)} עד {fmtShort(booking.check_out_date)}</p>
             </Link>
