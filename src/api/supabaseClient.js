@@ -43,6 +43,25 @@ export function fetchWithTimeout(input, init = {}, ms = REQUEST_TIMEOUT_MS) {
     .finally(() => clearTimeout(t));
 }
 
+/**
+ * The auth result Supabase put in the URL when a confirmation / recovery link was opened
+ * (#access_token=… or #error_code=otp_expired…). Captured before createClient(), because
+ * detectSessionInUrl strips the hash right after reading it.
+ */
+export const INITIAL_AUTH_URL = (() => {
+  if (typeof window === 'undefined') return { hash: '', search: '', path: '' };
+  return { hash: window.location.hash || '', search: window.location.search || '', path: window.location.pathname || '' };
+})();
+
+/** { error, code, description } from the initial URL, or null. */
+export function initialAuthUrlError() {
+  const params = new URLSearchParams(`${INITIAL_AUTH_URL.hash.replace(/^#/, '')}&${INITIAL_AUTH_URL.search.replace(/^\?/, '')}`);
+  const error = params.get('error');
+  const code = params.get('error_code');
+  if (!error && !code) return null;
+  return { error, code, description: params.get('error_description') || '' };
+}
+
 export const supabase = (supabaseUrl && supabaseKey)
   ? createClient(supabaseUrl, supabaseKey, {
       auth: {

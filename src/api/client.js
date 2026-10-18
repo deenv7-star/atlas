@@ -531,6 +531,8 @@ const supabaseAuth = {
       password,
       options: {
         data: { full_name, organization_name },
+        // The confirmation link lands on the verify page, which shows "confirmed → continue" or "expired".
+        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/verify-email?confirmed=1` : undefined,
       },
     });
     if (error) {

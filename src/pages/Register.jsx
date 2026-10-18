@@ -66,7 +66,7 @@ export default function Register() {
 
     const rl = checkRateLimit(form.email);
     if (!rl.allowed) {
-      atlasToastApi.error(`נסה שוב בעוד ${rl.retryAfter} שניות`);
+      atlasToastApi.error(`נסו שוב בעוד ${rl.retryAfter} שניות`);
       return;
     }
 
@@ -108,10 +108,10 @@ export default function Register() {
           const isApiMissing = err?.status === 404 || msg.includes('http 404');
           if (isApiMissing) {
             atlasToastApi.error(
-              'שרת ה-API לא נמצא. אם האתר מוצג כקבצים סטטיים בלבד, הגדר Supabase (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY) או פרוס את שרת Express והפנה את הנתיב /api אליו.'
+              'השרת לא זמין כרגע. נסו שוב בעוד כמה דקות.'
             );
           } else {
-            atlasToastApi.error(isNetworkError ? 'שגיאת חיבור. בדוק את החיבור לאינטרנט וודא שהשרת פעיל.' : (err?.message || 'אירעה שגיאה. נסה שוב.'));
+            atlasToastApi.error(isNetworkError ? 'אין חיבור. בדקו את האינטרנט ונסו שוב.' : (err?.message || 'אירעה שגיאה. נסו שוב.'));
           }
         }
       }
@@ -146,12 +146,12 @@ export default function Register() {
         <div>
           {emailExists ? (
             <div className="space-y-4">
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-                <p className="text-amber-800 font-semibold">כתובת המייל הזו כבר רשומה במערכת</p>
+              <div className="bg-[#EEF0FF] border border-[#D9DCFB] rounded-xl p-4 text-center">
+                <p className="text-navy-900 font-semibold">כתובת המייל הזו כבר רשומה במערכת</p>
               </div>
               <Link to={`/login?email=${encodeURIComponent(form.email)}`}>
                 <Button className="w-full h-12 text-[16px] font-bold gap-2">
-                  התחבר עם מייל זה
+                  התחברו עם המייל הזה
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
@@ -164,7 +164,9 @@ export default function Register() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="הזן כתובת מייל"
+                    placeholder="name@example.com"
+                    inputMode="email"
+                    dir="ltr"
                     value={form.email}
                     onChange={set('email')}
                     onBlur={handleBlur('email')}
@@ -200,7 +202,7 @@ export default function Register() {
                     autoComplete="new-password"
                     maxLength={128}
                   />
-                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
+                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute left-0.5 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   {touched.password && (errors.password ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.password && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}
@@ -210,7 +212,7 @@ export default function Register() {
                     <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all" style={{ width: `${(passwordStrength.score / 5) * 100}%`, background: passwordStrength.color }} />
                     </div>
-                    <span className="text-xs font-medium" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
+                    <span className="text-xs font-medium" style={{ color: passwordStrength.textColor }}>{passwordStrength.label}</span>
                   </div>
                 )}
                 {touched.password && errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
@@ -222,7 +224,7 @@ export default function Register() {
                   <Input
                     id="confirmPassword"
                     type={showConfirm ? 'text' : 'password'}
-                    placeholder="הזן שוב את הסיסמה"
+                    placeholder="הקלידו שוב את הסיסמה"
                     value={form.confirmPassword}
                     onChange={set('confirmPassword')}
                     onBlur={handleBlur('confirmPassword')}
@@ -234,7 +236,7 @@ export default function Register() {
                     autoComplete="new-password"
                     maxLength={128}
                   />
-                  <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
+                  <button type="button" onClick={() => setShowConfirm(v => !v)} className="absolute left-0.5 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[8px] text-gray-400 hover:text-gray-600" aria-label={showConfirm ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}>
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   {touched.confirmPassword && (errors.confirmPassword ? <X className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" /> : form.confirmPassword && form.password === form.confirmPassword && <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />)}
@@ -244,14 +246,14 @@ export default function Register() {
 
               <Button type="submit" disabled={!canSubmit || isLoading} className="w-full h-12 text-[16px] font-bold gap-2">
                 {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ArrowLeft className="w-5 h-5" />}
-                {isLoading ? 'יוצר חשבון...' : 'פתיחת חשבון'}
+                {isLoading ? 'פותחים חשבון…' : 'פתיחת חשבון'}
               </Button>
             </form>
           )}
 
           <div className="flex items-center justify-center gap-1.5 mt-6 text-gray-400">
             <Shield className="w-3.5 h-3.5" />
-            <p className="text-xs">המידע שלך מאובטח ומוגן בהצפנה מתקדמת</p>
+            <p className="text-xs">המידע שלכם מאובטח ומוצפן</p>
           </div>
         </div>
 
