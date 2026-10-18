@@ -155,20 +155,27 @@ export default function InvoicesPage({ orgId }) {
     onError: () => atlasToastApi.error('שגיאה במחיקת החשבונית')
   });
 
+  // No mail provider is connected yet: open the owner's own mail app with the text ready (honest, nothing "sent" by us).
   const sendEmailMutation = useMutation({
     mutationFn: async (invoice) => {
-      await base44.integrations.Core.SendEmail({
+      const res = await base44.integrations.Core.SendEmail({
         to: invoice.guest_email || invoice.customer_email,
         subject: `חשבונית ${invoice.invoice_number}`,
-        body: `מצורפת חשבונית ${invoice.invoice_number} לתשלום.`
+        body: `שלום,\nמצורפת חשבונית ${invoice.invoice_number}.\nתודה.`,
       });
-      return base44.entities.Invoice.update(invoice.id, { status: 'SENT' });
+      if (res?.success) {
+        await base44.entities.Invoice.update(invoice.id, { status: 'SENT' });
+        return { sent: true };
+      }
+      if (res?.mailto) window.location.href = res.mailto;
+      return { sent: false };
     },
-    onSuccess: () => {
+    onSuccess: (r) => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      atlasToastApi.success('החשבונית סומנה כנשלחה');
+      if (r?.sent) atlasToastApi.success('החשבונית נשלחה וסומנה כנשלחה');
+      else atlasToastApi.success('פתחנו את תוכנת המייל שלכם עם הנוסח. צרפו את קובץ החשבונית ושלחו משם.');
     },
-    onError: () => atlasToastApi.error('שגיאה בשליחת החשבונית')
+    onError: () => atlasToastApi.error('לא הצלחנו לפתוח את המייל')
   });
 
   const handleSave = (data) => {

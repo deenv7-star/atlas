@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { isUuid } from '@/lib/entityPayloads';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { waLink } from '@/lib/stay/whatsapp';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -60,7 +61,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['message-logs'] });
       setReplyText('');
-      toast({ title: 'הודעה נשלחה' });
+      toast({ title: 'וואטסאפ נפתח עם ההודעה', description: 'שלחו אותה בוואטסאפ. היא נשמרה בשיחה כאן.' });
     },
     onError: () => toast({ title: 'שגיאה בשליחת ההודעה', variant: 'destructive' }),
   });
@@ -105,6 +106,12 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
   const handleSend = () => {
     if (!replyText.trim() || !currentThread) return;
     const lastMsg = currentThread.messages?.[currentThread.messages.length - 1] || {};
+    // No WhatsApp API is connected yet: the message goes out from the owner's own WhatsApp (wa.me, prefilled),
+    // opened inside the tap so mobile browsers allow it. We only log what the owner chose to send.
+    const phone = currentThread.messages.map((m) => m.recipient).filter(Boolean).pop() || '';
+    if (String(currentThread.channel || 'whatsapp').toLowerCase().includes('whatsapp')) {
+      window.open(waLink(phone, replyText.trim()), '_blank', 'noopener,noreferrer');
+    }
     sendMutation.mutate({
       guest_name: currentThread.guest_name,
       // thread key falls back to guest name when there is no booking — only send real ids
@@ -116,6 +123,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
       channel: currentThread.channel,
       direction: 'outbound',
       status: 'sent',
+      subject: 'וואטסאפ · הודעה ידנית',
     });
   };
 
@@ -260,8 +268,8 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                 value={replyText}
                 onChange={e => setReplyText(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="כתיבת הודעה"
-                aria-label="כתיבת הודעה"
+                placeholder="כתיבת הודעה (תישלח מהוואטסאפ שלכם)"
+                aria-label="כתיבת הודעה, תישלח מהוואטסאפ שלכם"
                 rows={1}
                 className="max-h-[120px] min-h-[44px] flex-1 resize-none text-[15px]"
               />

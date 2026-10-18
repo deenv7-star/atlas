@@ -15,12 +15,17 @@
  */
 import { isSupabaseConfigured } from '@/api/supabaseClient';
 
-const LEVEL = Number(import.meta.env.VITE_DB_SCHEMA_LEVEL) || 7;
+// The live database is at 013 (008/009/013/014 applied 18.10.2026 by feat/real-core). The env var can only raise it.
+const LIVE_LEVEL = 13;
+const LEVEL = Math.max(Number(import.meta.env.VITE_DB_SCHEMA_LEVEL) || 0, LIVE_LEVEL);
 
 export const DB_FEATURES = {
   guestPages: !isSupabaseConfigured || LEVEL >= 8,
   directBooking: !isSupabaseConfigured || LEVEL >= 8,
   expenses: !isSupabaseConfigured || LEVEL >= 9,
+  // 013 real core: server iCal sync/export, message queue, online check-in, pricing rules, il_calendar.
+  // These need the server (edge functions), so they are Supabase-only (demo mode shows an honest note).
+  realCore: isSupabaseConfigured && LEVEL >= 13,
 };
 
 /** True for "relation/column/function does not exist" style errors from PostgREST / Postgres. */
