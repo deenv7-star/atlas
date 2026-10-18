@@ -441,7 +441,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             onAfterSubmitSuccess={() => {
               window.setTimeout(closeMaintenanceDialog, 2000);
             }}
-            submitLabel="צור משימה"
+            submitLabel="יצירת משימה"
           />
         </DialogContent>
       </Dialog>

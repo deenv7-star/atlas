@@ -36,15 +36,15 @@ export default function ResetPassword() {
       });
       if (err) throw err;
       setSent(true);
-      atlasToastApi.success('שלחנו לך מייל עם קישור לאיפוס הסיסמה');
+      atlasToastApi.success('אם הכתובת רשומה, שלחנו אליה קישור לאיפוס');
     } catch (err) {
       const msg = (err.message || '').toLowerCase();
       if (msg.includes('rate limit')) {
-        atlasToastApi.error('יותר מדי ניסיונות. נסה שוב מאוחר יותר.');
+        atlasToastApi.error('יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.');
       } else if (msg.includes('invalid') || msg.includes('not found')) {
         setError('כתובת אימייל לא רשומה במערכת');
       } else {
-        atlasToastApi.error(err.message || 'אירעה שגיאה. נסה שוב.');
+        atlasToastApi.error(err.message || 'אירעה שגיאה. נסו שוב.');
       }
     } finally {
       setIsLoading(false);
@@ -53,26 +53,26 @@ export default function ResetPassword() {
 
   if (sent) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#FFFFFF' }}>
+      <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#F7F8FB' }}>
         <div className="w-full max-w-[440px] text-center">
           <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
-            <p className="text-emerald-800 font-bold text-lg">שלחנו לך מייל עם קישור לאיפוס הסיסמה</p>
-            <p className="text-emerald-700 text-sm mt-2">בדוק את תיבת הדואר (וגם בתיקיית הספאם)</p>
+          <div className="v7-card p-6">
+            <p className="text-navy-900 font-bold text-lg">שלחנו לכם קישור לאיפוס הסיסמה</p>
+            <p className="text-ink-600 text-sm mt-2">בדקו את תיבת המייל (וגם את הספאם). הקישור תקף לשעה.</p>
           </div>
-          <Link to="/login" className="inline-block mt-6 text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
+          <Link to="/login" className="inline-flex min-h-[44px] items-center mt-6 text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#FFFFFF' }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#F7F8FB' }}>
       <div className="w-full max-w-[440px]">
         <div className="text-center mb-10">
           <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           <h1 className="text-2xl font-extrabold text-gray-900">איפוס סיסמה</h1>
-          <p className="text-gray-500 text-sm mt-2">הזן את כתובת האימייל ונשלח לך קישור לאיפוס</p>
+          <p className="text-gray-500 text-sm mt-2">הזינו את כתובת האימייל, ונשלח לכם קישור לאיפוס</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
@@ -92,13 +92,13 @@ export default function ResetPassword() {
               />
               {touched && error && <p className="text-sm text-red-500">{error}</p>}
             </div>
-            <Button type="submit" disabled={isLoading} className="w-full h-12 bg-[#111827] hover:bg-black text-white font-bold rounded-xl">
-              {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : 'שלח קישור לאיפוס סיסמה'}
+            <Button type="submit" disabled={isLoading} className="w-full h-12 font-bold rounded-xl">
+              {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : 'שליחת קישור לאיפוס'}
             </Button>
           </form>
         </div>
         <p className="text-center text-sm text-gray-500 mt-6">
-          <Link to="/login" className="text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
+          <Link to="/login" className="inline-flex min-h-[44px] items-center text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
         </p>
       </div>
     </div>

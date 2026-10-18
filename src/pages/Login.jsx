@@ -31,13 +31,10 @@ export default function Login() {
     if (prefilledEmail) setForm(f => ({ ...f, email: prefilledEmail }));
   }, [prefilledEmail]);
 
-  useEffect(() => {
-    if (successMsg) atlasToastApi.success(decodeURIComponent(successMsg));
-  }, [successMsg]);
 
   const set = (field) => (e) => {
     setForm(f => ({ ...f, [field]: e.target.value }));
-    if (errors[field]) setErrors(e => ({ ...e, [field]: null }));
+    if (errors[field] || errors.credentials) setErrors(e => ({ ...e, [field]: null, credentials: null }));
   };
 
   const handleBlur = (field) => () => {
@@ -56,7 +53,7 @@ export default function Login() {
 
     const rl = checkRateLimit(form.email);
     if (!rl.allowed) {
-      atlasToastApi.error(`נסה שוב בעוד ${rl.retryAfter} שניות`);
+      atlasToastApi.error(`נסו שוב בעוד ${rl.retryAfter} שניות`);
       return;
     }
 
@@ -73,21 +70,22 @@ export default function Login() {
       recordAttempt(form.email);
       const mapped = mapAuthErrorToHebrew(err);
       if (mapped?.kind === 'fields') {
-        setErrors(mapped.fields || { email: mapped.message, password: mapped.message });
+        // One message, under the password; both fields are marked (was printed twice).
+        setErrors({ credentials: mapped.message });
       } else if (mapped?.kind === 'toast') {
         atlasToastApi.error(mapped.message);
       } else {
         const msg = String(err?.message || '').toLowerCase();
         if (msg.includes('invalid') || msg.includes('credentials')) {
-          setErrors({ email: 'אימייל או סיסמה שגויים', password: 'אימייל או סיסמה שגויים' });
+          setErrors({ credentials: 'אימייל או סיסמה שגויים' });
         } else if (msg.includes('email not confirmed')) {
-          atlasToastApi.error('יש לאמת את כתובת האימייל תחילה. בדוק את תיבת הדואר.');
+          atlasToastApi.error('יש לאמת את כתובת האימייל תחילה. בדקו את תיבת הדואר.');
         } else if (err?.status === 404 || msg.includes('http 404')) {
           atlasToastApi.error(
-            'שרת ה-API לא נמצא. הגדר Supabase או שרת Express עם הפניה ל-/api.'
+            'השרת לא זמין כרגע. נסו שוב בעוד כמה דקות.'
           );
         } else {
-          atlasToastApi.error(err.message || 'אירעה שגיאה. נסה שוב.');
+          atlasToastApi.error(err.message || 'אירעה שגיאה. נסו שוב.');
         }
       }
     } finally {
@@ -117,6 +115,11 @@ export default function Login() {
       <h1 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">ברוכים השבים</h1>
       <p className="mt-1.5 text-[15px] text-ink-400">נכנסים, ורואים מה קורה היום בצימר.</p>
 
+      {successMsg ? (
+        <p role="status" className="mt-6 rounded-[12px] border border-[#CDEBD9] bg-[#EEF9F2] px-4 py-3 text-[15px] font-medium text-[#14532D]">
+          {successMsg}
+        </p>
+      ) : null}
       <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
         <div className="space-y-2">
           <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">אימייל</Label>
@@ -127,7 +130,7 @@ export default function Login() {
             value={form.email}
             onChange={set('email')}
             onBlur={handleBlur('email')}
-            className={field(touched.email && errors.email)}
+            className={field((touched.email && errors.email) || errors.credentials)}
             dir="ltr"
             autoComplete="email"
             autoFocus={!prefilledEmail}
@@ -148,7 +151,7 @@ export default function Login() {
               placeholder="••••••••"
               value={form.password}
               onChange={set('password')}
-              className={cn(field(touched.password && errors.password), 'pl-12')}
+              className={cn(field((touched.password && errors.password) || errors.credentials), 'pl-12')}
               autoComplete="current-password"
               maxLength={128}
             />
@@ -156,12 +159,13 @@ export default function Login() {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? 'הסתרת הסיסמה' : 'הצגת הסיסמה'}
-              className="press absolute left-1 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-ink-400 hover:text-navy-900"
+              className="press absolute left-0.5 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-ink-400 hover:text-navy-900"
             >
               {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
             </button>
           </div>
           {touched.password && errors.password && <p className="text-[14px] text-danger-600">{errors.password}</p>}
+          {errors.credentials && <p role="alert" className="text-[14px] text-danger-600">{errors.credentials}</p>}
         </div>
 
         <Button type="submit" size="lg" disabled={isLoading} className="h-12 w-full text-[15px] font-semibold">

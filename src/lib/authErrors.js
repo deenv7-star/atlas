@@ -8,7 +8,7 @@ export function mapAuthErrorToHebrew(err) {
   const msg = String(err?.message || '').toLowerCase();
 
   if (code === 'email_not_confirmed' || msg.includes('email not confirmed')) {
-    return { kind: 'toast', message: 'יש לאמת את כתובת האימייל תחילה. בדוק את תיבת הדואר.' };
+    return { kind: 'toast', message: 'יש לאמת את כתובת האימייל תחילה. בדקו את תיבת הדואר.' };
   }
   if (
     code === 'user_banned' ||
@@ -17,7 +17,7 @@ export function mapAuthErrorToHebrew(err) {
     msg.includes('banned') ||
     (msg.includes('disabled') && msg.includes('user'))
   ) {
-    return { kind: 'toast', message: 'החשבון הושבת או נחסם. פנה לתמיכה.' };
+    return { kind: 'toast', message: 'החשבון הושבת או נחסם. פנו לתמיכה.' };
   }
   if (
     code === 'invalid_credentials' ||
@@ -38,10 +38,10 @@ export function mapAuthErrorToHebrew(err) {
     msg.includes('rate limit') ||
     msg.includes('too many requests')
   ) {
-    return { kind: 'toast', message: 'יותר מדי ניסיונות. המתן דקה ונסה שוב.' };
+    return { kind: 'toast', message: 'יותר מדי ניסיונות. חכו דקה ונסו שוב.' };
   }
   if (code === 'weak_password' || msg.includes('weak password')) {
-    return { kind: 'toast', message: 'הסיסמה חלשה מדי. בחר סיסמה חזקה יותר.' };
+    return { kind: 'toast', message: 'הסיסמה חלשה מדי. בחרו סיסמה חזקה יותר.' };
   }
   if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already')) {
     return { kind: 'toast', message: 'כתובת המייל כבר רשומה במערכת.' };

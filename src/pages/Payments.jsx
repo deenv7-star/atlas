@@ -186,9 +186,9 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       <FinanceTabs />
 
       {!orgId && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 text-right">
+        <div className="rounded-2xl border border-line bg-white px-4 py-3 text-sm text-navy-900 text-right">
           <p className="font-semibold">התשלומים יופיעו אחרי הקמת העסק</p>
-          <p className="text-amber-900/80 mt-1">אחרי שתסיימו את הקמת העסק, רעננו את הדף.</p>
+          <p className="text-ink-600 mt-1">אחרי שתסיימו את הקמת העסק, רעננו את הדף.</p>
         </div>
       )}
 
@@ -231,13 +231,13 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       {/* Financial / payments table */}
       <div className="v7-card overflow-hidden">
         {!orgId ? (
-          <div className="p-6 text-center text-sm text-gray-500">התשלומים יופיעו כאן אחרי שתסיימו את הקמת העסק.</div>
+          <div className="p-6 text-center text-sm text-ink-600">התשלומים יופיעו כאן אחרי שתסיימו את הקמת העסק.</div>
         ) : filtered.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Wallet}
             title={searchTerm || statusFilter !== 'all' ? 'לא נמצאו תשלומים' : 'עדיין אין תשלומים'}
             description={searchTerm || statusFilter !== 'all' ? 'נסו חיפוש אחר.' : 'אורח שילם מקדמה או יתרה? לוחצים "תשלום חדש" ורושמים כמה. זה יופיע גם בהזמנה.'}
-            action={!searchTerm && statusFilter === 'all' ? <Button onClick={openNew} disabled={!orgId}><Plus strokeWidth={2.25} />תשלום חדש</Button> : null}
+            action={!searchTerm && statusFilter === 'all' ? <Button variant="outline" onClick={openNew} disabled={!orgId}><Plus strokeWidth={2.25} />תשלום חדש</Button> : null}
           />
         ) : (
           <>

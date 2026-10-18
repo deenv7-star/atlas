@@ -19,7 +19,7 @@ import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { UnitPhoto, CountUp, Rise, GuestAvatar, AvatarStack } from '@/components/app/atoms';
-import { unitPhoto, uploadedPhoto } from '@/lib/stay/unitPhoto';
+import { uploadedPhoto } from '@/lib/stay/unitPhoto';
 import { DEMO_PEOPLE } from '@/lib/demoPeople';
 import { guestInfoOf } from '@/lib/stay/guestInfo';
 import { readOrgSettings } from '@/lib/onboarding/orgSettings';
@@ -210,8 +210,9 @@ export default function TodayBoard({ user, orgId }) {
   /* numbers */
   const kpi = useMemo(() => {
     const now = new Date();
-    const months = monthlyRevenue(data.bookings, 12, now);
+    const months = monthlyRevenue(data.bookings, 12, now, data.paymentsByBooking);
     const thisMonth = months[months.length - 1]?.value || 0;
+    const expectedThisMonth = months[months.length - 1]?.expected || 0;
     const lastMonth = months[months.length - 2]?.value || 0;
     const pct = lastMonth > 0 ? ((thisMonth - lastMonth) / lastMonth) * 100 : null;
     // occupancy: booked nights inside this month / (units × days)
@@ -242,7 +243,7 @@ export default function TodayBoard({ user, orgId }) {
     const paidThisMonth = (data.payments || [])
       .filter((p) => String(p.status).toUpperCase() === 'PAID' && String(p.paid_date || p.paid_at || '').slice(0, 7) === monthKey)
       .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
-    return { paidThisMonth, months, thisMonth, pct, occupancy, nights, units, daysInMonth, openTotal, openCount, overdue, spark: months.slice(-7).map((x) => x.value) };
+    return { paidThisMonth, months, thisMonth, expectedThisMonth, pct, occupancy, nights, units, daysInMonth, openTotal, openCount, overdue, spark: months.slice(-7).map((x) => x.value) };
   }, [data.bookings, data.properties, data.payments, data.paymentsByBooking, day]);
 
   const chartData = useMemo(
@@ -325,7 +326,8 @@ export default function TodayBoard({ user, orgId }) {
   const monthGuests = (data.bookings || []).filter((b) => isActiveBooking(b) && String(b.check_in_date).slice(0, 7) === day.slice(0, 7)).map((b) => b.guest_name || 'אורח');
   const firstProp = (data.properties || [])[0];
   // demo workspace: an aerial pool in a green garden (cool, calm). Real workspaces: their own first photo.
-  const photo = DEMO_PEOPLE && !readOrgSettings().cover_photo ? '/demo/complex-pool.webp' : (readOrgSettings().cover_photo || uploadedPhoto(firstProp) || unitPhoto(firstProp) || '/demo/complex-pool.webp');
+  // Real workspace without any photo: a neutral navy tile, never a stock photo.
+  const photo = DEMO_PEOPLE && !readOrgSettings().cover_photo ? '/demo/complex-pool.webp' : (readOrgSettings().cover_photo || uploadedPhoto(firstProp) || null);
   const free = Math.max(0, tonight.units - tonight.occupied);
 
   /* ── blocks ── */
@@ -342,6 +344,11 @@ export default function TodayBoard({ user, orgId }) {
             {kpi.pct != null ? <DeltaPill onHero pct={kpi.pct} /> : null}
             <span>{kpi.pct != null ? 'מהחודש שעבר' : 'החודש הראשון שלכם'}</span>
           </p>
+          {kpi.expectedThisMonth > 0 ? (
+            <p className="text-[13px] text-white/85">
+              ועוד <span className="tabular font-bold text-white" dir="ltr">₪{Math.round(kpi.expectedThisMonth).toLocaleString('he-IL')}</span> צפוי מהזמנות שממתינות לתשלום
+            </p>
+          ) : null}
           {monthGuests.length ? (
             <span className="flex items-center gap-2 text-[13px] text-white/85">
               <AvatarStack names={monthGuests} size={30} max={3} showRest={false} ringClass="ring-brand-600" />
@@ -373,10 +380,10 @@ export default function TodayBoard({ user, orgId }) {
     <Link
       to="/calendar"
       aria-label={`${user?.organization_name || 'המתחם'}: ${tonight.occupied === 1 ? 'יחידה אחת מאוכלסת' : `${tonight.occupied} יחידות מאוכלסות`} הלילה, ${free} פנויות. ללוח השנה`}
-      className="v5-rise c-photo press v7-lift flex min-h-[196px] flex-col justify-between p-3.5 text-white md:p-4 lg:col-span-4 lg:min-h-[214px]"
+      className={cn('v5-rise c-photo press v7-lift flex min-h-[196px] flex-col justify-between p-3.5 text-white md:p-4 lg:col-span-4 lg:min-h-[214px]', !photo && 'c-photo--empty')}
       style={{ '--i': 3 }}
     >
-      <img src={photo} alt="" loading="eager" decoding="async" draggable={false} />
+      {photo ? <img src={photo} alt="" loading="eager" decoding="async" draggable={false} /> : null}
       <div className="flex items-start justify-between gap-2">
         <span className="c-glass inline-flex h-8 items-center rounded-full px-3 text-[12px] font-semibold">{heCount(tonight.units, 'unit')}</span>
         <span aria-hidden className="v7-arrow c-glass inline-flex h-10 w-10 items-center justify-center rounded-full">

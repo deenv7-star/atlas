@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useStayData } from '@/hooks/useStayData';
 import { PageHeader } from '@/components/ds';
 import { MessageCircle, Mail, Phone, Clock, CheckCircle, ArrowDown, Send, Gift, Star, Home, FileText, Zap, ToggleLeft, ToggleRight, Sparkles, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const CHANNELS = {
-  whatsapp: { icon: MessageCircle, label: 'WhatsApp', color: 'text-green-600 bg-green-50' },
+  whatsapp: { icon: MessageCircle, label: 'וואטסאפ', color: 'text-green-600 bg-green-50' },
   email: { icon: Mail, label: 'אימייל', color: 'text-brand-600 bg-brand-50' },
   sms: { icon: Phone, label: 'SMS', color: 'text-brand-600 bg-brand-50' },
 };
@@ -25,7 +27,7 @@ const INITIAL_STAGES = [
     name: 'פנייה חדשה',
     subtitle: 'New Inquiry',
     trigger: 'ליד חדש נכנס',
-    action: 'שלח הודעת WhatsApp: שלום! תודה על הפנייה...',
+    action: 'הודעת וואטסאפ: שלום! תודה על הפנייה...',
     timing: 'מיידי',
     channel: 'whatsapp',
     active: true,
@@ -36,7 +38,7 @@ const INITIAL_STAGES = [
     name: 'הצעת מחיר',
     subtitle: 'Quote Sent',
     trigger: '2 שעות אחרי פנייה',
-    action: 'שלח הצעת מחיר מותאמת אישית',
+    action: 'הצעת מחיר מותאמת אישית',
     timing: '2 שעות',
     channel: 'email',
     active: true,
@@ -47,7 +49,7 @@ const INITIAL_STAGES = [
     name: 'אישור הזמנה',
     subtitle: 'Booking Confirmed',
     trigger: 'הזמנה אושרה',
-    action: 'שלח אישור + חוזה לחתימה + בקשת תשלום',
+    action: 'אישור, חוזה לחתימה ובקשת תשלום',
     timing: 'מיידי',
     channel: 'whatsapp',
     active: true,
@@ -69,7 +71,7 @@ const INITIAL_STAGES = [
     name: 'במהלך השהייה',
     subtitle: 'During Stay',
     trigger: 'יום אחרי הכניסה',
-    action: 'שלח הודעה: הכל בסדר? צריכים משהו?',
+    action: 'הודעה: הכל בסדר? צריכים משהו?',
     timing: '24 שעות אחרי',
     channel: 'whatsapp',
     active: true,
@@ -80,7 +82,7 @@ const INITIAL_STAGES = [
     name: 'יציאה',
     subtitle: 'Check-out',
     trigger: 'יום היציאה',
-    action: 'שלח תודה + בקשת ביקורת + הנפק חשבונית',
+    action: 'תודה, בקשת ביקורת וחשבונית',
     timing: 'ביום',
     channel: 'email',
     active: true,
@@ -91,7 +93,7 @@ const INITIAL_STAGES = [
     name: 'לאחר השהייה',
     subtitle: 'Post-Stay',
     trigger: 'שבוע אחרי',
-    action: 'שלח קופון להזמנה חוזרת: 10% הנחה',
+    action: 'קופון להזמנה חוזרת: 10% הנחה',
     timing: '7 ימים',
     channel: 'whatsapp',
     active: false,
@@ -224,7 +226,7 @@ function StageCard({ stage, theme, index, total, onToggle }) {
               onClick={() => onToggle(stage.id)}
               aria-label={stage.active ? 'כיבוי שלב' : 'הפעלת שלב'}
               aria-pressed={!!stage.active}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors"
             >
               {stage.active ? (
                 <ToggleRight className="w-7 h-7 text-emerald-500" />
@@ -277,7 +279,7 @@ function TemplateCard({ template, onUse }) {
           onClick={() => onUse(template.id)}
           className="text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-colors"
         >
-          השתמש בתבנית
+          שימוש בתבנית
         </button>
       </div>
     </div>
@@ -294,6 +296,25 @@ export default function GuestJourney() {
 
   const activeCount = stages.filter(s => s.active).length;
 
+  // Real numbers from the organization's own data (were hard-coded 234 / 89% / 12 / 8).
+  const { bookings, messageLogs, isLoading } = useStayData({ withCleaning: false });
+  const stats = useMemo(() => {
+    const month = new Date().toISOString().slice(0, 7);
+    const sent = (messageLogs || []).filter((l) => String(l.created_date || l.created_at || l.sent_at || '').slice(0, 7) === month).length;
+    const guestKey = (b) => String(b.guest_phone || '').replace(/\D/g, '').slice(-9) || String(b.guest_email || '').toLowerCase();
+    const counts = new Map();
+    for (const b of bookings || []) {
+      if (['CANCELLED', 'CANCELED'].includes(String(b.status || '').toUpperCase()) || b.is_block) continue;
+      const k = guestKey(b);
+      if (!k) continue;
+      counts.set(k, (counts.get(k) || 0) + 1);
+    }
+    const returning = [...counts.values()].filter((n) => n > 1).length;
+    const stays = (bookings || []).filter((b) => !b.is_block && !['CANCELLED', 'CANCELED'].includes(String(b.status || '').toUpperCase())).length;
+    return { sent, returning, stays };
+  }, [bookings, messageLogs]);
+  const show = (n) => (isLoading ? '—' : n.toLocaleString('he-IL'));
+
   return (
     <div dir="rtl" className="mx-auto w-full max-w-[960px] px-5 pb-16 pt-6 md:px-10 md:pt-10">
 
@@ -302,16 +323,19 @@ export default function GuestJourney() {
 
       {/* Stats Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <StatCard icon={Send} value="234" label="הודעות שנשלחו החודש" color="bg-brand-50 text-brand-600" />
-        <StatCard icon={Sparkles} value="89%" label="שיעור פתיחה" color="bg-emerald-50 text-emerald-600" />
-        <StatCard icon={Star} value="12" label="ביקורות שהתקבלו" color="bg-amber-50 text-amber-600" />
-        <StatCard icon={Gift} value="8" label="הזמנות חוזרות" color="bg-brand-50 text-brand-600" />
+        <StatCard icon={Send} value={show(stats.sent)} label="הודעות שנשלחו החודש" color="bg-brand-50 text-brand-600" />
+        <StatCard icon={Home} value={show(stats.stays)} label="שהיות עד היום" color="bg-brand-50 text-brand-600" />
+        <StatCard icon={Gift} value={show(stats.returning)} label="אורחים שחזרו" color="bg-brand-50 text-brand-600" />
+        <StatCard icon={Star} value={show(activeCount)} label="שלבים מסומנים" color="bg-brand-50 text-brand-600" />
       </div>
+      <p className="-mt-3 mb-6 px-1 text-[13px] leading-relaxed text-ink-400">
+        המסע כאן הוא תכנון. את ההודעות שנשלחות בפועל מגדירים ב<Link to="/automations" className="font-semibold text-brand-600 hover:underline">אוטומציות</Link>.
+      </p>
 
       {/* Journey Info Bar */}
       <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="w-2 h-2 rounded-full bg-brand-600" />
           <span className="text-sm font-medium text-ink-600">
             {activeCount} מתוך {stages.length} שלבים פעילים
           </span>

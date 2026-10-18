@@ -484,7 +484,7 @@ export default function BookingsPage({ selectedPropertyId }) {
             ) : null}
             <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row">
               <Button variant="outline" onClick={() => void setUrlState({ status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי</Button>
-              <Button onClick={() => setFiltersOpen(false)}>הצגת {sorted.length} הזמנות</Button>
+              <Button onClick={() => setFiltersOpen(false)}>{sorted.length === 1 ? "הצגת הזמנה אחת" : `הצגת ${sorted.length} הזמנות`}</Button>
             </div>
           </div>
         </DialogContent>

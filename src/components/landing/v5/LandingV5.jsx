@@ -319,6 +319,10 @@ export function Footer() {
           <Link to="/accessibility">נגישות</Link>
           <Link to="/data-security">אבטחת מידע</Link>
         </nav>
+        <nav aria-label="יצירת קשר" className="l5-ftr-links l5-ftr-contact">
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">וואטסאפ <span dir="ltr" className="num">{PHONE_DISPLAY}</span></a>
+          <Link to="/contact">צרו קשר</Link>
+        </nav>
         <p className="l5-ftr-copy">© {new Date().getFullYear()} ATLAS · נבנתה בישראל</p>
       </div>
     </footer>

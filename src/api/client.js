@@ -446,7 +446,19 @@ class SupabaseEntityCollection {
 
 const supabaseAuth = {
   async me() {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    // getSession() reads the stored (auto-refreshed) session without a network round-trip;
+    // RLS still guards every query, so the server-verified getUser() is only a fallback.
+    let user = null;
+    let error = null;
+    try {
+      const { data: { session } = {} } = await supabase.auth.getSession();
+      user = session?.user || null;
+    } catch { /* fall through */ }
+    if (!user) {
+      const r = await supabase.auth.getUser();
+      user = r.data?.user || null;
+      error = r.error;
+    }
     if (error || !user) {
       const err = new Error('Not authenticated');
       err.status = 401;
@@ -519,6 +531,8 @@ const supabaseAuth = {
       password,
       options: {
         data: { full_name, organization_name },
+        // The confirmation link lands on the verify page, which shows "confirmed → continue" or "expired".
+        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/verify-email?confirmed=1` : undefined,
       },
     });
     if (error) {
@@ -561,10 +575,20 @@ const supabaseAuth = {
     return this.me();
   },
 
-  async deleteAccount() {
-    // Supabase does not expose a client-side delete-user API.
-    // This should be implemented as a server-side edge function.
-    throw new Error('Account deletion requires a server-side function.');
+  /** Real deletion: public.delete_my_account (migration 013b, SECURITY DEFINER, typed confirmation). */
+  async deleteAccount({ confirm } = {}) {
+    const { data, error } = await supabase.rpc('delete_my_account', { p_confirm: confirm || '' });
+    if (error) {
+      const e = new Error(/[\u0590-\u05FF]/.test(error.message || '') ? error.message : 'המחיקה לא בוצעה. שום דבר לא נמחק.');
+      e.code = error.code;
+      throw e;
+    }
+    // The auth user no longer exists: drop the local session without calling the server.
+    // Drop the stored session directly: signOut() would call /logout for a user that no longer exists (403).
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
+    } catch { /* ignore */ }
+    return data || { ok: true };
   },
 
   redirectToLogin(returnUrl) {

@@ -110,13 +110,13 @@
   }
   /* App shell (logged-in): warmer Hebrew-first stack */
   .atlas-app-shell {
-    font-family: 'Heebo', 'Rubik', system-ui, sans-serif;
+    font-family: 'Heebo', system-ui, sans-serif;
   }
 
   body {
     @apply text-foreground;
     background-color: var(--page-bg);
-    font-family: 'Heebo', 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Heebo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 1rem; /* 16px — readability & WCAG-friendly body text */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -124,7 +124,17 @@
 
   /* RTL Support */
   [dir="rtl"] {
-    font-family: 'Rubik', 'Heebo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Heebo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  /* Brand font is Heebo only. Some static pages still set 'Assistant' inline; keep them on Heebo. */
+  [style*="Assistant"] {
+    font-family: 'Heebo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+  /* iOS zooms into inputs under 16px: keep text entry at 16px on phones. */
+  @media (max-width: 767px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select {
+      font-size: max(16px, 1em);
+    }
   }
 
   /* Dense dashboards: stable number widths (VISUAL_DENSITY ~7) */

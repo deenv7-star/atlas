@@ -114,6 +114,9 @@ export function BookingForm({
             <Label className="text-[14px] font-medium text-ink-600">אימייל</Label>
             <Input
               {...fm.register('guest_email')}
+              type="email"
+              inputMode="email"
+              dir="ltr"
               placeholder="email@example.com"
               className="h-12 md:h-11 rounded-[10px]"
               autoComplete="email"
@@ -127,6 +130,9 @@ export function BookingForm({
             <Label className="text-[14px] font-medium text-ink-600">טלפון</Label>
             <Input
               {...fm.register('guest_phone')}
+              type="tel"
+              inputMode="tel"
+              dir="ltr"
               placeholder="050-0000000"
               className="h-12 md:h-11 rounded-[10px]"
               autoComplete="tel"

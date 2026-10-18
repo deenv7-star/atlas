@@ -18,6 +18,7 @@ import { GuestAvatar, dayPart } from '@/components/app/atoms';
 import { IconButton } from '@/components/ds';
 import { useSubscription } from '@/hooks/useSubscription';
 import { trialShortText } from '@/lib/trial';
+import { getPlanByKey } from '@/config/pricing';
 import { formatDayHe, todayISO, firstName } from '@/lib/stay/format';
 
 /** Re-renders on the hour so "בוקר טוב" turns into "צהריים טובים" without a reload. */
@@ -177,14 +178,14 @@ export function TabBar({ user, onLogout }) {
 
 /** Small indigo card at the bottom of the sidebar: trial days left, or the plan. */
 export function PlanCard({ compact = false }) {
-  const { daysLeft, isTrialing, isExpired, isLoading } = useSubscription();
+  const { daysLeft, isTrialing, isExpired, isLoading, plan } = useSubscription();
   if (isLoading) return null;
-  const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : 'ATLAS Pro';
+  const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : `ATLAS ${getPlanByKey(plan).nameHe}`;
   const sub = isTrialing || isExpired ? 'בוחרים מסלול וממשיכים בלי הפסקה.' : 'ערוצים, תשלומים והודעות במקום אחד.';
   if (compact) {
     return (
       <Link to={createPageUrl('Subscription')} className="v7-tt press inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-white shadow-[0_8px_18px_-6px_rgba(62,43,241,0.6)]" aria-label={`${title}, מנוי`}>
-        <span className="text-[13px] font-extrabold tabular">{isTrialing ? daysLeft : 'Pro'}</span>
+        <span className="text-[13px] font-extrabold tabular">{isTrialing ? daysLeft : <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden />}</span>
         <span className="v7-tt-label" aria-hidden>{title}</span>
       </Link>
     );

@@ -13,17 +13,34 @@ const MONTHS_LONG = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מא
 const INDIGO = '#3E2BF1';
 
 /** Revenue per month (by check-in month) for the last `count` months, oldest first. */
-export function monthlyRevenue(bookings, count = 6, now = new Date()) {
+const PENDING_STATUSES = new Set(['PENDING', 'pending', 'INQUIRY', 'inquiry', 'TENTATIVE', 'tentative']);
+const paidOf = (list) => (list || [])
+  .filter((p) => ['PAID', 'COMPLETED', 'SUCCEEDED'].includes(String(p.status || '').toUpperCase()))
+  .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+/**
+ * Income per check-in month. A booking that is still PENDING is not income yet: only what was
+ * actually paid on it counts in `value`; the rest goes to `expected` (shown as "צפוי").
+ */
+export function monthlyRevenue(bookings, count = 6, now = new Date(), paymentsByBooking = null) {
   const out = [];
   for (let i = count - 1; i >= 0; i -= 1) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    out.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`, label: MONTHS[d.getMonth()], long: `${MONTHS_LONG[d.getMonth()]} ${d.getFullYear()}`, value: 0 });
+    out.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`, label: MONTHS[d.getMonth()], long: `${MONTHS_LONG[d.getMonth()]} ${d.getFullYear()}`, value: 0, expected: 0 });
   }
   const byKey = new Map(out.map((m) => [m.key, m]));
   for (const b of bookings || []) {
     if (!isActiveBooking(b)) continue;
     const m = byKey.get(String(b.check_in_date).slice(0, 7));
-    if (m) m.value += Number(b.total_price) || 0;
+    if (!m) continue;
+    const total = Number(b.total_price) || 0;
+    if (PENDING_STATUSES.has(b.status)) {
+      const paid = paymentsByBooking ? Math.min(total || Infinity, paidOf(paymentsByBooking.get?.(b.id))) : 0;
+      m.value += paid;
+      m.expected += Math.max(0, total - paid);
+    } else {
+      m.value += total;
+    }
   }
   return out;
 }

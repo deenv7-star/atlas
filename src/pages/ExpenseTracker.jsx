@@ -198,14 +198,14 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-md" dir="rtl">
           <DialogHeader>
-            <DialogTitle>הוסף הוצאה חדשה</DialogTitle>
+            <DialogTitle>הוספת הוצאה חדשה</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div>
               <Label>נכס</Label>
               <Select value={form.property} onValueChange={v => setForm(f => ({ ...f, property: v }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="בחר נכס" />
+                  <SelectValue placeholder="בחרו נכס" />
                 </SelectTrigger>
                 <SelectContent>
                   {propertyNames.map(p => (
@@ -218,7 +218,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
               <Label>קטגוריה</Label>
               <Select value={form.category} onValueChange={v => setForm(f => ({ ...f, category: v }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="בחר קטגוריה" />
+                  <SelectValue placeholder="בחרו קטגוריה" />
                 </SelectTrigger>
                 <SelectContent>
                   {CATEGORIES.map(c => (
@@ -256,7 +256,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
               <Label>קבלה (אופציונלי)</Label>
               <div className="border-2 border-dashed border-line rounded-xl p-6 text-center hover:border-brand-100 transition-colors cursor-pointer">
                 <Upload className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
-                <p className="text-sm text-ink-600">גרור קובץ לכאן או לחץ להעלאה</p>
+                <p className="text-sm text-ink-600">גררו קובץ לכאן או לחצו להעלאה</p>
                 <p className="text-xs text-ink-400 mt-1">PDF, JPG, PNG, עד 5MB</p>
               </div>
             </div>
@@ -269,7 +269,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
                 onClick={handleAddExpense}
                 disabled={!form.property || !form.category || !form.amount}
               >
-                שמור הוצאה
+                שמירת ההוצאה
               </Button>
             </div>
           </div>

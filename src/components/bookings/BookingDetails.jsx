@@ -46,6 +46,8 @@ import {
 } from 'lucide-react';
 import { parseISO, differenceInDays } from 'date-fns';
 import { heCount } from '@/lib/hebrewCount';
+import { renderTemplate, waLink, logSubjectFor } from '@/lib/stay/whatsapp';
+import { useAuth } from '@/lib/AuthContext';
 
 const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer: 'העברה', card: 'כרטיס', credit_card: 'כרטיס אשראי', bit: 'ביט', paybox: 'פייבוקס' };
 
@@ -103,8 +105,10 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: allProperties = [] } = useProperties();
   const unitName = booking.property_name || allProperties.find((p) => p.id === booking.property_id)?.name || 'יחידה';
+  const bookingUnitPhoto = unitPhoto(allProperties.find((p) => p.id === booking.property_id) || { id: booking.property_id });
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   // Fetch payments for this booking
@@ -226,6 +230,31 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   const outstanding = Math.max(0, (Number(booking.total_price) || 0) - totalPaid);
   const phoneDigits = String(booking.guest_phone || '').replace(/[^0-9]/g, '');
   const waNumber = phoneDigits.startsWith('0') ? `972${phoneDigits.slice(1)}` : phoneDigits;
+  // Ready confirmation message with this booking's real details (dates, times, balance, guest page link).
+  const waProperty = allProperties.find((p) => p.id === booking.property_id) || null;
+  const waText = renderTemplate('confirmation', {
+    booking,
+    property: waProperty || {},
+    balance: { balance: outstanding },
+    orgName: user?.organization_name || '',
+  });
+  const waHref = waLink(booking.guest_phone, waText);
+  const logWhatsApp = () => {
+    base44.entities.MessageLog.create({
+      booking_id: booking.id,
+      direction: 'outbound',
+      channel: 'whatsapp',
+      recipient: waNumber,
+      subject: logSubjectFor('confirmation'),
+      body: waText,
+      status: 'sent',
+      guest_name: booking.guest_name || '',
+      property_id: booking.property_id || null,
+      property_name: waProperty?.name || booking.property_name || '',
+      created_at: new Date().toISOString(),
+      ...(user?.organization_id ? { org_id: user.organization_id } : {}),
+    }).catch(() => {});
+  };
   const ch = channelOf(booking.booking_source);
   const outstandingNow = totalDue || outstanding;
   const paidPct = Number(booking.total_price) > 0 ? Math.min(100, Math.round((totalPaid / Number(booking.total_price)) * 100)) : 0;
@@ -298,7 +327,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 {booking.guest_phone ? (
-                  <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noreferrer" className="press inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-brand-600 px-6 text-[15px] font-bold text-white shadow-[0_10px_22px_-10px_rgba(62,43,241,0.7)] hover:bg-brand-500 sm:flex-none">
+                  <a href={waHref} onClick={logWhatsApp} target="_blank" rel="noreferrer" className="press inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-brand-600 px-6 text-[15px] font-bold text-white shadow-[0_10px_22px_-10px_rgba(62,43,241,0.7)] hover:bg-brand-500 sm:flex-none">
                     <MessageSquare className="h-5 w-5" />
                     שליחה בוואטסאפ
                   </a>
@@ -383,11 +412,11 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             </section>
             <Link
               to={createPageUrl('MultiCalendar')}
-              className="v5-rise c-photo press v7-lift flex min-h-[168px] flex-col justify-end p-4 text-white"
+              className={cn('v5-rise c-photo press v7-lift flex min-h-[168px] flex-col justify-end p-4 text-white', !bookingUnitPhoto && 'c-photo--empty')}
               style={{ '--i': 3 }}
               aria-label={`${unitName}, ללוח השנה`}
             >
-              <img src={unitPhoto(allProperties.find((p) => p.id === booking.property_id) || { id: booking.property_id })} alt="" decoding="async" draggable={false} />
+              {bookingUnitPhoto ? <img src={bookingUnitPhoto} alt="" decoding="async" draggable={false} /> : null}
               <p className="text-[18px] font-bold leading-tight">{unitName}</p>
               <p className="mt-0.5 text-[13px] text-white/90">{fmtShort(booking.check_in_date)} עד {fmtShort(booking.check_out_date)}</p>
             </Link>
@@ -514,7 +543,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               disabled={newPayment.amount <= 0 || createPaymentMutation.isPending}
               className="bg-brand-600 hover:bg-brand-500 text-white rounded-xl"
             >
-              {createPaymentMutation.isPending ? 'שומר...' : 'הוסף תשלום'}
+              {createPaymentMutation.isPending ? 'שומרים…' : 'הוספת תשלום'}
             </Button>
           </DialogFooter>
         </DialogContent>

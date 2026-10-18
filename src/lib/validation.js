@@ -171,16 +171,17 @@ export function validateEmail(value) {
 
 // ─── Password strength ───
 export function getPasswordStrength(password) {
-  if (!password) return { score: 0, label: '', color: '' };
+  if (!password) return { score: 0, label: '', color: '', textColor: '' };
   let score = 0;
   if (password.length >= 8) score++;
   if (password.length >= 12) score++;
   if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
   if (/\d/.test(password)) score++;
   if (/[^a-zA-Z0-9]/.test(password)) score++;
-  if (score <= 2) return { score, label: 'חלש', color: '#EF4444' };
-  if (score <= 4) return { score, label: 'בינוני', color: '#F59E0B' };
-  return { score, label: 'חזק', color: '#22C55E' };
+  // Brand scale (indigo → navy), no amber/orange: bar `color`, readable label `textColor`.
+  if (score <= 2) return { score, label: 'חלשה', color: '#C9C4FB', textColor: '#4A5578' };
+  if (score <= 4) return { score, label: 'בינונית', color: '#7C6FF5', textColor: '#3E2BF1' };
+  return { score, label: 'חזקה', color: '#1B2656', textColor: '#1B2656' };
 }
 
 export function validatePassword(value) {
