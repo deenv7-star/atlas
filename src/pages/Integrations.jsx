@@ -313,7 +313,10 @@ export default function IntegrationsPage() {
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader title="ערוצים וחיבורים" subtitle="יומנים, תשלומים, הודעות וחשבונאות. כל חיבור חוסך עבודה ידנית." className="!mb-0" />
-      <Tabs defaultValue="calendars">
+      <Tabs defaultValue={(() => {
+        // Deep links (?tab=payments) — used by the help bot's in-app links.
+        try { const t = new URLSearchParams(window.location.search).get('tab'); return ['calendars', 'payments', 'messaging', 'pms', 'accounting'].includes(t) ? t : 'calendars'; } catch { return 'calendars'; }
+      })()}>
         <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
           <TabsList className="inline-flex w-max justify-start">
             <TabsTrigger value="calendars" className="flex items-center gap-2 whitespace-nowrap">
