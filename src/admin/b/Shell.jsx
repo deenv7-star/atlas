@@ -1,3 +1,4 @@
+import BrandWordmark from '@/components/common/BrandWordmark';
 import { useEffect, useRef } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { LayoutGrid, Users, CreditCard, Tags, ShieldCheck, Activity, ScrollText, ArrowUpRight, LifeBuoy, Inbox } from 'lucide-react';
@@ -29,7 +30,7 @@ export default function Shell({ children }) {
     <div className="adm-root b-root" dir="rtl">
       <a href="#adm-main" className="b-skip">דילוג לתוכן</a>
       <aside className="b-side" aria-label="ניווט ניהול">
-        <Link to="/admin" className="b-brand" aria-label="ATLAS ניהול, סקירה">ATLAS<i aria-hidden /></Link>
+        <Link to="/admin" className="b-brand" aria-label="ATLAS ניהול, סקירה"><BrandWordmark size={22} /></Link>
         <div className="b-who">
           <span className="b-who-av" aria-hidden>{initialsOf(name)}</span>
           <div><b>{name}</b><span>{ROLES[role]?.label} · ניהול ATLAS</span></div>
@@ -58,7 +59,7 @@ export default function Shell({ children }) {
       </aside>
       <header className="b-mtop">
         <div className="b-mtop-row">
-          <Link to="/admin" className="b-brand" aria-label="ATLAS ניהול, סקירה">ATLAS<i aria-hidden /></Link>
+          <Link to="/admin" className="b-brand" aria-label="ATLAS ניהול, סקירה"><BrandWordmark size={22} /></Link>
           <DemoBadge />
         </div>
         <nav aria-label="ניהול ATLAS, נייד" className="b-mnav" ref={mnav}>

@@ -1,5 +1,5 @@
 /**
- * Generate iOS/Android app icons from atlas-logo.png
+ * Generate iOS/Android app icons from the approved ATLAS A monogram
  * Run: node scripts/generate-icons.js
  * Requires: npm install sharp
  */
@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-const SRC = join(ROOT, 'public', 'atlas-logo-transparent.png')
+const SRC = join(ROOT, 'public', 'favicon.svg')
 const OUT = join(ROOT, 'public', 'icons')
 
 const SIZES = [72, 96, 120, 128, 144, 152, 167, 180, 192, 512, 1024]

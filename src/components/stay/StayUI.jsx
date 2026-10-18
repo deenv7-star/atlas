@@ -1,3 +1,4 @@
+import BrandWordmark from '@/components/common/BrandWordmark';
 /** Small brand primitives shared by the new feature screens (brand/atlas-brand.md). */
 import React from 'react';
 import { cn } from '@/lib/utils';
@@ -130,12 +131,7 @@ export function Segmented({ value, onChange, options, label }) {
 }
 
 export function Wordmark({ size = 22 }) {
-  return (
-    <span className="inline-flex items-baseline gap-1" style={{ fontFamily: 'Heebo, system-ui, sans-serif' }} dir="ltr">
-      <span style={{ fontWeight: 800, letterSpacing: '.02em', fontSize: size, color: 'var(--ink-900)', lineHeight: 1 }}>ATLAS</span>
-      <span aria-hidden style={{ width: size * 0.26, height: size * 0.26, borderRadius: 999, background: 'var(--brand-600)', display: 'inline-block' }} />
-    </span>
-  );
+  return <span className="inline-flex items-center" style={{ color: '#202334' }} dir="ltr"><BrandWordmark size={size} /></span>;
 }
 
 export function StatTile({ label, value, hint, tone, hero = false }) {

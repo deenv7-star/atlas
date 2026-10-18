@@ -35,3 +35,8 @@ Owner rule (Deen, 16.10.2026): one unified language, one unified branding, one c
 - Glossary (use exactly): הזמנה, אורח, ליד, נכס, יחידה, לוח שנה, תשלום, מקדמה, יתרה, ניקיון, הכנסות, הוצאות, הודעות, אוטומציות, ערוצים (Booking.com / Airbnb / ישיר).
 - Dates: "יום ו׳, 16 באוק׳"; money: "‏₪1,250" (no decimals unless needed).
 - Empty states: one sentence why + one primary action.
+
+
+## Approved wordmark (18 October 2026)
+
+Use `BrandWordmark` for the supplied custom ATLAS lettering. The canonical transparent artwork is `public/atlas-logo.svg`; paths are outlined, with no font dependency. Use inherited dark colour on light surfaces and white on dark surfaces. Do not add a dot, reflection, background rectangle or replacement text. `public/favicon.svg` uses the same first A as the app monogram; regenerate raster icons using the existing asset scripts.
