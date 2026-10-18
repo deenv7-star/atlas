@@ -10,6 +10,38 @@
  */
 import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 
+/*
+ * The account copy is read / written with a plain request to the auth API, not supabase.auth.updateUser():
+ * updateUser fires USER_UPDATED, and the app's auth listener re-reads the user inside that event, which
+ * locks supabase-js (a known deadlock) and would freeze sign-in for the rest of the visit.
+ */
+const SB_URL = import.meta.env.VITE_SUPABASE_URL;
+const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+function accessToken() {
+  try {
+    const key = supabase?.auth?.storageKey;
+    const raw = key ? localStorage.getItem(key) : null;
+    const s = raw ? JSON.parse(raw) : null;
+    return s?.access_token || s?.currentSession?.access_token || null;
+  } catch { return null; }
+}
+async function authUser(method, body) {
+  const token = accessToken();
+  if (!SB_URL || !token) throw new Error('no session');
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const r = await fetch(`${SB_URL.replace(/\/$/, '')}/auth/v1/user`, {
+      method,
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: ctrl.signal,
+    });
+    if (!r.ok) throw new Error(`auth ${r.status}`);
+    return await r.json();
+  } finally { clearTimeout(t); }
+}
+
 export const TOUR_VERSION = 1;
 const KEY = (uid) => `atlas.tour.v${TOUR_VERSION}.${uid || 'anon'}`;
 const EVT = 'atlas:tour';
@@ -29,8 +61,8 @@ export async function getTourState(user) {
   const local = readLocal(uid);
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data } = await supabase.auth.getUser();
-      const meta = data?.user?.user_metadata?.atlas_tour;
+      const u = await authUser('GET');
+      const meta = u?.user_metadata?.atlas_tour;
       if (meta && meta.v === TOUR_VERSION) {
         // the newest of the two wins (a local "done" written while the network was down)
         if (local?.at && meta.at && local.at > meta.at) return local;
@@ -47,7 +79,7 @@ export async function setTourState(user, patch) {
   writeLocal(uid, next);
   if (isSupabaseConfigured && supabase) {
     // one write at a time, in order: a slow "step 1" must never land after "step 2"
-    writes = writes.then(() => supabase.auth.updateUser({ data: { atlas_tour: next } })).catch(() => { /* the local copy stays */ });
+    writes = writes.then(() => authUser('PUT', { data: { atlas_tour: next } })).catch(() => { /* the local copy stays */ });
     await writes;
   }
   return next;
