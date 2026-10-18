@@ -1,451 +1,221 @@
-import React, { useState } from 'react';
-import { PageHeader } from '@/components/ds';
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, DollarSign, Calendar, Home, Zap, AlertTriangle, Sparkles, Target } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { PageHeader, EmptyState } from '@/components/ds';
+import { ArrowUpRight, ArrowDownRight, TrendingUp, BarChart3 } from 'lucide-react';
+import { useStayData } from '@/hooks/useStayData';
+import { buildMonthlyReport } from '@/lib/stay/report';
+import { formatMoney } from '@/lib/stay/format';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-const MONTHS_HEB = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
+/**
+ * Revenue overview, computed from the organization's own bookings (no sample numbers).
+ * Income is attributed by nights stayed inside each month, same as the monthly accountant report.
+ * Cancelled bookings are excluded; still-pending bookings are counted by their booked price and
+ * labelled as such in the footnote.
+ */
+const MONTHS_SHORT = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
 
-const MONTHLY_DATA = [
-  { month: 'ינואר',   revenue: 18200, prev: 15400 },
-  { month: 'פברואר',  revenue: 21500, prev: 17800 },
-  { month: 'מרץ',     revenue: 24800, prev: 20100 },
-  { month: 'אפריל',   revenue: 22100, prev: 19500 },
-  { month: 'מאי',     revenue: 26300, prev: 22000 },
-  { month: 'יוני',    revenue: 29400, prev: 24600 },
-  { month: 'יולי',    revenue: 35800, prev: 28900 },
-  { month: 'אוגוסט',  revenue: 42300, prev: 33100 },
-  { month: 'ספטמבר',  revenue: 28700, prev: 25200 },
-  { month: 'אוקטובר', revenue: 19600, prev: 18700 },
-  { month: 'נובמבר',  revenue: 16200, prev: 15900 },
-  { month: 'דצמבר',   revenue: 22500, prev: 20300 },
-];
+function lastMonths(count, now = new Date()) {
+  const out = [];
+  for (let i = count - 1; i >= 0; i -= 1) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    out.push({ year: d.getFullYear(), monthIndex: d.getMonth() });
+  }
+  return out;
+}
 
-const PROPERTIES = [
-  { name: 'פנטהאוז הכרמל',       revenue: 72400, nights: 78,  avgNight: 928,  occupancy: 91, revpar: 845, trend: 'up' },
-  { name: 'סוויטת נמל תל אביב',  revenue: 64200, nights: 82,  avgNight: 783,  occupancy: 94, revpar: 736, trend: 'up' },
-  { name: 'לופט פלורנטין',        revenue: 58100, nights: 71,  avgNight: 818,  occupancy: 88, revpar: 720, trend: 'up' },
-  { name: 'וילה הגליל',           revenue: 51800, nights: 54,  avgNight: 959,  occupancy: 79, revpar: 758, trend: 'down' },
-  { name: 'סוויטת הכרמל',        revenue: 40900, nights: 62,  avgNight: 660,  occupancy: 72, revpar: 475, trend: 'down' },
-];
+function sumReports(reports) {
+  const income = reports.reduce((s, r) => s + r.income, 0);
+  const nights = reports.reduce((s, r) => s + r.nights, 0);
+  const capacity = reports.reduce((s, r) => s + r.capacity, 0);
+  return {
+    income,
+    nights,
+    capacity,
+    adr: nights ? income / nights : 0,
+    occupancy: capacity ? nights / capacity : 0,
+    revpar: capacity ? income / capacity : 0,
+  };
+}
 
-const FORECAST = [
-  { month: 'ינואר 2026',  predicted: 24500, confidence: 91 },
-  { month: 'פברואר 2026', predicted: 31200, confidence: 89 },
-  { month: 'מרץ 2026',    predicted: 39300, confidence: 84 },
-];
+const changePct = (now, before) => (before > 0 ? ((now - before) / before) * 100 : null);
 
-function Sparkline({ data, color = 'from-brand-400 to-brand-400' }) {
-  const max = Math.max(...data);
+function Delta({ value }) {
+  if (value == null || !Number.isFinite(value)) return null;
+  const up = value >= 0;
   return (
-    <div className="flex items-end gap-[3px] h-8">
-      {data.map((v, i) => (
-        <div
-          key={i}
-          className={cn('w-[5px] rounded-full bg-gradient-to-t', color)}
-          style={{ height: `${Math.max((v / max) * 100, 12)}%` }}
-        />
-      ))}
-    </div>
+    <span className={cn('inline-flex h-6 items-center gap-0.5 rounded-full px-2 text-[12px] font-semibold', up ? 'bg-[var(--st-mint-bg)] text-[var(--st-mint-fg)]' : 'bg-[#FDEEEE] text-danger-600')}>
+      {up ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+      <span dir="ltr">{`${up ? '+' : ''}${Math.round(value)}%`}</span>
+    </span>
   );
 }
 
-function CircularProgress({ value, size = 48, strokeWidth = 5 }) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (value / 100) * circumference;
+function Kpi({ label, value, delta, hint }) {
   return (
-    <svg width={size} height={size} className="transform -rotate-90">
-      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#e5e7eb" strokeWidth={strokeWidth} />
-      <circle
-        cx={size / 2} cy={size / 2} r={radius} fill="none"
-        stroke="url(#gaugeGrad)" strokeWidth={strokeWidth}
-        strokeDasharray={circumference} strokeDashoffset={offset}
-        strokeLinecap="round" className="transition-[background-color,border-color,color,box-shadow,transform] duration-700"
-      />
-      <defs>
-        <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#3E2BF1" />
-          <stop offset="100%" stopColor="#3E2BF1" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
-
-function KPICard({ icon: Icon, label, value, suffix, change, positive, sparkData, isCircular, circularValue }) {
-  return (
-    <div className="bg-white rounded-2xl border border-line p-5 shadow-sm hover:shadow-md transition-shadow duration-300 group">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-brand-50 flex items-center justify-center group-hover:from-brand-100 group-hover:to-brand-100 transition-colors">
-            <Icon className="w-[18px] h-[18px] text-brand-600" />
-          </div>
-          <span className="text-sm text-ink-600 font-medium">{label}</span>
-        </div>
-        {change !== undefined && (
-          <div className={cn(
-            'flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full',
-            positive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
-          )}>
-            {positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-            {change}%
-          </div>
-        )}
+    <div className="v7-card p-5">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[14px] font-medium text-ink-600">{label}</p>
+        <Delta value={delta} />
       </div>
-      <div className="flex items-end justify-between">
-        <div>
-          <div className="text-2xl font-bold text-navy-900 tracking-tight">
-            {value}{suffix && <span className="text-base font-medium text-ink-400 mr-0.5">{suffix}</span>}
-          </div>
-        </div>
-        {isCircular ? (
-          <div className="relative">
-            <CircularProgress value={circularValue} />
-            <span className="absolute inset-0 flex items-center justify-center text-[12px] font-bold text-brand-600">{circularValue}%</span>
-          </div>
-        ) : (
-          sparkData && <Sparkline data={sparkData} />
-        )}
-      </div>
+      <p className="v5-num mt-3 text-[26px] font-extrabold leading-none text-navy-900">{value}</p>
+      {hint ? <p className="mt-2 text-[12px] text-ink-400">{hint}</p> : null}
     </div>
   );
 }
 
 export default function RevenueIntelligence() {
-  const [chartTab, setChartTab] = useState('monthly');
-  const maxRevenue = Math.max(...MONTHLY_DATA.map(d => d.revenue));
-  const maxForecast = Math.max(...FORECAST.map(f => f.predicted));
+  const { bookings, properties, payments, isLoading, isError, refetch } = useStayData({ withCleaning: false });
 
-  const chartTabs = [
-    { id: 'monthly', label: 'חודשי' },
-    { id: 'weekly', label: 'שבועי' },
-    { id: 'daily', label: 'יומי' },
-  ];
+  const model = useMemo(() => {
+    const months = lastMonths(24);
+    const reports = months.map(({ year, monthIndex }) => ({
+      year, monthIndex,
+      ...buildMonthlyReport({ year, monthIndex, bookings, properties, payments, expenses: [] }),
+    }));
+    const prev12 = reports.slice(0, 12);
+    const last12 = reports.slice(12);
+    const now = sumReports(last12);
+    const before = sumReports(prev12);
+    const hasPrev = before.income > 0;
+
+    const units = new Map();
+    for (const r of last12) {
+      for (const u of r.unitRows) {
+        if (!units.has(u.id)) units.set(u.id, { id: u.id, name: u.name, income: 0, nights: 0, days: 0 });
+        const row = units.get(u.id);
+        row.income += u.income;
+        row.nights += u.nights;
+      }
+    }
+    const days = last12.reduce((s, r) => s + r.days, 0);
+    const unitRows = [...units.values()]
+      .map((u) => ({ ...u, adr: u.nights ? u.income / u.nights : 0, occupancy: days ? u.nights / days : 0 }))
+      .sort((a, b) => b.income - a.income);
+
+    const bars = last12.map((r, i) => ({
+      key: `${r.year}-${r.monthIndex}`,
+      label: MONTHS_SHORT[r.monthIndex],
+      long: r.label,
+      value: r.income,
+      prev: prev12[i]?.income || 0,
+    }));
+    const best = bars.reduce((m, b) => (b.value > (m?.value || 0) ? b : m), null);
+    const pendingCount = (bookings || []).filter((b) => String(b.status || '').toUpperCase() === 'PENDING').length;
+
+    return { now, before, hasPrev, unitRows, bars, best, pendingCount };
+  }, [bookings, properties, payments]);
+
+  const hasData = model.now.income > 0 || model.now.nights > 0;
+  const maxBar = Math.max(1, ...model.bars.map((b) => Math.max(b.value, b.prev)));
 
   return (
     <div dir="rtl">
       <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10">
+        <PageHeader title="הכנסות" subtitle="12 החודשים האחרונים, מתוך ההזמנות שלכם." className="!mb-0" />
 
-        {/* ── Header ──────────────────────────────────────── */}
-        <PageHeader title="הכנסות" subtitle="מגמות, תחזית והשוואה בין הנכסים." className="!mb-0" />
-
-        {/* ── KPI Row ─────────────────────────────────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard
-            icon={DollarSign} label="סה״כ הכנסות" value="₪287,400" change={18} positive
-            sparkData={[18, 21, 25, 22, 26, 29, 36]}
-          />
-          <KPICard
-            icon={Calendar} label="ממוצע ללילה" value="₪842" change={12} positive
-            sparkData={[72, 78, 81, 79, 84, 85, 88]}
-          />
-          <KPICard
-            icon={Home} label="תפוסה" value="87" suffix="%" change={5} positive
-            isCircular circularValue={87}
-          />
-          <KPICard
-            icon={Target} label="RevPAR" value="₪733" change={14} positive
-            sparkData={[62, 68, 71, 69, 73, 76, 79]}
-          />
-        </div>
-
-        {/* ── Revenue Chart ──────────────────────────────── */}
-        <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
-          <div className="px-6 pt-5 pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-bold text-navy-900">סקירת הכנסות</h2>
-              <p className="text-xs text-ink-400 mt-0.5">2025 מול 2024</p>
-            </div>
-            <div className="flex gap-1 bg-neutral-100 rounded-xl p-1">
-              {chartTabs.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => setChartTab(t.id)}
-                  className={cn(
-                    'inline-flex h-11 items-center px-4 text-[15px] font-medium rounded-[9px] transition-[background-color,color,box-shadow] duration-150',
-                    chartTab === t.id
-                      ? 'bg-white text-brand-700 shadow-sm'
-                      : 'text-ink-600 hover:text-ink-600'
-                  )}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4" aria-busy="true" aria-label="טוען">
+            {[0, 1, 2, 3].map((i) => <div key={i} className="v7-card h-[118px] animate-pulse bg-white" />)}
           </div>
-
-          <div className="px-6 pb-2">
-            <div className="flex items-center gap-5 text-xs text-ink-400">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-brand-500" /> 2025</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 border-t-2 border-dashed border-neutral-300" /> 2024</span>
-            </div>
+        ) : isError ? (
+          <div className="v7-card">
+            <EmptyState
+              icon={BarChart3}
+              title="לא הצלחנו לטעון את הנתונים"
+              description="בדקו את החיבור ונסו שוב."
+              actionLabel="ניסיון נוסף"
+              onAction={() => refetch()}
+            />
           </div>
+        ) : !hasData ? (
+          <div className="v7-card">
+            <EmptyState
+              icon={TrendingUp}
+              title="עוד אין מספיק הזמנות לניתוח"
+              description="כאן יופיעו ההכנסות, התפוסה והמחיר הממוצע ללילה, מחושבים מההזמנות שלכם. הוסיפו הזמנות או חברו את Booking.com ו-Airbnb, והמספרים יתמלאו לבד."
+              action={<Button asChild><Link to="/bookings">להזמנות</Link></Button>}
+            />
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              <Kpi label="הכנסות" value={formatMoney(model.now.income)} delta={model.hasPrev ? changePct(model.now.income, model.before.income) : null} hint={model.hasPrev ? 'מול 12 החודשים שלפני' : null} />
+              <Kpi label="ממוצע ללילה" value={formatMoney(model.now.adr)} delta={model.hasPrev ? changePct(model.now.adr, model.before.adr) : null} />
+              <Kpi label="תפוסה" value={`${Math.round(model.now.occupancy * 100)}%`} delta={model.hasPrev ? changePct(model.now.occupancy, model.before.occupancy) : null} hint={`${model.now.nights.toLocaleString('he-IL')} לילות שנמכרו`} />
+              <Kpi label="הכנסה ללילה זמין" value={formatMoney(model.now.revpar)} delta={model.hasPrev ? changePct(model.now.revpar, model.before.revpar) : null} hint="RevPAR" />
+            </div>
 
-          <div className="px-6 pb-6">
-            <div className="relative h-64">
-              {/* Y-axis grid lines */}
-              {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
-                <div key={i} className="absolute left-0 right-0 border-t border-line" style={{ bottom: `${pct * 100}%` }}>
-                  <span className="absolute -top-2.5 left-0 text-[12px] text-ink-400 font-mono">
-                    {Math.round(maxRevenue * pct / 1000)}K
-                  </span>
+            <section className="v7-card overflow-hidden" aria-label="הכנסות לפי חודש">
+              <div className="flex flex-col gap-1 px-6 pb-3 pt-5 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-[17px] font-bold text-navy-900">הכנסות לפי חודש</h2>
+                  <p className="mt-0.5 text-[13px] text-ink-400">
+                    {model.best ? <>החודש החזק: <b className="font-semibold text-navy-900">{model.best.long}</b> ({formatMoney(model.best.value)})</> : null}
+                  </p>
                 </div>
-              ))}
-
-              <div className="relative h-full flex items-end justify-between gap-2 pr-8">
-                {MONTHLY_DATA.map((d, i) => {
-                  const barH = (d.revenue / maxRevenue) * 100;
-                  const prevH = (d.prev / maxRevenue) * 100;
-                  return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group/bar relative">
-                      {/* Tooltip */}
-                      <div className="absolute -top-10 opacity-0 group-hover/bar:opacity-100 transition-opacity duration-200 z-10
-                        bg-gray-900 text-white text-[12px] font-medium px-2 py-1 rounded-lg whitespace-nowrap pointer-events-none">
-                        ₪{d.revenue.toLocaleString()} | שנה קודמת: ₪{d.prev.toLocaleString()}
+                {model.hasPrev ? (
+                  <p className="flex items-center gap-4 text-[12px] text-ink-400">
+                    <span className="flex items-center gap-1.5"><span className="h-2 w-3 rounded-sm bg-brand-600" />השנה</span>
+                    <span className="flex items-center gap-1.5"><span className="h-0 w-3 border-t-2 border-dashed border-ink-300" />שנה קודמת</span>
+                  </p>
+                ) : null}
+              </div>
+              <div className="px-4 pb-6 sm:px-6">
+                <div className="flex h-56 items-end gap-1.5 sm:gap-2" role="list">
+                  {model.bars.map((b) => (
+                    <div key={b.key} role="listitem" aria-label={`${b.long}: ${formatMoney(b.value)}`} className="relative flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1">
+                      <div className="relative flex w-full flex-1 items-end justify-center">
+                        {model.hasPrev && b.prev > 0 ? (
+                          <div className="absolute left-1/2 w-[80%] -translate-x-1/2 border-t-2 border-dashed border-ink-300" style={{ bottom: `${(b.prev / maxBar) * 100}%` }} />
+                        ) : null}
+                        <div className="w-[62%] rounded-t-[6px] bg-brand-600" style={{ height: `${Math.max(b.value > 0 ? 2 : 0, (b.value / maxBar) * 100)}%` }} />
                       </div>
-                      <div className="w-full relative" style={{ height: '100%' }}>
-                        {/* Previous year dashed marker */}
-                        <div
-                          className="absolute left-1/2 -translate-x-1/2 w-[70%] border-t-2 border-dashed border-neutral-300/70 z-10"
-                          style={{ bottom: `${prevH}%` }}
-                        />
-                        {/* Current year bar */}
-                        <div
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] rounded-t-lg bg-brand-600
-                            group-hover/bar:from-brand-500 group-hover/bar:to-brand-300 transition-[background-color,border-color,color,box-shadow,transform] duration-300 cursor-pointer"
-                          style={{ height: `${barH}%` }}
-                        />
-                      </div>
-                      <span className="text-[12px] text-ink-400 font-medium mt-1 shrink-0">{MONTHS_HEB[i]}</span>
+                      <span className="shrink-0 text-[11px] font-medium text-ink-400 sm:text-[12px]">{b.label}</span>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* AI Insight */}
-          <div className="mx-6 mb-6 p-4 rounded-xl border-2 border-brand-100 bg-brand-50/80">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center shrink-0 mt-0.5">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <span className="text-xs font-bold text-brand-700 uppercase tracking-wider">AI Insight</span>
-                <p className="text-sm text-ink-600 mt-1 leading-relaxed">
-                  ההכנסות עלו ב-18% לעומת השנה שעברה. החודש הכי חזק: <span className="font-semibold text-brand-700">אוגוסט (₪42,300)</span>. המלצה: העלה מחירים בסופי שבוע ב-15%.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Property Performance Table ──────────────── */}
-        <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-line">
-            <h2 className="text-lg font-bold text-navy-900">ביצועי נכסים</h2>
-            <p className="text-xs text-ink-400 mt-0.5">השוואת ביצועים בין כל הנכסים</p>
-          </div>
-          <div tabIndex={0} role="region" aria-label="טבלה" className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <table className="w-full min-w-[600px]">
-              <thead>
-                <tr className="bg-canvas">
-                  {['נכס', 'הכנסות', 'לילות', 'ממוצע ללילה', 'תפוסה', 'RevPAR', 'מגמה'].map((h, i) => (
-                    <th key={i} className="px-5 py-3 text-right text-[12px] font-semibold text-ink-400 uppercase tracking-wider cursor-pointer hover:text-ink-600 transition-colors select-none">
-                      {h}
-                    </th>
                   ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {PROPERTIES.map((p, i) => {
-                  const isBest = i === 0;
-                  return (
-                    <tr
-                      key={i}
-                      className={cn(
-                        'hover:bg-canvas transition-colors',
-                        isBest && 'bg-emerald-50/40'
-                      )}
-                    >
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-2.5">
-                          <div className={cn(
-                            'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold',
-                            isBest
-                              ? 'bg-emerald-400 text-white'
-                              : 'bg-neutral-100 text-ink-600'
-                          )}>
-                            {i + 1}
-                          </div>
-                          <span className="font-medium text-navy-900 text-sm">{p.name}</span>
-                          {isBest && (
-                            <span className="text-[12px] font-semibold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
-                              Top
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-5 py-3.5 font-semibold text-navy-900 text-sm">₪{p.revenue.toLocaleString()}</td>
-                      <td className="px-5 py-3.5 text-ink-600 text-sm">{p.nights}</td>
-                      <td className="px-5 py-3.5 text-ink-600 text-sm">₪{p.avgNight}</td>
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-                            <div
-                              className={cn(
-                                'h-full rounded-full transition-[background-color,border-color,color,box-shadow,transform]',
-                                p.occupancy >= 85 ? 'bg-emerald-400' : p.occupancy >= 70 ? 'bg-brand-300' : 'bg-red-400'
-                              )}
-                              style={{ width: `${p.occupancy}%` }}
-                            />
-                          </div>
-                          <span className="text-sm text-ink-600">{p.occupancy}%</span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-3.5 text-ink-600 text-sm">₪{p.revpar}</td>
-                      <td className="px-5 py-3.5">
-                        <div className={cn(
-                          'inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-1 rounded-full',
-                          p.trend === 'up' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
-                        )}>
-                          {p.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                          {p.trend === 'up' ? 'עולה' : 'יורד'}
-                        </div>
-                      </td>
+                </div>
+              </div>
+            </section>
+
+            <section className="v7-card overflow-hidden" aria-label="לפי יחידה">
+              <div className="border-b border-line px-6 py-4">
+                <h2 className="text-[17px] font-bold text-navy-900">לפי יחידה</h2>
+                <p className="mt-0.5 text-[13px] text-ink-400">12 החודשים האחרונים</p>
+              </div>
+              <div tabIndex={0} role="region" aria-label="טבלת יחידות" className="overflow-x-auto">
+                <table className="w-full min-w-[520px] text-right">
+                  <thead>
+                    <tr className="bg-canvas text-[12px] font-semibold text-ink-400">
+                      <th className="px-5 py-3 font-semibold">יחידה</th>
+                      <th className="px-5 py-3 font-semibold">הכנסות</th>
+                      <th className="px-5 py-3 font-semibold">לילות</th>
+                      <th className="px-5 py-3 font-semibold">ממוצע ללילה</th>
+                      <th className="px-5 py-3 font-semibold">תפוסה</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* ── AI Insights Panel ──────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Opportunity */}
-          <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-            <div className="h-1 bg-emerald-400" />
-            <div className="p-5">
-              <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center">
-                  <Zap className="w-[18px] h-[18px] text-emerald-600" />
-                </div>
-                <h3 className="font-bold text-navy-900 text-sm">חלון הזדמנות</h3>
+                  </thead>
+                  <tbody>
+                    {model.unitRows.map((u) => (
+                      <tr key={u.id} className="border-t border-line text-[14px] text-navy-900">
+                        <td className="px-5 py-3 font-semibold">{u.name}</td>
+                        <td className="v5-num px-5 py-3">{formatMoney(u.income)}</td>
+                        <td className="v5-num px-5 py-3">{u.nights.toLocaleString('he-IL')}</td>
+                        <td className="v5-num px-5 py-3">{u.nights ? formatMoney(u.adr) : '—'}</td>
+                        <td className="v5-num px-5 py-3">{Math.round(u.occupancy * 100)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <p className="text-sm text-ink-600 leading-relaxed mb-4">
-                יש <span className="font-semibold text-emerald-700">12 לילות פנויים</span> בחודש הבא שיכולים לייצר <span className="font-semibold text-emerald-700">₪10,000+</span> אם תוריד מחיר ב-20%.
-              </p>
-              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors">
-                בצע אופטימיזציה
-              </button>
-            </div>
-          </div>
+            </section>
 
-          {/* Warning */}
-          <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-            <div className="h-1 bg-brand-200" />
-            <div className="p-5">
-              <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
-                  <AlertTriangle className="w-[18px] h-[18px] text-amber-600" />
-                </div>
-                <h3 className="font-bold text-navy-900 text-sm">אזהרת ביצועים</h3>
-              </div>
-              <p className="text-sm text-ink-600 leading-relaxed mb-4">
-                הנכס <span className="font-semibold text-amber-700">׳סוויטת הכרמל׳</span> ירד ב-30% בתפוסה. בדוק מחיר מול מתחרים.
-              </p>
-              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">
-                בדוק עכשיו
-              </button>
-            </div>
-          </div>
-
-          {/* Forecast */}
-          <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-            <div className="h-1 bg-brand-500" />
-            <div className="p-5">
-              <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-9 h-9 rounded-lg bg-brand-50 flex items-center justify-center">
-                  <Sparkles className="w-[18px] h-[18px] text-brand-600" />
-                </div>
-                <h3 className="font-bold text-navy-900 text-sm">חיזוי</h3>
-              </div>
-              <p className="text-sm text-ink-600 leading-relaxed mb-4">
-                לפי המגמה הנוכחית, ההכנסות ברבעון הבא צפויות להיות <span className="font-semibold text-brand-700">₪95,000</span>.
-              </p>
-              <button type="button" className="press w-full min-h-11 rounded-[10px] text-[15px] font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 transition-colors">
-                צפה בפירוט
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Revenue Forecast ───────────────────────────── */}
-        <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-line flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-navy-900">חיזוי הכנסות</h2>
-              <p className="text-xs text-ink-400 mt-0.5">תחזית ל-3 חודשים הבאים מבוססת AI</p>
-            </div>
-            <div className="flex items-center gap-2 bg-brand-50 px-3 py-1.5 rounded-full">
-              <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-              <span className="text-xs font-semibold text-brand-700">רמת דיוק: 89%</span>
-            </div>
-          </div>
-
-          <div className="px-6 py-6">
-            {/* Timeline bar */}
-            <div className="relative">
-              <div className="absolute top-5 left-0 right-0 h-0.5 bg-neutral-100 z-0" />
-              <div className="grid grid-cols-3 gap-4 relative z-10">
-                {FORECAST.map((f, i) => {
-                  const barH = (f.predicted / maxForecast) * 100;
-                  return (
-                    <div key={i} className="flex flex-col items-center">
-                      <div className="w-10 h-10 rounded-full bg-white border-2 border-brand-100 flex items-center justify-center mb-4 shadow-sm">
-                        <Calendar className="w-4 h-4 text-brand-500" />
-                      </div>
-                      <div className="w-full bg-brand-50/80 rounded-xl p-4 border border-brand-100/50 text-center">
-                        <p className="text-xs text-ink-400 font-medium mb-1">{f.month}</p>
-                        <div className="h-24 flex items-end justify-center mb-3">
-                          <div
-                            className="w-12 rounded-t-lg bg-brand-500/50 border border-brand-100/50 border-b-0"
-                            style={{ height: `${barH}%` }}
-                          />
-                        </div>
-                        <p className="text-lg font-bold text-navy-900">₪{f.predicted.toLocaleString()}</p>
-                        <div className="flex items-center justify-center gap-1 mt-1.5">
-                          <div className="h-1 flex-1 bg-neutral-100 rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-brand-500"
-                              style={{ width: `${f.confidence}%` }}
-                            />
-                          </div>
-                          <span className="text-[12px] font-semibold text-brand-600">{f.confidence}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Bottom summary */}
-            <div className="mt-6 flex items-center justify-between p-3 bg-brand-50/60 rounded-xl border border-brand-100/30">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-brand-500" />
-                <span className="text-sm text-ink-600">
-                  סה״כ תחזית רבעונית: <span className="font-bold text-brand-700">₪95,000</span>
-                </span>
-              </div>
-              <div className="flex items-center gap-1 text-xs text-emerald-600 font-semibold">
-                <ArrowUpRight className="w-3.5 h-3.5" />
-                +22% מהרבעון הנוכחי
-              </div>
-            </div>
-          </div>
-        </div>
+            <p className="text-[13px] leading-relaxed text-ink-400">
+              ההכנסה נספרת לפי הלילות שבכל חודש, בלי הזמנות שבוטלו.
+              {model.pendingCount > 0 ? ` כולל ${model.pendingCount === 1 ? 'הזמנה אחת שעדיין ממתינה' : `${model.pendingCount} הזמנות שעדיין ממתינות`} לאישור או לתשלום.` : ''}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
