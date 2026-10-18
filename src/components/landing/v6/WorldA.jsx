@@ -40,7 +40,7 @@ function Hero() {
             <span className="l5-h1-line" style={{ '--i': 2 }}>ATLAS מנהלת.</span>
           </h1>
           <p className="l6a-lead l5-in" style={{ '--i': 3 }}>
-            לוח אחד ל-Airbnb, Booking.com והזמנות ישירות, וואטסאפ לאורחים שיוצא לבד ומקדמות שנגבות בזמן.
+            לוח אחד ל-Airbnb, Booking.com והזמנות ישירות, וואטסאפ לאורחים שמוכן מראש ונשלח בלחיצה, ומעקב מקדמות ויתרות.
           </p>
           <div className="l6a-cta l5-in" style={{ '--i': 4 }}>
             <SignupButton className="is-lg l6-btn-white" />
@@ -83,8 +83,8 @@ const CHAPTERS = [
   },
   {
     k: 'pay', time: '14:05', img: 'hero-wide-960.webp', w: 960, h: 407,
-    title: 'הכסף נוחת בזמן.',
-    line: 'מקדמה נגבית עם ההזמנה, ותזכורת ליתרה כבר מתוזמנת. בלי לרדוף ובלי אקסל.',
+    title: 'כל שקל במעקב.',
+    line: 'רואים כל מקדמה ויתרה, ותזכורת ליתרה יוצאת בלחיצה. בלי לרדוף ובלי אקסל.',
     ui: (
       <div className="l6-stack">
         <PaidToast className="is-on" />
@@ -155,7 +155,7 @@ const TILES = [
   { k: 'today', span: 'w5', title: 'היום, במבט אחד', line: 'מי נכנס, מי יוצא ומה לנקות.', ui: <div className="l5-card"><TodayBoard title={false} /></div> },
   { k: 'rev', span: 'w4', title: 'הכנסות שרואים', line: 'כל החודש, לפי ערוץ ויחידה.', ui: <RevenueCard className="is-mini" /> },
   { k: 'report', span: 'w4', title: 'דוח לרואה החשבון', line: 'Excel או PDF, בלחיצה.', ui: <ReportMini /> },
-  { k: 'direct', span: 'w4', title: 'הזמנה ישירה בלי עמלות', line: 'עמוד משלכם עם תשלום מקדמה.', ui: <DirectPageMini /> },
+  { k: 'direct', span: 'w4', title: 'הזמנה ישירה בלי עמלות', line: 'עמוד משלכם לבקשות הזמנה.', ui: <DirectPageMini /> },
 ];
 
 function IndigoBlock() {

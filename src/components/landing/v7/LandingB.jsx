@@ -49,7 +49,7 @@ function Hero() {
           <span className="l5-h1-line is-ind" style={{ '--i': 2 }}>הכל כבר מוכן.</span>
         </h1>
         <p className="l7b-lead l5-in" style={{ '--i': 3 }}>
-          ATLAS מנהלת את ההזמנות מ-Airbnb, Booking.com ומהאתר שלכם על לוח אחד, שולחת לאורחים את מה שהם צריכים וגובה מקדמה בזמן.
+          ATLAS מנהלת את ההזמנות מ-Airbnb, Booking.com ומהאתר שלכם על לוח אחד, מכינה לאורחים את מה שהם צריכים ועוקבת אחרי כל מקדמה.
         </p>
         <div className="l7-cta l5-in" style={{ '--i': 4 }}>
           <SignupButton className="is-lg" />
@@ -98,7 +98,7 @@ function People() {
           </li>
           <li className="l7b-t is-mint" data-reveal style={{ '--d': '210ms' }}>
             <b className="l7b-stat num" dir="ltr">1</b>
-            <div><h3>מקום לכל התשלומים</h3><p>מקדמה נגבית עם ההזמנה, ותזכורת ליתרה יוצאת לבד.</p></div>
+            <div><h3>מקום לכל התשלומים</h3><p>כל מקדמה ויתרה במעקב, ותזכורת ליתרה בלחיצה.</p></div>
           </li>
           <li className="l7b-t is-sky" data-reveal>
             <b className="l7b-stat num" dir="ltr">10</b>
@@ -139,7 +139,7 @@ function Split() {
             </div>
             <ul className="l7b-split-facts">
               <li><b className="num" dir="ltr">0</b><span>הזמנות כפולות. הזמנה שנכנסת בערוץ אחד נחסמת בכל השאר.</span></li>
-              <li><b className="num" dir="ltr">24/7</b><span>הודעות לאורחים יוצאות לבד, גם בשבת בלילה.</span></li>
+              <li><b className="num" dir="ltr">24/7</b><span>הודעות לאורחים מוכנות מראש, ושקטות בשבת.</span></li>
               <li><b className="num" dir="ltr">1</b><span>קליק לדוח חודשי לרואה החשבון, ב-Excel או PDF.</span></li>
             </ul>
           </div>
