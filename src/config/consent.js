@@ -6,4 +6,4 @@
 export const TERMS_VERSION = '2026-10-18';
 
 /** Visual variant of the consent row: 'inline' (A, minimal) or 'card' (B, card-style). */
-export const CONSENT_VARIANT = 'inline';
+export const CONSENT_VARIANT = 'card';
