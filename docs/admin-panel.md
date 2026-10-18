@@ -44,7 +44,9 @@ Suspension is enforced in the customer app: after sign-in it reads `my_account_s
 suspended org sees a "החשבון מושהה" screen (billing / subscription stay reachable).
 
 Verification: `npm i --no-save @electric-sql/pglite && node supabase/tests/admin_rls.test.mjs`
-(applies 001-007 + 010 + 011 to real Postgres in WASM, 118 checks: anon / customer / support / admin / owner, org settings RLS, health).
+(applies 001-007 + 010 + 011 + 012 to real Postgres in WASM, 124 checks: anon / customer / support / admin / owner, org settings RLS, health, unit counts).
+
+`012_admin_units_from_properties.sql` (applied 18 Oct 2026): customers' units are `properties` rows in the app, so the console counts and lists properties when an org has no legacy `units` rows.
 
 ## Demo mode
 Without Supabase env (local demo) the console uses fictional sample data (`src/admin/demoData.js`),
