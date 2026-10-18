@@ -1,5 +1,5 @@
 /**
- * אוטומציות = מסע האורח (013). Four steps the server really runs every 15 minutes (automation-runner):
+ * אוטומציות = מסע האורח (014). Four steps the server really runs every 15 minutes (automation-runner):
  * it prepares each message at the right time, keeps quiet on Shabbat and Yom Tov, and puts it in
  * "לשלוח עכשיו" on the Today board, where one tap opens WhatsApp with the text ready.
  * Older free-form rules stay listed; the ones the runner cannot execute say so.

@@ -9,12 +9,15 @@
 import HelpHint from '@/components/help/HelpHint';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ChevronLeft, LogIn, LogOut, Sparkles, ArrowUpLeft } from 'lucide-react';
+import { Check, ChevronLeft, LogIn, LogOut, Sparkles, ArrowUpLeft, AlertTriangle, Moon } from 'lucide-react';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
 import { todayISO, addDays, formatDayHe, nightsBetween } from '@/lib/stay/format';
 import { isActiveBooking, checkOutOf, balanceOf } from '@/lib/stay/bookings';
-import { templateByKey } from '@/lib/stay/whatsapp';
+import { templateByKey, renderTemplate, normalizePhone } from '@/lib/stay/whatsapp';
+import { useMessageQueue } from '@/hooks/useMessageQueue';
+import { useWhatsAppSend } from '@/hooks/useWhatsAppSend';
+import { guestPageUrl } from '@/lib/stay/guestInfo';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -196,6 +199,9 @@ export default function TodayBoard({ user, orgId }) {
   const [composer, setComposer] = useState(null);
   const [showMessages, setShowMessages] = useState(false);
   const [range, setRange] = useState('month');
+  const queue = useMessageQueue({ orgId });
+  const sendWa = useWhatsAppSend({ orgId });
+  const [showQueue, setShowQueue] = useState(true);
 
   const board = useMemo(() => buildDayBoard({
     day, bookings: data.bookings, paymentsByBooking: data.paymentsByBooking, sentByBooking: data.sentByBooking,
@@ -272,6 +278,24 @@ export default function TodayBoard({ user, orgId }) {
   };
 
   const prop = (id) => data.propertyById.get(id) || null;
+  const bookingById = useMemo(() => new Map((data.bookings || []).map((b) => [b.id, b])), [data.bookings]);
+  const queueRows = queue.due.map((item) => ({ item, booking: bookingById.get(item.booking_id) })).filter((r) => r.booking);
+  const upcomingCount = queue.upcoming.filter((x) => bookingById.has(x.booking_id)).length;
+  const sendQueued = (item, booking) => {
+    const property = prop(booking.property_id);
+    const balance = balanceOf(booking, data.paymentsByBooking.get(booking.id) || [], day);
+    const text = renderTemplate(item.template_key, { booking, property, balance, orgName: user?.organization_name || '' });
+    // opens WhatsApp synchronously inside the tap, logs it, then marks the queue item sent
+    sendWa({ booking, property, templateKey: item.template_key, text })
+      .then(() => queue.markSent(item.id))
+      .then(() => atlasToastApi.success(`נפתח וואטסאפ ל${booking.guest_name || 'אורח'}. ההודעה סומנה כנשלחה`))
+      .catch(() => atlasToastApi.error('לא הצלחנו לסמן את ההודעה'));
+  };
+  const copyCheckin = async (item, booking) => {
+    const url = guestPageUrl(booking);
+    try { await navigator.clipboard.writeText(url); atlasToastApi.success('קישור הצ\'ק-אין הועתק. הדביקו אותו בצ\'אט של הערוץ'); }
+    catch { atlasToastApi.error(url || 'אין עדיין קישור להזמנה הזו'); }
+  };
   const openCleanings = board.cleanings.filter((c) => !c.done).length;
   const counts = [
     { label: board.arrivals.length === 1 ? 'כניסה' : 'כניסות', value: board.arrivals.length },
@@ -477,7 +501,48 @@ export default function TodayBoard({ user, orgId }) {
         </ul>
       )}
       <ul className="mt-auto space-y-0.5 border-t border-[#F0F0F6] px-2 py-2 md:px-3">
-        {board.messages.length > 0 ? (
+        {queue.syncProblems.length ? (
+          <li>
+            <Link to="/integrations" className="press c-row flex min-h-[48px] w-full items-center gap-3 rounded-[16px] px-3 text-right" data-testid="sync-problem">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-attention" strokeWidth={1.75} aria-hidden />
+              <span className="flex-1 truncate text-[14px] font-semibold text-navy-900">
+                {queue.syncProblems.some((x) => Array.isArray(x.conflicts) && x.conflicts.length) ? 'התנגשות בין ערוצים: יש תאריכים כפולים' : 'סנכרון יומן נכשל: בדקו את החיבור'}
+              </span>
+              <ChevronLeft className="h-4 w-4 shrink-0 text-ink-300" strokeWidth={1.75} />
+            </Link>
+          </li>
+        ) : null}
+        {queueRows.length > 0 || upcomingCount > 0 ? (
+          <li data-testid="send-queue">
+            <FoldLine open={showQueue} onClick={() => setShowQueue((v) => !v)} label={queueRows.length ? `לשלוח עכשיו: ${queueRows.length} ${queueRows.length === 1 ? 'הודעה' : 'הודעות'}` : `${upcomingCount} הודעות מתוכננות ל-24 השעות הקרובות`} />
+            {showQueue && queueRows.length ? (
+              <ul>
+                {queueRows.map(({ item, booking }, idx) => {
+                  const phone = normalizePhone(booking.guest_phone);
+                  const deferred = item.deferred_reason ? (item.deferred_reason === 'shabbat' ? 'חיכתה לצאת השבת' : 'חיכתה לצאת החג') : '';
+                  return (
+                    <DayRow
+                      key={`q-${item.id}`}
+                      i={idx}
+                      guest={booking.guest_name || 'אורח'}
+                      property={prop(booking.property_id)}
+                      time="—"
+                      title={booking.guest_name || 'אורח'}
+                      attention={!phone}
+                      detail={[templateByKey(item.template_key)?.label, deferred, phone ? '' : 'אין טלפון: שלחו קישור צ\'ק-אין'].filter(Boolean).join(' · ')}
+                      action={phone
+                        ? <Button className={sm} onClick={() => sendQueued(item, booking)} aria-label={`שליחה בוואטסאפ ל${booking.guest_name || 'אורח'}`}>שליחה</Button>
+                        : pill('קישור', () => copyCheckin(item, booking))}
+                    />
+                  );
+                })}
+              </ul>
+            ) : null}
+            {showQueue && queueRows.length && upcomingCount ? (
+              <p className="flex items-center gap-1.5 px-3 pb-1 text-[12px] text-ink-400"><Moon className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />עוד {upcomingCount} מתוכננות ל-24 השעות הקרובות</p>
+            ) : null}
+          </li>
+        ) : board.messages.length > 0 ? (
           <li>
             <FoldLine open={showMessages} onClick={() => setShowMessages((v) => !v)} label={board.messages.length === 1 ? 'הודעה אחת מחכה לשליחה' : `${board.messages.length} הודעות מחכות לשליחה`} />
             {showMessages ? (

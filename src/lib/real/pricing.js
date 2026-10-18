@@ -1,5 +1,5 @@
 /**
- * Holiday / weekend pricing rules (013, properties.pricing) + the Israeli calendar (il_calendar, from Hebcal).
+ * Holiday / weekend pricing rules (014, properties.pricing) + the Israeli calendar (il_calendar, from Hebcal).
  * Pure functions: suggestion per night, no randomness, no network.
  *
  * pricing: { base, weekend, holiday_uplift_pct, gap_night_discount_pct, min, max }

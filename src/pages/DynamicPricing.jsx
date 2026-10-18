@@ -1,5 +1,5 @@
 /**
- * תמחור לפי חגים וסופ"ש (013): the owner sets base / weekend / holiday uplift / single-night discount per unit,
+ * תמחור לפי חגים וסופ"ש (014): the owner sets base / weekend / holiday uplift / single-night discount per unit,
  * ATLAS suggests a price for every night of the next 8 weeks from the Hebrew calendar (Hebcal → il_calendar)
  * and the unit's real bookings. Suggestions only: nothing is pushed to Airbnb / Booking (iCal carries dates only).
  */

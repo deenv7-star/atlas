@@ -1,4 +1,4 @@
--- 014: schedule the real-core edge functions with pg_cron + pg_net (feat/real-core).
+-- 015: schedule the real-core edge functions with pg_cron + pg_net (feat/real-core).
 -- Additive. The shared secret lives in Supabase Vault as 'atlas_cron_secret' (created out of band,
 -- same value as the edge-function secret ATLAS_CRON_SECRET); it is never written in this file.
 --   atlas-ical-sync         every 15 minutes  -> functions/v1/ical-sync         {"all": true}

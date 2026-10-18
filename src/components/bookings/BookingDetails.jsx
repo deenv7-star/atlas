@@ -26,6 +26,8 @@ import { createPageUrl } from '@/utils';
 import { GuestAvatar } from '@/components/app/atoms';
 import { unitPhoto } from '@/lib/stay/unitPhoto';
 import { cn } from '@/lib/utils';
+import { guestPageUrl } from '@/lib/stay/guestInfo';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { Link } from 'react-router-dom';
 import { Page, StatusPill, channelOf, fmtDay, fmtShort, fmtMoney } from '@/components/ds';
 import {
@@ -342,6 +344,24 @@ export default function BookingDetails({ booking, onClose, orgId }) {
                   <a href={`mailto:${booking.guest_email}`} aria-label="אימייל" className="press inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F1F1F8] text-navy-900 hover:bg-[#E8E8F2]">
                     <Mail className="h-[18px] w-[18px]" />
                   </a>
+                ) : null}
+              </div>
+
+              {/* online check-in (014): status + the link to paste into the Booking / Airbnb chat */}
+              <div className="mt-4 flex flex-wrap items-center gap-2 rounded-[16px] bg-[#F7F8FB] px-3 py-2.5" data-testid="booking-checkin">
+                <p className="min-w-0 flex-1 text-[14px] text-ink-600">
+                  {booking.checkin_completed_at
+                    ? <><b className="text-navy-900">צ׳ק-אין הושלם</b>{booking.checkin?.arrival_time ? ` · הגעה ב-${booking.checkin.arrival_time}` : ''}{booking.checkin?.id_name ? ` · ${booking.checkin.id_name}` : ''}</>
+                    : <><b className="text-navy-900">צ׳ק-אין אונליין</b> · האורח ממלא טלפון ושעת הגעה בקישור</>}
+                </p>
+                {guestPageUrl(booking) ? (
+                  <Button
+                    type="button" variant="secondary" className="h-11 shrink-0 rounded-full px-4"
+                    onClick={async () => {
+                      try { await navigator.clipboard.writeText(guestPageUrl(booking)); atlasToastApi.success('הקישור הועתק. אפשר להדביק בצ׳אט של Booking או Airbnb'); }
+                      catch { atlasToastApi.error(guestPageUrl(booking)); }
+                    }}
+                  >העתקת קישור</Button>
                 ) : null}
               </div>
             </section>

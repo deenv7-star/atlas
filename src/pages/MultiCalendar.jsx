@@ -156,7 +156,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
   const qc = useQueryClient();
   const navigate = useNavigate();
-  // Real channel sync (013): pulls every connected iCal feed on the server, then reloads the calendar.
+  // Real channel sync (014): pulls every connected iCal feed on the server, then reloads the calendar.
   const handleSync = useCallback(async () => {
     if (!DB_FEATURES.realCore) { navigate('/integrations'); return; }
     setSyncing(true);

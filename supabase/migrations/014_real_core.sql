@@ -1,4 +1,4 @@
--- 013: "make it real" core (feat/real-core).
+-- 014: "make it real" core (feat/real-core).
 -- ADDITIVE and idempotent: new columns, tables, functions, one exclusion constraint. Nothing is dropped.
 -- Requires 008 (bookings.guest_token, properties.guest_info, get_guest_stay).
 --
@@ -288,7 +288,7 @@ create index if not exists job_runs_job_idx on public.job_runs (job, started_at 
 
 -- Schema marker the app can read (runtime feature detection).
 create or replace function public.atlas_schema_level()
-returns integer language sql stable as $$ select 13 $$;
+returns integer language sql stable as $$ select 15 $$;
 grant execute on function public.atlas_schema_level() to anon, authenticated;
 
 notify pgrst, 'reload schema';

@@ -1,5 +1,5 @@
 /**
- * The real "to send" queue (013 message_queue), filled by the automation-runner edge function.
+ * The real "to send" queue (014 message_queue), filled by the automation-runner edge function.
  * On mount the board asks the runner to refresh this org's queue (cheap, own org only), then reads it.
  */
 import { useEffect, useRef } from 'react';

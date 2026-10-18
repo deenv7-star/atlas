@@ -4,13 +4,13 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { MapPin, Wifi, Copy, Check, Phone, MessageCircle, ScrollText, KeyRound, Wallet, Navigation, CalendarDays } from 'lucide-react';
-import { fetchGuestStay } from '@/lib/stay/publicApi';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { MapPin, Wifi, Copy, Check, Phone, MessageCircle, ScrollText, KeyRound, Wallet, Navigation, CalendarDays, ClipboardCheck } from 'lucide-react';
+import { fetchGuestStay, submitGuestCheckin } from '@/lib/stay/publicApi';
 import { formatDayHe, formatMoney, firstName, withPrefix } from '@/lib/stay/format';
 import { navigationTarget, wazeUrl, googleMapsUrl } from '@/lib/stay/guestInfo';
 import { waLink } from '@/lib/stay/whatsapp';
-import { Wordmark, LinkBtn } from '@/components/stay/StayUI';
+import { Wordmark, LinkBtn, Btn } from '@/components/stay/StayUI';
 import '@/styles/atlas-brand.css';
 import { heCount } from '@/lib/hebrewCount';
 
@@ -49,6 +49,100 @@ function CopyField({ label, value }) {
   );
 }
 
+const ARRIVAL_TIMES = ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
+
+/** Online check-in (014): the guest leaves a phone, the name as on their ID, arrival time, and accepts the house rules. */
+function CheckInCard({ token, booking, checkin, rules, onDone }) {
+  const [open, setOpen] = useState(!checkin?.completed);
+  const [form, setForm] = useState({
+    id_name: checkin?.id_name || (booking.guest_name && !/^אורח |^חסום/.test(booking.guest_name) ? booking.guest_name : ''),
+    phone: '', arrival_time: checkin?.arrival_time || '', guests: (Number(booking.adults) || 0) + (Number(booking.children) || 0) || '',
+    rules_accepted: false, marketing_consent: false,
+  });
+  const [err, setErr] = useState('');
+  const [busy, setBusy] = useState(false);
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
+  const submit = async (e) => {
+    e.preventDefault();
+    setErr('');
+    if (form.id_name.trim().length < 2) { setErr('כתבו שם מלא כמו בתעודה'); return; }
+    if (form.phone.replace(/\D/g, '').length < 9) { setErr('כתבו מספר טלפון נייד'); return; }
+    if (!form.rules_accepted) { setErr('צריך לאשר את כללי המקום'); return; }
+    setBusy(true);
+    try {
+      await submitGuestCheckin(token, form);
+      setOpen(false);
+      onDone();
+    } catch (ex) {
+      const m = String(ex?.message || '');
+      setErr(/rate_limited/.test(m) ? 'רגע, כבר שמרנו. נסו שוב בעוד כמה שניות' : /missing_fields|rules/.test(m) ? 'חסרים פרטים בטופס' : 'לא הצלחנו לשמור. נסו שוב');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (checkin?.completed && !open) {
+    return (
+      <section className="ab-card p-4 sm:p-5 ab-enter" aria-label="צ'ק-אין" data-testid="checkin-done">
+        <div className="flex items-center gap-3">
+          <span className="ab-icon-tile" style={{ background: 'var(--st-mint-bg, #E6F6EE)', color: 'var(--st-mint-fg, #11603A)' }}><Check size={20} strokeWidth={2} aria-hidden /></span>
+          <div className="min-w-0 flex-1">
+            <h2 className="ab-h3">הצ׳ק-אין הושלם</h2>
+            <p className="ab-meta">{checkin.arrival_time ? `מחכים לכם בסביבות ${checkin.arrival_time}.` : 'תודה, קיבלנו את הפרטים.'}</p>
+          </div>
+          <Btn variant="ghost" size="sm" onClick={() => setOpen(true)}>עדכון</Btn>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="ab-card p-4 sm:p-5 ab-enter" aria-label="צ'ק-אין אונליין" data-testid="checkin-form">
+      <div className="flex items-center gap-3 mb-1">
+        <span className="ab-icon-tile"><ClipboardCheck size={20} strokeWidth={1.75} aria-hidden /></span>
+        <h2 className="ab-h3">צ׳ק-אין אונליין</h2>
+      </div>
+      <p className="ab-meta mb-4">דקה אחת, ואנחנו מוכנים לקראתכם. הטלפון משמש רק לעדכונים על השהייה.</p>
+      <form onSubmit={submit} noValidate className="grid grid-cols-2 gap-3">
+        <div className="col-span-2">
+          <label className="ab-label" htmlFor="ci-name">שם מלא כמו בתעודה</label>
+          <input id="ci-name" className="ab-input" autoComplete="name" value={form.id_name} onChange={set('id_name')} />
+        </div>
+        <div className="col-span-2 sm:col-span-1">
+          <label className="ab-label" htmlFor="ci-phone">טלפון נייד</label>
+          <input id="ci-phone" className="ab-input" type="tel" inputMode="tel" dir="ltr" style={{ textAlign: 'right' }} autoComplete="tel" placeholder="050-0000000" value={form.phone} onChange={set('phone')} />
+        </div>
+        <div className="col-span-1">
+          <label className="ab-label" htmlFor="ci-time">שעת הגעה משוערת</label>
+          <select id="ci-time" className="ab-input ab-num" value={form.arrival_time} onChange={set('arrival_time')}>
+            <option value="">לא בטוחים</option>
+            {ARRIVAL_TIMES.map((t) => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </div>
+        <div className="col-span-1">
+          <label className="ab-label" htmlFor="ci-guests">מספר אורחים</label>
+          <input id="ci-guests" className="ab-input ab-num" type="number" inputMode="numeric" min={1} max={40} value={form.guests} onChange={set('guests')} />
+        </div>
+        {rules.length ? (
+          <ul className="col-span-2 space-y-1.5 rounded-[14px] p-3" style={{ background: 'var(--canvas, #F7F8FB)' }}>
+            {rules.map((r) => <li key={r} className="text-[14px]" style={{ color: 'var(--ink-600)' }}>• {r}</li>)}
+          </ul>
+        ) : null}
+        <label className="col-span-2 flex min-h-[44px] items-start gap-3 text-[15px]">
+          <input type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[#3E2BF1]" checked={form.rules_accepted} onChange={set('rules_accepted')} />
+          <span>קראתי ואני מאשר/ת את כללי המקום{rules.length ? '' : ' כפי שיימסרו על ידי המארחים'}</span>
+        </label>
+        <label className="col-span-2 flex min-h-[44px] items-start gap-3 text-[14px]" style={{ color: 'var(--ink-600)' }}>
+          <input type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[#3E2BF1]" checked={form.marketing_consent} onChange={set('marketing_consent')} />
+          <span>אשמח לקבל מהמארחים הטבות ועדכונים (דיוור). אפשר להסיר בכל עת. לא חובה.</span>
+        </label>
+        {err ? <p role="alert" className="col-span-2 text-[14px] font-bold" style={{ color: 'var(--status-danger)' }}>{err}</p> : null}
+        <button type="submit" className="ab-btn ab-btn-primary ab-btn-lg col-span-2" disabled={busy}>{busy ? 'שומרים…' : 'סיום צ׳ק-אין'}</button>
+      </form>
+    </section>
+  );
+}
+
 function Shell({ children }) {
   return (
     <div dir="rtl" className="ab-root min-h-[100dvh]" style={{ background: 'var(--canvas)' }}>
@@ -63,6 +157,7 @@ function Shell({ children }) {
 
 export default function GuestStayPage() {
   const { token } = useParams();
+  const qc = useQueryClient();
   const q = useQuery({ queryKey: ['guest-stay', token], queryFn: () => fetchGuestStay(token), retry: false, staleTime: 60_000 });
 
   useEffect(() => {
@@ -132,6 +227,8 @@ export default function GuestStayPage() {
             </div>
           </div>
         </section>
+
+        <CheckInCard token={token} booking={booking} checkin={q.data.checkin} rules={rules} onDone={() => qc.invalidateQueries({ queryKey: ['guest-stay', token] })} />
 
         {nav ? (
           <Card icon={MapPin} title="איך מגיעים">

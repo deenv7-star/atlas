@@ -432,7 +432,7 @@ class SupabaseEntityCollection {
   }
 
   _wrapError(error, id) {
-    // bookings_no_overlap (013): the database refused a second booking on the same unit and nights.
+    // bookings_no_overlap (014): the database refused a second booking on the same unit and nights.
     if (error?.code === '23P01' || /bookings_no_overlap/.test(String(error?.message || ''))) {
       const e = new Error('התאריכים האלה כבר תפוסים ביחידה הזו. בחרו תאריכים אחרים או יחידה אחרת.');
       e.code = 'BOOKING_OVERLAP';

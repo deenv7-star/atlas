@@ -1,5 +1,5 @@
 /**
- * The guest journey the automation-runner edge function really executes (013).
+ * The guest journey the automation-runner edge function really executes (014).
  * Each step is one automation_rules row: trigger + timing_offset_hours + actions[0].config.template + conditions.
  */
 export const JOURNEY_STEPS = [
