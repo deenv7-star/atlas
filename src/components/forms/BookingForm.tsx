@@ -156,7 +156,7 @@ export function BookingForm({
                       field.onChange(v);
                     }}
                   >
-                    <SelectTrigger className="h-12 md:h-11 rounded-[10px]">
+                    <SelectTrigger aria-label="נכס" className="h-12 md:h-11 rounded-[10px]">
                       <SelectValue placeholder="בחר נכס" />
                     </SelectTrigger>
                     <SelectContent>
@@ -210,16 +210,16 @@ export function BookingForm({
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">תאריך כניסה *</Label>
-            <Input type="date" {...fm.register('check_in_date')} className="h-12 md:h-11 rounded-[10px]" />
+            <Label htmlFor="bf-check-in" className="text-[14px] font-medium text-ink-600">תאריך כניסה *</Label>
+            <Input id="bf-check-in" type="date" {...fm.register('check_in_date')} className="h-12 md:h-11 rounded-[10px]" />
             <FormMachineFieldHint
               error={fm.errors.check_in_date}
               validating={fm.isFieldValidating('check_in_date')}
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">תאריך יציאה</Label>
-            <Input type="date" {...fm.register('check_out_date')} className="h-12 md:h-11 rounded-[10px]" />
+            <Label htmlFor="bf-check-out" className="text-[14px] font-medium text-ink-600">תאריך יציאה</Label>
+            <Input id="bf-check-out" type="date" {...fm.register('check_out_date')} className="h-12 md:h-11 rounded-[10px]" />
             <FormMachineFieldHint
               error={fm.errors.check_out_date}
               validating={fm.isFieldValidating('check_out_date')}
@@ -243,7 +243,7 @@ export function BookingForm({
                     field.onChange(v);
                   }}
                 >
-                  <SelectTrigger className="h-12 md:h-11 rounded-[10px]">
+                  <SelectTrigger aria-label="סטטוס" className="h-12 md:h-11 rounded-[10px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
