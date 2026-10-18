@@ -13,6 +13,7 @@ import {
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { RecordPaymentSheet } from '@/components/stay/RecordPaymentSheet';
 import { Skeleton } from '@/components/ui/skeleton';
+import { heCount } from '@/lib/hebrewCount';
 
 const FILTERS = [
   { value: 'open', label: 'פתוחות' },
@@ -87,8 +88,8 @@ export default function BalancesPage({ user, orgId }) {
       ) : (
         <>
           <div className="stat-row mb-4">
-            <StatTile hero label="יתרות פתוחות" value={formatMoney(totals.open)} hint={`${rows.filter((r) => r.balance.balance > 0).length} הזמנות`} />
-            <StatTile label="באיחור" value={formatMoney(totals.overdue)} hint={`${totals.overdueCount} הזמנות`} tone={totals.overdueCount ? 'danger' : undefined} />
+            <StatTile hero label="יתרות פתוחות" value={formatMoney(totals.open)} hint={heCount(rows.filter((r) => r.balance.balance > 0).length, 'booking')} />
+            <StatTile label="באיחור" value={formatMoney(totals.overdue)} hint={heCount(totals.overdueCount, 'booking')} tone={totals.overdueCount ? 'danger' : undefined} />
             <StatTile label="מקדמות שהתקבלו" value={formatMoney(totals.deposits)} hint="בהזמנות פעילות" />
           </div>
 

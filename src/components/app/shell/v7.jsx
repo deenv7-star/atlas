@@ -17,6 +17,7 @@ import { useShellProperties, useIsActive, UserMenu, MoreSheet, navItem } from '@
 import { GuestAvatar, dayPart } from '@/components/app/atoms';
 import { IconButton } from '@/components/ds';
 import { useSubscription } from '@/hooks/useSubscription';
+import { trialShortText } from '@/lib/trial';
 import { formatDayHe, todayISO, firstName } from '@/lib/stay/format';
 
 /** Re-renders on the hour so "בוקר טוב" turns into "צהריים טובים" without a reload. */
@@ -178,7 +179,7 @@ export function TabBar({ user, onLogout }) {
 export function PlanCard({ compact = false }) {
   const { daysLeft, isTrialing, isExpired, isLoading } = useSubscription();
   if (isLoading) return null;
-  const title = isExpired ? 'הניסיון הסתיים' : isTrialing ? (daysLeft === 1 ? 'נשאר יום ניסיון' : `נשארו ${daysLeft} ימי ניסיון`) : 'ATLAS Pro';
+  const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : 'ATLAS Pro';
   const sub = isTrialing || isExpired ? 'בוחרים מסלול וממשיכים בלי הפסקה.' : 'ערוצים, תשלומים והודעות במקום אחד.';
   if (compact) {
     return (

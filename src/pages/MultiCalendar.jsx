@@ -16,6 +16,7 @@ import { SkeletonCalendar } from '@/components/skeletons/atlas-skeletons';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useCalendarUrlState } from '@/hooks/url-state/useCalendarUrlState';
 import { UnitPhoto, GuestAvatar, guestInitials } from '@/components/app/atoms';
+import { heCount } from '@/lib/hebrewCount';
 
 const CHANNELS = {
   airbnb: { label: 'Airbnb', color: '#EF5B5B' },
@@ -390,7 +391,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                               style={{ right: `calc(${(pos.start / totalDays) * 100}% + 2px)`, width: `calc(${(pos.span / totalDays) * 100}% - 4px)` }}
                               onMouseEnter={(e) => handleBookingHover(e, booking)}
                               onMouseLeave={() => setHoveredBooking(null)}
-                              aria-label={`${booking.guest || 'הזמנה'}, ${ch.label}, ${booking.nights} לילות`}
+                              aria-label={`${booking.guest || 'הזמנה'}, ${ch.label}, ${heCount(booking.nights, 'night')}`}
                             >
                               {/* v5: indigo-tint bar; the channel is only the thin coloured start edge */}
                               <span
@@ -408,7 +409,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                                   {!isBlocked && pos.span > 1 ? (
                                     <span className="flex items-center gap-1 truncate text-[12px] text-ink-600">
                                       <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: ch?.color }} />
-                                      {pending ? 'ממתינה לאישור' : `${booking.nights} לילות`}
+                                      {pending ? 'ממתינה לאישור' : heCount(booking.nights, 'night')}
                                     </span>
                                   ) : null}
                                 </span>
@@ -447,7 +448,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
             </div>
             <div className="text-[15px] font-semibold">{hoveredBooking.channel === 'blocked' ? 'תאריכים חסומים' : hoveredBooking.guest}</div>
             <div className="mt-1 text-[13px] text-ink-400">
-              {formatHebrewDate(hoveredBooking.startDate)} – {formatHebrewDate(hoveredBooking.endDate)} · {daysBetween(hoveredBooking.startDate, hoveredBooking.endDate)} לילות
+              {formatHebrewDate(hoveredBooking.startDate)} – {formatHebrewDate(hoveredBooking.endDate)} · {heCount(daysBetween(hoveredBooking.startDate, hoveredBooking.endDate), 'night')}
             </div>
             {hoveredBooking.amount > 0 && <div className="mt-1 text-[15px] font-bold tabular">{fmtMoney(hoveredBooking.amount)}</div>}
           </div>
@@ -474,7 +475,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
                       <UnitPhoto property={prop?.raw} className="h-11 w-11" rounded="rounded-[14px]" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-medium text-navy-900">{gap.property}</div>
-                        <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {gap.nights} לילות</div>
+                        <div className="text-[13px] text-ink-400">{formatHebrewDate(gap.startDate)} – {formatHebrewDate(gap.endDate)} · {heCount(gap.nights, 'night')}</div>
                       </div>
                       {prop ? (
                         <Button variant="ghost" size="sm" onClick={() => openNewAt(prop, gap.startDate)}>

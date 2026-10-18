@@ -28,6 +28,7 @@ import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
 import { Rise, GuestAvatar, AvatarStack } from '@/components/app/atoms';
+import { heCount } from '@/lib/hebrewCount';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -237,7 +238,7 @@ export default function BookingsPage({ selectedPropertyId }) {
       await updateMutation.mutateAsync({ id: row.id, data: { status } }).catch(() => {});
       done++;
     }
-    success(`עודכנו ${done} הזמנות ל-${STATUS_MAP[status]?.label || status}`);
+    success(`${done === 1 ? 'עודכנה הזמנה אחת' : `עודכנו ${done} הזמנות`} ל-${STATUS_MAP[status]?.label || status}`);
   };
 
   const handleBulkDeleteRows = rows => {
@@ -250,7 +251,7 @@ export default function BookingsPage({ selectedPropertyId }) {
       property_name: properties.find(p => p.id === b.property_id)?.name || '',
     }));
     exportToCSV(data, 'bookings', BOOKING_COLUMNS);
-    success(`יוצאו ${data.length} הזמנות ל-CSV`);
+    success(`${data.length === 1 ? 'יוצאה הזמנה אחת' : `יוצאו ${data.length} הזמנות`} ל-CSV`);
   };
 
   const dateInputValue = (d) => (d ? format(d, 'yyyy-MM-dd') : '');
@@ -380,7 +381,7 @@ export default function BookingsPage({ selectedPropertyId }) {
                         <span className="block truncate text-[15px] font-semibold text-navy-900">{b.guest_name || 'אורח'}</span>
                         <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
                           <ChannelDot source={b.booking_source || b.source} className="h-1.5 w-1.5 md:hidden" />
-                          <span className="truncate">{propName(b.property_id) || b.property_name}<span className="md:hidden"> · {fmtShort(b.check_in_date)}</span> · {b.nights || 1} לילות</span>
+                          <span className="truncate">{propName(b.property_id) || b.property_name}<span className="md:hidden"> · {fmtShort(b.check_in_date)}</span> · {heCount(b.nights || 1, 'night')}</span>
                         </span>
                       </span>
                     </span>
@@ -411,7 +412,7 @@ export default function BookingsPage({ selectedPropertyId }) {
             </div>
             {sorted.length > pageSize ? (
               <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-3 text-[14px] text-ink-600">
-                <span>עמוד {page} מתוך {totalPages} · {sorted.length} הזמנות</span>
+                <span>עמוד {page} מתוך {totalPages} · {heCount(sorted.length, 'booking')}</span>
                 <div className="flex gap-2">
                   <Button type="button" variant="outline" size="sm" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
                   <Button type="button" variant="outline" size="sm" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
