@@ -3,6 +3,7 @@
  * Everything here is decorative (aria-hidden at the call site) and shows example data.
  */
 import React from 'react';
+import BrandWordmark from '@/components/common/BrandWordmark';
 import {
   CalendarDays, Home, Inbox, Users, Wallet, MessageCircle, Settings, RefreshCw, Check,
   CheckCheck, LogIn, LogOut, SprayCan, FileSpreadsheet, Download, Send, ChevronRight, ChevronLeft,
@@ -31,7 +32,7 @@ export function Mark({ ch, size = 16, className = '' }) {
 }
 
 export function Wordmark({ small = false }) {
-  return <span className={`l5-wm${small ? ' is-sm' : ''}`} aria-hidden="true">ATLAS<i /></span>;
+  return <span className={`l5-wm${small ? ' is-sm' : ''}`} ><BrandWordmark /></span>;
 }
 
 /* ---------- app chrome ---------- */

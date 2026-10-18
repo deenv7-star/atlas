@@ -1,3 +1,4 @@
+import BrandWordmark from '@/components/common/BrandWordmark';
 /**
  * Guided tour, design B: "the guide".
  * A friendly guide card docks at the bottom of the screen and walks the owner through, screen by
@@ -37,7 +38,7 @@ function Demo({ id }) {
     case 'welcome':
       return (
         <div className="tb-demo tb-d-welcome">
-          <span className="tb-word" dir="ltr">ATLAS<i /></span>
+          <span className="tb-word" dir="ltr"><BrandWordmark /></span>
           <span className="tb-orb tb-orb--1"><CalendarRange strokeWidth={1.9} /></span>
           <span className="tb-orb tb-orb--2"><MessageCircle strokeWidth={1.9} /></span>
           <span className="tb-orb tb-orb--3"><Wallet strokeWidth={1.9} /></span>

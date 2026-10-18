@@ -1,3 +1,4 @@
+import BrandWordmark from '@/components/common/BrandWordmark';
 /**
  * Building blocks shared by both site designs (A and B). Design-specific layout and CSS
  * live in src/site/design/. Everything here renders identically on the server and in the browser.
@@ -68,7 +69,7 @@ export function SkipLink() {
 }
 
 export function Wordmark() {
-  return <span className="s-wm" dir="ltr">ATLAS<i aria-hidden="true" /></span>;
+  return <span className="s-wm" dir="ltr"><BrandWordmark /></span>;
 }
 
 export function WhatsAppIcon({ size = 18 }) {

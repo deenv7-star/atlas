@@ -1,3 +1,4 @@
+import BrandWordmark from '@/components/common/BrandWordmark';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Compass } from 'lucide-react';
@@ -20,7 +21,7 @@ export default function PageNotFound() {
     <div className="flex min-h-[100dvh] flex-col bg-canvas" dir="rtl">
       <header className="flex h-16 items-center px-5 md:px-10">
         <Link to="/" className="inline-flex min-h-[44px] items-center gap-1 text-[20px] font-extrabold tracking-[0.02em] text-navy-900" aria-label="ATLAS, לעמוד הראשי">
-          ATLAS<span aria-hidden className="mb-1 h-1.5 w-1.5 self-end rounded-full bg-brand-600" />
+          <BrandWordmark size={20} />
         </Link>
       </header>
       <main className="flex flex-1 items-center justify-center px-6 pb-24">
