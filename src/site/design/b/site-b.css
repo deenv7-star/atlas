@@ -120,7 +120,7 @@
 .b-ftr-brand p { margin: 12px 0 0; font-size: 14px; line-height: 1.7; color: var(--s-ink); max-width: 420px; }
 .b-ftr-h { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: var(--s-ink-2); }
 .b-ftr-col ul { list-style: none; margin: 0; padding: 0; }
-.b-ftr-col a { display: inline-flex; align-items: center; min-height: 40px; color: var(--s-navy); text-decoration: none; font-size: 15px; }
+.b-ftr-col a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; color: var(--s-navy); text-decoration: none; font-size: 15px; }
 .b-ftr-col a:hover { color: var(--s-indigo); text-decoration: underline; }
 .b-ftr-copy { margin: 32px 0 0; padding-top: 20px; border-top: 1px solid var(--s-line); font-size: 13px; color: var(--s-ink-2); }
 

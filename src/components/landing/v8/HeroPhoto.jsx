@@ -48,7 +48,14 @@ const TILE = {
 };
 
 /** Scroll segments (progress 0..1 through the sticky run). */
-const SEG = { shrink: [0.04, 0.68], copy: [0, 0.16], ntfs: [0.02, 0.18], dev: [0.18, 0.54], end: [0.54, 0.74], out: [0.72, 0.84], scrim: [0, 0.26] };
+/* copy, notifications and scrim hold fully opaque for the first 1% (a few px), so a resting page, scroll
+   restoration rounding or a 1px nudge never shows a half-faded headline */
+const SEG = { shrink: [0.04, 0.68], copy: [0.01, 0.16], ntfs: [0.02, 0.18], dev: [0.18, 0.54], end: [0.54, 0.74], out: [0.72, 0.84], scrim: [0.01, 0.26] };
+/** Near the top (p < DRIFT_ZONE) the compositor timeline must match the measured progress within DRIFT,
+    or we drop it for the rAF path. Only checked there: further down, a phone's URL bar legitimately makes
+    the two differ by a few percent (the timeline follows the visible viewport, progressOf the stage). */
+const DRIFT = 0.01;
+const DRIFT_ZONE = 0.05;
 const SAMPLES = 48;
 
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -264,21 +271,44 @@ export default function HeroPhoto() {
       idle = whenIdle(() => {
         if (!sec.current) return;
         try {
-          const timeline = new window.ViewTimeline({ subject: sec.current, axis: 'block' });
+          // inset 0: a view timeline's default inset is the scroller's scroll-padding, and the landing sets
+          // scroll-padding-top: 80px (anchor jumps under the fixed header). Newer Chrome applies it, which
+          // started the sequence ~8% in at scroll 0 (headline, CTAs and notifications half-faded on load).
+          let timeline;
+          try { timeline = new window.ViewTimeline({ subject: sec.current, axis: 'block', inset: '0px' }); } catch { timeline = new window.ViewTimeline({ subject: sec.current, axis: 'block' }); }
           const frames = Array.from({ length: SAMPLES + 1 }, (_, i) => frame(i / SAMPLES));
           const E = els();
           anims = Object.keys(frames[0]).filter((k) => E[k]).map((k) => E[k].animate(
             frames.map((fr, i) => ({ ...fr[k], offset: i / SAMPLES })),
             { timeline, rangeStart: 'contain 0%', rangeEnd: 'contain 100%', fill: 'both', easing: 'linear' },
           ));
+          verify(12);
         } catch {
           anims.forEach((a) => a.cancel()); anims = []; // fall back to the rAF path
         }
       });
     };
+    /* Belt and braces: at rest the compositor timeline must agree with the measured progress. If a browser
+       maps the view range differently (insets, sticky quirks), drop it and run the same frames on rAF. */
+    const drifted = (p) => {
+      if (p >= DRIFT_ZONE) return false;
+      const t = anims[0]?.effect?.getComputedTiming?.().progress;
+      return typeof t === 'number' && Math.abs(t - p) > DRIFT;
+    };
+    /* right after handing over (and on every scroll near the top): the timeline resolves its progress a
+       frame or two after animate(), so poll until it reports a number, then compare */
+    const verify = (tries) => {
+      requestAnimationFrame(() => {
+        if (!sec.current || !stage.current || !anims.length) return;
+        const t = anims[0].effect?.getComputedTiming?.().progress;
+        if (typeof t !== 'number') { if (tries > 0) verify(tries - 1); return; }
+        tick();
+      });
+    };
     const tick = () => {
       raf = 0;
       const p = progressOf(sec.current, stage.current);
+      if (anims.length && drifted(p)) { anims.forEach((a) => a.cancel()); anims = []; written.clear(); }
       if (!anims.length) write(p);
       const g = p >= SEG.copy[1];
       if (g !== gone) { gone = g; copy.current?.classList.toggle('is-gone', g); }

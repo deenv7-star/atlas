@@ -603,7 +603,7 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
 .l5-ftr-h { margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
 .l5-ftr-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 20px; }
 .l5-ftr-col li { min-width: 120px; }
-.l5-ftr-col a { display: inline-flex; align-items: center; min-height: 40px; font-size: 14px; color: var(--navy); }
+.l5-ftr-col a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; font-size: 14px; color: var(--navy); }
 .l5-ftr-col a:hover { color: var(--indigo); text-decoration: underline; }
 .l5-ftr > .l5-wrap > .l5-ftr-copy { padding: 16px 0 24px; margin: 16px 0 0; border-top: 1px solid var(--line-2); }
 .l5-ftr-links { display: flex; flex-wrap: wrap; gap: 0 8px; }

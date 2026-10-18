@@ -18,8 +18,16 @@
 
 .ph-in { position: relative; z-index: 2; height: 100%; }
 .ph-copy { position: absolute; inset-inline: var(--gut); bottom: max(28px, 4svh); max-width: 640px; }
+/* a soft navy pool of shade right behind the copy, so the white type stays crisp over the bright pool and
+   paving at every width (it fades out with the copy on scroll) */
+.ph-copy { isolation: isolate; }
+.ph-copy::before {
+  content: ''; position: absolute; z-index: -1; inset: -18% -16% -22% -16%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(var(--ph-scrim), 0.42), rgba(var(--ph-scrim), 0.22) 55%, rgba(var(--ph-scrim), 0));
+}
+.ph-sub, .ph-note { text-shadow: 0 1px 14px rgba(var(--ph-scrim), 0.45); }
 .ph-h1 { margin: 0; color: #fff; font-size: clamp(46px, 7.2vw, 108px); line-height: 0.98; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance; text-shadow: 0 2px 30px rgba(var(--ph-scrim), 0.25); }
-.ph-sub { margin: 18px 0 0; max-width: 34ch; font-size: clamp(17px, 1.5vw, 21px); line-height: 1.5; color: rgba(255, 255, 255, 0.92); }
+.ph-sub { margin: 18px 0 0; max-width: 34ch; font-size: clamp(17px, 1.5vw, 21px); line-height: 1.5; color: #fff; }
 .ph-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 26px; }
 .ph-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
@@ -35,7 +43,7 @@
 .ph-ghost { display: inline-flex; align-items: center; min-height: 48px; padding: 0 6px; font-weight: 700; font-size: 17px; color: #fff; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 6px; text-decoration-color: rgba(255, 255, 255, 0.5); transition: text-decoration-color 160ms; }
 .ph-ghost:hover { text-decoration-color: #fff; }
 .ph-hero :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-.ph-note { display: inline-flex; align-items: center; gap: 6px; margin: 12px 0 0; font-size: 14px; color: rgba(255, 255, 255, 0.9); }
+.ph-note { display: inline-flex; align-items: center; gap: 6px; margin: 12px 0 0; font-size: 14px; color: #fff; }
 .ph-note svg { color: #8ff0c4; }
 @media (min-width: 900px) {
   .ph-copy { inset-inline: max(var(--gut), calc((100vw - 1240px) / 2 + var(--gut))) auto; bottom: clamp(48px, 11svh, 120px); }
