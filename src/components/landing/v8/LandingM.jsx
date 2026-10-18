@@ -24,6 +24,7 @@ import '../v7/landing-v7.css';
 import './shared8.css';
 import './landing-v8m.css';
 import HeroPhoto from './HeroPhoto';
+import TrustA from './TrustA';
 
 const NAV = [['#features', 'המוצר'], ['#facts', 'למה ATLAS'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
@@ -246,6 +247,7 @@ export default function LandingM() {
         <Channels />
         <Blocks />
         <Facts />
+        <TrustA />
         <Pricing8 />
         <Faq limit={5} />
         <Final />
