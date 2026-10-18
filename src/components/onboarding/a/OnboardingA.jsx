@@ -55,6 +55,22 @@ function Progress({ chapter, screenInChapter, screensInChapter }) {
   );
 }
 
+
+/** A link is optional; when typed it must look like a web address (domain with a dot, no spaces). */
+function linkError(v) {
+  const t = String(v || '').trim();
+  if (!t) return '';
+  const withProto = /^https?:\/\//i.test(t) ? t : `https://${t}`;
+  try {
+    const u = new URL(withProto);
+    if (!/\./.test(u.hostname) || /\s/.test(t)) throw new Error('bad');
+    return '';
+  } catch {
+    return 'הכתובת לא נראית תקינה. למשל: www.example.co.il';
+  }
+}
+const linksValid = (links) => Object.values(links || {}).every((v) => !linkError(v));
+
 export default function OnboardingA({ user, again = false }) {
   const { draft: d, update, ready } = useOnboardingDraft(user);
   const [dir, setDir] = useState(1);
@@ -78,7 +94,7 @@ export default function OnboardingA({ user, again = false }) {
     { id: 'count', chapter: 1, focus: 'units', skip: () => T.single, can: () => d.units.length >= 1 },
     { id: 'units', chapter: 1, focus: 'units', can: () => d.units.length >= 1 && d.units.every((u) => u.name.trim()), leave: async () => { const r = await saveUnits(d); update(r); } },
     { id: 'today', chapter: 2, focus: 'channels', optional: true, leave: () => saveBusiness(user, d) },
-    { id: 'links', chapter: 2, focus: 'channels', optional: true, leave: () => saveBusiness(user, d) },
+    { id: 'links', chapter: 2, focus: 'channels', optional: true, can: () => linksValid(d.links), leave: () => saveBusiness(user, d) },
     { id: 'channels', chapter: 2, focus: 'channels', optional: true, skip: () => !otaChosen, leave: async () => { const sv = await saveChannels(d); update({ savedSyncs: sv }); } },
     { id: 'times', chapter: 3, focus: 'hosting', leave: () => saveHosting(user, d) },
     { id: 'wa', chapter: 3, focus: 'wa', optional: true, leave: () => saveHosting(user, d) },
@@ -398,7 +414,8 @@ export default function OnboardingA({ user, again = false }) {
                 <div key={f.key} className="flex items-end gap-3">
                   <span className="mb-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.06)]" aria-hidden><Icon className="h-5 w-5" strokeWidth={1.75} /></span>
                   <div className="min-w-0 flex-1">
-                    <BigInput label={f.label} dir="ltr" inputMode="url" className="!min-h-[54px] text-right !text-[17px]" value={d.links?.[f.key] || ''} placeholder={f.placeholder}
+                    <BigInput label={f.label} dir="ltr" type="url" inputMode="url" autoCapitalize="off" spellCheck={false} className="!min-h-[54px] text-right !text-[17px]" value={d.links?.[f.key] || ''} placeholder={f.placeholder}
+                      error={linkError(d.links?.[f.key])}
                       onChange={(e) => update((cur) => ({ links: { ...cur.links, [f.key]: e.target.value } }))} />
                   </div>
                 </div>

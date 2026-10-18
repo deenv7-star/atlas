@@ -302,7 +302,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       onValueChange={(v) => setNewRequestForm((f) => ({ ...f, property_id: v }))}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="בחר נכס" />
+                        <SelectValue placeholder="בחרו נכס" />
                       </SelectTrigger>
                       <SelectContent>
                         {properties.map((p) => (
@@ -311,7 +311,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <p className="text-xs text-amber-700">אין נכסים, הוסף נכס בהגדרות.</p>
+                    <p className="text-xs text-amber-700">אין נכסים. הוסיפו נכס בהגדרות.</p>
                   )}
                 </div>
               </div>
@@ -328,7 +328,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   )
                 }
               >
-                {createMutation.isPending ? 'שולח…' : 'צור בקשה'}
+                {createMutation.isPending ? 'שולחים…' : 'יצירת בקשה'}
               </Button>
             </form>
           </DialogContent>
@@ -387,7 +387,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-navy-900 mb-2">עדכן סטטוס</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">עדכון סטטוס</h4>
                     <Select
                       value={selectedRequest.status}
                       onValueChange={(value) => {
@@ -418,7 +418,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       onChange={(e) => {
                         setSelectedRequest({ ...selectedRequest, notes: e.target.value });
                       }}
-                      placeholder="הוסף הערות..."
+                      placeholder="הוסיפו הערות…"
                       className="min-h-24"
                     />
                     <Button
@@ -431,7 +431,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       disabled={updateMutation.isPending}
                       className="mt-2 w-full bg-brand-600 hover:bg-brand-500 text-white"
                     >
-                      שמור הערות
+                      שמירת ההערות
                     </Button>
                   </div>
                 </div>

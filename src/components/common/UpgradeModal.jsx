@@ -56,7 +56,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
                   <span className="font-semibold text-[#1B2656]">תוכנית {PLAN_NAMES[currentPlan]}</span>
                 </div>
                 <p className="text-sm text-gray-600">
-                  התוכנית הנוכחית שלך תומכת בעד <span className="font-bold">{limit}</span> {entityName.plural}
+                  החבילה הנוכחית שלכם כוללת עד <span className="font-bold">{limit}</span> {entityName.plural}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
                   כרגע יש לך <span className="font-bold">{currentCount}</span> {entityName.plural}

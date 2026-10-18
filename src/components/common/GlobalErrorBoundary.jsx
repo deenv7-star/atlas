@@ -31,7 +31,7 @@ class GlobalErrorBoundary extends React.Component {
         <div dir="rtl" className="min-h-screen flex items-center justify-center p-4" 
              style={{ 
                background: 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)',
-               fontFamily: "'Assistant', 'Heebo', sans-serif"
+               fontFamily: "'Heebo', system-ui, sans-serif"
              }}>
           <div className="max-w-md w-full">
             {/* Icon */}
@@ -100,7 +100,7 @@ class GlobalErrorBoundary extends React.Component {
                     href="mailto:support@atlas-il.com" 
                     className="text-brand-600 hover:text-brand-500 font-medium underline"
                   >
-                    צור קשר עם התמיכה
+                    פנייה לתמיכה
                   </a>
                 </p>
               </div>

@@ -46,11 +46,11 @@ export default function IOSInstallBanner() {
         <div>
           <p className="font-semibold text-sm leading-snug">התקן את ATLAS על האייפון</p>
           <p className="text-xs text-gray-400 mt-0.5 leading-snug">
-            לחץ על{' '}
+            לחצו על{' '}
             <Share className="inline h-3.5 w-3.5 text-brand-600" />
             {' '}ואז{' '}
             <span className="text-brand-600 font-medium inline-flex items-center gap-0.5">
-              <PlusSquare className="inline h-3.5 w-3.5" /> הוסף למסך הבית
+              <PlusSquare className="inline h-3.5 w-3.5" /> הוספה למסך הבית
             </span>
           </p>
         </div>

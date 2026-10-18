@@ -477,7 +477,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
               ))
             ) : templates.length === 0 ? (
               <div className="col-span-full text-center py-12 text-ink-600">
-                אין תבניות חוזה עדיין. צור תבנית ראשונה!
+                אין עדיין תבניות חוזה. צרו תבנית ראשונה.
               </div>
             ) : (
               templates.map(template => (
@@ -521,7 +521,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
       <Dialog open={isTemplateDialogOpen} onOpenChange={setIsTemplateDialogOpen}>
         <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingTemplate ? 'ערוך תבנית' : 'תבנית חוזה חדשה'}</DialogTitle>
+            <DialogTitle>{editingTemplate ? 'עריכת תבנית' : 'תבנית חוזה חדשה'}</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
@@ -557,7 +557,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
               disabled={!newTemplate.name || !newTemplate.content || createTemplateMutation.isPending || updateTemplateMutation.isPending}
               className="bg-brand-600 hover:bg-brand-500 text-white rounded-[10px]"
             >
-              {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? 'שומר...' : 'שמור'}
+              {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? 'שומרים…' : 'שמירה'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -567,7 +567,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
       <Dialog open={isSendDialogOpen} onOpenChange={setIsSendDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>צור חוזה</DialogTitle>
+            <DialogTitle>יצירת חוזה</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
@@ -578,7 +578,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 onValueChange={(value) => setNewContract({ ...newContract, booking_id: value })}
               >
                 <SelectTrigger className="mt-1 rounded-[10px]">
-                  <SelectValue placeholder="בחר הזמנה" />
+                  <SelectValue placeholder="בחרו הזמנה" />
                 </SelectTrigger>
                 <SelectContent>
                   {bookings.map(booking => (
@@ -596,7 +596,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 onValueChange={(value) => setNewContract({ ...newContract, template_id: value })}
               >
                 <SelectTrigger className="mt-1 rounded-[10px]">
-                  <SelectValue placeholder="בחר תבנית" />
+                  <SelectValue placeholder="בחרו תבנית" />
                 </SelectTrigger>
                 <SelectContent>
                   {templates.map(template => (
@@ -618,7 +618,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
               disabled={!newContract.booking_id || !newContract.template_id || createContractMutation.isPending}
               className="bg-brand-600 hover:bg-brand-500 text-white rounded-[10px]"
             >
-              {createContractMutation.isPending ? 'יוצר...' : 'צור חוזה'}
+              {createContractMutation.isPending ? 'יוצרים…' : 'יצירת חוזה'}
             </Button>
           </DialogFooter>
         </DialogContent>

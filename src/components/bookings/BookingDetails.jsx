@@ -543,7 +543,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               disabled={newPayment.amount <= 0 || createPaymentMutation.isPending}
               className="bg-brand-600 hover:bg-brand-500 text-white rounded-xl"
             >
-              {createPaymentMutation.isPending ? 'שומר...' : 'הוסף תשלום'}
+              {createPaymentMutation.isPending ? 'שומרים…' : 'הוספת תשלום'}
             </Button>
           </DialogFooter>
         </DialogContent>
