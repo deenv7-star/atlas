@@ -32,7 +32,7 @@ function holeFor(rect, vp) {
   return { top, left, width: right - left, height: bottom - top };
 }
 
-export default function TourView({ step, idx, total, steps, rect, ready, reduced, voiceOn, voiceError, speaking, onNext, onBack, onSkip, onToggleVoice, onGo }) {
+export default function TourView({ step, idx, total, steps, rect, ready, reduced, voiceOn, voiceError, speaking, onNext, onBack, onSkip, onToggleVoice }) {
   const vp = useViewport();
   const cardRef = useRef(null);
   const primaryRef = useRef(null);
