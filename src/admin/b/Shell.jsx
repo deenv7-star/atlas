@@ -1,12 +1,14 @@
-import { NavLink, Link } from 'react-router-dom';
-import { LayoutGrid, Users, CreditCard, Tags, ShieldCheck, Activity, ScrollText, ArrowUpRight, LifeBuoy } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { NavLink, Link, useLocation } from 'react-router-dom';
+import { LayoutGrid, Users, CreditCard, Tags, ShieldCheck, Activity, ScrollText, ArrowUpRight, LifeBuoy, Inbox } from 'lucide-react';
 import { ADMIN_NAV, ROLES, ADMIN_DEMO } from '../config';
 import { useAdmin } from '../hooks';
 import { DemoBadge } from '../ui';
 import { useSupportUnread } from '../supportApi';
+import { useContactUnread } from '../contactApi';
 
-const ICONS = { support: LifeBuoy, overview: LayoutGrid, customers: Users, payments: CreditCard, plans: Tags, team: ShieldCheck, health: Activity, audit: ScrollText };
-const SHORT = { support: 'תמיכה', overview: 'סקירה', customers: 'לקוחות', payments: 'תשלומים', plans: 'חבילות', team: 'צוות', health: 'תקינות', audit: 'יומן' };
+const ICONS = { support: LifeBuoy, inbox: Inbox, overview: LayoutGrid, customers: Users, payments: CreditCard, plans: Tags, team: ShieldCheck, health: Activity, audit: ScrollText };
+const SHORT = { support: 'תמיכה', inbox: 'פניות', overview: 'סקירה', customers: 'לקוחות', payments: 'תשלומים', plans: 'חבילות', team: 'צוות', health: 'תקינות', audit: 'יומן' };
 
 function initialsOf(s) {
   return String(s || '').split(/\s+/).map((x) => x[0]).join('').slice(0, 2).toUpperCase();
@@ -16,7 +18,13 @@ export default function Shell({ children }) {
   const { me, role } = useAdmin();
   const name = me?.full_name || me?.email?.split('@')[0] || '';
   const unread = useSupportUnread().data?.conversations || 0;
-  const badge = (key) => (key === 'support' && unread ? <span className="b-nav-badge" aria-label={`${unread} שיחות ממתינות`}>{unread}</span> : null);
+  const fresh = useContactUnread();
+  const { pathname } = useLocation();
+  const mnav = useRef(null);
+  // mobile: keep the current section's pill in view inside the horizontal nav
+  useEffect(() => { mnav.current?.querySelector('.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }, [pathname]);
+  const badge = (key) => (key === 'support' && unread ? <span className="b-nav-badge" aria-label={`${unread} שיחות ממתינות`}>{unread}</span>
+    : key === 'inbox' && fresh ? <span className="b-nav-badge" aria-label={`${fresh} ${fresh === 1 ? 'פנייה חדשה' : 'פניות חדשות'}`}>{fresh}</span> : null);
   return (
     <div className="adm-root b-root" dir="rtl">
       <a href="#adm-main" className="b-skip">דילוג לתוכן</a>
@@ -53,7 +61,7 @@ export default function Shell({ children }) {
           <Link to="/admin" className="b-brand" aria-label="ATLAS ניהול, סקירה">ATLAS<i aria-hidden /></Link>
           <DemoBadge />
         </div>
-        <nav aria-label="ניהול ATLAS, נייד" className="b-mnav">
+        <nav aria-label="ניהול ATLAS, נייד" className="b-mnav" ref={mnav}>
           {ADMIN_NAV.map((n) => (
             <NavLink key={n.key} to={n.to} end={n.end} className="b-mnav-item">{SHORT[n.key]}{badge(n.key)}</NavLink>
           ))}

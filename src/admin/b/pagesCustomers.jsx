@@ -4,7 +4,7 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, Cell } from 'rechar
 import { Search, Download, MessageCircle, Mail, ChevronLeft, ChevronRight, Eye, AlertCircle, CalendarPlus, Repeat, Wallet, PauseCircle, PlayCircle, ArrowUpRight } from 'lucide-react';
 import { Head } from './Shell';
 import { useOverview, useCustomers, useCustomer, usePlans, useAdmin } from '../hooks';
-import { StatusPill, ChargePill, Skel, money, moneyK, date, pct, contactLinks } from '../ui';
+import { StatusPill, ChargePill, Skel, money, moneyK, date, pct, contactLinks, heMessage } from '../ui';
 import { STATUS, STATUS_ORDER, METHODS, AUDIT_ACTIONS } from '../config';
 import { relTime, daysUntil, fmtPhone, monthlyValue, monthLabel } from '../metrics';
 import { useCustomerFilters, customerCsv, NotesBox, auditDetail } from '../shared';
@@ -16,7 +16,7 @@ const tick = { fill: '#646B85', fontSize: 12, fontFamily: 'Heebo' };
 
 export function BError({ error }) {
   if (!error) return null;
-  return <div className="b-tile b-error" role="alert"><AlertCircle size={18} strokeWidth={1.75} aria-hidden /><span>{error.message || 'לא הצלחנו לטעון את הנתונים'}</span></div>;
+  return <div className="b-tile b-error" role="alert"><AlertCircle size={18} strokeWidth={1.75} aria-hidden /><span>{heMessage(error, 'לא הצלחנו לטעון את הנתונים. נסו שוב בעוד רגע.')}</span></div>;
 }
 /** Donut as a conic gradient with 1.2° gaps (no focusable SVG, no animation needed). */
 function conic(parts) {
@@ -51,7 +51,7 @@ export function Overview() {
           </div>
           {isLoading ? <Skel w={200} h={56} style={{ opacity: 0.3 }} /> : <p className="b-hero-val adm-num">{money(data.mrr)}</p>}
           <div className="b-hero-row">
-            <div><span>ARR</span><b className="adm-num">{data ? moneyK(data.arr) : '—'}</b></div>
+            <div><span>הכנסה שנתית</span><b className="adm-num">{data ? moneyK(data.arr) : '—'}</b></div>
             <div><span>משלמים</span><b className="adm-num">{data ? data.paying : '—'}</b></div>
             <div><span>בסיכון</span><b className="adm-num">{data ? money(data.atRisk) : '—'}</b></div>
           </div>
@@ -155,7 +155,7 @@ export function Overview() {
         </section>
 
         <section className="b-tile b-plans-mini" aria-labelledby="h-plans">
-          <div className="b-tile-head"><h2 id="h-plans">MRR לפי חבילה</h2><Link to="/admin/plans" className="b-round b-round--soft" aria-label="לחבילות"><ArrowUpRight size={18} strokeWidth={2} /></Link></div>
+          <div className="b-tile-head"><h2 id="h-plans">הכנסה חודשית לפי חבילה</h2><Link to="/admin/plans" className="b-round b-round--soft" aria-label="לחבילות"><ArrowUpRight size={18} strokeWidth={2} /></Link></div>
           {data ? (
             <ul className="b-pbars">
               {data.byPlan.map((p) => (

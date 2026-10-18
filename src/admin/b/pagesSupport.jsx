@@ -95,7 +95,7 @@ function Thread({ conv, onBack }) {
           placeholder={`תשובה ל${first || 'לקוח'}. היא תופיע אצלו בחלון העזרה מיד.`} />
         <button type="submit" className="b-btn b-btn--primary" disabled={!draft.trim() || reply.isPending}><ArrowUp size={18} strokeWidth={2.25} aria-hidden />{reply.isPending ? 'שולחים…' : 'שליחה'}</button>
       </form>
-      <p className="b-sup-hint">Ctrl+Enter לשליחה · התשובה נשמרת ביומן הפעולות · השיחה עוברת לנציג ולא לבוט</p>
+      <p className="b-sup-hint">Ctrl ו-Enter לשליחה · התשובה נשמרת ביומן הפעולות · השיחה עוברת לנציג ולא לבוט</p>
     </section>
   );
 }
@@ -125,7 +125,7 @@ export function Support() {
     return (
       <>
         <Head title="תמיכה" sub="שיחות מהעזרה באפליקציה" />
-        <section className="b-tile"><h2>התמיכה תופעל אחרי עדכון מסד הנתונים</h2><p className="b-muted">צריך להריץ את 020_support.sql ולפרוס את הפונקציה support-chat.</p></section>
+        <section className="b-tile"><h2>התמיכה תופעל אחרי עדכון מסד הנתונים</h2><p className="b-muted">צריך להשלים עדכון במסד הנתונים ולהפעיל את שירות הצ׳אט.</p></section>
       </>
     );
   }

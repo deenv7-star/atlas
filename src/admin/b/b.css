@@ -1,7 +1,7 @@
 /* Admin B — "Bento". Lilac-grey canvas, floating white sidebar card, 24px tiles, one indigo hero tile. */
 .b-root { --b-canvas: #eeeef6; --b-r: 24px; --b-shadow: 0 1px 2px rgba(27, 38, 86, 0.035), 0 10px 30px -14px rgba(27, 38, 86, 0.12);
   min-height: 100dvh; background: var(--b-canvas); font-size: 15px; line-height: 1.5; }
-.b-skip { position: absolute; top: -60px; right: 16px; z-index: 100; background: var(--a-brand); color: #fff; padding: 10px 16px; border-radius: 12px; text-decoration: none; font-weight: 600; }
+.b-skip { position: absolute; top: -60px; right: 16px; z-index: 100; background: var(--a-brand); color: #fff; min-height: 44px; display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 12px; text-decoration: none; font-weight: 600; }
 .b-skip:focus { top: 12px; }
 .b-muted { color: var(--a-ink-3); }
 .b-small { font-size: 13px; }
@@ -426,3 +426,36 @@ a.b-crow-link:hover { color: var(--a-brand); }
   .b-sup-actions { width: 100%; }
   .b-sup-actions .b-btn { flex: 1 1 auto; }
 }
+
+/* פניות מהאתר */
+.b-cm-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+.b-cm-pills button { min-height: 44px; padding: 0 18px; }
+.b-cm-search { flex: 1 1 280px; }
+.b-cm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; max-width: 920px; }
+.b-cm { padding: 20px 22px; }
+.b-cm.is-new { box-shadow: inset -3px 0 0 var(--a-brand), var(--b-shadow); }
+.b-cm-head { display: flex; align-items: flex-start; gap: 12px; }
+.b-cm-who { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.b-cm-who h2 { font-size: 16.5px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.b-cm-contact { font-size: 14px; color: var(--a-ink-2); display: flex; flex-wrap: wrap; gap: 0 4px; min-width: 0; }
+.b-cm-contact span { overflow-wrap: anywhere; max-width: 100%; user-select: all; }
+.b-cm-side { display: grid; justify-items: end; gap: 6px; flex-shrink: 0; font-size: 13px; color: var(--a-ink-3); }
+.b-cm-subject { margin-top: 14px !important; font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
+.b-cm-body { margin-top: 6px !important; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; line-height: 1.6; color: var(--a-ink); max-width: 68ch; }
+.b-cm-when { margin-top: 10px !important; }
+.b-cm-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #efeff6; }
+.b-cm-btn { box-shadow: none; background: #f1f1f8; }
+.b-cm-btn:hover { background: #e8e8f3; }
+.b-cm-quiet { background: transparent; color: var(--a-ink-2); }
+.b-cm-gap { flex: 1; }
+.b-cm-empty { max-width: 920px; padding: 28px 24px; }
+.b-cm-foot { margin-top: 16px !important; }
+@media (max-width: 760px) {
+  .b-cm { padding: 16px; }
+  .b-cm-pills { width: 100%; justify-content: space-between; }
+  .b-cm-pills button { flex: 1; padding: 0 10px; }
+  .b-cm-search { flex-basis: 100%; max-width: none; }
+  .b-cm-gap { display: none; }
+  .b-cm-actions .b-cm-btn { flex: 1 1 calc(50% - 4px); }
+}
+@media (prefers-reduced-motion: reduce) { .b-cm-btn { transition: none; } }
