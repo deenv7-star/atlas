@@ -52,7 +52,7 @@
 }
 .ph-ntf:nth-child(3) { display: none; }
 @media (min-height: 760px) { .ph-ntf:nth-child(3) { display: flex; } }
-@keyframes ph-in { from { opacity: 0; transform: translateY(-14px) scale(0.96); } }
+@keyframes ph-in { from { opacity: 0; transform: translateY(-12px) scale(0.95); } 60% { opacity: 1; } }
 .ph-ntf-ic { flex: none; display: grid; place-items: center; }
 .ph-ntf-mk { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: #fff; box-shadow: 0 0 0 1px var(--line); }
 .ph-ntf-mk.is-whatsapp { background: #e9fbf0; box-shadow: none; color: var(--wa); }
@@ -65,7 +65,7 @@
   .ph-ntfs { inset-inline: auto max(var(--gut), calc((100vw - 1240px) / 2 + var(--gut))); top: auto; bottom: clamp(48px, 11svh, 120px); width: 360px; justify-items: stretch; gap: 10px; }
   .ph-ntf { width: 100%; }
   .ph-ntf:nth-child(2) { transform: translateX(-28px); animation-name: ph-in2; }
-  @keyframes ph-in2 { from { opacity: 0; transform: translate(-28px, -14px) scale(0.96); } to { transform: translateX(-28px); } }
+  @keyframes ph-in2 { from { opacity: 0; transform: translate(-28px, -12px) scale(0.95); } 60% { opacity: 1; } to { transform: translateX(-28px); } }
 }
 @media (prefers-reduced-motion: reduce) { .ph-ntf { animation: none; } .ph-btn, .ph-btn-ar { transition: none; } }
 
@@ -85,3 +85,77 @@
 
 /* the channels strip used to continue the old hero's lilac floor; give it its own top air */
 .lm.has-ph .lm-ch { padding-top: 28px; }
+
+/* ======================================================================================
+   Scroll motion (landing v9 Q, ea07f10), tuned: the photo shrinks into the real home screen.
+   Transform + opacity only; the frame (.ph-clip) is sized and rounded once by JS, then scaled.
+   ====================================================================================== */
+.ph-hero.is-scroll {
+  --ph-bar: 0px;
+  height: 190svh; min-height: 0; max-height: none; overflow: clip;
+  background: linear-gradient(180deg, #ffffff 0%, #f3f4ff 100%); color: var(--navy);
+}
+@media (min-width: 900px) { .ph-hero.is-scroll { height: 210svh; } }
+/* phones: the stage fills the large viewport so a collapsing URL bar never uncovers a strip under the
+   photo; bottom-anchored content keeps clear of the bar (lvh - svh = the bar's height) */
+.ph-stage { position: sticky; top: 0; height: 100svh; min-height: 560px; overflow: hidden; }
+@supports (height: 100lvh) {
+  .ph-stage { height: 100lvh; }
+  .ph-hero.is-scroll { --ph-bar: calc(100lvh - 100svh); }
+}
+.ph-hero.is-scroll .ph-in { position: absolute; inset: 0; z-index: 2; height: auto; pointer-events: none; color: #fff; }
+.ph-hero.is-scroll .ph-copy, .ph-hero.is-scroll .ph-ntfs { pointer-events: auto; }
+.ph-hero.is-scroll .ph-copy { bottom: calc(max(28px, 4svh) + var(--ph-bar)); }
+@media (min-width: 900px) {
+  .ph-hero.is-scroll .ph-copy { bottom: calc(clamp(48px, 11svh, 120px) + var(--ph-bar)); }
+  .ph-hero.is-scroll .ph-ntfs { bottom: calc(clamp(48px, 11svh, 120px) + var(--ph-bar)); }
+}
+.ph-copy.is-gone .ph-ctas, .ph-copy.is-gone .ph-note { visibility: hidden; }
+
+.ph-clip { position: absolute; inset: 0 auto auto 0; width: 100%; height: 100%; overflow: hidden; background: #1b2656; transform-origin: 0 0; backface-visibility: hidden; contain: layout paint; }
+.ph-clip .ph-photo { animation: ph-settle 1400ms var(--ph-ease) both; }
+.ph-clip .ph-photo img { inset: auto; right: auto; bottom: auto; transform-origin: 50% 50%; will-change: transform; }
+@keyframes ph-settle { from { transform: scale(1.045); } }
+.ph-hero.is-scroll .ph-clip { will-change: transform; }
+
+/* tighter, livelier arrival: 420 ms apart (was 650), a touch of lift */
+.ph-hero.is-scroll .ph-ntf { animation-duration: 680ms; animation-delay: calc(380ms + var(--i) * 420ms); }
+/* phones: no live backdrop blur under a moving photo (the most expensive pixel work on mobile GPUs) */
+@media (max-width: 899px) {
+  .ph-hero.is-scroll .ph-ntf { background: rgba(255, 255, 255, 0.94); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+.ph-end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 84px var(--gut) 20px; }
+.ph-end::before { content: ''; position: absolute; inset: 30% -10% -20%; background: radial-gradient(50% 50% at 50% 50%, rgba(62, 43, 241, 0.12), rgba(62, 43, 241, 0) 70%); pointer-events: none; }
+.ph-end-head { position: relative; text-align: center; opacity: 0; }
+.ph-end-h { margin: 0; font-size: clamp(26px, 3.4vw, 44px); line-height: 1.1; font-weight: 800; letter-spacing: -0.025em; color: var(--navy); }
+.ph-end-h span { color: var(--indigo); }
+.ph-end-sub { margin: 6px 0 0; font-size: 15px; color: var(--ink); }
+.ph-end-dev { position: relative; }
+.ph-end-dev .ph-dev { opacity: 0; }
+.ph-end-dev .ph-win { width: min(1180px, 90vw, calc((100svh - 250px) * 1.6)); }
+.ph-end-dev .ph-phone { --w: min(310px, 80vw, calc((100svh - 230px) * 0.462)); }
+
+/* real-screen frames (ea07f10 shared9 Browser / Phone) */
+.ph-win { border-radius: 18px; background: #fff; overflow: hidden; box-shadow: 0 0 0 1px rgba(27, 38, 86, 0.05), 0 2px 4px rgba(27, 38, 86, 0.04), 0 30px 60px -20px rgba(27, 38, 86, 0.22), 0 60px 120px -40px rgba(62, 43, 241, 0.25); }
+.ph-win-bar { height: 34px; display: flex; align-items: center; gap: 7px; padding: 0 14px; direction: ltr; background: #fbfbfd; border-bottom: 1px solid var(--line); }
+.ph-win-bar i { width: 10px; height: 10px; border-radius: 50%; background: #e3e5ee; }
+.ph-win-bar span { margin: 0 auto; transform: translateX(-28px); font-size: 12px; color: #5d6585; background: #f1f2f7; padding: 3px 14px; border-radius: 999px; }
+.ph-win-shot { position: relative; aspect-ratio: 1440 / 900; background: var(--canvas); }
+.ph-win-shot > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ph-phone {
+  --w: 300px; width: var(--w); aspect-ratio: 390 / 844; padding: calc(var(--w) * 0.035); border-radius: calc(var(--w) * 0.165); flex: none;
+  background: linear-gradient(145deg, #f4f5f9, #c9ccd8 45%, #eef0f5);
+  box-shadow: 0 0 0 1px rgba(27, 38, 86, 0.1), 0 2px 4px rgba(27, 38, 86, 0.06), 0 30px 60px -18px rgba(27, 38, 86, 0.32), 0 60px 100px -40px rgba(62, 43, 241, 0.3);
+}
+.ph-phone-scr { position: relative; width: 100%; height: 100%; border-radius: calc(var(--w) * 0.135); overflow: hidden; background: #eeeef6; border: calc(var(--w) * 0.012) solid #0b0d18; }
+.ph-phone-scr > img { position: absolute; inset: 5.57% 0 0; width: 100%; height: 94.43%; object-fit: cover; display: block; }
+.ph-phone-status { position: absolute; z-index: 3; inset: 0 0 auto; height: 5.57%; display: flex; align-items: center; justify-content: space-between; padding: 0 9% 0 10%; direction: ltr; font-size: calc(var(--w) * 0.045); font-weight: 700; color: #0b0d18; background: #eeeef6; }
+.ph-phone-island { position: absolute; top: 22%; left: 50%; width: 31%; height: 70%; transform: translateX(-50%); border-radius: 999px; background: #0b0d18; }
+.ph-phone-bat { width: 7.5%; height: 34%; border-radius: 3px; border: 1.5px solid #0b0d18; position: relative; }
+.ph-phone-bat::after { content: ''; position: absolute; inset: 1.5px 3px 1.5px 1.5px; border-radius: 1px; background: #0b0d18; }
+
+/* reduced motion: photo hero, then the home screen as its own section */
+.ph-static-end { display: grid; justify-items: center; gap: 20px; padding: 72px var(--gut) 24px; text-align: center; background: linear-gradient(180deg, #fff, #f3f4ff); }
+.ph-static-end .ph-win { width: min(1180px, 100%); }
+.ph-static-end .ph-phone { --w: min(310px, 80vw); }
