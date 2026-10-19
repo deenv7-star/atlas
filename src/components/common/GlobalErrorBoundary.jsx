@@ -51,7 +51,7 @@ class GlobalErrorBoundary extends React.Component {
                 אופס! משהו השתבש
               </h1>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                אירעה שגיאה בלתי צפויה במערכת. אנחנו עובדים על זה.
+                משהו השתבש בטעינת המסך. רעננו את העמוד, ואם זה חוזר, כתבו לנו.
               </p>
 
               {/* Error Details (Dev Mode) */}
@@ -108,7 +108,7 @@ class GlobalErrorBoundary extends React.Component {
 
             {/* Footer */}
             <p className="text-center text-xs text-gray-400 mt-6">
-              © 2026 ATLAS • אנחנו כאן בשבילך
+              © 2026 atlas • אנחנו כאן בשבילך
             </p>
           </div>
         </div>

@@ -29,8 +29,8 @@ test('zero technical jargon', () => {
   for (const re of banned) assert.ok(!re.test(text), `jargon ${re}`);
 });
 
-test('no promises ATLAS cannot keep, no invented numbers', () => {
-  const banned = [/מפיקה חשבונית/, /מפיקים? (?:ב|דרך )?ATLAS חשבונית/, /סליקה/, /גובה (?:מ|את)/, /גבייה/, /אוטומטית לגמרי/, /בלי לחיצה/, /נשלח(?:ות)? לבד/, /יוצאות לבד(?! ?\?)/, /לקוחות מרוצים/, /ביקורות/, /\d+%/, /\d+\s*שעות/, /בעלי צימרים כבר/, /אי אפשר לשמור/];
+test('no promises atlas cannot keep, no invented numbers', () => {
+  const banned = [/מפיקה חשבונית/, /מפיקים? (?:ב|דרך )?atlas חשבונית/, /סליקה/, /גובה (?:מ|את)/, /גבייה/, /אוטומטית לגמרי/, /בלי לחיצה/, /נשלח(?:ות)? לבד/, /יוצאות לבד(?! ?\?)/, /לקוחות מרוצים/, /ביקורות/, /\d+%/, /\d+\s*שעות/, /בעלי צימרים כבר/, /אי אפשר לשמור/];
   for (const re of banned) assert.ok(!re.test(answers), `claim ${re}`);
   // tax invoices: only ever said honestly (still issued in the owner's own software)
   if (/חשבונית מס/.test(answers)) assert.match(answers, /חשבונית מס רשמית עדיין מפיקים בתוכנת החשבוניות שלכם/);

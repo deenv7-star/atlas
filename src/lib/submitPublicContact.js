@@ -44,6 +44,6 @@ export function buildContactMailto({ name, email, phone, subject, message }) {
   const text = `שם: ${name}\nאימייל: ${email}\nטלפון: ${phone || '—'}\nנושא: ${subject || '—'}\n\n${message}`;
   // atlas-il.com has no inbound mail yet: without SUPPORT_EMAIL in src/config/legal.js, fall back to WhatsApp.
   if (!LEGAL.SUPPORT_EMAIL) return `${WHATSAPP_URL}?text=${encodeURIComponent(text)}`;
-  const subj = encodeURIComponent(`ATLAS: ${subject || 'פנייה מהאתר'}`);
+  const subj = encodeURIComponent(`atlas: ${subject || 'פנייה מהאתר'}`);
   return `mailto:${LEGAL.SUPPORT_EMAIL}?subject=${subj}&body=${encodeURIComponent(text)}`;
 }

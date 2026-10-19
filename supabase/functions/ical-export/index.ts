@@ -33,10 +33,10 @@ Deno.serve(async (req) => {
     .filter((b) => !channel || String(b.source || "").toLowerCase() !== channel)
     .map((b) => {
       const end = b.check_out_date && b.check_out_date > b.check_in_date ? b.check_out_date : addDaysISO(b.check_in_date, Math.max(1, Number(b.nights) || 1));
-      return { uid: `atlas-${b.id}@atlas-il.com`, start: b.check_in_date, end, summary: "ATLAS · תפוס" };
+      return { uid: `atlas-${b.id}@atlas-il.com`, start: b.check_in_date, end, summary: "atlas · תפוס" };
     });
 
-  const body = buildIcs({ name: `ATLAS · ${prop.name || "יחידה"}`, events });
+  const body = buildIcs({ name: `atlas · ${prop.name || "יחידה"}`, events });
   return new Response(body, {
     status: 200,
     headers: {

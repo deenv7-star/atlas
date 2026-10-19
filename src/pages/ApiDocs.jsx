@@ -81,7 +81,7 @@ export default function ApiDocs() {
             <Code2 className="w-5 h-5" />
             REST API
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">תיעוד API: ATLAS</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">תיעוד API: atlas</h1>
           <p className="text-ink-600 text-lg max-w-2xl leading-relaxed">
             ממשק REST מאובטח (JWT), מרובה־דיירים (tenant). כל הבקשות לנתיבי ישויות דורשות הרשאה ומסוננות לפי ארגון.
           </p>

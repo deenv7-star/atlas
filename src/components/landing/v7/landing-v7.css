@@ -66,7 +66,7 @@
 .l7-av { width: var(--s); height: var(--s); border-radius: 50%; object-fit: cover; display: block; box-shadow: 0 0 0 2px #fff; }
 .l7-ic { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; }
 .l7-ic.is-mint { background: var(--mint-50); color: var(--green); }
-.l7-ic.is-wa { background: #e7f9ee; }
+.l7-ic.is-wa { background: #fff; box-shadow: 0 0 0 1px var(--line); }
 .l7-ticks { color: #2a9df4; }
 .l7-stars { color: var(--indigo); gap: 1px !important; }
 .l7-stars .num { margin-inline-start: 6px; color: var(--navy); }

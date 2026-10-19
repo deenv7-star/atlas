@@ -161,7 +161,7 @@ export const translations = {
     
     // Landing page
     heroTitle: 'ניהול נכסים\nחכם ואוטומטי',
-    heroSubtitle: 'ATLAS מנהלת את הכל בשבילך - מלידים לתשלומים, מהזמנות לחוזים.\nאוטומציה חכמה שחוסכת לך 20+ שעות שבועיות.',
+    heroSubtitle: 'atlas מנהל את הכל בשבילכם - מלידים לתשלומים, מהזמנות לחוזים.\nאוטומציה שחוסכת לכם 20+ שעות בשבוע.',
     startTrial: 'התחל ניסיון',
     bookDemo: 'קבע דמו',
     problemTitle: 'היום זה נראה ככה',
@@ -172,7 +172,7 @@ export const translations = {
       'ניקיון שנופל בין הכיסאות',
       'שוכחים מקדמות/יתרות'
     ],
-    solutionTitle: 'ATLAS עושה סדר',
+    solutionTitle: 'atlas עושה סדר',
     solutionText: 'מערכת אחת שמרכזת את כל התפעול של הנכס שלך. מהליד הראשון ועד הביקורת האחרונה.',
     benefits: ['פחות פספוסים', 'פחות טעויות', 'יותר שליטה'],
     features: [
@@ -232,7 +232,7 @@ export const translations = {
       { q: 'כמה זמן לוקח להתחיל?', a: 'ההגדרה הראשונית לוקחת כ-10 דקות. תוכלו להתחיל לעבוד באותו היום.' }
     ],
     finalCta: 'מוכנים שהכל יזרום?',
-    tagline: 'הכל זורם. אתה רק מארח.',
+    tagline: 'אתם מארחים. atlas מסדר.',
     privacyPolicy: 'מדיניות פרטיות',
     termsOfService: 'תנאי שימוש',
     allRightsReserved: 'כל הזכויות שמורות',

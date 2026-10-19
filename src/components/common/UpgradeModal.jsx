@@ -59,7 +59,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
                   החבילה הנוכחית שלכם כוללת עד <span className="font-bold">{limit}</span> {entityName.plural}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
-                  כרגע יש לך <span className="font-bold">{currentCount}</span> {entityName.plural}
+                  כרגע יש לכם <span className="font-bold">{currentCount}</span> {entityName.plural}
                 </p>
               </div>
 

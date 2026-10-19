@@ -54,7 +54,7 @@ export default function PlatformAdmin() {
   if (!getToken()) {
     return (
       <div className="p-6 max-w-xl mx-auto" dir="rtl">
-        <p className="text-gray-600">יש להתחבר עם חשבון מנהל פלטפורמה.</p>
+        <p className="text-gray-600">צריך להתחבר עם חשבון מנהל פלטפורמה.</p>
       </div>
     );
   }

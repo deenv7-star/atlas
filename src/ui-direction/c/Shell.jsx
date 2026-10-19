@@ -31,7 +31,7 @@ function PlanCard() {
   const { daysLeft, isTrialing, isExpired, isLoading } = useSubscription();
   if (isLoading) return null;
   const trial = isTrialing || isExpired;
-  const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : 'ATLAS Pro';
+  const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : 'atlas Pro';
   const sub = trial ? 'בוחרים מסלול וממשיכים בלי הפסקה.' : 'כל הערוצים, התשלומים וההודעות במקום אחד.';
   const pct = isTrialing ? Math.max(6, Math.min(100, ((TRIAL_DAYS - (daysLeft || 0)) / TRIAL_DAYS) * 100)) : null;
   return (
@@ -86,7 +86,7 @@ export function Sidebar({ onLogout, user }) {
     <div className="h-full py-4 ps-4">
       <aside className="flex h-full w-[256px] flex-col rounded-[30px] bg-white shadow-[0_1px_2px_rgba(27,38,86,0.04),0_18px_48px_-18px_rgba(27,38,86,0.18)]" aria-label="ניווט ראשי">
         <div className="flex h-[78px] shrink-0 items-center px-6">
-          <Link to={createPageUrl('Dashboard')} aria-label="ATLAS, מסך היום" className="-mx-2 inline-flex h-11 items-center rounded-full px-2">
+          <Link to={createPageUrl('Dashboard')} aria-label="atlas, מסך היום" className="-mx-2 inline-flex h-11 items-center rounded-full px-2">
             <Wordmark size={22} />
           </Link>
         </div>

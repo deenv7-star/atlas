@@ -32,8 +32,9 @@ import './hero-photo.css';
 const P = '/landing-hero';
 const PORTRAIT = '(max-aspect-ratio: 2/3)';
 const set = (ext, list) => list.map(([f, w]) => `${P}/${f}.${ext} ${w}w`).join(', ');
-const PORT = [['pool-p480', 480], ['pool-p720', 720]];
-const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920]];
+const PORT = [['pool-p480', 480], ['pool-p720', 720], ['pool-p1080', 1080]];
+/* 4K source (Pexels 14546304, 4000x3000): sharp on 1920 DPR2 / 4K screens; phones stay on the portrait set (max 1080w, ~180KB AVIF) */
+const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['pool-2560', 2560], ['pool-3840', 3840]];
 
 const NTFS = [
   { ch: 'booking', title: 'הזמנה חדשה מ-Booking.com', sub: 'שירן ג. · הזית · 2 לילות', time: '08:12' },
@@ -150,7 +151,7 @@ function EndHead() {
   return (
     <>
       <h2 className="ph-end-h">בוקר טוב. <span>הכל כבר כאן.</span></h2>
-      <p className="ph-end-sub">ככה נראה מסך הבית של ATLAS כל בוקר. נתוני דוגמה.</p>
+      <p className="ph-end-sub">ככה נראה מסך הבית של atlas כל בוקר. נתוני דוגמה.</p>
     </>
   );
 }
@@ -162,13 +163,13 @@ function Device({ desk, shotRef }) {
       <div className="ph-win ph-dev">
         <div className="ph-win-bar" aria-hidden="true"><i /><i /><i /><span dir="ltr">app.atlas-il.com/today</span></div>
         <div className="ph-win-shot">
-          <img ref={shotRef} src={`${P}/ui-d-today.webp`} alt="מסך הבית של ATLAS, נתוני דוגמה" width="2400" height="1500" decoding="async" />
+          <img ref={shotRef} src={`${P}/ui-d-today.webp`} alt="מסך הבית של atlas, נתוני דוגמה" width="2400" height="1500" decoding="async" />
         </div>
       </div>
     );
   }
   return (
-    <div className="ph-phone ph-dev" role="img" aria-label="מסך הבית של ATLAS בטלפון, נתוני דוגמה">
+    <div className="ph-phone ph-dev" role="img" aria-label="מסך הבית של atlas בטלפון, נתוני דוגמה">
       <div className="ph-phone-scr">
         <span className="ph-phone-status" aria-hidden="true"><span className="num" dir="ltr">9:41</span><span className="ph-phone-island" /><i className="ph-phone-bat" /></span>
         <img ref={shotRef} src={`${P}/ui-m-today.webp`} alt="" width="780" height="1594" decoding="async" />
@@ -353,7 +354,7 @@ export default function HeroPhoto() {
             <Notifs />
           </div>
         </section>
-        <section id="product" className="ph-static-end" aria-label="מסך הבית של ATLAS">
+        <section id="product" className="ph-static-end" aria-label="מסך הבית של atlas">
           <EndHead />
           <div className="ph-static-dev"><Device desk={desk} /></div>
         </section>

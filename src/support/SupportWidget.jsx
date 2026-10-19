@@ -65,7 +65,7 @@ function Msg({ m, last, onLink, onFollow, onFeedback, onRetry }) {
     <div className={`sp-row sp-row--bot${agent ? ' sp-row--agent' : ''}`}>
       <div className="sp-who">
         {agent ? <span className="sp-av" aria-hidden>{initials(m.author_name || 'צוות')}</span> : <BotMark />}
-        <span>{agent ? `${m.author_name || 'נציג'} · צוות ATLAS` : 'העזרה של ATLAS'}</span>
+        <span>{agent ? `${m.author_name || 'נציג'} · צוות atlas` : 'העזרה של atlas'}</span>
       </div>
       <div className="sp-answer"><Markdown text={m.body} /></div>
       {m.links?.length ? (
@@ -268,8 +268,8 @@ export default function SupportWidget() {
                 <h2 id="sp-title">{view === 'history' ? 'שיחות קודמות' : 'עזרה'}</h2>
                 {view === 'chat' ? (
                   mode === 'human'
-                    ? <p className="sp-live"><i aria-hidden />נציג מצוות ATLAS בשיחה</p>
-                    : <p>תשובות מיידיות על ATLAS. נציג אנושי בלחיצה.</p>
+                    ? <p className="sp-live"><i aria-hidden />נציג מצוות atlas בשיחה</p>
+                    : <p>תשובות מיידיות על atlas. נציג אנושי בלחיצה.</p>
                 ) : null}
               </div>
               {view === 'chat' && SUPPORT_DB_READY ? (
@@ -300,7 +300,7 @@ export default function SupportWidget() {
               <span className="sp-hello-icon" aria-hidden><MessageCircle size={22} strokeWidth={1.75} /></span>
               <h3>העזרה בצ׳אט תיפתח בקרוב</h3>
               <p>בינתיים נשמח לעזור בוואטסאפ. בן אדם מהצוות עונה, בדרך כלל באותו יום.</p>
-              <a className="sp-primary" href={waSupportLink('שלום, אני צריך עזרה ב-ATLAS')} target="_blank" rel="noreferrer"><MessageCircle size={18} strokeWidth={1.75} aria-hidden />וואטסאפ {SUPPORT_WHATSAPP_DISPLAY}</a>
+              <a className="sp-primary" href={waSupportLink('שלום, אני צריך עזרה עם atlas')} target="_blank" rel="noreferrer"><MessageCircle size={18} strokeWidth={1.75} aria-hidden />וואטסאפ {SUPPORT_WHATSAPP_DISPLAY}</a>
             </div>
           ) : view === 'history' ? (
             <div className="sp-body">
@@ -325,7 +325,7 @@ export default function SupportWidget() {
                 <div className="sp-hello">
                   <p className="sp-hello-hi">{name ? `שלום ${name},` : 'שלום,'}</p>
                   <h3>במה אפשר לעזור?</h3>
-                  <p className="sp-hello-sub">אני מכיר כל מסך וכפתור ב-ATLAS. אם לא אדע, נציג מהצוות ימשיך מכאן.</p>
+                  <p className="sp-hello-sub">אני מכיר כל מסך וכפתור במערכת atlas. אם לא אדע, נציג מהצוות ימשיך מכאן.</p>
                   <ul className="sp-suggest" aria-label="שאלות נפוצות">
                     {suggestions.map((q) => (
                       <li key={q}><button type="button" onClick={() => send(q)}><span>{q}</span><ArrowUpLeft size={16} strokeWidth={1.75} aria-hidden /></button></li>
@@ -338,7 +338,7 @@ export default function SupportWidget() {
               ))}
               {typing ? (
                 <div className="sp-row sp-row--bot" aria-label="העזרה כותבת">
-                  <div className="sp-who"><BotMark /><span>העזרה של ATLAS</span></div>
+                  <div className="sp-who"><BotMark /><span>העזרה של atlas</span></div>
                   <div className="sp-typing" aria-hidden><i /><i /><i /></div>
                 </div>
               ) : null}

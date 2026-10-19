@@ -63,7 +63,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
       setReplyText('');
       toast({ title: 'וואטסאפ נפתח עם ההודעה', description: 'שלחו אותה בוואטסאפ. היא נשמרה בשיחה כאן.' });
     },
-    onError: () => toast({ title: 'שגיאה בשליחת ההודעה', variant: 'destructive' }),
+    onError: () => toast({ title: 'ההודעה לא נשלחה. בדקו את המספר ונסו שוב.', variant: 'destructive' }),
   });
 
   // Group messages by conversation (guest/booking)

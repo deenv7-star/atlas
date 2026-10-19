@@ -44,7 +44,7 @@ export function Header() {
   return (
     <header className="l5-hdr">
       <div className="l5-wrap l5-hdr-in">
-        <Link to="/" className="l5-logo" aria-label="ATLAS, לדף הבית"><Wordmark /></Link>
+        <Link to="/" className="l5-logo" aria-label="atlas, לדף הבית"><Wordmark /></Link>
         <nav className="l5-nav" aria-label="ניווט ראשי">
           <a href="#product">המוצר</a>
           <a href="#how">איך מתחילים</a>
@@ -74,7 +74,7 @@ export function Channels() {
   return (
     <section className="l5-channels" aria-labelledby="ch-title">
       <div className="l5-wrap l5-channels-in" data-reveal>
-        <p id="ch-title" className="l5-channels-t">מתחברת למה שאתם כבר עובדים איתו</p>
+        <p id="ch-title" className="l5-channels-t">עובד עם מה שכבר יש לכם</p>
         <ul className="l5-logos">
           {items.map(([k, n]) => (
             <li key={k} className={`l5-logo-${k}`}><Mark ch={k} size={22} /><span>{n}</span></li>
@@ -200,7 +200,7 @@ function Value() {
         <SectionHead id="value-title" title="השבוע שלכם, בלי העבודה השחורה." sub="אותו עסק, אותן הזמנות. רק בלי השעות שהולכות על ניהול." />
         <div className="l5-ba" data-reveal>
           <div className="l5-ba-col is-before">
-            <h3>בלי ATLAS</h3>
+            <h3>בלי atlas</h3>
             <ul>{BEFORE_AFTER.before.map((t) => <li key={t}><X size={16} strokeWidth={2} aria-hidden="true" />{t}</li>)}</ul>
           </div>
           <div className="l5-ba-col is-after">
@@ -327,26 +327,29 @@ export function FinalCta({ title }) {
 }
 
 export function Footer() {
+  const learn = FOOTER_GROUPS.find((g) => g.title === 'ללמוד');
+  const legal = FOOTER_GROUPS.find((g) => g.title === 'מידע משפטי');
   return (
-    <footer className="l5-ftr">
+    <footer className="l5-ftr l5-ftr-b">
       <div className="l5-wrap">
-        <div className="l5-ftr-grid">
-          <div className="l5-ftr-brand">
-            <Wordmark small />
-            <p>מערכת ניהול בעברית לצימרים, וילות ומתחמי נופש.</p>
-            <a className="l5-ftr-wa" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-              <Mark ch="whatsapp" size={18} /> <span>וואטסאפ <span dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</span></span>
-              <span className="sr-only"> (נפתח בוואטסאפ)</span>
-            </a>
-          </div>
-          {FOOTER_GROUPS.filter((g) => g.title !== 'מוצר').map((g) => (
-            <nav key={g.title} aria-label={g.title} className="l5-ftr-col">
-              <p className="l5-ftr-h">{g.title}</p>
-              <ul>{g.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}</ul>
-            </nav>
-          ))}
+        <div className="l5-ftr-b-top">
+          <Wordmark small />
+          <nav aria-label={learn.title} className="l5-ftr-b-row">
+            <ul>
+              {learn.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}
+              <li>
+                <a className="l5-ftr-wa" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                  <Mark ch="whatsapp" size={16} /> <span>וואטסאפ <span dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</span></span>
+                  <span className="sr-only"> (נפתח בוואטסאפ)</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
-        <p className="l5-ftr-copy">© {new Date().getFullYear()} ATLAS · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
+        <nav aria-label={legal.title} className="l5-ftr-b-legal">
+          <ul>{legal.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}</ul>
+        </nav>
+        <p className="l5-ftr-copy">© {new Date().getFullYear()} atlas · נבנה בישראל{BUSINESS_LINE ? ` · מופעל על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>
   );

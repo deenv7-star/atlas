@@ -185,7 +185,7 @@ export default function TourView({ step, idx, total, rect, ready, reduced, voice
         <div className="tb-head">
           <Guide speaking={speaking} />
           <span className="tb-who">
-            <span className="tb-name">המדריך של ATLAS</span>
+            <span className="tb-name">המדריך של atlas</span>
             <span className="tb-count">שלב {idx + 1} מתוך {total}</span>
           </span>
           <button type="button" className="tb-x" onClick={onSkip} aria-label={last ? 'סגירת הסיור' : 'דילוג על הסיור'}>

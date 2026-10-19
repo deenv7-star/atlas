@@ -44,7 +44,7 @@ export default function Register() {
       <div className="min-h-[100dvh] bg-white lg:grid lg:grid-cols-[minmax(440px,1fr)_minmax(0,1.15fr)]" dir="rtl">
         <main className="flex min-h-[100dvh] flex-col px-5 pb-8 pt-[max(18px,env(safe-area-inset-top))] sm:px-10 lg:px-14 xl:px-20">
           <header className="flex h-12 items-center justify-between">
-            <Link to="/" aria-label="ATLAS, לדף הבית" className="inline-flex h-11 items-center"><Wordmark size={20} /></Link>
+            <Link to="/" aria-label="atlas, לדף הבית" className="inline-flex h-11 items-center"><Wordmark size={20} /></Link>
             <p className="text-[14px] text-ink-600">
               כבר רשומים? <Link to="/login" className="inline-flex h-11 min-w-11 items-center justify-center px-1 font-bold text-brand-600 hover:underline">כניסה</Link>
             </p>

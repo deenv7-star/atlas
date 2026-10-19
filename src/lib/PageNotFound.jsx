@@ -8,7 +8,7 @@ export default function PageNotFound() {
   const { isAuthenticated } = useAuth();
   useEffect(() => {
     // Signal to crawlers this is a real 404, not indexable content
-    document.title = 'הדף לא נמצא | ATLAS';
+    document.title = 'הדף לא נמצא | atlas';
     const meta = document.createElement('meta');
     meta.name = 'robots';
     meta.content = 'noindex, nofollow';
@@ -20,7 +20,7 @@ export default function PageNotFound() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-canvas" dir="rtl">
       <header className="flex h-16 items-center px-5 md:px-10">
-        <Link to="/" className="inline-flex min-h-[44px] items-center gap-1 text-[20px] font-extrabold tracking-[0.02em] text-navy-900" aria-label="ATLAS, לעמוד הראשי">
+        <Link to="/" className="inline-flex min-h-[44px] items-center gap-1 text-[20px] font-extrabold tracking-[0.02em] text-navy-900" aria-label="atlas, לעמוד הראשי">
           <BrandWordmark size={20} />
         </Link>
       </header>

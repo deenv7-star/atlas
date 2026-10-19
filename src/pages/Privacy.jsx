@@ -86,7 +86,7 @@ export default function Privacy() {
               <li>התנגדות: להתנגד לעיבוד למטרות שיווק</li>
             </ul>
             <p className="mt-3">
-              למימוש זכויותיכם, אנא צרו קשר בכתובת atlas-il.com/contact. נענה בתוך 30 יום.
+              למימוש זכויותיכם, צרו קשר בכתובת atlas-il.com/contact. נענה בתוך 30 יום.
             </p>
           </section>
 
@@ -114,7 +114,7 @@ export default function Privacy() {
 
       <footer className="py-8 px-4 border-t bg-white mt-12">
         <div className="max-w-4xl mx-auto text-center text-gray-500 text-sm">
-          © {new Date().getFullYear()} ATLAS. כל הזכויות שמורות.
+          © {new Date().getFullYear()} atlas. כל הזכויות שמורות.
         </div>
       </footer>
     </div>

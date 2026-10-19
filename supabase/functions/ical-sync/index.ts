@@ -155,7 +155,7 @@ async function syncOne(db: SupabaseClient, s: SyncRow) {
     result.ok = true;
     await db.from("calendar_syncs").update({
       last_attempt_at: startedAt, last_sync_at: new Date().toISOString(), last_success_at: new Date().toISOString(),
-      sync_status: s.sync_status === "PAUSED" ? "PAUSED" : "ACTIVE", error_message: conflicts.length ? `${conflicts.length} התנגשויות: תאריכים שתפוסים כבר ביומן ATLAS` : null,
+      sync_status: s.sync_status === "PAUSED" ? "PAUSED" : "ACTIVE", error_message: conflicts.length ? `${conflicts.length} התנגשויות: תאריכים שתפוסים כבר ביומן atlas` : null,
       events_count: events.length, conflicts,
     }).eq("id", s.id);
   } catch (e) {

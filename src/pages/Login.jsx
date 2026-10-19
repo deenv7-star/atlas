@@ -92,13 +92,13 @@ export default function Login() {
         if (msg.includes('invalid') || msg.includes('credentials')) {
           setErrors({ credentials: 'אימייל או סיסמה שגויים' });
         } else if (msg.includes('email not confirmed')) {
-          atlasToastApi.error('יש לאמת את כתובת האימייל תחילה. בדקו את תיבת הדואר.');
+          atlasToastApi.error('עוד צעד קטן: שלחנו לכם מייל. לחצו על הקישור שבו ותיכנסו.');
         } else if (err?.status === 404 || msg.includes('http 404')) {
           atlasToastApi.error(
             'השרת לא זמין כרגע. נסו שוב בעוד כמה דקות.'
           );
         } else {
-          atlasToastApi.error(err.message || 'אירעה שגיאה. נסו שוב.');
+          atlasToastApi.error(err.message || 'לא הצלחנו להכניס אתכם. נסו שוב בעוד רגע.');
         }
       }
     } finally {

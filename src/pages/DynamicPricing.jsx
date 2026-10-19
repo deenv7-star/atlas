@@ -123,7 +123,7 @@ export default function DynamicPricing() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader title="תמחור חגים וסופ״ש" subtitle="מחיר בסיס, סוף שבוע וחגים. ATLAS מציעה מחיר לכל לילה לפי הלוח העברי וההזמנות שלכם." className="!mb-0" />
+      <PageHeader title="תמחור חגים וסופ״ש" subtitle="מחיר בסיס, סוף שבוע וחגים. atlas מציעה מחיר לכל לילה לפי הלוח העברי וההזמנות שלכם." className="!mb-0" />
 
       {properties.length === 0 ? (
         <Card className="p-6 text-center"><p className="text-[16px] font-semibold text-navy-900">עוד אין יחידות</p><p className="mt-1 text-[14px] text-ink-400">הוסיפו יחידה כדי לקבוע לה מחירים.</p></Card>
@@ -214,7 +214,7 @@ export default function DynamicPricing() {
               )}
               <p className="mt-4 flex gap-2 text-[12px] leading-relaxed text-ink-400">
                 <CalendarDays className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-                אלה הצעות. ATLAS עוד לא משנה מחירים ב-Airbnb או ב-Booking, כי סנכרון יומנים מעביר רק תאריכים. עדכנו את המחיר בערוץ, והשתמשו בו בהצעות מחיר ללידים.
+                אלה הצעות. atlas עוד לא משנה מחירים ב-Airbnb או ב-Booking, כי סנכרון יומנים מעביר רק תאריכים. עדכנו את המחיר בערוץ, והשתמשו בו בהצעות מחיר ללידים.
               </p>
             </Card>
           </div>

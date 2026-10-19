@@ -127,7 +127,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Payment.delete(id),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['payments'] }); toast({ title: 'התשלום נמחק' }); },
-    onError: () => toast({ title: 'שגיאה במחיקת התשלום', variant: 'destructive' }),
+    onError: () => toast({ title: 'לא הצלחנו למחוק את התשלום. נסו שוב.', variant: 'destructive' }),
   });
 
   const stats = useMemo(() => ({

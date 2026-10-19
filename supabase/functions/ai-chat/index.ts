@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
   if (!prompt.trim()) return json({ error: "empty_prompt" }, 400);
   const model = ALLOWED_MODELS.has(String(body.model)) ? String(body.model) : "gpt-4o-mini";
   const messages = [
-    { role: "system", content: String(body.system || "אתה העוזר של ATLAS, מערכת ניהול לצימרים ומתחמי נופש בישראל. ענה בעברית פשוטה, קצרה ומעשית.").slice(0, 2000) },
+    { role: "system", content: String(body.system || "אתה העוזר של atlas, מערכת ניהול לצימרים ומתחמי נופש בישראל. ענה בעברית פשוטה, קצרה ומעשית, ופנה לבעלים ברבים (אתם).").slice(0, 2000) },
     { role: "user", content: prompt },
   ];
   const res = await fetch("https://api.openai.com/v1/chat/completions", {

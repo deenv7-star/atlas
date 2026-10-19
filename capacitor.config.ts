@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'il.co.atlas.app',
-  appName: 'ATLAS',
+  appName: 'atlas',
   webDir: 'dist',
   server: {
     androidScheme: 'https'

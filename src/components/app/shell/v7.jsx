@@ -180,7 +180,7 @@ export function TabBar({ user, onLogout }) {
 export function PlanCard({ compact = false }) {
   const { daysLeft, isTrialing, isExpired, isLoading, plan } = useSubscription();
   if (isLoading) return null;
-  const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : `ATLAS ${getPlanByKey(plan).nameHe}`;
+  const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : `atlas ${getPlanByKey(plan).nameHe}`;
   const sub = isTrialing || isExpired ? 'בוחרים מסלול וממשיכים בלי הפסקה.' : 'ערוצים, תשלומים והודעות במקום אחד.';
   if (compact) {
     return (

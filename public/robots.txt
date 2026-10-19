@@ -1,4 +1,4 @@
-# ATLAS: public pages are open to every crawler, including AI assistants (GPTBot, ClaudeBot,
+# atlas: public pages are open to every crawler, including AI assistants (GPTBot, ClaudeBot,
 # PerplexityBot, Google-Extended). App screens behind login are not useful to index.
 User-agent: *
 Allow: /

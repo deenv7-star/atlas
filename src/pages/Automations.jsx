@@ -29,7 +29,7 @@ function runnable(rule) {
 
 const SAMPLE = {
   booking: { guest_name: 'נועה לוי', check_in_date: addDays(todayISO(), 7), check_out_date: addDays(todayISO(), 9), guest_token: 'example' },
-  property: { name: 'הצימר שלכם', guest_info: { check_in_time: '15:00', check_out_time: '11:00', wifi_name: 'Atlas-Guest' } },
+  property: { name: 'הצימר שלכם', guest_info: { check_in_time: '15:00', check_out_time: '11:00', wifi_name: 'atlas-guest' } },
 };
 
 function StepCard({ step, rule, onSave, busy, respectShabbat }) {
@@ -151,13 +151,13 @@ export default function AutomationsPage({ orgId }) {
     <div className="mx-auto w-full max-w-[960px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader
         title="מסע האורח"
-        subtitle="ATLAS מכינה כל הודעה בזמן הנכון, ואתם שולחים בלחיצה מלוח היום."
+        subtitle="atlas מכין כל הודעה בזמן הנכון, ואתם שולחים בלחיצה מלוח היום."
         className="!mb-0"
         actions={!allOn ? <Button className="h-11" onClick={turnAllOn} disabled={busy}>הפעלת כל המסע</Button> : null}
       />
 
       {!DB_FEATURES.realCore ? (
-        <Card className="p-5"><p className="text-[14px] text-ink-600">מנוע האוטומציות רץ בשרת של ATLAS, ולכן הוא פועל בחשבון מחובר ולא במצב ההדגמה.</p></Card>
+        <Card className="p-5"><p className="text-[14px] text-ink-600">ההודעות האוטומטיות יעבדו אחרי שתתחברו לחשבון. בהדגמה רק רואים איך זה נראה.</p></Card>
       ) : null}
 
       <Card className="flex items-center gap-3 p-5 md:px-6">
@@ -176,7 +176,7 @@ export default function AutomationsPage({ orgId }) {
       <Card className="p-5 md:px-6">
         <p className="text-[15px] font-bold text-navy-900">איך זה נשלח היום</p>
         <p className="mt-1 text-[14px] leading-relaxed text-ink-600">
-          כל 15 דקות ATLAS בודקת את ההזמנות ומכינה את ההודעות שהגיע זמנן. הן מחכות ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link> תחת "לשלוח עכשיו": לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח, ואחרי השליחה ההודעה מסומנת כנשלחה.
+          כל 15 דקות atlas בודקת את ההזמנות ומכינה את ההודעות שהגיע זמנן. הן מחכות ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link> תחת "לשלוח עכשיו": לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח, ואחרי השליחה ההודעה מסומנת כנשלחה.
           שליחה אוטומטית לגמרי, בלי לחיצה, תגיע עם חיבור WhatsApp Business API.
         </p>
       </Card>

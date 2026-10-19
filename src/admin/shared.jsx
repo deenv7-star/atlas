@@ -169,7 +169,7 @@ export function TeamAddForm({ className = '' }) {
       }}
     >
       <label className="adm-field adm-team-email">
-        <span>אימייל של משתמש ATLAS קיים</span>
+        <span>אימייל של משתמש atlas קיים</span>
         <input className="adm-input" type="email" dir="ltr" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" disabled={disabled} />
       </label>
       <label className="adm-field">

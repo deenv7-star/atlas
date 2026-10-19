@@ -27,14 +27,14 @@ import './faq-m.css';
 import HeroPhoto from './HeroPhoto';
 import TrustB from './TrustB';
 
-const NAV = [['#features', 'המוצר'], ['#facts', 'למה ATLAS'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
+const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
 /* ---------------- channels strip ---------------- */
 function Channels() {
   return (
-    <section className="lm-ch" aria-label="עובדת עם">
+    <section className="lm-ch" aria-label="עובד עם">
       <div className="l5-wrap lm-ch-in">
-        <p>מתחברת למה שכבר עובד אצלכם</p>
+        <p>עובד עם מה שכבר יש לכם</p>
         <ul>
           <li><Mark ch="airbnb" size={20} />Airbnb</li>
           <li><Mark ch="booking" size={20} />Booking.com</li>
@@ -89,10 +89,10 @@ function Blocks() {
         I={CalendarDays}
         kicker="לוח שנה"
         title={<>כל הערוצים. לוח אחד.</>}
-        text="Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח, ומתעדכנות כל 15 דקות. הזמנה שחופפת לתאריך תפוס פשוט לא נשמרת. בלי כפל הזמנות ובלי אקסל."
+        text="Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח, ומתעדכנות כל 15 דקות. תאריך תפוס נשאר תפוס. בלי כפל הזמנות, בלי אקסל."
       >
         <div className="lm-v lm-v-cal">
-          <img className="lm-ui is-cal" src={`${UI}/c-cal.webp`} alt="לוח השנה של ATLAS: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
+          <img className="lm-ui is-cal" src={`${UI}/c-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
           <figure className="lm-ph is-friends"><img src={`${PH}/m-friends.webp`} alt="" width="1400" height="933" loading="lazy" decoding="async" /></figure>
           <div className="lm-chip is-a"><Chip av={FACES.maya.src} ch="airbnb" title="הזמנה מ-Airbnb נכנסה ללוח" sub="מאיה כ. · 3 לילות · התאנה" /></div>
           <div className="lm-chip is-b"><span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />התאריכים נחסמו ב-Booking.com</span></div>
@@ -109,7 +109,7 @@ function Blocks() {
         points={['אישור מיד אחרי ההזמנה', 'הוראות הגעה יום לפני', 'תזכורת ליתרה, בלי מבוכה']}
       >
         <div className="lm-v lm-v-msg">
-          <img className="lm-ui is-msg" src={`${UI}/c-messages.webp`} alt="מסך ההודעות של ATLAS: שיחת וואטסאפ עם אורחים (נתוני דוגמה)" width="1800" height="1125" loading="lazy" decoding="async" />
+          <img className="lm-ui is-msg" src={`${UI}/c-messages.webp`} alt="מסך ההודעות של atlas: שיחת וואטסאפ עם אורחים (נתוני דוגמה)" width="1800" height="1125" loading="lazy" decoding="async" />
           <figure className="lm-ph is-tub"><img src={`${PH}/m-tub.webp`} alt="" width="1400" height="933" loading="lazy" decoding="async" /></figure>
           <div className="lm-chip is-c">
             <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר שלכם. קוד לדלת: 2419. נסיעה טובה!" time="18:00" />
@@ -123,7 +123,7 @@ function Blocks() {
         I={Wallet}
         kicker="תשלומים"
         title={<>הכסף נכנס. אתם רואים הכל.</>}
-        text="כל מקדמה ויתרה במעקב, תזכורת ליתרה בוואטסאפ בלחיצה, ותמונה אחת של מה נכנס החודש. אתם מקבלים כמו היום, ואנחנו לא שוכחים אף שקל."
+        text="כל מקדמה ויתרה במעקב, תזכורת ליתרה בוואטסאפ בלחיצה, ותמונה אחת של מה נכנס החודש. הכסף נכנס כמו תמיד, וכל מקדמה ויתרה נשמרות."
       >
         <div className="lm-v lm-v-pay">
           <img className="lm-ui is-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
@@ -195,8 +195,8 @@ function Final() {
           <div className="lm-x-faces" aria-hidden="true">
             {['noa', 'tom', 'maya', 'yossi'].map((k, i) => <Face key={k} f={FACES[k]} size={64} className={`lm-x-face is-${i + 1}`} />)}
           </div>
-          <h2 id="final-title" className="lm-x-h" data-reveal>הבמה מוכנה.<br />האורחים בדרך.</h2>
-          <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים ערוצים תוך 10 דקות, ו-ATLAS מתחילה לעבוד.</p>
+          <h2 id="final-title" className="lm-x-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
+          <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים את Booking ו-Airbnb ב-10 דקות, והלוח מתחיל להתמלא.</p>
           <div data-reveal><CtaLinks /></div>
           <div className="lm-x-shot" aria-hidden="true">
             <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="lazy" decoding="async" />

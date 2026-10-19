@@ -50,7 +50,7 @@ export function FaceStack({ keys, size = 34, className = '' }) {
 }
 
 /** WhatsApp bubble card: the real message text the demo app sends (example guest). */
-export function WaBubble({ who = 'משפחת לוי', text = 'שלום משפחת לוי, ההזמנה שלכם בצימר הזית מאושרת ל-16-19 באוקטובר. נשמח לראותכם!', time = '09:00', className = '', style }) {
+export function WaBubble({ who = 'משפחת לוי', text = 'שלום משפחת לוי, ההזמנה שלכם בצימר הזית מאושרת: יום ו׳ 16 באוק׳ עד יום ב׳ 19 באוק׳. מחכים לכם, צימרי הזית', time = '09:00', className = '', style }) {
   return (
     <div className={`v8-wa ${className}`} style={style}>
       <p className="v8-wa-top"><span className="v8-wa-ic"><Mark ch="whatsapp" size={15} /></span><b>{who}</b><small>וואטסאפ</small></p>
@@ -154,5 +154,5 @@ export function CtaLinks() {
 }
 
 export function Credits8() {
-  return <p className="v8-credits">צילומים: Pexels (רישיון חופשי). המסכים הם מסכי ATLAS אמיתיים עם נתוני דוגמה.</p>;
+  return <p className="v8-credits">צילומים: Pexels (רישיון חופשי). המסכים הם מסכי atlas אמיתיים עם נתוני דוגמה.</p>;
 }
