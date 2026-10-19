@@ -80,11 +80,12 @@ function Bot({ children, delay = 0 }) {
 function Shell({ variant, title, kicker, intro = [], onBack, children, footer, step }) {
   return (
     <div className="mx-auto flex min-h-[100dvh] w-full max-w-[640px] flex-col">
-      <header className="ob2-top sticky top-0 z-20 flex items-center gap-2 bg-[var(--ob2-canvas)]/90 px-4 pb-2 backdrop-blur md:px-6">
+      <header className="ob2-head"><div className="mx-auto flex w-full max-w-[640px] items-center gap-2 px-4 pb-3 md:px-6">
         {onBack ? <Ghost onClick={onBack} aria-label="חזרה לרשימה" className="!h-12 !w-12 !px-0"><ArrowRight className="h-6 w-6" aria-hidden /></Ghost> : <span className="flex h-12 items-center ps-1"><Wordmark size={20} /></span>}
         <span className="flex-1 truncate text-center text-[15px] font-semibold text-ink-600">{kicker}</span>
         <HelpLink compact />
-      </header>
+      </div></header>
+      <div className="ob2-head-space" aria-hidden />
       <main className="flex-1 px-5 pb-[calc(170px+env(safe-area-inset-bottom))] pt-3 md:px-6">
         {variant === 'b' ? (
           <div className="flex flex-col gap-2.5">
