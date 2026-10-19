@@ -82,6 +82,7 @@ export function CompareTable() {
 export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2' }) {
   const [yearly, setYearly] = useState(false);
   const first = PRICING_PLANS[0];
+  const PlanH = H === 'h1' ? 'h2' : 'h3'; // one level under the section title (no skipped level on /pricing, where it is the h1)
   return (
     <section id="pricing" className={`v8p v8pa ${tone}`} aria-labelledby="pricing-title">
       <div className="l5-wrap">
@@ -99,7 +100,7 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
             return (
               <li key={p.key} className={`v8p-plan${p.popular ? ' is-pop' : ''}`} aria-label={`${p.nameHe}, ${p.limit}`}>
                 <div className="v8p-top">
-                  <h3>{p.nameHe}</h3>
+                  <PlanH>{p.nameHe}</PlanH>
                   {p.popular && <span className="v8p-tag">מומלץ</span>}
                 </div>
                 <p className="v8p-limit">{p.limit}</p>

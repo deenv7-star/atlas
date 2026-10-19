@@ -74,9 +74,9 @@
 .v8p-plans { display: grid; gap: 14px; max-width: 1120px; margin-inline: auto; align-items: stretch; }
 .v8p-plan { position: relative; display: flex; flex-direction: column; padding: 28px 24px; border-radius: 28px; background: #fff; box-shadow: inset 0 0 0 1px var(--line), var(--sh-1); }
 .v8p-plan.is-pop { background: var(--indigo); color: #fff; box-shadow: 0 30px 60px -28px rgba(62, 43, 241, 0.7); }
-.v8p-plan.is-pop h3 { color: #fff; }
+.v8p-plan.is-pop :is(h2, h3) { color: #fff; }
 .v8p-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.v8p-plan h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.v8p-plan :is(h2, h3) { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
 .v8p-tag { display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.16); font-size: 13px; font-weight: 700; color: #fff; }
 .v8p-desc { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
 .v8p-plan.is-pop .v8p-desc { color: rgba(255, 255, 255, 0.85); }

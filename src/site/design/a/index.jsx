@@ -25,7 +25,7 @@ function Header() {
       <div className="a-wrap a-hdr-in">
         <Link to="/" className="a-logo" aria-label="ATLAS, לדף הבית"><Wordmark /></Link>
         <nav className="a-nav" aria-label="ניווט ראשי">
-          <Link to="/blog">בלוג</Link>
+          <Link to="/blog" className="a-hide-xs">בלוג</Link>
           <Link to="/pricing">מחירים</Link>
           <Link to="/about" className="a-hide-sm">אודות</Link>
           <Link to="/login" className="a-hide-sm">כניסה</Link>

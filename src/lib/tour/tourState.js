@@ -87,8 +87,12 @@ export async function setTourState(user, patch) {
   return next;
 }
 
-/** Called when onboarding finishes: the tour opens on the first visit to the app. */
-export function markTourPending(user) {
+/** Called when onboarding finishes: the tour opens on the first visit to the app.
+ *  Only the first time: someone who already finished or skipped the tour and goes through
+ *  onboarding again (/onboarding?again=1) is not shown it again (it stays in Settings). */
+export async function markTourPending(user) {
+  const st = await getTourState(user);
+  if (st?.status === 'done' || st?.status === 'skipped') return st;
   return setTourState(user, { status: 'pending', step: 0 });
 }
 
