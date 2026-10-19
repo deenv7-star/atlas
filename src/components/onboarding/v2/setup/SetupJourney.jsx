@@ -89,6 +89,7 @@ function Shell({ variant, title, kicker, intro = [], onBack, children, footer, s
       <main className="flex-1 px-5 pb-[calc(170px+env(safe-area-inset-bottom))] pt-3 md:px-6">
         {variant === 'b' ? (
           <div className="flex flex-col gap-2.5">
+            <h1 className="sr-only">{title}</h1>
             {[title, ...intro].filter(Boolean).map((t, i) => <Bot key={i} delay={i * 0.12}>{i === 0 ? <strong className="font-extrabold">{t}</strong> : t}</Bot>)}
           </div>
         ) : (
