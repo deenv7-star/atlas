@@ -1,0 +1,65 @@
+/* Pricing monthly/yearly motion, version A "odometer" (19.10.2026). Only transform, opacity and
+   clip-path animate. Nothing here changes a box size on toggle, so the toggle causes no layout shift. */
+
+/* ---- toggle: sliding indigo pill (clip-path reveal of a white-on-indigo copy of the labels) ---- */
+.v8p-seg { position: relative; isolation: isolate; }
+.v8p-seg-hi {
+  position: absolute; inset: 0; z-index: 1; display: flex; padding: 4px; border-radius: 999px;
+  background: var(--indigo, #3e2bf1); color: #fff; pointer-events: none; opacity: 0;
+  transition: clip-path 380ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.v8p-seg-hi > span {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px;
+  font-size: 15px; font-weight: 700; white-space: nowrap;
+}
+.v8p-seg button { white-space: nowrap; }
+.v8p-seg.is-live .v8p-seg-hi { opacity: 1; }
+.v8p-seg.is-live button[aria-pressed='true'] { background: transparent; color: var(--ink); }
+.v8p-seg button:focus-visible { outline: 2px solid var(--indigo, #3e2bf1); outline-offset: 2px; position: relative; z-index: 2; }
+
+/* ---- price: ghost keeps width + baseline, rolling digits sit on top ---- */
+.v8p-num { position: relative; display: inline-block; font-variant-numeric: tabular-nums; }
+.v8p-ghost { visibility: hidden; }
+.v8p-roll { position: absolute; inset-inline-start: 0; top: -0.1em; display: flex; direction: ltr; }
+.v8p-cur, .v8p-sep, .v8p-col, .v8p-strip > span { display: block; height: 1.2em; line-height: 1.2em; }
+.v8p-col {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+.v8p-strip {
+  display: block; transform: translateY(calc(var(--d) * -10%));
+  transition: transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i) * 45ms);
+  will-change: transform;
+}
+
+/* ---- billing line under the price: both states share one grid cell, so its size never changes ---- */
+.v8p .v8p-price { margin-bottom: 6px; }
+.v8p-bill { display: grid; margin: 0 0 22px; font-size: 14px; line-height: 28px; color: var(--ink-2); }
+.v8p-plan.is-pop .v8p-bill { color: rgba(255, 255, 255, 0.85); }
+.v8p-bill > span { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: opacity 200ms var(--ease-out, ease-out), visibility 0s linear 200ms; }
+.v8p-bill-y { opacity: 0; visibility: hidden; }
+.v8p.is-yearly .v8p-bill-m { opacity: 0; visibility: hidden; }
+.v8p.is-yearly .v8p-bill-y { opacity: 1; visibility: visible; transition: opacity 220ms var(--ease-out, ease-out) 80ms, visibility 0s; }
+.v8p-save {
+  display: inline-block; height: 26px; line-height: 26px; padding: 0 10px; border-radius: 999px;
+  background: var(--indigo-50, #f1effe); color: var(--indigo, #3e2bf1); font-size: 13px; font-weight: 800;
+  transform: scale(0.6); opacity: 0;
+  transition: transform 180ms ease-in, opacity 140ms ease-in;
+}
+.v8p-plan.is-pop .v8p-save { background: #fff; color: var(--indigo, #3e2bf1); }
+.v8p.is-yearly .v8p-save {
+  transform: none; opacity: 1;
+  transition: transform 460ms cubic-bezier(0.34, 1.56, 0.64, 1) 220ms, opacity 200ms ease-out 220ms;
+}
+@media (max-width: 899px) { .v8p-bill { margin-bottom: 18px; } }
+@media (max-width: 359px) { .v8p-bill > span { gap: 6px; } .v8p-save { padding: 0 8px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .v8p-seg-hi, .v8p-strip, .v8p-bill > span, .v8p-save,
+  .v8p.is-yearly .v8p-bill-y, .v8p.is-yearly .v8p-save { transition: none !important; }
+}
+
+/* the legacy ".v8p-price span" rule (label style) must not reach the digits */
+.v8p .v8p-plan .v8p-price .v8p-num span { font-size: inherit; color: inherit; }
