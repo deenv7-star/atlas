@@ -35,7 +35,8 @@ export function heroGeometry(st, s, im, fr, desk) {
 
 /**
  * Inline script placed right after the hero section's HTML: frames the photo exactly as heroGeometry does,
- * before the first paint of the prerendered page. Never runs on a client render (React does not execute
+ * and sets the progress-0 transforms HeroPhoto writes first (same layers, same rasterization), before the
+ * first paint of the prerendered page. Never runs on a client render (React does not execute
  * scripts it creates), and does nothing for reduced motion (the static hero has no frame).
  */
-export const heroGeometryScript = `(function(g){try{var s=document.currentScript,h=s&&s.previousElementSibling;if(!h||!h.classList.contains('is-scroll')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;var d=matchMedia('(min-width: 900px)').matches,st=h.querySelector('.ph-stage'),fr=h.querySelector('.ph-clip'),im=fr&&fr.querySelector('img'),sh=h.querySelector(d?'.ph-win-shot img':'.ph-phone-scr img');if(st&&fr&&im&&sh)g(st,sh,im,fr,d)}catch(e){}})(${heroGeometry.toString()})`;
+export const heroGeometryScript = `(function(g){try{var s=document.currentScript,h=s&&s.previousElementSibling;if(!h||!h.classList.contains('is-scroll')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;var d=matchMedia('(min-width: 900px)').matches,st=h.querySelector('.ph-stage'),fr=h.querySelector('.ph-clip'),im=fr&&fr.querySelector('img'),sh=h.querySelector(d?'.ph-win-shot img':'.ph-phone-scr img');if(st&&fr&&im&&sh){g(st,sh,im,fr,d);fr.style.transform='translate3d(0px, 0px, 0px) scale(1, 1)';im.style.transform='scale(1, 1)'}}catch(e){}})(${heroGeometry.toString()})`;

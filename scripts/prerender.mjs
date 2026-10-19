@@ -211,9 +211,7 @@ const LANDING_OG = `${ORIGIN}/og-image.png?v=5`;
 function readManifest() {
   const file = path.join(DIST, '.vite', 'manifest.json');
   if (!fs.existsSync(file)) throw new Error('dist/.vite/manifest.json missing (vite.config.js build.manifest)');
-  const manifest = JSON.parse(fs.readFileSync(file, 'utf8'));
-  fs.rmSync(path.join(DIST, '.vite'), { recursive: true, force: true }); // build-time only, not deployed
-  return manifest;
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
 /**
@@ -249,7 +247,7 @@ function assetLinks({ css, js }) {
    fade in on scroll exactly as before instead of showing and then hiding; without JS they stay visible. */
 const REVEAL_NOSCRIPT = '<noscript><style>.l5.l4-reveal-on [data-reveal]{opacity:1;transform:none}</style></noscript>';
 function withRevealOn(html) {
-  const out = html.replace(/^(<div class="l5 l7 v8 lm)/, '$1 l4-reveal-on');
+  const out = html.replace(/^((?:<!--[$]-->)*<div class="l5 l7 v8 lm)/, '$1 l4-reveal-on');
   if (out === html) throw new Error('lean page root not found (expected <div class="l5 l7 v8 lm …">)');
   return out;
 }
@@ -288,6 +286,7 @@ function prerenderLean(mod, template, index) {
     fs.mkdirSync(path.join(DIST, route.slice(1)), { recursive: true });
     fs.writeFileSync(path.join(DIST, route.slice(1), 'index.html'), headFor(template, appMeta(mod, route)));
   }
+  fs.rmSync(path.join(DIST, '.vite'), { recursive: true, force: true }); // build-time only, not deployed
   log('lean pages: / and /pricing prerendered (hydrated); app.html shell; /register, /login heads');
 }
 
