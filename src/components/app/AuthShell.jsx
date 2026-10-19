@@ -94,7 +94,7 @@ export default function AuthShell({ children, caption = 'כל הצימר שלכ�
       </main>
 
       {/* product side (left in RTL), desktop only */}
-      <aside aria-label="תצוגה של ATLAS" className="relative hidden p-4 lg:block">
+      <aside aria-label="תצוגה של atlas" className="relative hidden p-4 lg:block">
         <div className="sticky top-4 h-[calc(100dvh-32px)]">
           <ProductPreview caption={caption} />
         </div>
