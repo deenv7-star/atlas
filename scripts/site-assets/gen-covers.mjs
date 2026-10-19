@@ -121,6 +121,79 @@ const M = {
     <div style="position:absolute;left:150px;top:150px;width:230px;height:230px;border-radius:50%;border:6px solid #3E2BF1;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-8deg);background:#fff;box-shadow:0 24px 48px -16px rgba(27,38,86,.22)">
       <div class="m" style="font-size:20px">פריט</div><div class="t" style="font-size:64px;color:#3E2BF1;line-height:1">7.1ב</div><div class="m" style="font-size:18px">רישוי עסקים</div></div>
     <div class="chip" style="left:110px;bottom:90px"><span class="dot"></span>יותר מ-4 יחידות אירוח</div>`,
+  // 19.10.2026 posts: strict palette only (indigo #3E2BF1, navy #1B2656, white, canvas)
+  'zimmer-management-software-comparison': `
+    <div class="card" style="right:70px;top:70px;width:640px">
+      <div class="t" style="font-size:26px;margin-bottom:8px">השוואה לפי מה שהספק מציג</div>
+      ${[['מחיר מפורסם', '✓', '·', '✓'], ['Booking.com ו-Airbnb', '✓', '✓', '✓'], ['סליקה', '✓', '✓', '✕'], ['חשבוניות', '✓', '✓', '✕']].map(([a, x, y, z]) => `<div class="row"><span>${a}</span><span class="t" style="display:flex;gap:34px;direction:ltr"><span>${x}</span><span>${y}</span><span style="color:#3E2BF1">${z}</span></span></div>`).join('')}
+    </div>
+    <div class="chip ind" style="left:90px;top:150px">גילוי נאות: אנחנו ספק</div>
+    <div class="chip" style="left:120px;top:260px">8 מערכות · אוקטובר 2026</div>`,
+  'free-zimmer-management-software': `
+    <div class="card" style="right:80px;top:80px;width:520px">
+      <div class="t" style="font-size:26px;margin-bottom:6px">מה אפשר בחינם</div>
+      ${['גיליון Google Sheets', 'יומן Google לכל יחידה', 'הלוח של Booking.com', 'הלוח של Airbnb'].map((t) => `<div class="ck"><b></b>${t}</div>`).join('')}
+      ${['התראה על הזמנה כפולה', 'מקדמות ויתרות'].map((t) => `<div class="ck o"><b></b>${t}</div>`).join('')}
+    </div>
+    <div class="chip ind" style="left:110px;top:170px">₪0 לחודש</div>
+    <div class="chip" style="left:90px;top:280px">14 ימי ניסיון</div>`,
+  'zimmer-booking-calendar': `
+    <div class="card" style="right:70px;top:80px;width:660px">
+      <div class="t" style="font-size:26px">יומן הזמנות · נובמבר</div>
+      ${['סוויטת הזית', 'סוויטת האלון', 'הבקתה'].map((u, r) => `<div style="display:flex;align-items:center;gap:12px;margin-top:16px"><span style="width:150px;font-size:20px">${u}</span><div style="flex:1;display:grid;grid-template-columns:repeat(10,1fr);gap:6px">${Array.from({ length: 10 }, (_, i) => `<span style="height:34px;border-radius:8px;background:${(r === 0 && i > 1 && i < 4) || (r === 1 && i > 0 && i < 3) || (r === 2 && i > 5 && i < 9) ? (r === 1 ? '#1B2656' : '#3E2BF1') : '#F1F2F7'}"></span>`).join('')}</div></div>`).join('')}
+    </div>
+    <div class="chip" style="left:120px;bottom:120px">כניסה · יציאה · מקדמה · יתרה</div>`,
+  'zimmer-advertising': `
+    <div class="card" style="right:80px;top:70px;width:520px">
+      <div class="t" style="font-size:26px;margin-bottom:6px">מאיפה הגיעו ההזמנות</div>
+      ${[['Booking.com', 46], ['Airbnb', 28], ['אתר צימרים', 14], ['גוגל וחוזרים', 12]].map(([a, w], i) => `<div style="font-size:21px;margin-top:14px">${a}<div style="height:14px;border-radius:7px;background:#F1F2F7;margin-top:6px"><div style="height:14px;border-radius:7px;background:${i % 2 ? '#1B2656' : '#3E2BF1'};width:${w * 2}%"></div></div></div>`).join('')}
+    </div>
+    <div class="chip ind" style="left:110px;top:170px">פרסום בחינם</div>
+    <div class="chip" style="left:90px;top:280px">עלות לכל הזמנה</div>`,
+  'zimmer-cancellation-policy': `
+    <div class="card" style="right:80px;top:70px;width:560px">
+      <div class="t" style="font-size:26px;margin-bottom:6px">מדיניות ביטול</div>
+      ${[['14 יום מההזמנה, 7+ ימים לפני', '5% או ₪100'], ['עד 14 יום לפני ההגעה', '₪100'], ['13 עד 3 ימים לפני', '50%'], ['פחות מ-3 ימים', '100%']].map(([a, b], i) => `<div class="row"><span>${a}</span><span class="t" style="${i === 0 ? 'color:#3E2BF1' : ''}">${b}</span></div>`).join('')}
+    </div>
+    <div class="chip ind" style="left:110px;top:170px">חוק הגנת הצרכן</div>
+    <div class="chip" style="left:90px;top:280px">נוסח לדוגמה</div>`,
+  'zimmer-receipts-digital': `
+    <div class="card" style="right:110px;top:60px;width:440px;height:560px;padding:32px">
+      <div class="t" style="font-size:28px">קבלה מס' 0148</div><div class="m" style="font-size:19px;margin-top:4px">מסמך ממוחשב</div>
+      ${[['משפחת לוי', ''], ['מקדמה לאירוח', '‏₪800'], ['אמצעי תשלום', 'העברה'], ['תאריך', '19.10.2026']].map(([a, b]) => `<div class="row"><span>${a}</span><span class="t">${b}</span></div>`).join('')}
+      <div style="margin-top:22px;height:52px;border-radius:12px;background:#1B2656;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px">חתימה אלקטרונית</div>
+    </div>
+    <div class="chip ind" style="left:120px;top:170px">עוסק פטור: קבלה</div>
+    <div class="chip" style="left:90px;top:280px">מספר הקצאה מעל ₪5,000</div>`,
+  'zimmer-insurance': `
+    <div class="card" style="right:90px;top:70px;width:500px">
+      <div class="t" style="font-size:26px;margin-bottom:6px">מה הפוליסה מכסה</div>
+      ${['מבנה ותכולה', 'צד שלישי ואורחים', 'ג׳קוזי ובריכה', 'אובדן הכנסות'].map((t) => `<div class="ck"><b></b>${t}</div>`).join('')}
+      <div class="ck o"><b></b>ביטוח דירה רגיל</div>
+    </div>
+    <div style="position:absolute;left:150px;top:150px;width:240px;height:270px;border-radius:120px 120px 40px 40px;background:#3E2BF1;display:flex;align-items:center;justify-content:center;box-shadow:0 24px 48px -16px rgba(27,38,86,.3)"><div style="width:110px;height:56px;border:solid #fff;border-width:0 12px 12px 0;transform:rotate(45deg) translate(-10px,-20px);width:60px;height:110px"></div></div>`,
+  'channel-manager-zimmer': `
+    <div class="card" style="right:440px;top:230px;width:320px;text-align:center"><div class="t" style="font-size:28px">Channel Manager</div><div class="m" style="font-size:19px;margin-top:6px">מחירים וזמינות</div></div>
+    <div class="chip ind" style="right:120px;top:90px;direction:ltr">Booking.com</div>
+    <div class="chip ind" style="right:120px;top:300px;direction:ltr">Airbnb</div>
+    <div class="chip ind" style="right:120px;top:510px;direction:ltr">Expedia</div>
+    <div class="chip" style="left:90px;top:300px">iCal מול API</div>
+    <div style="position:absolute;right:330px;top:130px;width:110px;height:400px;border:4px solid #1B2656;border-left:0;border-radius:0 24px 24px 0;opacity:.35"></div>`,
+  'remote-zimmer-management': `
+    <div class="card" style="right:100px;top:60px;width:340px;height:560px;padding:28px;text-align:center">
+      <div class="m" style="font-size:20px">קוד לדלת</div><div class="t" style="font-size:72px;letter-spacing:8px;color:#3E2BF1;direction:ltr;margin-top:10px">2419</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:26px">${Array.from({ length: 9 }, (_, i) => `<span style="height:62px;border-radius:14px;background:#F1F2F7;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:26px;direction:ltr">${i + 1}</span>`).join('')}</div>
+    </div>
+    <div class="card" style="left:80px;top:150px;width:460px">
+      ${['כניסה עצמית', 'ניקיון מתואם', 'הודעות לאורחים', 'איש קשר מקומי'].map((t) => `<div class="ck"><b></b>${t}</div>`).join('')}
+    </div>`,
+  'zimmer-build-cost-profitability': `
+    <div class="card" style="right:70px;top:70px;width:560px">
+      <div class="t" style="font-size:26px;margin-bottom:6px">שנה ראשונה · דוגמה</div>
+      ${[['100 לילות × ‏₪1,100', '‏₪110,000'], ['עמלות וניקיון', '−‏₪23,500'], ['אנרגיה, ארנונה, ביטוח', '−‏₪21,000'], ['פרסום ומערכת', '−‏₪6,000'], ['לפני מס', '‏₪59,500']].map(([a, b], i) => `<div class="row"><span>${a}</span><span class="t" style="${i === 4 ? 'color:#3E2BF1;font-size:28px' : ''}">${b}</span></div>`).join('')}
+    </div>
+    <div class="chip ind" style="left:100px;top:170px">‏₪3,000 עד ₪4,500 למ״ר</div>
+    <div class="chip" style="left:120px;top:280px">תפוסת מיטות 15.6%</div>`,
 };
 
 function ogHtml(title, kicker) {
@@ -148,11 +221,13 @@ async function shot(html, h, out, fmt) {
   console.log('wrote', path.relative(ROOT, out));
 }
 
+const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null;
 for (const p of POSTS) {
+  if (ONLY && !ONLY.includes(p.slug)) continue;
   if (!M[p.slug]) { console.warn('no motif for', p.slug); continue; }
   await shot(`<div class="stage"><div class="grid"></div>${M[p.slug]}</div>`, 675, path.join(ROOT, `public/blog/covers/${p.slug}.webp`), 'webp');
   await shot(ogHtml(p.title, 'בלוג atlas'), 630, path.join(ROOT, `public/og/blog-${p.slug}.png`), 'png');
 }
-await shot(ogHtml('מדריכים מעשיים לבעלי צימרים ומתחמי נופש', 'בלוג atlas'), 630, path.join(ROOT, 'public/og/og-blog.png'), 'png');
-await shot(ogHtml('מערכת ניהול בעברית לצימרים ומתחמי נופש', 'לוח אחד לכל הערוצים · וואטסאפ לאורחים · מקדמות ויתרות'), 630, path.join(ROOT, 'public/og/og-default.png'), 'png');
+if (!ONLY) await shot(ogHtml('מדריכים מעשיים לבעלי צימרים ומתחמי נופש', 'בלוג atlas'), 630, path.join(ROOT, 'public/og/og-blog.png'), 'png');
+if (!ONLY) await shot(ogHtml('מערכת ניהול בעברית לצימרים ומתחמי נופש', 'לוח אחד לכל הערוצים · וואטסאפ לאורחים · מקדמות ויתרות'), 630, path.join(ROOT, 'public/og/og-default.png'), 'png');
 await browser.close();
