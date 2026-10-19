@@ -21,7 +21,7 @@ export default function PlanPick({ value = 'trial', onChange, compact = false })
             {trialOn ? <Check className="h-4 w-4" strokeWidth={3} /> : null}
           </span>
           <span className="text-[19px] font-extrabold">{TRIAL_DAYS} יום ניסיון חינם</span>
-          <span className={cn('ms-auto rounded-full px-2.5 py-1 text-[12px] font-bold', trialOn ? 'bg-white/20 text-white' : 'bg-[#E4E1FD] text-brand-700')}>מומלץ להתחלה</span>
+          {!compact ? <span className={cn('ms-auto whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-bold', trialOn ? 'bg-white/20 text-white' : 'bg-[#E4E1FD] text-brand-700')}>מומלץ להתחלה</span> : null}
         </span>
         <span className={cn('ps-9 text-[15px] leading-snug', trialOn ? 'text-white/90' : 'text-ink-600')}>כל המערכת, בלי כרטיס אשראי. {CANCEL_LINE}</span>
       </button>

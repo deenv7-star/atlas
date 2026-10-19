@@ -107,7 +107,6 @@ export default function ChatB({ user, again = false }) {
   const [dockH, setDockH] = useState(200);
   const dock = useRef(null);
   const dockInner = useRef(null);
-  const end = useRef(null);
   const still = useReducedMotion();
   const i = Math.max(0, Math.min(QUESTIONS.length - 1, Number(a.step) || 0));
   const q = QUESTIONS[i];
@@ -124,7 +123,8 @@ export default function ChatB({ user, again = false }) {
   // the dock can't be reached (tap or keyboard) while the question is still being "typed"
   useEffect(() => { if (dockInner.current) dockInner.current.inert = !ready; }, [ready, q]);
   useEffect(() => {
-    const t = setTimeout(() => end.current?.scrollIntoView({ block: 'end', behavior: still ? 'auto' : 'smooth' }), 60);
+    // keep the newest line just above the answer dock
+    const t = setTimeout(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: still ? 'auto' : 'smooth' }), 60);
     return () => clearTimeout(t);
   }, [i, ready, dockH, custom, more]);
 
@@ -292,13 +292,14 @@ export default function ChatB({ user, again = false }) {
   return (
     <MotionConfig reducedMotion="user">
       <div className="ob2 flex flex-col" dir="rtl">
-        <header className="ob2-top sticky top-0 z-20 bg-[var(--ob2-canvas)]/90 backdrop-blur">
+        <header className="ob2-head">
           <div className="mx-auto flex w-full max-w-[680px] items-center gap-3 px-4 pb-3 md:px-6">
             <span className="flex h-12 items-center ps-1"><Wordmark size={20} /></span>
             <Progress value={i} total={QUESTIONS.length} label={`שאלה ${i + 1} מתוך ${QUESTIONS.length}`} />
             <HelpLink compact />
           </div>
         </header>
+        <div className="ob2-head-space" aria-hidden />
 
         <main className="mx-auto w-full max-w-[680px] flex-1 px-4 pt-2 md:px-6" style={{ paddingBottom: dockH + 24 }} aria-live="polite">
           <ol className="flex flex-col gap-5" aria-label="השיחה">
@@ -322,7 +323,6 @@ export default function ChatB({ user, again = false }) {
               ) : null}
             </li>
           </ol>
-          <div ref={end} />
         </main>
 
         <footer ref={dock} className="ob2-bar !pt-3" aria-label="התשובה שלך">
