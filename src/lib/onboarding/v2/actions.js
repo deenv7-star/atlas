@@ -18,6 +18,8 @@ import { base44 } from '@/api/base44Client';
 import { isSupabaseConfigured } from '@/api/supabaseClient';
 import { readOrgSettings, writeOrgSettings, setActiveOrg } from '@/lib/onboarding/orgSettings';
 import { finishOnboarding } from '@/lib/onboarding/store';
+import { DB_FEATURES } from '@/config/dbFeatures';
+import { callEdge } from '@/lib/real/edge';
 import { unitRow, unitProfile, clampInt, UNITS_LIMIT, defaultAnswers } from './model';
 
 const DRAFT = (uid) => `atlas.onboarding.v2.${uid || 'local'}`;
@@ -144,9 +146,14 @@ export async function markSetup(orgId, id, how /* 'done' | 'skipped' | 'todo' */
 export async function saveCalendarLink(provider, propertyId, url, existing = []) {
   const link = String(url || '').trim();
   if (existing.some((s) => s.provider === provider && s.property_id === propertyId && s.ical_url === link)) return null;
-  return base44.entities.CalendarSync.create({
+  const created = await base44.entities.CalendarSync.create({
     provider, property_id: propertyId, ical_url: link, is_active: true, sync_status: 'ACTIVE', sync_direction: 'IMPORT',
   });
+  // same as Integrations: pull the bookings right away (server real core); the 15-minute job takes over after
+  if (DB_FEATURES.realCore && created?.id) {
+    try { await callEdge('ical-sync', { sync_id: created.id }); } catch { /* the scheduled sync will retry */ }
+  }
+  return created;
 }
 
 export async function saveWhatsApp(orgId, phone, hostName) {
