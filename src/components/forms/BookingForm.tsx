@@ -196,7 +196,7 @@ export function BookingForm({
                           field.onChange(o.v);
                         }}
                         className={
-                          'press inline-flex h-10 items-center justify-center gap-1.5 rounded-[9px] text-[14px] font-medium ' +
+                          'press inline-flex h-11 items-center justify-center gap-1.5 rounded-[9px] text-[14px] font-medium ' +
                           (on ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.1)]' : 'text-ink-600')
                         }
                       >

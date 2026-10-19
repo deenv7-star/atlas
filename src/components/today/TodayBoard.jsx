@@ -33,6 +33,7 @@ import { SegmentedControl, SkelLine, DeltaPill, CardArrow } from '@/components/d
 import { cn } from '@/lib/utils';
 import { heCount } from '@/lib/hebrewCount';
 import SetupResumeCard from '@/components/today/SetupResumeCard';
+import PwaOffer from '@/components/pwa/PwaOffer';
 
 const HHMM = /^([01]?\d|2[0-3]):([0-5]\d)/;
 /** "15:00" from a booking/property time field ("15:00", "15:00:00", "1500"); '' when unusable. */
@@ -592,6 +593,7 @@ export default function TodayBoard({ user, orgId }) {
     <div className="mx-auto w-full max-w-[var(--page-max,1200px)] px-5 pb-16 pt-2 md:px-10 md:pt-3" dir="rtl">
       <h1 className="sr-only">היום</h1>
       <SetupResumeCard user={user} />
+      <PwaOffer user={user} />
       {data.isError ? (
         <div className="v7-card mt-4 p-6">
           <p className="text-[15px] font-semibold text-navy-900">לא הצלחנו לטעון את היום</p>

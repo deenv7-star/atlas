@@ -32,7 +32,11 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         globPatterns: ['**/*.{js,css,woff2}'],
-        globIgnores: ['**/registerSW.js'],
+        globIgnores: ['**/registerSW.js', '**/push-sw.js'],
+        // Push notifications (new booking / lead): public/push-sw.js adds ONLY push + notificationclick +
+        // pushsubscriptionchange listeners to this same worker. No fetch handler, no cache: the landing and
+        // every page load exactly as before. Kept as its own file so it can be reviewed / removed on its own.
+        importScripts: ['/push-sw.js'],
         // Cache API calls for offline fallback
         runtimeCaching: [
           {
