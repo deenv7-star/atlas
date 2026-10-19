@@ -20,7 +20,6 @@ const STEP_MS = 1150;
 
 export function buildSteps(a) {
   const n = clampInt(a.unitCount, 1, UNITS_LIMIT);
-  const k = kindInfo(a.kind);
   const links = linkList(a);
   const names = Array.from(new Set(links.map((l) => (l.provider === 'AIRBNB' ? 'Airbnb' : 'Booking.com'))));
   return [
