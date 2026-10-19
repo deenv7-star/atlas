@@ -11,7 +11,10 @@ import { Check, ChevronDown, MessageCircle, MapPin, ShieldCheck } from 'lucide-r
 import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE } from '@/config/pricing';
 import { fmt } from '../v5/motion';
 import { SignupButton } from '../v5/LandingV5';
+import { BillingToggle8 } from './pricing/BillingToggle8';
+import { PriceNumber } from './pricing/PriceTween8';
 import './pricing8.css';
+import './pricing/pricing-motion.css';
 
 const TRUST = [
   { I: MessageCircle, t: 'תמיכה בעברית, בוואטסאפ' },
@@ -20,12 +23,28 @@ const TRUST = [
 ];
 
 function Price({ p, yearly }) {
+  const save = (p.price - p.priceYearly) * 12;
   return (
-    <p className="v8p-price">
-      <b className="num" dir="ltr">₪{fmt(yearly ? p.priceYearly : p.price)}</b>
-      <span>לחודש{yearly ? ', בחיוב שנתי' : ''}</span>
-    </p>
+    <>
+      <p className="v8p-price">
+        <PriceNumber value={yearly ? p.priceYearly : p.price} />
+        <span>לחודש</span>
+      </p>
+      <p className="v8p-bill">
+        <span className="v8p-bill-m" aria-hidden={yearly}>בחיוב חודשי</span>
+        <span className="v8p-bill-y" aria-hidden={!yearly}>
+          בחיוב שנתי
+          <span className="v8p-save">חוסכים <bdi dir="ltr">₪{fmt(save)}</bdi> בשנה</span>
+        </span>
+      </p>
+    </>
   );
+}
+
+/** One polite announcement per toggle with the final prices (never per animation frame, never on load). */
+function announcement(yearly) {
+  const list = PRICING_PLANS.map((p) => `${p.nameHe} ₪${fmt(yearly ? p.priceYearly : p.price)} לחודש`).join(', ');
+  return `${yearly ? 'מחירים בחיוב שנתי' : 'מחירים בחיוב חודשי'}: ${list}`;
 }
 
 function FeatList({ items }) {
@@ -80,20 +99,24 @@ export function CompareTable() {
 }
 
 export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2' }) {
-  const [yearly, setYearly] = useState(false);
+  const [yearly, setYearlyState] = useState(false);
+  const [said, setSaid] = useState('');
+  const setYearly = (y) => {
+    if (y === yearly) return;
+    setYearlyState(y);
+    setSaid(announcement(y));
+  };
   const first = PRICING_PLANS[0];
   const PlanH = H === 'h1' ? 'h2' : 'h3'; // one level under the section title (no skipped level on /pricing, where it is the h1)
   return (
-    <section id="pricing" className={`v8p v8pa ${tone}`} aria-labelledby="pricing-title">
+    <section id="pricing" className={`v8p v8pa${yearly ? ' is-yearly' : ''} ${tone}`} aria-labelledby="pricing-title">
       <div className="l5-wrap">
         <div className="v8-head is-center" data-reveal>
           <H id="pricing-title" className="v8-h2">{title}</H>
           <p className="v8-txt">כל החבילות כוללות את כל המערכת. ההבדל הוא רק במספר המתחמים.</p>
         </div>
-        <div className="v8p-seg" role="group" aria-label="תקופת חיוב" data-reveal>
-          <button type="button" aria-pressed={!yearly} onClick={() => setYearly(false)}>חודשי</button>
-          <button type="button" aria-pressed={yearly} onClick={() => setYearly(true)}>שנתי · חוסכים 20%</button>
-        </div>
+        <BillingToggle8 yearly={yearly} onChange={setYearly} />
+        <p className="sr-only" aria-live="polite" aria-atomic="true">{said}</p>
         <ul className="v8p-plans" data-reveal>
           {PRICING_PLANS.map((p, i) => {
             const prev = PRICING_PLANS[i - 1];
