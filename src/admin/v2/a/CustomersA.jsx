@@ -73,7 +73,7 @@ export function CustomersA() {
           <table className="xa-table">
             <thead>
               <tr>
-                <th scope="col" className="xa-c-check"><input type="checkbox" checked={list.allOnPage} onChange={list.togglePage} aria-label="בחירת כל הלקוחות בעמוד" /></th>
+                <th scope="col" className="xa-c-check"><label className="x-hit"><input type="checkbox" checked={list.allOnPage} onChange={list.togglePage} aria-label="בחירת כל הלקוחות בעמוד" /></label></th>
                 <SortTh k="org_name" list={list} className="xa-c-name" />
                 <th scope="col">סטטוס</th>
                 <th scope="col">חבילה</th>
@@ -90,7 +90,7 @@ export function CustomersA() {
                 const sel = list.selected.includes(c.org_id);
                 return (
                   <tr key={c.org_id} data-selected={sel || undefined} data-open={list.openId === c.org_id || undefined}>
-                    <td className="xa-c-check"><input type="checkbox" checked={sel} onChange={() => list.toggle(c.org_id)} aria-label={`בחירת ${displayName(c)}`} /></td>
+                    <td className="xa-c-check"><label className="x-hit"><input type="checkbox" checked={sel} onChange={() => list.toggle(c.org_id)} aria-label={`בחירת ${displayName(c)}`} /></label></td>
                     <td className="xa-c-name">
                       <button type="button" className="xa-open" onClick={() => list.open(c.org_id)}>
                         <span className="x-av" aria-hidden>{initials(displayName(c))}</span>

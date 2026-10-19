@@ -70,7 +70,7 @@ export function CustomersB() {
             const mv = ['active', 'past_due'].includes(c.status) ? monthlyValue(c, plans) : null;
             return (
               <li key={c.org_id} className="xb-card" data-selected={sel || undefined}>
-                <input type="checkbox" className="xb-check" checked={sel} onChange={() => list.toggle(c.org_id)} aria-label={`בחירת ${displayName(c)}`} />
+                <label className="x-hit xb-check-hit"><input type="checkbox" className="xb-check" checked={sel} onChange={() => list.toggle(c.org_id)} aria-label={`בחירת ${displayName(c)}`} /></label>
                 <Link to={`/admin/customers/${c.org_id}`} className="xb-card-link">
                   <span className="xb-card-top">
                     <span className="x-av x-av--lg" aria-hidden>{initials(displayName(c))}</span>

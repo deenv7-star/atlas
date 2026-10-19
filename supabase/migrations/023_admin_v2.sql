@@ -31,7 +31,7 @@ REVOKE ALL ON public.platform_org_flags FROM PUBLIC, anon, authenticated;
 -- Same rule as the UI (src/admin/v2/testAccounts.js). Keep the two in sync.
 CREATE OR REPLACE FUNCTION public.admin_is_test_pattern(p_email TEXT, p_name TEXT)
 RETURNS BOOLEAN LANGUAGE sql IMMUTABLE AS $$
-  SELECT COALESCE(lower(p_email), '') ~ '(^qa[+._-]|^test[+._-]|[+]test|[+]qa|[+]scout|^roast[+]|@gonogo\.team$|@example\.(com|org|net)$|@mailinator\.|@demo-atlas\.co\.il$|\.invalid$|\.test$)'
+  SELECT COALESCE(lower(p_email), '') ~ '(^qa[+._-]|^test[+._-]|[+]test|[+]qa|[+]scout|^roast[+]|@gonogo\.team$|@example\.(com|org|net)$|@mailinator\.|\.invalid$|\.test$)'
       OR COALESCE(lower(p_name), '') ~ '(^qa |^qa$| qa org$|^test |בדיקה)';
 $$;
 

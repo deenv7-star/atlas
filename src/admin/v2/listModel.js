@@ -8,6 +8,9 @@ export const DEFAULT_FILTERS = { q: '', status: 'all', plan: 'all', signup: 'any
 
 export const SIGNUP = { any: 'כל זמן', '7': '7 ימים', '30': '30 יום', '90': '90 יום', older: 'לפני יותר מ-90 יום' };
 export const ACTIVE = { any: 'כל פעילות', '1': 'היום', '7': 'השבוע', '30': '30 יום', stale: 'לא פעילים 30+ יום', never: 'לא נכנסו מעולם' };
+/* Object keys like '7' are integer-like and JS lists them first, so the menu order lives here. */
+export const SIGNUP_ORDER = ['any', '7', '30', '90', 'older'];
+export const ACTIVE_ORDER = ['any', '1', '7', '30', 'stale', 'never'];
 export const UNITS = { any: 'יחידות: הכל', yes: 'עם יחידות', no: 'בלי יחידות' };
 export const TESTS = { hide: 'בלי חשבונות בדיקה', show: 'כולל בדיקה', only: 'רק בדיקה' };
 
