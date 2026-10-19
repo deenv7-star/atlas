@@ -8,12 +8,13 @@ import { ArrowLeft } from 'lucide-react';
 import { loadSetupFacts } from '@/lib/onboarding/v2/actions';
 import { setupStatus, setupProgress } from '@/lib/onboarding/v2/model';
 import { Ring } from '@/components/onboarding/v2/ui';
-import { readOrgSettings } from '@/lib/onboarding/orgSettings';
+import { readOrgSettings, writeOrgSettings } from '@/lib/onboarding/orgSettings';
 
 export default function SetupResumeCard({ user }) {
   // started is known synchronously (settings on this device), so the card's space is held while the
   // account is read: no layout shift on /today.
-  const started = !!readOrgSettings(user?.organization_id).setup?.started_at;
+  const s0 = readOrgSettings(user?.organization_id).setup;
+  const started = !!s0?.started_at && !s0?.complete;
   const [prog, setProg] = useState(started ? 'loading' : null);
   useEffect(() => {
     let alive = true;
@@ -22,6 +23,7 @@ export default function SetupResumeCard({ user }) {
       if (!alive) return;
       if (!f.setup?.started_at) { setProg(null); return; }
       const p = setupProgress(setupStatus(f));
+      if (p.complete && !f.setup.complete) writeOrgSettings(f.orgId, { setup: { ...f.setup, complete: true } }).catch(() => {});
       setProg(p.complete ? null : p);
     }).catch(() => { if (alive) setProg(null); });
     return () => { alive = false; };

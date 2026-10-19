@@ -20,6 +20,7 @@ import { GUIDES, GuidePic } from './guides';
 import {
   setupStatus, setupProgress, checkIcalLink, waLink, phoneValid, PRICE_MODES, kindInfo, normalizeGuests,
 } from '@/lib/onboarding/v2/model';
+import { writeOrgSettings } from '@/lib/onboarding/orgSettings';
 import { loadSetupFacts, markSetup, saveCalendarLink, saveWhatsApp, saveUnit, unitView } from '@/lib/onboarding/v2/actions';
 
 const EASE = [0.23, 1, 0.32, 1];
@@ -37,6 +38,12 @@ export default function SetupJourney({ user, variant = 'a' }) {
 
   const steps = useMemo(() => (facts ? setupStatus(facts) : []), [facts]);
   const prog = setupProgress(steps);
+  // remember "all done" so /today doesn't hold space for the resume card on the next visit
+  useEffect(() => {
+    if (facts?.setup && !!prog.complete !== !!facts.setup.complete) {
+      writeOrgSettings(facts.orgId, { setup: { ...facts.setup, complete: !!prog.complete } }).catch(() => {});
+    }
+  }, [facts, prog.complete]);
   const open = (id) => { setParams(id ? { step: id } : {}, { replace: false }); window.scrollTo({ top: 0 }); };
   const back = (msg = '') => { setFlash(msg); open(''); };
 
