@@ -75,7 +75,7 @@ export default function BuildMoment({ user, answers: a, onSetup, onApp, tone = '
           </div>
 
           <div className="order-2 flex flex-col lg:order-1 lg:w-[460px] lg:shrink-0">
-            <p className="text-[15px] font-bold text-brand-600" aria-live="polite">{done ? 'הכל מוכן' : tone === 'b' ? 'רגע, אני בונה…' : 'בונים לך את המערכת'}</p>
+            <p className="text-[15px] font-bold text-brand-600" aria-live="polite">{done ? 'הכל מוכן' : tone === 'b' ? 'רגע, בונה לך…' : 'בונים לך את המערכת'}</p>
             <h1 className="mt-1 text-[28px] font-extrabold leading-[1.12] tracking-[-0.02em] text-navy-900 md:text-[40px]">
               {done ? <>{name}<br />מוכן להתחלה</> : 'משהו טוב מתחיל כאן'}
             </h1>
