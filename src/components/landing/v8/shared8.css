@@ -4,10 +4,11 @@
 
 .v8 {
   /* Section surfaces (brand: white / canvas #F7F8FB only, no sky / lilac / mint tints).
-     Version A: alternating white and canvas. The old tone names stay as aliases. */
-  --sec-alt: #f7f8fb;
-  --sec-card: #f7f8fb;
-  --sec-card-line: transparent;
+     Version B: one cool indigo-tinted neutral (#3E2BF1 at 3% on white = #F9F9FF) for every
+     alternating section and the fact cards, with a faint indigo hairline on cards. Old tone names stay as aliases. */
+  --sec-alt: #f9f9ff;
+  --sec-card: #f9f9ff;
+  --sec-card-line: rgba(62, 43, 241, 0.08);
   --sky: var(--sec-alt);
   --sky-2: #e7e9f1;
   --lilac: #ffffff;
