@@ -6,6 +6,10 @@ import { isProductionBackendConfigured } from '@/lib/backendConfig'
 import '@/index.css'
 import '@/ui-direction/flag'
 import { registerServiceWorker } from '@/lib/swUpdate'
+import { captureInstallPrompt } from '@/lib/pwa/install'
+
+// Keep Chrome's install prompt for a sensible moment (after setup, from a tap) instead of its own mini-infobar.
+captureInstallPrompt()
 
 // Minimal fallback when app crashes (no external deps)
 function CrashFallback({ error }) {

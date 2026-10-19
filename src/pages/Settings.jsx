@@ -22,6 +22,7 @@ import HelpHint from '@/components/help/HelpHint';
 import { startTour } from '@/lib/tour/tourState';
 import SecuritySettings from '@/components/settings/SecuritySettings';
 import { readOrgSettings, writeOrgSettings } from '@/lib/onboarding/orgSettings';
+import DeviceNotificationsCard from '@/components/pwa/DeviceNotificationsCard';
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -336,6 +337,7 @@ export default function SettingsPage({ user }) {
           )}
 
           {/* Notifications Tab */}
+          {activeTab === 'notifications' && <DeviceNotificationsCard />}
           {activeTab === 'notifications' && (
             <Card>
               <CardHeader>
@@ -356,6 +358,7 @@ export default function SettingsPage({ user }) {
                       <p className="text-xs text-ink-400">{item.desc}</p>
                     </div>
                     <Switch
+                      aria-label={item.label}
                       checked={notifSettings[item.key]}
                       onCheckedChange={val => setNotifSettings(prev => ({ ...prev, [item.key]: val }))}
                       className="data-[state=checked]:bg-brand-600"
