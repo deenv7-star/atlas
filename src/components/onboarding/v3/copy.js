@@ -113,7 +113,7 @@ export const COPY = {
     },
     channels: {
       title: 'מאיפה מגיעות ההזמנות?',
-      sub: 'סמנו הכל. את Booking ו-Airbnb אפשר לחבר כבר עכשיו.',
+      sub: 'סמנו הכל. את Booking או Airbnb אפשר לחבר כבר עכשיו.',
       linkLabel: (name) => `קישור היומן מ-${name}`,
       optional: 'לא חובה',
       linkLine: 'מדביקים, ו-atlas מושכת משם את ההזמנות לבד.',
@@ -131,7 +131,7 @@ export const COPY = {
       guests: 'אורחים',
       times: 'שעות',
       channels: 'הזמנות',
-      linked: (names) => `${names} מחובר ליומן`,
+      linked: (names) => (names.length > 1 ? 'Booking ו-Airbnb מחוברים ליומן' : `${names[0]} מחובר ליומן`),
       edit: 'שינוי',
       done: 'סיום',
     },

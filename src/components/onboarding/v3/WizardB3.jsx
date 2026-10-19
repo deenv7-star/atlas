@@ -295,7 +295,7 @@ function Review({ a, update, onJump }) {
   const [edit, setEdit] = useState('');
   const toggle = (id) => setEdit((e) => (e === id ? '' : id));
   const ch = CHANNELS.filter((c) => (a.channels || []).includes(c.value)).map((c) => c.label).join(', ');
-  const linked = linksFromAnswers(a).map((l) => (l.provider === 'AIRBNB' ? 'Airbnb' : 'Booking.com'));
+  const linked = linksFromAnswers(a).map((l) => (l.provider === 'AIRBNB' ? 'Airbnb' : 'Booking'));
   const timesValue = COPY.review.timesValue(a);
   return (
     <div className="flex flex-col gap-6">
@@ -318,7 +318,7 @@ function Review({ a, update, onJump }) {
           </div>
         </ReviewRow>
         <ReviewRow open={edit} onToggle={toggle} id="channels" label={R.channels} value={ch || COPY.review.noChannels}
-          line={linked.length ? (linked.length > 1 ? `${linked.join(' ו-')} מחוברים ליומן` : R.linked(linked[0])) : ''} onEdit={() => onJump(1)} />
+          line={linked.length ? R.linked(linked) : ''} onEdit={() => onJump(1)} />
       </section>
       <PlanPick value={a.plan} onChange={(v) => update({ plan: v })} />
     </div>
@@ -332,9 +332,9 @@ function ReviewRow({ id, label, value, line, onEdit, open, onToggle, children })
   return (
     <div className="ob3-row-wrap">
       <div className="ob3-row">
-        <span className="w-[72px] shrink-0 text-[15px] font-semibold text-ink-400">{label}</span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[16px] font-bold leading-snug text-navy-900">{value}</span>
+          <span className="block text-[14px] font-semibold text-ink-400">{label}</span>
+          <span className="block text-[17px] font-bold leading-snug text-navy-900">{value}</span>
           {line ? <span className="mt-0.5 flex items-center gap-1 text-[14px] font-semibold text-brand-700"><Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />{line}</span> : null}
         </span>
         <button type="button" onClick={onEdit || (() => onToggle(id))} aria-expanded={onEdit ? undefined : isOpen}
