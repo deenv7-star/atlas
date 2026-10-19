@@ -295,7 +295,15 @@ function leanBody(html, appHtml, assets) {
 
 function appMeta(mod, route) {
   const m = mod.appRouteMeta(route);
-  return { title: m.title, description: m.description, canonical: `${ORIGIN}${route}`, ogImage: LANDING_OG };
+  const jsonLd = route === '/pricing' ? mod.pricingLd() : null;
+  return { title: m.title, description: m.description, canonical: `${ORIGIN}${route}`, ogImage: LANDING_OG, jsonLd };
+}
+
+/** /register, /login: the SPA shell with their own head, and real text (visually hidden) ahead of the spinner. */
+function appShellWithText(html, bodyHtml) {
+  const out = html.replace('<div id="root">', `<div id="root">${bodyHtml}`);
+  if (out === html) throw new Error('template has no #root');
+  return out;
 }
 
 /* src/ui-direction/flag.js sets <html data-ui> when the entry runs; on a prerendered page that attribute
@@ -332,7 +340,7 @@ function prerenderLean(mod, template, index) {
   // SPA screens with their own <head> (the landing's canonical used to be on them for non-JS readers)
   for (const route of ['/register', '/login']) {
     fs.mkdirSync(path.join(DIST, route.slice(1)), { recursive: true });
-    fs.writeFileSync(path.join(DIST, route.slice(1), 'index.html'), headFor(template, appMeta(mod, route)));
+    fs.writeFileSync(path.join(DIST, route.slice(1), 'index.html'), appShellWithText(headFor(template, appMeta(mod, route)), mod.appRouteBody(route)));
   }
   fs.rmSync(path.join(DIST, '.vite'), { recursive: true, force: true }); // build-time only, not deployed
   log('lean pages: / and /pricing prerendered (hydrated); app.html shell; /register, /login heads');
