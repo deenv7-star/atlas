@@ -39,8 +39,8 @@
   .gd-stick { grid-column: 2; grid-row: 1; align-self: start; top: 112px; padding: 0; background: none; }
   .gd-stick::after { display: none; }
   .gd-phone { width: 330px; }
-  .gd-chap { display: flex; flex-direction: column; justify-content: center; min-height: 78vh; padding: 0; }
-  .gd-chap:last-child { min-height: 78vh; }
+  .gd-chap { display: flex; flex-direction: column; justify-content: center; min-height: 66vh; padding: 0; }
+  .gd-chap:last-child { min-height: 82vh; }
   .gd-chap-h { font-size: 48px; line-height: 1.05; }
   .gd-chap-p { font-size: 21px; }
 }
@@ -121,7 +121,7 @@
   .gd-chap { min-height: 0; padding-top: 28px; }
   .gd-chap:last-child { min-height: 0; }
 }
-@media (max-width: 899px) and (min-height: 641px) { .gd-chap:last-child { min-height: 46svh; } }
+@media (max-width: 899px) and (min-height: 641px) { .gd-chap:last-child { min-height: 50svh; } }
 /* narrow phones (320-379): the price rows stack so the numbers never squeeze the terms into a column */
 @media (max-width: 379px) {
   .gd-offer { padding: 22px 18px 18px; }
