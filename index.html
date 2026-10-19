@@ -4,18 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-    <!-- iOS / PWA -->
+    <!-- iOS / PWA (installed app: standalone, light status bar over the canvas colour, safe areas via viewport-fit=cover) -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="ATLAS" />
+    <meta name="apple-mobile-web-app-title" content="אטלס" />
+    <meta name="application-name" content="atlas" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="format-detection" content="telephone=no" />
 
-    <!-- iOS App Icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
-    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167x167.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png" />
+    <!-- iOS app icons: full-bleed squares (iOS rounds the corners; transparent corners would turn black) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-180.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/apple-touch-167.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-152.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-120.png" />
+    <!-- iOS launch images for the installed app (scripts/pwa/generate-pwa-assets.mjs) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/iphone-440x956@3x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/iphone-402x874@3x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/iphone-430x932@3x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/iphone-393x852@3x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/iphone-428x926@3x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/iphone-390x844@3x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/iphone-414x896@3x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/iphone-375x812@3x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/iphone-414x896@2x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/iphone-375x667@2x.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/iphone-320x568@2x.png" />
     <title>ATLAS | מערכת ניהול לצימרים ומתחמי נופש</title>
     <meta name="description" content="לוח אחד לכל הערוצים, הודעות וואטסאפ לאורחים שמוכנות מראש ונשלחות בלחיצה, ומעקב מקדמות ויתרות. מערכת ניהול לצימרים ומתחמי נופש, בעברית." />
     <meta name="keywords" content="ניהול צימרים, מערכת ניהול צימרים, ניהול מתחמי נופש, מערכת הזמנות, לוח הזמנות, Booking.com, Airbnb" />
@@ -29,7 +42,6 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website" />
