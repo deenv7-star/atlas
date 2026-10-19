@@ -11,7 +11,7 @@
  */
 export const LEGAL = {
   /* ---- Legal entity (operator of the service) ---- */
-  BUSINESS_NAME: 'דין וינוקור', // Deen approved publishing, 18.10.2026 (operating brand: ATLAS)
+  BUSINESS_NAME: 'דין וינוקור', // Deen approved publishing, 18.10.2026 (operating brand: atlas)
   BUSINESS_TYPE: 'עוסק פטור', // Deen, 18.10.2026
   BUSINESS_ID: '315492124', // Deen, 18.10.2026
   BUSINESS_ADDRESS: 'המעגן 3, דירה 21, נהריה 2221622', // Deen, 18.10.2026
@@ -39,7 +39,7 @@ export const LEGAL = {
   /* ---- Cancellation (Deen's business decision) ---- */
   // One sentence, e.g. 'ATLAS לא גובה דמי ביטול.' or 'ATLAS גובה דמי ביטול בשיעור זה.'
   // Approved by Deen 18.10.2026: no cancellation fee at all.
-  CANCELLATION_FEE_POLICY: 'ATLAS לא גובה דמי ביטול.',
+  CANCELLATION_FEE_POLICY: 'atlas לא גובה דמי ביטול.',
 
   /* ---- Courts ---- */
   JURISDICTION_CITY: 'חיפה', // approved by Deen 18.10.2026 (district of the business address, Nahariya)
@@ -48,7 +48,7 @@ export const LEGAL = {
   FOUNDER_NAME: 'דין וינוקור',
   FOUNDER_NAME_EN: 'Deen Vinokur',
   FOUNDER_ROLE: 'מייסד',
-  FOUNDER_BIO: null, // a few sentences in Deen's words (background, why ATLAS)
+  FOUNDER_BIO: null, // a few sentences in Deen's words (background, why atlas)
   FOUNDER_PHOTO: null, // path under /public, e.g. '/about/deen.webp'
 };
 

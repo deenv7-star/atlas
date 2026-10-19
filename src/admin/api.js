@@ -18,7 +18,7 @@ const HE_ERRORS = [
   [/role .* required|insufficient|42501/i, 'אין לכם הרשאה לפעולה הזו'],
   [/days must be/i, 'אפשר להאריך בין יום ל-90 ימים'],
   [/unknown plan/i, 'החבילה לא קיימת'],
-  [/no ATLAS user/i, 'אין משתמש ATLAS עם האימייל הזה. קודם צריך להירשם.'],
+  [/no atlas user/i, 'אין משתמש atlas עם האימייל הזה. קודם צריך להירשם.'],
   [/last owner/i, 'חייב להישאר לפחות בעלים אחד'],
   [/yourself/i, 'אי אפשר להסיר את עצמכם'],
   [/already settled/i, 'החיוב כבר סומן'],
@@ -192,7 +192,7 @@ const demoApi = {
     const team = D().team;
     let m = team.find((x) => x.email === e);
     const known = m || D().customers.find((c) => c.owner_email === e);
-    if (!known) throw new Error(toHebrew('no ATLAS user'));
+    if (!known) throw new Error(toHebrew('no atlas user'));
     const from = m?.role || null;
     if (from === 'owner' && role !== 'owner' && team.filter((x) => x.role === 'owner').length <= 1) throw new Error(toHebrew('last owner'));
     if (m) m.role = role;

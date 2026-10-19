@@ -104,7 +104,7 @@ export default function Contact() {
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">צור קשר</h1>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            נשמח לשמוע ממך. צוות ATLAS זמין בימים א–ה 09:00–18:00, גם בוואטסאפ וגם במייל.
+            נשמח לשמוע ממך. צוות atlas זמין בימים א–ה 09:00–18:00, גם בוואטסאפ וגם במייל.
           </p>
         </div>
 
@@ -266,7 +266,7 @@ export default function Contact() {
 
       <footer className="py-8 px-4 bg-gray-50 border-t border-gray-100 mt-16">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <p className="text-sm text-gray-400">© {new Date().getFullYear()} ATLAS. כל הזכויות שמורות.</p>
+          <p className="text-sm text-gray-400">© {new Date().getFullYear()} atlas. כל הזכויות שמורות.</p>
           <div className="flex gap-4 text-sm text-gray-400">
             <Link to={createPageUrl('Privacy')} className="hover:text-gray-600 transition-colors">פרטיות</Link>
             <Link to={createPageUrl('Terms')} className="hover:text-gray-600 transition-colors">תנאי שימוש</Link>

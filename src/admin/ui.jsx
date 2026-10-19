@@ -75,6 +75,6 @@ export function Field({ label, children, hint }) {
 export function contactLinks(c) {
   const d = String(c?.owner_phone || '').replace(/\D/g, '');
   const wa = d ? `https://wa.me/${d.startsWith('972') ? d : d.startsWith('0') ? `972${d.slice(1)}` : d}` : null;
-  const mail = c?.owner_email ? `mailto:${c.owner_email}?subject=${encodeURIComponent(`ATLAS · ${c.org_name || ''}`)}` : null;
+  const mail = c?.owner_email ? `mailto:${c.owner_email}?subject=${encodeURIComponent(`atlas · ${c.org_name || ''}`)}` : null;
   return { wa, mail };
 }

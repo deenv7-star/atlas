@@ -46,7 +46,7 @@ function Thread({ conv, onBack }) {
   const phone = conv.user_phone;
   const wa = waDigits(phone);
   const first = (conv.user_name || '').split(' ')[0];
-  const waText = `שלום${first ? ` ${first}` : ''}, כאן ${(me?.full_name || '').split(' ')[0] || 'צוות'} מ-ATLAS לגבי הפנייה שלכם בעזרה: "${(conv.subject || '').slice(0, 80)}"`;
+  const waText = `שלום${first ? ` ${first}` : ''}, כאן ${(me?.full_name || '').split(' ')[0] || 'צוות'} מצוות atlas לגבי הפנייה שלכם בעזרה: "${(conv.subject || '').slice(0, 80)}"`;
   const submit = (e) => {
     e?.preventDefault();
     const body = draft.trim();
@@ -64,7 +64,7 @@ function Thread({ conv, onBack }) {
         </div>
         <div className="b-sup-actions">
           {wa ? <a className="b-btn b-btn--sm" href={`https://wa.me/${wa}?text=${encodeURIComponent(waText)}`} target="_blank" rel="noreferrer"><MessageCircle size={16} strokeWidth={1.75} aria-hidden />וואטסאפ {fmtPhone(phone)}</a> : null}
-          {conv.user_email ? <a className="b-btn b-btn--sm" href={`mailto:${conv.user_email}?subject=${encodeURIComponent('ATLAS · הפנייה שלכם')}`}><Mail size={16} strokeWidth={1.75} aria-hidden />מייל</a> : null}
+          {conv.user_email ? <a className="b-btn b-btn--sm" href={`mailto:${conv.user_email}?subject=${encodeURIComponent('atlas · הפנייה שלכם')}`}><Mail size={16} strokeWidth={1.75} aria-hidden />מייל</a> : null}
           {conv.status === 'open'
             ? <button type="button" className="b-btn b-btn--sm" onClick={() => setStatus.mutate({ convId: conv.id, status: 'closed' })} disabled={setStatus.isPending}><CheckCircle2 size={16} strokeWidth={1.75} aria-hidden />סגירה</button>
             : <button type="button" className="b-btn b-btn--sm" onClick={() => setStatus.mutate({ convId: conv.id, status: 'open' })} disabled={setStatus.isPending}><RotateCcw size={16} strokeWidth={1.75} aria-hidden />פתיחה מחדש</button>}
@@ -109,7 +109,7 @@ export function Support() {
   const notify = useNotify();
   const selected = params.get('c');
   const onEvent = useCallback((row) => {
-    if (row?.sender === 'system' || (row?.sender === 'user')) notify.show('ATLAS · פנייה בתמיכה', String(row.body || '').slice(0, 120), row.conversation_id);
+    if (row?.sender === 'system' || (row?.sender === 'user')) notify.show('atlas · פנייה בתמיכה', String(row.body || '').slice(0, 120), row.conversation_id);
   }, [notify.show]); // eslint-disable-line react-hooks/exhaustive-deps
   useSupportLive(onEvent);
   const rows = useMemo(() => {

@@ -23,7 +23,7 @@ const svg = `
   </defs>
   <rect width="100%" height="100%" fill="url(#bg)"/>
   <rect x="0" y="0" width="100%" height="6" fill="url(#accent)"/>
-  <text x="50%" y="42%" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="72" font-weight="bold">ATLAS</text>
+  <text x="50%" y="42%" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="72" font-weight="bold">atlas</text>
   <text x="50%" y="55%" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-family="Arial, sans-serif" font-size="28">מערכת ניהול מתחמי נופש בישראל</text>
   <text x="50%" y="68%" text-anchor="middle" fill="rgba(167,139,250,0.95)" font-family="Arial, sans-serif" font-size="22">הפסק לנהל. תתחיל להרוויח.</text>
 </svg>

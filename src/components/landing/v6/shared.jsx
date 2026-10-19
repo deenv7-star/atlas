@@ -20,7 +20,7 @@ export function V6Header({ tone = 'photo' }) {
   return (
     <header className={`l6-hdr${solid ? ' is-solid' : ''}${tone === 'light' ? ' is-light' : ''}`}>
       <div className="l5-wrap l6-hdr-in">
-        <Link to="/" className="l5-logo" aria-label="ATLAS, לדף הבית"><Wordmark /></Link>
+        <Link to="/" className="l5-logo" aria-label="atlas, לדף הבית"><Wordmark /></Link>
         <nav className="l6-nav" aria-label="ניווט ראשי">
           <a href={tone === 'light' ? '#fly' : '#story'}>המוצר</a>
           <a href="#how">איך מתחילים</a>

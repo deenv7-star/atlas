@@ -126,7 +126,7 @@ const M = {
 function ogHtml(title, kicker) {
   return `<div class="stage og" style="background:#3E2BF1;color:#fff">
     <div class="grid" style="background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px)"></div>
-    <div style="position:absolute;right:80px;left:80px;top:70px"><span class="wm" style="color:#fff">ATLAS<i style="background:#fff"></i></span></div>
+    <div style="position:absolute;right:80px;left:80px;top:70px"><span class="wm" style="color:#fff">atlas<i style="background:#fff"></i></span></div>
     ${kicker ? `<div style="position:absolute;right:80px;top:180px;font-size:26px;font-weight:700;color:#DCD9FF">${kicker}</div>` : ''}
     <div style="position:absolute;right:80px;left:80px;top:230px;font-size:${title.length > 60 ? 54 : 62}px;line-height:1.12;font-weight:800;letter-spacing:-.01em">${title}</div>
     <div style="position:absolute;right:80px;bottom:64px;font-size:24px;color:#DCD9FF">atlas-il.com</div>
@@ -151,8 +151,8 @@ async function shot(html, h, out, fmt) {
 for (const p of POSTS) {
   if (!M[p.slug]) { console.warn('no motif for', p.slug); continue; }
   await shot(`<div class="stage"><div class="grid"></div>${M[p.slug]}</div>`, 675, path.join(ROOT, `public/blog/covers/${p.slug}.webp`), 'webp');
-  await shot(ogHtml(p.title, 'בלוג ATLAS'), 630, path.join(ROOT, `public/og/blog-${p.slug}.png`), 'png');
+  await shot(ogHtml(p.title, 'בלוג atlas'), 630, path.join(ROOT, `public/og/blog-${p.slug}.png`), 'png');
 }
-await shot(ogHtml('מדריכים מעשיים לבעלי צימרים ומתחמי נופש', 'בלוג ATLAS'), 630, path.join(ROOT, 'public/og/og-blog.png'), 'png');
+await shot(ogHtml('מדריכים מעשיים לבעלי צימרים ומתחמי נופש', 'בלוג atlas'), 630, path.join(ROOT, 'public/og/og-blog.png'), 'png');
 await shot(ogHtml('מערכת ניהול בעברית לצימרים ומתחמי נופש', 'לוח אחד לכל הערוצים · וואטסאפ לאורחים · מקדמות ויתרות'), 630, path.join(ROOT, 'public/og/og-default.png'), 'png');
 await browser.close();

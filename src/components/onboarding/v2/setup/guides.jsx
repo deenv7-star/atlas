@@ -21,7 +21,7 @@ export const GUIDES = {
       { title: 'נכנסים לאקסטרא-נט', en: 'admin.booking.com', text: 'האתר שבו מנהלים את המקום ב-Booking. נכנסים עם השם והסיסמה הרגילים.', pic: 'b1' },
       { title: 'תעריפים וזמינות ← סנכרון לוחות שנה', en: 'Rates & Availability → Sync calendars', text: 'בתפריט למעלה לוחצים על "תעריפים וזמינות", ואז על "סנכרון לוחות שנה".', pic: 'b2' },
       { title: 'ליד היחידה: הוספת חיבור', en: 'Add calendar connection → Skip this step', text: 'ליד היחידה לוחצים "הוספת חיבור לוח שנה". בחלון שנפתח גוללים למטה ולוחצים "דילוג על השלב".', pic: 'b3' },
-      { title: 'נותנים שם ומעתיקים את הקישור', en: 'Name it "ATLAS" → Copy link', text: 'כותבים ATLAS בשם החיבור ולוחצים "העתקת קישור". הקישור נשמר בזיכרון של המחשב או הטלפון.', pic: 'b4' },
+      { title: 'נותנים שם ומעתיקים את הקישור', en: 'Name it "atlas" → Copy link', text: 'כותבים atlas בשם החיבור ולוחצים "העתקת קישור". הקישור נשמר בזיכרון של המחשב או הטלפון.', pic: 'b4' },
     ],
   },
   AIRBNB: {
@@ -99,7 +99,7 @@ export function GuidePic({ pic, n }) {
         <Bar url="admin.booking.com/…/sync" />
         <div className="flex flex-col gap-2 px-3 py-3" dir="ltr">
           <span className="text-[12px] font-extrabold text-navy-900">Export calendar</span>
-          <span className="flex h-7 items-center rounded-[8px] border border-[#E1E4EE] px-2 text-[11px] text-navy-900">ATLAS</span>
+          <span className="flex h-7 items-center rounded-[8px] border border-[#E1E4EE] px-2 text-[11px] text-navy-900">atlas</span>
           <div className="flex items-center gap-2">
             <span className="flex h-7 flex-1 items-center truncate rounded-[8px] bg-[#F7F8FB] px-2 text-[10px] text-ink-600">https://ical.booking.com/v1/export?t=…</span>
             <span className="ob2-hot relative flex h-7 items-center px-2 text-[11px] font-bold text-navy-900">Copy link<Mark n={n} className="-end-3 -top-4" /></span>

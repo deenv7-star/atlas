@@ -30,7 +30,7 @@ export function Sidebar({ onLogout, user }) {
     <div className="h-full py-3 ps-3">
       <aside className="flex h-full w-[248px] flex-col rounded-[28px] bg-white shadow-[0_1px_2px_rgba(27,38,86,0.04),0_12px_40px_-12px_rgba(27,38,86,0.12)] ring-1 ring-[#E8EAF2]/70" aria-label="ניווט ראשי">
         <div className="flex h-[76px] shrink-0 items-center px-6">
-          <Link to={createPageUrl('Dashboard')} aria-label="ATLAS, מסך היום" className="-mx-2 inline-flex h-11 items-center rounded-full px-2">
+          <Link to={createPageUrl('Dashboard')} aria-label="atlas, מסך היום" className="-mx-2 inline-flex h-11 items-center rounded-full px-2">
             <Wordmark size={22} />
           </Link>
         </div>

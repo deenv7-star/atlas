@@ -224,7 +224,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
   };
 
   const intro = variant === 'b'
-    ? [`כשמחברים את ${G.name}, כל הזמנה משם נכנסת ללוח של ATLAS לבד, ואין הזמנות כפולות.`, `${G.tip} נעשה את זה יחד, שלב אחד בכל פעם.`]
+    ? [`כשמחברים את ${G.name}, כל הזמנה משם נכנסת ללוח של atlas לבד, ואין הזמנות כפולות.`, `${G.tip} נעשה את זה יחד, שלב אחד בכל פעם.`]
     : [`כל הזמנה מ-${G.name} תיכנס ללוח לבד, בלי להקליד ובלי הזמנות כפולות.`, G.tip];
 
   return (
@@ -280,13 +280,13 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
             <LinkField key={u.id} id={`link-${u.id}`} label={u.name} value={links[u.id] || ''} onChange={(v) => setLinks((l) => ({ ...l, [u.id]: v }))} check={checks[u.id]} connected={connectedIds.has(u.id)} />
           )) : <p className="text-[16px] text-ink-600">קודם מוסיפים יחידה אחת לפחות, בשלב "היחידות שלך".</p>}
           <p className="text-[14px] leading-snug text-ink-400">
-            {DB_FEATURES.realCore ? 'אחרי השמירה ATLAS מושכת את ההזמנות מיד, ומשם מתעדכנת כל 15 דקות.' : 'במצב הדגמה הקישור נשמר, אבל לא מתבצע סנכרון אמיתי.'}
+            {DB_FEATURES.realCore ? 'אחרי השמירה atlas מושכת את ההזמנות מיד, ומשם מתעדכנת כל 15 דקות.' : 'במצב הדגמה הקישור נשמר, אבל לא מתבצע סנכרון אמיתי.'}
           </p>
         </section>
       ) : null}
       <p className="mt-5 text-[14px] text-ink-400">
         <a className="font-semibold text-brand-700 underline underline-offset-2" href={G.help} target="_blank" rel="noopener noreferrer">ההסבר הרשמי של {G.name}</a>
-        {' · '}רוצים שגם {G.name} יחסום תאריכים שנסגרו ב-ATLAS? זה במסך <a className="font-semibold text-brand-700 underline underline-offset-2" href="/integrations">ערוצים וחיבורים</a>.
+        {' · '}רוצים שגם {G.name} יחסום תאריכים שנסגרו במערכת atlas? זה במסך <a className="font-semibold text-brand-700 underline underline-offset-2" href="/integrations">ערוצים וחיבורים</a>.
       </p>
     </Shell>
   );
@@ -311,7 +311,7 @@ function WhatsAppStep({ facts, user, variant, step, onBack, onDone, prog }) {
     <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title="וואטסאפ לאורחים"
       intro={variant === 'b'
         ? ['אכין לך את ההודעות לאורחים: אישור הזמנה, יום לפני, יום ההגעה. שולחים בלחיצה אחת, מהוואטסאפ שלך.', 'רק צריך את המספר שהאורחים מכירים.']
-        : ['ATLAS מכינה את ההודעות לאורחים בזמן הנכון. אתם שולחים בלחיצה אחת, מהוואטסאפ שלכם.', 'שליחה אוטומטית בלי לגעת תגיע בקרוב.']}
+        : ['atlas מכינה את ההודעות לאורחים בזמן הנכון. אתם שולחים בלחיצה אחת, מהוואטסאפ שלכם.', 'שליחה אוטומטית בלי לגעת תגיע בקרוב.']}
       footer={(
         <>
           {err ? <p className="rounded-[14px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}
@@ -433,7 +433,7 @@ function PlanStep({ facts, variant, step, onBack, onDone, onSkip, prog }) {
   const p = getPlanByKey(facts.planChoice?.key);
   return (
     <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title={`מסלול ${p.nameHe}`}
-      intro={[`${p.limit}, כל המערכת כלולה. ₪${p.price} לחודש.`, `${TRIAL_DAYS} הימים הראשונים חינם בכל מקרה. משלימים את המסלול במסך המסלולים, ושם צוות ATLAS חוזר אליכם.`]}
+      intro={[`${p.limit}, כל המערכת כלולה. ₪${p.price} לחודש.`, `${TRIAL_DAYS} הימים הראשונים חינם בכל מקרה. משלימים את המסלול במסך המסלולים, ושם צוות atlas חוזר אליכם.`]}
       footer={(
         <>
           <Primary className="w-full" onClick={async () => { await onDone(''); window.location.assign('/subscription'); }}>למסך המסלולים<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>

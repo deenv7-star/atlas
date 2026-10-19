@@ -126,7 +126,7 @@ const demoApi = {
         d.conversations.push(c);
       }
       Object.assign(c, { mode: 'human', status: 'open', handoff_at: c.handoff_at || t, handoff_reason: c.handoff_reason || reason, unread_admin: Math.max(1, c.unread_admin) });
-      const sys = { id: crypto.randomUUID(), conversation_id: c.id, user_id: c.user_id, org_id: c.org_id, sender: 'system', body: 'העברנו את השיחה לנציג מצוות ATLAS. הוא רואה את כל מה שכתבתם, ויענה כאן באותו חלון. אפשר להמשיך לכתוב בינתיים.', links: [], meta: { reason }, created_at: t };
+      const sys = { id: crypto.randomUUID(), conversation_id: c.id, user_id: c.user_id, org_id: c.org_id, sender: 'system', body: 'העברנו את השיחה לנציג מצוות atlas. הוא רואה את כל מה שכתבתם, ויענה כאן באותו חלון. אפשר להמשיך לכתוב בינתיים.', links: [], meta: { reason }, created_at: t };
       d.messages.push(sys);
       Object.assign(c, { last_message_at: t, last_message_preview: sys.body.slice(0, 140), last_sender: 'system' });
       return { conversation_id: c.id, mode: 'human', system_message: sys };

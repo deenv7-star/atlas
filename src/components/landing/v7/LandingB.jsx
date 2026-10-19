@@ -49,7 +49,7 @@ function Hero() {
           <span className="l5-h1-line is-ind" style={{ '--i': 2 }}>הכל כבר מוכן.</span>
         </h1>
         <p className="l7b-lead l5-in" style={{ '--i': 3 }}>
-          ATLAS מנהלת את ההזמנות מ-Airbnb, Booking.com ומהאתר שלכם על לוח אחד, מכינה לאורחים את מה שהם צריכים ועוקבת אחרי כל מקדמה.
+          atlas מנהלת את ההזמנות מ-Airbnb, Booking.com ומהאתר שלכם על לוח אחד, מכינה לאורחים את מה שהם צריכים ועוקבת אחרי כל מקדמה.
         </p>
         <div className="l7-cta l5-in" style={{ '--i': 4 }}>
           <SignupButton className="is-lg" />

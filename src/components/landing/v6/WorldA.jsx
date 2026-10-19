@@ -37,14 +37,14 @@ function Hero() {
           <p className="l6-eyebrow l5-in" style={{ '--i': 0 }}><span className="l6-live" />מערכת ניהול לצימרים ומתחמי נופש</p>
           <h1 id="hero-title" className="l6a-h1">
             <span className="l5-h1-line" style={{ '--i': 1 }}>אתם מארחים.</span>
-            <span className="l5-h1-line" style={{ '--i': 2 }}>ATLAS מנהלת.</span>
+            <span className="l5-h1-line" style={{ '--i': 2 }}>atlas מנהלת.</span>
           </h1>
           <p className="l6a-lead l5-in" style={{ '--i': 3 }}>
             לוח אחד ל-Airbnb, Booking.com והזמנות ישירות, וואטסאפ לאורחים שמוכן מראש ונשלח בלחיצה, ומעקב מקדמות ויתרות.
           </p>
           <div className="l6a-cta l5-in" style={{ '--i': 4 }}>
             <SignupButton className="is-lg l6-btn-white" />
-            <a href="#story" className="l6-btn-glass is-lg">לראות יום עם ATLAS</a>
+            <a href="#story" className="l6-btn-glass is-lg">לראות יום עם atlas</a>
           </div>
           <p className="l6a-note l5-in" style={{ '--i': 5 }}><Check size={14} strokeWidth={2.5} aria-hidden="true" />{CTA_NOTE} · הגדרה תוך 10 דקות</p>
         </div>

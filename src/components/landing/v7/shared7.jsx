@@ -32,7 +32,7 @@ export function V7Header({ links = DEFAULT_NAV }) {
   return (
     <header className={`l7-hdr${solid ? ' is-solid' : ''}`}>
       <div className="l5-wrap l7-hdr-in">
-        <Link to="/" className="l5-logo" aria-label="ATLAS, לדף הבית"><Wordmark /></Link>
+        <Link to="/" className="l5-logo" aria-label="atlas, לדף הבית"><Wordmark /></Link>
         <nav className="l7-nav" aria-label="ניווט ראשי">
           {links.map(([href, label]) => <a key={href} href={href}>{label}</a>)}
         </nav>

@@ -42,7 +42,7 @@ router.post('/contact', async (req, res) => {
   const { name, email, phone, subject, message } = parsed.data;
   const topic = SUBJECT_LABELS[subject] || SUBJECT_LABELS[''];
   const text =
-    `פנייה מטופס צור קשר באתר ATLAS\n\n` +
+    `פנייה מטופס צור קשר באתר atlas\n\n` +
     `שם: ${name}\n` +
     `אימייל: ${email}\n` +
     `טלפון: ${phone || '—'}\n` +
@@ -62,7 +62,7 @@ router.post('/contact', async (req, res) => {
           from: env.EMAIL_FROM,
           to: [inbox],
           reply_to: email,
-          subject: `[ATLAS צור קשר] ${topic} — ${name}`,
+          subject: `[atlas צור קשר] ${topic} — ${name}`,
           text,
         }),
       });

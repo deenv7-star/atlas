@@ -39,7 +39,7 @@ export default function Accessibility() {
           <div>
             <h2 className="text-2xl font-bold text-[#1B2656] mb-4">המחויבות שלנו</h2>
             <p className="text-gray-600 leading-relaxed">
-              ATLAS מחויבת להנגשת האתר והשירותים שלה לכלל האוכלוסייה, לרבות אנשים עם מוגבלויות. 
+              atlas מחויבת להנגשת האתר והשירותים שלה לכלל האוכלוסייה, לרבות אנשים עם מוגבלויות. 
               אנו פועלים ליישום תקן הנגישות הישראלי (ת"י 5568) ותקנות שוויון זכויות לאנשים עם מוגבלות 
               (התאמות נגישות לשירות), התשע"ג-2013.
             </p>
@@ -134,7 +134,7 @@ export default function Accessibility() {
           <div className="bg-brand-50/60 rounded-xl p-6 mt-8">
             <h3 className="text-lg font-bold text-[#1B2656] mb-2">מועד הכנת הצהרה זו</h3>
             <p className="text-gray-600 mb-3">הצהרת נגישות זו הוכנה בתאריך: 10 בפברואר 2026</p>
-            <p className="text-gray-600">אחראי נגישות בארגון: מנהל המוצר של ATLAS</p>
+            <p className="text-gray-600">אחראי נגישות בארגון: מנהל המוצר של atlas</p>
           </div>
         </div>
       </section>
@@ -143,7 +143,7 @@ export default function Accessibility() {
       <footer className="py-8 px-4 bg-white border-t border-line">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo  size="small" />
-          <p className="text-ink-400 text-sm">© 2024 ATLAS. כל הזכויות שמורות</p>
+          <p className="text-ink-400 text-sm">© 2024 atlas. כל הזכויות שמורות</p>
         </div>
       </footer>
     </div>

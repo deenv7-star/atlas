@@ -17,7 +17,7 @@ export const APP_ID = `${SITE_ORIGIN}/#software`;
 export const DEFAULT_OG = `${SITE_ORIGIN}/og/og-default.png`;
 
 export const ATLAS_ONE_LINER =
-  'ATLAS היא מערכת ניהול בעברית לצימרים, וילות ומתחמי נופש בישראל: לוח שנה אחד לכל היחידות והערוצים (Booking.com, Airbnb והזמנות ישירות), לידים, מעקב מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן, משימות ניקיון ודוח הכנסות חודשי. עובדת מהדפדפן במחשב ובטלפון, עם 14 ימי ניסיון בחינם.';
+  'atlas היא מערכת ניהול בעברית לצימרים, וילות ומתחמי נופש בישראל: לוח שנה אחד לכל היחידות והערוצים (Booking.com, Airbnb והזמנות ישירות), לידים, מעקב מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן, משימות ניקיון ודוח הכנסות חודשי. עובדת מהדפדפן במחשב ובטלפון, עם 14 ימי ניסיון בחינם.';
 
 export function abs(path) {
   if (!path) return SITE_ORIGIN + '/';
@@ -29,7 +29,7 @@ export function organizationLd() {
   const org = {
     '@type': 'Organization',
     '@id': ORG_ID,
-    name: 'ATLAS',
+    name: 'atlas',
     url: `${SITE_ORIGIN}/`,
     logo: `${SITE_ORIGIN}/icons/icon-512x512.png`,
     description: ATLAS_ONE_LINER,
@@ -50,7 +50,7 @@ export function organizationLd() {
 }
 
 export function websiteLd() {
-  return { '@type': 'WebSite', '@id': SITE_ID, url: `${SITE_ORIGIN}/`, name: 'ATLAS', inLanguage: 'he-IL', publisher: { '@id': ORG_ID } };
+  return { '@type': 'WebSite', '@id': SITE_ID, url: `${SITE_ORIGIN}/`, name: 'atlas', inLanguage: 'he-IL', publisher: { '@id': ORG_ID } };
 }
 
 export function softwareLd() {
@@ -58,8 +58,8 @@ export function softwareLd() {
   return {
     '@type': 'SoftwareApplication',
     '@id': APP_ID,
-    name: 'ATLAS',
-    alternateName: 'ATLAS מערכת ניהול לצימרים ומתחמי נופש',
+    name: 'atlas',
+    alternateName: 'atlas מערכת ניהול לצימרים ומתחמי נופש',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     url: `${SITE_ORIGIN}/`,
@@ -98,7 +98,7 @@ export function graph(nodes) {
 
 /** Crumbs for a site path. */
 export function crumbsFor(pathname) {
-  const home = { name: 'ATLAS', path: '/' };
+  const home = { name: 'atlas', path: '/' };
   if (pathname === '/blog') return [home, { name: 'בלוג', path: '/blog' }];
   if (pathname.startsWith('/blog/')) {
     const post = getPost(pathname.split('/')[2]);
@@ -117,7 +117,7 @@ export function siteMeta(pathname) {
   if (path === '/blog') {
     const url = abs('/blog');
     return {
-      title: 'בלוג ATLAS: מדריכים לבעלי צימרים ומתחמי נופש',
+      title: 'בלוג atlas: מדריכים לבעלי צימרים ומתחמי נופש',
       description: 'מדריכים מעשיים לבעלי צימרים: סנכרון Booking.com ו-Airbnb, תמחור לפי עונות וחגים, הודעות לאורחים, מע"מ וחשבוניות, ניקיון, ביקורות ורישוי.',
       canonical: url,
       ogImage: `${SITE_ORIGIN}/og/og-blog.png`,
@@ -129,7 +129,7 @@ export function siteMeta(pathname) {
           '@type': 'Blog',
           '@id': `${url}#blog`,
           url,
-          name: 'בלוג ATLAS',
+          name: 'בלוג atlas',
           inLanguage: 'he-IL',
           publisher: { '@id': ORG_ID },
           blogPost: POSTS.map((p) => ({ '@type': 'BlogPosting', headline: p.title, url: abs(`/blog/${p.slug}`), datePublished: p.published, dateModified: p.updated })),
@@ -209,7 +209,7 @@ export function siteMeta(pathname) {
 
 export function notFoundMeta() {
   return {
-    title: 'הדף לא נמצא | ATLAS',
+    title: 'הדף לא נמצא | atlas',
     description: 'הדף שחיפשתם לא קיים. אפשר לחזור לדף הבית, לבלוג או ליצירת קשר.',
     canonical: null,
     ogImage: DEFAULT_OG,

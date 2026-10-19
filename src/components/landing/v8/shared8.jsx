@@ -154,5 +154,5 @@ export function CtaLinks() {
 }
 
 export function Credits8() {
-  return <p className="v8-credits">צילומים: Pexels (רישיון חופשי). המסכים הם מסכי ATLAS אמיתיים עם נתוני דוגמה.</p>;
+  return <p className="v8-credits">צילומים: Pexels (רישיון חופשי). המסכים הם מסכי atlas אמיתיים עם נתוני דוגמה.</p>;
 }

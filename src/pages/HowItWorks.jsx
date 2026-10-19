@@ -21,7 +21,7 @@ const STEPS = [
   {
     n: 3,
     title: 'כללי התנגשות (Conflict rules)',
-    body: 'כשנכנסות שתי הזמנות לאותו חדר באותו טווח תאריכים, ATLAS מסמנת התנגשות: לפי סדר קבלה, סטטוס (מאושר מול טיוטה) והגדרות נכס. המנהל רואה התראה ומחליט איזו הזמנה נשארת.',
+    body: 'כשנכנסות שתי הזמנות לאותו חדר באותו טווח תאריכים, atlas מסמנת התנגשות: לפי סדר קבלה, סטטוס (מאושר מול טיוטה) והגדרות נכס. המנהל רואה התראה ומחליט איזו הזמנה נשארת.',
     icon: Shield,
   },
   {
@@ -61,7 +61,7 @@ export default function HowItWorks() {
             ארכיטקטורה ותפעול
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
-            איך ATLAS מונעת הזמנות כפולות ומסנכרנת ערוצים
+            איך atlas מונעת הזמנות כפולות ומסנכרנת ערוצים
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed mb-10">
             דף זה מסביר ברמת מערכת: בלי הבטחות קסם, איך נתונים זורמים מערוצי הזמנה ללוח אחד, ואיך מתמודדים עם התנגשויות.
@@ -76,7 +76,7 @@ export default function HowItWorks() {
             <h2 className="text-lg font-bold text-gray-900 mb-4">תרשים זרימה (תמצית)</h2>
             <ol className="space-y-3 text-gray-700 text-sm sm:text-base leading-relaxed list-decimal list-inside marker:font-bold marker:text-[#2A1AC9]">
               <li>מקור חיצוני או ידני יוצר/מעדכן הזמנה.</li>
-              <li>ATLAS מאמתת טווח תאריכים מול הלוח הפנימי לנכס/חדר.</li>
+              <li>atlas מאמתת טווח תאריכים מול הלוח הפנימי לנכס/חדר.</li>
               <li>אם יש חפיפה: נוצרת התראה והרשומה מסומנת לטיפול אנושי או לפי כללים שהוגדרו בארגון.</li>
               <li>אין חפיפה: ההזמנה נרשמת והלוח מתעדכן; הערוץ המקושר מקבל עדכון כשהאינטגרציה תומכת בכך.</li>
             </ol>

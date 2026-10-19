@@ -23,14 +23,14 @@ export default function Terms() {
       </nav>
 
       <main className="max-w-4xl mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold text-[#1B2656] mb-4">תנאי שימוש - ATLAS</h1>
+        <h1 className="text-3xl font-bold text-[#1B2656] mb-4">תנאי שימוש - atlas</h1>
         <p className="text-gray-500 mb-8">עדכון אחרון: מרץ 2025</p>
         
         <div className="prose prose-lg max-w-none text-gray-700 space-y-8">
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
             <h2 className="text-2xl font-bold text-[#1B2656] mb-4">1. קבלת התנאים</h2>
             <p className="leading-relaxed mb-3">
-              בגישה לפלטפורמת ATLAS ובשימוש בה, אתם מצהירים כי קראתם, הבנתם ומסכימים להיות מחויבים על ידי 
+              בגישה לפלטפורמת atlas ובשימוש בה, אתם מצהירים כי קראתם, הבנתם ומסכימים להיות מחויבים על ידי 
               תנאי שימוש אלה וכל החוקים והתקנות החלים. אם אינכם מסכימים לתנאים אלה, אינכם רשאים להשתמש 
               או לגשת לפלטפורמה.
             </p>
@@ -42,7 +42,7 @@ export default function Terms() {
           <section className="bg-white rounded-2xl p-6 shadow-sm border">
             <h2 className="text-2xl font-bold text-[#1B2656] mb-4">2. תיאור השירות</h2>
             <p className="leading-relaxed mb-3">
-              ATLAS היא פלטפורמת תוכנה כשירות (SaaS) מבוססת ענן לניהול נכסי אירוח לטווח קצר. השירות כולל:
+              atlas היא פלטפורמת תוכנה כשירות (SaaS) מבוססת ענן לניהול נכסי אירוח לטווח קצר. השירות כולל:
             </p>
             <ul className="list-disc pr-6 space-y-2 mb-3">
               <li>מערכת ניהול לידים ומעקב פניות</li>
@@ -257,7 +257,7 @@ export default function Terms() {
 
       <footer className="py-8 px-4 border-t bg-white mt-12">
         <div className="max-w-4xl mx-auto text-center text-gray-500 text-sm">
-          © {new Date().getFullYear()} ATLAS. כל הזכויות שמורות.
+          © {new Date().getFullYear()} atlas. כל הזכויות שמורות.
         </div>
       </footer>
     </div>

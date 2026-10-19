@@ -44,7 +44,7 @@ export function Header() {
   return (
     <header className="l5-hdr">
       <div className="l5-wrap l5-hdr-in">
-        <Link to="/" className="l5-logo" aria-label="ATLAS, לדף הבית"><Wordmark /></Link>
+        <Link to="/" className="l5-logo" aria-label="atlas, לדף הבית"><Wordmark /></Link>
         <nav className="l5-nav" aria-label="ניווט ראשי">
           <a href="#product">המוצר</a>
           <a href="#how">איך מתחילים</a>
@@ -200,7 +200,7 @@ function Value() {
         <SectionHead id="value-title" title="השבוע שלכם, בלי העבודה השחורה." sub="אותו עסק, אותן הזמנות. רק בלי השעות שהולכות על ניהול." />
         <div className="l5-ba" data-reveal>
           <div className="l5-ba-col is-before">
-            <h3>בלי ATLAS</h3>
+            <h3>בלי atlas</h3>
             <ul>{BEFORE_AFTER.before.map((t) => <li key={t}><X size={16} strokeWidth={2} aria-hidden="true" />{t}</li>)}</ul>
           </div>
           <div className="l5-ba-col is-after">
@@ -346,7 +346,7 @@ export function Footer() {
             </nav>
           ))}
         </div>
-        <p className="l5-ftr-copy">© {new Date().getFullYear()} ATLAS · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
+        <p className="l5-ftr-copy">© {new Date().getFullYear()} atlas · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>
   );

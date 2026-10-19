@@ -192,7 +192,7 @@ export function ContactForm({ className = '' }) {
   const [errors, setErrors] = useState({});
   const [state, setState] = useState({ status: 'idle', error: '' });
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const waText = () => `שלום ATLAS,\nשם: ${form.name.trim()}\n${form.phone.trim() ? `טלפון: ${form.phone.trim()}\n` : ''}נושא: ${form.topic}\n\n${form.message.trim()}`;
+  const waText = () => `שלום atlas,\nשם: ${form.name.trim()}\n${form.phone.trim() ? `טלפון: ${form.phone.trim()}\n` : ''}נושא: ${form.topic}\n\n${form.message.trim()}`;
   const submit = async (e) => {
     e.preventDefault();
     if (state.status === 'sending') return;

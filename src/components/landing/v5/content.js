@@ -66,7 +66,7 @@ export const FAQ = [
   // 02-units (name, guests and nightly price per unit; another total per booking), 13 #9 (weekend/holiday price suggestions)
   { q: 'יש לי כמה יחידות, כל אחת במחיר אחר. זה מתאים?', a: 'בדיוק בשביל זה. לכל יחידה יש שורה בלוח, מספר אורחים ומחיר משלה, ובכל הזמנה אפשר לרשום מחיר אחר. המערכת גם מציעה לכם מחיר לסופ״ש ולחגים.' },
   // 01-getting-started #install (works in the browser, add to home screen), 13 #13 (no store app)
-  { q: 'זה עובד גם בטלפון?', a: 'כן. ATLAS עובדת בטלפון כמו במחשב, בלי להוריד אפליקציה מהחנות. מוסיפים אותה למסך הבית ופותחים בלחיצה, מכל מקום.' },
+  { q: 'זה עובד גם בטלפון?', a: 'כן. atlas עובדת בטלפון כמו במחשב, בלי להוריד אפליקציה מהחנות. מוסיפים אותה למסך הבית ופותחים בלחיצה, מכל מקום.' },
   // 07-money (payments recorded, balances, monthly report; documents are for records only, no tax allocation number), 13 #5 #11
   { q: 'אפשר להוציא קבלות וחשבוניות?', a: 'כל תשלום נרשם, ורואים מיד מי שילם ומה עוד פתוח. חשבונית מס רשמית עדיין מפיקים בתוכנת החשבוניות שלכם, והחיבור אליה בדרך. בסוף החודש מורידים דוח מסודר לרואה החשבון.' },
   // security.md (isolation per business, encrypted connection), privacy.md (no selling, no ads), terms #your-data + csvExport.js
