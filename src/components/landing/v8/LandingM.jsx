@@ -18,7 +18,8 @@ import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { Faq, Footer } from '../v5/LandingV5';
 import { V7Header, Chip } from '../v7/shared7';
-import { UI, PH, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8, useScrollProgress } from './shared8';
+import { UI, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8, useScrollProgress } from './shared8';
+import { Pic } from './people/Pic';
 import '../v5/landing-v5.css';
 import '../v7/landing-v7.css';
 import './shared8.css';
@@ -93,7 +94,7 @@ function Blocks() {
       >
         <div className="lm-v lm-v-cal">
           <img className="lm-ui is-cal" src={`${UI}/c-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
-          <figure className="lm-ph is-friends"><img src={`${PH}/m-friends.webp`} alt="" width="1400" height="933" loading="lazy" decoding="async" /></figure>
+          <figure className="lm-ph is-friends"><Pic name="p-arrive" widths={[560, 1000]} ratio={1000 / 826} sizes="(min-width: 900px) 28vw, 52vw" /></figure>
           <div className="lm-chip is-a"><Chip av={FACES.maya.src} ch="airbnb" title="הזמנה מ-Airbnb נכנסה ללוח" sub="מאיה כ. · 3 לילות · התאנה" /></div>
           <div className="lm-chip is-b"><span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />התאריכים נחסמו ב-Booking.com</span></div>
         </div>
@@ -110,7 +111,7 @@ function Blocks() {
       >
         <div className="lm-v lm-v-msg">
           <img className="lm-ui is-msg" src={`${UI}/c-messages.webp`} alt="מסך ההודעות של atlas: שיחת וואטסאפ עם אורחים (נתוני דוגמה)" width="1800" height="1125" loading="lazy" decoding="async" />
-          <figure className="lm-ph is-tub"><img src={`${PH}/m-tub.webp`} alt="" width="1400" height="933" loading="lazy" decoding="async" /></figure>
+          <figure className="lm-ph is-tub"><Pic name="p-couple" widths={[400, 760]} ratio={1} sizes="(min-width: 900px) 20vw, 46vw" /></figure>
           <div className="lm-chip is-c">
             <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר שלכם. קוד לדלת: 2419. נסיעה טובה!" time="18:00" />
           </div>
@@ -127,7 +128,7 @@ function Blocks() {
       >
         <div className="lm-v lm-v-pay">
           <img className="lm-ui is-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
-          <figure className="lm-ph is-host"><img src={`${PH}/m-host.webp`} alt="" width="900" height="968" loading="lazy" decoding="async" /></figure>
+          <figure className="lm-ph is-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} sizes="(min-width: 900px) 26vw, 46vw" /></figure>
           <img className="lm-ui is-chart" src={`${UI}/c-chart.webp`} alt="גרף הכנסות לפי חודש (נתוני דוגמה)" width="1256" height="966" loading="lazy" decoding="async" />
           <img className="lm-ui is-rec" src={`${UI}/c-received.webp`} alt="" width="704" height="220" loading="lazy" decoding="async" />
         </div>
@@ -145,7 +146,7 @@ function Blocks() {
         <div className="lm-v lm-v-today">
           <img className="lm-ui is-today" src={`${UI}/c-todaylist.webp`} alt="רשימת ״היום במתחם״: כניסה, יציאה וניקיון (נתוני דוגמה)" width="888" height="966" loading="lazy" decoding="async" />
           <img className="lm-ui is-prog" src={`${UI}/c-progress.webp`} alt="" width="848" height="566" loading="lazy" decoding="async" />
-          <figure className="lm-ph is-clean"><img src={`${PH}/m-clean.webp`} alt="" width="1300" height="866" loading="lazy" decoding="async" /></figure>
+          <figure className="lm-ph is-clean"><Pic name="p-room" widths={[600, 1100]} ratio={1100 / 846} sizes="(min-width: 900px) 40vw, 78vw" /></figure>
           <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
         </div>
       </Block>

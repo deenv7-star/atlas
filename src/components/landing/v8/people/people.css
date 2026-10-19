@@ -1,0 +1,3 @@
+/* people photos: the <picture> wrapper must not break the figure's object-fit cover */
+.pp-pic { display: block; width: 100%; height: 100%; }
+.pp-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
