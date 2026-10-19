@@ -94,7 +94,6 @@ function Blocks() {
       >
         <div className="lm-v lm-v-cal">
           <img className="lm-ui is-cal" src={`${UI}/c-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
-          <figure className="lm-ph is-friends"><Pic name="p-arrive" widths={[560, 1000]} ratio={1000 / 826} alt="זוג אורחים מגיע לחופשה, עם תיק על הגב" sizes="(min-width: 900px) 28vw, 52vw" /></figure>
           <div className="lm-chip is-a"><Chip av={FACES.maya.src} ch="airbnb" title="הזמנה מ-Airbnb נכנסה ללוח" sub="מאיה כ. · 3 לילות · התאנה" /></div>
           <div className="lm-chip is-b"><span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />התאריכים נחסמו ב-Booking.com</span></div>
         </div>
@@ -111,7 +110,6 @@ function Blocks() {
       >
         <div className="lm-v lm-v-msg">
           <img className="lm-ui is-msg" src={`${UI}/c-messages.webp`} alt="מסך ההודעות של atlas: שיחת וואטסאפ עם אורחים (נתוני דוגמה)" width="1800" height="1125" loading="lazy" decoding="async" />
-          <figure className="lm-ph is-tub"><Pic name="p-couple" widths={[400, 760]} ratio={1} alt="זוג אורחים מתחבק בקשת לבנה מול הים" sizes="(min-width: 900px) 20vw, 46vw" /></figure>
           <div className="lm-chip is-c">
             <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר שלכם. קוד לדלת: 2419. נסיעה טובה!" time="18:00" />
           </div>
@@ -143,11 +141,13 @@ function Blocks() {
         text="כניסות, יציאות וניקיונות בציר אחד. מסמנים ״בוצע״ בלחיצה, וכולם יודעים מה הלאה."
         points={['כל בוקר: מה מחכה היום', 'ניקיון בין אורח לאורח', 'הכל מוכן? רואים במבט']}
       >
-        <div className="lm-v lm-v-today">
-          <img className="lm-ui is-today" src={`${UI}/c-todaylist.webp`} alt="רשימת ״היום במתחם״: כניסה, יציאה וניקיון (נתוני דוגמה)" width="888" height="966" loading="lazy" decoding="async" />
-          <img className="lm-ui is-prog" src={`${UI}/c-progress.webp`} alt="" width="848" height="566" loading="lazy" decoding="async" />
-          <figure className="lm-ph is-clean"><Pic name="p-room" widths={[600, 1100]} ratio={1100 / 846} alt="בעלת מתחם מדברת בטלפון ליד חדר האורחים המוכן" sizes="(min-width: 900px) 40vw, 78vw" /></figure>
+        <div className="lm-v lm-v-today pp-b-today">
+          <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 900px) 34vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
+          <div className="pp-b-phone" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
+            <img src="/landing-hero/ui-m-today.webp" alt="" width="780" height="1594" loading="lazy" decoding="async" />
+          </div>
           <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
+          <p className="pp-b-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
         </div>
       </Block>
     </div>
@@ -170,7 +170,7 @@ function Facts() {
           <h2 id="facts-title" className="v8-h2">הזמנות, תשלומים ואורחים. <span className="is-ind">במקום אחד.</span></h2>
           <div className="lm-facts-people">
             <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={48} />
-            <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.</p>
+            <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
           </div>
         </div>
         <ul className="lm-facts-row">

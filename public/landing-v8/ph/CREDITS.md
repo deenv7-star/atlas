@@ -24,10 +24,8 @@ Not used: Unsplash+ / premium, Canva AI, any generated image.
 ## Scenes (AVIF + WebP, two widths each, lazy)
 | file | slot | source | photographer |
 |---|---|---|---|
-| p-arrive-{560,1000} | calendar block, guests arriving | https://www.pexels.com/photo/a-couple-walking-through-the-athens-athens-28318801/ | Uiliam Nörnberg |
-| p-couple-{400,760} | messages block, round crop | https://www.pexels.com/photo/couple-kissing-under-arcades-by-sea-shore-15570289/ | Mihai Vlasceanu |
+| p-hostess-{560,1000} | today block (version B), owner hosting on the porch, with the real atlas Today screen in a phone over it | https://www.pexels.com/photo/woman-holding-two-platters-of-bread-10020187/ | Ron Lach |
 | p-host-{480,840} | payments block, host at the laptop | https://www.pexels.com/photo/man-working-at-laptop-in-garden-cafe-24604951/ | David Escala de Almeida |
-| p-room-{600,1100} | today block, host on the phone by a guest room | https://www.pexels.com/photo/woman-with-curly-hair-talking-on-the-phone-6862859/ | cottonbro studio |
 
 Older files m-*.webp / n-*.webp (previous set, sources not recorded) are no longer referenced by the live
 landing (LandingM) and can be deleted once no open PR uses them.
