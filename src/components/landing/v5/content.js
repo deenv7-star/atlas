@@ -46,35 +46,45 @@ export const TRUST = [
 ];
 
 /**
- * Landing FAQ v2 (19.10.2026). Deen: "שאלות קצת יותר רלוונטיות". Written for Israeli zimmer / villa / vacation-complex
- * owners (non-technical, often older): the questions they actually ask before signing up, in their words.
- * Benefit first, 1-3 short sentences, zero jargon. Every line is true today, checked against the code and
- * supabase/functions/support-chat/kb/curated (01 setup, 02 units, 04 overlap guard, 05 channels, 06 WhatsApp,
- * 07 money, 11 subscription, 13 limitations), src/config/pricing.js and the legal pages.
+ * Landing FAQ v3 (19.10.2026). Deen sent the easylist.co.il FAQ as the pattern: who it is for, not technical,
+ * several people / permissions, commitment, how to start. Written for Israeli zimmer / villa / vacation-complex
+ * owners (non-technical, often older), ordered by what they ask first. Benefit first, 1-3 short sentences,
+ * zero jargon. Every line is true today, checked against the code and supabase/functions/support-chat/kb/curated
+ * (00 about, 01 setup, 02 units, 04 overlap guard, 05 channels, 06 WhatsApp, 07 money, 11 subscription,
+ * 12 settings, 13 limitations), src/config/pricing.js, src/lib/onboarding/store.js and the legal pages.
  * Honest limits kept on purpose: WhatsApp goes out with one tap (never auto-send), ATLAS records payments but does
- * not charge guests, and official tax invoices are still issued in the owner's own invoicing software.
+ * not charge guests, official tax invoices are still issued in the owner's own invoicing software, and there is one
+ * login per business (no team members or staff permissions yet; terms #account: do not share the password).
+ * Skipped from the pattern because we cannot back them: years in business, Tax Authority registration.
  * No numbers, customer counts, reviews or time-savings stats. tests/unit/landing-faq.test.mjs guards the rules.
  */
 const FROM_PRICE = PRICING_PLANS[0].price;
+// \u00A0 (no-break space) keeps 'לא יהיו' and '14 ימי' together, and \u2060 (word joiner) keeps 'ו-Airbnb' whole, when a question wraps on a phone.
 export const FAQ = [
+  // onboarding/store.js BUSINESS_TYPES (zimmer, zimmer complex, villa, boutique, guesthouse, apartments, hotel), 02-units (a row per unit, no unit cap inside a complex)
+  { q: 'למי ATLAS מתאימה?', a: 'לבעלי צימרים, וילות, דירות נופש, בתי הארחה ומתחמי אירוח, מצימר אחד ועד מתחם עם הרבה יחידות. כל צימר, חדר או דירה מקבלים שורה משלהם בלוח, והכל בעברית.' },
   // 05-channels (two-way calendar link, import every 15 min), BookingOverlapGuard (same unit, same nights: warns and asks for an explicit 'save anyway')
-  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד, יחד עם ההזמנות הישירות שלכם. מנסים לרשום הזמנה על לילות תפוסים? המערכת עוצרת ומתריעה לפני ששומרים, ואף הזמנה לא נדרסת.' },
-  // 01-getting-started (one question per screen, about five minutes), 15-support (a person on WhatsApp)
-  { q: 'קשה להתחיל? מישהו יעזור לי?', a: `לא קשה: המערכת שואלת שאלה אחת בכל פעם, בעברית פשוטה, ותוך כמה דקות הלוח שלכם מוכן. נתקעתם? בן אדם אמיתי עונה לכם בוואטסאפ ב-${PHONE_DISPLAY} ועוזר גם להעביר את מה שיש לכם היום.` },
+  { q: 'זה עובד עם Booking ו-\u2060Airbnb? לא\u00A0יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד, יחד עם ההזמנות הישירות שלכם. מנסים לרשום הזמנה על לילות תפוסים? המערכת עוצרת ומתריעה לפני ששומרים, ואף הזמנה לא נדרסת.' },
+  // 01-getting-started (one question per screen, about five minutes), 15-support (a person on WhatsApp), 13 #14 (a rep helps move existing data)
+  { q: 'זה מתאים גם למי שלא מתמצא בטכנולוגיה?', a: `כן, המערכת שואלת שאלה אחת בכל פעם, בעברית פשוטה, ותוך כמה דקות הלוח שלכם מוכן. נתקעתם? בן אדם אמיתי עונה לכם בוואטסאפ ב-${PHONE_DISPLAY} ועוזר גם להעביר את מה שיש לכם היום.` },
   // 06-whatsapp-messages (guest journey prepared on schedule, one tap from the owner's own WhatsApp, Shabbat quiet), 13 #2
   { q: 'ההודעות לאורחים בוואטסאפ יוצאות לבד?', a: 'כמעט: אישור הזמנה, הוראות הגעה יום לפני והודעת תודה מוכנות לבד בזמן הנכון, עם השם של האורח והניווט אליכם. אתם רק מאשרים, והן יוצאות מהוואטסאפ שלכם בלחיצה אחת, ובשבת המערכת שומרת על שקט.' },
   // 02-units (name, guests and nightly price per unit; another total per booking), 13 #9 (weekend/holiday price suggestions)
   { q: 'יש לי כמה יחידות, כל אחת במחיר אחר. זה מתאים?', a: 'בדיוק בשביל זה. לכל יחידה יש שורה בלוח, מספר אורחים ומחיר משלה, ובכל הזמנה אפשר לרשום מחיר אחר. המערכת גם מציעה לכם מחיר לסופ״ש ולחגים.' },
   // 01-getting-started #install (works in the browser, add to home screen), 13 #13 (no store app)
   { q: 'זה עובד גם בטלפון?', a: 'כן. ATLAS עובדת בטלפון כמו במחשב, בלי להוריד אפליקציה מהחנות. מוסיפים אותה למסך הבית ופותחים בלחיצה, מכל מקום.' },
+  // 12-settings #users + 13 #7 (one user per account, no staff invites or permissions; no members UI in src), Cleaning.jsx (task carries the cleaner's name), pricing.js INCLUDED_FEATURES (Today: arrivals, departures, cleaning)
+  { q: 'אפשר שגם בן או בת הזוג והעובדים ייכנסו?', a: 'עדיין לא. כרגע יש כניסה אחת לכל עסק, בלי משתמשים נוספים ובלי הרשאות לעובדים. את משימות הניקיון רושמים עם שם המנקה, ורואים אותן במסך ״היום״.' },
   // 07-money (payments recorded, balances, monthly report; documents are for records only, no tax allocation number), 13 #5 #11
   { q: 'אפשר להוציא קבלות וחשבוניות?', a: 'כל תשלום נרשם, ורואים מיד מי שילם ומה עוד פתוח. חשבונית מס רשמית עדיין מפיקים בתוכנת החשבוניות שלכם, והחיבור אליה בדרך. בסוף החודש מורידים דוח מסודר לרואה החשבון.' },
   // security.md (isolation per business, encrypted connection), privacy.md (no selling, no ads), terms #your-data + csvExport.js
   { q: 'המידע שלי ושל האורחים שמור?', a: 'כן. כל עסק רואה רק את המידע שלו, החיבור מוצפן, ואנחנו לא מוכרים מידע ולא מציגים פרסומות. הנתונים שייכים לכם, ואפשר להוריד אותם לאקסל בכל רגע.' },
   // pricing.js PRICING_PLANS[0] (one complex, whole system included); yearly and multi-complex plans shown in #pricing
   { q: 'כמה זה עולה?', a: `₪${FROM_PRICE} לחודש למתחם אחד, וכל המערכת כלולה. יש גם מסלול שנתי משתלם יותר ומסלול לכמה מתחמים, הכל מופיע למעלה במחירים.` },
-  // 11-subscription (no card, no automatic charge, account and data kept), terms #cancellation, cancellation.md #how
-  { q: 'ומה קורה אחרי 14 ימי הניסיון?', a: '14 הימים הראשונים חינם, בלי כרטיס אשראי, ובסופם לא יורד שקל לבד. ממשיכים רק אם בוחרים מסלול, והחשבון וכל הנתונים נשמרים. בלי התחייבות: מפסיקים בהודעה אחת בוואטסאפ.' },
+  // 11-subscription (no card, no automatic charge, a rep handles cancel), terms #trial ('בלי התחייבות', no auto charge), cancellation.md #how
+  { q: 'יש התחייבות? מה קורה אחרי 14\u00A0ימי הניסיון?', a: 'אין התחייבות. 14 הימים הראשונים חינם, בלי כרטיס אשראי, ובסופם לא יורד שקל לבד. ממשיכים רק אם בוחרים מסלול, ומפסיקים מתי שרוצים בהודעה אחת בוואטסאפ.' },
+  // CTA_SIGNUP button, Register.jsx (complex name, email, password), terms #account (email confirmation), 01-getting-started (questions save as you go, resume where you stopped)
+  { q: 'איך מתחילים?', a: `לוחצים על ״${CTA_SIGNUP}״, ממלאים שם מתחם, אימייל וסיסמה ומאשרים במייל. אחר כך המערכת שואלת כמה שאלות פשוטות על העסק, ואפשר לעצור באמצע ולהמשיך מאותה נקודה.` },
 ];
 
 /** Example data shown inside the HTML/CSS product UI. */
