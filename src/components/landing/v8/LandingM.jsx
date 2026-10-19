@@ -231,9 +231,9 @@ function StickyCta() {
     return () => io.disconnect();
   }, []);
   return (
-    <div className={`lm-sticky${on ? ' is-on' : ''}`} aria-hidden={on ? undefined : 'true'}>
+    <aside className={`lm-sticky${on ? ' is-on' : ''}`} aria-label="התחלת ניסיון חינם" aria-hidden={on ? undefined : 'true'}>
       <Link to="/register" tabIndex={on ? 0 : -1}>התחילו 14 יום חינם</Link>
-    </div>
+    </aside>
   );
 }
 
