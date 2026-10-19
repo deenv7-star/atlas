@@ -73,3 +73,6 @@
 
 /* the peek is the phone's preview; on desktop the side preview takes over (lg:hidden loses to .ob3-peek's display) */
 @media (min-width: 1024px) { .ob3-peek { display: none; } }
+
+/* B: the kind rows share the screen with the name field, so they are a little shorter */
+.ob3-kind.is-compact { min-height: 84px; padding: 8px; padding-inline-end: 18px; }

@@ -104,6 +104,38 @@ export const COPY = {
     noChannels: 'נחבר בהמשך',
     timesValue: (a) => `כניסה ${a.checkIn} · יציאה ${a.checkOut}${a.timesVary ? ' (משתנה)' : ''}`,
   },
+  /** Version B: 3 screens (the place, where bookings come from + calendar links, "זה נראה נכון?"). */
+  b: {
+    place: {
+      title: 'מה סוג המתחם שלכם?',
+      sub: 'ואיך קוראים לו. 2 דקות, נשמר אוטומטית.',
+      nameHint: 'בחרו סוג מתחם כדי להמשיך',
+    },
+    channels: {
+      title: 'מאיפה מגיעות ההזמנות?',
+      sub: 'סמנו הכל. את Booking ו-Airbnb אפשר לחבר כבר עכשיו.',
+      linkLabel: (name) => `קישור היומן מ-${name}`,
+      optional: 'לא חובה',
+      linkLine: 'מדביקים, ו-atlas מושכת משם את ההזמנות לבד.',
+      firstUnit: (unit) => `זה הקישור של ${unit} 1. את השאר מחברים בהגדרה.`,
+      where: 'איפה מוצאים את הקישור?',
+      openSite: (label) => label,
+      badLink: (name) => `הקישור של ${name} לא תקין. תקנו או מחקו אותו.`,
+      guideNote: 'נפתח בחלון חדש. חוזרים לכאן ומדביקים.',
+    },
+    review: {
+      title: 'זה נראה נכון?',
+      sub: 'בדקו רגע. כל דבר אפשר לשנות גם אחר כך.',
+      place: 'המתחם',
+      units: 'יחידות',
+      guests: 'אורחים',
+      times: 'שעות',
+      channels: 'הזמנות',
+      linked: (names) => `${names} מחובר ליומן`,
+      edit: 'שינוי',
+      done: 'סיום',
+    },
+  },
   preview: {
     label: 'כך ייראה היומן שלכם',
     placeholderName: 'המתחם שלכם',
