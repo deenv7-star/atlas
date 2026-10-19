@@ -83,7 +83,7 @@ export function GuestAvatar({ name = '', size = 36, className, ring = false, src
         className={cn('relative inline-flex shrink-0 select-none overflow-hidden rounded-full bg-[#E6E9F2]', ring && 'ring-[3px] ring-white', className)}
         style={{ width: size, height: size }}
       >
-        <img src={url} alt="" width={size} height={size} loading="lazy" decoding="async" draggable={false} onError={() => setFailed(true)} className="h-full w-full object-cover" />
+        <img src={url} alt="" width={size} height={size} loading="lazy" decoding="async" draggable={false} referrerPolicy="no-referrer" onError={() => setFailed(true)} className="h-full w-full object-cover" />
       </span>
     );
   }

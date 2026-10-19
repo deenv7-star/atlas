@@ -452,6 +452,12 @@ class SupabaseEntityCollection {
 // Supabase Auth
 // =============================================================================
 
+/** https photo URL from the sign-in provider (Google: avatar_url / picture), else ''. */
+function metaAvatar(meta = {}) {
+  const url = String(meta?.avatar_url || meta?.picture || '').trim();
+  return /^https:\/\/[^\s"'<>]+$/i.test(url) ? url : '';
+}
+
 const supabaseAuth = {
   async me() {
     // getSession() reads the stored (auto-refreshed) session without a network round-trip;
@@ -527,7 +533,8 @@ const supabaseAuth = {
       full_name:            profile?.full_name || user.user_metadata?.full_name || '',
       phone:                profile?.phone || '',
       profile_image:        profile?.profile_image || '',
-      avatar_url:           profile?.profile_image || '',
+      // Google sign-in: the account photo until the profile has its own (the callback copies it in).
+      avatar_url:           profile?.profile_image || metaAvatar(user.user_metadata),
       organization_id:      orgId,
       organization_name:    profile?.organizations?.name || '',
       subscription_plan:    profile?.organizations?.subscription_plan || 'starter',

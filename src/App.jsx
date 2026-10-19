@@ -22,6 +22,8 @@ const Register = lazy(() => import('@/pages/Register'));
 const VerifyEmail = lazy(() => import('@/pages/VerifyEmail'));
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
+// Google / Apple sign-in lands here (Supabase redirectTo). Not behind the signed-in redirects: the session appears on this page.
+const AuthCallback = lazy(() => import('@/pages/AuthCallback'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const SetupPage = lazy(() => import('@/pages/Setup'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
@@ -169,6 +171,7 @@ const AuthenticatedApp = () => {
       />
       <Route path="/reset-password" element={<S><ResetPassword /></S>} />
       <Route path="/update-password" element={<S><UpdatePassword /></S>} />
+      <Route path="/auth/callback" element={<S><AuthCallback /></S>} />
 
       {/* Public static pages — no auth required */}
       <Route path="/about" element={<S><SitePage /></S>} />
