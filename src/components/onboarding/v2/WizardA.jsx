@@ -216,7 +216,7 @@ export default function WizardA({ user, again = false }) {
             <div className="flex items-center gap-2">
               <Ghost onClick={skip} className="shrink-0">דלג</Ghost>
               <Primary className="flex-1" onClick={() => go(i + 1)} disabled={!canNext}>
-                {last ? <>בונים לי את המערכת<ArrowLeft className="h-5 w-5" aria-hidden /></> : <>המשך<ArrowLeft className="h-5 w-5" aria-hidden /></>}
+                {last ? <>בונים את המערכת<ArrowLeft className="h-5 w-5" aria-hidden /></> : <>המשך<ArrowLeft className="h-5 w-5" aria-hidden /></>}
               </Primary>
             </div>
             <div className="mt-1 flex justify-center"><HelpLink className="!min-h-[44px] !bg-transparent !shadow-none !text-[14px]" /></div>

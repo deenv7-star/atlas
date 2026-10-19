@@ -240,8 +240,8 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
             <Primary className="w-full" onClick={() => setSeen((n) => n + 1)}>עשיתי, מה הלאה?<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>
           )}
           <div className="flex gap-2">
-            <Ghost className="flex-1" onClick={onSkip}>{`אין לי ${G.short}`}</Ghost>
-            <Ghost className="flex-1" onClick={onBack}>אחר כך</Ghost>
+            <Ghost className="flex-1 whitespace-nowrap" onClick={onSkip}>{`אין לי ${G.short}`}</Ghost>
+            <Ghost className="flex-1 whitespace-nowrap" onClick={onBack}>אחר כך</Ghost>
           </div>
         </>
       )}>
