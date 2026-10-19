@@ -8,7 +8,6 @@
 import React, { useState } from 'react';
 import { Check, ChevronDown, X, Lightbulb } from 'lucide-react';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
-import { formatDayHe, todayISO } from '@/lib/stay/format';
 import { cn } from '@/lib/utils';
 import InsightActionButton from './InsightActionButton';
 
@@ -44,7 +43,7 @@ function useLeave(restore) {
   return [leaving, leave];
 }
 
-function Priority({ n, item, onAction, onDone, leaving }) {
+function Priority({ n, item, primary, onAction, onDone, leaving }) {
   return (
     <li className={cn('ins-row', leaving && 'is-leaving')} data-insight={item.rule} data-severity={item.severity}>
       <div className="min-h-0 overflow-hidden">
@@ -53,11 +52,11 @@ function Priority({ n, item, onAction, onDone, leaving }) {
           <div className="min-w-0 flex-1">
             <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               <span className="text-[16px] font-bold leading-snug text-navy-900">{item.title}</span>
-              <span className={cn('inline-flex h-6 items-center rounded-full px-2.5 text-[12px] font-bold', CHIP[item.severity])}>{item.label}</span>
+              {item.severity === 'urgent' ? null : <span className={cn('inline-flex h-6 items-center rounded-full px-2.5 text-[12px] font-bold', CHIP[item.severity])}>{item.label}</span>}
             </p>
             <p className="mt-1 text-[14px] leading-[1.55] text-ink-600">{item.why}</p>
             <div className="mt-2.5 flex items-center gap-1">
-              <InsightActionButton item={item} onAction={onAction} tone={item.severity === 'urgent' ? 'solid' : 'soft'} />
+              <InsightActionButton item={item} onAction={onAction} tone={primary ? 'solid' : 'soft'} />
               <button
                 type="button"
                 onClick={() => onDone(item)}
@@ -102,6 +101,7 @@ function Idea({ item, onAction, onDismiss, leaving }) {
 export default function MorningBrief({ insights, onAction }) {
   const { items, ready, snooze, dismiss, restore } = insights;
   const [more, setMore] = useState(false);
+  const [ideasOpen, setIdeasOpen] = useState(false);
   const [leaving, leave] = useLeave(restore);
   if (!ready) return <div className="mb-3 h-[132px] rounded-[24px] bg-white/60 md:mb-4" aria-hidden />;
 
@@ -118,7 +118,7 @@ export default function MorningBrief({ insights, onAction }) {
     <section aria-labelledby="brief-title" className="v7-card v5-rise mb-3 overflow-hidden md:mb-4" style={{ '--i': 0 }} data-testid="morning-brief">
       <div className={cn('grid', ideas.length && 'lg:grid-cols-12')}>
         <div className={cn('min-w-0 px-5 pb-3 pt-5 md:px-6 md:pt-6', ideas.length && 'lg:col-span-7')}>
-          <p className="text-[13px] font-medium text-ink-400">{formatDayHe(todayISO())}</p>
+          <p className="text-[13px] font-medium text-ink-400">סיכום הבוקר</p>
           <h2 id="brief-title" className="mt-1 text-[22px] font-extrabold leading-tight tracking-[-0.01em] text-navy-900 md:text-[24px]">
             {calm ? 'הכל מסודר להיום' : headline(urgent)}
           </h2>
@@ -132,7 +132,7 @@ export default function MorningBrief({ insights, onAction }) {
               {subline(urgent, worth) ? <p className="mt-1 text-[14px] text-ink-600">{subline(urgent, worth)}</p> : null}
               <ol className="mt-2" aria-label="מה לעשות היום">
                 {shown.map((item, i) => (
-                  <Priority key={item.id} n={i + 1} item={item} onAction={onAction} onDone={onDone} leaving={leaving === item.id} />
+                  <Priority key={item.id} n={i + 1} item={item} primary={i === 0 && item.severity === 'urgent'} onAction={onAction} onDone={onDone} leaving={leaving === item.id} />
                 ))}
               </ol>
               {tasks.length > TOP ? (
@@ -150,12 +150,21 @@ export default function MorningBrief({ insights, onAction }) {
           )}
         </div>
         {ideas.length ? (
-          <aside aria-labelledby="ideas-title" className="min-w-0 border-t border-[#F0F0F6] bg-[#F7F8FB] px-5 pb-3 pt-4 md:px-6 lg:col-span-5 lg:border-s lg:border-t-0 lg:pt-6">
-            <h3 id="ideas-title" className="flex items-center gap-1.5 text-[14px] font-bold text-navy-900">
-              <Lightbulb className="h-4 w-4 text-brand-600" strokeWidth={1.75} aria-hidden />
-              {ideas.length === 1 ? 'רעיון אחד' : `${ideas.length} רעיונות`}
+          <aside aria-labelledby="ideas-title" className="min-w-0 border-t border-[#F0F0F6] bg-[#F7F8FB] px-5 pb-2 pt-2 md:px-6 lg:col-span-5 lg:border-s lg:border-t-0 lg:pt-5">
+            <h3 id="ideas-title" className="text-[14px] font-bold text-navy-900">
+              {/* phones: ideas fold so the priorities stay on the first screen; desktop: always open */}
+              <button
+                type="button"
+                onClick={() => setIdeasOpen((v) => !v)}
+                aria-expanded={ideasOpen}
+                className="press -ms-1 flex min-h-[44px] w-full items-center gap-1.5 rounded-full px-1 text-right lg:pointer-events-none"
+              >
+                <Lightbulb className="h-4 w-4 text-brand-600" strokeWidth={1.75} aria-hidden />
+                <span className="flex-1">{ideas.length === 1 ? 'רעיון אחד' : `${ideas.length} רעיונות`}</span>
+                <ChevronDown className={cn('h-4 w-4 text-ink-400 transition-transform duration-200 lg:hidden', ideasOpen && 'rotate-180')} strokeWidth={2} aria-hidden />
+              </button>
             </h3>
-            <ul>
+            <ul className={cn(!ideasOpen && 'hidden lg:block')}>
               {ideas.map((item) => (
                 <Idea key={item.id} item={item} onAction={onAction} onDismiss={onDismiss} leaving={leaving === item.id} />
               ))}
