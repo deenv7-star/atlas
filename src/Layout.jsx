@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
 import TrialBanner from '@/components/TrialBanner';
-import IOSInstallBanner from '@/components/app/IOSInstallBanner';
+import LaunchActions from '@/components/pwa/LaunchActions';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { cn } from '@/lib/utils';
 import { CommandPalette } from '@/components/ui/CommandPalette';
@@ -82,6 +82,7 @@ function LayoutContent({ children, currentPageName }) {
 
   return (
     <QuickBookingProvider>
+      <LaunchActions />
       <div className={cn('atlas-app-shell flex h-[100dvh] max-h-[100dvh] min-h-[100dvh] flex-col overflow-hidden safe-top safe-left safe-right', shellClass)} dir="rtl">
         <div className="lg:hidden"><TrialBanner /></div>
         <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -117,7 +118,6 @@ function LayoutContent({ children, currentPageName }) {
           <ErrorBoundary section="support-widget" variant="silent">
             <Suspense fallback={null}><SupportWidget /></Suspense>
           </ErrorBoundary>
-          <IOSInstallBanner />
         </div>
         <TourHost user={user} />
       </div>
