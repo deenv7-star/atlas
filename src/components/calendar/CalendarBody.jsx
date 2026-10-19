@@ -42,7 +42,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
   return (
     <div className="space-y-4">
       <div
-        className="v7-card overflow-hidden"
+        className="v7-card overflow-hidden max-[359px]:-mx-5 max-[359px]:rounded-none"
         style={{ '--lane': `${laneSm}px` }}
       >
         <div className="md:[--lane:var(--lane-md)]" style={{ '--lane-md': `${lane}px` }}>
@@ -61,7 +61,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
 
           {multi ? (
             <p className="border-b border-navy-900/[0.08] px-3 py-2 text-[12px] text-navy-900/70 md:hidden">
-              שורה לכל יחידה, מלמעלה למטה: {units.map((u) => u.name).join(' · ')}
+              מלמעלה למטה: {units.map((u) => u.name).join(' · ')}
             </p>
           ) : null}
           {weeks.map((week) => (
