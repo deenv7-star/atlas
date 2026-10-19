@@ -32,7 +32,7 @@ atlas לא סולקת כרטיסי אשראי ולא שומרת פרטי כרט�
 
 ## מה אנחנו לא טוענים {#not-claimed}
 
-ל-atlas עצמה אין כרגע הסמכת אבטחה כמו SOC 2 או ISO 27001. ספקי התשתית שלנו מחזיקים בהסמכות משלהם, ואפשר לקרוא עליהן באתרים שלהם: [Supabase](https://supabase.com/security) ו-[Vercel](https://vercel.com/security).
+למערכת atlas עצמה אין כרגע הסמכת אבטחה כמו SOC 2 או ISO 27001. ספקי התשתית שלנו מחזיקים בהסמכות משלהם, ואפשר לקרוא עליהן באתרים שלהם: [Supabase](https://supabase.com/security) ו-[Vercel](https://vercel.com/security).
 
 ## מצאתם בעיית אבטחה? {#report}
 

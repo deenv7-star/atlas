@@ -46,7 +46,7 @@ function Thread({ conv, onBack }) {
   const phone = conv.user_phone;
   const wa = waDigits(phone);
   const first = (conv.user_name || '').split(' ')[0];
-  const waText = `שלום${first ? ` ${first}` : ''}, כאן ${(me?.full_name || '').split(' ')[0] || 'צוות'} מ-atlas לגבי הפנייה שלכם בעזרה: "${(conv.subject || '').slice(0, 80)}"`;
+  const waText = `שלום${first ? ` ${first}` : ''}, כאן ${(me?.full_name || '').split(' ')[0] || 'צוות'} מצוות atlas לגבי הפנייה שלכם בעזרה: "${(conv.subject || '').slice(0, 80)}"`;
   const submit = (e) => {
     e?.preventDefault();
     const body = draft.trim();

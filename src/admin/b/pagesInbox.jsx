@@ -23,7 +23,7 @@ function Card({ m, me }) {
   const subject = subjectOf(m.subject);
   const wa = waDigits(m.phone);
   const sender = (me?.full_name || '').split(' ')[0] || 'צוות';
-  const waText = `שלום${first ? ` ${first}` : ''}, כאן ${sender} מ-atlas. קיבלנו את הפנייה שלך מהאתר${subject ? ` ("${subject.slice(0, 60)}")` : ''}.`;
+  const waText = `שלום${first ? ` ${first}` : ''}, כאן ${sender} מצוות atlas. קיבלנו את הפנייה שלך מהאתר${subject ? ` ("${subject.slice(0, 60)}")` : ''}.`;
   const mail = `mailto:${m.email}?subject=${encodeURIComponent(`atlas · ${subject || 'הפנייה שלך מהאתר'}`)}&body=${encodeURIComponent(`שלום${first ? ` ${first}` : ''},\n\n`)}`;
   const replied = () => { if (m.status === 'NEW' || m.status === 'READ') set.mutate({ id: m.id, status: 'REPLIED', silent: true }); };
   const isNew = m.status === 'NEW';

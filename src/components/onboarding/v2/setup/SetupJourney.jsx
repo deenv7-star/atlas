@@ -286,7 +286,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
       ) : null}
       <p className="mt-5 text-[14px] text-ink-400">
         <a className="font-semibold text-brand-700 underline underline-offset-2" href={G.help} target="_blank" rel="noopener noreferrer">ההסבר הרשמי של {G.name}</a>
-        {' · '}רוצים שגם {G.name} יחסום תאריכים שנסגרו ב-atlas? זה במסך <a className="font-semibold text-brand-700 underline underline-offset-2" href="/integrations">ערוצים וחיבורים</a>.
+        {' · '}רוצים שגם {G.name} יחסום תאריכים שנסגרו במערכת atlas? זה במסך <a className="font-semibold text-brand-700 underline underline-offset-2" href="/integrations">ערוצים וחיבורים</a>.
       </p>
     </Shell>
   );

@@ -370,7 +370,7 @@ export function VerifyPhone({ phone, verified, onVerified }) {
     <div className="flex flex-col gap-2.5 rounded-[20px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_8px_22px_-12px_rgba(27,38,86,0.16)]">
       <p className="text-[16px] font-semibold text-navy-900">רוצים לוודא שהמספר נכון?</p>
       {!sent ? (
-        <a href={`https://wa.me/${intl}?text=${encodeURIComponent('בדיקה מ-atlas: המספר שלי נכון.')}`} target="_blank" rel="noreferrer" onClick={() => setSent(true)}
+        <a href={`https://wa.me/${intl}?text=${encodeURIComponent('הודעת בדיקה ממערכת atlas: המספר שלי נכון.')}`} target="_blank" rel="noreferrer" onClick={() => setSent(true)}
           className="ob-press inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-[#1FA855] px-5 text-[17px] font-bold text-white" aria-disabled={digits.length < 9}>
           שליחת הודעת בדיקה לעצמי
         </a>

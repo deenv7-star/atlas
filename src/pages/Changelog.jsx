@@ -27,7 +27,7 @@ export default function Changelog() {
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">יומן שינויים</h1>
-          <p className="text-gray-600 mb-12">עדכונים ושיפורים ב-atlas</p>
+          <p className="text-gray-600 mb-12">עדכונים ושיפורים במערכת atlas</p>
 
           <div className="space-y-8">
             {entries.map((e, i) => (

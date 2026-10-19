@@ -196,7 +196,7 @@ function Final() {
             {['noa', 'tom', 'maya', 'yossi'].map((k, i) => <Face key={k} f={FACES[k]} size={64} className={`lm-x-face is-${i + 1}`} />)}
           </div>
           <h2 id="final-title" className="lm-x-h" data-reveal>הבמה מוכנה.<br />האורחים בדרך.</h2>
-          <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים ערוצים תוך 10 דקות, ו-atlas מתחילה לעבוד.</p>
+          <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים ערוצים תוך 10 דקות, והמערכת מתחילה לעבוד.</p>
           <div data-reveal><CtaLinks /></div>
           <div className="lm-x-shot" aria-hidden="true">
             <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="lazy" decoding="async" />

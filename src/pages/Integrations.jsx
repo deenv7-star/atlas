@@ -211,7 +211,7 @@ function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, 
           <AddFeed property={property} onAdd={onAdd} busy={adding === property.id} />
         </div>
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowUpFromLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייצוא: הזמנות מ-atlas אל הערוצים</h3>
+          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowUpFromLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייצוא: הזמנות ממערכת atlas אל הערוצים</h3>
           {property.ical_export_token ? (
             <>
               <CopyRow label="להדבקה ב-Airbnb" hint="כל ההזמנות חוץ מאלה שהגיעו מ-Airbnb" value={icalExportUrl(property, 'airbnb')} />
@@ -223,12 +223,12 @@ function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, 
       </div>
       <div className="space-y-2 px-5 pb-5 md:px-6">
         <Help title="איך מחברים את Airbnb">
-          <p><b>1. מ-Airbnb ל-atlas:</b> ב-Airbnb נכנסים ללוח השנה ← בוחרים את המודעה ← זמינות ← <i>חיבור לוחות שנה</i> ← <i>ייצוא לוח שנה</i>. מעתיקים את הקישור ומדביקים אותו למעלה ב"ייבוא".</p>
-          <p><b>2. מ-atlas ל-Airbnb:</b> באותו מסך בוחרים <i>ייבוא לוח שנה</i>, מדביקים את "להדבקה ב-Airbnb", ונותנים שם atlas.</p>
+          <p><b>1. ייבוא מ-Airbnb:</b> ב-Airbnb נכנסים ללוח השנה ← בוחרים את המודעה ← זמינות ← <i>חיבור לוחות שנה</i> ← <i>ייצוא לוח שנה</i>. מעתיקים את הקישור ומדביקים אותו למעלה ב"ייבוא".</p>
+          <p><b>2. ייצוא אל Airbnb:</b> באותו מסך בוחרים <i>ייבוא לוח שנה</i>, מדביקים את "להדבקה ב-Airbnb", ונותנים שם atlas.</p>
         </Help>
         <Help title="איך מחברים את Booking.com">
-          <p><b>1. מ-Booking ל-atlas:</b> ב-Extranet נכנסים ל<i>תעריפים וזמינות</i> ← <i>סנכרון לוחות שנה</i> ← בוחרים את סוג החדר ← <i>ייצוא לוח שנה</i>. מעתיקים ומדביקים למעלה.</p>
-          <p><b>2. מ-atlas ל-Booking:</b> באותו מסך <i>הוספת חיבור לוח שנה</i> ← מדביקים את "להדבקה ב-Booking.com".</p>
+          <p><b>1. ייבוא מ-Booking:</b> ב-Extranet נכנסים ל<i>תעריפים וזמינות</i> ← <i>סנכרון לוחות שנה</i> ← בוחרים את סוג החדר ← <i>ייצוא לוח שנה</i>. מעתיקים ומדביקים למעלה.</p>
+          <p><b>2. ייצוא אל Booking:</b> באותו מסך <i>הוספת חיבור לוח שנה</i> ← מדביקים את "להדבקה ב-Booking.com".</p>
         </Help>
         <Help title="מה חשוב לדעת">
           <p>atlas בודקת את הערוצים כל 15 דקות, ואפשר ללחוץ על סנכרון בכל רגע. הערוצים עצמם מושכים את היומן של atlas בקצב שלהם: Booking בערך כל שעתיים, Airbnb בערך כל 3 שעות. בחלון הזה עדיין אפשרית הזמנה כפולה, ולכן כשיש חפיפה atlas לא דורסת הזמנה קיימת ומסמנת התנגשות.</p>

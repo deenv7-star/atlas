@@ -11,7 +11,7 @@ export function inboxLink(convId: string) {
 
 export async function notifyHandoff(h: Handoff): Promise<string[]> {
   const sent: string[] = [];
-  const text = `פנייה חדשה לנציג ב-atlas\n${h.customer}${h.org ? ` · ${h.org}` : ''}${h.phone ? ` · ${h.phone}` : ''}\nסיבה: ${h.reason}\nשאלה: ${h.last_question}\n${inboxLink(h.conversation_id)}`;
+  const text = `פנייה חדשה לנציג במערכת atlas\n${h.customer}${h.org ? ` · ${h.org}` : ''}${h.phone ? ` · ${h.phone}` : ''}\nסיבה: ${h.reason}\nשאלה: ${h.last_question}\n${inboxLink(h.conversation_id)}`;
   const resend = Deno.env.get('RESEND_API_KEY'), to = Deno.env.get('SUPPORT_NOTIFY_EMAIL');
   if (resend && to) {
     try {

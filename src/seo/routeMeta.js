@@ -28,7 +28,7 @@ const EXACT = {
   },
   '/onboarding': {
     title: 'הגדרת חשבון | atlas',
-    description: 'סיום ההרשמה והגדרת הארגון ב-atlas.',
+    description: 'סיום ההרשמה והגדרת הארגון במערכת atlas.',
   },
   '/dashboard': {
     title: 'היום | atlas',
@@ -64,7 +64,7 @@ const EXACT = {
   },
   '/data-security': {
     title: 'אבטחת מידע | atlas',
-    description: 'אבטחת מידע והגנת נתונים ב-atlas.',
+    description: 'אבטחת מידע והגנת נתונים במערכת atlas.',
   },
   '/accessibility': {
     title: 'נגישות | atlas',
@@ -72,7 +72,7 @@ const EXACT = {
   },
   '/sla': {
     title: 'SLA | atlas',
-    description: 'הסכם רמת שירות (SLA) ל-atlas.',
+    description: 'הסכם רמת שירות (SLA) של atlas.',
   },
   '/api-docs': {
     title: 'תיעוד API | atlas',
@@ -89,7 +89,7 @@ const EXACT = {
   },
   '/billing': {
     title: 'חיובים | atlas',
-    description: 'ניהול חיוב ותשלומים ב-atlas.',
+    description: 'ניהול חיוב ותשלומים בחשבון atlas.',
   },
   '/subscription': {
     title: 'מנוי | atlas',
