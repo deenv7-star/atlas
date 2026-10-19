@@ -171,7 +171,7 @@
 }
 
 /* growth C placeholder (LazyGrowth): close to the mounted section's height, measured on the production build
-   (20.10.2026: 2628px at 320, 2688 at 390, 3188 at 899, 2403 at 900, 2519 from 1280), so mounting never shifts layout */
-.lg-ph-c { min-height: calc(2340px + 90vw); }
+   (20.10.2026: 2657px at 320, 2718 at 390, ~3220 at 899, 2403 at 900, 2519 from 1280), so mounting never shifts layout */
+.lg-ph-c { min-height: calc(2370px + 90vw); }
 @media (min-width: 900px) { .lg-ph-c { min-height: 2400px; } }
 @media (min-width: 1280px) { .lg-ph-c { min-height: 2520px; } }

@@ -78,3 +78,8 @@
   .gc-vis .gc-screen { transform: translateY(56px); transition: transform 1100ms cubic-bezier(0.23, 1, 0.32, 1) 120ms; }
   .gc-vis.is-in .gc-photo, .gc-vis.is-in .gc-screen { transform: none; }
 }
+/* narrow phones (320-379): the CTA stays on one line */
+@media (max-width: 379px) {
+  .gc-offer { padding: 24px 18px 20px; }
+  .gc-cta { padding: 0 16px; font-size: 16px; white-space: nowrap; }
+}
