@@ -23,6 +23,7 @@ import { useQuickBooking } from '@/components/app/QuickBooking';
 import { useSubscription } from '@/hooks/useSubscription';
 import { trialShortText, TRIAL_DAYS } from '@/lib/trial';
 import { formatDayHe, todayISO, firstName } from '@/lib/stay/format';
+import { AskAtlasButton } from '@/assistant/launcher';
 
 export const shellClass = 'bg-canvas';
 
@@ -184,6 +185,7 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
         <div className="hidden lg:block">
           <UnitSwitcher properties={properties} selectedPropertyId={selectedPropertyId} onPropertyChange={onPropertyChange} />
         </div>
+        <AskAtlasButton />
         <IconButton as={Link} to={createPageUrl('Messages')} label="הודעות" className="ring-0">
           <Bell strokeWidth={1.75} />
         </IconButton>

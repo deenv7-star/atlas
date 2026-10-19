@@ -1,0 +1,15 @@
+/* Version B header button. Loaded with the shell (tiny); the panel's own CSS loads with it lazily. */
+/* ── B: header button ─────────────────────────────────────────────────── */
+.as-open { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; min-width: 48px; padding: 0; border: 0; border-radius: 999px;
+  background: #fff; color: #1B2656; font-family: 'Heebo', system-ui, sans-serif; font-size: 15px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 1px 2px rgba(27, 38, 86, 0.05); transition: background-color 160ms ease, transform 120ms cubic-bezier(0.23, 1, 0.32, 1); }
+.as-open:active { transform: scale(0.96); }
+.as-open:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
+.as-open[aria-expanded='true'] { background: rgba(62, 43, 241, 0.08); }
+.as-open-label { display: none; }
+@media (min-width: 1280px) { .as-open { padding: 0 18px 0 16px; } .as-open-label { display: inline; } }
+
+
+/* the help launcher shares the bottom-left corner: step aside while the panel is open */
+html[data-assistant-open] .sp-launcher { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .as-open { transition: none; } }
