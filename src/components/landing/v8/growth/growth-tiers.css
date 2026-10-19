@@ -1,0 +1,46 @@
+/* Growth tier cards. Palette: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white. */
+.gt { --gt-ind: #3E2BF1; --gt-navy: #1B2656; --gt-ink: #4A5478; --gt-line: #E3E6F0; }
+.gt-seg { display: flex; width: max-content; max-width: 100%; margin: 0 auto 20px; padding: 4px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--gt-line); }
+.gt-seg button { min-height: 44px; padding: 0 18px; border-radius: 999px; font: inherit; font-size: 15px; font-weight: 700; color: var(--gt-ink); background: none; border: 0; cursor: pointer; transition: background-color 180ms cubic-bezier(.23,1,.32,1), color 180ms; }
+.gt-seg button[aria-pressed='true'] { background: var(--gt-navy); color: #fff; }
+.gt-seg button:focus-visible { outline: 2px solid var(--gt-ind); outline-offset: 2px; }
+.gt-list { display: grid; gap: 12px; }
+@media (min-width: 980px) { .gt-list { grid-template-columns: 1fr 1.12fr 1fr; align-items: stretch; gap: 16px; } }
+.gt-card { display: flex; flex-direction: column; min-width: 0; padding: 22px 20px 18px; border-radius: 24px; background: #fff; color: var(--gt-navy); box-shadow: inset 0 0 0 1px var(--gt-line); }
+.gt-card.is-pop { background: var(--gt-ind); color: #fff; box-shadow: 0 2px 4px rgba(27,38,86,.06), 0 24px 48px -20px rgba(62,43,241,.55); }
+@media (min-width: 980px) { .gt-card { padding: 28px 26px 22px; } .gt-card.is-pop { transform: translateY(-10px); } }
+.gt-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gt-name { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.gt-tag { padding: 4px 10px; border-radius: 999px; background: #fff; color: var(--gt-ind); font-size: 13px; font-weight: 800; }
+.gt-for { margin-top: 4px; font-size: 15px; color: var(--gt-ink); }
+.gt-card.is-pop .gt-for, .gt-card.is-pop .gt-note, .gt-card.is-pop .gt-lead { color: rgba(255,255,255,.86); }
+.gt-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; margin-top: 18px; font-size: 15px; color: var(--gt-ink); }
+.gt-card.is-pop .gt-price { color: rgba(255,255,255,.86); }
+.gt-price b { font-size: 44px; line-height: 1; font-weight: 800; letter-spacing: -0.04em; color: var(--gt-navy); font-variant-numeric: tabular-nums; }
+.gt-card.is-pop .gt-price b { color: #fff; }
+.gt-from { width: 100%; font-size: 13px; font-weight: 600; }
+.gt-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; margin-top: 16px; padding: 0 18px; border-radius: 999px; font-size: 16px; font-weight: 700; background: #F7F8FB; color: var(--gt-navy); box-shadow: inset 0 0 0 1px var(--gt-line); transition: transform 160ms cubic-bezier(.23,1,.32,1), background-color 160ms; }
+.gt-btn.is-pop { background: #fff; color: var(--gt-ind); box-shadow: none; }
+.gt-btn:active { transform: scale(.97); }
+.gt-btn:focus-visible { outline: 2px solid var(--gt-ind); outline-offset: 3px; }
+.gt-card.is-pop .gt-btn:focus-visible { outline-color: #fff; }
+@media (hover: hover) and (pointer: fine) { .gt-btn:hover { background: #EEF0F7; } .gt-btn.is-pop:hover { background: #F1F0FF; } }
+.gt-lead { margin-top: 18px; font-size: 14px; font-weight: 700; color: var(--gt-ink); }
+.gt-items { display: grid; gap: 8px; margin-top: 10px; }
+.gt-items li { display: flex; gap: 8px; font-size: 15px; line-height: 1.4; }
+.gt-items svg { flex: none; margin-top: 2px; color: var(--gt-ind); }
+.gt-card.is-pop .gt-items svg { color: #fff; }
+.gt-note { margin-top: auto; padding-top: 16px; font-size: 13px; color: var(--gt-ink); }
+.gt-extra { display: grid; gap: 10px; margin-top: 16px; }
+@media (min-width: 980px) { .gt-extra { grid-template-columns: 1.2fr 1fr; gap: 16px; margin-top: 24px; } }
+.gt-found, .gt-launch { display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 18px; font-size: 15px; line-height: 1.5; color: var(--gt-navy); background: #fff; box-shadow: inset 0 0 0 1px var(--gt-line); }
+.gt-found svg { flex: none; margin-top: 3px; color: var(--gt-ind); }
+.gt-launch { flex-direction: column; gap: 4px; }
+.gt-launch a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--gt-ind); text-decoration: underline; text-underline-offset: 4px; }
+.gt-launch a:focus-visible { outline: 2px solid var(--gt-ind); outline-offset: 2px; border-radius: 6px; }
+.gt.is-dark .gt-seg { background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); }
+.gt.is-dark .gt-seg button { color: rgba(255,255,255,.86); }
+.gt.is-dark .gt-seg button[aria-pressed='true'] { background: #fff; color: var(--gt-navy); }
+@media (prefers-reduced-motion: reduce) { .gt-card.is-pop { transform: none; } .gt-btn, .gt-seg button { transition: none; } }
+.gt .gt-card .gt-name { color: var(--gt-navy); }
+.gt .gt-card.is-pop .gt-name { color: #fff; }
