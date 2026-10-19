@@ -181,7 +181,7 @@ export default function ChatB({ user, again = false }) {
     ),
     count: (
       <div className="flex flex-col gap-2">
-        <div role="radiogroup" aria-label={`כמה ${k.units}`} className="grid grid-cols-6 gap-2">
+        <div role="radiogroup" aria-label={`כמה ${k.units}`} className="grid grid-cols-6 gap-2 max-[359px]:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((v) => <button key={v} type="button" role="radio" aria-checked={!custom && n === v} onClick={() => answer({ unitCount: v })} className="ob2-chip ob-press !px-0 !text-[20px]">{v}</button>)}
         </div>
         {custom ? (
