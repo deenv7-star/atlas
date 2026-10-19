@@ -25,6 +25,7 @@ export const BUSINESS_TYPES = [
   { value: 'zimmer', label: 'צימר', unit: 'צימר', units: 'צימרים', single: true, photo: '/demo/units/unit-6.webp', line: 'צימר אחד' },
   { value: 'zimmer_complex', label: 'מתחם צימרים', unit: 'צימר', units: 'יחידות', photo: '/demo/units/unit-2.webp', line: 'כמה צימרים במקום אחד' },
   { value: 'villa', label: 'וילה', unit: 'וילה', units: 'וילות', single: true, photo: '/demo/units/unit-3.webp', line: 'בית שלם לאורחים' },
+  { value: 'complex', label: 'מתחם אירוח', unit: 'יחידה', units: 'יחידות', photo: '/demo/complex-pool.webp', line: 'כמה יחידות, קבוצות ומשפחות' },
   { value: 'hotel', label: 'מלון', unit: 'חדר', units: 'חדרים', photo: '/demo/types/hotel.webp', line: 'חדרים, קבלה, צוות' },
   { value: 'boutique', label: 'מלון בוטיק', unit: 'חדר', units: 'חדרים', photo: '/demo/types/boutique.webp', line: 'מעט חדרים, הרבה אופי' },
   { value: 'guesthouse', label: 'בית הארחה', unit: 'חדר', units: 'חדרים', photo: '/demo/units/unit-4.webp', line: 'חדרים בבית אחד' },
