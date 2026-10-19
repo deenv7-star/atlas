@@ -176,7 +176,6 @@ function StageCard({ stage, theme, index, total, onToggle }) {
             <h3 className={cn('font-bold text-sm', stage.active ? 'text-navy-900' : 'text-ink-400')}>
               {stage.name}
             </h3>
-            <span className="text-[12px] text-ink-400 font-medium">{stage.subtitle}</span>
           </div>
         </div>
 

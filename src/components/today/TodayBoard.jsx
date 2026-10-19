@@ -404,7 +404,6 @@ export default function TodayBoard({ user, orgId }) {
   const photoTile = (
     <Link
       to="/calendar"
-      aria-label={`${user?.organization_name || 'המתחם'}: ${tonight.occupied === 1 ? 'יחידה אחת מאוכלסת' : `${tonight.occupied} יחידות מאוכלסות`} הלילה, ${free} פנויות. ללוח השנה`}
       className={cn('v5-rise c-photo press v7-lift flex min-h-[196px] flex-col justify-between p-3.5 text-white md:p-4 lg:col-span-4 lg:min-h-[214px]', !photo && 'c-photo--empty')}
       style={{ '--i': 3 }}
     >
@@ -424,6 +423,8 @@ export default function TodayBoard({ user, orgId }) {
         </div>
         {tonight.guests.length ? <AvatarStack names={tonight.guests} size={30} max={3} showRest={false} className="hidden shrink-0 sm:inline-flex" /> : null}
       </div>
+      {/* accessible name = the visible text + where the link goes (WCAG 2.5.3 label in name) */}
+      <span className="sr-only">{free} {free === 1 ? 'פנויה' : 'פנויות'}. ללוח השנה</span>
     </Link>
   );
 

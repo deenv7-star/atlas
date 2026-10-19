@@ -273,7 +273,7 @@ export function ContactForm({ className = '' }) {
 export function ContactDetails() {
   const rows = [
     { label: 'וואטסאפ', value: <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" dir="ltr">{LEGAL.WHATSAPP_DISPLAY}<span className="s-sr"> (נפתח בוואטסאפ)</span></a> },
-    legalValue('BUSINESS_PHONE') && { label: 'טלפון', value: <a href={`tel:${LEGAL.BUSINESS_PHONE}`} dir="ltr">{LEGAL.BUSINESS_PHONE}</a> },
+    legalValue('BUSINESS_PHONE') && { label: 'טלפון', value: <a href={`tel:+972${String(LEGAL.BUSINESS_PHONE).replace(/\D/g, '').replace(/^0/, '')}`} dir="ltr">{LEGAL.BUSINESS_PHONE}</a> },
     legalValue('SUPPORT_EMAIL') && { label: 'מייל', value: <a href={`mailto:${LEGAL.SUPPORT_EMAIL}`} dir="ltr">{LEGAL.SUPPORT_EMAIL}</a> },
     legalValue('BUSINESS_ADDRESS') && { label: 'כתובת למכתבים', value: <Placeholder name="BUSINESS_ADDRESS" /> },
     BUSINESS_LINE && { label: 'פרטי העסק', value: <span>{BUSINESS_LINE}</span> },

@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Receipt, Plus, TrendingDown, Calendar, DollarSign, Wallet, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { todayIsrael } from '@/lib/localDate';
 
 const CATEGORIES = [
   { value: 'ניקיון', label: 'ניקיון', color: 'bg-emerald-100 text-emerald-700', barColor: 'bg-emerald-500' },
@@ -54,7 +55,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
     property: '',
     category: '',
     amount: '',
-    date: new Date().toISOString().slice(0, 10),
+    date: todayIsrael(),
     description: '',
   });
 
@@ -88,7 +89,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
       description: form.description || '',
     }).then(() => atlasToastApi.success('ההוצאה נשמרה'))
       .catch(() => atlasToastApi.error('ההוצאה לא נשמרה'));
-    setForm({ property: '', category: '', amount: '', date: new Date().toISOString().slice(0, 10), description: '' });
+    setForm({ property: '', category: '', amount: '', date: todayIsrael(), description: '' });
     setDialogOpen(false);
   };
 

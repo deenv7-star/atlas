@@ -7,6 +7,7 @@
 //   "סנכרן עכשיו" button  -> Authorization: Bearer <user JWT>, body {"sync_id"?: uuid}  (own org only, via RLS)
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { parseIcs, addDaysISO, type IcsEvent } from "../_shared/ics.ts";
+import { isPublicFeedUrl } from "../_shared/feedUrl.ts";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -46,11 +47,21 @@ function guestNameFor(ev: IcsEvent, label: string): string {
 async function fetchFeed(url: string): Promise<string> {
   let u = url.trim();
   if (/^webcal:\/\//i.test(u)) u = "https://" + u.slice(9);
-  if (!/^https?:\/\//i.test(u)) throw new Error("bad_url");
+  if (!/^https?:\/\//i.test(u) || !isPublicFeedUrl(u)) throw new Error("bad_url");
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 25_000);
   try {
-    const res = await fetch(u, { signal: ctrl.signal, headers: { "User-Agent": "ATLAS-iCal-Sync/1.0 (+https://atlas-il.com)", Accept: "text/calendar, text/plain, */*" }, redirect: "follow" });
+    let res: Response | null = null;
+    for (let hop = 0; hop < 5; hop++) {
+      res = await fetch(u, { signal: ctrl.signal, headers: { "User-Agent": "ATLAS-iCal-Sync/1.0 (+https://atlas-il.com)", Accept: "text/calendar, text/plain, */*" }, redirect: "manual" });
+      if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {
+        u = new URL(res.headers.get("location")!, u).toString();
+        if (!isPublicFeedUrl(u)) throw new Error("bad_url");
+        continue;
+      }
+      break;
+    }
+    if (!res || (res.status >= 300 && res.status < 400)) throw new Error("http_310");
     if (!res.ok) throw new Error(`http_${res.status}`);
     const buf = await res.arrayBuffer();
     if (buf.byteLength > 5_000_000) throw new Error("too_large");

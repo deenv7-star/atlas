@@ -50,6 +50,7 @@ import { parseISO, differenceInDays } from 'date-fns';
 import { heCount } from '@/lib/hebrewCount';
 import { renderTemplate, waLink, logSubjectFor } from '@/lib/stay/whatsapp';
 import { useAuth } from '@/lib/AuthContext';
+import { todayIsrael } from '@/lib/localDate';
 
 const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer: 'העברה', card: 'כרטיס', credit_card: 'כרטיס אשראי', bit: 'ביט', paybox: 'פייבוקס' };
 
@@ -167,7 +168,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   const markPaidMutation = useMutation({
     mutationFn: (paymentId) => base44.entities.Payment.update(paymentId, {
       status: 'PAID',
-      paid_date: new Date().toISOString().split('T')[0]
+      paid_date: todayIsrael()
     }),
     onMutate: async (paymentId) => {
       await queryClient.cancelQueries({ queryKey: ['payments', booking.id] });
@@ -176,7 +177,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
 
       // Optimistically update payment status
       queryClient.setQueryData(['payments', booking.id], (old) =>
-        old?.map(p => p.id === paymentId ? { ...p, status: 'PAID', paid_date: new Date().toISOString().split('T')[0] } : p)
+        old?.map(p => p.id === paymentId ? { ...p, status: 'PAID', paid_date: todayIsrael() } : p)
       );
       
       return { previousPayments };

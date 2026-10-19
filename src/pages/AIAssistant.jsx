@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
+import { todayIsrael } from '@/lib/localDate';
 
 const QUICK_QUESTIONS = [
   { icon: TrendingUp, text: 'ניתוח ביצועים החודש', prompt: 'תן לי ניתוח מפורט של הביצועים העסקיים שלי החודש - הזמנות, הכנסות, תפוסה, והשוואה לחודש הקודם. הוסף תובנות והמלצות.' },
@@ -68,7 +69,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
   }, [messages]);
 
   const buildContext = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayIsrael();
     const thisMonth = today.substring(0, 7);
 
     // Calculate metrics
