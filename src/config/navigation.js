@@ -4,11 +4,12 @@
  * Labels follow the glossary in docs/brand.md.
  */
 import {
-  Sun, CalendarRange, CalendarDays, Users, MessageSquare, Star, Sparkles as SparklesIcon,
+  Sun, CalendarRange, CalendarDays, Users, MessageSquare, Star,
   Brush, Headset, FileSignature, Zap, Wallet, FileText, TrendingDown, BarChart3,
   FileBarChart, Tags, Link2, Route, Globe, CreditCard, Receipt, Settings, Shield,
 } from 'lucide-react';
 import { DB_FEATURES } from '@/config/dbFeatures';
+import { SparkMark } from '@/assistant/mark';
 
 /**
  * Simplicity rules (16.10.2026): the sidebar shows exactly seven places. Everything else
@@ -45,7 +46,7 @@ export const NAV_GROUPS = [
     items: [
       ...(DB_FEATURES.guestPages ? [{ page: 'GuestPortal', label: 'דף אורח והזמנה ישירה', icon: Globe }] : []),
       { page: 'GuestJourney', label: 'שלבי האירוח', icon: Route },
-      { page: 'AIAssistant', label: 'עוזר אישי', icon: SparklesIcon },
+      { page: 'AIAssistant', label: 'שאלו את atlas', icon: SparkMark },
     ],
   },
   {
