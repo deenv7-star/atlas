@@ -47,7 +47,7 @@ export default function SubscriptionPage({ user }) {
     setBusy(plan.id);
     try {
       const { ok, data } = await submitPublicContact({
-        name: user?.full_name || user?.organization_name || user?.email || 'לקוח ATLAS',
+        name: user?.full_name || user?.organization_name || user?.email || 'לקוח atlas',
         email: user?.email || '',
         phone: user?.phone || '',
         subject: `upgrade:${plan.id}`,

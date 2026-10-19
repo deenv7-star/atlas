@@ -15,7 +15,7 @@ export default function AccountSuspended({ reason }) {
         </span>
         <h1 className="mt-4 text-[22px] font-bold text-[#0F1640]">החשבון מושהה כרגע</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-[#4A5170]">
-          הגישה ל-ATLAS הושהתה על ידי הצוות שלנו. המידע שלכם שמור ולא נמחק.
+          הגישה ל-atlas הושהתה על ידי הצוות שלנו. המידע שלכם שמור ולא נמחק.
           {reason ? <><br />סיבה: {reason}</> : null}
         </p>
         <div className="mt-6 flex flex-col gap-3">

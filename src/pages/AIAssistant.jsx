@@ -82,7 +82,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
     const pendingCleaning = cleaningTasks.filter(t => t.status === 'OPEN');
 
     return `
-אתה עוזר AI חכם של מערכת ניהול נכסים לטווח קצר בשם ATLAS.
+אתה עוזר AI חכם של מערכת ניהול נכסים לטווח קצר בשם atlas.
 אתה מדבר עברית, אדיב, מקצועי ונותן תשובות קצרות ומדויקות.
 
 נתוני העסק:
@@ -204,7 +204,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-8">
                 <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-50 text-brand-600"><Bot className="h-7 w-7" strokeWidth={1.75} /></span>
-                <h3 className="text-2xl font-bold text-navy-900 mb-2">העוזר של ATLAS</h3>
+                <h3 className="text-2xl font-bold text-navy-900 mb-2">העוזר של atlas</h3>
                 <p className="text-ink-600 mb-3 leading-relaxed">אני מנתח את כל הנתונים שלך בזמן אמת ויכול לעזור לך עם:</p>
                 <div className="grid grid-cols-2 gap-2 mb-6 text-sm text-right">
                 <div className="flex items-start gap-2">

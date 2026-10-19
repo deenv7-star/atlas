@@ -24,7 +24,7 @@ function Header() {
   return (
     <header className="b-hdr">
       <div className="b-wrap b-hdr-in">
-        <Link to="/" className="b-logo" aria-label="ATLAS, לדף הבית"><Wordmark /></Link>
+        <Link to="/" className="b-logo" aria-label="atlas, לדף הבית"><Wordmark /></Link>
         <nav className="b-nav" aria-label="ניווט ראשי">
           <Link to="/blog">בלוג</Link>
           <Link to="/pricing">מחירים</Link>
@@ -60,7 +60,7 @@ export function Footer() {
             </nav>
           ))}
         </div>
-        <p className="b-ftr-copy">© 2026 ATLAS · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
+        <p className="b-ftr-copy">© 2026 atlas · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>
   );
@@ -217,7 +217,7 @@ export function BlogIndex() {
   const list = cat === 'הכול' ? POSTS : POSTS.filter((p) => p.category === cat);
   return (
     <>
-      <Band path="/blog" title="בלוג ATLAS" lede="מדריכים מעשיים לבעלי צימרים ומתחמי נופש. בלי מילים גדולות, עם מקורות." wide>
+      <Band path="/blog" title="בלוג atlas" lede="מדריכים מעשיים לבעלי צימרים ומתחמי נופש. בלי מילים גדולות, עם מקורות." wide>
         <div className="b-chips" role="group" aria-label="סינון לפי נושא">
           {cats.map((c) => (
             <button key={c} type="button" className="b-chip" aria-pressed={cat === c} onClick={() => setCat(c)}>{c}</button>
@@ -261,7 +261,7 @@ export function Article({ post, body }) {
     <>
       <Band path={path} eyebrow={post.category} title={nbHyphen(post.title)} lede={nbHyphen(post.description)}>
         <p className="b-meta b-meta-row">
-          <span>צוות ATLAS</span>
+          <span>צוות atlas</span>
           <span><CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" /> <time dateTime={post.updated}>{heDate(post.updated)}</time></span>
           <span><Clock size={16} strokeWidth={1.75} aria-hidden="true" /> {minutes} דקות קריאה</span>
         </p>

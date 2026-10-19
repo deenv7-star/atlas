@@ -68,7 +68,7 @@ export default function AdminGate({ children }) {
         icon={Clock}
         title="אזור הניהול עוד לא הופעל"
         body="הוא יופעל אחרי עדכון מסד הנתונים."
-        action={<Link className="adm-gate-link" to="/today">חזרה ל-ATLAS</Link>}
+        action={<Link className="adm-gate-link" to="/today">חזרה ל-atlas</Link>}
       />
     );
   }
@@ -79,8 +79,8 @@ export default function AdminGate({ children }) {
       <Center
         icon={ShieldOff}
         title="אין לכם גישה לאזור הזה"
-        body="האזור מיועד לצוות ATLAS בלבד."
-        action={<Link className="adm-gate-link" to="/today">חזרה ל-ATLAS</Link>}
+        body="האזור מיועד לצוות atlas בלבד."
+        action={<Link className="adm-gate-link" to="/today">חזרה ל-atlas</Link>}
       />
     );
   }

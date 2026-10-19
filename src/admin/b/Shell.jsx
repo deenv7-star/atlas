@@ -30,12 +30,12 @@ export default function Shell({ children }) {
     <div className="adm-root b-root" dir="rtl">
       <a href="#adm-main" className="b-skip">דילוג לתוכן</a>
       <aside className="b-side" aria-label="ניווט ניהול">
-        <Link to="/admin" className="b-brand" aria-label="ATLAS ניהול, סקירה"><BrandWordmark size={22} /></Link>
+        <Link to="/admin" className="b-brand" aria-label="atlas ניהול, סקירה"><BrandWordmark size={22} /></Link>
         <div className="b-who">
           <span className="b-who-av" aria-hidden>{initialsOf(name)}</span>
-          <div><b>{name}</b><span>{ROLES[role]?.label} · ניהול ATLAS</span></div>
+          <div><b>{name}</b><span>{ROLES[role]?.label} · ניהול atlas</span></div>
         </div>
-        <nav aria-label="ניהול ATLAS">
+        <nav aria-label="ניהול atlas">
           <ul className="b-nav">
             {ADMIN_NAV.map((n) => {
               const Icon = ICONS[n.key];
@@ -59,10 +59,10 @@ export default function Shell({ children }) {
       </aside>
       <header className="b-mtop">
         <div className="b-mtop-row">
-          <Link to="/admin" className="b-brand" aria-label="ATLAS ניהול, סקירה"><BrandWordmark size={22} /></Link>
+          <Link to="/admin" className="b-brand" aria-label="atlas ניהול, סקירה"><BrandWordmark size={22} /></Link>
           <DemoBadge />
         </div>
-        <nav aria-label="ניהול ATLAS, נייד" className="b-mnav" ref={mnav}>
+        <nav aria-label="ניהול atlas, נייד" className="b-mnav" ref={mnav}>
           {ADMIN_NAV.map((n) => (
             <NavLink key={n.key} to={n.to} end={n.end} className="b-mnav-item">{SHORT[n.key]}{badge(n.key)}</NavLink>
           ))}

@@ -23,7 +23,7 @@ function Header() {
   return (
     <header className="a-hdr">
       <div className="a-wrap a-hdr-in">
-        <Link to="/" className="a-logo" aria-label="ATLAS, לדף הבית"><Wordmark /></Link>
+        <Link to="/" className="a-logo" aria-label="atlas, לדף הבית"><Wordmark /></Link>
         <nav className="a-nav" aria-label="ניווט ראשי">
           <Link to="/blog" className="a-hide-xs">בלוג</Link>
           <Link to="/pricing">מחירים</Link>
@@ -53,7 +53,7 @@ export function Footer() {
             </nav>
           ))}
         </div>
-        <p className="a-ftr-copy">© 2026 ATLAS · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
+        <p className="a-ftr-copy">© 2026 atlas · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>
   );
@@ -170,7 +170,7 @@ export function BlogIndex() {
     <div className="a-wrap a-doc">
       <div className="a-head">
         <Breadcrumbs items={crumbsFor('/blog')} />
-        <h1>בלוג ATLAS</h1>
+        <h1>בלוג atlas</h1>
         <p className="a-lede">מדריכים מעשיים לבעלי צימרים ומתחמי נופש. בלי מילים גדולות, עם מקורות.</p>
       </div>
       <ul className="a-list">
@@ -208,7 +208,7 @@ export function Article({ post, body }) {
         <h1>{nbHyphen(post.title)}</h1>
         <p className="a-lede">{nbHyphen(post.description)}</p>
         <p className="a-meta a-meta-row">
-          <span>צוות ATLAS</span>
+          <span>צוות atlas</span>
           <span><CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" /> <time dateTime={post.updated}>{heDate(post.updated)}</time></span>
           <span><Clock size={16} strokeWidth={1.75} aria-hidden="true" /> {minutes} דקות קריאה</span>
         </p>

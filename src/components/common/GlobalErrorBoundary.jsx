@@ -108,7 +108,7 @@ class GlobalErrorBoundary extends React.Component {
 
             {/* Footer */}
             <p className="text-center text-xs text-gray-400 mt-6">
-              © 2026 ATLAS • אנחנו כאן בשבילך
+              © 2026 atlas • אנחנו כאן בשבילך
             </p>
           </div>
         </div>

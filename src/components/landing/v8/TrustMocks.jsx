@@ -21,7 +21,7 @@ export function MockTrial() {
 export function MockCancel() {
   return (
     <div className="tm tm-chat" aria-hidden="true">
-      <div className="tm-chat-hd"><span className="tm-av"><MessageCircle size={12} strokeWidth={2.4} /></span><b>ATLAS</b><small>וואטסאפ</small></div>
+      <div className="tm-chat-hd"><span className="tm-av"><MessageCircle size={12} strokeWidth={2.4} /></span><b>atlas</b><small>וואטסאפ</small></div>
       <p className="tm-b is-out">לבטל את המנוי<CheckCheck size={12} strokeWidth={2.4} /></p>
       <div className="tm-slot">
         <span className="tm-typing"><i /><i /><i /></span>

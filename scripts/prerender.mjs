@@ -89,7 +89,7 @@ function headFor(template, meta) {
   }
   tags.push(
     `<meta property="og:type" content="${meta.ogType || 'website'}" />`,
-    `<meta property="og:site_name" content="ATLAS" />`,
+    `<meta property="og:site_name" content="atlas" />`,
     `<meta property="og:locale" content="he_IL" />`,
     `<meta property="og:title" content="${esc(meta.title)}" />`,
     `<meta property="og:description" content="${esc(meta.description)}" />`,
@@ -149,11 +149,11 @@ function llms(mod) {
   const { POSTS, SITE_PAGES, ATLAS_ONE_LINER, FAQ, PRICING_PLANS } = mod;
   const plan = (p) => `- ${p.nameHe} (${p.name}): ‏₪${p.price} לחודש, או ‏₪${p.priceYearly} לחודש בתשלום שנתי. ${p.limit}.`;
   return [
-    '# ATLAS',
+    '# atlas',
     '',
     `> ${ATLAS_ONE_LINER}`,
     '',
-    'ATLAS (atlas-il.com) is a Hebrew, right-to-left SaaS for owners of zimmers (צימרים), villas and small vacation complexes in Israel. It runs in the browser on desktop and mobile. Founder: Deen Vinokur.',
+    'atlas (atlas-il.com) is a Hebrew, right-to-left SaaS for owners of zimmers (צימרים), villas and small vacation complexes in Israel. It runs in the browser on desktop and mobile. Founder: Deen Vinokur.',
     '',
     '## עובדות',
     '- מה זה: מערכת ניהול (SaaS) לצימרים ומתחמי נופש בישראל, בעברית.',
@@ -186,7 +186,7 @@ function llms(mod) {
 
 function llmsFull(mod) {
   const { POSTS, BODIES, mdToText } = mod;
-  const parts = ['# ATLAS: בלוג, טקסט מלא', '', `מקור: ${ORIGIN}/blog`, ''];
+  const parts = ['# atlas: בלוג, טקסט מלא', '', `מקור: ${ORIGIN}/blog`, ''];
   POSTS.forEach((p) => {
     parts.push(`## ${p.title}`, '', `כתובת: ${ORIGIN}/blog/${p.slug}`, `עודכן: ${p.updated}`, '', mdToText(BODIES[p.slug]), '', '### שאלות נפוצות');
     p.faq.forEach((f) => parts.push(`- ${f.q} ${f.a}`));

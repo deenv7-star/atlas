@@ -185,7 +185,7 @@ export default function SLA() {
       <footer className="py-8 px-4 bg-white border-t border-line">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo  size="small" />
-          <p className="text-ink-400 text-sm">© 2024 ATLAS. כל הזכויות שמורות</p>
+          <p className="text-ink-400 text-sm">© 2024 atlas. כל הזכויות שמורות</p>
         </div>
       </footer>
     </div>

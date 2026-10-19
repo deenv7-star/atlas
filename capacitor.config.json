@@ -1,6 +1,6 @@
 {
   "appId": "com.atlas-il.app",
-  "appName": "ATLAS",
+  "appName": "atlas",
   "webDir": "dist",
   "server": {
     "androidScheme": "https"

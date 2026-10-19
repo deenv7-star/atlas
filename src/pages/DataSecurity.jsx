@@ -104,7 +104,7 @@ export default function DataSecurity() {
             <h2 className="text-2xl font-bold text-[#1B2656]">בקרת גישה ו-SSO</h2>
           </div>
           <p className="text-gray-600 leading-relaxed mb-4">
-            ATLAS תומכת ב-<strong>Single Sign-On (SSO)</strong> באמצעות SAML 2.0 ו-OAuth 2.0, זמין בחבילת Business.
+            atlas תומכת ב-<strong>Single Sign-On (SSO)</strong> באמצעות SAML 2.0 ו-OAuth 2.0, זמין בחבילת Business.
             כלל המשתמשים נהנים מאימות דו-שלבי (2FA) ובקרת הרשאות מפורטת.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -159,7 +159,7 @@ export default function DataSecurity() {
             <strong className="text-[#1B2656]">שקיפות לגבי SOC 2 / ISO:</strong>{' '}
             דוחות תאימות של ספקי הענן (למשל AWS, SOC 2 Type II, ISO 27001) ותיעוד תהליכי אבטחה פנימיים
             זמינים ללקוחות <strong>Enterprise</strong> לפי בקשה, בכפוף ל-NDA ולסיווג המידע.
-            אין כאן תעודת SOC 2 על חברת ATLAS עצמה, אנחנו בונים על תשתית מאושרת ושכבות אבטחה נוספות באפליקציה.
+            אין כאן תעודת SOC 2 על חברת atlas עצמה, אנחנו בונים על תשתית מאושרת ושכבות אבטחה נוספות באפליקציה.
           </div>
           <div className="space-y-3">
             {[
@@ -189,7 +189,7 @@ export default function DataSecurity() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <a
-              href="/contact?subject=בקשת%20מידע%20אבטחה%20(ATLAS)"
+              href="/contact?subject=בקשת%20מידע%20אבטחה%20(atlas)"
               className="inline-flex items-center gap-2 px-5 py-3 bg-brand-600 text-white rounded-lg font-semibold text-sm hover:bg-brand-500 transition-colors"
             >
               <Shield className="w-4 h-4" />
@@ -219,7 +219,7 @@ export default function DataSecurity() {
             <Link to="/terms" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">תנאי שימוש</Link>
             <Link to="/sla" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center px-1 text-ink-400 hover:text-navy-900 transition-colors">SLA</Link>
           </div>
-          <p className="text-ink-400 text-sm">© {new Date().getFullYear()} ATLAS. כל הזכויות שמורות</p>
+          <p className="text-ink-400 text-sm">© {new Date().getFullYear()} atlas. כל הזכויות שמורות</p>
         </div>
       </footer>
     </div>

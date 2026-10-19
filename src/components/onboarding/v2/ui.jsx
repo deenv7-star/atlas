@@ -42,7 +42,7 @@ export function useKeyboardInset() {
   }, []);
 }
 
-export const HELP_WA = `https://wa.me/${LEGAL.WHATSAPP_NUMBER_INTL}?text=${encodeURIComponent('היי, אני מגדיר/ה את ATLAS וצריך/ה עזרה')}`;
+export const HELP_WA = `https://wa.me/${LEGAL.WHATSAPP_NUMBER_INTL}?text=${encodeURIComponent('היי, אני מגדיר/ה את atlas וצריך/ה עזרה')}`;
 
 export function HelpLink({ className, compact = false }) {
   return (

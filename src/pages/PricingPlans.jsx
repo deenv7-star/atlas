@@ -13,7 +13,7 @@ import '@/components/landing/v7/landing-v7.css';
 import '@/components/landing/v8/shared8.css';
 import '@/components/landing/v8/landing-v8m.css';
 
-const NAV = [['/#features', 'המוצר'], ['/#facts', 'למה ATLAS'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
+const NAV = [['/#features', 'המוצר'], ['/#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
 export default function PricingPlans() {
   const root = useRef(null);
