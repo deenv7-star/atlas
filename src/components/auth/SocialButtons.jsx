@@ -109,6 +109,8 @@ export default function SocialButtons({ intent = 'login', returnTo = null, getCo
             type="button"
             data-provider={p}
             onClick={() => go(p)}
+            // Keep focus where it is: blurring a form field first could re-layout the page mid-tap.
+            onMouseDown={(e) => e.preventDefault()}
             disabled={Boolean(busy)}
             aria-busy={isBusy || undefined}
             className={cn(

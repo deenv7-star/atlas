@@ -65,6 +65,9 @@ export function useRegister() {
 
   const handleBlur = (field) => () => {
     if (field === 'business') return;
+    // Empty fields are flagged on submit only: an error line appearing on blur shifts the page under the
+    // finger (e.g. tapping "המשך עם Google" right after a field had focus).
+    if (!String(form[field] || '').trim()) return;
     setTouched((t) => ({ ...t, [field]: true }));
     if (field === 'email') {
       const r = validateEmail(form.email);

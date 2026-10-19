@@ -51,7 +51,9 @@ export default function Login() {
   const handleBlur = (field) => () => {
     setTouched(t => ({ ...t, [field]: true }));
     if (field === 'email') {
-      const r = validateEmail(form.email);
+      // An empty field is only flagged on submit: a "required" line appearing on blur moves the page under
+      // the owner's finger (e.g. tapping "המשך עם Google" right after the field had focus).
+      const r = form.email.trim() ? validateEmail(form.email) : { valid: true };
       setErrors(e => ({ ...e, email: r.valid ? null : r.error }));
     }
   };
