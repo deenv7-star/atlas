@@ -250,7 +250,10 @@ export function Health() {
 export function Audit() {
   const { data, isLoading, error } = useAudit();
   const [type, setType] = useState('all');
-  const rows = (data || []).filter((a) => type === 'all' || a.action === type);
+  const [q, setQ] = useState('');
+  const term = q.trim().toLowerCase();
+  const rows = (data || []).filter((a) => (type === 'all' || a.action === type)
+    && (!term || `${a.actor_email || ''} ${a.org_name || ''} ${a.details?.org_name || ''} ${a.details?.email || ''}`.toLowerCase().includes(term)));
   const present = [...new Set((data || []).map((a) => a.action))];
   const groups = useMemo(() => {
     const g = new Map();
@@ -266,6 +269,11 @@ export function Audit() {
       <Head title="יומן פעולות" sub="כל פעולה של הצוות נשמרת לתמיד." actions={<button type="button" className="b-btn" onClick={() => downloadCsv(`atlas-audit-${new Date().toISOString().slice(0, 10)}.csv`, rows, auditCsv)} disabled={!rows.length}><Download size={16} strokeWidth={1.75} aria-hidden />CSV</button>} />
       <BError error={error} />
       <div className="b-bar">
+        <label className="b-search">
+          <Search size={18} strokeWidth={1.75} aria-hidden />
+          <span className="adm-sr">חיפוש ביומן</span>
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="חיפוש לפי איש צוות, לקוח או אימייל" />
+        </label>
         <div className="b-pills" role="group" aria-label="סוג פעולה">
           <button type="button" aria-pressed={type === 'all'} onClick={() => setType('all')}>הכל</button>
           {present.map((k) => <button key={k} type="button" aria-pressed={type === k} onClick={() => setType(k)}>{AUDIT_ACTIONS[k] || k}</button>)}
