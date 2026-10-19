@@ -24,8 +24,9 @@ export default function InstallCardA({ user }) {
   let icon; let title; let sub; let action; let onClose;
   if (kind === 'install') {
     icon = <AppIcon size={48} />;
-    title = 'atlas על מסך הבית';
-    sub = install.state === 'ios-guide' ? 'נפתח בלחיצה, עם התראה על כל הזמנה חדשה' : 'נפתח בלחיצה כמו אפליקציה, עם התראה על כל הזמנה חדשה';
+    title = desktop ? 'atlas כאפליקציה במחשב' : 'atlas על מסך הבית';
+    sub = desktop ? 'נפתח בחלון משלו, עם התראה על כל הזמנה חדשה'
+      : install.state === 'ios-guide' ? 'נפתח בלחיצה, עם התראה על כל הזמנה חדשה' : 'נפתח בלחיצה כמו אפליקציה, עם התראה על כל הזמנה חדשה';
     action = install.state === 'prompt'
       ? <button type="button" className={cn(pill, 'bg-brand-600 text-white hover:bg-brand-500 active:bg-brand-700')} onClick={() => install.install()}>התקנה</button>
       : <button type="button" className={cn(pill, 'bg-brand-600 text-white hover:bg-brand-500 active:bg-brand-700')} onClick={() => setGuide(true)}>איך מתקינים</button>;

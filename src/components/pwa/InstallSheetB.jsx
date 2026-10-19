@@ -55,10 +55,11 @@ export default function InstallSheetB({ user }) {
 
   const title = step === 'done' ? 'ההתראות פועלות'
     : step === 'push' ? 'התראה על כל הזמנה חדשה'
-      : ios ? 'atlas על מסך הבית של האייפון' : 'atlas על מסך הבית';
+      : ios ? 'atlas על מסך הבית של האייפון' : desktop ? 'atlas כאפליקציה במחשב' : 'atlas על מסך הבית';
   const desc = step === 'done' ? (push.note || 'נודיע לכם על כל הזמנה חדשה, ליד חדש והזמנה מהערוצים.')
     : step === 'push' ? `הזמנה מ-Booking.com, מ-Airbnb או מהאתר, וגם ליד חדש: הודעה קטנה ${desktop ? 'במחשב הזה' : 'בטלפון'}, ברגע שזה קורה.`
-      : 'נפתח בלחיצה אחת כמו אפליקציה, בלי לחפש בדפדפן. ומקבלים התראה על כל הזמנה חדשה.';
+      : desktop ? 'נפתח בחלון משלו, ישר מהשולחן או מסרגל המשימות. ומקבלים התראה על כל הזמנה חדשה.'
+        : 'נפתח בלחיצה אחת כמו אפליקציה, בלי לחפש בדפדפן. ומקבלים התראה על כל הזמנה חדשה.';
 
   return (
     <Drawer open={open} onOpenChange={(o) => { if (!o) close(); }} shouldScaleBackground={false}>
