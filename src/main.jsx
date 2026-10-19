@@ -53,6 +53,8 @@ if (!lean) loadFullApp()
 // "/" and /pricing are prerendered (scripts/prerender.mjs → <div id="root" data-hydrate>): React adopts
 // that HTML (hydration) instead of replacing it, so the page the visitor already sees stays as it is.
 const hydrate = lean && rootEl.hasAttribute('data-hydrate')
+// the prerendered landing skips laying out its below-the-fold parts until now (scripts/prerender.mjs)
+document.documentElement.classList.remove('atlas-prerender')
 if (!hydrate && rootEl.hasAttribute('data-hydrate')) rootEl.textContent = ''
 
 try {

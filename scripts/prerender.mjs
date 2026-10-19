@@ -253,7 +253,8 @@ function withRevealOn(html) {
  * The prerendered page is complete HTML, so no JS is needed for its first paint. As a plain module script
  * the entry was fetched and run (and hydrated) before the browser painted, holding the headline back
  * behind the JS download and ~2 s of JS on a phone. Here nothing but the HTML, CSS, fonts and hero photo
- * competes for the first paint: right after the first frame is painted, the entry and the page's chunks are
+ * competes for the first paint: right after the first contentful paint (Paint Timing; first frame where that is
+ * not available), the entry and the page's chunks are
  * requested together (modulepreload, no waterfall) and the entry starts. Nothing on screen changes when it
  * does (hydration adopts the HTML). Hidden tabs (no frames) start at once; a 2.5 s timer is the safety net.
  */
@@ -263,7 +264,7 @@ function deferEntry(html, js) {
   if (!m) throw new Error('entry <script type="module"> not found in the template');
   const src = m[1];
   const pre = JSON.stringify(js);
-  const boot = `<script>(function(){var d=0;function go(){if(d)return;d=1;var h=document.head;${pre}.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.crossOrigin='anonymous';l.href=u;h.appendChild(l)});var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=${JSON.stringify(src)};document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}requestAnimationFrame(function(){setTimeout(go,0)});setTimeout(go,2500)})()</script>`;
+  const boot = `<script>(function(){var d=0;function go(){if(d)return;d=1;var h=document.head;${pre}.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.crossOrigin='anonymous';l.href=u;h.appendChild(l)});var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=${JSON.stringify(src)};document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}var later=function(){setTimeout(go,0)};try{if(PerformanceObserver.supportedEntryTypes.indexOf('paint')<0)throw 0;if(performance.getEntriesByName('first-contentful-paint').length){later()}else{new PerformanceObserver(function(l,o){if(l.getEntriesByName('first-contentful-paint').length){o.disconnect();later()}}).observe({type:'paint',buffered:true})}}catch(e){requestAnimationFrame(later)}setTimeout(go,2500)})()</script>`;
   return html.replace(re, '').replace('</body>', `    ${boot}\n  </body>`);
 }
 
@@ -291,13 +292,28 @@ function withUiFlag(html) {
   return html.replace('<html lang="he" dir="rtl">', `<html lang="he" dir="rtl" data-ui="${m[1]}">`);
 }
 
+/*
+ * Landing only, until main.jsx hydrates (it removes html.atlas-prerender first): the parts below the hero
+ * (which alone is 190svh tall, so none of them is on the first screen) are content-visibility: auto, so the
+ * browser neither lays them out nor starts their ~450 KB of lazy images ahead of the headline (their lazy
+ * loading distance reached them at once). Once the class is gone they are ordinary blocks, exactly as before.
+ */
+const DEFER_BELOW_FOLD = '<style id="atlas-prerender-css">html.atlas-prerender .lm.has-ph>main>:not(.ph-hero):not(script),html.atlas-prerender .lm.has-ph>.v8-credits,html.atlas-prerender .lm.has-ph>.l5-ftr{content-visibility:auto;contain-intrinsic-size:auto 900px}</style>';
+const DEFER_NOSCRIPT = '<noscript><style>html.atlas-prerender .lm.has-ph *{content-visibility:visible!important}</style></noscript>';
+function withBelowFoldDeferred(html) {
+  const out = html.replace('<html lang="he" dir="rtl"', '<html class="atlas-prerender" lang="he" dir="rtl"')
+    .replace('</head>', `    ${DEFER_BELOW_FOLD}\n    ${DEFER_NOSCRIPT}\n  </head>`);
+  if (!out.includes('class="atlas-prerender"')) throw new Error('<html> tag not found');
+  return out;
+}
+
 function prerenderLean(mod, template, index) {
   const manifest = readManifest();
   // every URL that is not a prerendered file gets the plain SPA shell (vercel.json / _redirects / netlify.toml)
   fs.writeFileSync(path.join(DIST, 'app.html'), index);
 
   const landing = withRevealOn(mod.renderLean('/'));
-  fs.writeFileSync(path.join(DIST, 'index.html'), withUiFlag(leanBody(index, landing, chunkAssets(manifest, 'src/pages/Landing.jsx'))));
+  fs.writeFileSync(path.join(DIST, 'index.html'), withBelowFoldDeferred(withUiFlag(leanBody(index, landing, chunkAssets(manifest, 'src/pages/Landing.jsx')))));
 
   const pricing = withRevealOn(mod.renderLean('/pricing'));
   const pricingHead = headFor(template, appMeta(mod, '/pricing'));
