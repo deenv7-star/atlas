@@ -51,7 +51,11 @@ export default function DeviceNotificationsCard() {
           </span>
           <div className="min-w-0">
             <p className="text-[15px] font-semibold text-navy-900">{installed ? 'atlas מותקן במכשיר הזה' : 'atlas על מסך הבית'}</p>
-            <p className="text-[14px] text-ink-400">{installed ? 'פותחים מהאייקון, כמו כל אפליקציה' : install.state === 'ios-guide' ? 'באייפון זה נדרש כדי לקבל התראות' : 'נפתח בלחיצה, בלי לחפש בדפדפן'}</p>
+            <p className="text-[14px] text-ink-400">{installed ? 'פותחים מהאייקון, כמו כל אפליקציה'
+              : install.state === 'ios-guide' ? 'באייפון זה נדרש כדי לקבל התראות'
+                : install.state === 'prompt' ? 'נפתח בלחיצה, בלי לחפש בדפדפן'
+                  : install.platform === 'android' ? 'בתפריט הדפדפן: ״הוספה למסך הבית״ או ״התקנת אפליקציה״'
+                    : 'בכרום או באדג׳: סמל ההתקנה בקצה שורת הכתובת'}</p>
           </div>
         </div>
         {install.state === 'prompt' ? <button type="button" className={cn(pill, 'bg-brand-600 text-white hover:bg-brand-500')} onClick={() => install.install()}>התקנה</button> : null}

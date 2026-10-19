@@ -358,6 +358,7 @@ export default function SettingsPage({ user }) {
                       <p className="text-xs text-ink-400">{item.desc}</p>
                     </div>
                     <Switch
+                      aria-label={item.label}
                       checked={notifSettings[item.key]}
                       onCheckedChange={val => setNotifSettings(prev => ({ ...prev, [item.key]: val }))}
                       className="data-[state=checked]:bg-brand-600"
