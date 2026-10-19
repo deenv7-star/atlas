@@ -235,11 +235,8 @@ function chunkAssets(manifest, key) {
   return { css, js };
 }
 
-function assetLinks({ css, js }) {
-  return [
-    ...css.map((h) => `<link rel="stylesheet" crossorigin href="${h}">`),
-    ...js.map((h) => `<link rel="modulepreload" crossorigin href="${h}">`),
-  ].join('\n    ');
+function cssLinks({ css }) {
+  return css.map((h) => `<link rel="stylesheet" crossorigin href="${h}">`).join('\n    ');
 }
 
 /* Reveal-on-scroll (src/components/landing/v5/motion.js useReveal) hides [data-reveal] blocks only once JS runs
@@ -253,24 +250,26 @@ function withRevealOn(html) {
 }
 
 /**
- * The prerendered page is complete HTML, so the app's entry script is not needed for the first paint.
- * As a plain module script it ran (and hydrated) before the browser's first paint of the page, holding the
- * headline back behind ~2 s of JS on a phone. Here it is fetched at once (modulepreload) but started right
- * after the first frame is painted; nothing on screen changes when it starts (hydration adopts the HTML).
- * Hidden tabs (no frames) start it at once; a 2.5 s timer is the safety net.
+ * The prerendered page is complete HTML, so no JS is needed for its first paint. As a plain module script
+ * the entry was fetched and run (and hydrated) before the browser painted, holding the headline back
+ * behind the JS download and ~2 s of JS on a phone. Here nothing but the HTML, CSS, fonts and hero photo
+ * competes for the first paint: right after the first frame is painted, the entry and the page's chunks are
+ * requested together (modulepreload, no waterfall) and the entry starts. Nothing on screen changes when it
+ * does (hydration adopts the HTML). Hidden tabs (no frames) start at once; a 2.5 s timer is the safety net.
  */
-function deferEntry(html) {
+function deferEntry(html, js) {
   const re = /<script type="module" crossorigin src="(\/assets\/[^"]+\.js)"><\/script>/;
   const m = html.match(re);
   if (!m) throw new Error('entry <script type="module"> not found in the template');
   const src = m[1];
-  const boot = `<script>(function(){var d=0;function go(){if(d)return;d=1;var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=${JSON.stringify(src)};document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}requestAnimationFrame(function(){setTimeout(go,0)});setTimeout(go,2500)})()</script>`;
-  return html.replace(re, `<link rel="modulepreload" crossorigin href="${src}">`).replace('</body>', `    ${boot}\n  </body>`);
+  const pre = JSON.stringify(js);
+  const boot = `<script>(function(){var d=0;function go(){if(d)return;d=1;var h=document.head;${pre}.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.crossOrigin='anonymous';l.href=u;h.appendChild(l)});var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=${JSON.stringify(src)};document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}requestAnimationFrame(function(){setTimeout(go,0)});setTimeout(go,2500)})()</script>`;
+  return html.replace(re, '').replace('</body>', `    ${boot}\n  </body>`);
 }
 
 /** Put the prerendered tree inside #root (replacing the "טוען..." placeholder), marked for hydration. */
-function leanBody(html, appHtml, links) {
-  const head = deferEntry(html).replace('</head>', `    ${links}\n    ${REVEAL_NOSCRIPT}\n  </head>`);
+function leanBody(html, appHtml, assets) {
+  const head = deferEntry(html, assets.js).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`);
   const start = head.indexOf('<div id="root">');
   if (start < 0) throw new Error('template has no #root');
   const after = head.slice(start);
@@ -284,18 +283,26 @@ function appMeta(mod, route) {
   return { title: m.title, description: m.description, canonical: `${ORIGIN}${route}`, ogImage: LANDING_OG };
 }
 
+/* src/ui-direction/flag.js sets <html data-ui> when the entry runs; on a prerendered page that attribute
+   change restyled the whole painted document. Ship it in the HTML (same value), so setting it is a no-op. */
+function withUiFlag(html) {
+  const m = fs.readFileSync(path.join(ROOT, 'src/ui-direction/flag.js'), 'utf8').match(/DIRECTION = '(\w+)'/);
+  if (!m) throw new Error('DIRECTION not found in src/ui-direction/flag.js');
+  return html.replace('<html lang="he" dir="rtl">', `<html lang="he" dir="rtl" data-ui="${m[1]}">`);
+}
+
 function prerenderLean(mod, template, index) {
   const manifest = readManifest();
   // every URL that is not a prerendered file gets the plain SPA shell (vercel.json / _redirects / netlify.toml)
   fs.writeFileSync(path.join(DIST, 'app.html'), index);
 
   const landing = withRevealOn(mod.renderLean('/'));
-  fs.writeFileSync(path.join(DIST, 'index.html'), leanBody(index, landing, assetLinks(chunkAssets(manifest, 'src/pages/Landing.jsx'))));
+  fs.writeFileSync(path.join(DIST, 'index.html'), withUiFlag(leanBody(index, landing, chunkAssets(manifest, 'src/pages/Landing.jsx'))));
 
   const pricing = withRevealOn(mod.renderLean('/pricing'));
   const pricingHead = headFor(template, appMeta(mod, '/pricing'));
   fs.mkdirSync(path.join(DIST, 'pricing'), { recursive: true });
-  fs.writeFileSync(path.join(DIST, 'pricing', 'index.html'), leanBody(pricingHead, pricing, assetLinks(chunkAssets(manifest, 'src/pages/PricingPlans.jsx'))));
+  fs.writeFileSync(path.join(DIST, 'pricing', 'index.html'), withUiFlag(leanBody(pricingHead, pricing, chunkAssets(manifest, 'src/pages/PricingPlans.jsx'))));
 
   // SPA screens with their own <head> (the landing's canonical used to be on them for non-JS readers)
   for (const route of ['/register', '/login']) {
