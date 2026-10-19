@@ -33,7 +33,7 @@ function CompactMonth({ month, today, units, occ, gapSet, holidays, onDay, selec
           <div key={d} className={cn('py-1.5 text-center text-[12px] font-semibold text-navy-900/70')}>{d}</div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1 max-[359px]:gap-0">
+      <div className="grid grid-cols-7 gap-1 max-md:gap-0.5 max-[359px]:gap-0">
         {weeks.flat().map((d) => {
           const inMonth = d.slice(0, 7) === mk;
           if (!inMonth) return <span key={d} aria-hidden className="h-[52px]" />;
@@ -355,7 +355,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
   if (mobile) {
     return (
       <div className="space-y-4">
-        <div className="v7-card p-3 max-[359px]:-mx-5 max-[359px]:rounded-none max-[359px]:px-1">
+        <div className="v7-card p-3 px-1.5 max-[359px]:-mx-5 max-[359px]:rounded-none max-[359px]:px-1">
           {compact}
           <Legend className="mt-3 px-1" />
         </div>
