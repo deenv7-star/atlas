@@ -30,6 +30,9 @@ export function buildSeed(now = new Date('2026-10-16T10:00:00+03:00')) {
     ['p_teena', 'אסף ונטע', 24, 2, 'direct', 'CONFIRMED', 1880],
     ['p_gefen', 'ליאור ושני', 27, 3, 'booking', 'CONFIRMED', 2950],
     ['p_zait', 'חן וטל ברק', 29, 2, 'airbnb', 'PENDING', 2350],
+    // "מה דורש תשומת לב" triggers (appended so earlier payment indexes stay the same):
+    // same-day turnover in צימר התאנה on the 20th (Sarah Klein leaves) + an open balance on arrival + a 2-night gap before אסף ונטע.
+    ['p_teena', 'שקד ויובל', 20, 2, 'direct', 'CONFIRMED', 1760],
   ];
   const phones = ['052-6418830', '054-7729105', '050-3317462', '053-9902417', '058-4471236', '052-8810394'];
   const bookings = B.map(([pid, guest, day, nights, src, status, total], i) => {
@@ -100,6 +103,9 @@ export function buildSeed(now = new Date('2026-10-16T10:00:00+03:00')) {
     organization_id: ORG, organization_name: 'נופי הגליל', subscription_plan: 'pro', subscription_status: 'active', selected_plan: 'pro', trial_ends_at: '2027-06-30T00:00:00Z',
     onboarding_completed: true, is_platform_admin: false, role: 'owner', created_date: ts(1),
   };
+  // Two old expenses (about 2 months back) and none since, so "לא נרשמו הוצאות לאחרונה" shows. Sample data.
+  const expenses = [[-58, 'ניקיון', 450, 'p_gefen', 'ניקיון אחרי סופ״ש'], [-52, 'תחזוקה', 680, 'p_alon', 'תיקון משאבת בריכה']]
+    .map(([day, category, amount, pid, description], i) => ({ id: `e_${i + 1}`, org_id: ORG, property_id: pid, category, amount, description, expense_date: d(day), date: d(day), created_date: ts(day), created_at: ts(day) }));
   const reviews = [[1, 5], [2, 5], [4, 4], [5, 5], [6, 5], [7, 4], [8, 5]].map(([bi, rating], i) => ({ id: `r_${i}`, org_id: ORG, booking_id: bookings[bi].id, property_id: bookings[bi].property_id, guest_name: bookings[bi].guest_name, rating, status: 'COMPLETED', sent_at: bookings[bi].check_out_date, created_date: ts(Math.min(15, 3 + i * 2)), created_at: ts(Math.min(15, 3 + i * 2)) }));
   return {
     atlas_entity_ReviewRequest: reviews,
@@ -110,5 +116,6 @@ export function buildSeed(now = new Date('2026-10-16T10:00:00+03:00')) {
     atlas_entity_Payment: payments,
     atlas_entity_MessageLog: messageLogs,
     atlas_entity_CleaningTask: cleaning,
+    atlas_entity_Expense: expenses,
   };
 }

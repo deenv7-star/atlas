@@ -13,5 +13,6 @@ The landing page shows real ATLAS screens, not mockups. All of them live in
    - mobile: 780 wide, `public/landing/screens/mobile/<name>.webp`
    - crops: re-crop the same regions (calendar grid, calendar toolbar, tables, chat, KPIs) into `crops/` and `crops-m/`
 
-`seed.mjs` holds the demo complex "נופי הגליל" (4 units, 18 bookings across the current month,
-7 leads, payments, WhatsApp/SMS messages, cleaning tasks, reviews). Times are written for Asia/Jerusalem.
+`seed.mjs` holds the demo complex "נופי הגליל" (4 units, 19 bookings across the current month,
+7 leads, payments, WhatsApp/SMS messages, cleaning tasks, reviews, 2 old expenses), including a same-day turnover,
+unpaid arrivals, gap nights and stale leads so the Today "מה דורש תשומת לב" rules fire on the 20th. Times are written for Asia/Jerusalem.
