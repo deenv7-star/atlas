@@ -166,10 +166,10 @@ function Facts() {
     <section id="facts" className="lm-facts" aria-labelledby="facts-title">
       <div className="l5-wrap">
         <div className="lm-facts-top" data-reveal>
-          <h2 id="facts-title" className="v8-h2">נבנתה לצימרים. <span className="is-ind">לא למלונות.</span></h2>
+          <h2 id="facts-title" className="v8-h2">הצימר מסודר. <span className="is-ind">הראש שקט.</span></h2>
           <div className="lm-facts-people">
             <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={48} />
-            <p>בעברית, מימין לשמאל, עם תמיכה אנושית בוואטסאפ.</p>
+            <p>כל ההזמנות, התשלומים וההודעות במקום אחד, כדי שתתפנו לאורחים.</p>
           </div>
         </div>
         <ul className="lm-facts-row">
