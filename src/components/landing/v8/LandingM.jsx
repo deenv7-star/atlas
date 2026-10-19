@@ -249,7 +249,7 @@ export default function LandingM() {
         <Facts />
         <TrustB />
         <Pricing8 />
-        <Faq limit={5} />
+        <Faq openFirst cta />
         <Final />
       </main>
       <Credits8 />

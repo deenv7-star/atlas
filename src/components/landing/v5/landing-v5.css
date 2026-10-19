@@ -583,6 +583,24 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
 .l5-faq details[open] .l5-plus { transform: rotate(45deg); background: var(--indigo-100); color: var(--indigo); box-shadow: none; }
 .l5-faq details p { padding: 0 0 20px; color: var(--ink); font-size: 16px; max-width: 60ch; }
 @media (min-width: 900px) { .l5-faq-grid { grid-template-columns: 4fr 7fr; gap: 64px; } .l5-faq summary { font-size: 18px; } }
+/* faq B: open answer reads as the lead, closing trial card under the list */
+.l5-faq details[open] summary { color: var(--indigo); }
+@media (prefers-reduced-motion: no-preference) {
+  .l5-faq details[open] p { animation: l5-faq-in 260ms var(--ease-out) both; }
+}
+@keyframes l5-faq-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.l5-faq-cta {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+  margin-top: 32px; padding: 24px; border-radius: var(--r-xl);
+  background: var(--white); box-shadow: inset 0 0 0 1px var(--line-2), var(--sh-1);
+}
+.l5-faq-cta-h { font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); }
+.l5-faq-cta-txt p { margin-top: 6px; color: var(--ink); font-size: 16px; }
+.l5-faq-cta .l5-btn { width: 100%; }
+@media (min-width: 640px) {
+  .l5-faq-cta { flex-direction: row; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px; }
+  .l5-faq-cta .l5-btn { width: auto; }
+}
 
 /* final */
 .l5-final-sec { padding: 0 0 var(--sec); background: var(--white); }
