@@ -34,7 +34,7 @@ export default function Register() {
           <header className="flex h-12 items-center justify-between">
             <Link to="/" aria-label="ATLAS, לדף הבית" className="inline-flex h-11 items-center"><Wordmark size={20} /></Link>
             <p className="text-[14px] text-ink-600">
-              כבר רשומים? <Link to="/login" className="inline-flex h-11 items-center font-bold text-brand-600 hover:underline">כניסה</Link>
+              כבר רשומים? <Link to="/login" className="inline-flex h-11 min-w-11 items-center justify-center px-1 font-bold text-brand-600 hover:underline">כניסה</Link>
             </p>
           </header>
 

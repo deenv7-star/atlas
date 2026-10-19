@@ -14,6 +14,9 @@ import { cn } from '@/lib/utils';
 import { CONSENT_VARIANT } from '@/config/consent';
 
 const NEW_TAB = { target: '_blank', rel: 'noopener noreferrer' };
+// Inline links are ~21px tall. Inline padding (cancelled by negative margin) grows the tap area to ≥44px
+// on every line the link wraps to, without moving the text.
+const LINK_HIT = 'relative z-[1] -mx-1.5 px-1.5 py-3 [box-decoration-break:clone] [-webkit-box-decoration-break:clone]';
 const SR_NEW_TAB = <span className="sr-only"> (נפתח בכרטיסייה חדשה)</span>;
 
 export const CONSENT_ERROR = 'כדי להמשיך, סמנו שקראתם ואתם מסכימים לתקנון ולמדיניות הפרטיות.';
@@ -56,9 +59,9 @@ function ConsentText() {
   return (
     <>
       קראתי ואני מסכים/ה ל
-      <a href="/terms" {...NEW_TAB} className="font-semibold text-brand-600 underline decoration-brand-600/30 underline-offset-[3px] hover:decoration-brand-600">תקנון</a>
+      <a href="/terms" {...NEW_TAB} className={cn('font-semibold text-brand-600 underline decoration-brand-600/30 underline-offset-[3px] hover:decoration-brand-600', LINK_HIT)}>תקנון</a>
       {' '}ול
-      <a href="/privacy" {...NEW_TAB} className="font-semibold text-brand-600 underline decoration-brand-600/30 underline-offset-[3px] hover:decoration-brand-600">מדיניות הפרטיות</a>
+      <a href="/privacy" {...NEW_TAB} className={cn('font-semibold text-brand-600 underline decoration-brand-600/30 underline-offset-[3px] hover:decoration-brand-600', LINK_HIT)}>מדיניות הפרטיות</a>
     </>
   );
 }
@@ -97,9 +100,11 @@ export default function TermsConsent({ id = 'terms-consent', checked, onChange, 
 
   return (
     <div className={className}>
-      <div className="flex min-h-11 items-start gap-2.5 py-1">
-        <span className="mt-[2px]"><Box id={id} checked={checked} onChange={onChange} error={error} describedBy={describedBy} /></span>
-        <label htmlFor={id} className="cursor-pointer select-none text-[14px] leading-[1.6] text-ink-600">
+      <div className="relative flex min-h-11 items-start gap-2.5 py-1">
+        {/* The whole row (≥44px tall) toggles the box, except the two links. */}
+        <label htmlFor={id} className="absolute inset-0 cursor-pointer" aria-hidden="true" />
+        <span className="relative mt-[2px]"><Box id={id} checked={checked} onChange={onChange} error={error} describedBy={describedBy} /></span>
+        <label htmlFor={id} className="relative cursor-pointer select-none text-[14px] leading-[1.6] text-ink-600">
           <ConsentText />
         </label>
       </div>
