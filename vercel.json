@@ -44,11 +44,20 @@
       ]
     },
     {
-      "source": "/(landing-hero|landing-v6|landing-v7|landing-v8|demo|blog/covers|og|tour)/(.*)",
+      "source": "/(landing-hero|landing-v6|landing-v7|landing-v8|demo|blog/covers|og)/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=2592000, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/tour/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
         }
       ]
     },
