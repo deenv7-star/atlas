@@ -1,0 +1,64 @@
+/* Trust B "בלי הפתעות". Bold: solid indigo band (not dark) with a bento of four large visual tiles.
+   Strict palette: indigo #3E2BF1, navy #1B2656, white, canvas #F7F8FB. No amber, no warm tones. */
+.tb { padding: 16px 0 64px; background: #fff; }
+@media (min-width: 900px) { .tb { padding: 32px 0 112px; } }
+.tb-stage { position: relative; overflow: hidden; isolation: isolate; padding: 36px 14px 14px; border-radius: var(--r-box); background: var(--indigo); color: #fff; }
+.tb-stage::before { content: ''; position: absolute; z-index: -1; width: 80%; aspect-ratio: 1; inset-inline-start: -25%; top: -55%; background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 70%); pointer-events: none; }
+@media (min-width: 1000px) { .tb-stage { padding: 72px 72px 64px; } }
+.tb-head { padding-inline: 8px; margin-bottom: 24px; }
+@media (min-width: 1000px) { .tb-head { padding: 0; margin-bottom: 40px; } }
+.tb-h { font-size: 38px; line-height: 1.02; font-weight: 800; letter-spacing: -0.045em; text-wrap: balance; color: #fff; }
+.tb-h span { display: block; color: var(--lavender, #E4E1FD); opacity: 0.86; }
+@media (max-width: 359px) { .tb-h { font-size: 32px; } }
+@media (min-width: 900px) { .tb-h { font-size: 60px; } }
+@media (min-width: 1200px) { .tb-h { font-size: 68px; } .tb-h span { display: inline; } }
+
+/* bento */
+.tb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tb-tile.is-trial, .tb-tile.is-secure { grid-column: 1 / -1; }
+@media (min-width: 1000px) {
+  .tb-grid { grid-template-columns: 1.15fr 1fr 1fr; gap: 14px; }
+  .tb-tile.is-trial { grid-column: 1; grid-row: 1 / span 2; }
+  .tb-tile.is-secure { grid-column: 2 / span 2; }
+}
+.tb-tile { display: flex; flex-direction: column; min-width: 0; padding: 12px 12px 2px; border-radius: 20px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.07)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+@media (min-width: 1000px) { .tb-tile { padding: 20px 22px 6px; border-radius: 26px; } }
+.tb-vis { display: grid; align-items: center; flex: 1; min-height: 118px; padding: 12px 2px 10px; }
+@media (min-width: 1000px) { .tb-vis { min-height: 150px; padding: 10px 4px 14px; } }
+.tb-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; column-gap: 10px; }
+.tb-t { padding-inline: 4px; font-size: 15px; font-weight: 800; line-height: 1.25; letter-spacing: -0.015em; color: #fff; text-wrap: balance; }
+@media (min-width: 1000px) { .tb-t { font-size: 19px; } }
+.tb-src { white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; min-height: 44px; min-width: 44px; padding-inline: 4px; font-size: 13px; font-weight: 600; color: var(--lavender, #E4E1FD); text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: rgba(228, 225, 253, 0.4); text-underline-offset: 4px; border-radius: 8px; transition: color 160ms var(--ease-out), text-decoration-color 160ms var(--ease-out); }
+.tb-src svg { transition: transform 180ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .tb-src:hover { color: #fff; text-decoration-color: #fff; }
+  .tb-src:hover svg { transform: translate(-2px, -2px); }
+}
+.tb-src:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* the "14" tile: number straight on the band, big */
+.tb .is-trial .tm { max-width: none; margin: 0; padding: 0; background: none; box-shadow: none; color: #fff; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.tb .is-trial .tm-trial-n { flex-direction: column; align-items: flex-start; gap: 4px; }
+.tb .is-trial .tm-trial-n b { font-size: 6.4em; color: #fff; letter-spacing: -0.06em; }
+.tb .is-trial .tm-trial-n span { font-size: 1.25em; color: rgba(255, 255, 255, 0.9); }
+.tb .is-trial .tm-row { margin: 0; padding: 0.55em 0.6em 0.55em 0.95em; border: 0; border-radius: 999px; background: #fff; color: var(--navy); font-size: 1.05em; box-shadow: var(--sh-2); }
+@media (min-width: 1000px) {
+  .tb .is-trial .tm { flex-direction: column; align-items: flex-start; gap: 28px; }
+  .tb .is-trial .tm-trial-n b { font-size: 13em; }
+  .tb .is-trial .tm-trial-n span { font-size: 1.6em; }
+}
+
+/* the security tile is wide: lock + chips in a row */
+.tb .is-secure .tm { width: fit-content; max-width: 100%; margin-inline: auto; flex-direction: row; align-items: center; gap: 0.8em; }
+.tb .is-secure .tb-vis { min-height: 0; padding-block: 18px 12px; }
+@media (min-width: 1000px) { .tb .is-secure .tb-vis { padding-block: 10px 14px; } }
+@media (min-width: 1000px) { .tb .is-secure .tm { --tm-fs: 15px; padding: 1.1em 1.2em; } }
+
+/* real customer quotes (only when configured) */
+.tb-quotes { display: grid; gap: 12px; margin-top: 16px; }
+@media (min-width: 900px) { .tb-quotes { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; } }
+.tb-quote { padding: 24px; border-radius: 22px; background: var(--canvas); }
+.tb-quote-tag { font-size: 13px; font-weight: 700; color: var(--indigo-700); }
+.tb-quote blockquote p { margin-top: 10px; font-size: 19px; line-height: 1.5; font-weight: 600; color: var(--navy); text-wrap: pretty; }
+.tb-quote-by { margin-top: 12px; font-size: 14.5px; color: var(--ink); }
+.tb-quote-by b { color: var(--navy); }
