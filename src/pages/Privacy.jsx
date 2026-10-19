@@ -86,7 +86,7 @@ export default function Privacy() {
               <li>התנגדות: להתנגד לעיבוד למטרות שיווק</li>
             </ul>
             <p className="mt-3">
-              למימוש זכויותיכם, אנא צרו קשר בכתובת atlas-il.com/contact. נענה בתוך 30 יום.
+              למימוש זכויותיכם, צרו קשר בכתובת atlas-il.com/contact. נענה בתוך 30 יום.
             </p>
           </section>
 

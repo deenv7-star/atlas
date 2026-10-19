@@ -44,7 +44,7 @@ export default function ResetPassword() {
       } else if (msg.includes('invalid') || msg.includes('not found')) {
         setError('כתובת אימייל לא רשומה במערכת');
       } else {
-        atlasToastApi.error(err.message || 'אירעה שגיאה. נסו שוב.');
+        atlasToastApi.error(err.message || 'לא הצלחנו לשלוח את הקישור. נסו שוב בעוד רגע.');
       }
     } finally {
       setIsLoading(false);
@@ -72,7 +72,7 @@ export default function ResetPassword() {
         <div className="text-center mb-10">
           <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           <h1 className="text-2xl font-extrabold text-gray-900">איפוס סיסמה</h1>
-          <p className="text-gray-500 text-sm mt-2">הזינו את כתובת האימייל, ונשלח לכם קישור לאיפוס</p>
+          <p className="text-gray-500 text-sm mt-2">כתבו את כתובת האימייל, ונשלח לכם קישור לאיפוס</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">

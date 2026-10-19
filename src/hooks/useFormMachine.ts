@@ -85,7 +85,7 @@ function toHebrewServerMessage(err: unknown): string {
     if (m) return m;
   }
   if (typeof err === 'string' && err) return err;
-  return 'השמירה נכשלה. נסו שוב או פנו לתמיכה.';
+  return 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.';
 }
 
 export function useFormMachine<TFieldValues extends FieldValues>({
@@ -254,7 +254,7 @@ export function useFormMachine<TFieldValues extends FieldValues>({
         !nextOpen &&
         (machineRef.current === 'dirty' || machineRef.current === 'error')
       ) {
-        const ok = window.confirm('יש לך שינויים שלא נשמרו. לצאת בכל זאת?');
+        const ok = window.confirm('יש שינויים שלא נשמרו. לצאת בכל זאת?');
         if (!ok) return;
         resetAll();
       }

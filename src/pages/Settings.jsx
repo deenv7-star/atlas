@@ -113,11 +113,11 @@ export default function SettingsPage({ user }) {
       return base44.auth.updateMe(profileForm);
     },
     onSuccess: () => {
-      toast({ title: 'הפרופיל עודכן בהצלחה', description: 'השינויים נשמרו.' });
+      toast({ title: 'הפרטים נשמרו', description: 'השינויים כבר בתוקף.' });
       queryClient.invalidateQueries(['user']);
     },
     onError: () => {
-      toast({ title: 'שגיאה בשמירה', variant: 'destructive' });
+      toast({ title: 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.', variant: 'destructive' });
     },
   });
 
@@ -134,7 +134,7 @@ export default function SettingsPage({ user }) {
       queryClient.invalidateQueries(['organization']);
     },
     onError: () => {
-      toast({ title: 'שגיאה בשמירה', variant: 'destructive' });
+      toast({ title: 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.', variant: 'destructive' });
     },
   });
 

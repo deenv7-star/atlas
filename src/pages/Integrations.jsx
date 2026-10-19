@@ -297,7 +297,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
 
   const report = (r, url = '') => {
     if (!r) return;
-    if (!r.ok) { atlasToastApi.error('הסנכרון נכשל. הפרטים מופיעים ליד הערוץ'); return; }
+    if (!r.ok) { atlasToastApi.error('לא הצלחנו לעדכן את הלוח. הפרטים מופיעים ליד הערוץ'); return; }
     // A link that is not Airbnb / Booking.com with this many busy dates is probably not one unit's export
     // (a holidays or a whole-hotel calendar): say so instead of a plain "synced".
     if (isSuspiciousFeed(url, r.events)) {
@@ -328,7 +328,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
         else atlasToastApi.success(`כל ${rs.length} הערוצים סונכרנו`);
       }
     } catch (e) {
-      atlasToastApi.error(e.message || 'הסנכרון נכשל');
+      atlasToastApi.error(e.message || 'לא הצלחנו לעדכן את הלוח. נסו שוב.');
     } finally {
       setSyncingId(null);
       refresh();
@@ -421,7 +421,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
 
       {tab === 'messages' ? (
         <ProviderStatus items={[
-          { name: 'WhatsApp בלחיצה אחת', live: true, text: 'atlas מכינה את ההודעות לפי מסע האורח (אישור, יום לפני, יום ההגעה, בקשת ביקורת) ושומרת על שקט בשבת ובחג. בלוח "היום" כל הודעה מוכנה נפתחת בוואטסאפ עם הטקסט, ושולחים בלחיצה.' },
+          { name: 'WhatsApp בלחיצה אחת', live: true, text: 'atlas מכין את ההודעות לפי מסע האורח (אישור, יום לפני, יום ההגעה, בקשת ביקורת) ושומר על שקט בשבת ובחג. בלוח "היום" כל הודעה מוכנה נפתחת בוואטסאפ עם הטקסט, ושולחים בלחיצה.' },
           { name: 'WhatsApp אוטומטי (Meta Cloud API)', live: false, text: 'שליחה בלי לגעת: ההודעות יוצאות לבד מהמספר העסקי של המתחם, עם תבניות מאושרות.', needs: 'חשבון WhatsApp Business מאומת אצל Meta ומספר ייעודי.' },
           { name: 'SMS', live: false, text: 'גיבוי לאורחים בלי וואטסאפ.', needs: 'ספק SMS ישראלי (חבילת הודעות).' },
           { name: 'אימייל יוצא', live: false, text: 'עד שיחובר שירות דיוור, "שליחה במייל" פותחת את תוכנת המייל שלכם עם הטקסט מוכן.', needs: 'שירות שליחת מיילים.' },

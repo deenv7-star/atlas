@@ -43,7 +43,7 @@ export default function Contact() {
       }
       if (ok) {
         setSent(true);
-        atlasToastApi.success('הפנייה נשלחה בהצלחה');
+        atlasToastApi.success('הפנייה נשלחה. נחזור אליכם בהקדם');
         return;
       }
       if (status === 503 && data?.code === 'EMAIL_NOT_CONFIGURED') {

@@ -56,7 +56,7 @@ export default function WizardA({ user, again = false }) {
 
   const screens = {
     kind: {
-      title: again ? 'נעדכן את פרטי המקום' : 'איזה מקום יש לך?',
+      title: again ? 'נעדכן את פרטי המקום' : 'איזה מקום יש לכם?',
       sub: 'נתאים את המערכת לסוג האירוח.',
       body: (
         <div className="flex flex-col gap-3">
@@ -105,7 +105,7 @@ export default function WizardA({ user, again = false }) {
       ),
     },
     count: {
-      title: `כמה ${k.units} יש לך?`,
+      title: `כמה ${k.units} יש לכם?`,
       sub: 'כל אחת מקבלת שורה משלה בלוח ההזמנות.',
       body: (
         <div className="flex flex-col items-center gap-6">

@@ -132,7 +132,7 @@ export function useRegister() {
           const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err?.name === 'TypeError';
           const isApiMissing = err?.status === 404 || msg.includes('http 404');
           if (isApiMissing) atlasToastApi.error('השרת לא זמין כרגע. נסו שוב בעוד כמה דקות.');
-          else atlasToastApi.error(isNetworkError ? 'אין חיבור. בדקו את האינטרנט ונסו שוב.' : (err?.message || 'אירעה שגיאה. נסו שוב.'));
+          else atlasToastApi.error(isNetworkError ? 'אין חיבור. בדקו את האינטרנט ונסו שוב.' : (err?.message || 'לא הצלחנו ליצור את החשבון. נסו שוב בעוד רגע, ואם זה חוזר, כתבו לנו בוואטסאפ.'));
         }
       }
       return false;

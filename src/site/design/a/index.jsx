@@ -53,7 +53,7 @@ export function Footer() {
             </nav>
           ))}
         </div>
-        <p className="a-ftr-copy">© 2026 atlas · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
+        <p className="a-ftr-copy">© 2026 atlas · נבנה בישראל{BUSINESS_LINE ? ` · מופעל על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>
   );

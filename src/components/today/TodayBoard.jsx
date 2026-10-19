@@ -507,7 +507,7 @@ export default function TodayBoard({ user, orgId }) {
             <Link to="/integrations" className="press c-row flex min-h-[48px] w-full items-center gap-3 rounded-[16px] px-3 text-right" data-testid="sync-problem">
               <AlertTriangle className="h-4 w-4 shrink-0 text-attention" strokeWidth={1.75} aria-hidden />
               <span className="flex-1 truncate text-[14px] font-semibold text-navy-900">
-                {queue.syncProblems.some((x) => Array.isArray(x.conflicts) && x.conflicts.length) ? 'התנגשות בין ערוצים: יש תאריכים כפולים' : 'סנכרון יומן נכשל: בדקו את החיבור'}
+                {queue.syncProblems.some((x) => Array.isArray(x.conflicts) && x.conflicts.length) ? 'התנגשות בין ערוצים: יש תאריכים כפולים' : 'הלוח לא התעדכן מהערוץ. בדקו את החיבור'}
               </span>
               <ChevronLeft className="h-4 w-4 shrink-0 text-ink-300" strokeWidth={1.75} />
             </Link>

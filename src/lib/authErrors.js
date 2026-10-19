@@ -8,7 +8,7 @@ export function mapAuthErrorToHebrew(err) {
   const msg = String(err?.message || '').toLowerCase();
 
   if (code === 'email_not_confirmed' || msg.includes('email not confirmed')) {
-    return { kind: 'toast', message: 'יש לאמת את כתובת האימייל תחילה. בדקו את תיבת הדואר.' };
+    return { kind: 'toast', message: 'עוד צעד קטן: שלחנו לכם מייל. לחצו על הקישור שבו ותיכנסו.' };
   }
   if (
     code === 'user_banned' ||

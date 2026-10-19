@@ -130,9 +130,9 @@ export default function InvoicesPage({ orgId }) {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
-      atlasToastApi.success('החשבונית נשמרה בהצלחה');
+      atlasToastApi.success('החשבונית נשמרה');
     },
-    onError: () => atlasToastApi.error('שגיאה בשמירת החשבונית')
+    onError: () => atlasToastApi.error('לא הצלחנו לשמור את החשבונית. נסו שוב.')
   });
 
   const updateMutation = useMutation({
@@ -141,9 +141,9 @@ export default function InvoicesPage({ orgId }) {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
-      atlasToastApi.success('החשבונית עודכנה בהצלחה');
+      atlasToastApi.success('החשבונית עודכנה');
     },
-    onError: () => atlasToastApi.error('שגיאה בעדכון החשבונית')
+    onError: () => atlasToastApi.error('לא הצלחנו לעדכן את החשבונית. נסו שוב.')
   });
 
   const deleteMutation = useMutation({
@@ -152,7 +152,7 @@ export default function InvoicesPage({ orgId }) {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       atlasToastApi.success('החשבונית נמחקה');
     },
-    onError: () => atlasToastApi.error('שגיאה במחיקת החשבונית')
+    onError: () => atlasToastApi.error('לא הצלחנו למחוק את החשבונית. נסו שוב.')
   });
 
   // No mail provider is connected yet: open the owner's own mail app with the text ready (honest, nothing "sent" by us).

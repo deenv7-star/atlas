@@ -83,7 +83,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
 
     return `
 אתה עוזר AI חכם של מערכת ניהול נכסים לטווח קצר בשם atlas.
-אתה מדבר עברית, אדיב, מקצועי ונותן תשובות קצרות ומדויקות.
+אתה מדבר עברית, אדיב, מקצועי ונותן תשובות קצרות ומדויקות. פנה לבעלים ברבים (אתם).
 
 נתוני העסק:
 - שם הנכס הנוכחי: ${selectedProperty?.name || 'לא נבחר'}
@@ -352,7 +352,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
               </Button>
             </div>
             <p className="text-xs text-ink-400 mt-2">
-              לחץ Enter לשליחה • Shift+Enter לשורה חדשה
+              Enter לשליחה • Shift+Enter לשורה חדשה
             </p>
           </div>
         </CardContent>

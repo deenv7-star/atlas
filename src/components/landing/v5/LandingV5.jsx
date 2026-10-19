@@ -74,7 +74,7 @@ export function Channels() {
   return (
     <section className="l5-channels" aria-labelledby="ch-title">
       <div className="l5-wrap l5-channels-in" data-reveal>
-        <p id="ch-title" className="l5-channels-t">מתחברת למה שאתם כבר עובדים איתו</p>
+        <p id="ch-title" className="l5-channels-t">עובד עם מה שכבר יש לכם</p>
         <ul className="l5-logos">
           {items.map(([k, n]) => (
             <li key={k} className={`l5-logo-${k}`}><Mark ch={k} size={22} /><span>{n}</span></li>
@@ -346,7 +346,7 @@ export function Footer() {
             </nav>
           ))}
         </div>
-        <p className="l5-ftr-copy">© {new Date().getFullYear()} atlas · נבנתה בישראל{BUSINESS_LINE ? ` · מופעלת על ידי ${BUSINESS_LINE}` : ''}</p>
+        <p className="l5-ftr-copy">© {new Date().getFullYear()} atlas · נבנה בישראל{BUSINESS_LINE ? ` · מופעל על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>
   );

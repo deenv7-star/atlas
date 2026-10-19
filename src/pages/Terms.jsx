@@ -244,7 +244,7 @@ export default function Terms() {
           <section className="bg-brand-600/5 rounded-2xl p-6 border border-brand-600/20">
             <h2 className="text-2xl font-bold text-[#1B2656] mb-4">13. יצירת קשר ותמיכה</h2>
             <p className="leading-relaxed mb-3">
-              לשאלות, בקשות תמיכה או כל נושא הקשור לתנאי שימוש אלה, אנא צרו קשר:
+              לשאלות, בקשות תמיכה או כל נושא הקשור לתנאי שימוש אלה, צרו קשר:
             </p>
             <div className="space-y-2 text-sm">
               <p><strong>דואר אלקטרוני:</strong> support@atlas-il.com</p>
