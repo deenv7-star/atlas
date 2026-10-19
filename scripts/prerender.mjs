@@ -253,24 +253,24 @@ function withRevealOn(html) {
  * The prerendered page is complete HTML, so no JS is needed for its first paint. As a plain module script
  * the entry was fetched and run (and hydrated) before the browser painted, holding the headline back
  * behind the JS download and ~2 s of JS on a phone. Here nothing but the HTML, CSS, fonts and hero photo
- * competes for the first paint: right after the first contentful paint (Paint Timing; first frame where that is
- * not available), the entry and the page's chunks are
- * requested together (modulepreload, no waterfall) and the entry starts. Nothing on screen changes when it
- * does (hydration adopts the HTML). Hidden tabs (no frames) start at once; a 2.5 s timer is the safety net.
+ * competes for the first paint: right after the first contentful paint (Paint Timing; first frame where that
+ * is not available) the entry is added, and Vite's loader fetches the page's chunks as usual. (Adding
+ * modulepreload links for all ~20 chunks here was measured as one ~200 ms task on a 4x-throttled CPU.)
+ * Nothing on screen changes when it starts (hydration adopts the HTML). Hidden tabs start at once; a 2.5 s
+ * timer is the safety net.
  */
-function deferEntry(html, js) {
+function deferEntry(html) {
   const re = /<script type="module" crossorigin src="(\/assets\/[^"]+\.js)"><\/script>/;
   const m = html.match(re);
   if (!m) throw new Error('entry <script type="module"> not found in the template');
   const src = m[1];
-  const pre = JSON.stringify(js);
-  const boot = `<script>(function(){var d=0;function go(){if(d)return;d=1;var h=document.head;${pre}.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.crossOrigin='anonymous';l.href=u;h.appendChild(l)});var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=${JSON.stringify(src)};document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}var later=function(){setTimeout(go,0)};try{if(PerformanceObserver.supportedEntryTypes.indexOf('paint')<0)throw 0;if(performance.getEntriesByName('first-contentful-paint').length){later()}else{new PerformanceObserver(function(l,o){if(l.getEntriesByName('first-contentful-paint').length){o.disconnect();later()}}).observe({type:'paint',buffered:true})}}catch(e){requestAnimationFrame(later)}setTimeout(go,2500)})()</script>`;
+  const boot = `<script>(function(){var d=0;function go(){if(d)return;d=1;var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=${JSON.stringify(src)};document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}var later=function(){setTimeout(go,0)};try{if(PerformanceObserver.supportedEntryTypes.indexOf('paint')<0)throw 0;if(performance.getEntriesByName('first-contentful-paint').length){later()}else{new PerformanceObserver(function(l,o){if(l.getEntriesByName('first-contentful-paint').length){o.disconnect();later()}}).observe({type:'paint',buffered:true})}}catch(e){requestAnimationFrame(later)}setTimeout(go,2500)})()</script>`;
   return html.replace(re, '').replace('</body>', `    ${boot}\n  </body>`);
 }
 
 /** Put the prerendered tree inside #root (replacing the "טוען..." placeholder), marked for hydration. */
 function leanBody(html, appHtml, assets) {
-  const head = deferEntry(html, assets.js).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`);
+  const head = deferEntry(html).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`);
   const start = head.indexOf('<div id="root">');
   if (start < 0) throw new Error('template has no #root');
   const after = head.slice(start);
