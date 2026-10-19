@@ -1,0 +1,80 @@
+/* Growth C "editorial calm". Palette strictly: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white.
+   Type does the work: one idea per screen, generous space, no card soup. Motion: transform + opacity only. */
+.gc { --gc-ind: #3E2BF1; --gc-navy: #1B2656; --gc-ink: #48527A; --gc-line: rgba(27, 38, 86, 0.1);
+  padding: 96px 0 104px; background: #F7F8FB; color: var(--gc-navy); }
+@media (min-width: 900px) { .gc { padding: 160px 0 168px; } }
+.gc-ind { color: var(--gc-ind); }
+
+/* 1 · statement */
+.gc-head { max-width: 15em; }
+@media (min-width: 900px) { .gc-head { max-width: 860px; } }
+.gc-kick { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--gc-ind); }
+.gc-h { margin-top: 14px; font-size: 42px; line-height: 1.04; font-weight: 800; letter-spacing: -0.045em; text-wrap: balance; }
+.gc-h > span { display: block; }
+@media (min-width: 900px) { .gc-h { margin-top: 18px; font-size: 76px; line-height: 1; letter-spacing: -0.05em; } }
+.gc-lede { margin-top: 20px; max-width: 24em; font-size: 19px; line-height: 1.55; color: var(--gc-ink); text-wrap: pretty; }
+@media (min-width: 900px) { .gc-lede { margin-top: 28px; font-size: 22px; } }
+
+/* 2 · one real product visual: the real booking page rising out of the photo it is built from */
+.gc-vis { margin: 56px 0 0; }
+@media (min-width: 900px) { .gc-vis { margin-top: 96px; } }
+.gc-stage { position: relative; overflow: hidden; isolation: isolate; aspect-ratio: 4 / 5; border-radius: 28px; background: #E9ECF4; }
+@media (min-width: 900px) { .gc-stage { aspect-ratio: 16 / 8.2; border-radius: 36px; } }
+.gc-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
+.gc-stage::after { content: ''; position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(27, 38, 86, 0) 40%, rgba(27, 38, 86, 0.28) 100%); pointer-events: none; }
+.gc-screen { position: absolute; z-index: 1; inset-inline: 0; margin-inline: auto; bottom: -38%; width: 72%; height: auto; border-radius: 22px;
+  box-shadow: 0 0 0 1px rgba(27, 38, 86, 0.06), 0 30px 60px -18px rgba(27, 38, 86, 0.45); }
+@media (min-width: 900px) { .gc-screen { width: 30%; bottom: -58%; border-radius: 28px; } }
+.gc-cap { margin-top: 14px; font-size: 15px; line-height: 1.5; color: var(--gc-ink); }
+
+/* 3 · three steps, no cards: hairline + big line */
+.gc-steps { display: grid; gap: 48px; margin-top: 88px; }
+@media (min-width: 900px) { .gc-steps { grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 144px; } }
+.gc-step { padding-top: 20px; border-top: 1px solid var(--gc-line); }
+.gc-n { display: block; font-size: 15px; font-weight: 700; color: var(--gc-ind); }
+.gc-step-h { margin-top: 10px; font-size: 30px; line-height: 1.1; font-weight: 800; letter-spacing: -0.035em; }
+@media (min-width: 900px) { .gc-step-h { font-size: 36px; } }
+.gc-step-p { margin-top: 10px; max-width: 22em; font-size: 18px; line-height: 1.55; color: var(--gc-ink); text-wrap: pretty; }
+.gc-soon { margin-top: 12px; font-size: 15px; font-weight: 700; color: var(--gc-ind); }
+
+/* 4 · the money sentence */
+.gc-roi { margin: 96px 0 0; max-width: 17em; }
+@media (min-width: 900px) { .gc-roi { margin-top: 160px; max-width: 980px; } }
+.gc-roi-q { font-size: 32px; line-height: 1.18; font-weight: 800; letter-spacing: -0.04em; text-wrap: balance; }
+@media (min-width: 900px) { .gc-roi-q { font-size: 56px; line-height: 1.08; } }
+.gc-roi-f { margin-top: 16px; max-width: 32em; font-size: 15px; line-height: 1.6; color: var(--gc-ink); }
+
+/* 5 · one focused offer */
+.gc-offer { display: grid; gap: 28px; margin-top: 80px; padding: 28px 22px 24px; border-radius: 28px; background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 38, 86, 0.04), 0 24px 48px -32px rgba(27, 38, 86, 0.18); }
+@media (min-width: 900px) { .gc-offer { grid-template-columns: 1fr 1fr; gap: 24px 64px; align-items: end; margin-top: 128px; padding: 48px 56px 40px; border-radius: 36px; } }
+.gc-offer-h { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; }
+.gc-offer-sub { margin-top: 4px; font-size: 17px; color: var(--gc-ink); }
+.gc-price { display: flex; align-items: baseline; gap: 10px; margin-top: 18px; }
+.gc-price b { font-size: 64px; line-height: 0.95; font-weight: 800; letter-spacing: -0.05em; }
+.gc-price span { font-size: 18px; color: var(--gc-ink); }
+@media (min-width: 900px) { .gc-price b { font-size: 88px; } }
+.gc-found { display: grid; gap: 2px; padding-inline-start: 14px; border-inline-start: 3px solid var(--gc-ind); font-size: 17px; line-height: 1.5; color: var(--gc-ink); }
+.gc-found b { color: var(--gc-navy); font-weight: 800; }
+.gc-cta { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; margin-top: 20px; padding: 0 24px; border-radius: 999px;
+  background: var(--gc-ind); color: #fff; font-size: 17px; font-weight: 700; transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms ease; }
+.gc-cta:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .gc-cta:hover { background: #3422E0; } .gc-cta:hover svg { transform: translateX(-3px); } }
+.gc-cta svg { transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+.gc-link { display: flex; align-items: center; justify-content: center; min-height: 48px; margin-top: 6px; font-size: 16px; font-weight: 600; color: var(--gc-navy);
+  text-decoration: underline; text-decoration-color: rgba(27, 38, 86, 0.3); text-underline-offset: 5px; }
+@media (hover: hover) and (pointer: fine) { .gc-link:hover { text-decoration-color: currentColor; } }
+.gc-offer-fine { font-size: 14px; color: var(--gc-ink); }
+@media (min-width: 900px) { .gc-offer-fine { grid-column: 1 / -1; padding-top: 20px; border-top: 1px solid var(--gc-line); } }
+.gc :focus-visible { outline: 2px solid var(--gc-ind); outline-offset: 3px; }
+.gc-cta:focus-visible { outline-offset: 4px; }
+
+/* motion: one-time reveal, transform + opacity only */
+@media (prefers-reduced-motion: no-preference) {
+  .gc [data-r] { opacity: 0; transform: translateY(18px); transition: opacity 700ms cubic-bezier(0.23, 1, 0.32, 1), transform 700ms cubic-bezier(0.23, 1, 0.32, 1); transition-delay: calc(var(--d, 0) * 80ms); }
+  .gc [data-r].is-in { opacity: 1; transform: none; }
+  .gc-vis[data-r] { transform: none; }
+  .gc-vis .gc-photo { transform: scale(1.06); transition: transform 1400ms cubic-bezier(0.23, 1, 0.32, 1); }
+  .gc-vis .gc-screen { transform: translateY(56px); transition: transform 1100ms cubic-bezier(0.23, 1, 0.32, 1) 120ms; }
+  .gc-vis.is-in .gc-photo, .gc-vis.is-in .gc-screen { transform: none; }
+}
