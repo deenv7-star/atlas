@@ -1,5 +1,5 @@
 /**
- * "קראתי ואני מסכים/ה לתקנון ולמדיניות הפרטיות" — an ACTIVE consent checkbox.
+ * "קראתי והסכמתי לתקנון ולמדיניות הפרטיות" — an ACTIVE consent checkbox.
  *
  * Unchecked by default, a real <input type="checkbox"> (keyboard, screen readers, autofill-safe),
  * 44px touch target, RTL. The links open in a new tab so a half-filled form is never lost.
@@ -58,7 +58,7 @@ function Box({ id, checked, onChange, error, describedBy, size = 20 }) {
 function ConsentText() {
   return (
     <>
-      קראתי ואני מסכים/ה ל
+      קראתי והסכמתי ל
       <a href="/terms" {...NEW_TAB} className={cn('font-semibold text-brand-600 underline decoration-brand-600/30 underline-offset-[3px] hover:decoration-brand-600', LINK_HIT)}>תקנון</a>
       {' '}ול
       <a href="/privacy" {...NEW_TAB} className={cn('font-semibold text-brand-600 underline decoration-brand-600/30 underline-offset-[3px] hover:decoration-brand-600', LINK_HIT)}>מדיניות הפרטיות</a>

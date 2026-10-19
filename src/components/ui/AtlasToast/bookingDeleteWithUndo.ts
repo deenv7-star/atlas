@@ -30,8 +30,8 @@ export function deleteBookingWithUndo(qc: QueryClient, bookingId: string): void 
   };
 
   const message = removed
-    ? `ההזמנה של ${removed.guest_name || 'אורח'} נמחקה מהתצוגה.`
-    : 'ההזמנה נמחקה מהתצוגה.';
+    ? `ההזמנה של ${removed.guest_name || 'אורח'} נמחקה.`
+    : 'ההזמנה נמחקה.';
 
   atlasToastApi.undo(message, restore, async () => {
     try {
@@ -43,7 +43,7 @@ export function deleteBookingWithUndo(qc: QueryClient, bookingId: string): void 
       const status = getErrorHttpStatus(err);
       if (status === 409) {
         openOptimisticConflictModal({
-          message: getErrorMessage(err) || 'לא ניתן למחוק את ההזמנה.',
+          message: getErrorMessage(err) || 'לא הצלחנו למחוק את ההזמנה. נסו שוב.',
         });
         return;
       }

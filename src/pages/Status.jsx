@@ -8,7 +8,7 @@ import { CheckCircle2, ExternalLink } from 'lucide-react';
 export default function Status() {
   const services = [
     { name: 'אתר וממשק', status: 'operational' },
-    { name: 'התחברות ומשתמשים', status: 'operational' },
+    { name: 'כניסה לחשבון', status: 'operational' },
     { name: 'API ונתונים', status: 'operational' },
     { name: 'אימייל ותזכורות', status: 'operational' },
   ];
@@ -33,8 +33,8 @@ export default function Status() {
 
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">סטטוס המערכת</h1>
-          <p className="text-gray-600 mb-4">מעקב אחר זמינות השירותים והתראות תפעול</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">מצב השירות</h1>
+          <p className="text-gray-600 mb-4">האם הכל עובד כרגע</p>
           <p className="text-sm text-gray-500 mb-8">
             עדכון אחרון: {updated} (שעון ישראל). אין אירועים פתוחים כרגע.
           </p>
@@ -42,7 +42,7 @@ export default function Status() {
           <div className="flex items-center gap-3 p-4 bg-green-50 rounded-xl border border-green-200 mb-8">
             <CheckCircle2 className="w-8 h-8 text-green-600 shrink-0" />
             <div>
-              <p className="font-bold text-green-800">כל המערכות פועלות כרגיל</p>
+              <p className="font-bold text-green-800">הכל עובד כרגיל</p>
               <p className="text-sm text-green-700">אין השבתה מתוכננת. במקרה של תקלה, נעדכן כאן ובמייל ללקוחות.</p>
             </div>
           </div>

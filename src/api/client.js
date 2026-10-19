@@ -842,15 +842,15 @@ const integrations = {
           let code = data?.error || '';
           if (!code) { try { code = (await error.context?.json?.())?.error || ''; } catch { /* not json */ } }
           const e = new Error(code === 'not_configured'
-            ? 'העוזר החכם עוד לא הופעל בחשבון הזה. הנתונים שלכם בטוחים, ופשוט אין עדיין מנוע AI מחובר.'
+            ? 'העוזר עוד לא פעיל בחשבון הזה. הנתונים שלכם בטוחים.'
             : code === 'rate_limited' ? 'יותר מדי שאלות בדקה האחרונה. נסו שוב עוד רגע.'
-            : 'העוזר החכם לא זמין כרגע. נסו שוב עוד מעט.');
+            : 'העוזר לא זמין כרגע. נסו שוב בעוד רגע.');
           e.code = code === 'not_configured' ? 'AI_NOT_CONFIGURED' : 'AI_ERROR';
           throw e;
         }
         return data?.text ?? '';
       }
-      const e = new Error('העוזר החכם זמין בחשבון מחובר.');
+      const e = new Error('העוזר זמין אחרי שתתחברו לחשבון.');
       e.code = 'AI_NOT_CONFIGURED';
       throw e;
     },

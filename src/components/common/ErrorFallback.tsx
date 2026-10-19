@@ -11,7 +11,7 @@ export type ErrorFallbackProps = {
 };
 
 export function ErrorFallback({
-  title = 'לא ניתן לטעון את הנתונים',
+  title = 'לא הצלחנו לטעון את הנתונים',
   description = 'בדקו את החיבור לאינטרנט ונסו שוב.',
   className,
   compact = false,

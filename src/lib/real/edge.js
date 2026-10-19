@@ -9,12 +9,12 @@ export class EdgeError extends Error {
 }
 
 export async function callEdge(fn, body = {}) {
-  if (!isSupabaseConfigured || !supabase) throw new EdgeError('זמין רק בחשבון מחובר', 'not_configured');
+  if (!isSupabaseConfigured || !supabase) throw new EdgeError('זמין אחרי שתתחברו לחשבון', 'not_configured');
   const { data, error } = await supabase.functions.invoke(fn, { body });
   if (error) {
     let code = 'edge_error';
     try { const j = await error.context?.json?.(); code = j?.error || code; } catch { /* not json */ }
-    throw new EdgeError(code === 'unauthorized' ? 'צריך להתחבר מחדש' : 'השרת לא הגיב. נסו שוב בעוד רגע', code);
+    throw new EdgeError(code === 'unauthorized' ? 'התחברו שוב כדי להמשיך' : 'אין תשובה כרגע. נסו שוב בעוד רגע', code);
   }
   return data;
 }
@@ -40,12 +40,12 @@ export function isOverlapError(e) {
 export const OVERLAP_MESSAGE = 'התאריכים האלה כבר תפוסים ביחידה הזו. בחרו תאריכים אחרים או יחידה אחרת.';
 
 export function minutesAgoHe(iso) {
-  if (!iso) return 'עוד לא סונכרן';
+  if (!iso) return 'עוד לא עודכן';
   const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
-  if (m < 1) return 'סונכרן עכשיו';
-  if (m < 60) return `סונכרן לפני ${m === 1 ? 'דקה' : `${m} דקות`}`;
+  if (m < 1) return 'עודכן עכשיו';
+  if (m < 60) return `עודכן לפני ${m === 1 ? 'דקה' : `${m} דקות`}`;
   const h = Math.round(m / 60);
-  if (h < 24) return `סונכרן לפני ${h === 1 ? 'שעה' : `${h} שעות`}`;
+  if (h < 24) return `עודכן לפני ${h === 1 ? 'שעה' : `${h} שעות`}`;
   const d = Math.round(h / 24);
-  return `סונכרן לפני ${d === 1 ? 'יום' : `${d} ימים`}`;
+  return `עודכן לפני ${d === 1 ? 'יום' : `${d} ימים`}`;
 }

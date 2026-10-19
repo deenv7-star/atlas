@@ -186,7 +186,7 @@ export function BlogIndex() {
 function EndCta() {
   return (
     <aside className="a-cta" aria-labelledby="a-cta-t">
-      <h2 id="a-cta-t">כל הצימר במסך אחד, בעברית</h2>
+      <h2 id="a-cta-t">כל הצימר על מסך אחד</h2>
       <p>לוח אחד לכל הערוצים, מקדמות ויתרות, וואטסאפ לאורחים בנוסח מוכן ודוח חודשי לרואה החשבון.</p>
       <div className="a-cta-row">
         <Link to="/register" className="s-btn s-btn-white">14 ימי ניסיון בחינם</Link>
@@ -253,7 +253,7 @@ export function NotFound() {
     <div className="a-wrap a-doc a-404">
       <p className="a-cat">שגיאה 404</p>
       <h1>הדף הזה לא נמצא</h1>
-      <p className="a-lede">ייתכן שהקישור ישן או שהייתה טעות בכתובת. אולי אחד מאלה יעזור:</p>
+      <p className="a-lede">אולי הקישור ישן, או שיש טעות בכתובת. נסו אחד מאלה:</p>
       <ul className="a-404-links">
         <li><Link to="/">דף הבית</Link></li>
         <li><Link to="/blog">הבלוג</Link></li>

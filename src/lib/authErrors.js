@@ -17,7 +17,7 @@ export function mapAuthErrorToHebrew(err) {
     msg.includes('banned') ||
     (msg.includes('disabled') && msg.includes('user'))
   ) {
-    return { kind: 'toast', message: 'החשבון הושבת או נחסם. פנו לתמיכה.' };
+    return { kind: 'toast', message: 'החשבון הזה מושהה. כתבו לנו בוואטסאפ ונבדוק.' };
   }
   if (
     code === 'invalid_credentials' ||
@@ -28,8 +28,8 @@ export function mapAuthErrorToHebrew(err) {
   ) {
     return {
       kind: 'fields',
-      message: 'אימייל או סיסמה שגויים',
-      fields: { email: 'אימייל או סיסמה שגויים', password: 'אימייל או סיסמה שגויים' },
+      message: 'המייל או הסיסמה לא נכונים',
+      fields: { email: 'המייל או הסיסמה לא נכונים', password: 'המייל או הסיסמה לא נכונים' },
     };
   }
   if (
@@ -41,10 +41,10 @@ export function mapAuthErrorToHebrew(err) {
     return { kind: 'toast', message: 'יותר מדי ניסיונות. חכו דקה ונסו שוב.' };
   }
   if (code === 'weak_password' || msg.includes('weak password')) {
-    return { kind: 'toast', message: 'הסיסמה חלשה מדי. בחרו סיסמה חזקה יותר.' };
+    return { kind: 'toast', message: 'קל לנחש את הסיסמה הזו. נסו סיסמה ארוכה יותר, עם אות וספרה.' };
   }
   if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already')) {
-    return { kind: 'toast', message: 'כתובת המייל כבר רשומה במערכת.' };
+    return { kind: 'toast', message: 'המייל הזה כבר רשום. התחברו או אפסו סיסמה.' };
   }
 
   return null;

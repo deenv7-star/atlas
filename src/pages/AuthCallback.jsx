@@ -127,7 +127,7 @@ export default function AuthCallback() {
   };
 
   if (stage === 'loading') return <Centered label="מתחברים…" />;
-  if (stage === 'going') return <Centered label="מכינים את המערכת שלכם…" />;
+  if (stage === 'going') return <Centered label="מכינים את החשבון שלכם…" />;
 
   if (stage === 'error') {
     return (

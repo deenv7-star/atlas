@@ -345,7 +345,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                       onClick={() => handleStatusChange(selectedTask.id, 'IN_PROGRESS')}
                     >
                       <PlayCircle className="h-4 w-4" />
-                      התחל
+                      התחלה
                     </Button>
                   )}
                   {selectedTask.status === 'IN_PROGRESS' && (
@@ -354,7 +354,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                       onClick={() => handleStatusChange(selectedTask.id, 'DONE')}
                     >
                       <CheckCircle2 className="h-4 w-4" />
-                      סיים
+                      סיום
                     </Button>
                   )}
                   {selectedTask.status === 'DONE' && (
@@ -363,7 +363,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                       variant="outline"
                       onClick={() => handleStatusChange(selectedTask.id, 'OPEN')}
                     >
-                      פתח מחדש
+                      פתיחה מחדש
                     </Button>
                   )}
                 </div>

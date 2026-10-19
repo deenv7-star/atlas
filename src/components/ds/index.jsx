@@ -103,7 +103,7 @@ export const STATUS_META = {
   // payments
   PAID: { label: 'שולם', tone: 'success' },
   OVERDUE: { label: 'באיחור', tone: 'danger' },
-  FAILED: { label: 'נכשל', tone: 'danger' },
+  FAILED: { label: 'לא עבר', tone: 'danger' },
   REFUNDED: { label: 'הוחזר', tone: 'neutral' },
   // tasks
   COMPLETED: { label: 'בוצע', tone: 'success' },
@@ -363,7 +363,7 @@ export function SlowLoadNotice({ onRetry, className }) {
         <p className="font-bold text-navy-900">הטעינה לוקחת יותר מהרגיל</p>
         <p className="text-[14px] text-ink-600">ייתכן שהחיבור איטי. אפשר לנסות שוב, הנתונים שכבר נטענו נשמרים.</p>
       </div>
-      <Button variant="outline" onClick={onRetry}>לנסות שוב</Button>
+      <Button variant="outline" onClick={onRetry}>נסו שוב</Button>
     </div>
   );
 }

@@ -286,7 +286,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             <DialogHeader>
               <DialogTitle className="text-[20px] font-bold text-navy-900">למחוק את ההזמנה?</DialogTitle>
             </DialogHeader>
-            <p className="text-[15px] text-ink-600">ההזמנה של {booking.guest_name || 'האורח'} תוסר. אפשר לבטל מיד אחרי המחיקה.</p>
+            <p className="text-[15px] text-ink-600">ההזמנה של {booking.guest_name || 'האורח'} תימחק. אפשר לשחזר אותה מיד אחרי המחיקה.</p>
             <DialogFooter>
               <Button variant="outline" onClick={() => setConfirmDelete(false)}>ביטול</Button>
               <Button variant="destructive" onClick={() => { setConfirmDelete(false); deleteBookingWithUndo(queryClient, booking.id); navigate(createPageUrl('Bookings')); }}>מחיקה</Button>

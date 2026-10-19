@@ -221,7 +221,7 @@ export default function BookingsPage({ selectedPropertyId }) {
   };
 
   const handleDelete = (id) => {
-    if (!confirm('למחוק הזמנה זו?')) return;
+    if (!confirm('למחוק את ההזמנה?')) return;
     deleteBookingWithUndo(queryClient, id);
   };
 
@@ -281,7 +281,7 @@ export default function BookingsPage({ selectedPropertyId }) {
         title="הזמנות"
         help="bookings.page"
         tour="bookings-page"
-        subtitle="כל ההזמנות מכל הערוצים, במקום אחד."
+        subtitle="כל ההזמנות, מכל הערוצים."
         actions={
           <>
             {/* desktop: "הזמנה חדשה" lives in the header; tablets keep it here */}
@@ -399,7 +399,7 @@ export default function BookingsPage({ selectedPropertyId }) {
                 bookings={paged}
                 properties={properties}
                 isLoading={isLoading || propertiesLoading}
-                error={isError ? (bookingsError instanceof Error ? bookingsError : new Error('שגיאת טעינה')) : null}
+                error={isError ? (bookingsError instanceof Error ? bookingsError : new Error('לא הצלחנו לטעון את ההזמנות')) : null}
                 onEdit={openEdit}
                 onDelete={handleDelete}
                 onBulkDelete={handleBulkDeleteRows}

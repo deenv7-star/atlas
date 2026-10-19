@@ -49,7 +49,7 @@ export function WhatsAppComposer({ open, onOpenChange, booking: bookingProp, pro
       onSent?.(templateKey);
       onOpenChange(false);
     } catch {
-      atlasToastApi.error('וואטסאפ נפתח, אבל לא הצלחנו לשמור את ההודעה ביומן.');
+      atlasToastApi.error('וואטסאפ נפתח, אבל לא הצלחנו לשמור את ההודעה במסך ההודעות.');
       onOpenChange(false);
     }
   };

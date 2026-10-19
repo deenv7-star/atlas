@@ -31,12 +31,12 @@ export default function IOSInstallBanner() {
       className="fixed bottom-20 inset-x-4 z-50 bg-[#F4F3FF] border border-brand-600/30 rounded-2xl shadow-2xl p-4 text-navy-900"
       style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
       role="dialog"
-      aria-label="התקן את atlas"
+      aria-label="הוספת atlas למסך הבית"
     >
       <button
         onClick={dismiss}
         className="absolute top-3 left-3 text-gray-400 hover:text-navy-900"
-        aria-label="סגור"
+        aria-label="סגירה"
       >
         <X className="h-4 w-4" />
       </button>
@@ -44,7 +44,7 @@ export default function IOSInstallBanner() {
       <div className="flex items-start gap-3">
         <img src="/apple-touch-icon.png" alt="atlas" className="w-12 h-12 rounded-xl flex-shrink-0" />
         <div>
-          <p className="font-semibold text-sm leading-snug">התקן את atlas על האייפון</p>
+          <p className="font-semibold text-sm leading-snug">הוסיפו את atlas למסך הבית</p>
           <p className="text-xs text-gray-400 mt-0.5 leading-snug">
             לחצו על{' '}
             <Share className="inline h-3.5 w-3.5 text-brand-600" />

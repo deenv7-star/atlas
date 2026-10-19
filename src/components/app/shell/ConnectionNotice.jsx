@@ -46,7 +46,7 @@ export default function ConnectionNotice() {
       </div>
       <button type="button" onClick={retry} className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[10px] border border-line bg-white px-4 text-[15px] font-medium text-navy-900 transition-[background-color,transform] duration-150 hover:bg-canvas active:scale-[.98]">
         <RotateCw className="h-4 w-4" strokeWidth={1.5} aria-hidden />
-        לנסות שוב
+        נסו שוב
       </button>
     </div>
   );

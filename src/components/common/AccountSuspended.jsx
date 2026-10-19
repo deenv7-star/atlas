@@ -15,7 +15,7 @@ export default function AccountSuspended({ reason }) {
         </span>
         <h1 className="mt-4 text-[22px] font-bold text-[#0F1640]">החשבון מושהה כרגע</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-[#4A5170]">
-          הגישה לחשבון atlas שלכם הושהתה על ידי הצוות שלנו. המידע שלכם שמור ולא נמחק.
+          הצוות שלנו השהה את הגישה לחשבון. המידע שלכם שמור ולא נמחק.
           {reason ? <><br />סיבה: {reason}</> : null}
         </p>
         <div className="mt-6 flex flex-col gap-3">
@@ -32,7 +32,7 @@ export default function AccountSuspended({ reason }) {
             onClick={logout}
             className="inline-flex h-12 items-center justify-center rounded-full border border-[#E6E8F0] bg-white px-6 text-[15px] font-semibold text-[#0F1640]"
           >
-            התנתקות
+            יציאה מהחשבון
           </button>
         </div>
       </div>

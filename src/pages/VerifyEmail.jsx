@@ -146,7 +146,7 @@ export default function VerifyEmail() {
                   className="mt-3 h-12 w-full text-[15px] font-semibold"
                   onClick={() => navigate(user?.onboarding_completed ? '/dashboard' : '/onboarding', { replace: true })}
                 >
-                  {user?.onboarding_completed ? 'מעבר ללוח הבקרה' : 'המשך כאן להגדרת הצימר'}
+                  {user?.onboarding_completed ? 'מעבר למסך הבית' : 'המשך כאן להגדרת הצימר'}
                 </Button>
               ) : (
                 <Button asChild size="lg" className="mt-3 h-12 w-full text-[15px] font-semibold">
@@ -170,7 +170,7 @@ export default function VerifyEmail() {
             </p>
           )}
           {cross.status === 'paused' && (
-            <p className="text-[14px] text-ink-600" role="status">הפסקנו לבדוק אוטומטית. אחרי שתאשרו במייל, לחצו "אישרתי במייל — המשך".</p>
+            <p className="text-[14px] text-ink-600" role="status">הפסקנו לבדוק אוטומטית. אחרי שתאשרו במייל, לחצו "אישרתי, אפשר להמשיך".</p>
           )}
           {needsPassword && (
             <div className="space-y-2">
@@ -194,7 +194,7 @@ export default function VerifyEmail() {
             aria-busy={cross.checking}
             className="h-12 w-full gap-2 text-[15px] font-semibold"
           >
-            {cross.checking ? <><Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />בודקים…</> : 'אישרתי במייל — המשך'}
+            {cross.checking ? <><Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />בודקים…</> : 'אישרתי, אפשר להמשיך'}
           </Button>
           {cross.manualError && <p className="text-[14px] text-danger-600" role="alert">{cross.manualError}</p>}
         </form>

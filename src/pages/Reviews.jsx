@@ -21,7 +21,7 @@ const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתין', color: 'bg-amber-100 text-amber-700', icon: Clock },
   { value: 'SENT', label: 'נשלח', color: 'bg-brand-100 text-brand-700', icon: Send },
   { value: 'REVIEWED', label: 'התקבל', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-  { value: 'DECLINED', label: 'סירב', color: 'bg-red-100 text-red-600', icon: AlertCircle },
+  { value: 'DECLINED', label: 'לא כתבו', color: 'bg-red-100 text-red-600', icon: AlertCircle },
 ];
 
 const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
@@ -131,7 +131,7 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
             <EmptyState
               compact
               icon={Star}
-              title={searchTerm || statusFilter !== 'all' ? 'לא נמצאו ביקורות' : 'אין עדיין ביקורות'}
+              title={searchTerm || statusFilter !== 'all' ? 'אין ביקורות שמתאימות' : 'אין עדיין ביקורות'}
               description={searchTerm || statusFilter !== 'all' ? 'נסו חיפוש או סינון אחר.' : 'אחרי כל יציאה אפשר לשלוח לאורח בקשה לביקורת, זה לוקח לו דקה.'}
             />
           </Card>

@@ -144,7 +144,7 @@ export function BookingForm({
           </div>
           {properties.length > 0 && (
             <div className="col-span-2 space-y-1.5">
-              <Label className="text-[14px] font-medium text-ink-600">נכס</Label>
+              <Label className="text-[14px] font-medium text-ink-600">יחידה</Label>
               <Controller
                 control={fm.control}
                 name="property_id"
@@ -156,8 +156,8 @@ export function BookingForm({
                       field.onChange(v);
                     }}
                   >
-                    <SelectTrigger aria-label="נכס" className="h-12 md:h-11 rounded-[10px]">
-                      <SelectValue placeholder="בחר נכס" />
+                    <SelectTrigger aria-label="יחידה" className="h-12 md:h-11 rounded-[10px]">
+                      <SelectValue placeholder="בחרו יחידה" />
                     </SelectTrigger>
                     <SelectContent>
                       {properties.map((prop) => (
@@ -260,7 +260,7 @@ export function BookingForm({
           </div>
           <div className="col-span-2 space-y-1.5">
             <Label className="text-[14px] font-medium text-ink-600">הערות</Label>
-            <Input {...fm.register('notes')} placeholder="הערות פנימיות" className="h-12 md:h-11 rounded-[10px]" />
+            <Input {...fm.register('notes')} placeholder="רק אתם רואים את זה" className="h-12 md:h-11 rounded-[10px]" />
             <FormMachineFieldHint error={fm.errors.notes} />
           </div>
           <BookingOverlapGuard
@@ -311,7 +311,7 @@ export function BookingForm({
             {fm.state === 'submitting' ? (
               <>
                 <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                שומר…
+                שומרים…
               </>
             ) : fm.state === 'success' ? (
               <>

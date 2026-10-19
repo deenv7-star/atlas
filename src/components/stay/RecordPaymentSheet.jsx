@@ -51,7 +51,7 @@ export function RecordPaymentSheet({ open, onOpenChange, booking, balance, orgId
       atlasToastApi.success(`נרשם תשלום של ${formatMoney(n)}`);
       onOpenChange(false);
     } catch (e) {
-      atlasToastApi.error(e?.message ? `התשלום לא נשמר: ${e.message}` : 'התשלום לא נשמר');
+      atlasToastApi.error(e?.message ? `התשלום לא נשמר: ${e.message}` : 'התשלום לא נשמר. נסו שוב.');
     }
   };
 
@@ -64,7 +64,7 @@ export function RecordPaymentSheet({ open, onOpenChange, booking, balance, orgId
       footer={(
         <>
           <Btn variant="primary" size="lg" icon={Check} onClick={save} disabled={n <= 0 || createPayment.isPending} className="w-full sm:w-auto">
-            {createPayment.isPending ? 'שומר…' : 'שמירה'}
+            {createPayment.isPending ? 'שומרים…' : 'שמירה'}
           </Btn>
           <Btn variant="secondary" size="lg" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">ביטול</Btn>
         </>

@@ -117,7 +117,7 @@ export default function LeadDetail({ orgId }) {
   if (!lead) {
     return (
       <div className="p-6 text-center text-gray-500">
-        ליד לא נמצא
+        לא מצאנו את הליד
       </div>
     );
   }
@@ -224,7 +224,7 @@ export default function LeadDetail({ orgId }) {
         >
           <CardContent className="p-4 space-y-2">
             <Label htmlFor="lead-notes" className="text-xs text-gray-500">
-              נשמר אוטומטית בעת יציאה מהשדה
+              נשמר לבד
             </Label>
             <Textarea
               id="lead-notes"
@@ -233,7 +233,7 @@ export default function LeadDetail({ orgId }) {
               value={notesDraft}
               onChange={(e) => setNotesDraft(e.target.value)}
               onBlur={saveNotes}
-              placeholder="הערות פנימיות על הליד…"
+              placeholder="רק אתם רואים את זה"
               className="rounded-xl text-sm resize-y min-h-[100px]"
             />
           </CardContent>
@@ -264,7 +264,7 @@ export default function LeadDetail({ orgId }) {
         onClick={() => handleConvertToBooking(lead)}
       >
         <ArrowLeftRight className="h-4 w-4 ml-2" />
-        הפוך להזמנה
+        הפיכה להזמנה
       </Button>
     </motion.div>
   );

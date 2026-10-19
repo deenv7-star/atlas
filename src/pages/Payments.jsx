@@ -28,7 +28,7 @@ const PAYMENT_STATUSES = [
   { value: 'PENDING',  label: 'ממתין', color: 'bg-amber-100 text-amber-700 border-amber-200' },
   { value: 'PAID',     label: 'שולם',  color: 'bg-green-100 text-green-700 border-green-200' },
   { value: 'PARTIAL',  label: 'חלקי',  color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { value: 'FAILED',   label: 'נכשל',  color: 'bg-red-100 text-red-700 border-red-200' },
+  { value: 'FAILED',   label: 'לא עבר',  color: 'bg-red-100 text-red-700 border-red-200' },
   { value: 'REFUNDED', label: 'הוחזר', color: 'bg-gray-100 text-gray-500 border-gray-200' },
   { value: 'OVERDUE',  label: 'באיחור', color: 'bg-orange-100 text-orange-700 border-orange-200' },
 ];
@@ -235,7 +235,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         ) : filtered.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Wallet}
-            title={searchTerm || statusFilter !== 'all' ? 'לא נמצאו תשלומים' : 'עדיין אין תשלומים'}
+            title={searchTerm || statusFilter !== 'all' ? 'אין תשלומים שמתאימים' : 'עדיין אין תשלומים'}
             description={searchTerm || statusFilter !== 'all' ? 'נסו חיפוש אחר.' : 'אורח שילם מקדמה או יתרה? לוחצים "תשלום חדש" ורושמים כמה. זה יופיע גם בהזמנה.'}
             action={!searchTerm && statusFilter === 'all' ? <Button variant="outline" onClick={openNew} disabled={!orgId}><Plus strokeWidth={2.25} />תשלום חדש</Button> : null}
           />
@@ -268,10 +268,10 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
           <FinancialTable
             payments={filtered}
             isLoading={isLoading}
-            error={isError ? (paymentsError instanceof Error ? paymentsError : new Error('שגיאת טעינה')) : null}
+            error={isError ? (paymentsError instanceof Error ? paymentsError : new Error('לא הצלחנו לטעון את התשלומים')) : null}
             onEdit={openEdit}
             onDelete={(id) => {
-              if (confirm('למחוק תשלום זה?')) deleteMutation.mutate(id);
+              if (confirm('למחוק את התשלום?')) deleteMutation.mutate(id);
             }}
             onBulkDelete={(rows) => {
               if (!confirm(`למחוק ${heCount(rows.length, 'payment')}?`)) return;
@@ -327,7 +327,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
                 }}
               >
                 <Trash2 />
-                {confirmPaymentDelete ? 'ללחוץ שוב כדי למחוק' : 'מחיקת תשלום'}
+                {confirmPaymentDelete ? 'לחצו שוב כדי למחוק' : 'מחיקת תשלום'}
               </Button>
             </div>
           ) : null}

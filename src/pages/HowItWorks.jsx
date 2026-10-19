@@ -9,25 +9,25 @@ const STEPS = [
   {
     n: 1,
     title: 'ערוצי הזמנה ויומנים',
-    body: 'Airbnb, Booking.com, יומני Google/Apple וערוצים נוספים מחוברים דרך מסך האינטגרציות. כל ערוץ נשמר כמקור נתונים נפרד עם חותמת זמן.',
+    body: 'Airbnb, Booking.com ויומנים אחרים מתחברים במסך "ערוצים וחיבורים", עם קישור יומן אחד לכל יחידה.',
     icon: Link2,
   },
   {
     n: 2,
-    title: 'סנכרון ללוח המרכזי',
-    body: 'המערכת מושכת תאריכי חסימה והזמנות ללוח האחוד. עדכונים מתוזמנים ואירועים חדשים נכנסים לתור עיבוד כדי למנוע עומס על הערוצים.',
+    title: 'הכל נכנס ללוח אחד',
+    body: 'כל 15 דקות atlas בודק כל ערוץ, ותאריכים תפוסים נכנסים ללוח לבד.',
     icon: RefreshCw,
   },
   {
     n: 3,
-    title: 'כללי התנגשות (Conflict rules)',
-    body: 'כשנכנסות שתי הזמנות לאותו חדר באותו טווח תאריכים, atlas מסמנת התנגשות: לפי סדר קבלה, סטטוס (מאושר מול טיוטה) והגדרות נכס. המנהל רואה התראה ומחליט איזו הזמנה נשארת.',
+    title: 'כשיש חפיפה',
+    body: 'אם שתי הזמנות נופלות על אותה יחידה באותם לילות, atlas מסמן את זה ומתריע. אתם מחליטים איזו הזמנה נשארת.',
     icon: Shield,
   },
   {
     n: 4,
-    title: 'יומן אמת אחד',
-    body: 'לאחר הכרעה (או כאשר אין התנגשות), הלוח מציג מצב אחד עקבי. שינויים מהערוץ או מהממשק נשמרים ביומן פעילות לביקורת עתידית.',
+    title: 'לוח אחד שאפשר לסמוך עליו',
+    body: 'אחרי שהחלטתם, הלוח מראה תמונה אחת וברורה. כל שינוי נרשם, כך שתמיד אפשר לבדוק מה קרה.',
     icon: Database,
   },
 ];
@@ -58,13 +58,13 @@ export default function HowItWorks() {
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-2 text-[#2A1AC9] text-sm font-bold mb-3">
             <GitBranch className="w-5 h-5" aria-hidden />
-            ארכיטקטורה ותפעול
+            איך זה עובד
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
-            איך atlas מונעת הזמנות כפולות ומסנכרנת ערוצים
+            איך נמנעים מהזמנות כפולות
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed mb-10">
-            דף זה מסביר ברמת מערכת: בלי הבטחות קסם, איך נתונים זורמים מערוצי הזמנה ללוח אחד, ואיך מתמודדים עם התנגשויות.
+            בלי הבטחות קסם: איך הזמנות מכל הערוצים מגיעות ללוח אחד, ומה קורה כשיש חפיפה.
             לפרטי ממשק REST ראו{' '}
             <Link to={createPageUrl('ApiDocs')} className="text-brand-600 font-semibold underline-offset-2 hover:underline">
               תיעוד ה-API
@@ -73,12 +73,12 @@ export default function HowItWorks() {
           </p>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm mb-12">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">תרשים זרימה (תמצית)</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">בקצרה</h2>
             <ol className="space-y-3 text-gray-700 text-sm sm:text-base leading-relaxed list-decimal list-inside marker:font-bold marker:text-[#2A1AC9]">
-              <li>מקור חיצוני או ידני יוצר/מעדכן הזמנה.</li>
-              <li>atlas מאמתת טווח תאריכים מול הלוח הפנימי לנכס/חדר.</li>
-              <li>אם יש חפיפה: נוצרת התראה והרשומה מסומנת לטיפול אנושי או לפי כללים שהוגדרו בארגון.</li>
-              <li>אין חפיפה: ההזמנה נרשמת והלוח מתעדכן; הערוץ המקושר מקבל עדכון כשהאינטגרציה תומכת בכך.</li>
+              <li>הזמנה חדשה נכנסת מערוץ, או שאתם רושמים אותה.</li>
+              <li>atlas בודק אם הלילות פנויים ביחידה.</li>
+              <li>אם יש חפיפה, מופיעה התראה ואתם מחליטים.</li>
+              <li>אם אין חפיפה, ההזמנה נשמרת והלוח מתעדכן.</li>
             </ol>
           </div>
 
@@ -113,12 +113,12 @@ export default function HowItWorks() {
             <div className="flex flex-wrap gap-3 justify-center">
               <Link to="/register">
                 <Button className="bg-brand-600 text-white hover:bg-[#00c4b4] font-bold">
-                  הרשמה חינם
+                  14 ימי ניסיון חינם
                 </Button>
               </Link>
               <Link to="/contact">
                 <Button variant="outline" className="border-white/40 text-navy-900 hover:bg-white border border-line shadow-card">
-                  דברו עם המכירות
+                  שאלה? כתבו לנו
                 </Button>
               </Link>
             </div>

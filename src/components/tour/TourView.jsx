@@ -205,7 +205,7 @@ export default function TourView({ step, idx, total, rect, ready, reduced, voice
         <div className="tb-foot">
           <button type="button" className={cn('tb-voice', voiceOn && 'is-on')} aria-pressed={voiceOn} onClick={onToggleVoice}>
             {voiceOn ? (speaking ? <span className="tb-bars" aria-hidden><i /><i /><i /></span> : <Volume2 className="h-[18px] w-[18px]" strokeWidth={1.9} aria-hidden />) : <VolumeX className="h-[18px] w-[18px]" strokeWidth={1.9} aria-hidden />}
-            <span>{voiceOn ? 'הסבר קולי פועל' : 'השמע הסבר'}</span>
+            <span>{voiceOn ? 'הסבר קולי פועל' : 'השמעת הסבר'}</span>
           </button>
           <span className="tb-btns">
             {!first ? (

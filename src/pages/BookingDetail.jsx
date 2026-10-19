@@ -42,7 +42,7 @@ export default function BookingDetail({ orgId }) {
   if (!booking) {
     return (
       <div className="p-10 text-center text-[16px] text-ink-600">
-        ההזמנה לא נמצאה. ייתכן שנמחקה.
+        לא מצאנו את ההזמנה. אולי היא נמחקה.
       </div>
     );
   }

@@ -61,8 +61,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setTouched({ email: true, password: true });
-    if (!form.email.trim()) { setErrors(e => ({ ...e, email: 'שדה חובה' })); return; }
-    if (!form.password) { setErrors(e => ({ ...e, password: 'שדה חובה' })); return; }
+    if (!form.email.trim()) { setErrors(e => ({ ...e, email: 'כתבו את המייל' })); return; }
+    if (!form.password) { setErrors(e => ({ ...e, password: 'כתבו את הסיסמה' })); return; }
 
     const rl = checkRateLimit(form.email);
     if (!rl.allowed) {
@@ -90,12 +90,12 @@ export default function Login() {
       } else {
         const msg = String(err?.message || '').toLowerCase();
         if (msg.includes('invalid') || msg.includes('credentials')) {
-          setErrors({ credentials: 'אימייל או סיסמה שגויים' });
+          setErrors({ credentials: 'המייל או הסיסמה לא נכונים' });
         } else if (msg.includes('email not confirmed')) {
           atlasToastApi.error('עוד צעד קטן: שלחנו לכם מייל. לחצו על הקישור שבו ותיכנסו.');
         } else if (err?.status === 404 || msg.includes('http 404')) {
           atlasToastApi.error(
-            'השרת לא זמין כרגע. נסו שוב בעוד כמה דקות.'
+            'משהו אצלנו לא זמין כרגע. נסו שוב בעוד כמה דקות.'
           );
         } else {
           atlasToastApi.error(err.message || 'לא הצלחנו להכניס אתכם. נסו שוב בעוד רגע.');

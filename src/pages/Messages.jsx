@@ -150,7 +150,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
   return (
     <div className="flex h-full flex-col overflow-hidden" dir="rtl">
       <div className="mx-auto w-full max-w-[var(--page-max,1200px)] flex-shrink-0 px-5 pt-3 md:px-10 md:pt-5">
-        <PageHeader title="הודעות" help="messages.page" tour="messages-page" subtitle="וואטסאפ, SMS ומייל לאורחים, במקום אחד." className="!mb-4 md:!mb-5" />
+        <PageHeader title="הודעות" help="messages.page" tour="messages-page" subtitle="כל השיחות עם האורחים." className="!mb-4 md:!mb-5" />
       </div>
       <div className="mx-auto flex min-h-0 w-full max-w-[var(--page-max,1200px)] flex-1 flex-col overflow-hidden md:mb-6 md:px-10">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[22px] md:border md:shadow-card">
@@ -176,7 +176,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
           {isLoading ? (
             <div className="p-4"><SkelRows rows={5} /></div>
           ) : filteredThreads.length === 0 ? (
-            <EmptyState compact icon={MessageSquare} title={searchTerm ? 'לא נמצאו שיחות' : 'עוד לא נשלחו הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'פותחים הזמנה ולוחצים "שליחה בוואטסאפ". השיחה תופיע כאן.'} action={searchTerm ? null : <Button asChild><Link to={createPageUrl('Bookings')}>להזמנות</Link></Button>} />
+            <EmptyState compact icon={MessageSquare} title={searchTerm ? 'אין שיחה בשם הזה' : 'עוד לא נשלחו הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'פותחים הזמנה ולוחצים "שליחה בוואטסאפ". השיחה תופיע כאן.'} action={searchTerm ? null : <Button asChild><Link to={createPageUrl('Bookings')}>להזמנות</Link></Button>} />
           ) : (
             filteredThreads.map(thread => {
               const last = thread.messages[thread.messages.length - 1];

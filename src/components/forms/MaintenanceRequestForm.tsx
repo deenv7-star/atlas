@@ -78,13 +78,13 @@ export function MaintenanceRequestForm({
             />
           </div>
           <div className="space-y-1.5">
-            <Label>הקצה ל</Label>
-            <Input {...fm.register('assigned_to_name')} className="mt-1 rounded-xl" placeholder="שם העובד" />
+            <Label>מי מטפל</Label>
+            <Input {...fm.register('assigned_to_name')} className="mt-1 rounded-xl" placeholder="שם ומספר טלפון" />
             <FormMachineFieldHint error={fm.errors.assigned_to_name} />
           </div>
           <div className="space-y-1.5">
             <Label>הערות</Label>
-            <Textarea {...fm.register('notes')} className="mt-1 rounded-xl" rows={3} placeholder="הערות נוספות..." />
+            <Textarea {...fm.register('notes')} className="mt-1 rounded-xl" rows={3} placeholder="מה צריך לתקן" />
             <FormMachineFieldHint error={fm.errors.notes} />
           </div>
           <div className="space-y-2">
@@ -144,7 +144,7 @@ export function MaintenanceRequestForm({
               />
             )}
             {fm.state === 'submitting' ? (
-              <>שומר…</>
+              <>שומרים…</>
             ) : fm.state === 'success' ? (
               <>נשמר</>
             ) : (

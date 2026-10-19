@@ -75,7 +75,7 @@ async function searchUnitsFallback(orgId: string, q: string): Promise<SearchHit[
     .map((u) => ({
       id: u.id,
       title: u.name || 'יחידה',
-      subtitle: propMap.get(u.property_id || '') || 'נכס',
+      subtitle: propMap.get(u.property_id || '') || 'מתחם',
       propertyId: u.property_id ?? null,
     }));
 }
@@ -107,7 +107,7 @@ function mapUnitRows(
   return (rows ?? []).slice(0, LIMIT).map((r) => ({
     id: r.id,
     title: r.name || 'יחידה',
-    subtitle: propNames.get(r.property_id || '') || 'נכס',
+    subtitle: propNames.get(r.property_id || '') || 'מתחם',
     propertyId: r.property_id ?? null,
   }));
 }

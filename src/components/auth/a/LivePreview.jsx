@@ -93,7 +93,7 @@ function WhatsAppBubble({ name, guest = 'נועה', small }) {
         <MessageCircle className="h-4 w-4" strokeWidth={2.25} />
       </span>
       <div className="relative max-w-[260px] rounded-[16px] rounded-bl-[6px] bg-white px-3.5 py-2.5 shadow-[0_2px_6px_rgba(27,38,86,0.06),0_16px_36px_-14px_rgba(27,38,86,0.3)]">
-        <p className="text-[11px] font-semibold text-[#075E54]">וואטסאפ · נשלח אוטומטית</p>
+        <p className="text-[11px] font-semibold text-[#075E54]">וואטסאפ · מוכן לשליחה</p>
         <p className="mt-0.5 text-[13px] leading-[1.45] text-navy-900">היי {guest}, ההזמנה שלכם ב{name || 'מתחם'} אושרה. נתראה ביום ה׳ ב-15:00</p>
         <p className="mt-1 flex items-center justify-end gap-0.5 text-[10px] text-ink-400 tabular-nums">10:24 <Check className="h-3 w-3 text-[#34B7F1]" strokeWidth={3} /><Check className="-ms-2 h-3 w-3 text-[#34B7F1]" strokeWidth={3} /></p>
       </div>
@@ -113,7 +113,7 @@ export function LivePreviewFull({ business, email, level }) {
       <div className="relative mx-auto w-full max-w-[600px]">
         <div className="mb-5 flex items-center gap-2 text-[13px] font-semibold text-brand-700">
           <span className="relative flex h-2 w-2"><span className="absolute inset-0 animate-ping rounded-full bg-brand-600/50 motion-reduce:hidden" /><span className="relative h-2 w-2 rounded-full bg-brand-600" /></span>
-          המערכת שלכם נבנית בזמן שאתם מקלידים
+          החשבון שלכם נבנה בזמן שאתם מקלידים
         </div>
 
         {/* the app window */}

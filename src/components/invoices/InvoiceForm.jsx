@@ -72,7 +72,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
         guest_email: booking.guest_email,
         customer_phone: booking.guest_phone,
         items: [{
-          description: `שהייה בנכס - ${format(new Date(booking.check_in_date), 'dd/MM/yyyy')} עד ${format(new Date(booking.check_out_date), 'dd/MM/yyyy')}`,
+          description: `שהייה, ${format(new Date(booking.check_in_date), 'dd/MM/yyyy')} עד ${format(new Date(booking.check_out_date), 'dd/MM/yyyy')}`,
           quantity: 1,
           unit_price: booking.total_price || 0,
           total: booking.total_price || 0,
@@ -124,13 +124,13 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label>בחר הזמנה (אופציונלי)</Label>
+          <Label>הזמנה (לא חובה)</Label>
           <Select
             value={formData.booking_id || NO_BOOKING}
             onValueChange={(v) => handleBookingSelect(v === NO_BOOKING ? '' : v)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="בחר הזמנה" />
+              <SelectValue placeholder="בחרו הזמנה" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={NO_BOOKING}>ללא הזמנה</SelectItem>
@@ -163,7 +163,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
           <Input
             value={formData.invoice_number}
             onChange={(e) => setFormData(prev => ({ ...prev, invoice_number: e.target.value }))}
-            placeholder="יוצר אוטומטית אם ריק"
+            placeholder="נמלא לבד אם תשאירו ריק"
           />
         </div>
 
@@ -260,7 +260,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
           <h3 className="font-semibold">פריטים</h3>
           <Button type="button" size="sm" onClick={addItem} variant="outline">
             <Plus className="w-4 h-4 ml-1" />
-            הוסף פריט
+            הוספת פריט
           </Button>
         </div>
 
@@ -347,7 +347,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
           value={formData.notes}
           onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
           rows={3}
-          placeholder="הערות נוספות..."
+          placeholder="יופיע בתחתית המסמך"
         />
       </div>
 
@@ -356,7 +356,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
           ביטול
         </Button>
         <Button type="submit" className="bg-brand-600 hover:bg-brand-600/90">
-          שמור חשבונית
+          שמירת חשבונית
         </Button>
       </div>
     </form>

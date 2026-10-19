@@ -56,7 +56,7 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
       <p className="ab-meta px-1">תפוסה {pct(r.occupancy)} · {r.nights} מתוך {r.capacity} לילות · ממוצע ללילה {formatMoney(r.adr)}</p>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Block title="הכנסות לפי ערוץ" note="הכנסה משויכת לחודש לפי הלילות שבו. שהייה שחוצה חודשים מתחלקת באופן יחסי.">
+        <Block title="הכנסות לפי ערוץ" note="כל לילה נספר בחודש שבו הוא. שהייה בין שני חודשים מתחלקת ביניהם.">
           {r.channels.length === 0 ? <p className="ab-meta">אין הכנסות בחודש הזה.</p> : (
             <ul className="space-y-3">
               {r.channels.map((c) => (
@@ -104,7 +104,7 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
 
       <Block title="לפי יחידה">
         <Table
-          head={['יחידה', 'לילות', 'תפוסה', 'ADR', 'הכנסות']}
+          head={['יחידה', 'לילות', 'תפוסה', 'ממוצע ללילה', 'הכנסות']}
           align={['right', 'left', 'left', 'left', 'left']}
           rows={r.unitRows.map((u) => [u.name, u.nights, pct(u.occupancy), formatMoney(u.adr), formatMoney(u.income)])}
           foot={['סה״כ', r.nights, pct(r.occupancy), formatMoney(r.adr), formatMoney(r.income)]}

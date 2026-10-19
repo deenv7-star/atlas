@@ -151,7 +151,7 @@ export function BookingsTable(props: BookingsTableProps): React.ReactElement {
         enableMultiSort={!(sorting !== undefined && onSortingChange !== undefined)}
         stickyHeader
         virtualScroll={bookings.length >= 400}
-        emptyMessage="אין הזמנות להצגה"
+        emptyMessage="עוד אין הזמנות כאן"
         csvExport={{ filename: 'bookings', columns: csvColumns }}
         bulkBar={{
           onDeleteSelected: (rows) => {
@@ -168,7 +168,7 @@ export function BookingsTable(props: BookingsTableProps): React.ReactElement {
       {statusMenuRows && statusMenuRows.length > 0 ? (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 p-4" role="dialog" aria-modal>
           <div className="max-h-[70vh] w-full max-w-sm overflow-auto rounded-2xl border border-gray-200 bg-white p-3 shadow-xl" dir="rtl">
-            <p className="mb-2 text-sm font-semibold text-gray-800">בחר סטטוס ל-{statusMenuRows.length} הזמנות</p>
+            <p className="mb-2 text-sm font-semibold text-gray-800">בחרו סטטוס ל-{statusMenuRows.length} הזמנות</p>
             <div className="flex flex-col gap-1">
               {STATUS_OPTIONS.map((s) => (
                 <button

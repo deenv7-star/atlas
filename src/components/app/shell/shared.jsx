@@ -76,7 +76,7 @@ export function UserMenu({ user, onLogout, children, align = 'end', side }) {
           <Link to={createPageUrl('Subscription')}><CreditCard className="h-[18px] w-[18px] text-ink-600" />מנוי</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => startTour(0)} className="min-h-11 gap-2.5 text-[15px]">
-          <Compass className="h-[18px] w-[18px] text-ink-600" />סיור במערכת
+          <Compass className="h-[18px] w-[18px] text-ink-600" />סיור מודרך
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onLogout} className="min-h-11 gap-2.5 text-[15px] text-danger-600 focus:text-danger-700">

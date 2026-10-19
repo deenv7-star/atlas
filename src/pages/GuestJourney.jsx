@@ -104,23 +104,23 @@ const INITIAL_STAGES = [
 const TEMPLATES = [
   {
     id: 'standard',
-    name: 'מסע סטנדרטי',
-    description: '7 שלבים, מכסה את כל מחזור החיים של האורח',
+    name: 'רגיל',
+    description: '7 שלבים, מהפנייה ועד אחרי היציאה',
     badge: 'מומלץ',
     badgeColor: 'bg-emerald-100 text-emerald-700',
     stages: 7,
   },
   {
     id: 'vip',
-    name: 'מסע VIP',
-    description: '10 שלבים, נקודות מגע נוספות ומתנות אישיות',
+    name: 'VIP',
+    description: '10 שלבים, עם עוד הודעות ומתנות אישיות',
     badge: 'VIP',
     badgeColor: 'bg-amber-100 text-amber-700',
     stages: 10,
   },
   {
     id: 'minimal',
-    name: 'מסע מינימלי',
+    name: 'מינימלי',
     description: '4 שלבים, רק ההודעות החיוניות',
     badge: 'בסיסי',
     badgeColor: 'bg-neutral-100 text-ink-600',
@@ -319,7 +319,7 @@ export default function GuestJourney() {
     <div dir="rtl" className="mx-auto w-full max-w-[960px] px-5 pb-16 pt-6 md:px-10 md:pt-10">
 
       {/* Header */}
-      <PageHeader title="מסע אורח" subtitle="כל נקודות המגע עם האורח, מהפנייה ועד הביקורת." className="!mb-0" />
+      <PageHeader title="שלבי האירוח" subtitle="כל מה שהאורח מקבל מכם, מהפנייה ועד הביקורת." className="!mb-0" />
 
       {/* Stats Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -329,7 +329,7 @@ export default function GuestJourney() {
         <StatCard icon={Star} value={show(activeCount)} label="שלבים מסומנים" color="bg-brand-50 text-brand-600" />
       </div>
       <p className="-mt-3 mb-6 px-1 text-[13px] leading-relaxed text-ink-400">
-        המסע כאן הוא תכנון. את ההודעות שנשלחות בפועל מגדירים ב<Link to="/automations" className="font-semibold text-brand-600 hover:underline">אוטומציות</Link>.
+        זה תכנון בלבד. את ההודעות שנשלחות בפועל מגדירים ב<Link to="/automations" className="font-semibold text-brand-600 hover:underline">אוטומציות</Link>.
       </p>
 
       {/* Journey Info Bar */}
@@ -373,7 +373,7 @@ export default function GuestJourney() {
           {/* Start marker */}
           <div className="flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-brand-500 text-white text-xs font-bold shadow-lg">
             <Zap className="w-3.5 h-3.5" />
-            התחלת המסע
+            הפנייה הראשונה
           </div>
           <div className="w-0.5 h-6 bg-brand-100" />
 
@@ -393,7 +393,7 @@ export default function GuestJourney() {
             <div className="w-0.5 h-6 bg-gray-200 mx-auto" />
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500 text-white text-xs font-bold shadow-lg mt-1">
               <CheckCircle className="w-3.5 h-3.5" />
-              סיום המסע
+              אחרי היציאה
             </div>
           </div>
         </div>

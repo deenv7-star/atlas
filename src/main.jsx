@@ -13,11 +13,11 @@ function CrashFallback({ error }) {
       minHeight: '100vh', padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       fontFamily: "'Heebo', sans-serif", background: '#F7F8FB', textAlign: 'center'
     }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1B2656', marginBottom: 12 }}>אופס! משהו השתבש</h1>
-      <p style={{ color: '#6B7280', marginBottom: 20, maxWidth: 400 }}>לא הצלחנו לטעון את atlas. רעננו את העמוד ונסו שוב.</p>
+      <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1B2656', marginBottom: 12 }}>atlas לא נטען</h1>
+      <p style={{ color: '#6B7280', marginBottom: 20, maxWidth: 400 }}>רעננו את העמוד. אם זה חוזר, כתבו לנו.</p>
       {error && <pre style={{ background: '#FEE2E2', padding: 12, borderRadius: 8, fontSize: 12, overflow: 'auto', maxWidth: '100%', marginBottom: 20 }}>{String(error)}</pre>}
-      <button onClick={() => window.location.href = '/'} style={{ padding: '12px 24px', background: '#3E2BF1', color: '#FFFFFF', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>חזור לדף הבית</button>
-      <button onClick={() => window.location.reload()} style={{ marginTop: 12, padding: '12px 24px', background: 'white', color: '#374151', border: '1px solid #E5E7EB', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>רענן</button>
+      <button onClick={() => window.location.href = '/'} style={{ padding: '12px 24px', background: '#3E2BF1', color: '#FFFFFF', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>חזרה לדף הבית</button>
+      <button onClick={() => window.location.reload()} style={{ marginTop: 12, padding: '12px 24px', background: 'white', color: '#374151', border: '1px solid #E5E7EB', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>רענון</button>
     </div>
   )
 }

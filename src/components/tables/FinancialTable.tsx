@@ -8,7 +8,7 @@ const PAYMENT_STATUSES = [
   { value: 'PENDING', label: 'ממתין', color: 'bg-amber-100 text-amber-700 border border-amber-200' },
   { value: 'PAID', label: 'שולם', color: 'bg-green-100 text-green-700 border border-green-200' },
   { value: 'PARTIAL', label: 'חלקי', color: 'bg-blue-100 text-blue-700 border border-blue-200' },
-  { value: 'FAILED', label: 'נכשל', color: 'bg-red-100 text-red-700 border border-red-200' },
+  { value: 'FAILED', label: 'לא עבר', color: 'bg-red-100 text-red-700 border border-red-200' },
   { value: 'REFUNDED', label: 'הוחזר', color: 'bg-gray-100 text-gray-500 border border-gray-200' },
   { value: 'OVERDUE', label: 'באיחור', color: 'bg-orange-100 text-orange-700 border border-orange-200' },
 ] as const;
@@ -83,7 +83,7 @@ export function FinancialTable(props: FinancialTableProps): React.ReactElement {
       {
         id: 'method',
         accessorKey: 'method',
-        header: 'שיטה',
+        header: 'אמצעי',
         size: 88,
         cell: ({ getValue }) => {
           const m = String(getValue() ?? '');
@@ -121,7 +121,7 @@ export function FinancialTable(props: FinancialTableProps): React.ReactElement {
       enableMultiSort
       stickyHeader
       virtualScroll={payments.length >= 400}
-      emptyMessage="אין תנועות כספיות"
+      emptyMessage="עוד אין תשלומים"
       csvExport={{ filename: 'financial', columns: csvColumns }}
       bulkBar={{
         onDeleteSelected: (rows) => {

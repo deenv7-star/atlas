@@ -45,7 +45,7 @@ export default function MonthlyReportPrint() {
         </header>
         {ready ? <MonthlyReportBody report={report} /> : <p className="ab-meta">טוען…</p>}
         <footer className="mt-6 pt-4 ab-faint" style={{ borderTop: '1px solid var(--line)' }}>
-          סכומים בשקלים כפי שנרשמו בהזמנות ובהוצאות. הכנסה משויכת לפי לילות בחודש.
+          סכומים בשקלים כפי שנרשמו בהזמנות ובהוצאות. כל לילה נספר בחודש שבו הוא.
         </footer>
       </div>
     </div>

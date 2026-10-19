@@ -98,7 +98,7 @@ export function GuestForm({
           </div>
           {properties.length > 0 && (
             <div className="col-span-2 space-y-1.5">
-              <Label className="text-xs font-semibold">נכס</Label>
+              <Label className="text-xs font-semibold">יחידה</Label>
               <Controller
                 control={fm.control}
                 name="property_id"
@@ -111,7 +111,7 @@ export function GuestForm({
                     }}
                   >
                     <SelectTrigger className="h-9 text-sm rounded-xl">
-                      <SelectValue placeholder="בחר נכס" />
+                      <SelectValue placeholder="בחרו יחידה" />
                     </SelectTrigger>
                     <SelectContent>
                       {properties.map((prop) => (
@@ -181,12 +181,12 @@ export function GuestForm({
           </div>
           <div className="col-span-2 space-y-1.5">
             <Label className="text-xs font-semibold">מקור</Label>
-            <Input {...fm.register('source')} placeholder="מקור הפניה" className="h-9 text-sm rounded-xl" />
+            <Input {...fm.register('source')} placeholder="למשל: פייסבוק, חברים, גוגל" className="h-9 text-sm rounded-xl" />
             <FormMachineFieldHint error={fm.errors.source} />
           </div>
           <div className="col-span-2 space-y-1.5">
             <Label className="text-xs font-semibold">הערות</Label>
-            <Textarea {...fm.register('notes')} placeholder="הערות נוספות..." rows={2} className="text-sm resize-none rounded-xl" />
+            <Textarea {...fm.register('notes')} placeholder="מה חשוב לזכור על הפנייה" rows={2} className="text-sm resize-none rounded-xl" />
             <FormMachineFieldHint error={fm.errors.notes} />
           </div>
         </div>
@@ -223,7 +223,7 @@ export function GuestForm({
             {fm.state === 'submitting' ? (
               <>
                 <span className="inline-block h-4 w-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
-                שומר…
+                שומרים…
               </>
             ) : fm.state === 'success' ? (
               <>נשמר</>

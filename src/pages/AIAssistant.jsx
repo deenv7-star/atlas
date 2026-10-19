@@ -13,11 +13,11 @@ import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const QUICK_QUESTIONS = [
-  { icon: TrendingUp, text: 'ניתוח ביצועים החודש', prompt: 'תן לי ניתוח מפורט של הביצועים העסקיים שלי החודש - הזמנות, הכנסות, תפוסה, והשוואה לחודש הקודם. הוסף תובנות והמלצות.' },
-  { icon: Calendar, text: 'סיכום היום שלי', prompt: 'תן לי סיכום מלא של היום: כניסות, יציאות, תשלומים לגביה, משימות פתוחות ופעולות דחופות שצריך לבצע.' },
-  { icon: DollarSign, text: 'מצב כספי מלא', prompt: 'תן לי דוח כספי מלא: תשלומים ממתינים, באיחור, צפויים בשבוע הקרוב, והכנסות החודש. כלול המלצות לגבייה.' },
-  { icon: Users, text: 'ניהול לידים חכם', prompt: 'נתח את הלידים הפתוחים שלי - סדר לפי עדיפות, תן לי טקסטים מוכנים לשליחה, והמלצות לסגירת עסקאות.' },
-  { icon: Lightbulb, text: 'אסטרטגיה לצמיחה', prompt: 'על בסיס כל הנתונים, תן לי תוכנית פעולה אסטרטגית להגדלת ההכנסות והשיפור התפעולי - 5 צעדים קונקרטיים.' }
+  { icon: TrendingUp, text: 'איך היה החודש?', prompt: 'תן לי ניתוח מפורט של הביצועים העסקיים שלי החודש - הזמנות, הכנסות, תפוסה, והשוואה לחודש הקודם. הוסף תובנות והמלצות.' },
+  { icon: Calendar, text: 'מה יש לי היום?', prompt: 'תן לי סיכום מלא של היום: כניסות, יציאות, תשלומים לגביה, משימות פתוחות ופעולות דחופות שצריך לבצע.' },
+  { icon: DollarSign, text: 'מה מצב הכסף?', prompt: 'תן לי דוח כספי מלא: תשלומים ממתינים, באיחור, צפויים בשבוע הקרוב, והכנסות החודש. כלול המלצות לגבייה.' },
+  { icon: Users, text: 'למי לחזור קודם?', prompt: 'נתח את הלידים הפתוחים שלי - סדר לפי עדיפות, תן לי טקסטים מוכנים לשליחה, והמלצות לסגירת עסקאות.' },
+  { icon: Lightbulb, text: 'איך להגדיל הכנסות?', prompt: 'על בסיס כל הנתונים, תן לי תוכנית פעולה אסטרטגית להגדלת ההכנסות והשיפור התפעולי - 5 צעדים קונקרטיים.' }
 ];
 
 export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
@@ -119,7 +119,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
 
       const assistantMessage = { 
         role: 'assistant', 
-        content: response || 'מצטער, לא הצלחתי לענות על השאלה. נסה שוב.' 
+        content: response || 'לא הצלחתי לענות הפעם. נסו לשאול אחרת.' 
       };
       
       setMessages(prev => [...prev, assistantMessage]);
@@ -165,13 +165,13 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
           </motion.div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-3xl font-bold text-navy-900">עוזר AI חכם</h1>
+              <h1 className="text-3xl font-bold text-navy-900">עוזר אישי</h1>
               <Badge className="bg-brand-500 text-white border-0 shadow-sm">
                 <Sparkles className="h-3 w-3 ml-1" />
-                AI מופעל
+                פעיל
               </Badge>
             </div>
-                    <p className="text-ink-600">העוזר האישי שלך לניהול הנכסים, ניתוח נתונים, המלצות והחלטות חכמות בזמן אמת</p>
+                    <p className="text-ink-600">שאלו על ההזמנות, הכסף והלידים, וקבלו תשובה קצרה.</p>
           </div>
         </div>
         
@@ -205,23 +205,23 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
               <div className="h-full flex flex-col items-center justify-center text-center p-8">
                 <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-50 text-brand-600"><Bot className="h-7 w-7" strokeWidth={1.75} /></span>
                 <h3 className="text-2xl font-bold text-navy-900 mb-2">העוזר של atlas</h3>
-                <p className="text-ink-600 mb-3 leading-relaxed">אני מנתח את כל הנתונים שלך בזמן אמת ויכול לעזור לך עם:</p>
+                <p className="text-ink-600 mb-3 leading-relaxed">אפשר לשאול אותי על:</p>
                 <div className="grid grid-cols-2 gap-2 mb-6 text-sm text-right">
                 <div className="flex items-start gap-2">
                     <div className="text-brand-500">✓</div>
-                    <span className="text-ink-600">ניתוח ביצועים והמלצות</span>
+                    <span className="text-ink-600">איך היה החודש</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <div className="text-brand-500">✓</div>
-                    <span className="text-ink-600">חיזוי הכנסות ותפוסה</span>
+                    <span className="text-ink-600">הכנסות ותפוסה</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <div className="text-brand-500">✓</div>
-                    <span className="text-ink-600">אסטרטגיות תמחור</span>
+                    <span className="text-ink-600">מחירים לסופ״ש ולחגים</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <div className="text-brand-500">✓</div>
-                    <span className="text-ink-600">ניהול לידים אוטומטי</span>
+                    <span className="text-ink-600">למי לחזור מהלידים</span>
                   </div>
                 </div>
                 
@@ -334,7 +334,7 @@ export default function AIAssistantPage({ user, orgId, selectedPropertyId }) {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="שאל אותי כל שאלה..."
+                placeholder="מה תרצו לדעת?"
                 className="resize-none min-h-[60px] max-h-[120px]"
                 disabled={isLoading}
               />

@@ -15,10 +15,10 @@
 /** What every plan includes (same list for all three, shown on the landing). */
 export const INCLUDED_FEATURES = [
   'לוח שנה אחד לכל היחידות',
-  'כל ההזמנות במקום אחד, לפי ערוץ: Booking.com, Airbnb וישיר',
+  'כל ההזמנות מ-Booking.com, Airbnb וישיר, על לוח אחד',
   'התראה כשהזמנות חופפות',
   'מסך ״היום״: כניסות, יציאות וניקיון',
-  'ניהול לידים ופניות',
+  'מעקב אחרי פניות של אורחים',
   'הודעות וואטסאפ בלחיצה, בנוסח מוכן בעברית',
   'מעקב תשלומים, מקדמות ויתרות',
   'משימות ניקיון',
@@ -27,7 +27,7 @@ export const INCLUDED_FEATURES = [
 ];
 
 export const TRIAL_DAYS = 14;
-export const TRIAL_LINE = '14 יום ניסיון חינם עם כל המערכת, בלי כרטיס אשראי.';
+export const TRIAL_LINE = '14 יום ניסיון חינם, הכל פתוח, בלי כרטיס אשראי.';
 export const CANCEL_LINE = 'בלי התחייבות: מפסיקים מתי שרוצים.';
 
 export const PRICING_PLANS = [
@@ -41,7 +41,7 @@ export const PRICING_PLANS = [
     limit: 'מתחם אחד',
     properties: 3,
     desc: 'למי שמנהל מתחם אחד: צימר, וילה או בקתות',
-    features: ['מתחם אחד', 'כל המערכת כלולה', 'תמיכה בעברית בוואטסאפ'],
+    features: ['מתחם אחד', 'כל היכולות כלולות', 'תמיכה בעברית בוואטסאפ'],
     adds: [],
     popular: false,
   },
@@ -55,7 +55,7 @@ export const PRICING_PLANS = [
     limit: 'עד 5 מתחמים',
     properties: 10,
     desc: 'למי שמנהל כמה מתחמים, עד חמישה',
-    features: ['עד 5 מתחמים', 'כל המערכת כלולה', 'תמיכה בעברית בוואטסאפ'],
+    features: ['עד 5 מתחמים', 'כל היכולות כלולות', 'תמיכה בעברית בוואטסאפ'],
     adds: ['עד 5 מתחמים במקום מתחם אחד'],
     popular: true,
   },
@@ -69,7 +69,7 @@ export const PRICING_PLANS = [
     limit: 'מתחמים ללא הגבלה',
     properties: null,
     desc: 'לרשתות ולחברות ניהול עם הרבה מתחמים',
-    features: ['מתחמים ללא הגבלה', 'כל המערכת כלולה', 'תמיכה בעברית בוואטסאפ'],
+    features: ['מתחמים ללא הגבלה', 'כל היכולות כלולות', 'תמיכה בעברית בוואטסאפ'],
     adds: ['מתחמים ללא הגבלה'],
     popular: false,
   },

@@ -8,7 +8,7 @@ const NAME_REGEX = /^[\u0590-\u05FFa-zA-Z\s'-]+$/;
 
 export function validateFirstName(value) {
   const v = (value || '').trim();
-  if (!v) return { valid: false, error: 'שדה חובה' };
+  if (!v) return { valid: false, error: 'צריך למלא כאן' };
   if (v.length < 2) return { valid: false, error: 'לפחות 2 תווים' };
   if (!NAME_REGEX.test(v)) return { valid: false, error: 'אותיות בעברית או אנגלית בלבד' };
   return { valid: true };
@@ -23,8 +23,8 @@ const PHONE_REGEX = /^(\+972|0)(5[0-9]|7[2-9])[0-9]{7}$/;
 
 export function validatePhone(value) {
   const v = (value || '').replace(/\s|-/g, '');
-  if (!v) return { valid: false, error: 'שדה חובה' };
-  if (!PHONE_REGEX.test(v)) return { valid: false, error: 'מספר טלפון לא תקין: לדוגמה: 050-1234567' };
+  if (!v) return { valid: false, error: 'צריך למלא כאן' };
+  if (!PHONE_REGEX.test(v)) return { valid: false, error: 'בדקו את המספר, למשל 050-1234567' };
   return { valid: true };
 }
 
@@ -42,7 +42,7 @@ export function formatPhone(value) {
 // ─── Organization ───
 export function validateOrgName(value) {
   const v = (value || '').trim();
-  if (!v) return { valid: false, error: 'שדה חובה' };
+  if (!v) return { valid: false, error: 'צריך למלא כאן' };
   if (v.length < 2) return { valid: false, error: 'לפחות 2 תווים' };
   if (v.length > 50) return { valid: false, error: 'עד 50 תווים' };
   return { valid: true };
@@ -50,28 +50,28 @@ export function validateOrgName(value) {
 
 export function validateAddress(value) {
   const v = (value || '').trim();
-  if (!v) return { valid: false, error: 'שדה חובה' };
+  if (!v) return { valid: false, error: 'צריך למלא כאן' };
   if (v.length < 5) return { valid: false, error: 'לפחות 5 תווים' };
   return { valid: true };
 }
 
 export function validateOrgType(value) {
   const v = (value || '').trim();
-  if (!v) return { valid: false, error: 'נא לבחור סוג' };
+  if (!v) return { valid: false, error: 'בחרו סוג' };
   return { valid: true };
 }
 
 // ─── Property ───
 export function validatePropertyName(value) {
   const v = (value || '').trim();
-  if (!v) return { valid: false, error: 'שדה חובה' };
+  if (!v) return { valid: false, error: 'צריך למלא כאן' };
   if (v.length < 2) return { valid: false, error: 'לפחות 2 תווים' };
   return { valid: true };
 }
 
 export function validateRooms(value) {
   const n = parseInt(value, 10);
-  if (isNaN(n) || value === '' || value === null) return { valid: false, error: 'שדה חובה' };
+  if (isNaN(n) || value === '' || value === null) return { valid: false, error: 'צריך למלא כאן' };
   if (n < 1 || n > 100) return { valid: false, error: 'מספר בין 1 ל-100' };
   if (/[a-zA-Z]/.test(String(value))) return { valid: false, error: 'מספרים בלבד' };
   return { valid: true };
@@ -79,7 +79,7 @@ export function validateRooms(value) {
 
 export function validatePricePerNight(value) {
   const n = parseFloat(String(value).replace(/[^\d.]/g, ''));
-  if (isNaN(n) || value === '' || value === null) return { valid: false, error: 'שדה חובה' };
+  if (isNaN(n) || value === '' || value === null) return { valid: false, error: 'צריך למלא כאן' };
   if (n <= 0) return { valid: false, error: 'מחיר חייב להיות גדול מ-0' };
   if (/[a-zA-Z]/.test(String(value))) return { valid: false, error: 'מספרים בלבד' };
   return { valid: true };
@@ -153,7 +153,7 @@ const CARD_NAME_REGEX = /^[\u0590-\u05FFa-zA-Z\s'-]+$/;
 
 export function validateNameOnCard(value) {
   const v = (value || '').trim();
-  if (!v) return { valid: false, error: 'שדה חובה' };
+  if (!v) return { valid: false, error: 'צריך למלא כאן' };
   if (v.length < 3) return { valid: false, error: 'לפחות 3 תווים' };
   if (!CARD_NAME_REGEX.test(v)) return { valid: false, error: 'אותיות בלבד' };
   return { valid: true };
@@ -164,8 +164,8 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateEmail(value) {
   const v = (value || '').trim();
-  if (!v) return { valid: false, error: 'שדה חובה' };
-  if (!EMAIL_REGEX.test(v)) return { valid: false, error: 'כתובת אימייל לא תקינה' };
+  if (!v) return { valid: false, error: 'צריך למלא כאן' };
+  if (!EMAIL_REGEX.test(v)) return { valid: false, error: 'בדקו את כתובת המייל' };
   return { valid: true };
 }
 
@@ -187,7 +187,7 @@ export function getPasswordStrength(password) {
 export function validatePassword(value) {
   const v = value || '';
   if (v.length < 8) return { valid: false, error: 'לפחות 8 תווים' };
-  if (!/\d/.test(v)) return { valid: false, error: 'חייבת להכיל לפחות ספרה אחת' };
-  if (!/[a-zA-Z]/.test(v)) return { valid: false, error: 'חייבת להכיל לפחות אות אחת' };
+  if (!/\d/.test(v)) return { valid: false, error: 'הוסיפו לפחות ספרה אחת' };
+  if (!/[a-zA-Z]/.test(v)) return { valid: false, error: 'הוסיפו לפחות אות אחת באנגלית' };
   return { valid: true };
 }

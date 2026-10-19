@@ -109,7 +109,7 @@ export default function DynamicPricing() {
       await updateProperty.mutateAsync({ id: unit.id, data: { pricing, base_price: base } });
       atlasToastApi.success(`המחירים של ${unit.name} נשמרו`);
     } catch {
-      atlasToastApi.error('לא הצלחנו לשמור את המחירים');
+      atlasToastApi.error('לא הצלחנו לשמור את המחירים. נסו שוב.');
     }
   };
 
@@ -123,7 +123,7 @@ export default function DynamicPricing() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader title="תמחור חגים וסופ״ש" subtitle="מחיר בסיס, סוף שבוע וחגים. atlas מציעה מחיר לכל לילה לפי הלוח העברי וההזמנות שלכם." className="!mb-0" />
+      <PageHeader title="תמחור חגים וסופ״ש" subtitle="מחיר בסיס, סוף שבוע וחגים. atlas מציע מחיר לכל לילה לפי הלוח העברי וההזמנות שלכם." className="!mb-0" />
 
       {properties.length === 0 ? (
         <Card className="p-6 text-center"><p className="text-[16px] font-semibold text-navy-900">עוד אין יחידות</p><p className="mt-1 text-[14px] text-ink-400">הוסיפו יחידה כדי לקבוע לה מחירים.</p></Card>
@@ -137,16 +137,16 @@ export default function DynamicPricing() {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="text-[17px] font-bold text-navy-900">המחירים של {unit?.name}</h2>
-                <p className="mt-1 text-[13px] text-ink-400">לילות סוף שבוע: חמישי ושישי. חגים, ערבי חג וחול המועד לפי Hebcal.</p>
+                <p className="mt-1 text-[13px] text-ink-400">לילות סוף שבוע: חמישי ושישי. חגים, ערבי חג וחול המועד לפי הלוח העברי.</p>
               </div>
               <Button onClick={save} disabled={!dirty || updateProperty.isPending} className="h-11">
-                <Save className="h-4 w-4" strokeWidth={1.75} />{updateProperty.isPending ? 'שומר…' : 'שמירה'}
+                <Save className="h-4 w-4" strokeWidth={1.75} />{updateProperty.isPending ? 'שומרים…' : 'שמירה'}
               </Button>
             </div>
             {form ? (
               <div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-5">
                 <Field id="p-base" label="מחיר בסיס ללילה" suffix="₪" value={form.base} onChange={(v) => setForm({ ...form, base: v })} />
-                <Field id="p-weekend" label="לילה בסוף שבוע" suffix="₪" hint={form.weekend ? '' : 'ברירת מחדל: בסיס +25%'} value={form.weekend} onChange={(v) => setForm({ ...form, weekend: v })} />
+                <Field id="p-weekend" label="לילה בסוף שבוע" suffix="₪" hint={form.weekend ? '' : 'אם תשאירו ריק: בסיס ועוד 25%'} value={form.weekend} onChange={(v) => setForm({ ...form, weekend: v })} />
                 <Field id="p-holiday" label="תוספת בחגים" suffix="%" value={form.holiday_uplift_pct} onChange={(v) => setForm({ ...form, holiday_uplift_pct: v })} />
                 <Field id="p-gap" label="הנחה ללילה בודד" suffix="%" hint="לילה פנוי בין שתי הזמנות" value={form.gap_night_discount_pct} onChange={(v) => setForm({ ...form, gap_night_discount_pct: v })} />
                 <Field id="p-min" label="מחיר מינימום" suffix="₪" value={form.min} onChange={(v) => setForm({ ...form, min: v })} />
@@ -214,7 +214,7 @@ export default function DynamicPricing() {
               )}
               <p className="mt-4 flex gap-2 text-[12px] leading-relaxed text-ink-400">
                 <CalendarDays className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-                אלה הצעות. atlas עוד לא משנה מחירים ב-Airbnb או ב-Booking, כי סנכרון יומנים מעביר רק תאריכים. עדכנו את המחיר בערוץ, והשתמשו בו בהצעות מחיר ללידים.
+                אלה הצעות בלבד. atlas לא משנה מחירים ב-Airbnb או ב-Booking, כי הקישור לערוצים מעביר רק תאריכים. עדכנו את המחיר בערוץ עצמו, והשתמשו בו גם בהצעות ללידים.
               </p>
             </Card>
           </div>

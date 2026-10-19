@@ -25,7 +25,7 @@ const PAYMENT_STATUSES = [
   { value: 'PENDING', label: 'ממתין' },
   { value: 'PAID', label: 'שולם' },
   { value: 'PARTIAL', label: 'חלקי' },
-  { value: 'FAILED', label: 'נכשל' },
+  { value: 'FAILED', label: 'לא עבר' },
   { value: 'REFUNDED', label: 'הוחזר' },
   { value: 'OVERDUE', label: 'באיחור' },
 ];
@@ -135,7 +135,7 @@ export function PaymentForm({
           </div>
           <div className="col-span-2 space-y-1.5">
             <Label className="text-xs text-gray-500">תיאור</Label>
-            <Input {...fm.register('description')} placeholder="תיאור התשלום" className="h-11 text-sm rounded-xl" />
+            <Input {...fm.register('description')} placeholder="למשל: מקדמה לסופ״ש" className="h-11 text-sm rounded-xl" />
             <FormMachineFieldHint error={fm.errors.description} validating={fm.isFieldValidating('description')} />
           </div>
           <div className="space-y-1.5">
@@ -245,7 +245,7 @@ export function PaymentForm({
             {fm.state === 'submitting' ? (
               <>
                 <span className="inline-block h-4 w-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
-                שומר…
+                שומרים…
               </>
             ) : fm.state === 'success' ? (
               <>נשמר</>

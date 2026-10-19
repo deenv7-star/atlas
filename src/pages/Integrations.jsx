@@ -1,6 +1,6 @@
 /**
  * ערוצים וחיבורים: only what really works is shown as working.
- *   יומנים (real, 013): per unit, import Airbnb / Booking.com / any iCal feed (server sync every 15 minutes + "סנכרן עכשיו"),
+ *   יומנים (real, 013): per unit, import Airbnb / Booking.com / any iCal feed (server sync every 15 minutes + "עדכון עכשיו"),
  *            and an export feed to paste into each channel. Status, last sync, errors and conflicts come from the server.
  *   הודעות / תשלומים / חשבוניות: an honest status per provider (what works today, what is coming, what it needs).
  */
@@ -104,7 +104,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
         <div className="min-w-[160px] flex-1">
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] font-semibold text-navy-900">
             <span className="min-w-0 truncate">{sync.label || p.name}</span>
-            <StatusPill tone={error ? 'red' : paused ? 'slate' : conflicts.length ? 'amber' : 'mint'} label={error ? 'שגיאה' : paused ? 'מושהה' : conflicts.length ? 'התנגשות' : 'פעיל'} />
+            <StatusPill tone={error ? 'red' : paused ? 'slate' : conflicts.length ? 'amber' : 'mint'} label={error ? 'לא מתעדכן' : paused ? 'מושהה' : conflicts.length ? 'חפיפה' : 'פעיל'} />
           </p>
           <p className="mt-0.5 truncate text-[13px] text-ink-400">
             <span data-testid="sync-ago">{minutesAgoHe(sync.last_success_at || sync.last_sync_at)}</span>
@@ -140,7 +140,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
       ) : null}
       {confirm ? (
         <div className="mt-2 flex flex-wrap items-center gap-2 rounded-[12px] bg-[#F7F8FB] px-3 py-2">
-          <p className="flex-1 text-[13px] text-ink-600">להפסיק לסנכרן את {p.name}? הזמנות שכבר נוספו יישארו ביומן.</p>
+          <p className="flex-1 text-[13px] text-ink-600">להפסיק לקבל הזמנות מ-{p.name}? הזמנות שכבר נכנסו יישארו בלוח.</p>
           <Button type="button" variant="outline" className="h-11" onClick={() => setConfirm(false)}>ביטול</Button>
           <Button type="button" className="h-11 bg-red-600 hover:bg-red-700" onClick={() => onDelete(sync)}>הסרה</Button>
         </div>
@@ -179,7 +179,7 @@ function AddFeed({ property, onAdd, busy }) {
         />
         <Button type="submit" className="h-12 shrink-0 px-5" disabled={busy || !url.trim()}>
           {busy ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" strokeWidth={2} />}
-          {busy ? 'מחבר ומסנכרן…' : 'חיבור וסנכרון'}
+          {busy ? 'מחברים…' : 'חיבור הערוץ'}
         </Button>
       </div>
       {err ? <p role="alert" className="text-[13px] text-[var(--st-red-fg,#B42318)]">{err}</p> : null}
@@ -211,7 +211,7 @@ function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, 
           <AddFeed property={property} onAdd={onAdd} busy={adding === property.id} />
         </div>
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowUpFromLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייצוא: הזמנות ממערכת atlas אל הערוצים</h3>
+          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowUpFromLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייצוא: ההזמנות שלכם אל הערוצים</h3>
           {property.ical_export_token ? (
             <>
               <CopyRow label="להדבקה ב-Airbnb" hint="כל ההזמנות חוץ מאלה שהגיעו מ-Airbnb" value={icalExportUrl(property, 'airbnb')} />
@@ -224,14 +224,14 @@ function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, 
       <div className="space-y-2 px-5 pb-5 md:px-6">
         <Help title="איך מחברים את Airbnb">
           <p><b>1. ייבוא מ-Airbnb:</b> ב-Airbnb נכנסים ללוח השנה ← בוחרים את המודעה ← זמינות ← <i>חיבור לוחות שנה</i> ← <i>ייצוא לוח שנה</i>. מעתיקים את הקישור ומדביקים אותו למעלה ב"ייבוא".</p>
-          <p><b>2. ייצוא אל Airbnb:</b> באותו מסך בוחרים <i>ייבוא לוח שנה</i>, מדביקים את "להדבקה ב-Airbnb", ונותנים שם atlas.</p>
+          <p><b>2. ייצוא אל Airbnb:</b> באותו מסך בוחרים <i>ייבוא לוח שנה</i>, מדביקים את "להדבקה ב-Airbnb", ונותנים לו את השם atlas.</p>
         </Help>
         <Help title="איך מחברים את Booking.com">
           <p><b>1. ייבוא מ-Booking:</b> ב-Extranet נכנסים ל<i>תעריפים וזמינות</i> ← <i>סנכרון לוחות שנה</i> ← בוחרים את סוג החדר ← <i>ייצוא לוח שנה</i>. מעתיקים ומדביקים למעלה.</p>
           <p><b>2. ייצוא אל Booking:</b> באותו מסך <i>הוספת חיבור לוח שנה</i> ← מדביקים את "להדבקה ב-Booking.com".</p>
         </Help>
         <Help title="מה חשוב לדעת">
-          <p>atlas בודקת את הערוצים כל 15 דקות, ואפשר ללחוץ על סנכרון בכל רגע. הערוצים עצמם מושכים את היומן של atlas בקצב שלהם: Booking בערך כל שעתיים, Airbnb בערך כל 3 שעות. בחלון הזה עדיין אפשרית הזמנה כפולה, ולכן כשיש חפיפה atlas לא דורסת הזמנה קיימת ומסמנת התנגשות.</p>
+          <p>atlas בודק את הערוצים כל 15 דקות, ואפשר ללחוץ על עדכון בכל רגע. הערוצים עצמם מושכים את היומן של atlas בקצב שלהם: Booking בערך כל שעתיים, Airbnb בערך כל 3 שעות. בחלון הזה עדיין אפשרית הזמנה כפולה, ולכן כשיש חפיפה atlas לא דורס הזמנה קיימת ומסמן חפיפה.</p>
           <p>יומן iCal מעביר רק תאריכים תפוסים, בלי שם, טלפון או מחיר. כדי לקבל את הטלפון של האורח שלחו לו את קישור הצ'ק-אין מתוך ההזמנה.</p>
         </Help>
       </div>
@@ -324,8 +324,8 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
         const bad = rs.filter((r) => !r.ok).length;
         const conf = rs.reduce((s, r) => s + (r.conflicts || 0), 0);
         if (!rs.length) atlasToastApi.success('אין עדיין ערוצים מחוברים');
-        else if (bad || conf) atlasToastApi.error(`סונכרנו ${rs.length - bad} מתוך ${rs.length} ערוצים${conf ? `, ${conf} התנגשויות` : ''}`);
-        else atlasToastApi.success(`כל ${rs.length} הערוצים סונכרנו`);
+        else if (bad || conf) atlasToastApi.error(`עודכנו ${rs.length - bad} מתוך ${rs.length} ערוצים${conf ? `, ${conf} חפיפות` : ''}`);
+        else atlasToastApi.success(`כל ${rs.length} הערוצים עודכנו`);
       }
     } catch (e) {
       atlasToastApi.error(e.message || 'לא הצלחנו לעדכן את הלוח. נסו שוב.');
@@ -346,7 +346,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
       report(res?.results?.[0], url);
       return true;
     } catch (e) {
-      atlasToastApi.error(e.message || 'לא הצלחנו לחבר את היומן');
+      atlasToastApi.error(e.message || 'לא הצלחנו לחבר את היומן. בדקו את הקישור ונסו שוב.');
       return false;
     } finally {
       setAdding(null);
@@ -361,7 +361,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
   });
   const remove = useMutation({
     mutationFn: (sync) => base44.entities.CalendarSync.delete(sync.id),
-    onSuccess: () => { refresh(); atlasToastApi.success('הערוץ הוסר. ההזמנות שכבר נוספו נשארו ביומן'); },
+    onSuccess: () => { refresh(); atlasToastApi.success('הערוץ הוסר. ההזמנות שכבר נכנסו נשארו בלוח'); },
     onError: () => atlasToastApi.error('לא הצלחנו להסיר את הערוץ'),
   });
 
@@ -372,12 +372,12 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
       <PageHeader
         title="ערוצים וחיבורים"
         help="integrations.page"
-        subtitle="סנכרון יומנים עם Airbnb ו-Booking.com, והמצב האמיתי של כל חיבור."
+        subtitle="Airbnb ו-Booking.com נכנסים ללוח לבד. כאן רואים שכל חיבור עובד."
         className="!mb-0"
         actions={tab === 'calendars' && DB_FEATURES.realCore && syncs.length ? (
           <Button variant="outline" className="h-11" onClick={() => runSync(null)} disabled={!!syncingId}>
             <RefreshCw className={cn('h-4 w-4', syncingId === 'all' && 'animate-spin')} strokeWidth={1.75} />
-            סנכרן עכשיו
+            עדכון עכשיו
           </Button>
         ) : null}
       />
@@ -395,7 +395,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
 
       {tab === 'calendars' ? (
         !DB_FEATURES.realCore ? (
-          <Card className="p-6"><p className="text-[15px] text-ink-600">סנכרון יומנים רץ בשרת של atlas, ולכן הוא זמין בחשבון מחובר ולא במצב ההדגמה.</p></Card>
+          <Card className="p-6"><p className="text-[15px] text-ink-600">חיבור הערוצים עובד אחרי שתתחברו לחשבון. בהדגמה רק רואים איך זה נראה.</p></Card>
         ) : loading ? (
           <div className="space-y-3" role="status" aria-busy="true" aria-label="טוען"><SkelLine className="h-64 rounded-[24px]" /><SkelLine className="h-64 rounded-[24px]" /></div>
         ) : properties.length === 0 ? (
@@ -421,8 +421,8 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
 
       {tab === 'messages' ? (
         <ProviderStatus items={[
-          { name: 'WhatsApp בלחיצה אחת', live: true, text: 'atlas מכין את ההודעות לפי מסע האורח (אישור, יום לפני, יום ההגעה, בקשת ביקורת) ושומר על שקט בשבת ובחג. בלוח "היום" כל הודעה מוכנה נפתחת בוואטסאפ עם הטקסט, ושולחים בלחיצה.' },
-          { name: 'WhatsApp אוטומטי (Meta Cloud API)', live: false, text: 'שליחה בלי לגעת: ההודעות יוצאות לבד מהמספר העסקי של המתחם, עם תבניות מאושרות.', needs: 'חשבון WhatsApp Business מאומת אצל Meta ומספר ייעודי.' },
+          { name: 'WhatsApp בלחיצה אחת', live: true, text: 'atlas מכין את ההודעות לפי שלבי השהייה (אישור, יום לפני, יום ההגעה, בקשת ביקורת) ושומר על שקט בשבת ובחג. בלוח "היום" כל הודעה מוכנה נפתחת בוואטסאפ עם הטקסט, ושולחים בלחיצה.' },
+          { name: 'WhatsApp אוטומטי', live: false, text: 'שליחה בלי לגעת: ההודעות יוצאות לבד מהמספר העסקי של המתחם, עם תבניות מאושרות.', needs: 'חשבון WhatsApp Business מאומת אצל Meta ומספר ייעודי.' },
           { name: 'SMS', live: false, text: 'גיבוי לאורחים בלי וואטסאפ.', needs: 'ספק SMS ישראלי (חבילת הודעות).' },
           { name: 'אימייל יוצא', live: false, text: 'עד שיחובר שירות דיוור, "שליחה במייל" פותחת את תוכנת המייל שלכם עם הטקסט מוכן.', needs: 'שירות שליחת מיילים.' },
         ]} />
@@ -437,7 +437,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
 
       {tab === 'invoices' ? (
         <ProviderStatus items={[
-          { name: 'חשבונית ירוקה (Morning) / iCount', live: false, text: 'חשבונית מס/קבלה חוקית לכל תשלום, נשלחת לאורח לבד. מסמך חוקי מופק רק בתוכנה רשומה ברשות המסים, ולכן עד החיבור atlas רק מתעדת מספרי מסמכים שהופקו אצלכם.', needs: 'חשבון Morning או iCount עם גישת API.' },
+          { name: 'חשבונית ירוקה (Morning) / iCount', live: false, text: 'חשבונית מס/קבלה חוקית לכל תשלום, נשלחת לאורח לבד. מסמך חוקי מופק רק בתוכנה רשומה ברשות המסים, ולכן עד החיבור atlas רק מתעד מספרי מסמכים שהופקו אצלכם.', needs: 'חשבון Morning או iCount עם גישת API.' },
         ]} />
       ) : null}
 

@@ -25,7 +25,7 @@ import { readOrgSettings, writeOrgSettings } from '@/lib/onboarding/orgSettings'
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
-  { id: 'organization', label: 'ארגון', icon: Building2 },
+  { id: 'organization', label: 'העסק', icon: Building2 },
   { id: 'notifications', label: 'התראות', icon: Bell },
   { id: 'security', label: 'אבטחה', icon: Shield },
 ];
@@ -130,7 +130,7 @@ export default function SettingsPage({ user }) {
       }
     },
     onSuccess: () => {
-      toast({ title: 'פרטי הארגון עודכנו', description: 'השינויים נשמרו.' });
+      toast({ title: 'פרטי העסק נשמרו', description: 'השינויים כבר בתוקף.' });
       queryClient.invalidateQueries(['organization']);
     },
     onError: () => {
@@ -151,7 +151,7 @@ export default function SettingsPage({ user }) {
         <div className="flex items-start gap-3">
           <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Compass className="h-5 w-5" strokeWidth={1.75} /></span>
           <div className="min-w-0">
-            <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">סיור במערכת<HelpHint id="settings.tour" /></p>
+            <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">סיור מודרך<HelpHint id="settings.tour" /></p>
             <p className="mt-0.5 text-[14px] text-ink-600">דקה אחת על המסכים העיקריים, עם הסבר קולי אם רוצים.</p>
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function SettingsPage({ user }) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-[18px] font-bold">פרטים אישיים</CardTitle>
-                <CardDescription>עדכנו את פרטי הפרופיל שלכם</CardDescription>
+                <CardDescription>השם והטלפון שלכם</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
                 {/* Avatar */}
@@ -200,7 +200,7 @@ export default function SettingsPage({ user }) {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium text-navy-900">{user?.full_name || 'משתמש'}</p>
+                    <p className="text-sm font-medium text-navy-900">{user?.full_name || 'החשבון שלי'}</p>
                     <p className="text-xs text-ink-600">{user?.email}</p>
                   </div>
                 </div>
@@ -232,7 +232,7 @@ export default function SettingsPage({ user }) {
                       disabled
                       className="bg-canvas"
                     />
-                    <p className="text-[12px] text-ink-400">לא ניתן לשנות כתובת אימייל</p>
+                    <p className="text-[12px] text-ink-400">את המייל אי אפשר לשנות כאן. צריכים? כתבו לנו.</p>
                   </div>
                 </div>
                 <div className="flex justify-end pt-2">
@@ -270,17 +270,17 @@ export default function SettingsPage({ user }) {
             </div>
             <Card>
               <CardHeader>
-                <CardTitle className="text-[18px] font-bold">פרטי הארגון</CardTitle>
-                <CardDescription>המידע על העסק שלכם</CardDescription>
+                <CardTitle className="text-[18px] font-bold">פרטי העסק</CardTitle>
+                <CardDescription>השם, הטלפון והכתובת של העסק</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-[14px] font-medium text-navy-900">שם הארגון</Label>
+                    <Label className="text-[14px] font-medium text-navy-900">שם העסק</Label>
                     <Input
                       value={orgForm.name}
                       onChange={e => setOrgForm(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="שם החברה / העסק"
+                      placeholder="למשל: צימרי הגליל"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -348,7 +348,7 @@ export default function SettingsPage({ user }) {
                   { key: 'new_lead', label: 'ליד חדש', desc: 'כשמגיעה פנייה חדשה' },
                   { key: 'payment_received', label: 'תשלום התקבל', desc: 'כשמתקבל תשלום' },
                   { key: 'new_review', label: 'ביקורת חדשה', desc: 'כשנכתבת ביקורת חדשה' },
-                  { key: 'system_updates', label: 'עדכוני מערכת', desc: 'שיפורים ויכולות חדשות' },
+                  { key: 'system_updates', label: 'חידושים', desc: 'כשמשהו חדש מגיע' },
                 ].map(item => (
                   <div key={item.key} className="flex items-center justify-between py-3 border-b border-line last:border-0">
                     <div>

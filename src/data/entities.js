@@ -87,7 +87,7 @@ export function useUpdateBooking() {
       const status = getErrorHttpStatus(err);
       if (status === 409) {
         openOptimisticConflictModal({
-          message: getErrorMessage(err) || 'לא ניתן לשמור: ייתכן שהתאריכים תפוסים או שהנתונים השתנו בשרת.',
+          message: getErrorMessage(err) || 'לא הצלחנו לשמור. אולי התאריכים כבר תפוסים, או שמישהו שינה את ההזמנה בינתיים.',
         });
         return;
       }
@@ -132,7 +132,7 @@ export function useDeleteBooking() {
       if (id) setOptimisticEntityPhase(id, 'rollback');
       const status = getErrorHttpStatus(err);
       if (status === 409) {
-        openOptimisticConflictModal({ message: getErrorMessage(err) || 'לא ניתן למחוק את ההזמנה.' });
+        openOptimisticConflictModal({ message: getErrorMessage(err) || 'לא הצלחנו למחוק את ההזמנה. נסו שוב.' });
         return;
       }
       if (status !== 409) {
@@ -228,7 +228,7 @@ export function useUpdateLead() {
       if (lid) setOptimisticEntityPhase(lid, 'rollback');
       const status = getErrorHttpStatus(err);
       if (status === 409) {
-        openOptimisticConflictModal({ message: getErrorMessage(err) || 'הנתונים התנגשו עם השרת.' });
+        openOptimisticConflictModal({ message: getErrorMessage(err) || 'מישהו שינה את זה בינתיים. רעננו ונסו שוב.' });
         return;
       }
       if (status === 422) {
@@ -381,7 +381,7 @@ export function useUpdateCleaningTask() {
       if (tid) setOptimisticEntityPhase(tid, 'rollback');
       const status = getErrorHttpStatus(err);
       if (status === 409) {
-        openOptimisticConflictModal({ message: getErrorMessage(err) || 'לא ניתן לעדכן את המשימה.' });
+        openOptimisticConflictModal({ message: getErrorMessage(err) || 'לא הצלחנו לעדכן את המשימה. נסו שוב.' });
         return;
       }
       if (status !== 409) {

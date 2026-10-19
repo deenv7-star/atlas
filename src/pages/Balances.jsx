@@ -27,7 +27,7 @@ function StatusPill({ b }) {
   if (b.state === 'paid') return <Pill tone="success">שולם</Pill>;
   if (b.state === 'partial') return <Pill tone="amber">מקדמה שולמה</Pill>;
   if (b.state === 'no_price') return <Pill tone="muted">אין מחיר</Pill>;
-  return <Pill tone="muted">טרם שולם</Pill>;
+  return <Pill tone="muted">עוד לא שולם</Pill>;
 }
 
 function ProgressBar({ paid, total }) {
