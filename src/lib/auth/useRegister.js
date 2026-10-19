@@ -14,6 +14,7 @@ import { checkRateLimit, recordAttempt, clearAttempts } from '@/lib/authRateLimi
 import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { TERMS_VERSION } from '@/config/consent';
+import { setPendingCredentials } from '@/lib/auth/pendingCredentials';
 
 export const PENDING_BUSINESS_KEY = 'atlas.signup.business';
 
@@ -108,6 +109,8 @@ export function useRegister() {
 
       if (data?.user && !data?.session) {
         atlasToastApi.success('נשלח מייל לאימות');
+        // Memory only: lets the waiting screen continue by itself when the email is confirmed on another device.
+        setPendingCredentials(form.email.trim(), form.password);
         navigate('/verify-email', { state: { email: form.email.trim() }, replace: true });
       } else if (data?.session) {
         await loginUser(null);
