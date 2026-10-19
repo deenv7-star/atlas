@@ -4,7 +4,7 @@
  * (להזכיר מחר / לא רלוונטי) kept on this device. Four rows show; the rest fold under "עוד".
  * Everything shown comes from buildInsights (real account rows only).
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check, ChevronDown, MoreHorizontal, BellOff, X } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -18,7 +18,21 @@ const CHIP = {
   worth: 'bg-[#ECEAFE] text-brand-600',
   idea: 'bg-[#F7F8FB] text-navy-900 ring-1 ring-inset ring-[#E4E6F0]',
 };
-export const SHOW = 4;
+export const SHOW = { phone: 3, desktop: 4 };
+
+/** true from 1024px: two columns and one more row before "עוד". */
+function useWide() {
+  const q = '(min-width: 1024px)';
+  const [wide, setWide] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.(q).matches);
+  useEffect(() => {
+    const m = window.matchMedia?.(q);
+    if (!m) return undefined;
+    const on = () => setWide(m.matches);
+    m.addEventListener?.('change', on);
+    return () => m.removeEventListener?.('change', on);
+  }, []);
+  return wide;
+}
 
 export function SeverityChip({ item, className }) {
   return (
@@ -51,7 +65,7 @@ function RowMenu({ item, onSnooze, onDismiss }) {
   );
 }
 
-function Row({ item, onAction, onSnooze, onDismiss, leaving }) {
+function Row({ item, primary, onAction, onSnooze, onDismiss, leaving }) {
   return (
     <li className={cn('ins-row', leaving && 'is-leaving')} data-insight={item.rule} data-severity={item.severity}>
       <div className="min-h-0 overflow-hidden">
@@ -64,7 +78,7 @@ function Row({ item, onAction, onSnooze, onDismiss, leaving }) {
             <p className="mt-1 text-[13px] leading-[1.5] text-ink-600">{item.why}</p>
           </div>
           <div className="ms-auto flex items-center gap-1">
-            <InsightActionButton item={item} onAction={onAction} tone={item.severity === 'urgent' ? 'solid' : 'soft'} />
+            <InsightActionButton item={item} onAction={onAction} tone={primary ? 'solid' : 'soft'} />
             <RowMenu item={item} onSnooze={onSnooze} onDismiss={onDismiss} />
           </div>
         </div>
@@ -77,6 +91,7 @@ export default function InsightsFeed({ insights, onAction }) {
   const { items, ready, snooze, dismiss, restore } = insights;
   const [open, setOpen] = useState(false);
   const [leaving, setLeaving] = useState(null);
+  const wide = useWide();
   if (!ready) return <div className="mb-3 h-[76px] rounded-[24px] bg-white/60 md:mb-4" aria-hidden />;
 
   const hide = (item, fn, msg) => {
@@ -92,7 +107,8 @@ export default function InsightsFeed({ insights, onAction }) {
   const onDismiss = (item) => hide(item, dismiss, 'הוסר מהרשימה');
 
   const urgent = items.filter((x) => x.severity === 'urgent').length;
-  const shown = open ? items : items.slice(0, SHOW);
+  const limit = wide ? SHOW.desktop : SHOW.phone;
+  const shown = open ? items : items.slice(0, limit);
   const rest = items.length - shown.length;
 
   return (
@@ -115,12 +131,12 @@ export default function InsightsFeed({ insights, onAction }) {
         </div>
       ) : (
         <>
-          <ul className="px-2 pb-2 md:px-3">
-            {shown.map((item) => (
-              <Row key={item.id} item={item} onAction={onAction} onSnooze={onSnooze} onDismiss={onDismiss} leaving={leaving === item.id} />
+          <ul className="ins-list px-2 pb-2 md:px-3 lg:grid lg:grid-cols-2 lg:gap-x-4">
+            {shown.map((item, i) => (
+              <Row key={item.id} item={item} primary={i === 0 && item.severity === 'urgent'} onAction={onAction} onSnooze={onSnooze} onDismiss={onDismiss} leaving={leaving === item.id} />
             ))}
           </ul>
-          {items.length > SHOW ? (
+          {items.length > limit ? (
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
