@@ -23,6 +23,7 @@ const VerifyEmail = lazy(() => import('@/pages/VerifyEmail'));
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const SetupPage = lazy(() => import('@/pages/Setup'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
 // Platform admin console (/admin): its own shell, gated by the database (migration 011).
 const AdminRoot = lazy(() => import('@/admin/AdminRoot'));
@@ -201,6 +202,15 @@ const AuthenticatedApp = () => {
         element={
           <ProtectedRoute requireOnboarding={false}>
             <S><Onboarding /></S>
+          </ProtectedRoute>
+        }
+      />
+      {/* Guided setup after onboarding (calendars, WhatsApp, units): full screen, needs a set-up account */}
+      <Route
+        path="/setup"
+        element={
+          <ProtectedRoute>
+            <S><SetupPage /></S>
           </ProtectedRoute>
         }
       />
