@@ -1,6 +1,7 @@
 /* Admin v2 shared parts: KPI strip, filters, bulk bar, pager, customer-360 sections, delete flow.
    Both visual versions (a: table + drawer, b: list + page) compose these. */
 import { useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import {
   Search, X, Info, Download, CalendarPlus, Repeat, PauseCircle, PlayCircle, FlaskConical, Mail, KeyRound, Eye,
@@ -449,6 +450,9 @@ const GROUPS = [
 
 export function DeleteFlow({ c, open, onOpenChange, onSuspend, onDeleted }) {
   const [step, setStep] = useState('choose');
+  const qc = useQueryClient();
+  /* After a delete the cached list still holds the customer: drop it from the cache, then leave. */
+  const finish = () => { qc.removeQueries({ queryKey: ['admin', 'customer', c.org_id] }); qc.invalidateQueries({ queryKey: ['admin'] }); onOpenChange(false); onDeleted?.(); };
   const [pv, setPv] = useState(null);
   const [err, setErr] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -491,7 +495,7 @@ export function DeleteFlow({ c, open, onOpenChange, onSuspend, onDeleted }) {
   }).filter((x) => x.n > 0 || x.g === 'users') : [];
 
   return (
-    <Modal open={open} onOpenChange={(o) => { if (!busy) onOpenChange(o); }} title={step === 'done' ? 'הלקוח נמחק' : `מחיקת ${name}`} sub={step === 'done' ? null : 'מחיקה סופית. שום דבר מזה לא חוזר מתוך המערכת.'}>
+    <Modal open={open} onOpenChange={(o) => { if (busy) return; if (!o && step === 'done') finish(); else onOpenChange(o); }} title={step === 'done' ? 'הלקוח נמחק' : `מחיקת ${name}`} sub={step === 'done' ? null : 'מחיקה סופית. שום דבר מזה לא חוזר מתוך המערכת.'}>
       <ol className="x-steps" aria-label="שלבים">
         {[['choose', 'בחירה'], ['preview', 'מה יימחק'], ['backup', 'גיבוי'], ['confirm', 'אישור']].map(([k, l], i) => (
           <li key={k} data-state={stepIndex(step) > i ? 'done' : stepIndex(step) === i ? 'now' : 'next'}><span className="adm-num">{i + 1}</span>{l}</li>
@@ -559,7 +563,7 @@ export function DeleteFlow({ c, open, onOpenChange, onSuspend, onDeleted }) {
           <dl className="x-dl"><div><dt>גיבוי בשרת</dt><dd className="adm-ltr">{result.backup_path}</dd></div></dl>
           <div className="adm-dialog-actions">
             {result.backup_url ? <a className="adm-btn" href={result.backup_url}><Download size={16} strokeWidth={1.75} aria-hidden />הורדת הגיבוי מהשרת</a> : null}
-            <button type="button" className="adm-btn adm-btn--primary" onClick={() => { onOpenChange(false); onDeleted?.(); }}>חזרה ללקוחות</button>
+            <button type="button" className="adm-btn adm-btn--primary" onClick={finish}>חזרה ללקוחות</button>
           </div>
         </div>
       ) : null}
