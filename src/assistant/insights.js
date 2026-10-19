@@ -84,7 +84,7 @@ export function insightOf(f) {
       body: n === 1
         ? `היתרה של ${f.overdue[0].name} עברה את מועד התשלום.`
         : `${n} יתרות עברו את מועד התשלום. הגדולה: ${f.overdue[0].name}, ${money(f.overdue[0].amount)}.`,
-      ask: 'מי עוד חייב לנו כסף, ומה הכי דחוף?',
+      ask: 'מה הכי דחוף לגבות?',
       action: { label: 'פתיחת היתרות', href: '/balances' },
     };
   }

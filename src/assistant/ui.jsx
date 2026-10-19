@@ -243,11 +243,11 @@ export function Conversation({ facts, loading, page = '', variant = 'page', onNa
     return () => el.removeEventListener('scroll', onScroll);
   }, [scroller]);
   const lastLen = messages.length ? messages[messages.length - 1].content.length : 0;
+  const lastStatus = messages.length ? messages[messages.length - 1].status : '';
   useEffect(() => {
     const el = scroller();
     if (el && pinned.current) el.scrollTo({ top: el.scrollHeight, behavior: 'auto' });
-  }, [messages.length, lastLen, scroller]);
-  const lastStatus = messages.length ? messages[messages.length - 1].status : '';
+  }, [messages.length, lastLen, lastStatus, scroller]);
   useEffect(() => {
     const m = messages[messages.length - 1];
     if (m?.role === 'assistant' && m.status === 'done') setAnnounce(splitActions(m.content).body.slice(0, 400));
