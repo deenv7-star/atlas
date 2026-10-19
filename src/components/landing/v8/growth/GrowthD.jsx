@@ -20,7 +20,7 @@ const CHAPTERS = [
 ];
 const NEW_TAB = ' (וואטסאפ, נפתח בחלון חדש)';
 
-/** Which chapter sits in the reading band of the viewport. One IntersectionObserver, no scroll listener. */
+/** Which chapter crosses the middle of the viewport (a 4% band), so the screen swaps when its words are centred. One IntersectionObserver, no scroll listener. */
 function useActiveChapter(listRef) {
   const [active, setActive] = useState(0);
   useEffect(() => {
@@ -29,7 +29,7 @@ function useActiveChapter(listRef) {
     const items = [...list.querySelectorAll('[data-ch]')];
     const io = new IntersectionObserver((entries) => {
       entries.forEach((en) => { if (en.isIntersecting) setActive(Number(en.target.dataset.ch)); });
-    }, { rootMargin: '-58% 0px -28% 0px', threshold: 0 });
+    }, { rootMargin: '-48% 0px -48% 0px', threshold: 0 });
     items.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [listRef]);
