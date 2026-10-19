@@ -117,6 +117,7 @@ function Photo({ imgRef }) {
         width="1920"
         height="1440"
         fetchPriority="high"
+        decoding="async"
       />
     </picture>
   );

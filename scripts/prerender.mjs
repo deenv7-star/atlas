@@ -273,12 +273,13 @@ function deferEntry(html) {
  * The lean pages' stylesheets (the entry's and the page chunk's) are inlined in place, same order, so the first
  * paint waits for the HTML alone instead of three more CSS requests (Lighthouse mobile: ~0.7 s render-blocking).
  * Chunk CSS keeps an inert <link media="not all"> with the same href: Vite's loader sees it when the chunk is
- * imported and adds nothing, so the cascade stays exactly as it was. The inert link downloads at idle priority.
+ * imported and adds nothing, so the cascade stays exactly as it was. `disabled` keeps the browser from fetching
+ * it at all (an inert media="not all" link was still downloaded before the first paint).
  */
 function inlineCss(html) {
   return html.replace(/<link rel="stylesheet" crossorigin href="(\/assets\/[^"]+\.css)">/g, (tag, href) => {
     const css = fs.readFileSync(path.join(DIST, href), 'utf8').replace(/<\/style/gi, '<\\/style');
-    const marker = /\/index-[^/]+\.css$/.test(href) ? '' : `<link rel="stylesheet" crossorigin href="${href}" media="not all">`;
+    const marker = /\/index-[^/]+\.css$/.test(href) ? '' : `<link rel="stylesheet" crossorigin href="${href}" media="not all" disabled>`;
     return `<style data-href="${href}">${css}</style>${marker}`;
   });
 }

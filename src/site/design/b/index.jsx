@@ -3,6 +3,7 @@
  * strong blocks, not pale white-on-white), content sits on a white sheet that overlaps the band,
  * the blog is a grid of cover cards. Same content and components as design A.
  */
+import { isoDateTime } from '../../isoDate';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Clock, CalendarDays, ListTree } from 'lucide-react';
@@ -139,7 +140,7 @@ export function LegalPage({ path, page }) {
   return (
     <>
       <Band path={path} title={page.title} lede={page.lede}>
-        {page.updated && <p className="b-meta">עודכן לאחרונה: <time dateTime={page.updated}>{heDate(page.updated)}</time></p>}
+        {page.updated && <p className="b-meta">עודכן לאחרונה: <time dateTime={isoDateTime(page.updated)}>{heDate(page.updated)}</time></p>}
       </Band>
       <Sheet toc={toc}>
         <Summary text={summary} />
@@ -262,7 +263,7 @@ export function Article({ post, body }) {
       <Band path={path} eyebrow={post.category} title={nbHyphen(post.title)} lede={nbHyphen(post.description)}>
         <p className="b-meta b-meta-row">
           <span>צוות atlas</span>
-          <span><CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" /> <time dateTime={post.updated}>{heDate(post.updated)}</time></span>
+          <span><CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" /> <time dateTime={isoDateTime(post.updated)}>{heDate(post.updated)}</time></span>
           <span><Clock size={16} strokeWidth={1.75} aria-hidden="true" /> {minutes} דקות קריאה</span>
         </p>
       </Band>

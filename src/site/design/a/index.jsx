@@ -2,6 +2,7 @@
  * Site design A, "Editorial": white page, a calm reading column, a sticky table of contents,
  * hairline rules, indigo only for links and the one primary action. Benchmarks: Stripe / Linear docs.
  */
+import { isoDateTime } from '../../isoDate';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Clock, CalendarDays } from 'lucide-react';
@@ -76,7 +77,7 @@ function PageHead({ path, title, lede, updated }) {
       <Breadcrumbs items={crumbsFor(path)} />
       <h1>{nbHyphen(title)}</h1>
       {lede && <p className="a-lede">{nbHyphen(lede)}</p>}
-      {updated && <p className="a-meta">עודכן לאחרונה: <time dateTime={updated}>{heDate(updated)}</time></p>}
+      {updated && <p className="a-meta">עודכן לאחרונה: <time dateTime={isoDateTime(updated)}>{heDate(updated)}</time></p>}
     </div>
   );
 }
@@ -158,7 +159,7 @@ function PostRow({ post, featured = false }) {
         <span className="a-row-cat">{post.category}</span>
         <span className="a-row-title">{nbHyphen(post.title)}</span>
         <span className="a-row-desc">{nbHyphen(post.description)}</span>
-        <span className="a-row-meta"><time dateTime={post.published}>{heDate(post.published)}</time></span>
+        <span className="a-row-meta"><time dateTime={isoDateTime(post.published)}>{heDate(post.published)}</time></span>
       </Link>
     </li>
   );
@@ -209,7 +210,7 @@ export function Article({ post, body }) {
         <p className="a-lede">{nbHyphen(post.description)}</p>
         <p className="a-meta a-meta-row">
           <span>צוות atlas</span>
-          <span><CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" /> <time dateTime={post.updated}>{heDate(post.updated)}</time></span>
+          <span><CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" /> <time dateTime={isoDateTime(post.updated)}>{heDate(post.updated)}</time></span>
           <span><Clock size={16} strokeWidth={1.75} aria-hidden="true" /> {minutes} דקות קריאה</span>
         </p>
       </div>
