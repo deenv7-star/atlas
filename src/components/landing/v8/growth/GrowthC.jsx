@@ -32,7 +32,7 @@ export default function GrowthC() {
           <h2 id="growth-title" className="gc-h" data-r style={{ '--d': 1 }}>
             <span>אתם מארחים. atlas מסדר.</span> <span className="gc-ind">ועכשיו גם מביא הזמנות.</span>
           </h2>
-          <p className="gc-lede" data-r style={{ '--d': 2 }}>מהתמונות של המתחם: דף הזמנה ישירה, סרטון ומודעה. כל פנייה נוחתת אצלכם.</p>
+          <p className="gc-lede" data-r style={{ '--d': 2 }}>מהתמונות של המתחם: דף הזמנה ישירה, ובקרוב גם סרטון ומודעה. כל פנייה נוחתת אצלכם.</p>
         </header>
 
         <figure className="gc-vis" data-r>
