@@ -82,6 +82,27 @@ export function pricingLd() {
         priceSpecification: { '@type': 'UnitPriceSpecification', price: String(p.price), priceCurrency: 'ILS', unitText: 'MONTH', billingDuration: 'P1M' },
       })),
     },
+    // Product with one Offer per plan: what Google's Rich Results test reads as a "Product snippet" (it does
+    // not show SoftwareApplication offers without ratings). Same prices as the page.
+    {
+      '@type': 'Product',
+      '@id': `${url}#product`,
+      name: 'atlas',
+      description: app.description,
+      image: ['https://atlas-il.com/og/og-default.png'],
+      brand: { '@type': 'Brand', name: 'atlas' },
+      category: 'BusinessApplication',
+      url,
+      offers: PRICING_PLANS.map((p) => ({
+        '@type': 'Offer',
+        name: `${p.nameHe} (${p.name})`,
+        price: String(p.price),
+        priceCurrency: 'ILS',
+        availability: 'https://schema.org/InStock',
+        url,
+        seller: { '@id': 'https://atlas-il.com/#organization' },
+      })),
+    },
     breadcrumbLd([{ name: 'atlas', path: '/' }, { name: 'תמחור ותוכניות', path: '/pricing' }]),
   ]);
 }
