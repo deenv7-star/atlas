@@ -26,6 +26,9 @@ import './landing-v8m.css';
 import './faq-m.css';
 import HeroPhoto from './HeroPhoto';
 import TrustB from './TrustB';
+import LazyGrowth from './growth/LazyGrowth';
+
+const loadGrowth = () => import('./growth/GrowthB');
 
 const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
@@ -249,6 +252,7 @@ export default function LandingM() {
         <Blocks />
         <Facts />
         <TrustB />
+        <LazyGrowth load={loadGrowth} minHeight={1100} />
         <Pricing8 />
         <Faq openFirst cta />
         <Final />
