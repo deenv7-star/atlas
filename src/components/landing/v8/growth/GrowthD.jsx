@@ -65,6 +65,16 @@ export default function GrowthD() {
           <div className="gd-stick">
             <Phone active={active} />
             <p className="gd-ex">דוגמה, מסכים אמיתיים מ-atlas</p>
+            {/* phones: the active chapter's words sit under the phone, inside the sticky area, so they are never
+                covered by it or by the sticky CTA. Visual copy only; the list below carries the text for screen readers. */}
+            <div className="gd-cap" aria-hidden="true">
+              {CHAPTERS.map((c, i) => (
+                <div key={c.h} className={`gd-cap-i${i === active ? ' is-on' : ''}`}>
+                  <p className="gd-chap-h">{c.h}</p>
+                  <p className="gd-chap-p">{c.p}</p>
+                </div>
+              ))}
+            </div>
           </div>
           <ol ref={list} className="gd-ch">
             {CHAPTERS.map((c, i) => (

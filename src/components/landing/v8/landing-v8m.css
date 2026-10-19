@@ -169,3 +169,8 @@
 @media (prefers-reduced-motion: reduce) {
   .lm-v .lm-ui, .lm-v .lm-ph { transform: none; }
 }
+
+/* growth D placeholder (LazyGrowth): close to the mounted section's height, measured on the production build
+   (20.10.2026), so mounting never shifts layout */
+.lg-ph-d { min-height: 2720px; }
+@media (min-width: 900px) { .lg-ph-d { min-height: 3417px; } }

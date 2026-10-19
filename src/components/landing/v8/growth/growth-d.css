@@ -1,7 +1,7 @@
 /* Growth D "product-led". Palette strictly: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white.
    Real atlas screens in the official iPhone 17 Pro bezel; the phone holds still while chapters scroll past.
    Motion: opacity + transform only, driven by one IntersectionObserver. */
-.gd { --gd-ind: #3E2BF1; --gd-navy: #1B2656; --gd-ink: #48527A; --gd-line: rgba(27, 38, 86, 0.1); --gd-bg: #F7F8FB; --gd-top: 64px;
+.gd { --gd-ind: #3E2BF1; --gd-navy: #1B2656; --gd-ink: #48527A; --gd-line: rgba(27, 38, 86, 0.1); --gd-bg: #F7F8FB; --gd-top: 76px;
   padding: 96px 0 104px; background: var(--gd-bg); color: var(--gd-navy); }
 @media (min-width: 900px) { .gd { padding: 152px 0 160px; } }
 .gd-ind { color: var(--gd-ind); }
@@ -91,3 +91,33 @@
   .gd-chap.is-on::before { transform: scaleY(1); }
 }
 @media (prefers-reduced-motion: reduce) { .gd-screen img { transition: opacity 200ms ease; } }
+
+/* phones (< 900px): the phone and the active chapter's words stick together under the floating header (bottom 70px)
+   and above the sticky CTA (72px). The chapter list keeps its height as the scroll track; its words are read by
+   screen readers only, the visible copy is .gd-cap. Phone width follows the viewport height so the pair always fits. */
+.gd-cap { display: none; }
+@media (max-width: 899px) and (min-height: 641px) {
+  .gd-phone { width: min(52vw, 220px, calc((100svh - 400px) * 0.489)); }
+  .gd-stick { padding: 8px 0 12px; }
+  .gd-ex { margin-top: 8px; font-size: 14px; }
+  .gd-cap { display: grid; width: 100%; margin-top: 14px; }
+  .gd-cap-i { grid-area: 1 / 1; opacity: 0; }
+  .gd-cap-i.is-on { opacity: 1; }
+  .gd-cap .gd-chap-h { font-size: 24px; }
+  .gd-cap .gd-chap-p { margin-top: 6px; font-size: 17px; line-height: 1.5; }
+  .gd-chap { min-height: 42svh; padding: 0; }
+  .gd-chap:last-child { min-height: 30svh; }
+  .gd-ch .gd-chap-h, .gd-ch .gd-chap-p { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .gd-stick::after { height: 20px; }
+}
+@media (max-width: 899px) and (min-height: 641px) and (prefers-reduced-motion: no-preference) {
+  .gd-cap-i { transform: translateY(8px); transition: opacity 320ms ease, transform 420ms cubic-bezier(0.23, 1, 0.32, 1); }
+  .gd-cap-i.is-on { transform: none; }
+}
+/* short phones (<= 640px tall): no sticky pair, the phone sits above the chapters and still swaps screens */
+@media (max-width: 899px) and (max-height: 640px) {
+  .gd-stick { position: relative; top: auto; }
+  .gd-stick::after { display: none; }
+  .gd-chap { min-height: 0; padding-top: 28px; }
+  .gd-chap:last-child { min-height: 0; }
+}
