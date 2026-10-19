@@ -257,7 +257,7 @@ export default function HeroPhoto() {
     const build = () => {
       cancelIdle(idle);
       anims.forEach((a) => a.cancel()); anims = []; written.clear();
-      if (!measure()) return;
+      if (!measure() || !sec.current) return;
       const p0 = progressOf(sec.current, stage.current);
       write(p0); // correct first paint, and the fallback path
       if (!viewTimelineOK()) return;
@@ -302,6 +302,8 @@ export default function HeroPhoto() {
     };
     const tick = () => {
       raf = 0;
+      // the static (reduced-motion) hero can replace this one right after hydration: its refs are gone then
+      if (!sec.current || !stage.current) return;
       const p = progressOf(sec.current, stage.current);
       if (anims.length && drifted(p)) { anims.forEach((a) => a.cancel()); anims = []; written.clear(); }
       if (!anims.length) write(p);
