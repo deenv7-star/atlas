@@ -37,7 +37,7 @@ export function useArticleBody(slug) {
 /* ---------------- tiny helpers ---------------- */
 const HE_MONTHS = ['בינואר', 'בפברואר', 'במרץ', 'באפריל', 'במאי', 'ביוני', 'ביולי', 'באוגוסט', 'בספטמבר', 'באוקטובר', 'בנובמבר', 'בדצמבר'];
 export function heDate(iso) {
-  const [y, m, d] = iso.split('-').map(Number);
+  const [y, m, d] = String(iso).slice(0, 10).split('-').map(Number);
   return `${d} ${HE_MONTHS[m - 1]} ${y}`;
 }
 
