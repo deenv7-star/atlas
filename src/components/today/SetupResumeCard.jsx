@@ -33,16 +33,16 @@ export default function SetupResumeCard({ user }) {
   return (
     <section aria-label="המשך הגדרה" className="mb-3 md:mb-4">
       <Link to={prog.next ? `/setup?step=${prog.next.id}` : '/setup'}
-        className="group flex min-h-[84px] items-center gap-4 rounded-[24px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.05),0_10px_28px_-16px_rgba(27,38,86,0.25)] ring-1 ring-[#E4E1FD] transition-shadow hover:shadow-[0_2px_4px_rgba(27,38,86,0.06),0_16px_36px_-16px_rgba(62,43,241,0.35)] md:p-5">
+        className="group flex min-h-[84px] items-center gap-4 rounded-[24px] bg-white p-4 max-[359px]:gap-3 max-[359px]:p-3.5 shadow-[0_1px_2px_rgba(27,38,86,0.05),0_10px_28px_-16px_rgba(27,38,86,0.25)] ring-1 ring-[#E4E1FD] transition-shadow hover:shadow-[0_2px_4px_rgba(27,38,86,0.06),0_16px_36px_-16px_rgba(62,43,241,0.35)] md:p-5">
         <Ring value={prog.handled} total={prog.total} size={56} stroke={6}>
           <span className="text-[13px] font-extrabold tabular-nums text-navy-900" dir="ltr">{prog.handled}/{prog.total}</span>
         </Ring>
         <span className="min-w-0 flex-1">
-          <span className="block text-[17px] font-extrabold text-navy-900">המשך הגדרה</span>
+          <span className="block whitespace-nowrap text-[17px] font-extrabold text-navy-900">המשך הגדרה</span>
           <span className="block truncate text-[15px] text-ink-600">{prog.next ? `הבא: ${prog.next.title}` : 'כמעט סיימנו'}</span>
         </span>
-        <span className="flex h-12 shrink-0 items-center gap-1.5 rounded-full bg-brand-600 px-5 text-[16px] font-bold text-white">
-          המשך<ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" aria-hidden />
+        <span className="flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-full bg-brand-600 px-5 text-[16px] font-bold text-white max-[359px]:w-12 max-[359px]:px-0">
+          <span className="max-[359px]:sr-only">המשך</span><ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" aria-hidden />
         </span>
       </Link>
     </section>
