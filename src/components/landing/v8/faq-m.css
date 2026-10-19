@@ -1,0 +1,63 @@
+/* Landing M FAQ polish (19.10.2026). Scoped to .lm so older landings keep the v5 accordion.
+   Grouped white list on canvas (iOS-settings style), larger readable answers for older owners,
+   sticky intro on desktop, smooth height on open where the browser supports ::details-content.
+   Strict palette: indigo #3E2BF1, navy #1B2656, lavender #E4E1FD, canvas #F7F8FB. */
+.lm .l5-faq-sec { padding: 72px 0 88px; }
+@media (min-width: 900px) { .lm .l5-faq-sec { padding: 120px 0 128px; } }
+.lm .l5-faq-grid { gap: 28px; }
+@media (min-width: 900px) { .lm .l5-faq-grid { grid-template-columns: 4fr 7fr; gap: 64px; align-items: start; } }
+@media (min-width: 1200px) { .lm .l5-faq-grid { gap: 88px; } }
+
+/* intro */
+.lm .l5-faq-side { gap: 14px; }
+@media (min-width: 900px) { .lm .l5-faq-side { position: sticky; top: 112px; } }
+.lm .l5-faq-side .l5-h2 { font-size: 38px; line-height: 1.02; letter-spacing: -0.045em; color: var(--navy); }
+@media (min-width: 900px) { .lm .l5-faq-side .l5-h2 { font-size: 56px; } }
+@media (min-width: 1200px) { .lm .l5-faq-side .l5-h2 { font-size: 60px; } }
+.lm .l5-faq-side .l5-sub { max-width: 26em; }
+.lm .l5-faq-wa {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; margin-top: 6px; padding: 0 18px 0 14px;
+  border-radius: 999px; background: #fff; color: var(--navy); font-size: 16px; font-weight: 700;
+  box-shadow: inset 0 0 0 1px var(--line), 0 1px 2px rgba(27, 38, 86, 0.05);
+  transition: box-shadow 180ms var(--ease-out), transform 160ms var(--ease-out);
+}
+.lm .l5-faq-wa .num { color: var(--indigo); letter-spacing: 0.01em; }
+.lm .l5-faq-wa svg:last-child { color: var(--ink-2); transition: transform 180ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .lm .l5-faq-wa:hover { box-shadow: inset 0 0 0 1px var(--indigo-200), 0 6px 18px -8px rgba(62, 43, 241, 0.35); }
+  .lm .l5-faq-wa:hover svg:last-child { transform: translateX(-3px); }
+}
+.lm .l5-faq-wa:active { transform: scale(0.98); }
+.lm .l5-faq-wa:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; }
+
+/* grouped list */
+.lm .l5-faq { padding: 4px 20px; border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px var(--line-2), 0 1px 2px rgba(27, 38, 86, 0.04); }
+@media (min-width: 900px) { .lm .l5-faq { padding: 8px 32px; border-radius: 28px; } }
+.lm .l5-faq details, .lm .l5-faq details:first-child { border: 0; }
+.lm .l5-faq details + details { border-top: 1px solid var(--line-2); }
+.lm .l5-faq summary { min-height: 68px; padding: 18px 0; font-size: 17px; line-height: 1.35; font-weight: 700; color: var(--navy); letter-spacing: -0.01em; text-wrap: pretty; border-radius: 12px; transition: color 160ms var(--ease-out); }
+@media (min-width: 900px) { .lm .l5-faq summary { min-height: 76px; font-size: 19px; } }
+@media (hover: hover) and (pointer: fine) { .lm .l5-faq summary:hover { color: var(--indigo); } }
+.lm .l5-faq summary:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+.lm .l5-faq details[open] summary { color: var(--indigo); }
+.lm .l5-plus { width: 32px; height: 32px; background: var(--canvas); box-shadow: none; color: var(--navy); }
+.lm .l5-faq details[open] .l5-plus { background: var(--indigo); color: #fff; }
+.lm .l5-faq details p { padding: 0 0 22px; max-width: 58ch; font-size: 17px; line-height: 1.7; color: var(--ink); text-wrap: pretty; }
+@media (min-width: 900px) { .lm .l5-faq details p { padding-inline-end: 48px; } }
+
+/* smooth height where supported (progressive: older browsers just open) */
+@supports selector(::details-content) {
+  .lm .l5-faq { interpolate-size: allow-keywords; }
+  .lm .l5-faq details::details-content { block-size: 0; overflow: clip; transition: block-size 280ms var(--ease-out), content-visibility 280ms allow-discrete; }
+  .lm .l5-faq details[open]::details-content { block-size: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lm .l5-faq details::details-content { transition: none; }
+}
+
+/* closing trial card: lavender, sits outside the white group */
+.lm .l5-faq-cta { margin: 8px -20px -4px; padding: 22px 20px; border-radius: 0 0 24px 24px; background: var(--indigo-50); box-shadow: none; border-top: 1px solid var(--line-2); }
+@media (min-width: 640px) { .lm .l5-faq-cta { padding: 24px 28px; } }
+@media (min-width: 900px) { .lm .l5-faq-cta { margin: 8px -32px -8px; padding: 28px 32px; border-radius: 0 0 28px 28px; } }
+.lm .l5-faq-cta-h { font-size: 20px; color: var(--navy); }
+.lm .l5-faq-cta-txt p { font-size: 16px; color: var(--ink); }

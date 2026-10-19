@@ -280,7 +280,7 @@ export function Faq({ limit = FAQ.length, openFirst = false, cta = false }) {
         <div className="l5-faq-side" data-reveal>
           <h2 id="faq-title" className="l5-h2">שאלות נפוצות</h2>
           <p className="l5-sub">לא מצאתם תשובה? כותבים לנו, ואדם עונה.</p>
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="l5-link">
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={cta ? 'l5-faq-wa' : 'l5-link'}>
             <Mark ch="whatsapp" size={16} />
             וואטסאפ <span dir="ltr" className="num">{PHONE_DISPLAY}</span>
             <ChevronLeft size={16} strokeWidth={2} aria-hidden="true" />

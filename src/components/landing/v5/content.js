@@ -46,25 +46,35 @@ export const TRUST = [
 ];
 
 /**
- * Landing FAQ (18.10.2026, Deen: "השאלות תשובות לא צריכות להתעסק בדברים טכנים. הם אמורות לשכנע את הלקוח
- * להרשם, להסביר לו כמה זה פשוט, למה זה משנה חיים, כמה זה אמין ונוח").
- * Sales FAQ in the owner's voice: benefit first, 1-3 short sentences, zero jargon.
- * Every line is true today, checked against supabase/functions/support-chat/kb/curated (01, 05, 06, 11, 13, 15),
- * src/site/content/pages (terms, cancellation, privacy, security) and src/config/pricing.js.
- * Never add numbers, customer counts, reviews or time-savings stats. ATLAS does not issue tax invoices,
- * does not charge guests and does not send WhatsApp without the owner's tap: do not promise any of these.
- * tests/unit/landing-faq.test.mjs guards the rules.
+ * Landing FAQ v2 (19.10.2026). Deen: "שאלות קצת יותר רלוונטיות". Written for Israeli zimmer / villa / vacation-complex
+ * owners (non-technical, often older): the questions they actually ask before signing up, in their words.
+ * Benefit first, 1-3 short sentences, zero jargon. Every line is true today, checked against the code and
+ * supabase/functions/support-chat/kb/curated (01 setup, 02 units, 04 overlap guard, 05 channels, 06 WhatsApp,
+ * 07 money, 11 subscription, 13 limitations), src/config/pricing.js and the legal pages.
+ * Honest limits kept on purpose: WhatsApp goes out with one tap (never auto-send), ATLAS records payments but does
+ * not charge guests, and official tax invoices are still issued in the owner's own invoicing software.
+ * No numbers, customer counts, reviews or time-savings stats. tests/unit/landing-faq.test.mjs guards the rules.
  */
 const FROM_PRICE = PRICING_PLANS[0].price;
 export const FAQ = [
-  { q: 'כמה זמן זה באמת יחסוך לי?', a: 'את הזמן שהולך היום על עדכון כמה יומנים, הקלדה של אותן הודעות לאורחים ובדיקה מי עוד לא שילם. כל בוקר מחכה לכם מסך אחד עם מה שיש לעשות היום, ואתם רק מאשרים.' },
-  { q: 'נגמרו הפספוסים וההזמנות הכפולות?', a: 'הזמנות מ-Airbnb ומ-Booking.com נכנסות לבד ללוח אחד, יחד עם ההזמנות הישירות שלכם. המערכת לא נותנת לשמור שתי הזמנות על אותם לילות, ואם משהו מתנגש היא מסמנת לכם את זה ולא דורסת אף הזמנה.' },
-  { q: 'כמה זמן לוקח עד שזה עובד?', a: 'בערך עשר דקות. עונים על כמה שאלות פשוטות על המקום והיחידות, מחברים את Airbnb ו-Booking.com פעם אחת, והתאריכים התפוסים כבר מופיעים בלוח.' },
-  { q: 'אני לא חזק בטכנולוגיה. אסתדר?', a: 'כן. הכל בעברית, כל מסך עושה דבר אחד, ובהתחלה המערכת שואלת שאלה אחת בכל פעם. ואם נתקעתם, בן אדם אמיתי עונה לכם בוואטסאפ ועוזר גם להעביר את מה שיש לכם היום.' },
-  { q: 'אפשר לנהל הכל מהטלפון?', a: 'כן. ATLAS עובדת בטלפון כמו במחשב, ישר מהדפדפן, בלי להוריד אפליקציה. מוסיפים אותה למסך הבית ופותחים בלחיצה, מכל מקום.' },
-  { q: 'האורחים שלי ירגישו את ההבדל?', a: 'כן. כל אורח מקבל בוואטסאפ, בזמן הנכון, אישור הזמנה, הוראות הגעה יום לפני והודעת תודה, עם השם שלו והניווט אליכם. ההודעות מוכנות מראש ויוצאות מהמספר שלכם בלחיצה אחת, ובשבת המערכת שומרת על שקט.' },
-  { q: 'המידע שלי ושל האורחים שמור?', a: 'כן. כל עסק רואה רק את המידע שלו, החיבור מוצפן, ואנחנו לא מוכרים מידע ולא מציגים פרסומות. הנתונים שייכים לכם, ואפשר להוריד אותם בכל רגע.' },
-  { q: 'כמה זה עולה, ויש התחייבות?', a: `14 הימים הראשונים חינם, בלי כרטיס אשראי, ובסופם לא יורד שקל לבד. אחר כך מ-‏₪${FROM_PRICE} לחודש למתחם אחד, בלי התחייבות: מפסיקים בהודעה אחת בוואטסאפ.` },
+  // 05-channels (two-way calendar link, import every 15 min), BookingOverlapGuard (same unit, same nights: warns and asks for an explicit 'save anyway')
+  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד, יחד עם ההזמנות הישירות שלכם. מנסים לרשום הזמנה על לילות תפוסים? המערכת עוצרת ומתריעה לפני ששומרים, ואף הזמנה לא נדרסת.' },
+  // 01-getting-started (one question per screen, about five minutes), 15-support (a person on WhatsApp)
+  { q: 'קשה להתחיל? מישהו יעזור לי?', a: `לא קשה: המערכת שואלת שאלה אחת בכל פעם, בעברית פשוטה, ותוך כמה דקות הלוח שלכם מוכן. נתקעתם? בן אדם אמיתי עונה לכם בוואטסאפ ב-${PHONE_DISPLAY} ועוזר גם להעביר את מה שיש לכם היום.` },
+  // 06-whatsapp-messages (guest journey prepared on schedule, one tap from the owner's own WhatsApp, Shabbat quiet), 13 #2
+  { q: 'ההודעות לאורחים בוואטסאפ יוצאות לבד?', a: 'כמעט: אישור הזמנה, הוראות הגעה יום לפני והודעת תודה מוכנות לבד בזמן הנכון, עם השם של האורח והניווט אליכם. אתם רק מאשרים, והן יוצאות מהוואטסאפ שלכם בלחיצה אחת, ובשבת המערכת שומרת על שקט.' },
+  // 02-units (name, guests and nightly price per unit; another total per booking), 13 #9 (weekend/holiday price suggestions)
+  { q: 'יש לי כמה יחידות, כל אחת במחיר אחר. זה מתאים?', a: 'בדיוק בשביל זה. לכל יחידה יש שורה בלוח, מספר אורחים ומחיר משלה, ובכל הזמנה אפשר לרשום מחיר אחר. המערכת גם מציעה לכם מחיר לסופ״ש ולחגים.' },
+  // 01-getting-started #install (works in the browser, add to home screen), 13 #13 (no store app)
+  { q: 'זה עובד גם בטלפון?', a: 'כן. ATLAS עובדת בטלפון כמו במחשב, בלי להוריד אפליקציה מהחנות. מוסיפים אותה למסך הבית ופותחים בלחיצה, מכל מקום.' },
+  // 07-money (payments recorded, balances, monthly report; documents are for records only, no tax allocation number), 13 #5 #11
+  { q: 'אפשר להוציא קבלות וחשבוניות?', a: 'כל תשלום נרשם, ורואים מיד מי שילם ומה עוד פתוח. חשבונית מס רשמית עדיין מפיקים בתוכנת החשבוניות שלכם, והחיבור אליה בדרך. בסוף החודש מורידים דוח מסודר לרואה החשבון.' },
+  // security.md (isolation per business, encrypted connection), privacy.md (no selling, no ads), terms #your-data + csvExport.js
+  { q: 'המידע שלי ושל האורחים שמור?', a: 'כן. כל עסק רואה רק את המידע שלו, החיבור מוצפן, ואנחנו לא מוכרים מידע ולא מציגים פרסומות. הנתונים שייכים לכם, ואפשר להוריד אותם לאקסל בכל רגע.' },
+  // pricing.js PRICING_PLANS[0] (one complex, whole system included); yearly and multi-complex plans shown in #pricing
+  { q: 'כמה זה עולה?', a: `₪${FROM_PRICE} לחודש למתחם אחד, וכל המערכת כלולה. יש גם מסלול שנתי משתלם יותר ומסלול לכמה מתחמים, הכל מופיע למעלה במחירים.` },
+  // 11-subscription (no card, no automatic charge, account and data kept), terms #cancellation, cancellation.md #how
+  { q: 'ומה קורה אחרי 14 ימי הניסיון?', a: '14 הימים הראשונים חינם, בלי כרטיס אשראי, ובסופם לא יורד שקל לבד. ממשיכים רק אם בוחרים מסלול, והחשבון וכל הנתונים נשמרים. בלי התחייבות: מפסיקים בהודעה אחת בוואטסאפ.' },
 ];
 
 /** Example data shown inside the HTML/CSS product UI. */
