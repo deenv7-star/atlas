@@ -280,7 +280,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
             <LinkField key={u.id} id={`link-${u.id}`} label={u.name} value={links[u.id] || ''} onChange={(v) => setLinks((l) => ({ ...l, [u.id]: v }))} check={checks[u.id]} connected={connectedIds.has(u.id)} />
           )) : <p className="text-[16px] text-ink-600">קודם מוסיפים יחידה אחת לפחות, בשלב "היחידות שלך".</p>}
           <p className="text-[14px] leading-snug text-ink-400">
-            {DB_FEATURES.realCore ? 'אחרי השמירה ההזמנות נכנסות ללוח תוך כרבע שעה, ומשם מתעדכנות כל 15 דקות.' : 'במצב הדגמה הקישור נשמר, אבל לא מתבצע סנכרון אמיתי.'}
+            {DB_FEATURES.realCore ? 'אחרי השמירה ATLAS מושכת את ההזמנות מיד, ומשם מתעדכנת כל 15 דקות.' : 'במצב הדגמה הקישור נשמר, אבל לא מתבצע סנכרון אמיתי.'}
           </p>
         </section>
       ) : null}
