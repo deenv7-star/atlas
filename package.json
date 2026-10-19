@@ -35,6 +35,7 @@
     "kb:check": "node scripts/support-kb/build-kb.mjs --check",
     "test:support-rls": "node supabase/tests/support_rls.test.mjs",
     "test:push-rls": "node supabase/tests/push_rls.test.mjs",
+    "test:push-e2e": "node --experimental-strip-types --no-warnings --import ./supabase/tests/send-push/register.mjs supabase/tests/send-push/send-push.e2e.mjs",
     "push:vapid": "node scripts/push/generate-vapid.mjs"
   },
   "dependencies": {
