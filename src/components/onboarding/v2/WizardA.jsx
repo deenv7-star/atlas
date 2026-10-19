@@ -5,38 +5,24 @@
  * profile building itself beside the question; each line there jumps back to its question.
  * After the last answer: the building moment, then the guided setup (/setup).
  */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Wordmark } from '@/components/app/shell/shared';
 import { Primary, Ghost } from '@/components/onboarding/kit';
-import { readPendingBusiness } from '@/lib/auth/useRegister';
 import { getPlanByKey, TRIAL_DAYS } from '@/config/pricing';
 import {
-  KINDS, MORE_KINDS, kindInfo, applyKind, defaultAnswers, PRICE_MODES, CHECKIN_TIMES, CHECKOUT_TIMES, CHANNELS,
+  KINDS, MORE_KINDS, kindInfo, applyKind, PRICE_MODES, CHECKIN_TIMES, CHECKOUT_TIMES, CHANNELS,
   guestsLabel, priceLabel, timesLabel, clampInt, UNITS_LIMIT, unitsLabel, placeWord,
 } from '@/lib/onboarding/v2/model';
-import { loadAnswers, saveAnswers } from '@/lib/onboarding/v2/actions';
 import { useKeyboardInset, HelpLink, Count, GuestRange, Options, SwitchRow, MoneyInput, TimeChips, Progress } from './ui';
 import PlanPick from './PlanPick';
+import { useAnswers } from './useAnswers';
 import BuildMoment from './BuildMoment';
 
 const EASE = [0.23, 1, 0.32, 1];
 export const QUESTIONS = ['kind', 'name', 'count', 'guests', 'price', 'times', 'channels', 'plan'];
-
-export function useAnswers(user) {
-  const [a, setA] = useState(() => {
-    const saved = loadAnswers(user?.id);
-    if (saved) return saved;
-    const d = defaultAnswers();
-    const pending = readPendingBusiness() || (user?.organization_name && user.organization_name !== 'My Organization' ? user.organization_name : '');
-    return { ...d, name: pending || '' };
-  });
-  useEffect(() => { const t = setTimeout(() => saveAnswers(user?.id, a), 200); return () => clearTimeout(t); }, [a, user?.id]);
-  const update = (patch) => setA((cur) => ({ ...cur, ...(typeof patch === 'function' ? patch(cur) : patch) }));
-  return [a, update];
-}
 
 export default function WizardA({ user, again = false }) {
   useKeyboardInset();
