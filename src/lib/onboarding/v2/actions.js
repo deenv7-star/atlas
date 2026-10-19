@@ -209,8 +209,8 @@ export function unitView(p, profiles = {}) {
 }
 
 /**
- * Version B: calendar links pasted during onboarding (a.links = [{ provider, url, ok }], in unit order).
- * Link i goes to unit i. Runs after commitUnits, so the units exist. Same writes as the setup journey.
+ * Version B: calendar links pasted during onboarding (a.links = [{ provider, url, ok, unit }]). `unit` is the
+ * unit's index (default 0, the first unit). Runs after commitUnits, so the units exist. Same writes as the setup journey.
  */
 export async function commitLinks(user, a) {
   const links = (Array.isArray(a.links) ? a.links : []).filter((l) => l && l.ok && String(l.url || '').trim());
@@ -219,8 +219,10 @@ export async function commitLinks(user, a) {
   const props = (await listProperties()).slice().sort((x, y) => ts(x) - ts(y)); // unit 1 first
   const existing = await listSyncs();
   let saved = 0;
-  for (let i = 0; i < links.length && i < props.length; i += 1) {
-    const r = await saveCalendarLink(links[i].provider, props[i].id, links[i].url, existing);
+  for (const l of links) {
+    const p = props[Math.max(0, Math.min(props.length - 1, Number(l.unit) || 0))];
+    if (!p) continue;
+    const r = await saveCalendarLink(l.provider, p.id, l.url.trim(), existing);
     if (r) saved += 1;
   }
   const orgId = user?.organization_id;

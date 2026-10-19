@@ -37,14 +37,19 @@ export function useStepHistory(step, setStep) {
     }
     if (st.obStep !== step) window.history.pushState({ ...st, obStep: step }, '');
   }, [step]);
+  // One listener for the whole flow, reading the latest setStep from a ref. Re-subscribing on every render
+  // lost the event: the router re-renders synchronously inside the same popstate dispatch, the effect
+  // cleanup removed this listener mid-dispatch, and the new one never saw the event (QA 20.10).
+  const latest = useRef(setStep);
+  latest.current = setStep;
   useEffect(() => {
     const onPop = (e) => {
       const s = e.state && typeof e.state.obStep === 'number' ? e.state.obStep : null;
-      if (s != null) setStep(s, true);
+      if (s != null) latest.current(s, true);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
-  }, [setStep]);
+  }, []);
 }
 
 /** A quiet "נשמר ✓" that shows for a moment after each autosave. */

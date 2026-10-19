@@ -179,7 +179,7 @@ function Checklist({ facts, variant, steps, prog, flash, onOpen }) {
 
 /* ───────────────────────── calendars ───────────────────────── */
 
-function LinkField({ id, label, value, onChange, check, connected }) {
+export function LinkField({ id, label, value, onChange, check, connected }) {
   const paste = async () => { try { const t = await navigator.clipboard.readText(); if (t) onChange(t.trim()); } catch { /* not allowed: type or long-press paste */ } };
   return (
     <div className="flex flex-col gap-1.5">

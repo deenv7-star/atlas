@@ -176,14 +176,14 @@ export default function WizardA3({ user, again = false }) {
       sub: C.channels.sub,
       body: (
         <div className="flex flex-col gap-5">
-          <div role="group" aria-label={C.channels.group} className="grid grid-cols-1 gap-2.5 min-[380px]:grid-cols-2">
+          <div role="group" aria-label={C.channels.group} className="flex flex-wrap gap-2.5">
             {CHANNELS.map((c) => {
               const on = (a.channels || []).includes(c.value);
               return (
                 <button key={c.value} type="button" role="checkbox" aria-checked={on} onClick={() => update((cur) => ({ channels: on ? cur.channels.filter((v) => v !== c.value) : [...(cur.channels || []), c.value] }))}
-                  className="ob2-option ob-press !min-h-[60px]">
+                  className="ob2-option ob-press !min-h-[56px] !w-auto !gap-3 !rounded-full !py-2.5 !pe-5 !ps-3">
                   <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] border-2 transition-colors', on ? 'border-brand-600 bg-brand-600 text-white' : 'border-[#CBD0E0]')} aria-hidden>{on ? <Check className="h-4 w-4" strokeWidth={3} /> : null}</span>
-                  <span className="text-[17px] font-bold text-navy-900">{c.label}</span>
+                  <span className="whitespace-nowrap text-[17px] font-bold text-navy-900">{c.label}</span>
                 </button>
               );
             })}
@@ -305,12 +305,13 @@ function Review({ a, onJump, onPlan }) {
   const k = kindInfo(a.kind || 'zimmer');
   const n = clampInt(a.unitCount, 1, UNITS_LIMIT);
   const ch = CHANNELS.filter((c) => (a.channels || []).includes(c.value)).map((c) => c.label).join(', ');
+  const R = COPY.review;
   const rows = [
-    { to: 0, label: 'סוג', value: a.kind ? k.label : 'צימר' },
-    { to: 1, label: 'שם', value: a.name.trim() || 'יתווסף אחר כך' },
-    { to: 2, label: 'יחידות', value: `${unitsLabel(a.kind || 'zimmer', n)} · ${guestsLabel(a)}` },
-    { to: 3, label: 'שעות', value: timesLabel(a) },
-    { to: 4, label: 'הזמנות מ-', value: ch || 'נחבר בהמשך' },
+    { to: 0, label: R.kind, value: k.label },
+    { to: 1, label: R.name, value: a.name.trim() || R.noName },
+    { to: 2, label: R.units, value: `${unitsLabel(a.kind || 'zimmer', n)} · ${guestsLabel(a)}` },
+    { to: 3, label: R.times, value: R.timesValue(a) },
+    { to: 4, label: R.channels, value: ch || R.noChannels },
   ];
   return (
     <div className="flex flex-col gap-6">

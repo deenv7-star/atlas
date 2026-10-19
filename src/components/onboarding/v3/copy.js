@@ -94,6 +94,16 @@ export const COPY = {
     edit: 'שינוי',
     cta: 'בנו את היומן',
   },
+  review: {
+    kind: 'סוג',
+    name: 'שם',
+    units: 'יחידות',
+    times: 'שעות',
+    channels: 'הזמנות',
+    noName: 'יתווסף אחר כך',
+    noChannels: 'נחבר בהמשך',
+    timesValue: (a) => `כניסה ${a.checkIn} · יציאה ${a.checkOut}${a.timesVary ? ' (משתנה)' : ''}`,
+  },
   preview: {
     label: 'כך ייראה היומן שלכם',
     placeholderName: 'המתחם שלכם',

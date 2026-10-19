@@ -178,7 +178,7 @@ function Assembly({ a, k, n, name, at, still, total = 4, msgAt = 2 }) {
       <motion.div {...card(0)} style={still && !show(0) ? { opacity: 0 } : undefined}
         className="absolute end-0 top-0 w-[60%] overflow-hidden rounded-[20px] bg-white shadow-[0_2px_4px_rgba(27,38,86,0.06),0_24px_48px_-20px_rgba(27,38,86,0.35)] lg:w-[66%]">
         <div className="aspect-[16/7] overflow-hidden bg-[#E9ECF4] lg:aspect-[16/8]"><img src={k.photo || '/demo/complex-pool.webp'} alt="" className="h-full w-full object-cover" /></div>
-        <div className="px-3.5 py-2.5 lg:px-4 lg:py-3">
+        <div className="py-2.5 pe-3.5 ps-[30%] lg:py-3 lg:pe-4 lg:ps-[48%]">
           <p className="truncate text-[16px] font-extrabold text-navy-900 lg:text-[17px]">{name}</p>
           <p className="truncate text-[13px] text-ink-600">{k.label} · {guestsLabel(a)}</p>
         </div>
