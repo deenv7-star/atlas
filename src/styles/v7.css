@@ -91,3 +91,9 @@ body { background-color: var(--canvas); }
   .v7-lift, .v7-lift:hover { transform: none !important; transition: none !important; }
   .v7-arrow { transition: none !important; }
 }
+
+/* Today insights: a row collapses (height + fade) when snoozed / dismissed. Grid-rows trick, no layout jump. */
+.ins-row { display: grid; grid-template-rows: 1fr; opacity: 1; transition: grid-template-rows 200ms var(--ease-out), opacity 160ms var(--ease-out); }
+.ins-row.is-leaving { grid-template-rows: 0fr; opacity: 0; }
+.ins-row + .ins-row > div > div { border-top: 1px solid #F0F0F6; }
+@media (prefers-reduced-motion: reduce) { .ins-row { transition: none; } }
