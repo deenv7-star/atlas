@@ -218,13 +218,17 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                   if (!seg) return null;
                   const w = seg.to - seg.from;
                   const inHouse = s.start <= today && s.end > today && !s.isBlock && !s.pending;
+                  // a half-day sliver at the month edge is too narrow to be a target: draw it, let taps reach the day cell
+                  const sliver = w < 1;
+                  const Bar = sliver ? 'span' : Link;
+                  const barProps = sliver
+                    ? { 'aria-hidden': true }
+                    : { to: `${createPageUrl('BookingDetail')}/${s.id}`, 'aria-label': stayAria(s, u.name), title: `${stayLabel(s)} · ${shortDay(s.start)}–${shortDay(s.end)}` };
                   return (
-                    <Link
+                    <Bar
                       key={s.id}
-                      to={`${createPageUrl('BookingDetail')}/${s.id}`}
-                      aria-label={stayAria(s, u.name)}
-                      title={`${stayLabel(s)} · ${shortDay(s.start)}–${shortDay(s.end)}`}
-                      className={cn('absolute top-[18px] z-10 block h-[48px]', optimisticEntityClassName(s.id))}
+                      {...barProps}
+                      className={cn('absolute top-[18px] z-10 block h-[48px]', sliver && 'pointer-events-none', optimisticEntityClassName(s.id))}
                       style={{ right: `calc(${(seg.from / n) * 100}% + 1px)`, width: `calc(${(w / n) * 100}% - 2px)` }}
                     >
                       <span className={cn(
@@ -249,7 +253,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                           </>
                         ) : null}
                       </span>
-                    </Link>
+                    </Bar>
                   );
                 })}
               </div>
