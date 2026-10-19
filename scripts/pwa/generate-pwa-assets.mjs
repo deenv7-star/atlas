@@ -24,7 +24,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-const DEFAULT_VARIANT = 'a';
+const DEFAULT_VARIANT = 'wordmark';
 const VARIANT = (process.argv.find((a) => a.startsWith('--variant=')) || `--variant=${DEFAULT_VARIANT}`).split('=')[1];
 if (!['a', 'wordmark'].includes(VARIANT)) throw new Error(`unknown --variant=${VARIANT} (a | wordmark)`);
 
