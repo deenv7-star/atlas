@@ -33,7 +33,7 @@ import { SegmentedControl, SkelLine, DeltaPill, CardArrow } from '@/components/d
 import { cn } from '@/lib/utils';
 import { heCount } from '@/lib/hebrewCount';
 import SetupResumeCard from '@/components/today/SetupResumeCard';
-import InsightsFeed from '@/components/today/InsightsFeed';
+import MorningBrief from '@/components/today/MorningBrief';
 import { useTodayInsights } from '@/hooks/useTodayInsights';
 
 const HHMM = /^([01]?\d|2[0-3]):([0-5]\d)/;
@@ -604,7 +604,7 @@ export default function TodayBoard({ user, orgId }) {
         </div>
       ) : data.isLoading ? skeleton : (
         <>
-          <InsightsFeed insights={insights} onAction={onInsight} />
+          <MorningBrief insights={insights} onAction={onInsight} />
           <section aria-label="מספרים" className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-12">
             {hero}
             {donut}
