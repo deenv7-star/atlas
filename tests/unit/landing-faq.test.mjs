@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import { FAQ, PHONE_DISPLAY } from '../../src/components/landing/v5/content.js';
 import { PRICING_PLANS, TRIAL_DAYS } from '../../src/config/pricing.js';
 
-// Landing FAQ v2 (19.10.2026): owner questions for zimmer / villa / complex owners, true claims only.
+// Landing FAQ v3 (19.10.2026): owner questions for zimmer / villa / complex owners (easylist pattern), true claims only.
 const text = FAQ.map((f) => `${f.q} ${f.a}`).join(' ');
 const answers = FAQ.map((f) => f.a).join(' ');
 
-test('6 to 9 sales questions, each a question with a short answer', () => {
-  assert.ok(FAQ.length >= 6 && FAQ.length <= 9, `got ${FAQ.length}`);
+test('10 to 12 sales questions, each a question with a short answer', () => {
+  assert.ok(FAQ.length >= 10 && FAQ.length <= 12, `got ${FAQ.length}`);
   for (const f of FAQ) {
     assert.ok(f.q.trim().endsWith('?'), f.q);
     assert.ok(f.q.length <= 60, `${f.q}: question too long`);
@@ -20,7 +20,7 @@ test('6 to 9 sales questions, each a question with a short answer', () => {
 });
 
 test('covers what owners ask before signing up', () => {
-  const topics = [/Booking/, /Airbnb/, /כפולות/, /מישהו יעזור/, /14 ימי הניסיון/, /עולה/, /וואטסאפ/, /חשבוניות/, /בטלפון/, /יחידות/, /שמור/];
+  const topics = [/^למי/, /Booking/, /Airbnb/, /כפולות/, /לא מתמצא בטכנולוגיה/, /14\s?ימי הניסיון/, /התחייבות/, /עולה/, /וואטסאפ/, /חשבוניות/, /בטלפון/, /יחידות/, /שמור/, /ייכנסו/, /^איך מתחילים/];
   for (const re of topics) assert.ok(FAQ.some((f) => re.test(f.q)), `missing question ${re}`);
 });
 
@@ -41,7 +41,7 @@ test('no promises ATLAS cannot keep, no invented numbers', () => {
 test('true anchors stay: trial, no card, no commitment, real price, a human on WhatsApp, phone', () => {
   assert.match(text, new RegExp(`${TRIAL_DAYS} הימים הראשונים חינם`));
   assert.match(text, /בלי כרטיס אשראי/);
-  assert.match(text, /בלי התחייבות/);
+  assert.match(text, /אין התחייבות|בלי התחייבות/);
   assert.ok(text.includes(`₪${PRICING_PLANS[0].price} לחודש`));
   assert.match(text, /בן אדם אמיתי עונה לכם בוואטסאפ/);
   assert.ok(text.includes(PHONE_DISPLAY));
@@ -51,4 +51,17 @@ test('true anchors stay: trial, no card, no commitment, real price, a human on W
 
 test('house style: no em or en dashes', () => {
   assert.ok(!/[\u2014\u2013]/.test(text));
+});
+
+test('several people: honest, one login per business, no staff permissions claimed', () => {
+  const f = FAQ.find((x) => /ייכנסו/.test(x.q));
+  assert.ok(f);
+  assert.match(f.a, /^עדיין לא/);
+  assert.match(f.a, /כניסה אחת לכל עסק/);
+  // terms #account: do not share the password, so never suggest sharing a login
+  for (const re of [/משתפים (את )?(הסיסמה|פרטי)/, /אותה סיסמה/, /אפשר להוסיף (משתמש|עובד)/, /הרשאות שונות/]) assert.ok(!re.test(answers), `claim ${re}`);
+});
+
+test('no claims we cannot back (years in business, Tax Authority registration)', () => {
+  for (const re of [/מס הכנסה/, /רשות המסים/, /שנים/, /ותיק/, /מאז \d/]) assert.ok(!re.test(text), `claim ${re}`);
 });
