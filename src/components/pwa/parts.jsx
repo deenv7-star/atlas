@@ -32,10 +32,10 @@ export function NotificationPreview({ className, delay = 0.15 }) {
       <AppIcon size={38} />
       <div className="min-w-0 flex-1 text-start">
         <div className="flex items-baseline justify-between gap-2">
-          <span className="truncate text-[14px] font-bold text-navy-900">הזמנה חדשה מ-Booking.com</span>
+          <span className="min-w-0 text-[14px] font-bold leading-snug text-navy-900">הזמנה חדשה מ-Booking.com</span>
           <span className="shrink-0 text-[12px] text-ink-400">עכשיו</span>
         </div>
-        <p className="mt-0.5 truncate text-[14px] text-ink-600">דנה כהן · 12–14 בנוב׳ · 2 לילות</p>
+        <p className="mt-0.5 text-[14px] leading-snug text-ink-600">דנה כהן · 12–14 בנוב׳ · 2 לילות</p>
       </div>
     </motion.div>
   );
