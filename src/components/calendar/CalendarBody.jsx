@@ -5,7 +5,8 @@
  * Phones: the compact month on top and an agenda list (arrivals, departures, gaps) below it.
  * Every number is counted from real stays.
  */
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowDownLeft, ArrowUpRight, Lock, Moon, Plus } from 'lucide-react';
 import { createPageUrl } from '@/utils';
@@ -21,15 +22,15 @@ import { SourceBadge, stayAria, stayLabel } from './shared';
 
 /* ── compact month: one dot per unit per night ───────────────────────────── */
 
-function CompactMonth({ month, today, units, occ, gapSet, holidays, onDay }) {
+function CompactMonth({ month, today, units, occ, gapSet, holidays, onDay, selected }) {
   const weeks = useMemo(() => monthMatrix(month), [month]);
   const mk = monthKey(month);
   const many = units.length > 6;
   return (
     <div>
       <div className="grid grid-cols-7 pb-1">
-        {HE_DAYS_SHORT.map((d, i) => (
-          <div key={d} className={cn('py-1.5 text-center text-[12px] font-semibold text-navy-900/60', (i === 5 || i === 6) && 'text-navy-900/45')}>{d}</div>
+        {HE_DAYS_SHORT.map((d) => (
+          <div key={d} className={cn('py-1.5 text-center text-[12px] font-semibold text-navy-900/70')}>{d}</div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">
@@ -53,10 +54,11 @@ function CompactMonth({ month, today, units, occ, gapSet, holidays, onDay }) {
               className={cn(
                 'press relative flex h-[52px] min-w-0 flex-col items-center justify-center gap-1 rounded-[14px]',
                 isToday ? 'bg-brand-600 text-white' : 'bg-[#F7F8FB] text-navy-900 hover:bg-brand-600/[0.07]',
-                past && !isToday && 'opacity-55',
+                selected === d && 'ring-2 ring-navy-900 ring-offset-1',
               )}
+              aria-current={selected === d ? 'date' : undefined}
             >
-              <span className="text-[15px] font-semibold leading-none tabular">{dt.getDate()}</span>
+              <span className={cn('text-[15px] leading-none tabular', past && !isToday ? 'font-normal text-navy-900/70' : 'font-semibold')}>{dt.getDate()}</span>
               {many ? (
                 <span aria-hidden className={cn('h-1 w-6 overflow-hidden rounded-full', isToday ? 'bg-white/30' : 'bg-navy-900/10')}>
                   <span className={cn('block h-full rounded-full', isToday ? 'bg-white' : 'bg-navy-900')} style={{ width: `${(booked / Math.max(1, units.length)) * 100}%` }} />
@@ -116,9 +118,9 @@ function MonthFacts({ month, units, stays, occ, gaps }) {
     <dl className="grid grid-cols-3 gap-3">
       {facts.map((f) => (
         <div key={f.k} className="rounded-[18px] bg-[#F7F8FB] px-4 py-3">
-          <dt className="text-[13px] text-navy-900/60">{f.k}</dt>
+          <dt className="text-[13px] text-navy-900/70">{f.k}</dt>
           <dd className="mt-1 text-[26px] font-bold leading-none text-navy-900 tabular">{f.v}</dd>
-          <dd className="mt-1 text-[12px] text-navy-900/60">{f.sub}</dd>
+          <dd className="mt-1 text-[12px] text-navy-900/70">{f.sub}</dd>
         </div>
       ))}
     </dl>
@@ -127,10 +129,25 @@ function MonthFacts({ month, units, stays, occ, gaps }) {
 
 /* ── timeline: one tall row per unit ─────────────────────────────────────── */
 
-function Timeline({ month, today, units, stays, gapSet, holidays, onDay }) {
+function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDay }) {
   const days = useMemo(() => monthDays(month), [month]);
   const n = days.length;
-  const cols = `repeat(${n}, minmax(34px, 1fr))`;
+  const cols = `repeat(${n}, minmax(46px, 1fr))`;
+  const scroller = useRef(null);
+  const reduce = useReducedMotion();
+  const first = useRef(true);
+  useEffect(() => {
+    const c = scroller.current;
+    const target = focusDay && days.includes(focusDay) ? focusDay : null;
+    if (!c || !target) return;
+    const cell = c.querySelector(`[data-col="${target}"]`);
+    if (!cell) return;
+    const cr = c.getBoundingClientRect(); const r = cell.getBoundingClientRect();
+    // keep the day a little after the sticky unit column (RTL: the column is on the right)
+    const want = cr.right - 196 - cr.width * 0.18;
+    c.scrollBy({ left: r.right - want, behavior: first.current || reduce ? 'auto' : 'smooth' });
+    first.current = false;
+  }, [focusDay, days, reduce]);
   const byUnit = useMemo(() => {
     const m = new Map(units.map((u) => [u.id, []]));
     for (const s of stays) m.get(s.propertyId)?.push(s);
@@ -139,18 +156,18 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay }) {
   const todayIdx = days.indexOf(today);
   return (
     <div className="v7-card overflow-hidden" data-timeline>
-      <div className="overflow-x-auto overscroll-x-contain">
-        <div className="grid min-w-[1180px]" style={{ gridTemplateColumns: '196px minmax(0,1fr)' }}>
+      <div ref={scroller} className="overflow-x-auto overscroll-x-contain" tabIndex={-1}>
+        <div className="grid" style={{ gridTemplateColumns: '196px minmax(0,1fr)', minWidth: 196 + n * 46 }}>
           {/* header */}
-          <div className="sticky right-0 z-20 flex items-end border-b border-l border-navy-900/[0.08] bg-white px-4 pb-2 text-[13px] font-semibold text-navy-900/60">יחידה</div>
+          <div className="sticky right-0 z-20 flex items-end border-b border-l border-navy-900/[0.08] bg-white px-4 pb-2 text-[13px] font-semibold text-navy-900/70">יחידה</div>
           <div className="relative grid border-b border-navy-900/[0.08]" style={{ gridTemplateColumns: cols }}>
             {days.map((d, i) => {
               const dt = parseIso(d);
               const hol = holidays.get(d);
               const wk = dt.getDay() === 5 || dt.getDay() === 6;
               return (
-                <div key={d} title={hol ? hol.map((h) => h.title).join(' · ') : undefined} className={cn('flex flex-col items-center pb-2 pt-2.5', wk && 'bg-[#F7F8FB]')}>
-                  <span className={cn('text-[11px]', i === todayIdx ? 'font-semibold text-brand-600' : 'text-navy-900/50')}>{HE_DAYS_SHORT[dt.getDay()]}</span>
+                <div key={d} data-col={d} title={hol ? hol.map((h) => h.title).join(' · ') : undefined} className={cn('flex flex-col items-center pb-2 pt-2.5', wk && 'bg-[#F7F8FB]', focusDay === d && focusDay !== today && 'bg-navy-900/[0.06]')}>
+                  <span className={cn('text-[11px]', i === todayIdx ? 'font-semibold text-brand-600' : 'text-navy-900/70')}>{HE_DAYS_SHORT[dt.getDay()]}</span>
                   <span className={cn('mt-1 inline-flex h-7 min-w-7 items-center justify-center rounded-full px-1 text-[13px] font-semibold tabular', i === todayIdx ? 'bg-brand-600 text-white' : 'text-navy-900')}>{dt.getDate()}</span>
                   <span aria-hidden className={cn('mt-1 h-1 w-1 rounded-full', hol ? 'bg-brand-600/60' : 'bg-transparent')} />
                 </div>
@@ -164,7 +181,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay }) {
                 <UnitPhoto property={u.raw} className="h-11 w-11 shrink-0" rounded="rounded-[14px]" />
                 <div className="min-w-0">
                   <div className="truncate text-[15px] font-semibold text-navy-900">{u.name}</div>
-                  <div className="truncate text-[12px] text-navy-900/60">{u.raw?.max_guests ? `עד ${u.raw.max_guests} אורחים` : ''}</div>
+                  <div className="truncate text-[12px] text-navy-900/70">{u.raw?.max_guests ? `עד ${u.raw.max_guests} אורחים` : ''}</div>
                 </div>
               </div>
               <div className="relative grid border-b border-navy-900/[0.08]" style={{ gridTemplateColumns: cols }}>
@@ -225,7 +242,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay }) {
                               {w >= 3 && !s.isBlock ? <SourceBadge channel={s.channel} onDark={inHouse} /> : null}
                             </span>
                             {w >= 2 ? (
-                              <span className={cn('truncate text-[12px]', inHouse ? 'text-white/80' : 'text-navy-900/60')}>
+                              <span className={cn('truncate text-[12px]', inHouse ? 'text-white/80' : 'text-navy-900/70')}>
                                 {s.pending ? 'ממתינה לאישור' : s.isBlock ? `עד ${shortDay(s.end)}` : heCount(s.nights, 'night')}
                               </span>
                             ) : null}
@@ -292,7 +309,7 @@ function Agenda({ month, today, units, stays, gaps, holidays, onDay, onNewBookin
                       <span aria-hidden className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-dashed border-brand-600/60 text-brand-600"><Moon className="h-4 w-4" strokeWidth={1.75} /></span>
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-medium text-navy-900">{heCount(it.g.nights, 'night')} פנויים · {name(it.g.propertyId)}</div>
-                        <div className="text-[13px] text-navy-900/60">עד {shortDay(it.g.end)}, בין שתי הזמנות</div>
+                        <div className="text-[13px] text-navy-900/70">עד {shortDay(it.g.end)}, בין שתי הזמנות</div>
                       </div>
                       {u ? <button type="button" onClick={() => onNewBooking(u, it.g.start)} className="press inline-flex h-11 shrink-0 items-center gap-1 rounded-full px-3 text-[14px] font-semibold text-brand-600 hover:bg-brand-600/[0.06]"><Plus className="h-4 w-4" aria-hidden />הזמנה</button> : null}
                     </li>
@@ -312,7 +329,7 @@ function Agenda({ month, today, units, stays, gaps, holidays, onDay, onNewBookin
                           <span className="truncate text-[15px] font-medium text-navy-900">{s.isBlock ? `חסום עד ${shortDay(s.end)}` : stayLabel(s)}</span>
                           {!s.isBlock ? <SourceBadge channel={s.channel} /> : null}
                         </div>
-                        <div className="truncate text-[13px] text-navy-900/60">
+                        <div className="truncate text-[13px] text-navy-900/70">
                           {verb === 'חסום' ? name(s.propertyId) : `${verb} · ${name(s.propertyId)} · ${heCount(s.nights, 'night')}`}{s.pending ? ' · ממתינה לאישור' : ''}
                         </div>
                       </div>
@@ -330,7 +347,11 @@ function Agenda({ month, today, units, stays, gaps, holidays, onDay, onNewBookin
 
 export default function CalendarBody({ month, today, units, stays, occ, gaps, gapSet, holidays, onDay, onNewBooking }) {
   const mobile = useIsMobile();
-  const compact = <CompactMonth month={month} today={today} units={units} occ={occ} gapSet={gapSet} holidays={holidays} onDay={onDay} />;
+  const mk = monthKey(month);
+  const [focusDay, setFocusDay] = useState(today.slice(0, 7) === mk ? today : `${mk}-01`);
+  const compact = mobile
+    ? <CompactMonth month={month} today={today} units={units} occ={occ} gapSet={gapSet} holidays={holidays} onDay={onDay} />
+    : <CompactMonth month={month} today={today} units={units} occ={occ} gapSet={gapSet} holidays={holidays} onDay={setFocusDay} selected={focusDay} />;
   if (mobile) {
     return (
       <div className="space-y-4">
@@ -349,13 +370,13 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
         <div className="v7-card flex flex-col justify-between gap-4 p-5">
           <div>
             <h3 className="text-[17px] font-bold text-navy-900">החודש במבט אחד</h3>
-            <p className="text-[14px] text-navy-900/60">{heCount(units.length, 'unit')} · נקודה לכל יחידה בכל לילה</p>
+            <p className="text-[14px] text-navy-900/70">{heCount(units.length, 'unit')} · נוגעים ביום כדי לקפוץ אליו בציר</p>
           </div>
           <MonthFacts month={month} units={units} stays={stays} occ={occ} gaps={gaps} />
           <Legend />
         </div>
       </div>
-      <Timeline month={month} today={today} units={units} stays={stays} gapSet={gapSet} holidays={holidays} onDay={onDay} />
+      <Timeline month={month} today={today} units={units} stays={stays} gapSet={gapSet} holidays={holidays} onDay={onDay} focusDay={focusDay} />
     </div>
   );
 }
