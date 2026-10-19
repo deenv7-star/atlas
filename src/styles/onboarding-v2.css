@@ -88,3 +88,15 @@
   .ob2-bar.is-col { position: absolute; }
   .ob2-bar.is-flow { position: static; background: none; padding-top: 0; }
 }
+
+/* top bar. html/body have overflow-x:hidden (index.css), which breaks position:sticky, so it is fixed + a spacer */
+.ob2-head {
+  position: fixed; top: 0; inset-inline: 0; z-index: 25;
+  padding-top: max(12px, env(safe-area-inset-top));
+  background: rgba(247, 248, 251, 0.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.ob2-head-space { height: calc(72px + max(0px, env(safe-area-inset-top) - 12px)); flex-shrink: 0; }
+@media (min-width: 1024px) {
+  .ob2-head.is-col { inset-inline-end: auto; width: 600px; }
+  .ob2-aside { position: fixed; top: 0; bottom: 0; left: 0; width: calc(100% - 600px); }
+}

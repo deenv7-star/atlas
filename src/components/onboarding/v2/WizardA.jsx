@@ -192,14 +192,15 @@ export default function WizardA({ user, again = false }) {
       <div className="ob2 flex lg:flex-row" dir="rtl"
         onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName === 'INPUT' && canNext) { e.preventDefault(); go(i + 1); } }}>
         <div className="relative flex min-h-[100dvh] w-full flex-col lg:w-[600px] lg:shrink-0">
-          <header className="ob2-top sticky top-0 z-20 flex items-center gap-3 bg-[var(--ob2-canvas)]/90 px-4 pb-3 backdrop-blur md:px-8">
+          <header className="ob2-head is-col flex items-center gap-3 px-4 pb-3 md:px-8">
             {i > 0 ? <Ghost onClick={() => go(i - 1)} aria-label="חזרה" className="!h-12 !w-12 !px-0"><ArrowRight className="h-6 w-6" aria-hidden /></Ghost>
               : <span className="flex h-12 items-center ps-1"><Wordmark size={20} /></span>}
             <Progress value={i + 1} total={QUESTIONS.length} label={`שאלה ${i + 1} מתוך ${QUESTIONS.length}`} />
             <HelpLink compact />
           </header>
+          <div className="ob2-head-space" aria-hidden />
 
-          <main className="flex-1 overflow-x-clip px-5 pb-[calc(170px+env(safe-area-inset-bottom))] pt-5 md:px-8 lg:pt-12">
+          <main className="flex-1 overflow-x-clip px-5 pb-[calc(170px+env(safe-area-inset-bottom))] pt-2 md:px-8 lg:pt-10">
             <AnimatePresence mode="wait" custom={dir} initial={false}>
               <motion.section key={q} data-screen={q} custom={dir} variants={variants} initial="enter" animate="center" exit="exit">
                 <p className="text-[15px] font-bold text-brand-600">{`שאלה ${i + 1} מתוך ${QUESTIONS.length}`}</p>
@@ -222,7 +223,7 @@ export default function WizardA({ user, again = false }) {
           </footer>
         </div>
 
-        <aside className="sticky top-0 hidden h-[100dvh] min-w-0 flex-1 p-5 lg:block" aria-label="הפרופיל של העסק">
+        <aside className="ob2-aside hidden p-5 lg:block" aria-label="הפרופיל של העסק">
           <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-[32px] bg-[#E4E1FD]/60 p-10">
             <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(62,43,241,0.14),rgba(62,43,241,0))]" aria-hidden />
             <ProfileCard a={a} at={i} onJump={(to) => go(to)} />
