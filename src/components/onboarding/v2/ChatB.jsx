@@ -302,6 +302,7 @@ export default function ChatB({ user, again = false }) {
         <div className="ob2-head-space" aria-hidden />
 
         <main className="mx-auto w-full max-w-[680px] flex-1 px-4 pt-2 md:px-6" style={{ paddingBottom: dockH + 24 }} aria-live="polite">
+          <h1 className="sr-only">{again ? 'עדכון פרטי המקום' : 'הקמת המערכת'}</h1>
           <ol className="flex flex-col gap-5" aria-label="השיחה">
             {QUESTIONS.slice(0, i).map((qq, j) => (
               <li key={qq} className="flex flex-col gap-2">
