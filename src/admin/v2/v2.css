@@ -147,6 +147,7 @@
 .x-done { background: var(--a-brand-50); color: var(--a-ink); }
 .x-err svg, .x-warn svg, .x-done svg { flex-shrink: 0; margin-top: 3px; }
 .x-done svg { color: var(--a-brand); }
+.x-hit { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; margin: -11px; cursor: pointer; }
 .x-target { color: var(--a-ink); font-weight: 700; user-select: all; }
 .x-running { display: flex; align-items: center; gap: 10px; padding: 18px 4px; color: var(--a-ink-2); }
 .x-mail-opts { display: grid; gap: 8px; margin-bottom: 12px; }
@@ -168,7 +169,8 @@
   .x-hint-tip { width: 200px; }
   .x-filter-row { flex-wrap: nowrap; overflow-x: auto; margin-inline: -16px; padding: 2px 16px 6px; scrollbar-width: none; }
   .x-filter-row::-webkit-scrollbar { display: none; }
-  .x-select select { min-height: 44px; font-size: 14px; }
+  .x-select select { min-height: 44px; font-size: 16px; }
+  .adm-input, .adm-select, .adm-textarea, select, textarea { font-size: 16px; }
   .x-clear, .x-pill-btn { min-height: 44px; }
   .x-icon-btn { width: 44px; height: 44px; }
   .x-bulk { flex-wrap: wrap; top: 8px; }

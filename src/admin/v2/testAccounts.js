@@ -2,7 +2,7 @@
  * Test-account detection. Same rule as public.admin_is_test_pattern() in migration 023: keep them in sync.
  * A manual flag (023, platform_org_flags) always wins over the pattern.
  */
-const EMAIL_RE = /(^qa[+._-]|^test[+._-]|\+test|\+qa|\+scout|^roast\+|@gonogo\.team$|@example\.(com|org|net)$|@mailinator\.|@demo-atlas\.co\.il$|\.invalid$|\.test$)/i;
+const EMAIL_RE = /(^qa[+._-]|^test[+._-]|\+test|\+qa|\+scout|^roast\+|@gonogo\.team$|@example\.(com|org|net)$|@mailinator\.|\.invalid$|\.test$)/i;
 const NAME_RE = /(^qa |^qa$| qa org$|^test |בדיקה)/i;
 
 export function testPattern(email, name) {

@@ -15,7 +15,7 @@ import { downloadCsv } from '../csv';
 import { adminApi } from '../api';
 import { computeKpis, KPI_HELP, monthlyValue } from './kpis';
 import { testInfo } from './testAccounts';
-import { SIGNUP, ACTIVE, UNITS, TESTS, activeFilterCount } from './listModel';
+import { SIGNUP, ACTIVE, SIGNUP_ORDER, ACTIVE_ORDER, UNITS, TESTS, activeFilterCount } from './listModel';
 import { useV2Actions, logEvent, downloadJson, slug } from './hooks2';
 
 export const initials = (s) => String(s || '').replace(/[^\p{L}\s]/gu, '').split(/\s+/).filter(Boolean).map((x) => x[0]).join('').slice(0, 2).toUpperCase();
@@ -87,8 +87,8 @@ export function FilterBar({ f, set, reset, plans, counts }) {
       <div className="x-filter-row" role="group" aria-label="מסננים">
         <Select label="סטטוס" value={f.status} onChange={(v) => set({ status: v })} options={[['all', `כל הסטטוסים${counts ? ` (${counts.all})` : ''}`], ...STATUS_ORDER.map((s) => [s, `${STATUS[s].label}${counts ? ` (${counts[s] || 0})` : ''}`])]} />
         <Select label="חבילה" value={f.plan} onChange={(v) => set({ plan: v })} options={[['all', 'כל החבילות'], ...plans.map((p) => [p.key, p.name])]} />
-        <Select label="הצטרפו" value={f.signup} onChange={(v) => set({ signup: v })} options={Object.entries(SIGNUP).map(([k, v]) => [k, k === 'any' ? 'הצטרפו: כל זמן' : `הצטרפו: ${v}`])} />
-        <Select label="פעילות אחרונה" value={f.active} onChange={(v) => set({ active: v })} options={Object.entries(ACTIVE)} />
+        <Select label="הצטרפו" value={f.signup} onChange={(v) => set({ signup: v })} options={SIGNUP_ORDER.map((k) => [k, SIGNUP[k]]).map(([k, v]) => [k, k === 'any' ? 'הצטרפו: כל זמן' : `הצטרפו: ${v}`])} />
+        <Select label="פעילות אחרונה" value={f.active} onChange={(v) => set({ active: v })} options={ACTIVE_ORDER.map((k) => [k, ACTIVE[k]])} />
         <Select label="יחידות" value={f.units} onChange={(v) => set({ units: v })} options={Object.entries(UNITS)} />
         <Select label="חשבונות בדיקה" value={f.tests} onChange={(v) => set({ tests: v })} options={Object.entries(TESTS)} />
         {n ? <button type="button" className="x-clear" onClick={reset}><X size={14} strokeWidth={2} aria-hidden />ניקוי {n}</button> : null}
