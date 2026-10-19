@@ -13,11 +13,22 @@
 /* ── page layout (version A) ──────────────────────────────────────────── */
 .as-root--page { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 20px; min-height: calc(100dvh - 210px); }
 .as-root--page .as-scroll { flex: 1; }
-.as-root--page .as-dock { position: sticky; z-index: 5; bottom: calc(86px + env(safe-area-inset-bottom)); padding-top: 12px;
-  background: linear-gradient(to top, var(--canvas, #F7F8FB) 70%, transparent); }
+/* phones: the composer is pinned above the tab bar (and above the keyboard when it is open) */
+.as-root--page .as-thread { padding-bottom: 168px; }
+.as-root--page .as-dock { position: fixed; z-index: 25; left: 12px; right: 12px; bottom: calc(84px + env(safe-area-inset-bottom)); max-width: 696px; margin: 0 auto;
+  padding: 10px 0 0; }
+.as-root--page .as-dock::before { content: ''; position: absolute; inset: -18px -12px -96px; z-index: -1; pointer-events: none;
+  background: linear-gradient(to top, var(--canvas, #F7F8FB) 72%, color-mix(in srgb, var(--canvas, #F7F8FB) 0%, transparent)); }
 .as-root--page[data-kb] .as-dock { bottom: calc(var(--as-kb) + 8px); }
-@media (min-width: 1024px) { .as-root--page { min-height: calc(100dvh - 140px); } .as-root--page .as-dock { bottom: 0; padding-bottom: 20px; } }
-
+html[data-assistant-page] .sp-launcher { display: none; } /* phones: the composer owns the bottom corner on this screen */
+@media (max-width: 639px) { .as-head.has-thread p { display: none; } }
+@media (min-width: 1024px) {
+  html[data-assistant-page] .sp-launcher { display: inline-flex; }
+  .as-root--page { min-height: calc(100dvh - 140px); }
+  .as-root--page .as-thread { padding-bottom: 8px; }
+  .as-root--page .as-dock { position: sticky; left: auto; right: auto; bottom: 0; max-width: none; padding: 12px 0 20px; }
+  .as-root--page .as-dock::before { inset: -24px 0 0; background: linear-gradient(to top, var(--canvas, #F7F8FB) 78%, color-mix(in srgb, var(--canvas, #F7F8FB) 0%, transparent)); }
+}
 .as-head { display: flex; align-items: center; gap: 12px; padding: 8px 0 20px; }
 .as-head-mark { display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 14px; background: #fff;
   box-shadow: 0 1px 2px rgba(27, 38, 86, 0.06); }
