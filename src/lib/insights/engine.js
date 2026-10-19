@@ -49,12 +49,12 @@ const REVIEW_SUBJECTS = [SUBJECT.thanks_review, 'בקשת ביקורת'];
 const PROVIDER = { BOOKING_COM: 'Booking', BOOKING: 'Booking', AIRBNB: 'Airbnb' };
 
 /** "היום" / "מחר" / "אתמול" / "יום ה׳, 22 באוק׳" relative to today. */
-export function relDay(today, day) {
+export function relDay(today, day, { on = false } = {}) {
   const n = nightsBetween(today, day);
   if (day === today) return 'היום';
   if (day > today && n === 1) return 'מחר';
   if (day < today && nightsBetween(day, today) === 1) return 'אתמול';
-  return formatDayHe(day);
+  return on ? `ב${formatDayHe(day)},` : formatDayHe(day);
 }
 
 /** "כבר 3 שעות" / "כבר יומיים" from a millisecond age. */
@@ -115,7 +115,7 @@ function ruleBalances({ today, bookings, paymentsByBooking, sentByBooking }) {
       const soon = nightsBetween(today, b.check_in_date) <= 1;
       arrivals.push(make('unpaid_arrival', b.id, soon ? 'urgent' : 'worth', {
         title: `יתרה פתוחה: ${guestOf(b)}`,
-        why: `ההגעה ${relDay(today, b.check_in_date)} ועוד חסרים ${formatMoney(bal.balance)}.${sentLine}`,
+        why: `ההגעה ${relDay(today, b.check_in_date, { on: true })} ועוד חסרים ${formatMoney(bal.balance)}.${sentLine}`,
         action: remind,
         at: b.check_in_date,
         amount: bal.balance,
@@ -232,7 +232,7 @@ function ruleGaps(ctx) {
   const where = `${first.unit}, ${first.nights === 1 ? formatDayHe(first.from, { weekday: false }) : formatRangeHe(first.from, addDays(first.from, first.nights - 1))}`;
   return [make('gap_nights', gaps.map((g) => `${g.propertyId}@${g.from}`).join(','), sev, {
     title: nights === 1 ? 'לילה בודד בין שתי הזמנות' : `${nights} לילות בודדים בין הזמנות`,
-    why: gaps.length === 1 ? `${where}. קשה למכור אותו במחיר מלא.` : `הקרוב: ${where}. קשה למכור אותם במחיר מלא.`,
+    why: `${gaps.length === 1 ? '' : 'הקרוב: '}${where}. לילות כאלה קשה למכור במחיר מלא.`,
     action: { label: 'לתמחר לילות בודדים', to: '/dynamic-pricing' },
     at: first.from,
     count: nights,
@@ -266,7 +266,9 @@ function ruleHoliday({ today, bookings, properties, periods }) {
   const when = p.from <= today ? 'עכשיו' : days === 1 ? 'מחר' : `בעוד ${heCount(days, 'day')}`;
   return [make('holiday_free', `${p.name}@${p.from}`, days <= RULES.holidayWorthDays ? 'worth' : 'idea', {
     title: `${p.name} ${when}`,
-    why: `${heCount(free, 'night')} פנויים מתוך ${total} (${formatRangeHe(p.from, p.to)}).`,
+    why: free === total
+      ? `כל ${total} הלילות עדיין פנויים (${formatRangeHe(p.from, p.to)}, ${heCount(units, 'unit')}).`
+      : `${heCount(free, 'night')} פנויים מתוך ${total} (${formatRangeHe(p.from, p.to)}).`,
     action: { label: 'לתמחר את החג', to: '/dynamic-pricing' },
     at: p.from,
     count: free,
@@ -292,7 +294,7 @@ function ruleReviews({ today, bookings, sentByBooking, reviewRequests }) {
   if (due.length === 1) {
     return [make('review_request', b.id, 'worth', {
       title: `לבקש ביקורת מ${guestOf(b)}`,
-      why: `יצאו ${relDay(today, checkOutOf(b))} ועוד לא קיבלו בקשה לביקורת.`,
+      why: `יצאו ${relDay(today, checkOutOf(b), { on: true })} ועוד לא קיבלו בקשה לביקורת.`,
       action: hasPhone(b)
         ? { label: 'לשלוח בקשה', kind: 'whatsapp', template: 'thanks_review', bookingId: b.id }
         : { label: 'לביקורות', to: '/reviews' },
@@ -321,11 +323,12 @@ function ruleExpenses({ today, bookings, expenses }) {
   }
   const since = addDays(today, -RULES.expensesQuietDays);
   const lastExpense = expenses.map((e) => isoDay(e.expense_date || e.date || e.created_at)).filter(Boolean).sort().pop() || '';
+  const staysSince = real.filter((b) => b.check_in_date > lastExpense && b.check_in_date <= today).length;
   const recentStays = real.filter((b) => b.check_in_date >= since && b.check_in_date <= today).length;
   if (lastExpense && lastExpense < since && recentStays > 0) {
     return [make('no_expenses', `quiet@${lastExpense}`, 'idea', {
       title: 'לא נרשמו הוצאות לאחרונה',
-      why: `ההוצאה האחרונה מ-${formatDayHe(lastExpense, { weekday: false })}, ומאז ${heCount(recentStays, 'booking')}.`,
+      why: `ההוצאה האחרונה נרשמה ב-${formatDayHe(lastExpense, { weekday: false })}, ומאז היו ${heCount(staysSince, 'booking')}.`,
       action: { label: 'לרשום הוצאה', to: '/expense-tracker' },
     })];
   }

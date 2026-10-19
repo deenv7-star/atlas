@@ -25,6 +25,7 @@ test('helpers: relative day and waiting time read naturally', () => {
   assert.equal(relDay(TODAY, '2026-10-21'), 'מחר');
   assert.equal(relDay(TODAY, '2026-10-19'), 'אתמול');
   assert.equal(relDay(TODAY, '2026-10-22'), 'יום ה׳, 22 באוק׳');
+  assert.equal(relDay(TODAY, '2026-10-22', { on: true }), 'ביום ה׳, 22 באוק׳,');
   assert.equal(waitedFor(3 * 3600e3), 'כבר 3 שעות');
   assert.equal(waitedFor(2 * 3600e3), 'כבר שעתיים');
   assert.equal(waitedFor(50 * 3600e3), 'כבר יומיים');
@@ -67,6 +68,7 @@ test('unpaid arrival: in 3 days is "כדאי"; in 4 days or fully paid is nothin
   const bp = bk({ check_in_date: '2026-10-21', check_out_date: '2026-10-22' });
   const items = only(run({ bookings: [b3, b4, bp], payments: [paid(bp)] }), 'unpaid_arrival');
   assert.deepEqual(items.map((x) => [x.id, x.severity]), [[`unpaid_arrival:${b3.id}`, 'worth']]);
+  assert.match(items[0].why, /^ההגעה ביום ו׳, 23 באוק׳, ועוד חסרים/);
 });
 
 test('unpaid arrival: reminder already sent or no phone → the action opens the booking instead', () => {
@@ -200,6 +202,8 @@ test('holiday: next Hebcal period within 60 days with the real count of free nig
   assert.equal(x.severity, 'idea');
   assert.equal(x.count, 2 * 9 - 2); // 2 units × nights 4–12 Dec, minus 2 booked
   assert.match(x.why, /^16 לילות פנויים מתוך 18/);
+  const [all] = only(buildInsights({ today: TODAY, now: NOW, properties: P, bookings: [bk({ check_in_date: '2026-11-01', check_out_date: '2026-11-02' })], periods: IL_PEAK_PERIODS, reviewRequests: [] }), 'holiday_free');
+  assert.equal(all.why, 'כל 18 הלילות עדיין פנויים (4-12 בדצמ׳, 2 יחידות).');
 });
 
 test('holiday: nothing when it is fully booked or further than 60 days', () => {
@@ -260,7 +264,7 @@ test('no expenses: quiet for 45+ days while stays continue', () => {
   const pays = bs.map((b) => paid(b));
   const [x] = only(run({ bookings: bs, payments: pays, expenses: [{ expense_date: '2026-08-15', amount: 200 }] }), 'no_expenses');
   assert.match(x.why, /15 באוג׳/);
-  assert.match(x.why, /3 הזמנות/);
+  assert.match(x.why, /ומאז היו 3 הזמנות/);
   assert.equal(only(run({ bookings: bs, payments: pays, expenses: [{ expense_date: '2026-10-10' }] }), 'no_expenses').length, 0);
 });
 
