@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 import { X } from 'lucide-react';
 import { usePersistentToastStore } from './persistentToastStore';
+import { atlasToastApi } from './atlasToastApi';
 
 function PersistentAlertsHost(): React.ReactElement {
   const items = usePersistentToastStore((s) => s.items);
@@ -35,8 +36,8 @@ function PersistentAlertsHost(): React.ReactElement {
             ) : null}
             <button
               type="button"
-              className="rounded-lg p-1 text-amber-800 hover:bg-amber-200/80"
-              aria-label="סגור"
+              className="-m-2.5 inline-flex h-11 w-11 items-center justify-center rounded-lg text-amber-800 hover:bg-amber-200/80"
+              aria-label="סגירה"
               onClick={() => dismiss(item.id)}
             >
               <X className="h-4 w-4" />
@@ -50,6 +51,12 @@ function PersistentAlertsHost(): React.ReactElement {
 
 export function AtlasToaster(): React.ReactElement {
   const [isMobile, setIsMobile] = useState(false);
+
+  // Local demo build only (VITE_ALLOW_LOCAL_DEMO=true): lets QA scripts raise a real toast. Stripped from production builds.
+  useEffect(() => {
+    if (import.meta.env.VITE_ALLOW_LOCAL_DEMO !== 'true') return;
+    (window as unknown as { __atlasToastQA?: typeof atlasToastApi }).__atlasToastQA = atlasToastApi;
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 640px)');
@@ -71,6 +78,7 @@ export function AtlasToaster(): React.ReactElement {
         closeButton
         toastOptions={{
           className: '!pointer-events-auto',
+          closeButtonAriaLabel: 'סגירה',
         }}
       />
       <PersistentAlertsHost />
