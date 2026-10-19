@@ -207,3 +207,27 @@ export function unitView(p, profiles = {}) {
     priceFrom: mode === 'varies' ? pr.price_from || '' : '',
   };
 }
+
+/**
+ * Version B: calendar links pasted during onboarding (a.links = [{ provider, url, ok }], in unit order).
+ * Link i goes to unit i. Runs after commitUnits, so the units exist. Same writes as the setup journey.
+ */
+export async function commitLinks(user, a) {
+  const links = (Array.isArray(a.links) ? a.links : []).filter((l) => l && l.ok && String(l.url || '').trim());
+  if (!links.length) return { saved: 0 };
+  const ts = (p) => Date.parse(p.created_date || p.created_at || '') || 0;
+  const props = (await listProperties()).slice().sort((x, y) => ts(x) - ts(y)); // unit 1 first
+  const existing = await listSyncs();
+  let saved = 0;
+  for (let i = 0; i < links.length && i < props.length; i += 1) {
+    const r = await saveCalendarLink(links[i].provider, props[i].id, links[i].url, existing);
+    if (r) saved += 1;
+  }
+  const orgId = user?.organization_id;
+  const cur = readOrgSettings(orgId).setup || {};
+  const done = { ...(cur.done || {}) };
+  if (links.some((l) => l.provider === 'BOOKING_COM')) done.booking = true;
+  if (links.some((l) => l.provider === 'AIRBNB')) done.airbnb = true;
+  await writeOrgSettings(orgId, { setup: { started_at: cur.started_at || new Date().toISOString(), done, skipped: { ...(cur.skipped || {}) } } });
+  return { saved };
+}

@@ -11,19 +11,20 @@
 
 /** The three kinds most owners pick, then the rest behind "משהו אחר". `value` goes to properties.type. */
 export const KINDS = [
-  { value: 'zimmer', g: 'm', label: 'צימר', unit: 'צימר', units: 'צימרים', photo: '/demo/units/unit-6.webp', line: 'זוגות ומשפחות קטנות', guests: [2, 6], count: 1 },
-  { value: 'villa', g: 'f', label: 'וילה', unit: 'וילה', units: 'וילות', photo: '/demo/units/unit-3.webp', line: 'בית שלם לקבוצות ומשפחות', guests: [10, 20], count: 1 },
-  { value: 'complex', g: 'f', label: 'מתחם אירוח', unit: 'יחידה', units: 'יחידות', photo: '/demo/complex-pool.webp', line: 'כמה יחידות, קבוצות ואירועים', guests: [10, 30], count: 3 },
+  { value: 'zimmer', g: 'm', label: 'צימר', unit: 'צימר', units: 'צימרים', photo: '/demo/units/unit-6.webp', line: 'לזוגות ומשפחות קטנות', guests: [2, 6], count: 1 },
+  { value: 'villa', g: 'f', label: 'וילה', unit: 'וילה', units: 'וילות', photo: '/demo/units/unit-3.webp', line: 'בית שלם לקבוצות', guests: [10, 20], count: 1 },
+  { value: 'complex', g: 'f', label: 'מתחם אירוח', unit: 'יחידה', units: 'יחידות', photo: '/demo/complex-pool.webp', line: 'כמה יחידות במקום אחד', guests: [10, 30], count: 3 },
 ];
 export const MORE_KINDS = [
   { value: 'zimmer_complex', g: 'm', label: 'מתחם צימרים', unit: 'צימר', units: 'צימרים', guests: [2, 6], count: 3 },
   { value: 'guesthouse', g: 'm', label: 'בית הארחה', unit: 'חדר', units: 'חדרים', guests: [2, 4], count: 4 },
   { value: 'boutique', g: 'm', label: 'מלון בוטיק', unit: 'חדר', units: 'חדרים', guests: [2, 4], count: 6 },
-  { value: 'hotel', g: 'm', label: 'מלון', unit: 'חדר', units: 'חדרים', guests: [2, 4], count: 10 },
   { value: 'apartments', g: 'f', label: 'דירות נופש', unit: 'דירה', units: 'דירות', guests: [2, 6], count: 2 },
-  { value: 'other', g: 'f', label: 'משהו אחר', unit: 'יחידה', units: 'יחידות', guests: [2, 6], count: 1 },
+  { value: 'other', g: 'f', label: 'סוג אחר', unit: 'יחידה', units: 'יחידות', guests: [2, 6], count: 1 },
 ];
-export const ALL_KINDS = [...KINDS, ...MORE_KINDS];
+/** Kinds no longer offered (atlas is built for zimmers, not hotels) but still readable in saved answers. */
+const LEGACY_KINDS = [{ value: 'hotel', g: 'm', label: 'מלון', unit: 'חדר', units: 'חדרים', guests: [2, 4], count: 10 }];
+export const ALL_KINDS = [...KINDS, ...MORE_KINDS, ...LEGACY_KINDS];
 
 export function kindInfo(value) {
   return ALL_KINDS.find((k) => k.value === value) || KINDS[0];
@@ -47,7 +48,7 @@ export const UNITS_LIMIT = 30;
 export const PRICE_MODES = [
   { value: 'varies', label: 'משתנה לפי ההרכב והעונה', line: 'כל הזמנה מקבלת מחיר משלה' },
   { value: 'fixed', label: 'מחיר קבוע ללילה', line: 'אותו מחיר כמעט תמיד' },
-  { value: 'later', label: 'אגדיר אחר כך', line: 'אפשר להשאיר ריק' },
+  { value: 'later', label: 'אגדיר אחר כך', line: 'משאירים ריק בינתיים' },
 ];
 
 export const CHECKIN_TIMES = ['14:00', '15:00', '16:00'];
@@ -59,7 +60,7 @@ export const CHANNELS = [
   { value: 'booking', label: 'Booking.com' },
   { value: 'airbnb', label: 'Airbnb' },
   { value: 'portals', label: 'אתרי צימרים' },
-  { value: 'website', label: 'אתר משלי' },
+  { value: 'website', label: 'האתר שלכם' },
   { value: 'social', label: 'פייסבוק ואינסטגרם' },
 ];
 
@@ -170,11 +171,11 @@ export function unitProfile(a) {
  * `soon` steps are shown honestly as "בקרוב" and never count toward progress.
  */
 export const SETUP_STEPS = [
-  { id: 'units', title: 'היחידות שלך', line: 'שם, כמה אורחים ומחיר לכל יחידה', minutes: 1 },
+  { id: 'units', title: 'היחידות שלכם', line: 'שם, כמה אורחים ומחיר לכל יחידה', minutes: 1 },
   { id: 'booking', title: 'חיבור Booking.com', line: 'ההזמנות מ-Booking נכנסות ללוח לבד', minutes: 3 },
   { id: 'airbnb', title: 'חיבור Airbnb', line: 'ההזמנות מ-Airbnb נכנסות ללוח לבד', minutes: 3 },
   { id: 'whatsapp', title: 'וואטסאפ לאורחים', line: 'הודעות מוכנות, שולחים בלחיצה', minutes: 1 },
-  { id: 'plan', title: 'השלמת המסלול', line: 'המסלול שבחרת, מתי שנוח', minutes: 1 },
+  { id: 'plan', title: 'השלמת המסלול', line: 'המסלול שבחרתם, מתי שנוח', minutes: 1 },
   { id: 'payments', title: 'תשלומים וקבלות', line: 'סליקה וקבלות אוטומטיות', soon: true },
 ];
 

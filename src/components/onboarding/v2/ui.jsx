@@ -42,14 +42,14 @@ export function useKeyboardInset() {
   }, []);
 }
 
-export const HELP_WA = `https://wa.me/${LEGAL.WHATSAPP_NUMBER_INTL}?text=${encodeURIComponent('היי, אני מגדיר/ה את atlas וצריך/ה עזרה')}`;
+export const HELP_WA = `https://wa.me/${LEGAL.WHATSAPP_NUMBER_INTL}?text=${encodeURIComponent('היי, אני באמצע ההגדרה של atlas ואשמח לעזרה')}`;
 
 export function HelpLink({ className, compact = false }) {
   return (
-    <a href={HELP_WA} target="_blank" rel="noopener noreferrer" aria-label={compact ? `צריך עזרה? וואטסאפ ${LEGAL.WHATSAPP_DISPLAY}` : undefined}
+    <a href={HELP_WA} target="_blank" rel="noopener noreferrer" aria-label={compact ? `צריכים עזרה? וואטסאפ ${LEGAL.WHATSAPP_DISPLAY}` : undefined}
       className={cn('ob2-help ob-press', compact && 'is-compact', className)}>
       <MessageCircle className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
-      {compact ? <span aria-hidden>עזרה</span> : <span><span className="max-[359px]:hidden">צריך עזרה? </span>וואטסאפ <span dir="ltr" className="whitespace-nowrap tabular-nums">{LEGAL.WHATSAPP_DISPLAY}</span></span>}
+      {compact ? <span aria-hidden>עזרה</span> : <span><span className="max-[359px]:hidden">צריכים עזרה? </span>וואטסאפ <span dir="ltr" className="whitespace-nowrap tabular-nums">{LEGAL.WHATSAPP_DISPLAY}</span></span>}
     </a>
   );
 }
