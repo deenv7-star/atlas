@@ -116,7 +116,7 @@ export const COPY = {
       sub: 'סמנו הכל. את Booking או Airbnb אפשר לחבר כבר עכשיו.',
       linkLabel: (name) => `קישור היומן מ-${name}`,
       optional: 'לא חובה',
-      linkLine: 'מדביקים, ו-atlas מושכת משם את ההזמנות לבד.',
+      linkLine: 'מדביקים כאן, וההזמנות נכנסות ליומן לבד.',
       firstUnit: (unit) => `זה הקישור של ${unit} 1. את השאר מחברים בהגדרה.`,
       where: 'איפה מוצאים את הקישור?',
       openSite: (label) => label,

@@ -27,19 +27,11 @@ import { GUIDES, GuidePic } from '@/components/onboarding/v2/setup/guides';
 import { COPY } from './copy';
 import { useStepHistory, SavedTick, kindPhoto } from './shared';
 import { PreviewCard } from './WizardA3';
+import { linksFromAnswers } from './linksB';
 
 const EASE = [0.23, 1, 0.32, 1];
 export const STEPS_B = ['place', 'channels', 'review'];
 const LINKABLE = { booking: 'BOOKING_COM', airbnb: 'AIRBNB' };
-
-/** The calendar links the build step will save (only for ticked channels, only valid ones). */
-export function linksFromAnswers(a) {
-  const ch = Array.isArray(a.channels) ? a.channels : [];
-  const out = [];
-  if (ch.includes('booking') && checkIcalLink('BOOKING_COM', a.icalBooking).ok) out.push({ provider: 'BOOKING_COM', url: a.icalBooking.trim(), ok: true, unit: 0 });
-  if (ch.includes('airbnb') && checkIcalLink('AIRBNB', a.icalAirbnb).ok) out.push({ provider: 'AIRBNB', url: a.icalAirbnb.trim(), ok: true, unit: 0 });
-  return out;
-}
 
 export default function WizardB3({ user, again = false }) {
   useKeyboardInset();

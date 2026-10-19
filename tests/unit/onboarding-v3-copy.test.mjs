@@ -90,3 +90,13 @@ test('review rows: times are short, "(משתנה)" only when they vary', () => {
   assert.equal(COPY.review.timesValue({ checkIn: '15:00', checkOut: '11:00', timesVary: false }), 'כניסה 15:00 · יציאה 11:00');
   assert.equal(COPY.review.timesValue(SAMPLE_A), 'כניסה 15:00 · יציאה 11:00 (משתנה)');
 });
+
+test('B: only valid links of ticked channels are saved, both to the first unit', async () => {
+  const { linksFromAnswers } = await import('../../src/components/onboarding/v3/linksB.js');
+  const ok = { icalBooking: ' https://ical.booking.com/v1/export?t=abc ', icalAirbnb: 'https://www.airbnb.com/calendar/ical/1.ics?s=x' };
+  assert.deepEqual(linksFromAnswers({ ...ok, channels: ['booking', 'airbnb'] }).map((l) => [l.provider, l.unit, l.url]), [
+    ['BOOKING_COM', 0, 'https://ical.booking.com/v1/export?t=abc'], ['AIRBNB', 0, 'https://www.airbnb.com/calendar/ical/1.ics?s=x']]);
+  assert.equal(linksFromAnswers({ ...ok, channels: ['airbnb'] }).length, 1, 'unticked Booking is not saved');
+  assert.equal(linksFromAnswers({ icalBooking: 'https://www.airbnb.com/rooms/1', channels: ['booking'] }).length, 0, 'wrong link is not saved');
+  assert.equal(linksFromAnswers({ channels: ['booking'] }).length, 0);
+});
