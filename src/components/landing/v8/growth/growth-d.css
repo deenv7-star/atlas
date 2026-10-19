@@ -121,3 +121,10 @@
   .gd-chap { min-height: 0; padding-top: 28px; }
   .gd-chap:last-child { min-height: 0; }
 }
+@media (max-width: 899px) and (min-height: 641px) { .gd-chap:last-child { min-height: 46svh; } }
+/* narrow phones (320-379): the price rows stack so the numbers never squeeze the terms into a column */
+@media (max-width: 379px) {
+  .gd-offer { padding: 22px 18px 18px; }
+  .gd-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .gd-cta { padding: 0 16px; font-size: 16px; white-space: nowrap; }
+}
