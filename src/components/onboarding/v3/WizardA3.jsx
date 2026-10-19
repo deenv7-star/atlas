@@ -318,8 +318,10 @@ function Review({ a, onJump, onPlan }) {
       <section aria-label={COPY.start.summary} className="ob2-card overflow-hidden">
         {rows.map((r) => (
           <div key={r.to} className="ob3-row">
-            <span className="w-[76px] shrink-0 text-[15px] font-semibold text-ink-400">{r.label}</span>
-            <span className="min-w-0 flex-1 text-[16px] font-bold leading-snug text-navy-900">{r.value}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[14px] font-semibold text-ink-400">{r.label}</span>
+              <span className="block text-[17px] font-bold leading-snug text-navy-900">{r.value}</span>
+            </span>
             <button type="button" onClick={() => onJump(r.to)} className="ob-press -me-2 min-h-[44px] min-w-[44px] shrink-0 rounded-full px-3 text-[15px] font-bold text-brand-700" aria-label={`${COPY.start.edit}: ${r.label}`}>{COPY.start.edit}</button>
           </div>
         ))}
