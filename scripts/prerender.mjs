@@ -269,8 +269,22 @@ function deferEntry(html) {
 }
 
 /** Put the prerendered tree inside #root (replacing the "טוען..." placeholder), marked for hydration. */
+/**
+ * The lean pages' stylesheets (the entry's and the page chunk's) are inlined in place, same order, so the first
+ * paint waits for the HTML alone instead of three more CSS requests (Lighthouse mobile: ~0.7 s render-blocking).
+ * Chunk CSS keeps an inert <link media="not all"> with the same href: Vite's loader sees it when the chunk is
+ * imported and adds nothing, so the cascade stays exactly as it was. The inert link downloads at idle priority.
+ */
+function inlineCss(html) {
+  return html.replace(/<link rel="stylesheet" crossorigin href="(\/assets\/[^"]+\.css)">/g, (tag, href) => {
+    const css = fs.readFileSync(path.join(DIST, href), 'utf8').replace(/<\/style/gi, '<\\/style');
+    const marker = /\/index-[^/]+\.css$/.test(href) ? '' : `<link rel="stylesheet" crossorigin href="${href}" media="not all">`;
+    return `<style data-href="${href}">${css}</style>${marker}`;
+  });
+}
+
 function leanBody(html, appHtml, assets) {
-  const head = deferEntry(html).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`);
+  const head = inlineCss(deferEntry(html).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`));
   const start = head.indexOf('<div id="root">');
   if (start < 0) throw new Error('template has no #root');
   const after = head.slice(start);
