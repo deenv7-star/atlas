@@ -1,0 +1,73 @@
+/* Trust mock-ups (shared by A and B). White mini-UI cards, navy text, indigo accents only.
+   Sizes follow the tile width (container units) so the same mock fits 1440 and 320.
+   Motion: transform/opacity only, plays once when the tile reveals, off for reduced motion. */
+.tm-box { container-type: inline-size; }
+.tm { --tm-fs: clamp(10.5px, 6.6cqi, 13.5px); position: relative; width: 100%; max-width: 260px; margin-inline: auto; padding: 0.95em; border-radius: 16px; background: #fff; color: var(--navy); font-size: var(--tm-fs); line-height: 1.3; box-shadow: var(--sh-2); }
+.tm b { font-weight: 800; }
+
+/* 14 days + auto-charge switch (off) */
+.tm-trial-n { display: flex; align-items: baseline; gap: 0.4em; }
+.tm-trial-n b { font-size: 3.5em; line-height: 0.9; letter-spacing: -0.05em; color: var(--indigo); }
+.tm-trial-n span { font-weight: 700; color: var(--navy); }
+.tm-row { white-space: nowrap; display: flex; align-items: center; justify-content: space-between; gap: 0.6em; margin-top: 0.85em; padding-top: 0.75em; border-top: 1px solid var(--line-2); font-weight: 600; color: var(--ink); }
+.tm-sw { position: relative; flex: none; width: 2.6em; height: 1.5em; border-radius: 999px; background: var(--line); }
+.tm-sw::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--indigo); opacity: 0; }
+.tm-sw i { position: absolute; top: 0.15em; inset-inline-start: 0.15em; width: 1.2em; height: 1.2em; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(27, 38, 86, 0.25); }
+
+/* WhatsApp-style chat: cancel in one message */
+.tm-chat-hd { display: flex; align-items: center; gap: 0.45em; padding-bottom: 0.7em; margin-bottom: 0.7em; border-bottom: 1px solid var(--line-2); }
+.tm-chat-hd small { margin-inline-start: auto; font-size: 0.85em; font-weight: 600; color: var(--ink-2); }
+.tm-av { display: grid; place-items: center; width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--indigo-100); color: var(--indigo); }
+.tm-av svg { width: 0.95em; height: 0.95em; }
+.tm-b { text-wrap: balance; width: fit-content; max-width: 92%; padding: 0.5em 0.75em; border-radius: 0.95em; font-weight: 600; }
+.tm-b.is-out { white-space: nowrap; display: flex; align-items: center; gap: 0.35em; margin-inline-start: auto; border-end-end-radius: 0.3em; background: var(--indigo); color: #fff; }
+.tm-b.is-out svg { flex: none; width: 1em; height: 1em; opacity: 0.85; }
+.tm-slot { position: relative; margin-top: 0.45em; }
+.tm-b.is-in-msg { border-end-start-radius: 0.3em; background: var(--canvas); color: var(--navy); box-shadow: inset 0 0 0 1px var(--line); }
+.tm-typing { position: absolute; top: 0; inset-inline-start: 0; display: flex; gap: 0.22em; padding: 0.75em 0.8em; border-radius: 0.95em; background: var(--canvas); opacity: 0; }
+.tm-typing i { width: 0.36em; height: 0.36em; border-radius: 50%; background: var(--ink-3); }
+
+/* export: three files, each gets a check */
+.tm-export ul { display: grid; gap: 0.4em; }
+.tm-export li { white-space: nowrap; display: flex; align-items: center; gap: 0.45em; padding: 0.5em 0.6em; border-radius: 0.7em; background: var(--canvas); font-weight: 700; }
+.tm-export li > svg:first-child { flex: none; width: 1.05em; height: 1.05em; color: var(--indigo); }
+.tm-export em { font-style: normal; font-size: 0.78em; font-weight: 800; letter-spacing: 0.03em; color: var(--ink-2); }
+.tm-ok { flex: none; width: 1.3em; height: 1.3em; padding: 0.22em; margin-inline-start: auto; border-radius: 50%; background: var(--indigo); color: #fff; }
+.tm-dl { position: absolute; top: -0.6em; inset-inline-end: -0.4em; display: grid; place-items: center; width: 2.2em; height: 2.2em; border-radius: 50%; background: var(--navy); color: #fff; box-shadow: var(--sh-2); }
+.tm-dl svg { width: 1.05em; height: 1.05em; }
+
+/* security: lock + three facts */
+.tm-secure { display: flex; flex-direction: column; align-items: flex-start; gap: 0.7em; }
+.tm-lock { display: grid; place-items: center; width: 2.6em; height: 2.6em; border-radius: 0.8em; background: var(--indigo); color: #fff; }
+.tm-lock svg { width: 1.45em; height: 1.45em; }
+.tm-chips { display: flex; flex-wrap: wrap; gap: 0.35em; }
+.tm-chips li { padding: 0.35em 0.65em; border-radius: 999px; background: var(--indigo-50); box-shadow: inset 0 0 0 1px var(--indigo-200); color: var(--indigo-700); font-weight: 700; white-space: nowrap; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .is-in .tm-sw i { animation: tm-sw-off 420ms var(--ease-io) 650ms both; }
+  .is-in .tm-sw::before { animation: tm-fade-out 420ms var(--ease-io) 650ms both; }
+  .is-in .tm-trial-n b { animation: tm-pop 520ms var(--ease-out) 120ms both; }
+
+  .is-in .tm-b.is-out { animation: tm-pop 380ms var(--ease-out) 200ms both; transform-origin: left bottom; }
+  .is-in .tm-typing { animation: tm-typing 900ms linear 560ms both; }
+  .is-in .tm-typing i { animation: tm-dot 600ms ease-in-out 560ms 2 both; }
+  .is-in .tm-typing i:nth-child(2) { animation-delay: 680ms; }
+  .is-in .tm-typing i:nth-child(3) { animation-delay: 800ms; }
+  .is-in .tm-b.is-in-msg { animation: tm-pop 380ms var(--ease-out) 1460ms both; transform-origin: right bottom; }
+
+  .is-in .tm-export li { animation: tm-pop 360ms var(--ease-out) calc(160ms + var(--i) * 110ms) both; }
+  .is-in .tm-ok { animation: tm-check 320ms var(--spring) calc(620ms + var(--i) * 170ms) both; }
+  .is-in .tm-dl svg { animation: tm-drop 560ms var(--ease-out) 260ms 2 both; }
+
+  .is-in .tm-shackle { animation: tm-close 420ms var(--spring) 380ms both; }
+  .is-in .tm-chips li { animation: tm-pop 360ms var(--ease-out) calc(560ms + var(--i) * 110ms) both; }
+}
+@keyframes tm-pop { from { opacity: 0; transform: translateY(6px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes tm-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes tm-sw-off { from { transform: translateX(-1.1em); } to { transform: none; } }
+@keyframes tm-typing { 0% { opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes tm-dot { 0%, 100% { transform: none; } 50% { transform: translateY(-0.18em); } }
+@keyframes tm-check { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: none; } }
+@keyframes tm-drop { 0% { transform: translateY(-0.35em); opacity: 0; } 60% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+@keyframes tm-close { from { transform: translateY(-2.5px); } to { transform: none; } }
+@media (max-width: 999px) { .tm { padding: 0.8em; border-radius: 14px; } }
