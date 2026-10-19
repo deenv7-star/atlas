@@ -18,7 +18,7 @@ export function useAssistantFacts(orgId) {
   const bookings = useRows('bookings', orgId, () => base44.entities.Booking.filter({ org_id: orgId }, '-check_in_date', 500));
   const payments = useRows('payments', orgId, () => base44.entities.Payment.filter({ org_id: orgId }, '-created_date', 500));
   const leads = useRows('leads', orgId, () => base44.entities.Lead.filter({ org_id: orgId }, '-created_date', 200));
-  const properties = useRows('properties', orgId, () => base44.entities.Property.filter({ org_id: orgId }, 'name', 100));
+  const properties = useRows('properties', orgId, () => base44.entities.Property.list());
   const loading = on && [bookings, payments, leads, properties].some((x) => x.isLoading);
   const facts = useMemo(() => (loading || !on ? null : buildFacts({
     bookings: bookings.data || [], payments: payments.data || [], leads: leads.data || [], properties: properties.data || [],
