@@ -158,7 +158,7 @@ function Assembly({ a, k, n, name, at, still }) {
   });
   const allDone = at >= 4;
   return (
-    <div className="relative h-[228px] w-full max-w-[380px] sm:h-[360px] lg:h-[440px] lg:max-w-[460px]">
+    <div className="relative h-[250px] w-full max-w-[380px] sm:h-[360px] lg:h-[440px] lg:max-w-[460px]">
       {/* calm base: the space the cards land in, so nothing jumps when they arrive */}
       <div className="absolute inset-x-6 inset-y-4 rounded-[32px] bg-[#E4E1FD]/45" />
 
@@ -191,7 +191,7 @@ function Assembly({ a, k, n, name, at, still }) {
 
       {/* 3. first guest message */}
       <motion.div {...card(2)} style={still && !show(2) ? { opacity: 0 } : undefined}
-        className="absolute bottom-0 end-[6%] w-[60%] rounded-[20px] bg-white p-3 shadow-[0_2px_4px_rgba(27,38,86,0.06),0_24px_48px_-20px_rgba(27,38,86,0.35)] lg:w-[62%] lg:p-3.5">
+        className="absolute bottom-0 end-[2%] w-[56%] rounded-[20px] bg-white p-3 shadow-[0_2px_4px_rgba(27,38,86,0.06),0_24px_48px_-20px_rgba(27,38,86,0.35)] lg:w-[62%] lg:p-3.5">
         <p className="mb-1.5 text-[12px] font-bold text-ink-600">הודעה לאורח</p>
         <p className="rounded-[14px] rounded-se-[4px] bg-[#E4E1FD] px-3 py-2 text-[13px] leading-snug text-navy-900">
           שלום! מחכים לכם ב{name}. {a.timesVary ? 'נשלח שעת כניסה מדויקת לפני ההגעה.' : `הכניסה מ-${a.checkIn}.`}
