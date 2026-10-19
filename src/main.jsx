@@ -5,6 +5,7 @@ import BackendNotConfigured from '@/components/common/BackendNotConfigured'
 import { isProductionBackendConfigured } from '@/lib/backendConfig'
 import '@/index.css'
 import '@/ui-direction/flag'
+import { registerServiceWorker } from '@/lib/swUpdate'
 
 // Minimal fallback when app crashes (no external deps)
 function CrashFallback({ error }) {
@@ -68,3 +69,7 @@ window.onerror = (msg, src, line, col, err) => {
   }
   return false
 }
+
+// Service worker update loop: periodic/focus update checks + one safe reload when a new deploy takes over (see src/lib/swUpdate.js).
+// /registerSW.js (vite-plugin-pwa) still registers the SW too; registering the same /sw.js twice is a no-op.
+registerServiceWorker()
