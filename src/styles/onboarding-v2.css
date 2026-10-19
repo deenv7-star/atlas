@@ -100,3 +100,14 @@
   .ob2-head.is-col { inset-inline-end: auto; width: 600px; }
   .ob2-aside { position: fixed; top: 0; bottom: 0; left: 0; width: calc(100% - 600px); }
 }
+
+/* the smallest phones (320–359px) */
+@media (max-width: 359px) {
+  .ob2 .ob-primary { padding: 0 18px; font-size: 17px; }
+  .ob2 .ob-ghost { padding: 0 12px; }
+  .ob2-help { font-size: 14px; padding: 0 10px; }
+}
+/* short screens: the assembly gives the steps room */
+@media (max-height: 700px) and (max-width: 1023px) {
+  .ob2-assembly { height: 168px !important; transform: scale(0.82); transform-origin: top center; margin-bottom: -30px; }
+}

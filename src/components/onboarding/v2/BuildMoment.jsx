@@ -158,7 +158,7 @@ function Assembly({ a, k, n, name, at, still }) {
   });
   const allDone = at >= 4;
   return (
-    <div className="relative h-[250px] w-full max-w-[380px] sm:h-[360px] lg:h-[440px] lg:max-w-[460px]">
+    <div className="ob2-assembly relative h-[250px] w-full max-w-[380px] sm:h-[360px] lg:h-[440px] lg:max-w-[460px]">
       {/* calm base: the space the cards land in, so nothing jumps when they arrive */}
       <div className="absolute inset-x-6 inset-y-4 rounded-[32px] bg-[#E4E1FD]/45" />
 
