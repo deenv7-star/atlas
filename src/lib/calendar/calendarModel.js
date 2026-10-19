@@ -3,7 +3,7 @@
  * Days are local ISO strings ('YYYY-MM-DD'); a stay occupies the nights [checkIn, checkOut).
  * Weeks start on Sunday (Israel). Nothing here invents a number: every count comes from bookings.
  */
-import { IL_HOLIDAYS_STATIC } from './ilHolidays';
+import { IL_HOLIDAYS_STATIC } from './ilHolidays.js';
 
 export const HE_MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 export const HE_DAYS_SHORT = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
