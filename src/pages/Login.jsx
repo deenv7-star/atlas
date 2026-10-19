@@ -14,6 +14,9 @@ import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
 import { preloadAppShell } from '@/lib/appPreload';
+import SocialButtons from '@/components/auth/SocialButtons';
+import { socialProviders } from '@/lib/auth/socialAuth';
+import { SOCIAL_LAYOUT } from '@/config/socialAuth';
 
 export default function Login() {
   const { loginUser, isLoadingAuth } = useAuth();
@@ -48,7 +51,9 @@ export default function Login() {
   const handleBlur = (field) => () => {
     setTouched(t => ({ ...t, [field]: true }));
     if (field === 'email') {
-      const r = validateEmail(form.email);
+      // An empty field is only flagged on submit: a "required" line appearing on blur moves the page under
+      // the owner's finger (e.g. tapping "המשך עם Google" right after the field had focus).
+      const r = form.email.trim() ? validateEmail(form.email) : { valid: true };
       setErrors(e => ({ ...e, email: r.valid ? null : r.error }));
     }
   };
@@ -113,8 +118,11 @@ export default function Login() {
     );
   }
 
+  const hasSocial = socialProviders().length > 0;
+  const social = (divider) => <SocialButtons intent="login" divider={divider} returnTo={searchParams.get('return')} />;
+
   const field = (bad) => cn(
-    'h-12 rounded-[14px] border bg-white text-base text-navy-900 shadow-[0_1px_2px_rgba(16,24,64,0.04)] placeholder:text-ink-300 focus-visible:border-brand-500 focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.14)] focus-visible:ring-offset-0',
+    'h-12 rounded-[14px] border bg-white text-base md:text-base text-navy-900 shadow-[0_1px_2px_rgba(16,24,64,0.04)] placeholder:text-ink-300 focus-visible:border-brand-500 focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.14)] focus-visible:ring-offset-0',
     bad ? 'border-danger-500' : 'border-line',
   );
 
@@ -128,7 +136,10 @@ export default function Login() {
           {successMsg}
         </p>
       ) : null}
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
+      {hasSocial && SOCIAL_LAYOUT === 'above' ? (
+        <div className="mt-8">{social('after')}</div>
+      ) : null}
+      <form onSubmit={handleSubmit} className={cn('space-y-5', hasSocial && SOCIAL_LAYOUT === 'above' ? 'mt-6' : 'mt-8')} noValidate>
         <div className="space-y-2">
           <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">אימייל</Label>
           <Input
@@ -141,7 +152,7 @@ export default function Login() {
             className={field((touched.email && errors.email) || errors.credentials)}
             dir="ltr"
             autoComplete="email"
-            autoFocus={!prefilledEmail}
+            autoFocus={!prefilledEmail && !(hasSocial && SOCIAL_LAYOUT === 'above')}
             maxLength={255}
           />
           {touched.email && errors.email && <p className="text-[14px] text-danger-600">{errors.email}</p>}
@@ -180,10 +191,13 @@ export default function Login() {
           {isLoading ? 'מתחברים…' : 'כניסה'}
         </Button>
       </form>
+      {hasSocial && SOCIAL_LAYOUT === 'below' ? (
+        <div className="mt-6">{social('before')}</div>
+      ) : null}
 
       <p className="mt-8 text-center text-[15px] text-ink-600">
         עוד אין לכם חשבון?{' '}
-        <Link to="/register" className="font-bold text-brand-600 hover:underline">פתיחת חשבון</Link>
+        <Link to="/register" className="-my-3 inline-flex min-h-[44px] items-center px-1 font-bold text-brand-600 hover:underline">פתיחת חשבון</Link>
       </p>
       <p className="mt-6 flex items-center justify-center gap-1.5 text-[13px] text-ink-400">
         <Shield className="h-3.5 w-3.5" />החיבור מוצפן ומאובטח

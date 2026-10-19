@@ -82,7 +82,7 @@ export default function AuthShell({ children, caption = 'כל הצימר שלכ�
   return (
     <div className="min-h-[100dvh] bg-white lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]" dir="rtl" onKeyDown={onKeyDown}>
       {/* form side (right in RTL) */}
-      <div className="relative flex min-h-[100dvh] flex-col lg:min-h-0">
+      <main className="relative flex min-h-[100dvh] flex-col lg:min-h-0">
         <div className="flex h-16 shrink-0 items-center px-5 pt-[env(safe-area-inset-top)] lg:h-[88px] lg:px-16">
           <Link to="/" aria-label="ATLAS, לדף הבית" className="inline-flex min-h-[44px] items-center rounded-lg"><Wordmark size={21} /></Link>
         </div>
@@ -91,14 +91,14 @@ export default function AuthShell({ children, caption = 'כל הצימר שלכ�
             {children}
           </div>
         </div>
-      </div>
+      </main>
 
       {/* product side (left in RTL), desktop only */}
-      <div className="relative hidden p-4 lg:block">
+      <aside aria-label="תצוגה של ATLAS" className="relative hidden p-4 lg:block">
         <div className="sticky top-4 h-[calc(100dvh-32px)]">
           <ProductPreview caption={caption} />
         </div>
-      </div>
+      </aside>
     </div>
   );
 }

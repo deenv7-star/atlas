@@ -13,11 +13,23 @@ import TermsConsent from '@/components/legal/TermsConsent';
 import AuthField, { StrengthMeter } from '@/components/auth/AuthField';
 import { useRegister } from '@/lib/auth/useRegister';
 import { LivePreviewFull, LivePreviewCompact, levelOf } from '@/components/auth/a/LivePreview';
+import SocialButtons from '@/components/auth/SocialButtons';
+import { socialProviders } from '@/lib/auth/socialAuth';
+import { SOCIAL_LAYOUT } from '@/config/socialAuth';
+import { TERMS_VERSION } from '@/config/consent';
 
 export default function Register() {
   const r = useRegister();
   const { form, set, touched, errors, handleBlur, isLoading, emailExists } = r;
   const level = levelOf({ business: form.business.trim(), emailOk: r.emailOk, passwordOk: r.passwordOk, confirmOk: r.confirmOk, agreed: r.agreed });
+
+  const hasSocial = socialProviders().length > 0;
+  // A ticked terms box travels with the owner to Google / Apple, so a new account is not asked again.
+  const social = (divider) => (
+    <SocialButtons intent="register" divider={divider}
+      getConsent={() => (r.agreed ? { at: new Date().toISOString(), version: TERMS_VERSION } : null)}
+      getBusiness={() => form.business} />
+  );
 
   if (r.isLoadingAuth) {
     return (
@@ -55,7 +67,11 @@ export default function Register() {
                 <button type="button" onClick={() => r.setEmailExists(false)} className="flex h-11 w-full items-center justify-center text-[14px] font-semibold text-ink-600 hover:text-navy-900">מייל אחר</button>
               </div>
             ) : (
-              <form onSubmit={r.submit} noValidate className="mt-7 flex flex-col gap-4">
+              <>
+              {hasSocial && SOCIAL_LAYOUT === 'above' ? (
+                <div className="mt-7">{social('after')}</div>
+              ) : null}
+              <form onSubmit={r.submit} noValidate className={hasSocial && SOCIAL_LAYOUT === 'above' ? 'mt-6 flex flex-col gap-4' : 'mt-7 flex flex-col gap-4'}>
                 <AuthField id="business" label="איך קוראים למתחם?" hint="לא חובה. אפשר גם אחר כך." value={form.business} onChange={set('business')} placeholder="למשל: צימרי הגליל" maxLength={50} autoComplete="organization" ok={form.business.trim().length >= 2} />
                 <AuthField id="email" label="אימייל" type="email" inputMode="email" dir="ltr" inputClassName="text-right" placeholder="name@example.com" autoComplete="email" maxLength={255}
                   value={form.email} onChange={set('email')} onBlur={handleBlur('email')} error={touched.email ? errors.email : null} ok={touched.email && r.emailOk} />
@@ -73,6 +89,10 @@ export default function Register() {
                   {isLoading ? <><Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden />פותחים חשבון…</> : <>פתיחת חשבון<ArrowLeft className="h-5 w-5" aria-hidden /></>}
                 </button>
               </form>
+              {hasSocial && SOCIAL_LAYOUT === 'below' ? (
+                <div className="mt-6">{social('before')}</div>
+              ) : null}
+              </>
             )}
 
             <p className="mt-6 flex items-center justify-center gap-1.5 text-[13px] text-ink-400"><Shield className="h-3.5 w-3.5" aria-hidden />המידע שלכם מאובטח ומוצפן</p>
