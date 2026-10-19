@@ -141,7 +141,7 @@ export default function WizardA3({ user, again = false }) {
         <div className="flex flex-col gap-4">
           <div className="ob2-card flex flex-col items-center gap-5 px-4 py-6">
             <Count value={n} min={1} max={UNITS_LIMIT} onChange={(v) => update({ unitCount: v })} label={C.units.count(k)} />
-            <div role="radiogroup" aria-label={C.units.quick} className="grid w-full grid-cols-6 gap-2 max-[359px]:grid-cols-3">
+            <div role="radiogroup" aria-label={C.units.quick} className="grid w-full grid-cols-6 gap-2 max-[379px]:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map((v) => <button key={v} type="button" role="radio" aria-checked={n === v} onClick={() => update({ unitCount: v })} className="ob2-chip ob-press !min-h-[48px] !px-0 !text-[18px]">{v}</button>)}
             </div>
           </div>
