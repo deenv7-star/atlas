@@ -29,8 +29,16 @@
       "destination": "/:page/index.html"
     },
     {
-      "source": "/(.*)",
+      "source": "/",
       "destination": "/index.html"
+    },
+    {
+      "source": "/:page(pricing|register|login)",
+      "destination": "/:page/index.html"
+    },
+    {
+      "source": "/:seg(AIAssistant|Automations|Billing|BookingDetail|Bookings|Cleaning|Contracts|Dashboard|DynamicPricing|ExpenseTracker|GuestJourney|GuestPortal|GuestService|HowItWorks|Integrations|Invoices|Landing|LeadDetail|Leads|Legal|Login|Messages|MultiCalendar|Onboarding|OwnerReports|Payments|PlatformAdmin|Pricing|PricingPlans|Register|RevenueIntelligence|Reviews|Security|ServiceRequests|Settings|Subscription|admin|ai-assistant|api-docs|auth|automations|balances|billing|book|booking|bookings|calendar|changelog|cleaning|contracts|dashboard|dev|dynamic-pricing|expense-tracker|g|guest-journey|guest-portal|guest-service|how-it-works|integrations|invoices|lead|leads|legal|messages|monthly-report|onboarding|owner-reports|payments|platform-admin|reset-password|revenue-intelligence|reviews|security|service-requests|settings|setup|sla|status|subscription|today|update-password|verify-email)/:rest*",
+      "destination": "/app.html"
     }
   ],
   "headers": [

@@ -5,6 +5,7 @@
  *  - scripts/vite-seo-plugin.mjs (landing JSON-LD in index.html)
  * One source, so the static HTML and the SPA never disagree.
  */
+import { isoDateTime } from './isoDate';
 import { SITE_ORIGIN } from '@/seo/siteConfig';
 import { LEGAL, legalValue, WHATSAPP_URL } from '@/config/legal';
 import { PRICING_PLANS } from '@/config/pricing';
@@ -132,7 +133,7 @@ export function siteMeta(pathname) {
           name: 'בלוג atlas',
           inLanguage: 'he-IL',
           publisher: { '@id': ORG_ID },
-          blogPost: POSTS.map((p) => ({ '@type': 'BlogPosting', headline: p.title, url: abs(`/blog/${p.slug}`), datePublished: p.published, dateModified: p.updated })),
+          blogPost: POSTS.map((p) => ({ '@type': 'BlogPosting', headline: p.title, url: abs(`/blog/${p.slug}`), datePublished: isoDateTime(p.published), dateModified: isoDateTime(p.updated) })),
         },
         breadcrumbLd(crumbsFor('/blog')),
       ]),
@@ -149,7 +150,7 @@ export function siteMeta(pathname) {
       canonical: url,
       ogImage: image,
       ogType: 'article',
-      article: { published: post.published, modified: post.updated, section: post.category },
+      article: { published: isoDateTime(post.published), modified: isoDateTime(post.updated), section: post.category },
       jsonLd: graph([
         organizationLd(),
         websiteLd(),
@@ -159,8 +160,8 @@ export function siteMeta(pathname) {
           headline: post.title,
           description: post.description,
           image: [image],
-          datePublished: post.published,
-          dateModified: post.updated,
+          datePublished: isoDateTime(post.published),
+          dateModified: isoDateTime(post.updated),
           inLanguage: 'he-IL',
           articleSection: post.category,
           keywords: post.keywords.join(', '),
@@ -191,7 +192,7 @@ export function siteMeta(pathname) {
       inLanguage: 'he-IL',
       isPartOf: { '@id': SITE_ID },
       about: { '@id': ORG_ID },
-      ...(page.updated ? { dateModified: page.updated } : {}),
+      ...(page.updated ? { dateModified: isoDateTime(page.updated) } : {}),
     },
     breadcrumbLd(crumbsFor(path)),
   ];

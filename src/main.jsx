@@ -1,8 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from '@/App.jsx'
-import BackendNotConfigured from '@/components/common/BackendNotConfigured'
-import { isProductionBackendConfigured } from '@/lib/backendConfig'
+import Root, { isLeanUrl, loadFullApp } from '@/Root.jsx'
+import { DEFER_CLASS, revealDeferredParts } from '@/lib/prerenderDefer'
 import '@/index.css'
 import '@/ui-direction/flag'
 import { registerServiceWorker } from '@/lib/swUpdate'
@@ -46,9 +45,26 @@ if (ssrEl) {
   window.setTimeout(swap, 6000)
 }
 
+// "/" and /pricing render without the app bundle (src/Root.jsx). Any other first URL, or one carrying a
+// Supabase auth result, goes through the full app as before, and its code is requested right now rather
+// than after React's first render.
+const lean = isLeanUrl(window.location)
+if (!lean) loadFullApp()
+
+// "/" and /pricing are prerendered (scripts/prerender.mjs → <div id="root" data-hydrate>): React adopts
+// that HTML (hydration) instead of replacing it, so the page the visitor already sees stays as it is.
+const hydrate = lean && rootEl.hasAttribute('data-hydrate')
+// The prerendered landing does not lay out its below-the-fold parts before hydration (src/lib/prerenderDefer.js).
+if (!hydrate) document.documentElement.classList.remove(DEFER_CLASS)
+if (!hydrate && rootEl.hasAttribute('data-hydrate')) rootEl.textContent = ''
+
 try {
-  const root = ReactDOM.createRoot(rootEl)
-  root.render(isProductionBackendConfigured() ? <App /> : <BackendNotConfigured />)
+  if (hydrate) {
+    ReactDOM.hydrateRoot(rootEl, <Root lean />)
+    revealDeferredParts()
+  } else {
+    ReactDOM.createRoot(rootEl).render(<Root lean={lean} />)
+  }
 } catch (e) {
   rootEl.innerHTML = ''
   rootEl.style.minHeight = '100vh'
