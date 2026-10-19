@@ -327,25 +327,28 @@ export function FinalCta({ title }) {
 }
 
 export function Footer() {
+  const learn = FOOTER_GROUPS.find((g) => g.title === 'ללמוד');
+  const legal = FOOTER_GROUPS.find((g) => g.title === 'מידע משפטי');
   return (
-    <footer className="l5-ftr">
+    <footer className="l5-ftr l5-ftr-b">
       <div className="l5-wrap">
-        <div className="l5-ftr-grid">
-          <div className="l5-ftr-brand">
-            <Wordmark small />
-            <p>מערכת ניהול בעברית לצימרים, וילות ומתחמי נופש.</p>
-            <a className="l5-ftr-wa" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-              <Mark ch="whatsapp" size={18} /> <span>וואטסאפ <span dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</span></span>
-              <span className="sr-only"> (נפתח בוואטסאפ)</span>
-            </a>
-          </div>
-          {FOOTER_GROUPS.filter((g) => g.title !== 'מוצר').map((g) => (
-            <nav key={g.title} aria-label={g.title} className="l5-ftr-col">
-              <p className="l5-ftr-h">{g.title}</p>
-              <ul>{g.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}</ul>
-            </nav>
-          ))}
+        <div className="l5-ftr-b-top">
+          <Wordmark small />
+          <nav aria-label={learn.title} className="l5-ftr-b-row">
+            <ul>
+              {learn.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}
+              <li>
+                <a className="l5-ftr-wa" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                  <Mark ch="whatsapp" size={16} /> <span>וואטסאפ <span dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</span></span>
+                  <span className="sr-only"> (נפתח בוואטסאפ)</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
+        <nav aria-label={legal.title} className="l5-ftr-b-legal">
+          <ul>{legal.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}</ul>
+        </nav>
         <p className="l5-ftr-copy">© {new Date().getFullYear()} atlas · נבנה בישראל{BUSINESS_LINE ? ` · מופעל על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>

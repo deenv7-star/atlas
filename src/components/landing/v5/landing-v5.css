@@ -671,3 +671,14 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
   .l5 *, .l5 *::before, .l5 *::after, .lp-cookie { animation: none !important; transition: none !important; }
   .l5.l4-reveal-on [data-reveal] { opacity: 1; transform: none; }
 }
+
+/* Footer B: compact, centered. Row 1 = wordmark + main links, row 2 = legal links, smaller (19.10.2026) */
+.l5-ftr-b-top { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-block: 40px 4px; text-align: center; }
+.l5-ftr-b ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0 4px; }
+.l5-ftr-b-row a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; font-size: 15px; font-weight: 500; color: var(--navy); }
+.l5-ftr-b-row a.l5-ftr-wa { font-weight: 700; font-size: 15px; color: var(--indigo); }
+.l5-ftr-b-row a:hover { color: var(--indigo); text-decoration: underline; }
+.l5-ftr-b-legal { padding-top: 4px; }
+.l5-ftr-b-legal a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; font-size: 13px; color: var(--ink-2); }
+.l5-ftr-b-legal a:hover { color: var(--navy); text-decoration: underline; }
+.l5-ftr.l5-ftr-b > .l5-wrap > .l5-ftr-copy { text-align: center; margin: 8px 0 0; padding: 16px 0 28px; }
