@@ -123,5 +123,4 @@ textarea.ab-input { padding: 10px 12px; min-height: 96px; line-height: 1.5; }
   .stat-row > :nth-child(3):last-child { grid-column: auto; }
 }
 
-/* Toast close: the visible "x" stays 20px, the tap area reaches 44px (WCAG 2.5.5 / phones). */
-[data-sonner-toast] [data-close-button]::after { content: ""; position: absolute; inset: -12px; }
+/* Toast close tap area (44px): moved to brand.css so it applies on every page, not only where this file loads. */

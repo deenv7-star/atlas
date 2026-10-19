@@ -299,6 +299,18 @@ h1, h2, h3, h4 { color: var(--navy-900); line-height: 1.15; letter-spacing: -0.0
 [data-sonner-toaster] [data-sonner-toast][data-type='success'] [data-icon] { color: #5fd3a6 !important; }
 [data-sonner-toaster] [data-sonner-toast][data-type='error'] [data-icon] { color: #ff8a8a !important; }
 [data-sonner-toaster] [data-sonner-toast] [data-close-button] { background: rgba(255,255,255,.12) !important; color: #fff !important; border: 0 !important; }
+/* Toast close: sits inside the toast on its end side (left in RTL), vertically centred, instead of hanging half off the
+   corner (white-on-white over the page, cut by the screen edge on phones). Visible 28px, tap area 44px (WCAG 2.5.5).
+   Global, so it holds on every page. */
+[data-sonner-toaster] [data-sonner-toast]:has([data-close-button]) { padding-inline-end: 52px !important; }
+[data-sonner-toaster] [data-sonner-toast] [data-close-button] {
+  --toast-close-button-start: auto; --toast-close-button-end: auto; --toast-close-button-transform: translateY(-50%);
+  inset-inline-end: 12px !important; inset-inline-start: auto !important; top: 50% !important;
+  width: 28px !important; height: 28px !important; border-radius: 9999px !important;
+}
+[data-sonner-toaster] [data-sonner-toast] [data-close-button]:hover { background: rgba(255,255,255,.22) !important; }
+[data-sonner-toaster] [data-sonner-toast] [data-close-button]:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+[data-sonner-toaster] [data-sonner-toast] [data-close-button]::after { content: ""; position: absolute; inset: -8px; border-radius: 9999px; }
 [data-sonner-toaster] [data-sonner-toast] [data-button] { background: #fff !important; color: var(--navy-900) !important; border-radius: 8px !important; font-weight: 700 !important; }
 
 .atlas-page-hero p { margin-right: 0 !important; margin-left: 0 !important; max-width: 65ch; }
