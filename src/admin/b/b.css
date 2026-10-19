@@ -1,5 +1,5 @@
 /* Admin B — "Bento". Lilac-grey canvas, floating white sidebar card, 24px tiles, one indigo hero tile. */
-.b-root { --b-canvas: #eeeef6; --b-r: 24px; --b-shadow: 0 1px 2px rgba(27, 38, 86, 0.035), 0 10px 30px -14px rgba(27, 38, 86, 0.12);
+.b-root { --b-canvas: #f7f8fb; --b-r: 24px; --b-shadow: 0 1px 2px rgba(27, 38, 86, 0.035), 0 10px 30px -14px rgba(27, 38, 86, 0.12);
   min-height: 100dvh; background: var(--b-canvas); font-size: 15px; line-height: 1.5; }
 .b-skip { position: absolute; top: -60px; right: 16px; z-index: 100; background: var(--a-brand); color: #fff; min-height: 44px; display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 12px; text-decoration: none; font-weight: 600; }
 .b-skip:focus { top: 12px; }

@@ -75,6 +75,16 @@ export const AUDIT_ACTIONS = {
   'support.reply': 'תשובה בתמיכה',
   'support.closed': 'סגירת שיחת תמיכה',
   'support.open': 'פתיחה מחדש של שיחת תמיכה',
+  'customer.flag_test': 'סימון חשבון בדיקה',
+  'customer.view_as': 'צפייה כלקוח',
+  'customer.export': 'ייצוא לקוח (JSON)',
+  'customers.export_csv': 'ייצוא רשימת לקוחות',
+  'audit.export_csv': 'ייצוא יומן',
+  'charges.export_csv': 'ייצוא חיובים',
+  'auth.password_reset': 'מייל איפוס סיסמה',
+  'auth.resend_confirmation': 'מייל אימות נשלח שוב',
+  'customer.delete': 'מחיקת לקוח',
+  'customer.delete_failed': 'מחיקה שנכשלה',
 };
 
 /** Fallback plan list (same numbers as the landing) when the DB list is not loaded yet. */

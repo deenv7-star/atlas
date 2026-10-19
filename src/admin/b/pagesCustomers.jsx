@@ -35,13 +35,13 @@ const initials = (s) => String(s || '').replace(/[^\p{L}\s]/gu, '').split(/\s+/)
 
 /* ── Overview ──────────────────────────────────────────────────────────── */
 export function Overview() {
-  const { data, isLoading, error, plans } = useOverview();
+  const { data, isLoading, error, plans, tests } = useOverview();
   const [tab, setTab] = useState('signups');
   const donut = data ? STATUS_ORDER.map((s) => ({ s, name: STATUS[s].label, value: data.counts[s] || 0 })).filter((x) => x.value) : [];
   const maxPlan = data ? Math.max(1, ...data.byPlan.map((p) => p.mrr)) : 1;
   return (
     <>
-      <Head greet sub={data ? `${data.counts.total} לקוחות במערכת` : ''} />
+      <Head greet sub={data ? `${data.counts.total} לקוחות במערכת${tests ? `, בלי ${tests} חשבונות בדיקה` : ''}` : ''} />
       <BError error={error} />
       <div className="b-bento b-bento--ov">
         <section className="b-tile b-hero" aria-labelledby="h-mrr">

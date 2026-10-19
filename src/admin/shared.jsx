@@ -83,6 +83,12 @@ export function auditDetail(a) {
     case 'plan.update': return `${a.target_id}: ${money(d.before?.price_monthly)} ← ${money(d.after?.price_monthly)}`;
     case 'team.add': case 'team.role': return `${d.email} · ${ROLES[d.to]?.label || d.to}`;
     case 'team.remove': return d.email || '';
+    case 'customer.flag_test': return d.is_test == null ? 'חזרה לזיהוי אוטומטי' : d.is_test ? 'חשבון בדיקה' : 'לקוח אמיתי';
+    case 'customer.export': return d.counts ? `${Object.values(d.counts).reduce((s, n) => s + n, 0)} רשומות` : '';
+    case 'customers.export_csv': return d.count != null ? `${d.count} לקוחות` : '';
+    case 'auth.password_reset': case 'auth.resend_confirmation': return d.email || '';
+    case 'customer.delete': return `${d.org_name || ''}${d.counts?.bookings != null ? ` · ${d.counts.bookings} הזמנות` : ''}${d.users_deleted ? ` · ${d.users_deleted.length} כניסות` : ''}${d.reason ? ` · ${d.reason}` : ''}`;
+    case 'customer.delete_failed': return d.stage ? `נעצר בשלב: ${d.stage === 'backup' ? 'גיבוי' : 'מחיקה'}` : '';
     default: return '';
   }
 }

@@ -29,12 +29,16 @@ function toHebrew(e) {
   return 'הפעולה לא הצליחה. נסו שוב בעוד רגע.';
 }
 
+/** PostgREST: function not found (migration not applied yet). */
+const isMissing = (e) => ['PGRST202', '42883'].includes(e?.code) || /could not find the function|does not exist/i.test(String(e?.rawMessage || ''));
+
 async function rpc(fn, args) {
   const { data, error } = await supabase.rpc(fn, args || {});
   if (error) {
     if (error.code === '42501') throw new AdminAccessError(toHebrew(error));
     const e = new Error(toHebrew(error));
     e.code = error.code;
+    e.rawMessage = error.message;
     throw e;
   }
   return data;
@@ -76,6 +80,69 @@ function demoUsage(c) {
     messages_total: Math.round(c.bookings_count * 2.4),
     revenue_ils: c.bookings_count * 1350,
     by_month: months.map((m, i) => ({ month: m, bookings: m < created ? 0 : Math.max(0, Math.round(perMonth * (0.7 + ((i * 37) % 10) / 15))) })),
+  };
+}
+
+
+/** Demo-mode Port for the real admin-customer core (same rules as the edge function, on local sample data). */
+const demoBackups = new Map();
+function demoPort() {
+  const d = D();
+  const byOrg = (arr, orgId) => (arr || []).filter((x) => x.org_id === orgId);
+  const tableRows = (t, orgId) => {
+    const c = d.customers.find((x) => x.org_id === orgId);
+    if (!c) return [];
+    switch (t) {
+      case 'organizations': return [{ id: c.org_id, name: c.org_name, owner_id: c.owner_id, email: c.owner_email, created_at: c.created_at }];
+      case 'profiles': return (d.members?.[orgId] || []).map((m) => ({ id: m.user_id, email: m.email, full_name: m.full_name, organization_id: orgId }));
+      case 'properties': return (d.units[orgId] || []).map((u) => ({ ...u, org_id: orgId }));
+      case 'bookings': return (d.bookings[orgId] || []).map((b) => ({ ...b, org_id: orgId }));
+      case 'calendar_syncs': return (d.syncs?.[orgId] || []).map((x) => ({ ...x, org_id: orgId, ical_url: 'https://www.airbnb.com/calendar/ical/demo.ics?s=demo-private-token' }));
+      case 'platform_charges': return byOrg(d.charges, orgId);
+      case 'platform_customer_notes': return byOrg(d.notes, orgId);
+      case 'platform_subscriptions': return [{ org_id: orgId, plan_key: c.plan_key, status: c.status, trial_ends_at: c.trial_ends_at }];
+      default: return [];
+    }
+  };
+  const countOf = (t, orgId) => {
+    const c = d.customers.find((x) => x.org_id === orgId);
+    if (!c) return 0;
+    if (t === 'bookings') return c.bookings_count;
+    if (t === 'leads') return c.leads_count || 0;
+    if (t === 'message_queue') return d.wa?.[orgId]?.sent_30d || 0;
+    return tableRows(t, orgId).length;
+  };
+  return {
+    roleOf: async () => 'owner',
+    getOrg: async (orgId) => { const c = d.customers.find((x) => x.org_id === orgId); return c ? { id: c.org_id, name: c.org_name || c.owner_email, owner_id: c.owner_id, email: c.owner_email } : null; },
+    members: async (orgId) => (d.members?.[orgId] || []).map((m) => ({ user_id: m.user_id, email: m.email, is_staff: DEMO_ADMIN_EMAILS.includes(m.email), email_confirmed: m.email_confirmed })),
+    rows: async (t, orgId) => tableRows(t.table, orgId),
+    count: async (t, orgId) => countOf(t.table, orgId),
+    deleteLoose: async () => 0,
+    deleteOrg: async (orgId) => {
+      d.customers = d.customers.filter((x) => x.org_id !== orgId);
+      d.charges = d.charges.filter((x) => x.org_id !== orgId);
+      d.notes = d.notes.filter((x) => x.org_id !== orgId);
+      for (const k of ['units', 'bookings', 'members', 'syncs', 'wa', 'flags']) if (d[k]) delete d[k][orgId];
+    },
+    deleteAuthUser: async () => {},
+    storageExists: async () => [],
+    storageRemove: async () => [],
+    uploadBackup: async (path, body) => { demoBackups.set(path, body); },
+    backupExists: async (path) => demoBackups.has(path),
+    signBackup: async () => null,
+    sendPasswordReset: async () => {},
+    resendConfirmation: async () => {},
+    countAudit: async (_a, actions, since) => d.audit.filter((x) => x.actor_email === demoActor && actions.includes(x.action) && x.created_at >= since).length,
+    audit: async (row) => {
+      const org = d.customers.find((c) => c.org_id === row.org_id);
+      d.audit.unshift({ id: (d.audit[0]?.id || 0) + 1, ...row, actor_email: demoActor, org_name: org?.org_name || row.details?.org_name || null, created_at: nowIso() });
+    },
+    now: () => new Date(),
+    sha256: async (text) => {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    },
   };
 }
 
@@ -213,6 +280,44 @@ const demoApi = {
     demoLog('team.remove', 'admin', userId, null, { email: m.email, role: m.role });
     return commit({ removed: userId });
   },
+  /* ── v2 ── */
+  listCustomersV2: () => wait(D().customers.map((c) => ({ ...c, ...(D().flags?.[c.org_id] ? { is_test: D().flags[c.org_id].is_test, is_test_source: 'manual' } : {}) }))),
+  async getCustomerV2(orgId) {
+    const base = await demoApi.getCustomer(orgId);
+    const d = D();
+    const f = d.flags?.[orgId];
+    return wait({
+      ...base,
+      customer: { ...base.customer, ...(f ? { is_test: f.is_test, is_test_source: 'manual' } : {}) },
+      members: d.members?.[orgId] || [],
+      calendar_syncs: d.syncs?.[orgId] || [],
+      whatsapp: d.wa?.[orgId] || null,
+      counts: { leads: base.customer.leads_count || 0, invoices: Math.round(base.customer.bookings_count * 0.4), payments: Math.round(base.customer.bookings_count * 0.7), messages: base.usage.messages_total, support_conversations: 0 },
+      v2: true,
+    });
+  },
+  async setTestFlag(orgId, isTest, reason) {
+    demoCustomer(orgId);
+    const d = D();
+    d.flags ||= {};
+    if (isTest == null) delete d.flags[orgId]; else d.flags[orgId] = { is_test: Boolean(isTest), reason: reason || null };
+    demoLog('customer.flag_test', 'organization', orgId, orgId, { is_test: isTest, reason });
+    return commit({ org_id: orgId, is_test: isTest });
+  },
+  async logEvent(action, orgId, details) {
+    demoLog(action, orgId ? 'organization' : 'platform', orgId, orgId, details);
+    return commit(null);
+  },
+  async customerOp(action, orgId, extra = {}) {
+    const { handle, ERRORS_HE } = await import('../../supabase/functions/admin-customer/core.ts');
+    try {
+      return await handle(demoPort(), { id: 'demo-actor', email: demoActor }, { action, org_id: orgId, ...extra });
+    } catch (e) {
+      throw new Error(ERRORS_HE[e.code] || 'הפעולה לא הצליחה.');
+    } finally {
+      saveDemo(D());
+    }
+  },
 };
 
 /* ── Supabase backend ───────────────────────────────────────────────────── */
@@ -240,6 +345,32 @@ const dbApi = {
     }),
   setTeamMember: (email, role) => rpc('admin_set_team_member', { p_email: email, p_role: role }),
   removeTeamMember: (userId) => rpc('admin_remove_team_member', { p_user: userId }),
+
+  /* ── v2 (migration 023 + edge function admin-customer; both fall back gracefully when missing) ── */
+  async listCustomersV2() {
+    try { return await rpc('admin_list_customers_v2'); } catch (e) { if (isMissing(e)) return rpc('admin_list_customers'); throw e; }
+  },
+  async getCustomerV2(orgId) {
+    try { return { ...(await rpc('admin_get_customer_v2', { p_org: orgId })), v2: true }; } catch (e) { if (isMissing(e)) return { ...(await rpc('admin_get_customer', { p_org: orgId })), v2: false }; throw e; }
+  },
+  async setTestFlag(orgId, isTest, reason) {
+    try { return await rpc('admin_set_test_flag', { p_org: orgId, p_is_test: isTest, p_reason: reason || null }); }
+    catch (e) { if (isMissing(e)) throw new Error('סימון ידני יופעל אחרי עדכון מסד הנתונים (023). עד אז הסימון אוטומטי לפי האימייל.'); throw e; }
+  },
+  async logEvent(action, orgId, details) {
+    try { await rpc('admin_log_event', { p_action: action, p_org: orgId || null, p_details: details || {} }); } catch { /* best effort until 023 */ }
+  },
+  async customerOp(action, orgId, extra = {}) {
+    const { data, error } = await supabase.functions.invoke('admin-customer', { body: { action, org_id: orgId, ...extra } });
+    if (error) {
+      let msg = null;
+      try { const j = await error.context?.json?.(); msg = j?.message || null; } catch { /* not json */ }
+      const status = error.context?.status;
+      if (!msg && (status === 404 || /Failed to send a request|fetch/i.test(error.message || ''))) msg = 'השירות למחיקה וייצוא עוד לא הופעל בשרת. הוא יופעל אחרי אישור.';
+      throw new Error(msg || 'הפעולה לא הצליחה. נסו שוב בעוד רגע.');
+    }
+    return data;
+  },
 };
 
 export const adminApi = ADMIN_DEMO ? demoApi : dbApi;
