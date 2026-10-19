@@ -1,7 +1,7 @@
 /* Landing v8 M "Product theatre". */
 
 /* ================= channels ================= */
-.lm-ch { background: #e4e1fd; padding: 0 0 36px; }
+.lm-ch { background: #fff; padding: 0 0 36px; }
 .lm-ch-in { display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .lm-ch p { font-size: 14px; font-weight: 600; color: var(--indigo-700); }
 .lm-ch ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
@@ -11,7 +11,7 @@
 .lm-ch .l5-mk-google { color: var(--indigo); }
 
 /* ================= colour blocks ================= */
-.lm-blocks { position: relative; background: #e4e1fd; }
+.lm-blocks { position: relative; background: #fff; }
 .lm-blk { --p: 0.5; position: relative; overflow: hidden; padding: 72px 0 80px; border-radius: 32px 32px 0 0; }
 .lm-blk + .lm-blk { margin-top: -32px; }
 .lm-blk.is-indigo { background: var(--indigo); color: #fff; }
@@ -132,9 +132,7 @@
 .lm-facts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .lm-facts-row li { padding: 22px 20px; border-radius: 26px; background: var(--canvas); }
 .lm-facts-row li:nth-child(1) { background: var(--indigo); color: #fff; }
-.lm-facts-row li:nth-child(2) { background: var(--sky); }
-.lm-facts-row li:nth-child(3) { background: var(--lilac); }
-.lm-facts-row li:nth-child(4) { background: var(--mint); }
+.lm-facts-row li:nth-child(n + 2) { background: var(--sec-card); box-shadow: inset 0 0 0 1px var(--sec-card-line); }
 .lm-facts-row b { display: block; font-size: 56px; line-height: 1; font-weight: 800; letter-spacing: -0.05em; }
 .lm-facts-row span { display: block; margin-top: 6px; font-size: 18px; font-weight: 800; }
 .lm-facts-row p { margin-top: 8px; font-size: 14.5px; line-height: 1.45; color: var(--ink); }

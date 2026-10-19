@@ -27,7 +27,7 @@ import './faq-m.css';
 import HeroPhoto from './HeroPhoto';
 import TrustB from './TrustB';
 
-const NAV = [['#features', 'המוצר'], ['#facts', 'למה ATLAS'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
+const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
 /* ---------------- channels strip ---------------- */
 function Channels() {

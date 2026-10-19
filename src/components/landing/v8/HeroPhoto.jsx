@@ -32,8 +32,9 @@ import './hero-photo.css';
 const P = '/landing-hero';
 const PORTRAIT = '(max-aspect-ratio: 2/3)';
 const set = (ext, list) => list.map(([f, w]) => `${P}/${f}.${ext} ${w}w`).join(', ');
-const PORT = [['pool-p480', 480], ['pool-p720', 720]];
-const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920]];
+const PORT = [['pool-p480', 480], ['pool-p720', 720], ['pool-p1080', 1080]];
+/* 4K source (Pexels 14546304, 4000x3000): sharp on 1920 DPR2 / 4K screens; phones stay on the portrait set (max 1080w, ~180KB AVIF) */
+const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['pool-2560', 2560], ['pool-3840', 3840]];
 
 const NTFS = [
   { ch: 'booking', title: 'הזמנה חדשה מ-Booking.com', sub: 'שירן ג. · הזית · 2 לילות', time: '08:12' },
