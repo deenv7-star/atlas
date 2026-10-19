@@ -28,7 +28,7 @@
 /* "נשמר ✓" */
 .ob3-saved {
   display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: #3E2BF1;
-  opacity: 0; transform: translateY(2px); transition: opacity 220ms var(--ob-ease), transform 220ms var(--ob-ease); white-space: nowrap;
+  opacity: 0; transform: translateY(3px); transition: transform 220ms var(--ob-ease); white-space: nowrap; /* opacity snaps (a half-faded label fails contrast) */
 }
 .ob3-saved.is-on { opacity: 1; transform: none; }
 
@@ -70,3 +70,6 @@
 @media (prefers-reduced-motion: reduce) {
   .ob3 *, .ob3 *::before, .ob3 *::after { animation: none !important; transition-duration: 1ms !important; }
 }
+
+/* the peek is the phone's preview; on desktop the side preview takes over (lg:hidden loses to .ob3-peek's display) */
+@media (min-width: 1024px) { .ob3-peek { display: none; } }
