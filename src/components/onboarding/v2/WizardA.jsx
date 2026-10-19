@@ -110,7 +110,7 @@ export default function WizardA({ user, again = false }) {
       body: (
         <div className="flex flex-col items-center gap-6">
           <div className="ob2-card w-full py-7"><Count value={n} min={1} max={UNITS_LIMIT} onChange={(v) => update({ unitCount: v })} label={`מספר ${k.units}`} /></div>
-          <div role="radiogroup" aria-label="בחירה מהירה" className="grid w-full grid-cols-6 gap-2">
+          <div role="radiogroup" aria-label="בחירה מהירה" className="grid w-full grid-cols-6 gap-2 max-[359px]:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((v) => <button key={v} type="button" role="radio" aria-checked={n === v} onClick={() => update({ unitCount: v })} className="ob2-chip ob-press !px-0">{v}</button>)}
           </div>
         </div>
