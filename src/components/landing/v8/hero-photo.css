@@ -89,6 +89,15 @@
 .lm.has-ph .l7-hdr-cta { border-radius: 999px; padding: 0 18px; }
 @media (max-width: 380px) { .lm.has-ph .l7-hdr-in { gap: 8px; padding-inline-start: 14px; } .lm.has-ph .l7-hdr-cta { padding: 0 14px; } }
 .lm.has-ph .l7-hdr-cta { white-space: nowrap; }
+/* the outlined wordmark is a fixed 4.54em wide: flex must not shrink its link under כניסה; on the narrowest phones (320) trim the wordmark and the controls so כניסה keeps ~18px of clear space from it */
+.lm.has-ph .l7-hdr .l5-logo { flex-shrink: 0; }
+@media (max-width: 359px) {
+  .lm.has-ph .l7-hdr-in { gap: 12px; }
+  .lm.has-ph .l7-hdr .l5-wm { font-size: 17px; }
+  .lm.has-ph .l7-hdr-end { gap: 4px; }
+  .lm.has-ph .l7-login { padding: 0 6px; }
+  .lm.has-ph .l7-hdr-cta { padding: 0 12px; font-size: 14px; }
+}
 @media (max-width: 899px) and (max-height: 699px) { .ph-ntf:nth-child(2) { display: none; } }
 
 /* the channels strip used to continue the old hero's lilac floor; give it its own top air */

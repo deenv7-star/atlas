@@ -54,9 +54,21 @@
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Landing hero: preload the exact photo the hero <picture> picks and its fonts, on "/" only -->
+    <!-- Landing hero: preload the exact photo the hero <picture> picks and its fonts, on "/" only.
+         Prerendered site pages (legal, about, contact, blog): preload their Heebo weights so the
+         server-rendered text never re-flows on the font swap (CLS 0.14 desktop / 0.21 mobile on /terms) -->
     <script>
       (function () {
+        function font(w) {
+          var f = document.createElement('link');
+          f.rel = 'preload'; f.as = 'font'; f.type = 'font/woff2'; f.crossOrigin = 'anonymous';
+          f.href = '/fonts/heebo/heebo-' + w + '-normal.woff2';
+          document.head.appendChild(f);
+        }
+        if (/^\/(about|contact|privacy|terms|cookies|cancellation|data-processing|data-security|accessibility|blog)(\/|$)/.test(location.pathname)) {
+          ['hebrew-400', 'hebrew-500', 'hebrew-700', 'hebrew-800', 'latin-400', 'latin-700'].forEach(font);
+          return;
+        }
         if (location.pathname !== '/') return;
         var p = window.matchMedia && matchMedia('(max-aspect-ratio: 2/3)').matches;
         var l = document.createElement('link');
@@ -68,12 +80,7 @@
         document.head.appendChild(l);
         // the hero's Hebrew weights, plus Latin 700 (the digits in the "14" CTA and "₪1,250"), so the
         // bottom-anchored copy never re-flows on a font swap (CLS: a late latin-700 re-wrapped the CTA row)
-        ['hebrew-800', 'hebrew-400', 'hebrew-700', 'latin-700'].forEach(function (w) {
-          var f = document.createElement('link');
-          f.rel = 'preload'; f.as = 'font'; f.type = 'font/woff2'; f.crossOrigin = 'anonymous';
-          f.href = '/fonts/heebo/heebo-' + w + '-normal.woff2';
-          document.head.appendChild(f);
-        });
+        ['hebrew-800', 'hebrew-400', 'hebrew-700', 'latin-700'].forEach(font);
       })();
     </script>
 
