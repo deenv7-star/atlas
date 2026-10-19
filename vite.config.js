@@ -32,7 +32,10 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         globPatterns: ['**/*.{js,css,woff2}'],
-        globIgnores: ['**/registerSW.js'],
+        globIgnores: ['**/registerSW.js', '**/sw-cleanup.js', '**/google*.html'],
+        // One-time cleanup for browsers still on a pre-#109 worker (it answered every page with a stored
+        // index.html): delete stale caches and load open tabs fresh once. See public/sw-cleanup.js.
+        importScripts: ['/sw-cleanup.js'],
         // Cache API calls for offline fallback
         runtimeCaching: [
           {
@@ -40,7 +43,9 @@ export default defineConfig({
               url.origin === self.location.origin && !url.pathname.startsWith('/api/'),
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'atlas-navigation-v1',
+              // v2: older builds' stored pages are dropped on activate (sw-cleanup.js); this copy is only
+              // an offline fallback, a page is always fetched from the network first.
+              cacheName: 'atlas-pages-v2',
               cacheableResponse: { statuses: [200] },
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 },
             },

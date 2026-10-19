@@ -64,9 +64,13 @@ function siteCss() {
   return minifyCss(base + '\n' + design);
 }
 
+// Google Search Console ownership tag: every prerendered page keeps it (removing it un-verifies the property)
+const GSC_VERIFY = '<meta name="google-site-verification" content="UPKPNchNAYTlhNJG2i4zZ-6zdUGhDxsP0MgMSTIMUJY" />';
+
 /** Replace the SPA template <head> SEO tags with the route's own. */
 function headFor(template, meta) {
   let html = template;
+  if (!html.includes('google-site-verification')) html = html.replace('<head>', `<head>\n    ${GSC_VERIFY}`);
   // drop every SEO tag the template carries; we add the route's own below
   html = html.replace(/<title>[\s\S]*?<\/title>/, '');
   html = html.replace(/\s*<meta name="(description|keywords|robots|twitter:[a-z:]+)"[^>]*>/g, '');
