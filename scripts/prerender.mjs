@@ -292,18 +292,13 @@ function withUiFlag(html) {
   return html.replace('<html lang="he" dir="rtl">', `<html lang="he" dir="rtl" data-ui="${m[1]}">`);
 }
 
-/*
- * Landing only, until main.jsx hydrates (it removes html.atlas-prerender first): the parts below the hero
- * (which alone is 190svh tall, so none of them is on the first screen) are content-visibility: auto, so the
- * browser neither lays them out nor starts their ~450 KB of lazy images ahead of the headline (their lazy
- * loading distance reached them at once). Once the class is gone they are ordinary blocks, exactly as before.
- */
-const DEFER_BELOW_FOLD = '<style id="atlas-prerender-css">html.atlas-prerender .lm.has-ph>main>:not(.ph-hero):not(script),html.atlas-prerender .lm.has-ph>.v8-credits,html.atlas-prerender .lm.has-ph>.l5-ftr{content-visibility:auto;contain-intrinsic-size:auto 900px}</style>';
-const DEFER_NOSCRIPT = '<noscript><style>html.atlas-prerender .lm.has-ph *{content-visibility:visible!important}</style></noscript>';
-function withBelowFoldDeferred(html) {
-  const out = html.replace('<html lang="he" dir="rtl"', '<html class="atlas-prerender" lang="he" dir="rtl"')
-    .replace('</head>', `    ${DEFER_BELOW_FOLD}\n    ${DEFER_NOSCRIPT}\n  </head>`);
-  if (!out.includes('class="atlas-prerender"')) throw new Error('<html> tag not found');
+/* Landing only: its below-the-fold parts are not laid out until main.jsx hydrates (src/lib/prerenderDefer.js). */
+function withBelowFoldDeferred(mod, html) {
+  const css = `<style id="atlas-prerender-css">${mod.deferCss()}</style>`;
+  const noscript = `<noscript><style>html.${mod.DEFER_CLASS} .lm.has-ph *{content-visibility:visible!important}</style></noscript>`;
+  const out = html.replace('<html lang="he" dir="rtl"', `<html class="${mod.DEFER_CLASS}" lang="he" dir="rtl"`)
+    .replace('</head>', `    ${css}\n    ${noscript}\n  </head>`);
+  if (!out.includes(`class="${mod.DEFER_CLASS}"`)) throw new Error('<html> tag not found');
   return out;
 }
 
@@ -313,7 +308,7 @@ function prerenderLean(mod, template, index) {
   fs.writeFileSync(path.join(DIST, 'app.html'), index);
 
   const landing = withRevealOn(mod.renderLean('/'));
-  fs.writeFileSync(path.join(DIST, 'index.html'), withBelowFoldDeferred(withUiFlag(leanBody(index, landing, chunkAssets(manifest, 'src/pages/Landing.jsx')))));
+  fs.writeFileSync(path.join(DIST, 'index.html'), withBelowFoldDeferred(mod, withUiFlag(leanBody(index, landing, chunkAssets(manifest, 'src/pages/Landing.jsx')))));
 
   const pricing = withRevealOn(mod.renderLean('/pricing'));
   const pricingHead = headFor(template, appMeta(mod, '/pricing'));

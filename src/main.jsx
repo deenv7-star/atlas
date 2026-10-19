@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import Root, { isLeanUrl, loadFullApp } from '@/Root.jsx'
+import { DEFER_CLASS, revealDeferredParts } from '@/lib/prerenderDefer'
 import '@/index.css'
 import '@/ui-direction/flag'
 import { registerServiceWorker } from '@/lib/swUpdate'
@@ -53,13 +54,14 @@ if (!lean) loadFullApp()
 // "/" and /pricing are prerendered (scripts/prerender.mjs → <div id="root" data-hydrate>): React adopts
 // that HTML (hydration) instead of replacing it, so the page the visitor already sees stays as it is.
 const hydrate = lean && rootEl.hasAttribute('data-hydrate')
-// the prerendered landing skips laying out its below-the-fold parts until now (scripts/prerender.mjs)
-document.documentElement.classList.remove('atlas-prerender')
+// The prerendered landing does not lay out its below-the-fold parts before hydration (src/lib/prerenderDefer.js).
+if (!hydrate) document.documentElement.classList.remove(DEFER_CLASS)
 if (!hydrate && rootEl.hasAttribute('data-hydrate')) rootEl.textContent = ''
 
 try {
   if (hydrate) {
     ReactDOM.hydrateRoot(rootEl, <Root lean />)
+    revealDeferredParts()
   } else {
     ReactDOM.createRoot(rootEl).render(<Root lean={lean} />)
   }

@@ -18,6 +18,7 @@ import { RootTree } from '@/RootTree';
 import LandingPage from '@/pages/Landing';
 import PricingPlansPage from '@/pages/PricingPlans';
 import { getRouteMeta } from '@/seo/routeMeta';
+import { deferCss, DEFER_CLASS } from '@/lib/prerenderDefer';
 
 const eager = import.meta.glob('./content/blog/*.md', { query: '?raw', import: 'default', eager: true });
 export const BODIES = Object.fromEntries(Object.entries(eager).map(([k, v]) => [k.replace('./content/blog/', '').replace('.md', ''), v]));
@@ -61,4 +62,4 @@ export function landingLd() {
   return graph([organizationLd(), websiteLd(), softwareLd(), faqLd(FAQ, 'https://atlas-il.com/')]);
 }
 
-export { siteMeta, getRouteMeta, siteRoutes, notFoundMeta, POSTS, SITE_PAGES, mdToText, missingLegalKeys, ATLAS_ONE_LINER, FAQ, PRICING_PLANS };
+export { deferCss, DEFER_CLASS, siteMeta, getRouteMeta, siteRoutes, notFoundMeta, POSTS, SITE_PAGES, mdToText, missingLegalKeys, ATLAS_ONE_LINER, FAQ, PRICING_PLANS };
