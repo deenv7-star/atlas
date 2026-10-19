@@ -119,7 +119,7 @@ export default function Accessibility() {
             <h2 className="text-2xl font-bold text-[#1B2656] mb-4">נתקלתם בבעיית נגישות?</h2>
             <p className="text-gray-600 leading-relaxed mb-3">
               אם נתקלתם בבעיה או מכשול בנגישות, אנחנו מעוניינים לשמוע מכם ולסייע. 
-              אנא פנו אלינו בכתובת:
+              פנו אלינו בכתובת:
             </p>
             <div className="bg-brand-50/60 rounded-xl p-4">
               <p className="text-gray-700">

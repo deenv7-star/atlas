@@ -174,7 +174,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
       if (bad || conf) atlasToastApi.error(`סונכרנו ${rs.length - bad} מתוך ${rs.length} ערוצים${conf ? `, ${conf} התנגשויות` : ''}. הפרטים במסך החיבורים`);
       else atlasToastApi.success(added ? `הערוצים סונכרנו, ${added} עדכונים ביומן` : 'הערוצים סונכרנו, אין שינויים');
     } catch (e) {
-      atlasToastApi.error(e.message || 'הסנכרון נכשל');
+      atlasToastApi.error(e.message || 'לא הצלחנו לעדכן את הלוח. נסו שוב.');
     } finally {
       setSyncing(false);
       qc.invalidateQueries({ queryKey: ['bookings'] });

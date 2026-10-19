@@ -151,13 +151,13 @@ export default function AutomationsPage({ orgId }) {
     <div className="mx-auto w-full max-w-[960px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader
         title="מסע האורח"
-        subtitle="atlas מכינה כל הודעה בזמן הנכון, ואתם שולחים בלחיצה מלוח היום."
+        subtitle="atlas מכין כל הודעה בזמן הנכון, ואתם שולחים בלחיצה מלוח היום."
         className="!mb-0"
         actions={!allOn ? <Button className="h-11" onClick={turnAllOn} disabled={busy}>הפעלת כל המסע</Button> : null}
       />
 
       {!DB_FEATURES.realCore ? (
-        <Card className="p-5"><p className="text-[14px] text-ink-600">מנוע האוטומציות רץ בשרת של atlas, ולכן הוא פועל בחשבון מחובר ולא במצב ההדגמה.</p></Card>
+        <Card className="p-5"><p className="text-[14px] text-ink-600">ההודעות האוטומטיות יעבדו אחרי שתתחברו לחשבון. בהדגמה רק רואים איך זה נראה.</p></Card>
       ) : null}
 
       <Card className="flex items-center gap-3 p-5 md:px-6">

@@ -66,9 +66,9 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews'] });
-      toast({ title: 'תזכורת נשלחה בהצלחה' });
+      toast({ title: 'התזכורת נשלחה' });
     },
-    onError: () => toast({ title: 'שגיאה בשליחת התזכורת', variant: 'destructive' }),
+    onError: () => toast({ title: 'התזכורת לא נשלחה. נסו שוב.', variant: 'destructive' }),
   });
 
   const filtered = useMemo(() => {

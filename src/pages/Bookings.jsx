@@ -355,7 +355,7 @@ export default function BookingsPage({ selectedPropertyId }) {
         ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
           <DsEmptyState
             icon={CalendarDays}
-            title={hasQuery ? 'לא נמצאו הזמנות' : 'עדיין אין הזמנות'}
+            title={hasQuery ? 'אין הזמנות שמתאימות לחיפוש' : 'עדיין אין הזמנות'}
             description={hasQuery ? 'נסו חיפוש אחר או נקו את הסינון.' : 'מוסיפים הזמנה ראשונה בפחות מדקה: שם האורח, תאריכים ומאיפה הגיע.'}
             action={hasQuery ? (
               <Button variant="outline" onClick={() => void setUrlState({ search: '', tab: 'all', status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי הסינון</Button>

@@ -99,7 +99,7 @@ export function useUpdateBooking() {
         );
       }
       if (status !== 409) {
-        atlasToastApi.error('הפעולה נכשלה: השינויים בוטלו');
+        atlasToastApi.error('לא הצלחנו לשמור, אז השינויים בוטלו. נסו שוב.');
       }
     },
     onSettled: (_d, err, _v, context) => {
@@ -136,7 +136,7 @@ export function useDeleteBooking() {
         return;
       }
       if (status !== 409) {
-        atlasToastApi.error('הפעולה נכשלה: השינויים בוטלו');
+        atlasToastApi.error('לא הצלחנו לשמור, אז השינויים בוטלו. נסו שוב.');
       }
     },
     onSuccess: (_void, variables, context) => {
@@ -239,7 +239,7 @@ export function useUpdateLead() {
         );
       }
       if (status !== 409) {
-        atlasToastApi.error('הפעולה נכשלה: השינויים בוטלו');
+        atlasToastApi.error('לא הצלחנו לשמור, אז השינויים בוטלו. נסו שוב.');
       }
     },
     onSettled: (_d, err, _v, context) => {
@@ -385,7 +385,7 @@ export function useUpdateCleaningTask() {
         return;
       }
       if (status !== 409) {
-        atlasToastApi.error('הפעולה נכשלה: השינויים בוטלו');
+        atlasToastApi.error('לא הצלחנו לשמור, אז השינויים בוטלו. נסו שוב.');
       }
     },
     onSettled: (_d, err, _v, context) => {

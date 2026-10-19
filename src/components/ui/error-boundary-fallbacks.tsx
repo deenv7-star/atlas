@@ -62,16 +62,16 @@ export function ErrorFallbackPage({ error, reset, section, componentStack }: Fal
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
           <AlertCircle className="h-7 w-7 text-red-500" aria-hidden />
         </div>
-        <h1 className="mb-2 text-xl font-bold text-gray-900">אירעה שגיאה</h1>
+        <h1 className="mb-2 text-xl font-bold text-gray-900">המסך לא נטען</h1>
         <p className="mb-4 text-sm leading-relaxed text-gray-600">
-          לא הצלחנו להציג את העמוד. אפשר לחזור לדשבורד או לנסות לטעון את החלק מחדש.
+          לא הצלחנו להציג את העמוד. אפשר לחזור למסך הבית או לטעון את החלק מחדש.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
           <Button type="button" className="bg-brand-600 font-semibold text-white hover:bg-brand-500" onClick={reset}>
             נסה שוב
           </Button>
           <Button type="button" variant="outline" asChild>
-            <Link to={createPageUrl('Dashboard')}>חזור לדשבורד</Link>
+            <Link to={createPageUrl('Dashboard')}>חזרה למסך הבית</Link>
           </Button>
         </div>
         <DevTechnicalBlock error={error} componentStack={componentStack} />

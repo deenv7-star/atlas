@@ -25,7 +25,7 @@ export function FormRouteLeaveGuard({ blocker }: FormRouteLeaveGuardProps) {
         <AlertDialogHeader>
           <AlertDialogTitle>לצאת בלי לשמור?</AlertDialogTitle>
           <AlertDialogDescription className="text-start">
-            יש לך שינויים שלא נשמרו. לצאת בכל זאת?
+            יש שינויים שלא נשמרו. לצאת בכל זאת?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="gap-2 sm:gap-2">

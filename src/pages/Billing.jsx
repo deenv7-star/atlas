@@ -39,7 +39,7 @@ export default function BillingPage({ user }) {
     if (needConsent('billing-consent')) return;
     const token = localStorage.getItem('atlas_jwt_token');
     if (!token) {
-      window.alert('יש להתחבר מחדש');
+      window.alert('צריך להתחבר שוב כדי להמשיך');
       return;
     }
     setStripeLoading(true);
@@ -95,9 +95,9 @@ export default function BillingPage({ user }) {
     setLoading(true);
     try {
       await base44.auth.updateMe({ subscription_plan: planId });
-      alert('התוכנית עודכנה בהצלחה! התשלום יחויב בתאריך החיוב הבא.');
+      alert('המסלול עודכן. החיוב החדש יתחיל בתאריך החיוב הבא.');
     } catch (error) {
-      alert('שגיאה בעדכון התוכנית');
+      alert('לא הצלחנו לעדכן את המסלול. נסו שוב.');
     } finally {
       setLoading(false);
     }

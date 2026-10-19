@@ -65,7 +65,7 @@ function PropertyEditor({ property, onSaved }) {
       atlasToastApi.success('השינויים נשמרו');
       onSaved?.();
     } catch (e) {
-      atlasToastApi.error(/column|schema/i.test(e?.message || '') ? 'השמירה דורשת עדכון מסד נתונים (מיגרציה 008).' : 'השמירה נכשלה');
+      atlasToastApi.error(/column|schema/i.test(e?.message || '') ? 'השמירה דורשת עדכון מסד נתונים (מיגרציה 008).' : 'לא הצלחנו לשמור. נסו שוב.');
     }
   };
 

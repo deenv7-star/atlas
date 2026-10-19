@@ -172,7 +172,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       success('הליד עודכן');
     } else {
       await createMutation.mutateAsync(data);
-      success('ליד נוצר בהצלחה');
+      success('הליד נשמר');
     }
   };
 
@@ -180,7 +180,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
     if (!confirm('למחוק ליד זה?')) return;
     deleteMutation.mutate(id, {
       onSuccess: () => success('הליד נמחק'),
-      onError: () => toastError('שגיאה במחיקת הליד'),
+      onError: () => toastError('לא הצלחנו למחוק את הליד. נסו שוב.'),
     });
   };
 

@@ -311,7 +311,7 @@ function WhatsAppStep({ facts, user, variant, step, onBack, onDone, prog }) {
     <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title="וואטסאפ לאורחים"
       intro={variant === 'b'
         ? ['אכין לך את ההודעות לאורחים: אישור הזמנה, יום לפני, יום ההגעה. שולחים בלחיצה אחת, מהוואטסאפ שלך.', 'רק צריך את המספר שהאורחים מכירים.']
-        : ['atlas מכינה את ההודעות לאורחים בזמן הנכון. אתם שולחים בלחיצה אחת, מהוואטסאפ שלכם.', 'שליחה אוטומטית בלי לגעת תגיע בקרוב.']}
+        : ['atlas מכין את ההודעות לאורחים בזמן הנכון. אתם שולחים בלחיצה אחת, מהוואטסאפ שלכם.', 'שליחה אוטומטית בלי לגעת תגיע בקרוב.']}
       footer={(
         <>
           {err ? <p className="rounded-[14px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}

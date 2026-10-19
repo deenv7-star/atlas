@@ -15,7 +15,7 @@ import './pricing8.css';
 
 const TRUST = [
   { I: MessageCircle, t: 'תמיכה בעברית, בוואטסאפ' },
-  { I: MapPin, t: 'נבנתה בישראל' },
+  { I: MapPin, t: 'נבנה בישראל' },
   { I: ShieldCheck, t: 'מידע מוצפן ומגובה' },
 ];
 

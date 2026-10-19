@@ -47,7 +47,7 @@ export function deleteBookingWithUndo(qc: QueryClient, bookingId: string): void 
         });
         return;
       }
-      atlasToastApi.error('המחיקה נכשלה', getErrorMessage(err) || undefined);
+      atlasToastApi.error('לא הצלחנו למחוק', getErrorMessage(err) || undefined);
       setOptimisticEntityPhase(bookingId, 'rollback');
     }
   });
