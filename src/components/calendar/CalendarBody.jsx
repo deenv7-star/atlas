@@ -19,10 +19,11 @@ import {
 import { SourceBadge, stayAria, stayLabel } from './shared';
 
 function laneMetrics(n) {
-  if (n <= 1) return { lane: 34, laneSm: 26 };
-  if (n <= 3) return { lane: 30, laneSm: 22 };
-  if (n <= 6) return { lane: 26, laneSm: 18 };
-  return { lane: 22, laneSm: 15 };
+  // desktop lanes keep every bar (lane - 4px) at >= 24px, the WCAG 2.5.8 pointer-target minimum
+  if (n <= 1) return { lane: 38, laneSm: 26 };
+  if (n <= 3) return { lane: 34, laneSm: 22 };
+  if (n <= 6) return { lane: 30, laneSm: 18 };
+  return { lane: 28, laneSm: 15 };
 }
 
 export default function CalendarBody({ month, today, units, stays, occ, gaps, gapSet, holidays, onDay, onNewBooking }) {
