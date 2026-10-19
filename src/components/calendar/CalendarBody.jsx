@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { heCount } from '@/lib/hebrewCount';
 import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   HE_DAYS_LONG, HE_DAYS_SHORT, freeUnitsOn, monthMatrix, monthKey, parseIso, shortDay, weekSegment,
 } from '@/lib/calendar/calendarModel';
@@ -26,6 +27,7 @@ function laneMetrics(n) {
 
 export default function CalendarBody({ month, today, units, stays, occ, gaps, gapSet, holidays, onDay, onNewBooking }) {
   const weeks = useMemo(() => monthMatrix(month), [month]);
+  const mobile = useIsMobile();
   const mk = monthKey(month);
   const multi = units.length > 1;
   const { lane, laneSm } = laneMetrics(units.length);
@@ -57,6 +59,11 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
             </div>
           </div>
 
+          {multi ? (
+            <p className="border-b border-navy-900/[0.08] px-3 py-2 text-[12px] text-navy-900/60 md:hidden">
+              שורה לכל יחידה, מלמעלה למטה: {units.map((u) => u.name).join(' · ')}
+            </p>
+          ) : null}
           {weeks.map((week) => (
             <div key={week[0]} className={cn('grid border-b border-navy-900/[0.08] last:border-b-0', multi ? 'md:grid-cols-[132px_minmax(0,1fr)]' : '')}>
               {multi ? (
@@ -83,6 +90,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
                         key={d}
                         type="button"
                         onClick={() => onDay(d)}
+                        data-day={d}
                         aria-label={label}
                         className={cn(
                           'group/cell relative flex flex-col items-stretch border-l border-navy-900/[0.06] text-start last:border-l-0 hover:bg-brand-600/[0.03] focus-visible:z-20',
@@ -135,13 +143,16 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
                         if (!seg) return null;
                         const width = seg.to - seg.from;
                         const faded = !week.slice(Math.floor(seg.from), Math.ceil(seg.to)).some((d) => d.slice(0, 7) === mk);
+                        const Bar = mobile ? 'span' : Link;
+                        const barProps = mobile
+                          ? { 'aria-hidden': true }
+                          : { to: `${createPageUrl('BookingDetail')}/${s.id}`, 'aria-label': stayAria(s, multi ? u.name : ''), title: `${stayLabel(s)}${multi ? ` · ${u.name}` : ''}` };
+                        const showText = width >= 1 || seg.startsHere;
                         return (
-                          <Link
+                          <Bar
                             key={s.id}
-                            to={`${createPageUrl('BookingDetail')}/${s.id}`}
-                            aria-label={stayAria(s, multi ? u.name : '')}
-                            title={`${stayLabel(s)}${multi ? ` · ${u.name}` : ''}`}
-                            className={cn('pointer-events-auto absolute inset-y-[2px] z-10 block', faded && 'opacity-45', optimisticEntityClassName(s.id))}
+                            {...barProps}
+                            className={cn('absolute inset-y-[2px] z-10 block', !mobile && 'pointer-events-auto', faded && 'opacity-45', optimisticEntityClassName(s.id))}
                             style={{ right: `calc(${(seg.from / 7) * 100}% + 1px)`, width: `calc(${(width / 7) * 100}% - 2px)` }}
                           >
                             <span className={cn(
@@ -153,10 +164,10 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
                                   : s.start <= today && s.end > today ? 'bg-brand-600 text-white'
                                     : 'bg-[#E9E6FE] text-navy-900 hover:bg-[#DEDAFD]',
                             )}>
-                              <span className="min-w-0 truncate">{stayLabel(s)}</span>
+                              {showText ? <span className="min-w-0 truncate">{stayLabel(s)}</span> : null}
                               {width >= 2.5 && !s.isBlock ? <SourceBadge channel={s.channel} onDark={s.start <= today && s.end > today && !s.pending} className="hidden md:inline-flex" /> : null}
                             </span>
-                          </Link>
+                          </Bar>
                         );
                       })}
                     </div>
