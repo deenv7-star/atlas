@@ -644,7 +644,7 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
 .lp-cookie p { margin: 0; flex: 1 1 220px; }
 .lp-cookie a { color: #3e2bf1; text-decoration: underline; text-underline-offset: 3px; }
 /* 44px tap area on the inline policy link without growing the bar */
-.lp-cookie p a { display: inline-block; padding: 13px 0; margin: -13px 0; }
+.lp-cookie p a { display: inline-block; min-height: 44px; padding: 14px 0; margin: -14px 0; box-sizing: border-box; }
 .lp-cookie-actions { display: flex; gap: 6px; }
 .lp-cookie button { min-height: 44px; padding: 0 16px; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer; border: 0; background: transparent; color: #4a5578; }
 .lp-cookie button.ok { background: #3e2bf1; color: #fff; }
