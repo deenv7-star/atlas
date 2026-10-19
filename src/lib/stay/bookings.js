@@ -1,5 +1,5 @@
 /** Pure booking math shared by Today, balances, reports and the double-booking guard. */
-import { parseDay, todayISO, nightsBetween, addDays } from './format';
+import { parseDay, todayISO, nightsBetween, addDays } from './format.js';
 
 export const INACTIVE_STATUSES = new Set(['CANCELLED', 'CANCELED', 'WAITLIST', 'cancelled', 'canceled', 'waitlist']);
 
