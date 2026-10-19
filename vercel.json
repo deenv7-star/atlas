@@ -1,5 +1,21 @@
 {
+  "redirects": [
+    {
+      "source": "/how-it-works",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/how-it-works/",
+      "destination": "/",
+      "statusCode": 301
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/manifest.webmanifest",
+      "destination": "/manifest.json"
+    },
     {
       "source": "/blog",
       "destination": "/blog/index.html"
@@ -112,11 +128,15 @@
         {
           "key": "Cache-Control",
           "value": "no-cache, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
         }
       ]
     },
     {
-      "source": "/:file(sw.js|registerSW.js)",
+      "source": "/:file(sw.js|registerSW.js|sw-cleanup.js|push-sw.js)",
       "headers": [
         {
           "key": "Cache-Control",
