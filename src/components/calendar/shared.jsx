@@ -36,7 +36,7 @@ export function MonthToolbar({ month, onPrev, onNext, onToday, isCurrent, childr
         </div>
         <div className="min-w-0">
           <h2 className="text-[20px] font-bold leading-tight text-navy-900 tabular md:text-[22px]" aria-live="polite">{monthTitle(month)}</h2>
-          {heb ? <p className="text-[13px] text-navy-900/60">{heb}</p> : null}
+          {heb ? <p className="text-[13px] text-navy-900/70">{heb}</p> : null}
         </div>
         {!isCurrent ? (
           <button type="button" onClick={onToday} className="press h-11 rounded-full bg-white px-4 text-[14px] font-semibold text-brand-600 ring-1 ring-inset ring-navy-900/10 hover:bg-[#F7F8FB]">היום</button>
@@ -187,11 +187,11 @@ export function DaySheet({ actions, units, stays, holidays }) {
                 <li key={r.unit.id} className="rounded-[16px] bg-[#F7F8FB] px-3 py-2.5">
                   <div className="flex items-center justify-between gap-3">
                     <span className="truncate text-[15px] font-semibold text-navy-900">{r.unit.name}</span>
-                    <span className={cn('shrink-0 text-[13px] font-semibold', r.freeNight ? 'text-brand-600' : 'text-navy-900/60')}>{r.freeNight ? 'הלילה פנוי' : 'הלילה תפוס'}</span>
+                    <span className={cn('shrink-0 text-[13px] font-semibold', r.freeNight ? 'text-brand-600' : 'text-navy-900/70')}>{r.freeNight ? 'הלילה פנוי' : 'הלילה תפוס'}</span>
                   </div>
                   {[...r.leaving.map((s) => ['יוצאים', s]), ...r.arriving.map((s) => ['מגיעים', s]), ...r.staying.map((s) => ['שוהים', s])].map(([k, s]) => (
                     <Link key={`${k}-${s.id}`} to={`${createPageUrl('BookingDetail')}/${s.id}`} className="mt-1 flex min-h-[44px] items-center gap-2 rounded-[12px] px-1 text-[14px] text-navy-900 hover:bg-white">
-                      <span className="w-[52px] shrink-0 text-navy-900/60">{s.isBlock ? 'חסום' : k}</span>
+                      <span className="w-[52px] shrink-0 text-navy-900/70">{s.isBlock ? 'חסום' : k}</span>
                       <span className="min-w-0 flex-1 truncate font-medium">{s.isBlock ? `עד ${shortDay(s.end)}` : stayLabel(s)}</span>
                       {!s.isBlock ? <SourceBadge channel={s.channel} /> : null}
                     </Link>
@@ -246,7 +246,7 @@ export function BlockDialog({ actions, units }) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-right">
           <DialogTitle className="text-[22px] font-bold text-navy-900">חסימת תאריכים</DialogTitle>
-          <DialogDescription className="text-[15px] text-navy-900/70">אם חיברתם את Booking ו-Airbnb, התאריכים ייסגרו גם שם.</DialogDescription>
+          <DialogDescription className="text-[15px] text-navy-900/70">אם Booking ו-Airbnb מחוברים, הם ייסגרו גם שם.</DialogDescription>
         </DialogHeader>
         {block ? (
           <div className="grid gap-3">
@@ -266,7 +266,7 @@ export function BlockDialog({ actions, units }) {
                 <input type="date" className={field} value={v.end} min={v.start ? addDaysIso(v.start, 1) : undefined} onChange={(e) => setBlock({ ...v, end: e.target.value })} />
               </label>
             </div>
-            <label className="block text-[14px] font-semibold text-navy-900">הערה <span className="font-normal text-navy-900/60">(לא חובה)</span>
+            <label className="block text-[14px] font-semibold text-navy-900">הערה <span className="font-normal text-navy-900/70">(לא חובה)</span>
               <input type="text" className={field} value={v.note || ''} placeholder="למשל: שיפוץ, משפחה" onChange={(e) => setBlock({ ...v, note: e.target.value })} />
             </label>
             <Button onClick={save} disabled={!valid || busy} className="h-12">

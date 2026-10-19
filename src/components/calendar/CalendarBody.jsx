@@ -14,7 +14,7 @@ import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
-  HE_DAYS_LONG, HE_DAYS_SHORT, freeUnitsOn, monthMatrix, monthKey, parseIso, shortDay, weekSegment,
+  HE_DAYS_LONG, HE_DAYS_SHORT, HE_MONTHS, freeUnitsOn, monthMatrix, monthKey, parseIso, shortDay, weekSegment,
 } from '@/lib/calendar/calendarModel';
 import { SourceBadge, stayAria, stayLabel } from './shared';
 
@@ -51,7 +51,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
             {multi ? <div className="hidden md:block" /> : null}
             <div className="grid grid-cols-7">
               {HE_DAYS_LONG.map((d, i) => (
-                <div key={d} className={cn('py-2.5 text-center text-[12px] font-semibold text-navy-900/60 md:text-[13px]', (i === 5 || i === 6) && 'bg-[#F7F8FB]')}>
+                <div key={d} className={cn('py-2.5 text-center text-[12px] font-semibold text-navy-900/70 md:text-[13px]', (i === 5 || i === 6) && 'bg-[#F7F8FB]')}>
                   <span className="md:hidden">{HE_DAYS_SHORT[i]}</span>
                   <span className="hidden md:inline">{d}</span>
                 </div>
@@ -60,7 +60,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
           </div>
 
           {multi ? (
-            <p className="border-b border-navy-900/[0.08] px-3 py-2 text-[12px] text-navy-900/60 md:hidden">
+            <p className="border-b border-navy-900/[0.08] px-3 py-2 text-[12px] text-navy-900/70 md:hidden">
               שורה לכל יחידה, מלמעלה למטה: {units.map((u) => u.name).join(' · ')}
             </p>
           ) : null}
@@ -69,7 +69,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
               {multi ? (
                 <div aria-hidden className="hidden border-l border-navy-900/[0.08] bg-white pt-[34px] md:block">
                   {units.map((u) => (
-                    <div key={u.id} className="flex items-center truncate pe-2 ps-4 text-[13px] text-navy-900/60" style={{ height: 'var(--lane)' }}>{u.name}</div>
+                    <div key={u.id} className="flex items-center truncate pe-2 ps-4 text-[13px] text-navy-900/70" style={{ height: 'var(--lane)' }}>{u.name}</div>
                   ))}
                 </div>
               ) : null}
@@ -94,27 +94,27 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
                         aria-label={label}
                         className={cn(
                           'group/cell relative flex flex-col items-stretch border-l border-navy-900/[0.06] text-start last:border-l-0 hover:bg-brand-600/[0.03] focus-visible:z-20',
-                          (i === 5 || i === 6) && 'bg-[#F7F8FB]',
+                          (i === 5 || i === 6 || !inMonth) && 'bg-[#F7F8FB]',
                           yomtov && 'bg-brand-600/[0.035]',
                           isToday && 'bg-brand-600/[0.05]',
                         )}
                       >
                         <span className="flex h-[34px] items-center gap-1.5 px-1.5 md:px-2.5">
                           <span className={cn(
-                            'inline-flex h-7 min-w-7 items-center justify-center rounded-full text-[14px] font-semibold tabular',
-                            isToday ? 'bg-brand-600 px-1 text-white' : inMonth ? (past ? 'text-navy-900/45' : 'text-navy-900') : 'text-navy-900/25',
-                          )}>{dt.getDate()}</span>
+                            'inline-flex h-7 min-w-7 items-center justify-center rounded-full text-[14px] tabular',
+                            isToday ? 'bg-brand-600 px-1 font-semibold text-white' : inMonth && !past ? 'font-semibold text-navy-900' : 'font-normal text-navy-900/70',
+                          )}>{dt.getDate()}{!inMonth && dt.getDate() === 1 ? <span className="ms-1 hidden text-[12px] md:inline">{HE_MONTHS[dt.getMonth()]}</span> : null}</span>
                           {hol ? (
                             <>
                               <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-600/50 md:hidden" />
-                              <span aria-hidden className={cn('hidden truncate text-[12px] md:inline', inMonth ? 'text-brand-600/80' : 'text-brand-600/40')}>{hol[0].title}</span>
+                              <span aria-hidden className={cn('hidden truncate text-[12px] md:inline', 'text-brand-600')}>{hol[0].title}</span>
                             </>
                           ) : null}
                           {isToday ? <span className="sr-only">היום</span> : null}
                         </span>
                         <span className="flex-1" />
-                        <span aria-hidden className={cn('flex h-[26px] items-center px-1.5 text-[11px] font-semibold md:px-2.5 md:text-[12px]', !inMonth && 'opacity-40')}>
-                          {past ? null : free === 0 ? <span className="text-navy-900/40">מלא</span> : (
+                        <span aria-hidden className={cn('flex h-[26px] items-center px-1.5 text-[11px] font-semibold md:px-2.5 md:text-[12px]')}>
+                          {past || !inMonth ? null : free === 0 ? <span className="text-navy-900/70">מלא</span> : (
                             <span className="text-brand-600">{multi ? <><span className="tabular">{free}</span><span className="hidden sm:inline"> פנויות</span></> : 'פנוי'}</span>
                           )}
                           <Plus className="ms-auto hidden h-4 w-4 text-brand-600 opacity-0 transition-opacity duration-150 group-hover/cell:opacity-100 md:block" />
@@ -142,7 +142,6 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
                         const seg = weekSegment(s, week);
                         if (!seg) return null;
                         const width = seg.to - seg.from;
-                        const faded = !week.slice(Math.floor(seg.from), Math.ceil(seg.to)).some((d) => d.slice(0, 7) === mk);
                         const Bar = mobile ? 'span' : Link;
                         const barProps = mobile
                           ? { 'aria-hidden': true }
@@ -152,7 +151,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
                           <Bar
                             key={s.id}
                             {...barProps}
-                            className={cn('absolute inset-y-[2px] z-10 block', !mobile && 'pointer-events-auto', faded && 'opacity-45', optimisticEntityClassName(s.id))}
+                            className={cn('absolute inset-y-[2px] z-10 block', !mobile && 'pointer-events-auto', optimisticEntityClassName(s.id))}
                             style={{ right: `calc(${(seg.from / 7) * 100}% + 1px)`, width: `calc(${(width / 7) * 100}% - 2px)` }}
                           >
                             <span className={cn(
@@ -189,7 +188,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
 
       <section className="v7-card p-5" aria-labelledby="gaps-a">
         <h2 id="gaps-a" className="text-[17px] font-bold text-navy-900">לילות פנויים בין הזמנות</h2>
-        <p className="text-[14px] text-navy-900/60">{monthGaps.length ? 'חלונות קצרים שעוד אפשר למכור החודש' : 'אין החודש לילות בודדים שנשארו באמצע'}</p>
+        <p className="text-[14px] text-navy-900/70">{monthGaps.length ? 'חלונות קצרים שעוד אפשר למכור החודש' : 'אין החודש לילות בודדים שנשארו באמצע'}</p>
         {monthGaps.length ? (
           <ul className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
             {monthGaps.map((g) => {
@@ -198,7 +197,7 @@ export default function CalendarBody({ month, today, units, stays, occ, gaps, ga
                 <li key={`${g.propertyId}-${g.start}`} className="flex min-h-[64px] items-center gap-3 rounded-[16px] bg-[#F7F8FB] px-4 py-2">
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[15px] font-semibold text-navy-900">{unitName(g.propertyId)}</div>
-                    <div className="text-[13px] text-navy-900/60">{shortDay(g.start)} – {shortDay(g.end)} · {heCount(g.nights, 'night')}</div>
+                    <div className="text-[13px] text-navy-900/70">{shortDay(g.start)} – {shortDay(g.end)} · {heCount(g.nights, 'night')}</div>
                   </div>
                   {u ? (
                     <Button variant="ghost" className="h-11 shrink-0" onClick={() => onNewBooking(u, g.start)} aria-label={`הזמנה חדשה ב${u.name} מ-${shortDay(g.start)}`}>

@@ -82,7 +82,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
       <header className="v5-rise mb-5 flex flex-row items-end justify-between gap-3 md:mb-6">
         <div>
           <h1 className="flex items-center gap-1 text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">לוח שנה<HelpHint id="calendar.page" /></h1>
-          <p className="mt-2 hidden text-[15px] text-navy-900/60 md:block">נוגעים ביום כדי להוסיף הזמנה או לחסום תאריכים.</p>
+          <p className="mt-2 hidden text-[15px] text-navy-900/70 md:block">נוגעים ביום כדי להוסיף הזמנה או לחסום תאריכים.</p>
         </div>
         <div className="flex items-center gap-1">
           <HelpHint id="calendar.sync" />
