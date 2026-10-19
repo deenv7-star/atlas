@@ -95,7 +95,10 @@ export function createApp() {
     app.use((req, res, next) => {
       if (req.method !== 'GET' && req.method !== 'HEAD') return next();
       if (req.path.startsWith('/api')) return next();
-      res.sendFile(path.join(staticRoot, 'index.html'), next);
+      // "/" is the prerendered landing; every other route gets the plain SPA shell (scripts/prerender.mjs)
+      const shell = path.join(staticRoot, 'app.html');
+      const file = req.path === '/' || !fs.existsSync(shell) ? path.join(staticRoot, 'index.html') : shell;
+      res.sendFile(file, next);
     });
   } else if (env.STATIC_DIST_PATH) {
     logger.warn('server.static_dist_missing', { path: staticRoot });

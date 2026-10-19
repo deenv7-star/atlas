@@ -20,13 +20,14 @@
  * Reduced motion: the static photo hero, then the home screen as its own section (as in ea07f10).
  * Every name and amount on the notifications and the screen is example data.
  */
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
 import { Mark } from '../v5/ui';
 import { CTA_SIGNUP, CTA_NOTE } from '../v5/content';
 import { prefersReducedMotion } from '../v5/motion';
 import { FACES } from './shared8';
+import { heroGeometry, heroGeometryScript } from './heroGeometry';
 import './hero-photo.css';
 
 const P = '/landing-hero';
@@ -41,12 +42,6 @@ const NTFS = [
   { ch: 'whatsapp', title: 'אישור נשלח בוואטסאפ', sub: 'משפחת לוי · עם הוראות הגעה', time: '09:00' },
   { face: 'noa', title: 'נועה ל. שילמה מקדמה', sub: '‏₪1,250 · האלון · נרשם לבד', time: '10:24' },
 ];
-
-/** The property photo tile inside the real captures, as fractions of the screen image (from ea07f10). */
-const TILE = {
-  desk: { x: 80 / 2880, y: 202 / 1800, w: 704 / 2880, h: 432 / 1800, r: 28 / 1440 },
-  mob: { x: 40 / 780, y: 568 / 1594, w: 338 / 780, h: 460 / 1594, r: 28 / 390 },
-};
 
 /** Scroll segments (progress 0..1 through the sticky run). */
 /* copy, notifications and scrim hold fully opaque for the first 1% (a few px), so a resting page, scroll
@@ -64,8 +59,13 @@ const seg = (p, a, b) => clamp((p - a) / (b - a));
 const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const lerp = (a, b, t) => a + (b - a) * t;
 
+const DESK = '(min-width: 900px)';
+const isDesk = () => window.matchMedia(DESK).matches;
+
+/** Re-runs the motion setup when the layout crosses 900px. Both device frames are always rendered (CSS shows
+ *  the one for this width), so the markup never depends on it: the prerendered HTML hydrates unchanged. */
 function useDesktop() {
-  const q = '(min-width: 900px)';
+  const q = DESK;
   const [d, setD] = useState(() => typeof window !== 'undefined' && window.matchMedia(q).matches);
   useEffect(() => {
     const m = window.matchMedia(q);
@@ -156,67 +156,60 @@ function EndHead() {
   );
 }
 
-/** The real home screen: browser window (desktop capture 2400×1500) or phone (C mobile 780×1594). */
-function Device({ desk, shotRef }) {
-  if (desk) {
-    return (
+/** The real home screen: browser window (desktop capture 2400×1500, ≥900px) and phone (C mobile 780×1594,
+ *  <900px). Both are in the markup and CSS shows one (hero-photo.css, same 900px rule as useDesktop), so the
+ *  HTML is the same for every screen and the prerendered page hydrates as is; the hidden one is lazy, so it
+ *  is never downloaded. */
+function Device({ deskRef, mobRef }) {
+  return (
+    <>
       <div className="ph-win ph-dev">
         <div className="ph-win-bar" aria-hidden="true"><i /><i /><i /><span dir="ltr">app.atlas-il.com/today</span></div>
         <div className="ph-win-shot">
-          <img ref={shotRef} src={`${P}/ui-d-today.webp`} alt="מסך הבית של atlas, נתוני דוגמה" width="2400" height="1500" decoding="async" />
+          <img ref={deskRef} src={`${P}/ui-d-today.webp`} alt="מסך הבית של atlas, נתוני דוגמה" width="2400" height="1500" loading="lazy" decoding="async" />
         </div>
       </div>
-    );
-  }
-  return (
-    <div className="ph-phone ph-dev" role="img" aria-label="מסך הבית של atlas בטלפון, נתוני דוגמה">
-      <div className="ph-phone-scr">
-        <span className="ph-phone-status" aria-hidden="true"><span className="num" dir="ltr">9:41</span><span className="ph-phone-island" /><i className="ph-phone-bat" /></span>
-        <img ref={shotRef} src={`${P}/ui-m-today.webp`} alt="" width="780" height="1594" decoding="async" />
+      <div className="ph-phone ph-dev" role="img" aria-label="מסך הבית של atlas בטלפון, נתוני דוגמה">
+        <div className="ph-phone-scr">
+          <span className="ph-phone-status" aria-hidden="true"><span className="num" dir="ltr">9:41</span><span className="ph-phone-island" /><i className="ph-phone-bat" /></span>
+          <img ref={mobRef} src={`${P}/ui-m-today.webp`} alt="" width="780" height="1594" loading="lazy" decoding="async" />
+        </div>
       </div>
-    </div>
+    </>
   );
+}
+
+const noSubscribe = () => () => {};
+/** Reduced motion, read once (as before). While hydrating the prerendered page React uses the server value
+ *  (false: the scroll version, which is what the HTML contains) and then switches if the visitor asked for
+ *  reduced motion, so hydration never mismatches. */
+function useReducedMotionOnce() {
+  const [rm] = useState(prefersReducedMotion);
+  return useSyncExternalStore(noSubscribe, () => rm, () => false);
 }
 
 export default function HeroPhoto() {
   const desk = useDesktop();
-  const [rm] = useState(prefersReducedMotion);
+  const rm = useReducedMotionOnce();
   const sec = useRef(null);
   const stage = useRef(null);
   const clip = useRef(null);
   const img = useRef(null);
   const scrim = useRef(null);
-  const shot = useRef(null);
+  const shotD = useRef(null);
+  const shotM = useRef(null);
+  /** the frame CSS shows at this width (both are rendered) */
+  const shotEl = () => (isDesk() ? shotD.current : shotM.current);
   const copy = useRef(null);
   const ntfs = useRef(null);
   const end = useRef(null);
   const geo = useRef(null);
 
-  /* Geometry: stage, the tile inside the real screen, and an overscanned frame whose baked-in corner
-     radius lands exactly on the tile's radius at the end (the overscan hides the corners at the start). */
+  /* Geometry (heroGeometry.js): stage, the tile inside the real screen, the overscanned rounded frame. */
   const measure = useCallback(() => {
-    const st = stage.current; const s = shot.current; const im = img.current; const fr = clip.current;
+    const st = stage.current; const s = shotEl(); const im = img.current; const fr = clip.current;
     if (!st || !s || !im || !fr) return false;
-    const W = st.offsetWidth; const H = st.offsetHeight;
-    const sr = st.getBoundingClientRect();
-    const r = s.getBoundingClientRect();
-    const T = desk ? TILE.desk : TILE.mob;
-    const tx = r.left - sr.left + T.x * r.width; const ty = r.top - sr.top + T.y * r.height;
-    const tw = T.w * r.width; const th = T.h * r.height; const tr = T.r * r.width;
-    let m = 24; let rx = 0; let ry = 0;
-    for (let k = 0; k < 4; k += 1) {
-      rx = (tr * (W + 2 * m)) / tw; ry = (tr * (H + 2 * m)) / th;
-      m = Math.max(24, Math.ceil(0.32 * Math.max(rx, ry)));
-    }
-    const FW = W + 2 * m; const FH = H + 2 * m;
-    const portrait = window.matchMedia(PORTRAIT).matches;
-    const pw = im.naturalWidth || (portrait ? 720 : 1920);
-    const ph = im.naturalHeight || 1440;
-    const cover = Math.max(FW / pw, FH / ph);
-    const iw = pw * cover; const ih = ph * cover;
-    Object.assign(fr.style, { left: `${-m}px`, top: `${-m}px`, width: `${FW}px`, height: `${FH}px`, borderRadius: `${rx}px / ${ry}px` });
-    Object.assign(im.style, { width: `${iw}px`, height: `${ih}px`, left: `${(FW - iw) / 2}px`, top: `${(FH - ih) / 2}px` });
-    geo.current = { W, H, m, FW, FH, pw, ph, cover, tx, ty, tw, th };
+    geo.current = heroGeometry(st, s, im, fr, isDesk());
     return true;
   }, [desk]);
 
@@ -243,7 +236,7 @@ export default function HeroPhoto() {
 
   useLayoutEffect(() => {
     if (rm) return undefined;
-    const els = () => ({ clip: clip.current, img: img.current, scrim: scrim.current, copy: copy.current, ntfs: ntfs.current, dev: shot.current?.closest('.ph-dev'), end: end.current });
+    const els = () => ({ clip: clip.current, img: img.current, scrim: scrim.current, copy: copy.current, ntfs: ntfs.current, dev: shotEl()?.closest('.ph-dev'), end: end.current });
     let anims = [];
     let raf = 0;
     let size = '';
@@ -322,7 +315,7 @@ export default function HeroPhoto() {
       onScroll();
     };
     onResize(); tick();
-    const waits = [shot.current, img.current].filter((el) => el && !el.complete);
+    const waits = [shotEl(), img.current].filter((el) => el && !el.complete);
     const onLoad = () => { size = ''; onResize(); };
     waits.forEach((el) => el.addEventListener('load', onLoad, { once: true }));
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -356,18 +349,19 @@ export default function HeroPhoto() {
         </section>
         <section id="product" className="ph-static-end" aria-label="מסך הבית של atlas">
           <EndHead />
-          <div className="ph-static-dev"><Device desk={desk} /></div>
+          <div className="ph-static-dev"><Device /></div>
         </section>
       </>
     );
   }
 
   return (
+    <>
     <section ref={sec} className="ph-hero is-scroll" aria-labelledby="hero-title">
       <div ref={stage} className="ph-stage">
         <div className="ph-end">
           <div ref={end} className="ph-end-head" id="product"><EndHead /></div>
-          <div className="ph-end-dev"><Device desk={desk} shotRef={shot} /></div>
+          <div className="ph-end-dev"><Device deskRef={shotD} mobRef={shotM} /></div>
         </div>
         <div ref={clip} className="ph-clip">
           <Photo imgRef={img} />
@@ -379,5 +373,8 @@ export default function HeroPhoto() {
         </div>
       </div>
     </section>
+    {/* prerendered page: frame the photo before the first paint (heroGeometry.js); inert on client renders */}
+    <script dangerouslySetInnerHTML={{ __html: heroGeometryScript }} suppressHydrationWarning />
+    </>
   );
 }

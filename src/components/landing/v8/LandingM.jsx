@@ -10,7 +10,7 @@
  * All screens are real ATLAS screens in demo mode; every name, booking and amount is example data
  * and is labelled as such. No testimonials, logos or customer counts.
  */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
 import CookieConsent from '@/components/landing/CookieConsent';
@@ -236,6 +236,13 @@ function StickyCta() {
   );
 }
 
+/**
+ * Performance (qa/landing-perf/report.md): the page is prerendered and hydrated. Each part below the hero is
+ * its own Suspense boundary (nothing in it suspends; the markup is the same), so React hydrates the header
+ * and the hero first and the rest in small slices in the background, instead of one long main-thread task.
+ */
+const Part = ({ children }) => <Suspense fallback={null}>{children}</Suspense>;
+
 export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
@@ -245,17 +252,17 @@ export default function LandingM() {
       <V7Header links={NAV} />
       <main id="main">
         <HeroPhoto />
-        <Channels />
-        <Blocks />
-        <Facts />
-        <TrustB />
-        <Pricing8 />
-        <Faq openFirst cta />
-        <Final />
-        <Credits8 />
+        <Part><Channels /></Part>
+        <Part><Blocks /></Part>
+        <Part><Facts /></Part>
+        <Part><TrustB /></Part>
+        <Part><Pricing8 /></Part>
+        <Part><Faq openFirst cta /></Part>
+        <Part><Final /></Part>
+        <Part><Credits8 /></Part>
       </main>
-      <Footer />
-      <StickyCta />
+      <Part><Footer /></Part>
+      <Part><StickyCta /></Part>
       <CookieConsent revealAfter=".ph-hero" />
     </div>
   );

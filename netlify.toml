@@ -4,10 +4,12 @@
   publish = "dist"
   command = "npm run build"
 
-# SPA: serve index.html for all routes so /dashboard, /login etc. work when visited directly
+# SPA: serve the app shell for all routes so /dashboard, /login etc. work when visited directly.
+# "/" (dist/index.html) and /pricing, /register, /login (dist/<page>/index.html) are prerendered files and
+# are served as such (Netlify serves an existing file before a non-forced rewrite); app.html is the plain shell.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/app.html"
   status = 200
 
 # Security headers (align with server/middleware/security-headers.js where possible)

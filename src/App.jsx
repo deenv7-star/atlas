@@ -9,10 +9,10 @@ import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary';
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes, Navigate, useParams } from 'react-router-dom';
+import { Route, Routes, Navigate, useParams } from 'react-router-dom';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
-import SeoManager from '@/components/seo/SeoManager';
-import ScrollToTop from '@/lib/ScrollToTop';
+import BackendNotConfigured from '@/components/common/BackendNotConfigured';
+import { isProductionBackendConfigured } from '@/lib/backendConfig';
 import { createPageUrl } from '@/utils';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
@@ -313,19 +313,20 @@ const AuthenticatedApp = () => {
 };
 
 
+/**
+ * The full app: providers + every route. The Router, scroll reset and SEO tags live in src/Root.jsx,
+ * which serves "/" and /pricing (lean public pages) without this module. Every other URL renders this, lazily.
+ */
 function App() {
+  if (!isProductionBackendConfigured()) return <BackendNotConfigured />;
   return (
     <GlobalErrorBoundary>
       <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <NuqsAdapter>
-              <ScrollToTop />
-              <SeoManager />
-              <NavigationTracker />
-              <AuthenticatedApp />
-            </NuqsAdapter>
-          </Router>
+          <NuqsAdapter>
+            <NavigationTracker />
+            <AuthenticatedApp />
+          </NuqsAdapter>
           <Toaster />
           <ConflictModalHost />
           <AtlasToaster />

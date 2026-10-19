@@ -79,6 +79,8 @@ export default defineConfig({
   ],
   build: {
     chunkSizeWarningLimit: 2000,
+    // read by scripts/prerender.mjs (CSS / JS of the prerendered "/" and /pricing), then deleted from dist
+    manifest: true,
   },
   resolve: {
     alias: {

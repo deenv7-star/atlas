@@ -29,8 +29,16 @@
       "destination": "/:page/index.html"
     },
     {
-      "source": "/(.*)",
+      "source": "/",
       "destination": "/index.html"
+    },
+    {
+      "source": "/:page(pricing|register|login)",
+      "destination": "/:page/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/app.html"
     }
   ],
   "headers": [

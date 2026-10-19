@@ -149,6 +149,10 @@
 .ph-end-h span { color: var(--indigo); }
 .ph-end-sub { margin: 6px 0 0; font-size: 15px; color: var(--ink); }
 .ph-end-dev { position: relative; }
+/* both frames are in the markup (prerendered HTML is the same for every screen); show the one for this width,
+   on the same 900px rule as HeroPhoto's useDesktop / isDesk */
+@media (min-width: 900px) { .ph-phone.ph-dev { display: none; } }
+@media not all and (min-width: 900px) { .ph-win.ph-dev { display: none; } }
 .ph-end-dev .ph-dev { opacity: 0; }
 .ph-end-dev .ph-win { width: min(1180px, 90vw, calc((100svh - 250px) * 1.6)); }
 .ph-end-dev .ph-phone { --w: min(310px, 80vw, calc((100svh - 230px) * 0.462)); }

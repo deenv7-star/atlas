@@ -3,7 +3,7 @@
  * ₪399 / ₪699 / ₪999, Hebrew plan names). The old page had its own ₪299 / ₪599 / "Enterprise"
  * illustration that no longer matched what we sell.
  */
-import React, { useRef } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useReveal } from '@/components/landing/v5/motion';
 import { Faq, Footer } from '@/components/landing/v5/LandingV5';
 import { V7Header } from '@/components/landing/v7/shared7';
@@ -24,9 +24,9 @@ export default function PricingPlans() {
       <V7Header links={NAV} />
       <main id="main" className="pt-[72px]">
         <Pricing8 as="h1" title="מחירים. פשוט, לפי מספר המתחמים." />
-        <Faq limit={5} />
+        <Suspense fallback={null}><Faq limit={5} /></Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={null}><Footer /></Suspense>
     </div>
   );
 }
