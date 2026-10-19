@@ -252,9 +252,25 @@ function withRevealOn(html) {
   return out;
 }
 
+/**
+ * The prerendered page is complete HTML, so the app's entry script is not needed for the first paint.
+ * As a plain module script it ran (and hydrated) before the browser's first paint of the page, holding the
+ * headline back behind ~2 s of JS on a phone. Here it is fetched at once (modulepreload) but started right
+ * after the first frame is painted; nothing on screen changes when it starts (hydration adopts the HTML).
+ * Hidden tabs (no frames) start it at once; a 2.5 s timer is the safety net.
+ */
+function deferEntry(html) {
+  const re = /<script type="module" crossorigin src="(\/assets\/[^"]+\.js)"><\/script>/;
+  const m = html.match(re);
+  if (!m) throw new Error('entry <script type="module"> not found in the template');
+  const src = m[1];
+  const boot = `<script>(function(){var d=0;function go(){if(d)return;d=1;var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=${JSON.stringify(src)};document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}requestAnimationFrame(function(){setTimeout(go,0)});setTimeout(go,2500)})()</script>`;
+  return html.replace(re, `<link rel="modulepreload" crossorigin href="${src}">`).replace('</body>', `    ${boot}\n  </body>`);
+}
+
 /** Put the prerendered tree inside #root (replacing the "טוען..." placeholder), marked for hydration. */
 function leanBody(html, appHtml, links) {
-  const head = html.replace('</head>', `    ${links}\n    ${REVEAL_NOSCRIPT}\n  </head>`);
+  const head = deferEntry(html).replace('</head>', `    ${links}\n    ${REVEAL_NOSCRIPT}\n  </head>`);
   const start = head.indexOf('<div id="root">');
   if (start < 0) throw new Error('template has no #root');
   const after = head.slice(start);
