@@ -105,7 +105,7 @@
 .tb-demo svg { width: 16px; height: 16px; }
 
 .tb-d-welcome { align-items: center; }
-.tb-word { display: inline-flex; align-items: center; gap: 6px; font-size: 26px; font-weight: 800; letter-spacing: .02em; color: #1B2656; animation: tb-pop 600ms cubic-bezier(.2, .8, .2, 1) both; }
+.tb-word { display: inline-flex; align-items: center; gap: 6px; font-size: 26px; font-weight: 800; letter-spacing: .02em; color: #3E2BF1; animation: tb-pop 600ms cubic-bezier(.2, .8, .2, 1) both; }
 .tb-word i { width: 8px; height: 8px; border-radius: 9999px; background: #3E2BF1; }
 .tb-orb { position: absolute; display: inline-flex; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: 12px; background: #fff; color: #3E2BF1; box-shadow: 0 6px 16px -8px rgba(27, 38, 86, .35); animation: tb-float 3600ms ease-in-out infinite, tb-pop 500ms cubic-bezier(.2, .8, .2, 1) both; }
 .tb-orb--1 { top: 14px; right: 18%; animation-delay: 0ms, 250ms; }

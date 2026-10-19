@@ -91,7 +91,7 @@ html:has(.l5) { scroll-behavior: smooth; scroll-padding-top: 80px; }
 }
 
 /* ---------- wordmark + marks ---------- */
-.l5-wm { display: inline-flex; align-items: baseline; gap: 1px; font-weight: 800; font-size: 22px; letter-spacing: 0.01em; color: var(--navy); direction: ltr; line-height: 1; }
+.l5-wm { display: inline-flex; align-items: baseline; gap: 1px; font-weight: 800; font-size: 22px; letter-spacing: 0.01em; color: var(--indigo); direction: ltr; line-height: 1; }
 .l5-wm i { width: 7px; height: 7px; border-radius: 2px; background: var(--indigo); display: inline-block; }
 .l5-wm.is-sm { font-size: 18px; }
 .l5-wm.is-sm i { width: 6px; height: 6px; }

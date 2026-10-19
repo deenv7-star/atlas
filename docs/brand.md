@@ -27,10 +27,13 @@ Owner rule (Deen, 16.10.2026): one unified language, one unified branding, one c
 - Motion: 150-220ms, ease-out cubic-bezier(.2,.8,.2,1); press scale .98; respect prefers-reduced-motion.
 
 ## Logo
-- Use the approved sculpted lowercase `atlas` wordmark, outlined in `BrandWordmark` and `public/atlas-logo.svg`.
-- Website and app wordmarks contain lettering only: no standalone symbol and no trailing dot.
-- Keep light website surfaces and existing brand colors. Use inherited navy on light surfaces and white on dark surfaces.
-- Heebo remains the interface/body typeface; do not use it to recreate the custom logo.
+- Source of truth: Deen's final logo, docs/brand/atlas-logo-deen-source.svg (single compound path). Used exactly: the path data is unchanged; only the fill colour, the viewBox (padding trimmed) and the title ("atlas") differ. Never redraw, trace or re-letter it.
+- Version B: indigo #3E2BF1 wordmark; symbol = white orb "a" on a navy #1B2656 tile (favicon, app icon).
+- The symbol (app icon / favicon / avatar) is the orb "a" alone: the first two subpaths of the same compound path (arm + orb), split out with no new curves. Component: `BrandMark`; wordmark: `BrandWordmark` (same file).
+- White on navy/indigo when inverted. Colours only #1B2656, #3E2BF1, white.
+- Files: public/atlas-logo.svg (+ -navy / -indigo / -white), atlas-mark.svg, atlas-mark-white.svg, favicon.svg/.ico/16/32, apple-touch-icon.png, icons/icon-*.png, icons/maskable-192/512.png (mark inside the 80% safe zone), public/brand/icons/<colourway>/.
+- Rebuild: `python3 scripts/brand-logo/export_final.py B .` (cairosvg + pillow), then OG: `OG_ONLY=1 CHROME=... node scripts/site-assets/gen-covers.mjs` and copy public/og/og-default.png to public/og-image.png.
+- Heebo remains the interface/body typeface; never set the logo in a font.
 
 ## Voice (Hebrew)
 - Speak to the owner in plural "אתם" (landing) / imperative short verbs in app buttons ("הוסיפו הזמנה" → app buttons use infinitive-free short form: "הזמנה חדשה", "שמירה", "שליחה בוואטסאפ").
@@ -40,6 +43,3 @@ Owner rule (Deen, 16.10.2026): one unified language, one unified branding, one c
 - Empty states: one sentence why + one primary action.
 
 
-## Approved wordmark (19 October 2026)
-
-Use `BrandWordmark` for the selected sculpted lowercase atlas lettering. The canonical transparent artwork is `public/atlas-logo.svg`; paths are outlined, with no font dependency. The shared component preserves the existing wordmark width with the new artwork's 1859:638 proportions. Do not add a symbol, dot, reflection, background rectangle or replacement text. This update changes the text wordmark only; app icons and favicons are separate assets.

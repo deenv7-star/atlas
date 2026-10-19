@@ -40,7 +40,7 @@
 .s-skip { position: absolute; inset-inline-start: 12px; top: -64px; z-index: 100; background: var(--s-navy); color: #fff !important; padding: 10px 16px; border-radius: 10px; font-weight: 700; text-decoration: none; transition: top 160ms var(--s-ease); }
 .s-skip:focus { top: 12px; }
 
-.s-wm { display: inline-flex; align-items: baseline; gap: 2px; font-weight: 800; font-size: 22px; letter-spacing: 0.02em; color: var(--s-navy); line-height: 1; }
+.s-wm { display: inline-flex; align-items: baseline; gap: 2px; font-weight: 800; font-size: 22px; letter-spacing: 0.02em; color: var(--s-indigo); line-height: 1; }
 .s-wm i { width: 7px; height: 7px; border-radius: 2px; background: var(--s-indigo); display: inline-block; }
 
 .s-soon { color: inherit; opacity: .8; font-style: normal; }

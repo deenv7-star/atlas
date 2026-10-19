@@ -206,7 +206,7 @@ function llmsFull(mod) {
 
 /* ---------------- lean pages ("/", /pricing): prerendered + hydrated ---------------- */
 
-const LANDING_OG = `${ORIGIN}/og-image.png?v=5`;
+const LANDING_OG = `${ORIGIN}/og-image.png?v=6`;
 
 function readManifest() {
   const file = path.join(DIST, '.vite', 'manifest.json');
