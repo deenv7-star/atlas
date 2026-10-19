@@ -32,6 +32,14 @@ const PROVIDERS = {
   OUTLOOK: { name: 'Outlook', short: 'O', tone: 'bg-[#EEF0F6] text-ink-600', channel: 'outlook' },
 };
 
+/** More busy dates than one unit realistically has, from a link that is not Airbnb / Booking.com. */
+export const SUSPICIOUS_FEED_EVENTS = 100;
+export function isSuspiciousFeed(url, events) {
+  const u = String(url || '');
+  if (/airbnb\.|booking\.com/i.test(u)) return false;
+  return Number(events) > SUSPICIOUS_FEED_EVENTS;
+}
+
 function guessProvider(url) {
   if (/airbnb\./i.test(url)) return 'AIRBNB';
   if (/booking\.com/i.test(url)) return 'BOOKING_COM';
@@ -287,9 +295,18 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
     qc.invalidateQueries({ queryKey: ['stay'] });
   };
 
-  const report = (r) => {
+  const report = (r, url = '') => {
     if (!r) return;
     if (!r.ok) { atlasToastApi.error('הסנכרון נכשל. הפרטים מופיעים ליד הערוץ'); return; }
+    // A link that is not Airbnb / Booking.com with this many busy dates is probably not one unit's export
+    // (a holidays or a whole-hotel calendar): say so instead of a plain "synced".
+    if (isSuspiciousFeed(url, r.events)) {
+      atlasToastApi.error(
+        `בקישור הזה יש ${r.events} תאריכים תפוסים, הרבה יותר ממה שיש בדרך כלל ביחידה אחת.`,
+        'אם זה לא קישור הייצוא של היחידה מהערוץ, הסירו אותו מהרשימה כדי שהיומן לא ייחסם בטעות.',
+      );
+      return;
+    }
     const parts = [`נמצאו ${r.events} תאריכים תפוסים`];
     if (r.created) parts.push(`${r.created} נוספו ליומן`);
     if (r.cancelled) parts.push(`${r.cancelled} בוטלו בערוץ`);
@@ -301,7 +318,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
     setSyncingId(sync ? sync.id : 'all');
     try {
       const res = await callEdge('ical-sync', sync ? { sync_id: sync.id } : {});
-      if (sync) report(res?.results?.[0]);
+      if (sync) report(res?.results?.[0], sync.ical_url);
       else {
         const rs = res?.results || [];
         const bad = rs.filter((r) => !r.ok).length;
@@ -326,7 +343,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
       });
       qc.invalidateQueries({ queryKey: ['calendar-syncs'] });
       const res = await callEdge('ical-sync', { sync_id: created.id });
-      report(res?.results?.[0]);
+      report(res?.results?.[0], url);
       return true;
     } catch (e) {
       atlasToastApi.error(e.message || 'לא הצלחנו לחבר את היומן');

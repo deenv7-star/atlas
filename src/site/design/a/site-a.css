@@ -9,7 +9,7 @@
 .a-nav { display: flex; gap: 4px; margin-inline-start: auto; }
 .a-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--s-navy); text-decoration: none; font-weight: 500; font-size: 15px; }
 .a-nav a:hover { background: var(--s-canvas); }
-.a-hdr-cta { min-height: 44px; padding: 0 16px; font-size: 15px; }
+.a-hdr-cta { min-height: 44px; padding: 0 16px; font-size: 15px; white-space: nowrap; flex-shrink: 0; }
 
 /* page head */
 .a-doc { padding-top: 40px; padding-bottom: 72px; }
@@ -109,4 +109,11 @@
   .a-cover { border-radius: 14px; margin-bottom: 32px; }
   .a-cta { padding: 32px 22px; border-radius: 20px; }
   .a-card { padding: 22px; }
+}
+/* small phones (320-360): logo, "מחירים" and the CTA on one line, nothing past the edge
+   ("בלוג" stays in the footer and on the home page) */
+@media (max-width: 360px) {
+  .a-wrap { padding-inline: 16px; }
+  .a-hide-xs { display: none !important; }
+  .a-hdr-cta { padding: 0 14px; }
 }

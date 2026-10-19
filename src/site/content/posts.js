@@ -181,7 +181,7 @@ export const POSTS = [
       { title: 'רישוי ועסקים (עו"ד שושי יוסקוביץ\'): יחידות אירוח וצימרים, פריט 7.1ב', url: 'https://www.buslic.co.il/2016/12/06/zimerunits/' },
       { title: 'הרשות לפיתוח הגליל: הפעלת צימרים בגליל', url: 'http://www.romgalil.org.il/art/a_70.asp' },
       { title: 'משרד התיירות: תקנים פיזיים לתכנון וסיווג מתקני אכסון תיירותי', url: 'https://www.gov.il/BlobFolder/policy/hoverttkanim2012/he/hoverttkanim2012.pdf' },
-      { title: 'משרד הפנים: מפרט אחיד לפריט 7.1א', url: 'https://www.gov.il/BlobFolder/generalpage/uniform-spec-07-01a/he/file_3_specs-9-12-25-7.1a-full.pdf' },
+      { title: 'משרד הפנים: מפרט אחיד לפריט 7.1א', url: 'https://www.gov.il/BlobFolder/generalpage/uniform-spec-07-01a/he/07_2026_uniform-spec-07-01a-12-7-26-clean.pdf' },
     ],
   },
 ];

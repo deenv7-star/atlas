@@ -73,7 +73,7 @@
 .s-prose a { font-weight: 500; }
 .s-prose a:hover { color: var(--s-indigo-700); }
 
-.s-table { overflow-x: auto; border: 1px solid var(--s-line); border-radius: 12px; background: #fff; -webkit-overflow-scrolling: touch; }
+.s-table { position: relative; overflow-x: auto; border: 1px solid var(--s-line); border-radius: 12px; background: #fff; -webkit-overflow-scrolling: touch; }
 .s-table table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.55; }
 .s-table th, .s-table td { text-align: start; padding: 12px 14px; vertical-align: top; border-bottom: 1px solid var(--s-line); }
 .s-table tr:last-child td { border-bottom: 0; }
@@ -105,7 +105,7 @@
 /* toc */
 .s-toc-t { font-size: 13px; font-weight: 700; color: var(--s-ink-2); letter-spacing: 0.02em; margin: 0 0 8px; }
 .s-toc ol { list-style: none; margin: 0; padding: 0; }
-.s-toc a { display: block; padding: 6px 0; color: var(--s-ink); text-decoration: none; font-size: 15px; line-height: 1.45; }
+.s-toc a { display: flex; align-items: center; min-height: 44px; padding: 4px 0; color: var(--s-ink); text-decoration: none; font-size: 15px; line-height: 1.45; }
 .s-toc a:hover { color: var(--s-indigo); }
 
 .s-crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 8px; margin: 0; padding: 0; font-size: 14px; }
@@ -144,3 +144,8 @@
 
 .s-hp { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .s-form-done p { margin: 0 0 .75rem; }
+
+/* Tap areas >= 44px (WCAG 2.5.8) for standalone links in breadcrumbs, detail rows and tables.
+   Padding + equal negative margin: the hit area grows, the layout does not move. */
+.s-crumbs a, .s-dl dd a, .s-table td a { display: inline-block; padding-block: 11px; margin-block: -11px; }
+.s-crumbs a, .s-table td a { min-width: 44px; text-align: center; }

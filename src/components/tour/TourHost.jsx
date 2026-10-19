@@ -77,36 +77,66 @@ export default function TourHost({ user }) {
   const elRef = useRef(null);
   const audioRef = useRef(null);
   const returnFocus = useRef(null);
+  const navRef = useRef(null);         // { to, from } while the tour itself is navigating (null = none in flight)
   const step = TOUR_STEPS[idx];
   const total = TOUR_STEPS.length;
 
-  /* open by itself once after onboarding, or from anywhere via startTour() */
+  /* open by itself once after onboarding, or from anywhere via startTour().
+     A pending tour only resumes on its own when this load is already on the saved step's screen:
+     a deep link or a refresh on any other screen is never redirected and never covered.
+     (It can always be resumed from Settings or the account menu.) */
   useEffect(() => {
     if (!user?.id) return undefined;
     let alive = true;
     getTourState(user).then((st) => {
       if (!alive || st?.status !== 'pending') return;
-      setTimeout(() => { if (alive) { setIdx(Math.min(st.step || 0, total - 1)); setActive(true); } }, 700);
+      const at = Math.min(st.step || 0, total - 1);
+      setTimeout(() => {
+        if (!alive) return;
+        if (!samePath(window.location.pathname, TOUR_STEPS[at]?.path)) return;
+        returnFocus.current = document.activeElement;
+        navRef.current = null;
+        setIdx(at);
+        setActive(true);
+      }, 700);
     });
     return () => { alive = false; };
   }, [user?.id]);
 
   useEffect(() => onTourStart((s) => {
     returnFocus.current = document.activeElement;
+    navRef.current = null;
     setIdx(Math.max(0, Math.min(s, total - 1)));
     setActive(true);
   }), [total]);
 
-  /* go to the step's screen, wait for its element, bring it into view */
+  /* the tour moved (started, next, back, a dot): take the user to that step's screen.
+     Only the tour's own moves navigate; nothing here runs on a plain route change. */
+  useEffect(() => {
+    if (!active || !step) return;
+    if (!samePath(window.location.pathname, step.path)) {
+      navRef.current = { to: step.path, from: window.location.pathname };
+      navigate(step.path);
+    }
+  }, [active, idx]);
+
+  /* on the step's screen: wait for its element, bring it into view.
+     If the user leaves the step's screen themselves (back button, a link), the tour steps aside:
+     it closes quietly and keeps its place (still pending on the account), instead of pulling them back. */
   useEffect(() => {
     if (!active || !step) return undefined;
     let alive = true;
     setReady(false);
     elRef.current = null;
     if (!samePath(location.pathname, step.path)) {
-      navigate(step.path);
-      return undefined; // runs again when the path changes
+      const nav = navRef.current;
+      if (nav && samePath(nav.to, step.path) && location.pathname === nav.from) return undefined; // our own navigation is on its way
+      audioRef.current?.pause();
+      setActive(false);
+      setRect(null);
+      return undefined;
     }
+    navRef.current = null;
     if (!step.target) { setRect(null); setReady(true); return undefined; }
     const t0 = Date.now();
     const find = () => {
