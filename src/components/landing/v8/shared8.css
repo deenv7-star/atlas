@@ -3,12 +3,18 @@
    no dark or black sections (solid indigo is the bold surface). Heebo. */
 
 .v8 {
-  --sky: #e6f2ff;
-  --sky-2: #cfe6ff;
-  --lilac: #efecff;
-  --lilac-2: #ddd7ff;
-  --mint: #e8f7f1;
-  --mint-2: #c9eedd;
+  /* Section surfaces (brand: white / canvas #F7F8FB only, no sky / lilac / mint tints).
+     Version B: one cool indigo-tinted neutral (#3E2BF1 at 3% on white = #F9F9FF) for every
+     alternating section and the fact cards, with a faint indigo hairline on cards. Old tone names stay as aliases. */
+  --sec-alt: #f9f9ff;
+  --sec-card: #f9f9ff;
+  --sec-card-line: rgba(62, 43, 241, 0.08);
+  --sky: var(--sec-alt);
+  --sky-2: #e7e9f1;
+  --lilac: #ffffff;
+  --lilac-2: #e7e9f1;
+  --mint: var(--sec-alt);
+  --mint-2: #e7e9f1;
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --r-box: 28px;
   --sh-pop: 0 2px 4px rgba(27, 38, 86, 0.06), 0 18px 40px -14px rgba(27, 38, 86, 0.32), 0 40px 80px -40px rgba(62, 43, 241, 0.45);
@@ -42,7 +48,7 @@
 .v8-wa { width: 300px; padding: 12px 12px 14px; border-radius: 22px; background: #fff; box-shadow: var(--sh-pop); color: var(--navy); }
 .v8-wa-top { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 10px; }
 .v8-wa-top small { margin-inline-start: auto; font-size: 12.5px; color: var(--ink-2); }
-.v8-wa-ic { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #e7f9ee; }
+.v8-wa-ic { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #fff; box-shadow: 0 0 0 1px var(--line); }
 .v8-wa-msg { position: relative; padding: 10px 14px 24px; border-radius: 18px 18px 6px 18px; background: var(--indigo); color: #fff; font-size: 14.5px; line-height: 1.5; }
 .v8-wa-meta { position: absolute; inset-block-end: 6px; inset-inline-end: 12px; display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: rgba(255, 255, 255, 0.78); }
 .v8-wa-meta svg { color: #9fdcff; }
