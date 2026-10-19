@@ -4,6 +4,7 @@
   --ob-ease: cubic-bezier(0.23, 1, 0.32, 1);
   --ob-ring: 0 0 0 3px rgba(62, 43, 241, 0.22);
   --ob2-canvas: #F7F8FB;
+  min-height: 100vh; /* iOS Safari < 15.4: no dvh */
   min-height: 100dvh;
   background: var(--ob2-canvas);
   color: #1B2656;
@@ -54,7 +55,7 @@
 .ob2-top { padding-top: max(12px, env(safe-area-inset-top)); }
 
 /* the building moment */
-.ob2-build { position: relative; min-height: 100dvh; overflow: hidden; background: #fff; }
+.ob2-build { position: relative; min-height: 100vh; min-height: 100dvh; overflow: hidden; background: #fff; }
 .ob2-build-glow { position: absolute; inset: -20% -30% auto; height: 70%; background: radial-gradient(closest-side, rgba(62, 43, 241, 0.16), rgba(62, 43, 241, 0)); pointer-events: none; }
 .ob2-spin { animation: ob2-spin 0.9s linear infinite; transform-origin: 50% 50%; }
 @keyframes ob2-spin { to { transform: rotate(360deg); } }

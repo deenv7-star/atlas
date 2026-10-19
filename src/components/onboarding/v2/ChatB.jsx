@@ -308,7 +308,7 @@ export default function ChatB({ user, again = false }) {
               <li key={qq} className="flex flex-col gap-2">
                 <BotLines texts={lines(qq, { ...a, kind: a.kind }, again)} animate={false} />
                 <div className="flex items-end justify-end gap-1.5">
-                  <button type="button" onClick={() => editAt(j)} className="ob-press flex h-11 w-11 items-center justify-center rounded-full text-ink-400 hover:bg-white hover:text-navy-900" aria-label={`שינוי: ${answerText(qq, a)}`}>
+                  <button type="button" onClick={() => editAt(j)} className="ob-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-400 hover:bg-white hover:text-navy-900" aria-label={`שינוי: ${answerText(qq, a)}`}>
                     <Pencil className="h-4 w-4" aria-hidden />
                   </button>
                   <p className="ob2-bubble is-me !ms-0">{answerText(qq, a)}</p>

@@ -35,15 +35,15 @@ export default function PlanPick({ value = 'trial', onChange, compact = false })
               className="ob2-option ob-press !min-h-[72px] !items-start sm:flex-col sm:!items-stretch sm:!gap-2">
               <span className={cn('ob2-radio mt-0.5 sm:hidden', on && 'is-on')} aria-hidden>{on ? <Check className="h-4 w-4" strokeWidth={3} /> : null}</span>
               <span className="min-w-0 flex-1 text-start">
-                <span className="flex items-baseline gap-2">
+                <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                   <span className="text-[17px] font-extrabold text-navy-900">{p.nameHe}</span>
-                  {p.popular ? <span className="rounded-full bg-[#E4E1FD] px-2 py-0.5 text-[12px] font-bold text-brand-700">הכי נבחר</span> : null}
+                  {p.popular ? <span className="whitespace-nowrap rounded-full bg-[#E4E1FD] px-2 py-0.5 text-[12px] font-bold text-brand-700">הכי נבחר</span> : null}
                 </span>
                 <span className="mt-0.5 block text-[15px] text-ink-600">{p.limit}</span>
               </span>
-              <span className="shrink-0 text-end sm:text-start" dir="ltr">
+              <span className="shrink-0 whitespace-nowrap text-end sm:text-start" dir="ltr">
                 <span className="text-[20px] font-extrabold tabular-nums text-navy-900">₪{p.price}</span>
-                <span className="text-[13px] text-ink-400"> /חודש</span>
+                <span className="text-[13px] text-ink-600"> /חודש</span>
               </span>
             </button>
           );
