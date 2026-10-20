@@ -7,14 +7,16 @@
  * cancellation lines. Copy lives in src/config/pricing.js.
  */
 import React, { useState } from 'react';
-import { Check, ChevronDown, MessageCircle, MapPin, ShieldCheck } from 'lucide-react';
+import { Check, ChevronDown, MessageCircle, MapPin, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE } from '@/config/pricing';
+import { GROWTH_OFFER, FOUNDING, GROWTH_STATUS, GROWTH_LINKS, nis } from '@/config/growth';
 import { fmt } from '../v5/motion';
 import { SignupButton } from '../v5/LandingV5';
 import { BillingToggle8 } from './pricing/BillingToggle8';
 import { PriceNumber } from './pricing/PriceRoll8';
 import './pricing8.css';
 import './pricing/pricing-motion.css';
+import './pricing/pricing-growth.css';
 
 const TRUST = [
   { I: MessageCircle, t: 'תמיכה בעברית, בוואטסאפ' },
@@ -52,6 +54,37 @@ function FeatList({ items }) {
     <ul className="v8p-feat">
       {items.map((f) => <li key={f}><Check size={16} strokeWidth={2.6} aria-hidden="true" /><span>{f}</span></li>)}
     </ul>
+  );
+}
+
+/**
+ * The growth plan as one line under the plans (landing, 20.10.2026): the only place the page shows the
+ * growth price, so there is one pricing story. ₪749 INCLUDES the whole management system (a higher plan,
+ * not an extra on top), as Deen approved live. Prices and founding terms come from src/config/growth.js.
+ */
+function GrowthAddon({ H }) {
+  return (
+    <div id="pricing-growth" className="v8p-add" data-reveal>
+      <div className="v8p-add-main">
+        <div className="v8p-add-top">
+          <H className="v8p-add-h">{GROWTH_OFFER.name}</H>
+          <span className="v8p-add-soon">בקרוב</span>
+        </div>
+        <p className="v8p-add-line">
+          <span className="v8p-nw"><bdi className="num" dir="ltr">{nis(GROWTH_OFFER.price)}</bdi> לחודש,</span>{' '}
+          <span className="v8p-nw">כולל את כל מערכת הניהול</span><span aria-hidden="true"> · </span><span className="sr-only">, </span>
+          <span className="v8p-nw"><bdi className="num is-found" dir="ltr">{nis(FOUNDING.monthly)}</bdi> למייסדים</span>
+        </p>
+        <p className="v8p-add-terms">
+          <span className="v8p-nw">{`${FOUNDING.cap} ראשונים, עד ${FOUNDING.deadline}`}</span><span aria-hidden="true"> · </span><span className="sr-only">, </span>
+          <span className="v8p-nw">{`המחיר נעול ל-${FOUNDING.lockMonths} חודשים`}</span>
+        </p>
+        <p className="v8p-add-what">{`${GROWTH_STATUS.soon.join(', ').replace(/, ([^,]*)$/, ' ו$1')}. תקציב הפרסום שלכם, משולם ישירות `}<span className="v8p-nw">ל-Meta ול-Google</span>.</p>
+      </div>
+      <a className="v8p-add-cta" href={GROWTH_LINKS.founding} target="_blank" rel="noopener noreferrer">
+        <span>שמירת מקום כמייסדים</span><ArrowLeft size={18} strokeWidth={2} aria-hidden="true" /><span className="sr-only"> (וואטסאפ, נפתח בחלון חדש)</span>
+      </a>
+    </div>
   );
 }
 
@@ -98,7 +131,7 @@ export function CompareTable() {
   );
 }
 
-export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2' }) {
+export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2', growth = false }) {
   const [yearly, setYearlyState] = useState(false);
   const [said, setSaid] = useState('');
   const setYearly = (y) => {
@@ -152,6 +185,8 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
             );
           })}
         </ul>
+
+        {growth && <GrowthAddon H={PlanH} />}
 
         <details className="v8p-diff" data-reveal>
           <summary>

@@ -12,19 +12,24 @@
  * blocks, facts and trust sections are no longer rendered (removed from this file; see git history before 20.10.2026; TrustB.jsx is kept).
  * One bottom bar: the dark cookie row first, the sticky sign-up bar only after it is answered.
  *
+ * 20.10.2026 visual v2, version A: the same short page, but the 3 plain feature cards are the four colour
+ * blocks again, condensed into a bento of four tiles (indigo, canvas, canvas, navy), each with its real UI crop;
+ * the facts section (four numbers + the face stack) is back after the features. Photos row, 5 questions and
+ * one bottom bar stay as in #162.
+ *
  * All screens are real ATLAS screens in demo mode; every name, booking and amount is example data
  * and is labelled as such. No testimonials, logos or customer counts.
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, MessageCircle, Wallet, Sparkles } from 'lucide-react';
+import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { Faq, Footer } from '../v5/LandingV5';
 import { LANDING_FAQ, CTA_SIGNUP, CTA_NOTE } from '../v5/content';
 import { V7Header } from '../v7/shared7';
-import { UI, FACES, Face, FaceStack, Pricing8, CtaLinks, Credits8 } from './shared8';
+import { UI, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8 } from './shared8';
 import { Pic } from './people/Pic';
 import '../v5/landing-v5.css';
 import '../v7/landing-v7.css';
@@ -32,35 +37,69 @@ import './shared8.css';
 import './landing-v8m.css';
 import './faq-m.css';
 import './landing-ux-1020.css';
+import './landing-visual-v2.css';
 import HeroPhoto from './HeroPhoto';
 import LazyGrowth from './growth/LazyGrowth';
 
-const loadGrowth = () => import('./growth/GrowthD');
+const loadGrowth = () => import('./growth/GrowthS');
 
-const NAV = [['#features', 'המוצר'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
+const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
-/* ---------------- features: 3 rows + channels (replaces the 4 colour blocks, facts and trust) ---------------- */
-const FEATS = [
-  { I: CalendarDays, t: 'כל הערוצים. לוח אחד.', d: 'Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח. בלי כפל הזמנות.' },
-  { I: MessageCircle, t: 'וואטסאפ לאורחים. מוכן מראש.', d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.' },
-  { I: Wallet, t: 'הכסף נכנס. אתם רואים הכל.', d: 'כל מקדמה ויתרה נרשמות, ורואים כמה נכנס החודש.' },
+/* ---------------- features: the four colour blocks as a bento of tiles + photos + channels ---------------- */
+const TILES = [
+  {
+    tone: 'indigo', I: CalendarDays, k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
+    d: 'Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח. בלי כפל הזמנות.',
+    vis: (
+      <div className="lm-tile-vis is-cal">
+        <img src={`${UI}/c-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
+        <span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />התאריכים נחסמו ב-Booking.com</span>
+      </div>
+    ),
+  },
+  {
+    tone: 'canvas', I: MessageCircle, k: 'הודעות', t: 'וואטסאפ לאורחים. מוכן מראש.',
+    d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.',
+    vis: (
+      <div className="lm-tile-vis is-msg">
+        <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר מחכה לכם. קוד לדלת: 2419. נסיעה טובה" time="18:00" />
+      </div>
+    ),
+  },
+  {
+    tone: 'canvas', I: Wallet, k: 'תשלומים', t: 'הכסף נכנס. אתם רואים הכל.',
+    d: 'כל מקדמה ויתרה נרשמות, ורואים כמה נכנס החודש.',
+    vis: (
+      <div className="lm-tile-vis is-chart">
+        <img src={`${UI}/c-chart.webp`} alt="גרף הכנסות לפי חודש (נתוני דוגמה)" width="1256" height="966" loading="lazy" decoding="async" />
+      </div>
+    ),
+  },
+  {
+    tone: 'navy', I: Sun, k: 'היום', t: 'היום שלכם, מסודר מראש.',
+    d: 'כניסות, יציאות וניקיונות ברשימה אחת. מסמנים ״בוצע״ בלחיצה.',
+    vis: (
+      <div className="lm-tile-vis is-today">
+        <img src={`${UI}/c-todaylist.webp`} alt="רשימת ״היום במתחם״: כניסה, יציאה וניקיון (נתוני דוגמה)" width="888" height="966" loading="lazy" decoding="async" />
+      </div>
+    ),
+  },
 ];
 
 function Features() {
   return (
-    <section id="features" className="lm-feat" aria-labelledby="feat-title">
+    <section id="features" className="lm-feat is-tiles" aria-labelledby="feat-title">
       <div className="l5-wrap">
-        <h2 id="feat-title" className="v8-h2 lm-feat-h" data-reveal>אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
-        <div className="lm-feat-faces" data-reveal>
-          <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={44} />
-          <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
-        </div>
-        <ul className="lm-feat-list">
-          {FEATS.map(({ I, t, d }, i) => (
-            <li key={t} data-reveal style={{ '--d': `${i * 40}ms` }}>
-              <span className="lm-feat-ic" aria-hidden="true"><I size={22} strokeWidth={2.2} /></span>
-              <h3>{t}</h3>
-              <p>{d}</p>
+        <h2 id="feat-title" className="v8-h2 lm-feat-h" data-reveal>מההזמנה <span className="is-ind">ועד הניקיון.</span></h2>
+        <ul className="lm-tiles">
+          {TILES.map(({ tone, I, k, t, d, vis }, i) => (
+            <li key={k} className={`lm-tile is-${tone}`} data-reveal style={{ '--d': `${i * 60}ms` }}>
+              <div className="lm-tile-copy">
+                <p className="lm-kick"><I size={18} strokeWidth={2.2} aria-hidden="true" />{k}</p>
+                <h3>{t}</h3>
+                <p className="lm-tile-txt">{d}</p>
+              </div>
+              {vis}
             </li>
           ))}
         </ul>
@@ -88,6 +127,39 @@ function Features() {
             <li><Mark ch="google" size={20} />Google Calendar</li>
           </ul>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- facts ---------------- */
+const FACTS = [
+  { n: '3', u: 'ערוצים', t: 'Airbnb, Booking.com וישיר על לוח אחד' },
+  { n: '10', u: 'דקות', t: 'מההרשמה עד לוח מעודכן' },
+  { n: '14', u: 'ימים', t: 'ניסיון חינם, בלי כרטיס אשראי' },
+  { n: '₪0', u: 'עמלה', t: 'על הזמנות מעמוד ההזמנה הישירה' },
+];
+
+function Facts() {
+  return (
+    <section id="facts" className="lm-facts" aria-labelledby="facts-title">
+      <div className="l5-wrap">
+        <div className="lm-facts-top" data-reveal>
+          <h2 id="facts-title" className="v8-h2">אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
+          <div className="lm-facts-people">
+            <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={48} />
+            <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
+          </div>
+        </div>
+        <ul className="lm-facts-row">
+          {FACTS.map((f, i) => (
+            <li key={f.u} data-reveal style={{ '--d': `${i * 80}ms` }}>
+              <b className="num" dir="ltr">{f.n}</b>
+              <span>{f.u}</span>
+              <p>{f.t}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -170,8 +242,9 @@ export default function LandingM() {
       <main id="main">
         <HeroPhoto />
         <Part><Features /></Part>
-        <LazyGrowth load={loadGrowth} className="lg-ph-d" />
-        <Part><Pricing8 /></Part>
+        <Part><Facts /></Part>
+        <LazyGrowth load={loadGrowth} className="lg-ph-s" />
+        <Part><Pricing8 growth /></Part>
         <Part><Faq items={LANDING_FAQ} openFirst cta /></Part>
         <Part><Final /></Part>
         <Part><Credits8 /></Part>
