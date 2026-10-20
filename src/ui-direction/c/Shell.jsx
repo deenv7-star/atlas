@@ -32,7 +32,7 @@ function PlanCard() {
   if (isLoading) return null;
   const trial = isTrialing || isExpired;
   const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : 'atlas Pro';
-  const sub = trial ? 'בוחרים מסלול וממשיכים בלי הפסקה.' : 'כל הערוצים, התשלומים וההודעות במקום אחד.';
+  const sub = trial ? 'בוחרים מסלול וממשיכים בלי הפסקה.' : 'ערוצים, תשלומים והודעות, מסודרים על מסך אחד.';
   const pct = isTrialing ? Math.max(6, Math.min(100, ((TRIAL_DAYS - (daysLeft || 0)) / TRIAL_DAYS) * 100)) : null;
   return (
     <div className="c-plan relative overflow-hidden rounded-[24px] bg-brand-600 p-4 text-white">

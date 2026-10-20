@@ -94,7 +94,7 @@ export function MaintenanceTable(props: MaintenanceTableProps): React.ReactEleme
       {
         id: 'assigned',
         accessorKey: 'assigned_to',
-        header: 'מוקצה ל',
+        header: 'מי מטפל',
         size: 110,
         cell: ({ getValue }) => <span className="truncate text-sm text-gray-600">{String(getValue() ?? '—')}</span>,
       },
@@ -116,7 +116,7 @@ export function MaintenanceTable(props: MaintenanceTableProps): React.ReactEleme
       { label: 'יחידה', accessor: (r) => propertyName(r.property_id) },
       { label: 'סוג', accessor: (r) => TYPE_LABELS[String(r.request_type)] || r.request_type },
       { label: 'דחיפות', accessor: (r) => r.urgency },
-      { label: 'מוקצה ל', accessor: (r) => r.assigned_to },
+      { label: 'מי מטפל', accessor: (r) => r.assigned_to },
       { label: 'סטטוס', accessor: (r) => r.status },
       { label: 'נוצר', accessor: (r) => r.created_date || r.created_at },
       { label: 'כותרת', accessor: (r) => r.title },
@@ -139,7 +139,7 @@ export function MaintenanceTable(props: MaintenanceTableProps): React.ReactEleme
       enableMultiSort
       stickyHeader
       virtualScroll={requests.length >= 400}
-      emptyMessage="אין בקשות תחזוקה"
+      emptyMessage="אין תקלות פתוחות"
       csvExport={{ filename: 'maintenance', columns: csvColumns }}
     />
   );

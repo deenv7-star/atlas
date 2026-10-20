@@ -231,8 +231,8 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
       )}
     >
       {/* cmdk's dialog renders no Radix Title/Description; Radix logs a console error without them */}
-      <DialogPrimitive.Title className="sr-only">פלטת פקודות</DialogPrimitive.Title>
-      <DialogPrimitive.Description className="sr-only">חפש, נווט ובצע פעולות מהירות</DialogPrimitive.Description>
+      <DialogPrimitive.Title className="sr-only">חיפוש מהיר</DialogPrimitive.Title>
+      <DialogPrimitive.Description className="sr-only">חיפוש, מעבר בין מסכים ופעולות מהירות</DialogPrimitive.Description>
       <CommandPaletteAnnouncer />
       <div dir="rtl" className="flex flex-col">
         <div className="border-b border-gray-100/90 px-3 py-2">
@@ -252,9 +252,9 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
         >
           <CommandEmpty className="px-4 py-6 text-center text-sm text-gray-500">
             <p className="font-medium text-gray-700">
-              לא נמצאו תוצאות עבור &quot;{search.trim() || '…'}&quot;
+              לא מצאנו את &quot;{search.trim() || '…'}&quot;
             </p>
-            <p className="mt-2 text-xs text-gray-400">נסו מילה אחרת, או צרו רשומה חדשה מהפעולות המהירות.</p>
+            <p className="mt-2 text-xs text-gray-400">נסו מילה אחרת, או הוסיפו הזמנה או ליד מהפעולות המהירות.</p>
           </CommandEmpty>
 
           {!search.trim() && recents.length > 0 ? (
@@ -424,7 +424,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             <>
               <CommandSeparator className="my-2 bg-gray-100" />
               <CommandGroup
-                heading="חיפוש חי"
+                heading="תוצאות"
                 className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-ink-400"
               >
                 {remoteLoading ? (
@@ -499,7 +499,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                 {!remoteLoading &&
                 remote.bookings.length + remote.guests.length + remote.units.length === 0 &&
                 search.trim().length >= 2 ? (
-                  <div className="px-3 py-2 text-xs text-gray-400">אין תוצאות חיפוש בשרת עבור מחרוזת זו.</div>
+                  <div className="px-3 py-2 text-xs text-gray-400">לא מצאנו הזמנה, אורח או יחידה בשם הזה.</div>
                 ) : null}
               </CommandGroup>
             </>

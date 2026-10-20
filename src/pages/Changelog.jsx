@@ -7,8 +7,8 @@ import { FileText, ArrowRight } from 'lucide-react';
 
 export default function Changelog() {
   const entries = [
-    { date: '2025-03', title: 'גרסת בטא', items: ['השקה ראשונית של atlas', 'ניהול הזמנות ולידים', 'לוח שנה מרכזי', 'תשלומים וחשבוניות', 'מערכת ניקיון'] },
-    { date: '2025-02', title: 'פיתוח', items: ['אינטגרציות ראשונות', 'תמיכה בעברית מלאה', 'ממשק responsive'] },
+    { date: '2025-03', title: 'גרסת בטא', items: ['השקה ראשונית של atlas', 'ניהול הזמנות ולידים', 'לוח שנה מרכזי', 'תשלומים וחשבוניות', 'משימות ניקיון'] },
+    { date: '2025-02', title: 'פיתוח', items: ['אינטגרציות ראשונות', 'תמיכה בעברית מלאה', 'עובד גם בטלפון'] },
   ];
 
   return (
@@ -27,7 +27,7 @@ export default function Changelog() {
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">יומן שינויים</h1>
-          <p className="text-gray-600 mb-12">עדכונים ושיפורים במערכת atlas</p>
+          <p className="text-gray-600 mb-12">מה השתנה לאחרונה</p>
 
           <div className="space-y-8">
             {entries.map((e, i) => (

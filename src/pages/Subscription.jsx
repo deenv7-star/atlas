@@ -84,7 +84,7 @@ export default function SubscriptionPage({ user }) {
                 {isCurrent ? (
                   <span className="inline-flex h-6 items-center rounded-full bg-success-50 px-2.5 text-[13px] font-bold text-success-600">התוכנית שלכם</span>
                 ) : plan.popular ? (
-                  <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">הכי נבחרת</span>
+                  <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">מומלץ</span>
                 ) : null}
               </div>
               <p className="mt-4 text-navy-900">

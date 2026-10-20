@@ -127,7 +127,7 @@ function Copy({ copyRef, onShow }) {
   return (
     <div ref={copyRef} className="ph-copy">
       <h1 id="hero-title" className="ph-h1">כל המתחם.<br />במבט אחד.</h1>
-      <p className="ph-sub">הזמנות מכל הערוצים, וואטסאפ לאורחים ותשלומים, במסך אחד שעובד בשבילכם.</p>
+      <p className="ph-sub">הזמנות מכל הערוצים, הודעות לאורחים ומקדמות. הכל על מסך אחד.</p>
       <div className="ph-ctas">
         <Link to="/register" className="ph-btn">
           <span>{CTA_SIGNUP}</span>

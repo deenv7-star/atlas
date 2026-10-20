@@ -80,7 +80,7 @@ export default function BillingPage({ user }) {
       });
       const data = await res.json().catch(() => ({}));
       if (data.url) window.location.href = data.url;
-      else window.alert(data.error || 'לא ניתן לפתוח פורטל ניהול מנוי');
+      else window.alert(data.error || 'לא הצלחנו לפתוח את ניהול המנוי. נסו שוב בעוד רגע.');
     } finally {
       setStripeLoading(false);
     }
@@ -167,7 +167,7 @@ export default function BillingPage({ user }) {
 
       {upgrades.length > 0 && (
         <section>
-          <h2 className="mb-3 text-[20px] font-bold text-navy-900">שדרוג</h2>
+          <h2 className="mb-3 text-[20px] font-bold text-navy-900">החלפת מסלול</h2>
           <TermsConsent id="billing-consent-up" className="mb-4 max-w-[560px]" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
           <div className="grid gap-4 md:grid-cols-2">
             {upgrades.map(([key, p]) => (
@@ -177,7 +177,7 @@ export default function BillingPage({ user }) {
                     <span className="ds-icon-square">{React.createElement(p.icon, { className: 'h-5 w-5', strokeWidth: 1.75 })}</span>
                     <h3 className="text-[18px] font-bold text-navy-900">{p.name}</h3>
                   </div>
-                  {p.popular ? <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">הכי נבחרת</span> : null}
+                  {p.popular ? <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">מומלץ</span> : null}
                 </div>
                 <p className="mt-4 text-navy-900"><span className="tabular text-[32px] font-bold">{fmtMoney(p.price)}</span><span className="text-[15px] text-ink-400"> לחודש</span></p>
                 <ul className="mb-6 mt-4 flex-1 space-y-2">

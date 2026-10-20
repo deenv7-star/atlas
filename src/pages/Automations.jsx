@@ -107,7 +107,7 @@ export default function AutomationsPage({ orgId }) {
       else await base44.entities.AutomationRule.create({ ...payload, org_id: orgId, execution_count: 0 });
       atlasToastApi.success(on ? `${step.title}: פועל` : `${step.title}: כבוי`);
     } catch {
-      atlasToastApi.error('לא הצלחנו לשמור');
+      atlasToastApi.error('לא הצלחנו לשמור. נסו שוב.');
     } finally {
       setBusy(false);
       qc.invalidateQueries({ queryKey: ['automations'] });
@@ -120,7 +120,7 @@ export default function AutomationsPage({ orgId }) {
     try {
       await Promise.all(journeyRules.map((r) => base44.entities.AutomationRule.update(r.id, { conditions: { ...(r.conditions || {}), respect_shabbat: v } })));
       atlasToastApi.success(v ? 'לא נשלח הודעות בשבת ובחג' : 'הודעות יישלחו גם בשבת ובחג');
-    } catch { atlasToastApi.error('לא הצלחנו לשמור'); }
+    } catch { atlasToastApi.error('לא הצלחנו לשמור. נסו שוב.'); }
     finally { setBusy(false); qc.invalidateQueries({ queryKey: ['automations'] }); }
   };
 
@@ -150,10 +150,10 @@ export default function AutomationsPage({ orgId }) {
   return (
     <div className="mx-auto w-full max-w-[960px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader
-        title="מסע האורח"
+        title="ההודעות לאורחים"
         subtitle="atlas מכין כל הודעה בזמן הנכון, ואתם שולחים בלחיצה מלוח היום."
         className="!mb-0"
-        actions={!allOn ? <Button className="h-11" onClick={turnAllOn} disabled={busy}>הפעלת כל המסע</Button> : null}
+        actions={!allOn ? <Button className="h-11" onClick={turnAllOn} disabled={busy}>הפעלת כל ההודעות</Button> : null}
       />
 
       {!DB_FEATURES.realCore ? (
@@ -164,20 +164,20 @@ export default function AutomationsPage({ orgId }) {
         <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F1F3FA] text-navy-900" aria-hidden><Moon className="h-5 w-5" strokeWidth={1.75} /></span>
         <div className="min-w-0 flex-1">
           <p className="text-[15px] font-bold text-navy-900">שקט בשבת ובחג</p>
-          <p className="text-[13px] text-ink-400">הודעה שמגיע זמנה בין הדלקת נרות לצאת השבת או החג תחכה ל-20 דקות אחרי ההבדלה (זמני ירושלים, Hebcal).</p>
+          <p className="text-[13px] text-ink-400">הודעה שמגיע זמנה בין הדלקת נרות לצאת השבת או החג תחכה ל-20 דקות אחרי ההבדלה (לפי זמני ירושלים).</p>
         </div>
         <Switch checked={respectShabbat} disabled={busy || !journeyRules.length} onCheckedChange={setShabbat} aria-label="שקט בשבת ובחג" />
       </Card>
 
-      <ol className="space-y-3" aria-label="שלבי המסע">
+      <ol className="space-y-3" aria-label="שלבי ההודעות">
         {JOURNEY_STEPS.map((s) => <StepCard key={s.key} step={s} rule={byStep.get(s.key)} onSave={save} busy={busy} respectShabbat={respectShabbat} />)}
       </ol>
 
       <Card className="p-5 md:px-6">
         <p className="text-[15px] font-bold text-navy-900">איך זה נשלח היום</p>
         <p className="mt-1 text-[14px] leading-relaxed text-ink-600">
-          כל 15 דקות atlas בודקת את ההזמנות ומכינה את ההודעות שהגיע זמנן. הן מחכות ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link> תחת "לשלוח עכשיו": לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח, ואחרי השליחה ההודעה מסומנת כנשלחה.
-          שליחה אוטומטית לגמרי, בלי לחיצה, תגיע עם חיבור WhatsApp Business API.
+          כל 15 דקות atlas בודק את ההזמנות ומכין את ההודעות שהגיע זמנן. הן מחכות ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link> תחת "לשלוח עכשיו": לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח, ואחרי השליחה ההודעה מסומנת כנשלחה.
+          בהמשך אפשר יהיה לשלוח גם בלי לחיצה, דרך וואטסאפ עסקי.
         </p>
       </Card>
 
@@ -192,9 +192,9 @@ export default function AutomationsPage({ orgId }) {
                   <div className="min-w-0 flex-1">
                     <p className="flex flex-wrap items-center gap-2 truncate text-[15px] font-semibold text-navy-900">
                       {r.name || 'אוטומציה'}
-                      {ok ? <StatusPill tone="mint" label="רצה" /> : <StatusPill tone="slate" label="עוד לא נתמכת" />}
+                      {ok ? <StatusPill tone="mint" label="פועלת" /> : <StatusPill tone="slate" label="עוד לא נתמכת" />}
                     </p>
-                    {!ok ? <p className="text-[13px] text-ink-400">הפעולה הזו עוד לא מבוצעת בשרת, ולכן לא תצא בפועל.</p> : null}
+                    {!ok ? <p className="text-[13px] text-ink-400">הפעולה הזו עוד לא עובדת, ולכן לא תצא.</p> : null}
                   </div>
                   <Switch checked={!!r.is_active} onCheckedChange={(v) => toggleOther.mutate({ id: r.id, is_active: v })} aria-label={`הפעלה: ${r.name || 'אוטומציה'}`} />
                   <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={`מחיקה: ${r.name || 'אוטומציה'}`} onClick={() => removeOther.mutate(r.id)}>

@@ -130,7 +130,7 @@ function CheckInCard({ token, booking, checkin, rules, onDone }) {
         ) : null}
         <label className="col-span-2 flex min-h-[44px] items-start gap-3 text-[15px]">
           <input type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[#3E2BF1]" checked={form.rules_accepted} onChange={set('rules_accepted')} />
-          <span>קראתי ואני מאשר/ת את כללי המקום{rules.length ? '' : ' כפי שיימסרו על ידי המארחים'}</span>
+          <span>קראתי ואישרתי את כללי המקום{rules.length ? '' : ' כפי שהמארחים ימסרו'}</span>
         </label>
         <label className="col-span-2 flex min-h-[44px] items-start gap-3 text-[14px]" style={{ color: 'var(--ink-600)' }}>
           <input type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[#3E2BF1]" checked={form.marketing_consent} onChange={set('marketing_consent')} />
@@ -185,7 +185,7 @@ export default function GuestStayPage() {
         <div className="max-w-md mx-auto px-6 pt-24 text-center">
           <span className="ab-icon-tile mx-auto"><KeyRound size={20} strokeWidth={1.75} /></span>
           <h1 className="ab-h3 mt-4">הקישור לא נמצא</h1>
-          <p className="ab-meta mt-2">ייתכן שההזמנה עודכנה. בקשו מהמארחים קישור חדש.</p>
+          <p className="ab-meta mt-2">אולי ההזמנה עודכנה. בקשו מהמארחים קישור חדש.</p>
         </div>
       </Shell>
     );

@@ -171,7 +171,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
     enableMultiSort = true,
     stickyHeader = true,
     virtualScroll = false,
-    emptyMessage = 'אין נתונים להצגה',
+    emptyMessage = 'עוד אין כאן כלום',
     csvExport,
     className,
     onCellCommit,
@@ -229,7 +229,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
             className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
             checked={table.getIsAllRowsSelected()}
             onChange={() => table.toggleAllRowsSelected(!table.getIsAllRowsSelected())}
-            aria-label="בחר הכל"
+            aria-label="בחירת הכל"
           />
         </div>
       ),
@@ -255,7 +255,7 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
               lastClickedIndex.current = idx;
             }}
             onClick={(e) => e.stopPropagation()}
-            aria-label="בחר שורה"
+            aria-label="בחירת שורה"
           />
         </div>
       ),
@@ -440,21 +440,21 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
                   className="h-8 border-red-200 text-xs text-red-700"
                   onClick={() => bulkBar.onDeleteSelected?.(selectedRows)}
                 >
-                  מחק נבחרים
+                  מחיקת הנבחרים
                 </Button>
               ) : null}
               {bulkBar?.onChangeStatus ? (
                 <Button type="button" variant="outline" size="sm" className="h-8 text-xs" onClick={() => bulkBar.onChangeStatus?.(selectedRows)}>
-                  שנה סטטוס
+                  שינוי סטטוס
                 </Button>
               ) : null}
               {bulkBar?.onExportCsv ? (
                 <Button type="button" variant="outline" size="sm" className="h-8 text-xs" onClick={() => bulkBar.onExportCsv?.(selectedRows)}>
-                  ייצא
+                  ייצוא
                 </Button>
               ) : null}
               <Button type="button" variant="ghost" size="sm" className="h-8 text-xs" onClick={clearSelection}>
-                נקה בחירה
+                ניקוי הבחירה
               </Button>
             </>
           ) : null}

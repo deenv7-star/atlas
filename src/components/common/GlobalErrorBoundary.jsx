@@ -48,10 +48,10 @@ class GlobalErrorBoundary extends React.Component {
             {/* Content */}
             <div className="bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100">
               <h1 className="text-2xl font-bold text-[#1B2656] mb-3">
-                אופס! משהו השתבש
+                המסך לא נטען
               </h1>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                משהו השתבש בטעינת המסך. רעננו את העמוד, ואם זה חוזר, כתבו לנו.
+                רעננו את העמוד. אם זה חוזר, כתבו לנו ונסדר.
               </p>
 
               {/* Error Details (Dev Mode) */}
@@ -79,7 +79,7 @@ class GlobalErrorBoundary extends React.Component {
                   size="lg"
                 >
                   <RefreshCw className="w-4 h-4" />
-                  טען מחדש את הדף
+                  טעינה מחדש
                 </Button>
                 <Button
                   onClick={this.handleGoHome}
@@ -88,7 +88,7 @@ class GlobalErrorBoundary extends React.Component {
                   size="lg"
                 >
                   <Home className="w-4 h-4" />
-                  חזור לדף הבית
+                  חזרה לדף הבית
                 </Button>
               </div>
 
@@ -108,7 +108,7 @@ class GlobalErrorBoundary extends React.Component {
 
             {/* Footer */}
             <p className="text-center text-xs text-gray-400 mt-6">
-              © 2026 atlas • אנחנו כאן בשבילך
+              © 2026 atlas • אנחנו כאן בשבילכם
             </p>
           </div>
         </div>

@@ -254,7 +254,7 @@ export function useFormMachine<TFieldValues extends FieldValues>({
         !nextOpen &&
         (machineRef.current === 'dirty' || machineRef.current === 'error')
       ) {
-        const ok = window.confirm('יש שינויים שלא נשמרו. לצאת בכל זאת?');
+        const ok = window.confirm('השינויים עוד לא נשמרו. לצאת בכל זאת?');
         if (!ok) return;
         resetAll();
       }

@@ -111,7 +111,7 @@ export function useRegister() {
       try { if (business) localStorage.setItem(PENDING_BUSINESS_KEY, business); } catch { /* ignore */ }
 
       if (data?.user && !data?.session) {
-        atlasToastApi.success('נשלח מייל לאימות');
+        atlasToastApi.success('שלחנו לכם מייל לאישור');
         // Memory only: lets the waiting screen continue by itself when the email is confirmed on another device.
         setPendingCredentials(form.email.trim(), form.password);
         navigate('/verify-email', { state: { email: form.email.trim() }, replace: true });
@@ -134,7 +134,7 @@ export function useRegister() {
         } else {
           const isNetworkError = msg.includes('failed to fetch') || msg.includes('network') || err?.name === 'TypeError';
           const isApiMissing = err?.status === 404 || msg.includes('http 404');
-          if (isApiMissing) atlasToastApi.error('השרת לא זמין כרגע. נסו שוב בעוד כמה דקות.');
+          if (isApiMissing) atlasToastApi.error('משהו אצלנו לא זמין כרגע. נסו שוב בעוד כמה דקות.');
           else atlasToastApi.error(isNetworkError ? 'אין חיבור. בדקו את האינטרנט ונסו שוב.' : (err?.message || 'לא הצלחנו ליצור את החשבון. נסו שוב בעוד רגע, ואם זה חוזר, כתבו לנו בוואטסאפ.'));
         }
       }

@@ -30,7 +30,7 @@ export const BOOKING_COLUMNS = [
   { label: 'שם אורח',       accessor: r => r.guest_name },
   { label: 'אימייל',        accessor: r => r.guest_email },
   { label: 'טלפון',         accessor: r => r.guest_phone },
-  { label: 'נכס',           accessor: r => r.property_name || r.property_id },
+  { label: 'יחידה',           accessor: r => r.property_name || r.property_id },
   { label: 'כניסה',         accessor: r => r.check_in_date },
   { label: 'יציאה',         accessor: r => r.check_out_date },
   { label: 'לילות',         accessor: r => r.nights },
@@ -44,7 +44,7 @@ export const LEAD_COLUMNS = [
   { label: 'שם',             accessor: r => r.full_name || r.name },
   { label: 'אימייל',         accessor: r => r.email },
   { label: 'טלפון',          accessor: r => r.phone },
-  { label: 'נכס',            accessor: r => r.property_name || r.property_id },
+  { label: 'יחידה',            accessor: r => r.property_name || r.property_id },
   { label: 'כניסה',          accessor: r => r.check_in_date },
   { label: 'יציאה',          accessor: r => r.check_out_date },
   { label: 'סטטוס',          accessor: r => r.status },
@@ -54,7 +54,7 @@ export const LEAD_COLUMNS = [
 ];
 
 export const PAYMENT_COLUMNS = [
-  { label: 'הזמנה ID',       accessor: r => r.booking_id },
+  { label: 'מספר הזמנה',       accessor: r => r.booking_id },
   { label: 'סכום (₪)',       accessor: r => r.amount },
   { label: 'מטבע',           accessor: r => r.currency || 'ILS' },
   { label: 'סטטוס',          accessor: r => r.status },

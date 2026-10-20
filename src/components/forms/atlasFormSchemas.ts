@@ -3,14 +3,14 @@ import { z } from 'zod';
 const optionalEmail = z
   .string()
   .trim()
-  .refine((s) => s === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s), { message: 'אימייל לא תקין' });
+  .refine((s) => s === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s), { message: 'בדקו את כתובת המייל' });
 
 export const bookingFormSchema = z.object({
-  guest_name: z.string().min(1, 'נא למלא שם אורח'),
+  guest_name: z.string().min(1, 'כתבו את שם האורח'),
   guest_email: optionalEmail,
   guest_phone: z.string(),
   property_id: z.string(),
-  check_in_date: z.string().min(1, 'נא לבחור תאריך כניסה'),
+  check_in_date: z.string().min(1, 'בחרו תאריך כניסה'),
   check_out_date: z.string(),
   nights: z.coerce.number().int().min(1).default(1),
   adults: z.coerce.number().int().min(1).default(2),
@@ -44,7 +44,7 @@ export const emptyBookingFormValues: BookingFormValues = {
 };
 
 export const guestFormSchema = z.object({
-  full_name: z.string().min(1, 'נא למלא שם'),
+  full_name: z.string().min(1, 'כתבו שם'),
   email: optionalEmail,
   phone: z.string(),
   property_id: z.string(),
@@ -82,7 +82,7 @@ export const paymentFormSchema = z.object({
     .refine((s) => {
       const n = parseFloat(String(s).replace(',', '.'));
       return !Number.isNaN(n) && n > 0;
-    }, 'נא להזין סכום חיובי'),
+    }, 'כתבו סכום גדול מ-0'),
   currency: z.string().default('ILS'),
   status: z.string(),
   method: z.string(),
@@ -110,7 +110,7 @@ export const checklistItemSchema = z.object({
 });
 
 export const maintenanceRequestFormSchema = z.object({
-  scheduled_for: z.string().min(1, 'נא לבחור תאריך ושעה'),
+  scheduled_for: z.string().min(1, 'בחרו תאריך ושעה'),
   assigned_to_name: z.string(),
   notes: z.string(),
   checklist: z.array(checklistItemSchema),

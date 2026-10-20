@@ -105,13 +105,13 @@ function Blocks() {
         I={MessageCircle}
         kicker="הודעות"
         title={<>וואטסאפ לאורחים. מוכן מראש.</>}
-        text="אנחנו מכינים כל הודעה בזמן הנכון, עם השם, התאריכים והניווט, ושומרים על שקט בשבת. אתם שולחים בלחיצה אחת, מהוואטסאפ שלכם."
+        text="atlas מכין כל הודעה בזמן: שם האורח, התאריכים והניווט. אתם שולחים בלחיצה, מהוואטסאפ שלכם. בשבת שקט."
         points={['אישור מיד אחרי ההזמנה', 'הוראות הגעה יום לפני', 'תזכורת ליתרה, בלי מבוכה']}
       >
         <div className="lm-v lm-v-msg">
           <img className="lm-ui is-msg" src={`${UI}/c-messages.webp`} alt="מסך ההודעות של atlas: שיחת וואטסאפ עם אורחים (נתוני דוגמה)" width="1800" height="1125" loading="lazy" decoding="async" />
           <div className="lm-chip is-c">
-            <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר שלכם. קוד לדלת: 2419. נסיעה טובה!" time="18:00" />
+            <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר מחכה לכם. קוד לדלת: 2419. נסיעה טובה" time="18:00" />
           </div>
         </div>
       </Block>
@@ -122,7 +122,7 @@ function Blocks() {
         I={Wallet}
         kicker="תשלומים"
         title={<>הכסף נכנס. אתם רואים הכל.</>}
-        text="כל מקדמה ויתרה במעקב, תזכורת ליתרה בוואטסאפ בלחיצה, ותמונה אחת של מה נכנס החודש. הכסף נכנס כמו תמיד, וכל מקדמה ויתרה נשמרות."
+        text="הכסף נכנס כמו תמיד. atlas רושם כל מקדמה ויתרה, מכין תזכורת ליתרה ומראה כמה נכנס החודש."
       >
         <div className="lm-v lm-v-pay">
           <img className="lm-ui is-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
@@ -138,8 +138,8 @@ function Blocks() {
         I={Sun}
         kicker="היום"
         title={<>היום שלכם, מסודר מראש.</>}
-        text="כניסות, יציאות וניקיונות בציר אחד. מסמנים ״בוצע״ בלחיצה, וכולם יודעים מה הלאה."
-        points={['כל בוקר: מה מחכה היום', 'ניקיון בין אורח לאורח', 'הכל מוכן? רואים במבט']}
+        text="כניסות, יציאות וניקיונות על ציר אחד. מסמנים ״בוצע״ בלחיצה, ורואים מה נשאר."
+        points={['כל בוקר: מה מחכה היום', 'ניקיון בין אורח לאורח', 'הכל מוכן? רואים מיד']}
       >
         <div className="lm-v lm-v-today pp-b-today">
           <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 900px) 34vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
@@ -157,7 +157,7 @@ function Blocks() {
 /* ---------------- facts ---------------- */
 const FACTS = [
   { n: '3', u: 'ערוצים', t: 'Airbnb, Booking.com וישיר על לוח אחד' },
-  { n: '10', u: 'דקות', t: 'מההרשמה ועד לוח מסונכרן' },
+  { n: '10', u: 'דקות', t: 'מההרשמה עד לוח מעודכן' },
   { n: '14', u: 'ימים', t: 'ניסיון חינם, בלי כרטיס אשראי' },
   { n: '₪0', u: 'עמלה', t: 'על הזמנות מעמוד ההזמנה הישירה' },
 ];
@@ -167,7 +167,7 @@ function Facts() {
     <section id="facts" className="lm-facts" aria-labelledby="facts-title">
       <div className="l5-wrap">
         <div className="lm-facts-top" data-reveal>
-          <h2 id="facts-title" className="v8-h2">הזמנות, תשלומים ואורחים. <span className="is-ind">במקום אחד.</span></h2>
+          <h2 id="facts-title" className="v8-h2">אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
           <div className="lm-facts-people">
             <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={48} />
             <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>

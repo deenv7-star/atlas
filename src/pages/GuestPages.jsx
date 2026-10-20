@@ -65,7 +65,7 @@ function PropertyEditor({ property, onSaved }) {
       atlasToastApi.success('השינויים נשמרו');
       onSaved?.();
     } catch (e) {
-      atlasToastApi.error(/column|schema/i.test(e?.message || '') ? 'השמירה דורשת עדכון מסד נתונים (מיגרציה 008).' : 'לא הצלחנו לשמור. נסו שוב.');
+      atlasToastApi.error(/column|schema/i.test(e?.message || '') ? 'כדי לשמור צריך עדכון קטן מצדנו. כתבו לנו ונסדר.' : 'לא הצלחנו לשמור. נסו שוב.');
     }
   };
 
@@ -82,7 +82,7 @@ function PropertyEditor({ property, onSaved }) {
       await updateProperty.mutateAsync({ id: property.id, data: { images: [file_url, ...(Array.isArray(property.images) ? property.images.slice(1) : [])] } });
       atlasToastApi.success('התמונה עודכנה');
     } catch {
-      atlasToastApi.error('לא הצלחנו להעלות את התמונה');
+      atlasToastApi.error('לא הצלחנו להעלות את התמונה. נסו שוב.');
     } finally {
       setUploading(false);
     }
@@ -99,7 +99,7 @@ function PropertyEditor({ property, onSaved }) {
           </div>
           <label className="ab-btn ab-btn-secondary shrink-0 cursor-pointer">
             <ImagePlus size={18} strokeWidth={1.75} />
-            {uploading ? 'מעלה…' : 'החלפת תמונה'}
+            {uploading ? 'מעלים…' : 'החלפת תמונה'}
             <input type="file" accept="image/*" className="sr-only" onChange={onPhoto} disabled={uploading} />
           </label>
         </div>
@@ -145,7 +145,7 @@ function PropertyEditor({ property, onSaved }) {
           <Field id="gi-wifipw" label="סיסמת וויי-פיי"><input id="gi-wifipw" className="ab-input" dir="ltr" style={{ textAlign: 'right' }} value={info.wifi_password} onChange={set('wifi_password')} /></Field>
           <Field id="gi-host" label="שם המארחים"><input id="gi-host" className="ab-input" value={info.host_name} onChange={set('host_name')} placeholder="למשל: דין ושירה" /></Field>
           <Field id="gi-phone" label="טלפון המארחים"><input id="gi-phone" type="tel" className="ab-input" dir="ltr" style={{ textAlign: 'right' }} value={info.host_phone} onChange={set('host_phone')} /></Field>
-          <Field id="gi-nav" label="יעד לניווט" className="col-span-2" hint="כתובת או שם מקום כפי שמחפשים בוויז. ריק = כתובת הנכס.">
+          <Field id="gi-nav" label="יעד לניווט" className="col-span-2" hint="כתובת או שם מקום כפי שמחפשים בוויז. אם תשאירו ריק, נשתמש בכתובת המתחם.">
             <input id="gi-nav" className="ab-input" value={info.navigation_query} onChange={set('navigation_query')} placeholder={property.address || ''} />
           </Field>
           <Field id="gi-arrive" label="הוראות הגעה" className="col-span-2">
@@ -156,8 +156,8 @@ function PropertyEditor({ property, onSaved }) {
           </Field>
         </div>
         <div className="mt-4 flex gap-2">
-          <Btn variant="primary" icon={Save} onClick={() => save()} disabled={!dirty || updateProperty.isPending}>{updateProperty.isPending ? 'שומר…' : 'שמירה'}</Btn>
-          {dirty ? <span className="ab-meta self-center">יש שינויים שלא נשמרו</span> : null}
+          <Btn variant="primary" icon={Save} onClick={() => save()} disabled={!dirty || updateProperty.isPending}>{updateProperty.isPending ? 'שומרים…' : 'שמירה'}</Btn>
+          {dirty ? <span className="ab-meta self-center">השינויים עוד לא נשמרו</span> : null}
         </div>
       </section>
     </div>
@@ -214,8 +214,8 @@ function GuestPagesScreen({ user, orgId }) {
       />
       {data.isLoading ? <Skeleton className="h-64 rounded-[22px]" /> : properties.length === 0 ? (
         <div className="ab-card p-6 text-center">
-          <p className="font-bold">עוד אין יחידות במערכת.</p>
-          <p className="ab-meta mt-1">הוסיפו נכס בהגדרות כדי ליצור דפים לאורחים.</p>
+          <p className="font-bold">עוד אין יחידות.</p>
+          <p className="ab-meta mt-1">הוסיפו יחידה בהגדרות כדי ליצור דפים לאורחים.</p>
           <a href="/settings" className="ab-btn ab-btn-primary mt-3">להגדרות</a>
         </div>
       ) : (

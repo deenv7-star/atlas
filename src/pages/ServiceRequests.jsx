@@ -209,7 +209,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
             requests={filteredRequests}
             properties={properties}
             isLoading={isLoading}
-            error={isError ? (requestsError instanceof Error ? requestsError : new Error('שגיאת טעינה')) : null}
+            error={isError ? (requestsError instanceof Error ? requestsError : new Error('לא הצלחנו לטעון את הבקשות')) : null}
             onOpen={(row) => {
               setSelectedRequest(row);
               setOpenMaintenanceId(row.id);
@@ -249,7 +249,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   id="cp-maint-guest"
                   value={newRequestForm.guest_name}
                   onChange={(e) => setNewRequestForm((f) => ({ ...f, guest_name: e.target.value }))}
-                  placeholder="צוות / שם אורח"
+                  placeholder="שם האורח, או: צוות"
                 />
               </div>
               <div className="space-y-2">
@@ -267,7 +267,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   id="cp-maint-desc"
                   value={newRequestForm.description}
                   onChange={(e) => setNewRequestForm((f) => ({ ...f, description: e.target.value }))}
-                  placeholder="פרטים"
+                  placeholder="מה קרה ומה צריך"
                   className="min-h-[88px]"
                 />
               </div>
@@ -289,7 +289,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>נכס</Label>
+                  <Label>יחידה</Label>
                   {properties.length > 0 ? (
                     <Select
                       value={
@@ -301,7 +301,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       onValueChange={(v) => setNewRequestForm((f) => ({ ...f, property_id: v }))}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="בחרו נכס" />
+                        <SelectValue placeholder="בחרו יחידה" />
                       </SelectTrigger>
                       <SelectContent>
                         {properties.map((p) => (
@@ -310,7 +310,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <p className="text-xs text-amber-700">אין נכסים. הוסיפו נכס בהגדרות.</p>
+                    <p className="text-xs text-amber-700">אין יחידות. הוסיפו יחידה בהגדרות.</p>
                   )}
                 </div>
               </div>

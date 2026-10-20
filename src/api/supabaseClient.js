@@ -33,7 +33,7 @@ export function fetchWithTimeout(input, init = {}, ms = REQUEST_TIMEOUT_MS) {
   return fetch(input, { ...init, signal: ctrl.signal })
     .catch((err) => {
       if (timedOut) {
-        const e = new Error('הבקשה לשרת לקחה יותר מדי זמן');
+        const e = new Error('החיבור איטי מדי כרגע. נסו שוב בעוד רגע.');
         e.name = 'TimeoutError';
         e.isTimeout = true;
         throw e;

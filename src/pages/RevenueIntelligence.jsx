@@ -125,7 +125,7 @@ export default function RevenueIntelligence() {
               icon={BarChart3}
               title="לא הצלחנו לטעון את הנתונים"
               description="בדקו את החיבור ונסו שוב."
-              actionLabel="ניסיון נוסף"
+              actionLabel="נסו שוב"
               onAction={() => refetch()}
             />
           </div>
@@ -133,7 +133,7 @@ export default function RevenueIntelligence() {
           <div className="v7-card">
             <EmptyState
               icon={TrendingUp}
-              title="עוד אין מספיק הזמנות לניתוח"
+              title="עוד אין מספיק הזמנות"
               description="כאן יופיעו ההכנסות, התפוסה והמחיר הממוצע ללילה, מחושבים מההזמנות שלכם. הוסיפו הזמנות או חברו את Booking.com ו-Airbnb, והמספרים יתמלאו לבד."
               action={<Button asChild><Link to="/bookings">להזמנות</Link></Button>}
             />
@@ -144,7 +144,7 @@ export default function RevenueIntelligence() {
               <Kpi label="הכנסות" value={formatMoney(model.now.income)} delta={model.hasPrev ? changePct(model.now.income, model.before.income) : null} hint={model.hasPrev ? 'מול 12 החודשים שלפני' : null} />
               <Kpi label="ממוצע ללילה" value={formatMoney(model.now.adr)} delta={model.hasPrev ? changePct(model.now.adr, model.before.adr) : null} />
               <Kpi label="תפוסה" value={`${Math.round(model.now.occupancy * 100)}%`} delta={model.hasPrev ? changePct(model.now.occupancy, model.before.occupancy) : null} hint={`${model.now.nights.toLocaleString('he-IL')} לילות שנמכרו`} />
-              <Kpi label="הכנסה ללילה זמין" value={formatMoney(model.now.revpar)} delta={model.hasPrev ? changePct(model.now.revpar, model.before.revpar) : null} hint="RevPAR" />
+              <Kpi label="הכנסה ללילה זמין" value={formatMoney(model.now.revpar)} delta={model.hasPrev ? changePct(model.now.revpar, model.before.revpar) : null} hint="כולל לילות ריקים" />
             </div>
 
             <section className="v7-card overflow-hidden" aria-label="הכנסות לפי חודש">

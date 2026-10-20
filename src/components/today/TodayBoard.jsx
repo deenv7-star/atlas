@@ -507,7 +507,7 @@ export default function TodayBoard({ user, orgId }) {
             <Link to="/integrations" className="press c-row flex min-h-[48px] w-full items-center gap-3 rounded-[16px] px-3 text-right" data-testid="sync-problem">
               <AlertTriangle className="h-4 w-4 shrink-0 text-attention" strokeWidth={1.75} aria-hidden />
               <span className="flex-1 truncate text-[14px] font-semibold text-navy-900">
-                {queue.syncProblems.some((x) => Array.isArray(x.conflicts) && x.conflicts.length) ? 'התנגשות בין ערוצים: יש תאריכים כפולים' : 'הלוח לא התעדכן מהערוץ. בדקו את החיבור'}
+                {queue.syncProblems.some((x) => Array.isArray(x.conflicts) && x.conflicts.length) ? 'אותם תאריכים נתפסו בשני ערוצים' : 'הלוח לא התעדכן מהערוץ. בדקו את החיבור'}
               </span>
               <ChevronLeft className="h-4 w-4 shrink-0 text-ink-300" strokeWidth={1.75} />
             </Link>
@@ -596,7 +596,7 @@ export default function TodayBoard({ user, orgId }) {
         <div className="v7-card mt-4 p-6">
           <p className="text-[15px] font-semibold text-navy-900">לא הצלחנו לטעון את היום</p>
           <p className="mt-1 text-[14px] text-ink-400">בדקו את החיבור ונסו שוב.</p>
-          <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>לנסות שוב</Button>
+          <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>נסו שוב</Button>
         </div>
       ) : data.isLoading ? skeleton : (
         <>

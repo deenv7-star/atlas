@@ -71,7 +71,7 @@ function ProductPreview({ caption }) {
 
         <p className="mt-8 flex items-center gap-2 text-[13px] text-ink-400">
           <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--st-mint-bg)] text-[var(--st-mint-fg)]"><Check className="h-3 w-3" strokeWidth={2.5} /></span>
-          מסנכרן עם Booking.com ו-Airbnb · גיבוי יומי · תמיכה בעברית
+          עובד עם Booking.com ו-Airbnb · תמיכה בעברית, בוואטסאפ
         </p>
       </div>
     </div>

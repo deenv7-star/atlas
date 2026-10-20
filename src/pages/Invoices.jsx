@@ -175,7 +175,7 @@ export default function InvoicesPage({ orgId }) {
       if (r?.sent) atlasToastApi.success('החשבונית נשלחה וסומנה כנשלחה');
       else atlasToastApi.success('פתחנו את תוכנת המייל שלכם עם הנוסח. צרפו את קובץ החשבונית ושלחו משם.');
     },
-    onError: () => atlasToastApi.error('לא הצלחנו לפתוח את המייל')
+    onError: () => atlasToastApi.error('לא הצלחנו לפתוח את המייל. נסו שוב.')
   });
 
   const handleSave = (data) => {
@@ -200,7 +200,7 @@ export default function InvoicesPage({ orgId }) {
   const handleSendEmail = (invoice) => {
     const to = invoice.guest_email || invoice.customer_email;
     if (!to) {
-      atlasToastApi.error('אין כתובת אימייל ללקוח');
+      atlasToastApi.error('אין מייל לאורח הזה. הוסיפו אותו בחשבונית.');
       return;
     }
     sendEmailMutation.mutate(invoice);
@@ -219,7 +219,7 @@ export default function InvoicesPage({ orgId }) {
       <FinanceTabs className="!mb-0" />
       <PageHeader
         title="חשבוניות"
-        subtitle="חשבוניות וקבלות ללקוחות, במקום אחד."
+        subtitle="חשבוניות וקבלות לאורחים."
         className="!mb-0"
         actions={
           <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
@@ -272,7 +272,7 @@ export default function InvoicesPage({ orgId }) {
           <EmptyState
             compact
             icon={FileText}
-            title={rawInvoices.length === 0 ? 'אין עדיין חשבוניות' : 'לא נמצאו חשבוניות'}
+            title={rawInvoices.length === 0 ? 'אין עדיין חשבוניות' : 'אין חשבוניות שמתאימות'}
             description={rawInvoices.length === 0 ? 'חשבונית שנוצרת להזמנה תופיע כאן, מוכנה לשליחה.' : 'נסו חיפוש או סינון אחר.'}
             action={rawInvoices.length === 0 ? (
               <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>

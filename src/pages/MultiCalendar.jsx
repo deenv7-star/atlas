@@ -114,7 +114,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
 
   const properties = useMemo(() => rawProperties.map((p, i) => ({
     id: p.id,
-    name: p.name || `נכס ${i + 1}`,
+    name: p.name || `יחידה ${i + 1}`,
     dot: DOTS[i % DOTS.length],
     type: p.type || 'דירה',
     beds: p.beds || 2,
@@ -171,8 +171,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
       const bad = rs.filter((r) => !r.ok).length;
       const conf = rs.reduce((n, r) => n + (r.conflicts || 0), 0);
       const added = rs.reduce((n, r) => n + (r.created || 0) + (r.updated || 0), 0);
-      if (bad || conf) atlasToastApi.error(`סונכרנו ${rs.length - bad} מתוך ${rs.length} ערוצים${conf ? `, ${conf} התנגשויות` : ''}. הפרטים במסך החיבורים`);
-      else atlasToastApi.success(added ? `הערוצים סונכרנו, ${added} עדכונים ביומן` : 'הערוצים סונכרנו, אין שינויים');
+      if (bad || conf) atlasToastApi.error(`עודכנו ${rs.length - bad} מתוך ${rs.length} ערוצים${conf ? `, ${conf} חפיפות` : ''}. הפרטים במסך החיבורים`);
+      else atlasToastApi.success(added ? `הלוח עודכן: ${added} שינויים מהערוצים` : 'הלוח מעודכן. אין שינויים');
     } catch (e) {
       atlasToastApi.error(e.message || 'לא הצלחנו לעדכן את הלוח. נסו שוב.');
     } finally {
@@ -277,9 +277,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
         </div>
         <div className="flex flex-wrap items-center gap-1">
           <HelpHint id="calendar.sync" />
-          <Button variant="outline" onClick={handleSync} disabled={syncing} aria-label="סנכרון ערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
+          <Button variant="outline" onClick={handleSync} disabled={syncing} aria-label="עדכון מהערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
             <RefreshCw className={cn(syncing && 'animate-spin')} />
-            <span className="hidden sm:inline">סנכרון ערוצים</span>
+            <span className="hidden sm:inline">עדכון מהערוצים</span>
           </Button>
         </div>
       </header>
@@ -289,9 +289,9 @@ export default function MultiCalendar({ selectedPropertyId }) {
           <DsEmptyState
             photo="/demo/units/unit-2.webp"
             icon={CalendarRange}
-            title="הוסיפו את הנכס הראשון"
+            title="הוסיפו את היחידה הראשונה"
             description="אחרי שתוסיפו יחידות, כל הזמנה מכל ערוץ תופיע כאן על ציר אחד."
-            action={<Button asChild><Link to={createPageUrl('Onboarding')}><Plus />הוספת נכס</Link></Button>}
+            action={<Button asChild><Link to={createPageUrl('Onboarding')}><Plus />הוספת יחידה</Link></Button>}
           />
         </div>
       ) : null}
@@ -488,7 +488,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
             <div className="flex items-center justify-between px-5 pt-5">
               <div>
                 <h2 className="text-[15px] font-semibold text-navy-900">לילות פנויים בין הזמנות</h2>
-                <p className="text-[13px] text-ink-400">{gaps.length ? 'הקרובים שאפשר עוד למלא' : 'אין חלונות קצרים'}</p>
+                <p className="text-[13px] text-ink-400">{gaps.length ? 'הקרובים שאפשר עוד למלא' : 'אין לילות בודדים'}</p>
               </div>
             </div>
             {gaps.length === 0 ? (

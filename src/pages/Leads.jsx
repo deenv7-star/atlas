@@ -177,7 +177,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
   };
 
   const handleDelete = id => {
-    if (!confirm('למחוק ליד זה?')) return;
+    if (!confirm('למחוק את הליד?')) return;
     deleteMutation.mutate(id, {
       onSuccess: () => success('הליד נמחק'),
       onError: () => toastError('לא הצלחנו למחוק את הליד. נסו שוב.'),
@@ -266,7 +266,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[15px] font-semibold text-navy-900">{l.full_name || 'ללא שם'}</span>
                     <span className="block truncate text-[13px] text-ink-400">
-                      {l.check_in_date ? `מבקש ${fmtShort(l.check_in_date)}` : 'בלי תאריכים'}{l.nights ? ` · ${heCount(l.nights, 'night')}` : ''}
+                      {l.check_in_date ? `ל-${fmtShort(l.check_in_date)}` : 'בלי תאריכים'}{l.nights ? ` · ${heCount(l.nights, 'night')}` : ''}
                     </span>
                   </span>
                   <StatusPill status={l.status} label={STATUS_MAP[l.status]?.label} />
@@ -292,7 +292,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         ) : sorted.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Users}
-            title={searchTerm || tags.length ? 'לא נמצאו לידים' : 'עדיין אין לידים'}
+            title={searchTerm || tags.length ? 'אין לידים שמתאימים' : 'עדיין אין לידים'}
             description={searchTerm || tags.length ? 'נסו חיפוש אחר.' : 'מישהו שאל על חופשה בטלפון או בוואטסאפ? רושמים אותו כאן, ומכאן הוא הופך להזמנה.'}
             action={!searchTerm && !tags.length ? <Button onClick={openNew}><Plus strokeWidth={2.25} />ליד חדש</Button> : null}
           />
@@ -302,7 +302,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
               leads={paged}
               properties={properties}
               isLoading={isLoading}
-              error={isError ? (leadsError instanceof Error ? leadsError : new Error('שגיאת טעינה')) : null}
+              error={isError ? (leadsError instanceof Error ? leadsError : new Error('לא הצלחנו לטעון את הלידים')) : null}
               onEdit={openEdit}
               onDelete={handleDelete}
               onBulkDelete={handleBulkDeleteRows}
@@ -314,7 +314,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
             />
             {sorted.length > pageSize ? (
               <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 px-3 py-2 text-sm text-gray-600">
-                <span>עמוד {page} מתוך {totalPages} · {sorted.length} רשומות</span>
+                <span>עמוד {page} מתוך {totalPages} · {sorted.length} לידים</span>
                 <div className="flex gap-2">
                   <Button type="button" variant="outline" size="sm" className="h-9" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
                   <Button type="button" variant="outline" size="sm" className="h-9" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>

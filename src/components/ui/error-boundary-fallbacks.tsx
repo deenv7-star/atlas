@@ -37,8 +37,8 @@ export function ErrorFallbackInline({ error, reset, section, componentStack }: F
       dir="rtl"
     >
       <AlertCircle className="mx-auto mb-1.5 h-4 w-4 text-red-500" aria-hidden />
-      <p className="text-xs font-semibold text-red-900">משהו השתבש בחלק זה</p>
-      <p className="mt-0.5 text-[11px] text-red-700/90">לא ניתן להציג את התוכן. אפשר לנסות שוב.</p>
+      <p className="text-xs font-semibold text-red-900">החלק הזה לא נטען</p>
+      <p className="mt-0.5 text-[11px] text-red-700/90">שאר המסך עובד. נסו לטעון אותו שוב.</p>
       <Button
         type="button"
         variant="outline"
@@ -46,7 +46,7 @@ export function ErrorFallbackInline({ error, reset, section, componentStack }: F
         className="mt-2 h-8 border-red-200 text-xs text-red-800 hover:bg-red-100"
         onClick={reset}
       >
-        נסה שוב
+        נסו שוב
       </Button>
       <DevTechnicalBlock error={error} componentStack={componentStack} />
       <span className="sr-only">אזור: {section}</span>
@@ -68,7 +68,7 @@ export function ErrorFallbackPage({ error, reset, section, componentStack }: Fal
         </p>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
           <Button type="button" className="bg-brand-600 font-semibold text-white hover:bg-brand-500" onClick={reset}>
-            נסה שוב
+            נסו שוב
           </Button>
           <Button type="button" variant="outline" asChild>
             <Link to={createPageUrl('Dashboard')}>חזרה למסך הבית</Link>

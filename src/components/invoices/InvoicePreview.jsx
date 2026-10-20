@@ -2,8 +2,13 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Printer } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function InvoicePreview({ invoice }) {
+  const { user } = useAuth();
+  // The invoice is issued by the host's business, not by atlas.
+  const rawOrg = (user?.organization_name || '').trim();
+  const businessName = rawOrg && rawOrg !== 'My Organization' ? rawOrg : 'שם העסק שלכם';
   const handlePrint = () => {
     window.print();
   };
@@ -20,7 +25,7 @@ export default function InvoicePreview({ invoice }) {
       <div className="flex justify-end gap-2 mb-4 print:hidden">
         <Button onClick={handlePrint} variant="outline" size="sm">
           <Printer className="w-4 h-4 ml-2" />
-          הדפס
+          הדפסה
         </Button>
       </div>
 
@@ -28,8 +33,7 @@ export default function InvoicePreview({ invoice }) {
         {/* Header */}
         <div className="flex justify-between items-start mb-8 pb-4 border-b-2">
           <div>
-            <h1 className="text-3xl font-bold text-[#1B2656] mb-2">STAYFLOW</h1>
-            <p className="text-sm text-ink-600">מערכת ניהול נכסים</p>
+            <h1 className="text-3xl font-bold text-[#1B2656] mb-2">{businessName}</h1>
           </div>
           <div className="text-left">
             <h2 className="text-2xl font-bold text-[#1B2656] mb-2">
@@ -124,8 +128,8 @@ export default function InvoicePreview({ invoice }) {
 
         {/* Footer */}
         <div className="text-center text-xs text-ink-600 pt-6 border-t mt-8">
-          <p>מסמך זה הופק באמצעות מערכת STAYFLOW</p>
-          <p>תודה על העסקה!</p>
+          <p>הופק עם atlas</p>
+          <p>תודה, ונשמח לארח אתכם שוב</p>
         </div>
       </div>
     </div>

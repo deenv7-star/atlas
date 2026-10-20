@@ -42,7 +42,7 @@ export default function ResetPassword() {
       if (msg.includes('rate limit')) {
         atlasToastApi.error('יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.');
       } else if (msg.includes('invalid') || msg.includes('not found')) {
-        setError('כתובת אימייל לא רשומה במערכת');
+        setError('אין חשבון עם המייל הזה. בדקו את הכתובת או פתחו חשבון.');
       } else {
         atlasToastApi.error(err.message || 'לא הצלחנו לשלוח את הקישור. נסו שוב בעוד רגע.');
       }

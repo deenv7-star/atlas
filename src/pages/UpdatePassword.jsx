@@ -56,7 +56,7 @@ export default function UpdatePassword() {
 
     setIsLoading(true);
     try {
-      if (!supabase) throw new Error('אין חיבור לשרת כרגע. נסו שוב מאוחר יותר.');
+      if (!supabase) throw new Error('אין חיבור כרגע. נסו שוב בעוד רגע.');
       const { error } = await supabase.auth.updateUser({ password: form.password });
       if (error) throw error;
       atlasToastApi.success('הסיסמה עודכנה');

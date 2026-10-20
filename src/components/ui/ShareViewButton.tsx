@@ -12,14 +12,14 @@ export type ShareViewButtonProps = {
  * Copies the full current URL (path + query) so filters and deep links are preserved.
  */
 export function ShareViewButton(props: ShareViewButtonProps): React.ReactElement {
-  const { className, label = 'שתף תצוגה' } = props;
+  const { className, label = 'שיתוף התצוגה' } = props;
   const { success, error } = useToast();
 
   const onClick = useCallback(() => {
     const url = window.location.href;
     void navigator.clipboard.writeText(url).then(
-      () => success('הלינק הועתק'),
-      () => error('לא ניתן להעתיק ללוח'),
+      () => success('הקישור הועתק'),
+      () => error('לא הצלחנו להעתיק. נסו שוב.'),
     );
   }, [error, success]);
 

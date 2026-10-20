@@ -87,7 +87,7 @@ export function CompareTable() {
           <th scope="row">14 יום ניסיון חינם</th>
           {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} aria-label="כלול" /></td>)}
         </tr>
-        {['כל יכולות המערכת', 'תמיכה בעברית, בוואטסאפ'].map((f) => (
+        {['כל היכולות', 'תמיכה בעברית, בוואטסאפ'].map((f) => (
           <tr key={f}>
             <th scope="row">{f}</th>
             {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} aria-label="כלול" /></td>)}
@@ -113,7 +113,7 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
       <div className="l5-wrap">
         <div className="v8-head is-center" data-reveal>
           <H id="pricing-title" className="v8-h2">{title}</H>
-          <p className="v8-txt">כל החבילות כוללות את כל המערכת. ההבדל הוא רק במספר המתחמים.</p>
+          <p className="v8-txt">כל החבילות כוללות הכל. ההבדל רק במספר המתחמים.</p>
         </div>
         <BillingToggle8 yearly={yearly} onChange={setYearly} />
         <p className="sr-only" aria-live="polite" aria-atomic="true">{said}</p>
@@ -159,7 +159,7 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
             <ChevronDown size={20} strokeWidth={2} aria-hidden="true" />
           </summary>
           <div className="v8p-diff-body">
-            <p className="v8p-diff-note">אותה מערכת בדיוק בכל חבילה, עם כל היכולות שברשימה. בוחרים לפי מספר המתחמים שאתם מנהלים.</p>
+            <p className="v8p-diff-note">בכל חבילה מקבלים את כל היכולות. בוחרים לפי מספר המתחמים שלכם.</p>
             <CompareTable />
           </div>
         </details>

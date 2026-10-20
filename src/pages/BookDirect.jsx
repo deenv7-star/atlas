@@ -63,9 +63,9 @@ export default function BookDirectPage() {
   const guests = (Number(form.adults) || 0) + (Number(form.children) || 0);
   const tooMany = property.max_guests && guests > property.max_guests;
   const errors = {
-    full_name: !form.full_name.trim() ? 'נא למלא שם' : '',
-    phone: !PHONE_RE.test(form.phone.trim()) ? 'נא למלא טלפון תקין' : '',
-    dates: !range.ci || !range.co ? 'נא לבחור תאריכי כניסה ויציאה בלוח' : '',
+    full_name: !form.full_name.trim() ? 'כתבו שם' : '',
+    phone: !PHONE_RE.test(form.phone.trim()) ? 'בדקו את מספר הטלפון' : '',
+    dates: !range.ci || !range.co ? 'בחרו בלוח תאריך כניסה ויציאה' : '',
     guests: tooMany ? `עד ${property.max_guests} אורחים` : '',
     consent: !agreed ? 'consent' : '',
   };
@@ -162,7 +162,7 @@ export default function BookDirectPage() {
               {submit.isError ? <p className="mt-3 text-[14px] font-bold" style={{ color: 'var(--status-danger)' }}>הפנייה לא נשלחה. נסו שוב בעוד רגע.</p> : null}
               <TermsConsent id="bd-consent" className="mt-4" refundLine={false} checked={agreed} onChange={setAgreed} error={touched && !agreed} />
               <Btn type="submit" variant="primary" size="lg" icon={Send} className="w-full mt-4" disabled={submit.isPending}>
-                {submit.isPending ? 'שולח…' : 'שליחת בקשה להזמנה'}
+                {submit.isPending ? 'שולחים…' : 'שליחת בקשה להזמנה'}
               </Btn>
               <p className="ab-faint text-center mt-2">זו בקשה בלבד. ההזמנה נסגרת אחרי אישור המארחים.</p>
             </section>

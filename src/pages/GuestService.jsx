@@ -136,7 +136,7 @@ export default function GuestService() {
       <div className="max-w-3xl mx-auto p-6">
         <div className="mb-8 text-center">
           <div className="flex justify-center"><Wordmark size={28} /></div>
-          <h1 className="text-3xl font-bold text-navy-900 mt-6 mb-2">שירות חדרים</h1>
+          <h1 className="text-3xl font-bold text-navy-900 mt-6 mb-2">בקשה מהמארחים</h1>
           <p className="text-[#475569]">יש בעיה או צורך? נשמח לעזור</p>
         </div>
 

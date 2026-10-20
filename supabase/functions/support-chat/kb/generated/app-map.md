@@ -26,8 +26,8 @@ generated: true
 
 ## מה יש תחת "עוד"
 - **תפעול**: ניקיון (/cleaning), בקשות שירות (/service-requests), ביקורות (/reviews), חוזים (/contracts), אוטומציות (/automations)
-- **אורחים**: דף אורח והזמנה ישירה (/guest-portal), מסע אורח (/guest-journey), עוזר AI (/ai-assistant)
-- **ניתוח**: הכנסות (/revenue-intelligence), תמחור חגים (/dynamic-pricing), דוחות בעלים (/owner-reports)
+- **אורחים**: דף אורח והזמנה ישירה (/guest-portal), שלבי האירוח (/guest-journey), עוזר אישי (/ai-assistant)
+- **דוחות**: הכנסות (/revenue-intelligence), תמחור חגים (/dynamic-pricing), דוחות בעלים (/owner-reports)
 - **חשבון**: ערוצים וחיבורים (/integrations), מנוי (/subscription), חיובים (/billing)
 
 ## לשוניות במסך כספים

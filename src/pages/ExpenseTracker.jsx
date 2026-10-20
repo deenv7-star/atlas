@@ -39,7 +39,7 @@ export default function ExpenseTracker({ orgId }) {
     return (
       <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
         <FinanceTabs className="!mb-0" />
-        <PageHeader title="הוצאות" subtitle="כל ההוצאות לפי נכס, כדי לדעת כמה באמת נשאר." className="!mb-0" />
+        <PageHeader title="הוצאות" subtitle="כל ההוצאות לפי יחידה, כדי לדעת כמה באמת נשאר." className="!mb-0" />
         <ComingSoon icon={Receipt} title="מעקב הוצאות יגיע בקרוב" description="נפתח לכם את המסך הזה ברגע שהוא מוכן. עד אז ההכנסות והתשלומים מחכים בכספים." />
       </div>
     );
@@ -87,7 +87,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
       amount: parseFloat(form.amount) || 0,
       description: form.description || '',
     }).then(() => atlasToastApi.success('ההוצאה נשמרה'))
-      .catch(() => atlasToastApi.error('ההוצאה לא נשמרה'));
+      .catch(() => atlasToastApi.error('ההוצאה לא נשמרה. נסו שוב.'));
     setForm({ property: '', category: '', amount: '', date: new Date().toISOString().slice(0, 10), description: '' });
     setDialogOpen(false);
   };
@@ -98,7 +98,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
       <FinanceTabs className="!mb-0" />
       <PageHeader
         title="הוצאות"
-        subtitle="כל ההוצאות לפי נכס, כדי לדעת כמה באמת נשאר."
+        subtitle="כל ההוצאות לפי יחידה, כדי לדעת כמה באמת נשאר."
         className="!mb-0"
         actions={<Button onClick={() => setDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />הוצאה חדשה</Button>}
       />
@@ -121,7 +121,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
                 <Receipt className="w-8 h-8 text-neutral-300" />
               </div>
               <p className="text-[17px] font-bold text-navy-900 mb-1">אין עדיין הוצאות</p>
-              <p className="text-[15px] text-ink-600 mb-4">רשמו הוצאה כדי לראות כמה נשאר מכל נכס.</p>
+              <p className="text-[15px] text-ink-600 mb-4">רשמו הוצאה כדי לראות כמה נשאר מכל יחידה.</p>
               <Button onClick={() => setDialogOpen(true)} className="bg-brand-600 hover:bg-brand-700">
                 <Plus className="w-4 h-4 ml-2" />
                 הוצאה חדשה
@@ -133,7 +133,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
                 <thead>
                   <tr className="border-b border-line bg-canvas">
                     <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">תאריך</th>
-                    <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">נכס</th>
+                    <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">יחידה</th>
                     <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">קטגוריה</th>
                     <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">סכום</th>
                     <th className="text-right py-3 px-4 text-xs font-semibold text-ink-600">תיאור</th>
@@ -202,10 +202,10 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div>
-              <Label>נכס</Label>
+              <Label>יחידה</Label>
               <Select value={form.property} onValueChange={v => setForm(f => ({ ...f, property: v }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="בחרו נכס" />
+                  <SelectValue placeholder="בחרו יחידה" />
                 </SelectTrigger>
                 <SelectContent>
                   {propertyNames.map(p => (
@@ -245,15 +245,15 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
               />
             </div>
             <div>
-              <Label>תיאור (אופציונלי)</Label>
+              <Label>תיאור (לא חובה)</Label>
               <Input
-                placeholder="פרטים נוספים..."
+                placeholder="למשל: החלפת נורות במטבח"
                 value={form.description}
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
               />
             </div>
             <div>
-              <Label>קבלה (אופציונלי)</Label>
+              <Label>קבלה (לא חובה)</Label>
               <div className="border-2 border-dashed border-line rounded-xl p-6 text-center hover:border-brand-100 transition-colors cursor-pointer">
                 <Upload className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
                 <p className="text-sm text-ink-600">גררו קובץ לכאן או לחצו להעלאה</p>

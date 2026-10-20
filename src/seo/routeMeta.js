@@ -8,7 +8,7 @@ const EXACT = {
   },
   '/login': {
     title: 'התחברות | atlas',
-    description: 'התחברות לחשבון atlas לניהול נכסי אירוח, הזמנות ותשלומים.',
+    description: 'כניסה לחשבון atlas: ההזמנות, התשלומים וההודעות של הצימר.',
   },
   '/register': {
     title: 'הרשמה | atlas',
@@ -28,19 +28,19 @@ const EXACT = {
   },
   '/onboarding': {
     title: 'הגדרת חשבון | atlas',
-    description: 'סיום ההרשמה והגדרת הארגון במערכת atlas.',
+    description: 'סיום ההרשמה והגדרת העסק.',
   },
   '/dashboard': {
     title: 'היום | atlas',
-    description: 'סקירת הזמנות, לידים, תשלומים וביצועים: atlas.',
+    description: 'מה קורה היום בצימר: כניסות, יציאות, תשלומים והודעות.',
   },
   '/about': {
     title: 'אודות atlas',
-    description: 'מי אנחנו ומהי חזון הפלטפורמה לניהול נכסי אירוח בישראל.',
+    description: 'מי אנחנו ולמה בנינו את atlas לבעלי צימרים ומתחמי נופש.',
   },
   '/contact': {
     title: 'יצירת קשר | atlas',
-    description: 'יצירת קשר עם צוות atlas לתמיכה ומכירות.',
+    description: 'איך פונים לצוות atlas: וואטסאפ, טופס ומייל, בעברית.',
   },
   '/privacy': {
     title: 'מדיניות פרטיות | atlas',
@@ -59,12 +59,12 @@ const EXACT = {
     description: 'מצב זמינות השירות והמערכת.',
   },
   '/guest-service': {
-    title: 'שירות חדרים | atlas',
-    description: 'שירות אורחים וחוויית אירוח.',
+    title: 'בקשה מהמארחים | atlas',
+    description: 'טופס לאורחים: תקלה, בקשה או שאלה בזמן השהייה.',
   },
   '/data-security': {
     title: 'אבטחת מידע | atlas',
-    description: 'אבטחת מידע והגנת נתונים במערכת atlas.',
+    description: 'איך atlas שומר על המידע שלכם ושל האורחים.',
   },
   '/accessibility': {
     title: 'נגישות | atlas',
@@ -80,12 +80,12 @@ const EXACT = {
   },
   '/how-it-works': {
     title: 'איך זה עובד | atlas',
-    description: 'איך atlas מסנכרנת ערוצי הזמנה ומונעת הזמנות כפולות: זרימת נתונים וכללי התנגשות.',
+    description: 'איך הזמנות מ-Booking ו-Airbnb נכנסות ללוח אחד, ומה קורה כשיש חפיפה.',
   },
   '/pricing': {
     title: 'תמחור ותוכניות | atlas',
     description:
-      'תמחור atlas לניהול צימרים ומתחמי נופש: חבילה בסיסית, מתקדמת ו-Enterprise. השוואת תכונות, מחירים להמחשה וצור קשר להצעה.',
+      'המחירים של atlas לצימרים ומתחמי נופש: 3 חבילות לפי מספר המתחמים, 14 יום ניסיון חינם, בלי כרטיס אשראי.',
   },
   '/billing': {
     title: 'חיובים | atlas',
@@ -120,10 +120,10 @@ const SEGMENT_TITLE = {
   contracts: 'חוזים | atlas',
   automations: 'אוטומציות | atlas',
   integrations: 'ערוצים וחיבורים | atlas',
-  'ai-assistant': 'עוזר AI | atlas',
-  'revenue-intelligence': 'ניתוח הכנסות | atlas',
+  'ai-assistant': 'עוזר אישי | atlas',
+  'revenue-intelligence': 'הכנסות | atlas',
   'owner-reports': 'דוחות בעלים | atlas',
-  'guest-journey': 'מסע אורח | atlas',
+  'guest-journey': 'שלבי האירוח | atlas',
   'guest-portal': 'דף אורח והזמנה ישירה | atlas',
   'dynamic-pricing': 'תמחור חגים וסופ״ש | atlas',
   'expense-tracker': 'הוצאות | atlas',

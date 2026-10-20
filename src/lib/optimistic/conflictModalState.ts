@@ -12,7 +12,7 @@ function emit() {
 export function openOptimisticConflictModal(payload: { title?: string; message: string }) {
   state = {
     open: true,
-    title: payload.title ?? 'הנתונים התנגשו עם השרת',
+    title: payload.title ?? 'מישהו שינה את זה בינתיים',
     message: payload.message,
   };
   emit();

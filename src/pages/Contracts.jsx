@@ -312,7 +312,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                               }}
                             >
                               <Eye className="h-3 w-3 ml-1" />
-                              צפה
+                              צפייה
                             </Button>
                             {contract.status === 'DRAFT' && (
                               <Button 
@@ -322,7 +322,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                                 onClick={() => updateContractMutation.mutate({ id: contract.id, data: { status: 'SENT' } })}
                               >
                                 <Send className="h-3 w-3 ml-1" />
-                                שלח
+                                שליחה
                               </Button>
                             )}
                           </div>
@@ -386,7 +386,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                             }}
                           >
                             <Eye className="h-3 w-3 ml-1" />
-                            צפה
+                            צפייה
                           </Button>
                           {contract.status === 'DRAFT' && (
                             <Button 
@@ -395,7 +395,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                               onClick={() => updateContractMutation.mutate({ id: contract.id, data: { status: 'SENT' } })}
                             >
                               <Send className="h-3 w-3 ml-1" />
-                              שלח
+                              שליחה
                             </Button>
                           )}
                         </div>
@@ -440,7 +440,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
               className="rounded-[10px] gap-2"
             >
               <Upload className="h-4 w-4" />
-              ייבא מקובץ
+              ייבוא מקובץ
             </Button>
             <Button 
               onClick={() => {
@@ -487,7 +487,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                         onClick={() => handleEditTemplate(template)}
                       >
                         <Edit className="h-3 w-3 ml-1" />
-                        ערוך
+                        עריכה
                       </Button>
                       <Button 
                         size="sm" 
@@ -631,7 +631,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsPreviewOpen(false)} className="rounded-[10px]">
-              סגור
+              סגירה
             </Button>
           </DialogFooter>
         </DialogContent>

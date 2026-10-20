@@ -53,7 +53,7 @@ function Msg({ m, last, onLink, onFollow, onFeedback, onRetry }) {
         {m._failed ? (
           <div className="sp-failed" role="alert">
             <span>{m._error || 'לא נשלח'}</span>
-            <button type="button" className="sp-textbtn" onClick={() => onRetry(m)}><RotateCw size={14} strokeWidth={2} aria-hidden />לנסות שוב</button>
+            <button type="button" className="sp-textbtn" onClick={() => onRetry(m)}><RotateCw size={14} strokeWidth={2} aria-hidden />נסו שוב</button>
           </div>
         ) : null}
       </div>
@@ -300,7 +300,7 @@ export default function SupportWidget() {
               <span className="sp-hello-icon" aria-hidden><MessageCircle size={22} strokeWidth={1.75} /></span>
               <h3>העזרה בצ׳אט תיפתח בקרוב</h3>
               <p>בינתיים נשמח לעזור בוואטסאפ. בן אדם מהצוות עונה, בדרך כלל באותו יום.</p>
-              <a className="sp-primary" href={waSupportLink('שלום, אני צריך עזרה עם atlas')} target="_blank" rel="noreferrer"><MessageCircle size={18} strokeWidth={1.75} aria-hidden />וואטסאפ {SUPPORT_WHATSAPP_DISPLAY}</a>
+              <a className="sp-primary" href={waSupportLink('שלום, צריך עזרה עם atlas')} target="_blank" rel="noreferrer"><MessageCircle size={18} strokeWidth={1.75} aria-hidden />וואטסאפ {SUPPORT_WHATSAPP_DISPLAY}</a>
             </div>
           ) : view === 'history' ? (
             <div className="sp-body">
@@ -325,7 +325,7 @@ export default function SupportWidget() {
                 <div className="sp-hello">
                   <p className="sp-hello-hi">{name ? `שלום ${name},` : 'שלום,'}</p>
                   <h3>במה אפשר לעזור?</h3>
-                  <p className="sp-hello-sub">אני מכיר כל מסך וכפתור במערכת atlas. אם לא אדע, נציג מהצוות ימשיך מכאן.</p>
+                  <p className="sp-hello-sub">אני מכיר כל מסך וכפתור כאן. אם לא אדע, נציג מהצוות ימשיך מכאן.</p>
                   <ul className="sp-suggest" aria-label="שאלות נפוצות">
                     {suggestions.map((q) => (
                       <li key={q}><button type="button" onClick={() => send(q)}><span>{q}</span><ArrowUpLeft size={16} strokeWidth={1.75} aria-hidden /></button></li>

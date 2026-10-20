@@ -143,7 +143,7 @@ export function GuestsTable(props: GuestsTableProps): React.ReactElement {
         enableMultiSort={!(sorting !== undefined && onSortingChange !== undefined)}
         stickyHeader
         virtualScroll={leads.length >= 400}
-        emptyMessage="אין אורחים/לידים להצגה"
+        emptyMessage="עוד אין לידים כאן"
         csvExport={{ filename: 'guests', columns: csvColumns }}
         bulkBar={{
           onDeleteSelected: (rows) => {
@@ -160,7 +160,7 @@ export function GuestsTable(props: GuestsTableProps): React.ReactElement {
       {statusMenuRows && statusMenuRows.length > 0 ? (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 p-4" role="dialog" aria-modal>
           <div className="max-h-[70vh] w-full max-w-sm overflow-auto rounded-2xl border border-gray-200 bg-white p-3 shadow-xl" dir="rtl">
-            <p className="mb-2 text-sm font-semibold text-gray-800">בחר סטטוס ל-{statusMenuRows.length} רשומות</p>
+            <p className="mb-2 text-sm font-semibold text-gray-800">בחרו סטטוס ל-{statusMenuRows.length} רשומות</p>
             <div className="flex flex-col gap-1">
               {STATUS_OPTIONS.map((s) => (
                 <button

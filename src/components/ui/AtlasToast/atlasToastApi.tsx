@@ -93,7 +93,7 @@ export const atlasToastApi = {
         duration: DURATION_MS.undo,
         className: `${baseToast} border-amber-300 bg-amber-50 text-amber-950`,
         cancel: {
-          label: 'בטל',
+          label: 'ביטול',
           onClick: () => {
             if (settled) return;
             settled = true;

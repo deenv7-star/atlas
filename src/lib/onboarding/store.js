@@ -39,9 +39,9 @@ export function typeInfo(value) {
 }
 
 export const OWNER_ROLES = [
-  { value: 'owner', label: 'הבעלים', line: 'המקום שלי' },
-  { value: 'manager', label: 'מנהל/ת', line: 'מנהל/ת בשביל הבעלים' },
-  { value: 'family', label: 'בן/בת משפחה', line: 'עוזר/ת בעסק המשפחתי' },
+  { value: 'owner', label: 'הבעלים', line: 'העסק שלי' },
+  { value: 'manager', label: 'ניהול', line: 'מנהלים בשביל הבעלים' },
+  { value: 'family', label: 'משפחה', line: 'עוזרים בעסק המשפחתי' },
   { value: 'staff', label: 'צוות', line: 'קבלה, ניקיון או תחזוקה' },
 ];
 

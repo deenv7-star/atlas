@@ -30,7 +30,7 @@ export default function BackendNotConfigured() {
         {' '}לכתובת API מפורשת.
       </p>
       <p style={{ color: '#9CA3AF', fontSize: 14, marginBottom: 24 }}>
-        אם מופיע המסך הזה בטעות, בדוק שיש proxy ל־API או הגדר <code style={{ background: '#FEF3C7', padding: '2px 6px', borderRadius: 4 }}>VITE_ALLOW_LOCAL_DEMO=true</code>
+        אם מופיע המסך הזה בטעות, בדקו שיש proxy ל־API או הגדירו <code style={{ background: '#FEF3C7', padding: '2px 6px', borderRadius: 4 }}>VITE_ALLOW_LOCAL_DEMO=true</code>
         {' '}לפיתוח. רק פריסת סטטיק בלי API: <code style={{ background: '#FEE2E2', padding: '2px 6px', borderRadius: 4 }}>VITE_DISABLE_RELATIVE_API=true</code>
       </p>
       <a

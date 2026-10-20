@@ -64,7 +64,7 @@ function ChangePassword({ user }) {
     setErrors(errs);
     if (Object.keys(errs).length) return;
     if (!isSupabaseConfigured || !supabase) {
-      atlasToastApi.error('שינוי סיסמה זמין רק בחשבון מחובר לשרת');
+      atlasToastApi.error('אפשר לשנות סיסמה רק בחשבון אמיתי, לא בהדגמה');
       return;
     }
     setBusy(true);
@@ -151,7 +151,7 @@ function DeleteAccount({ onDeleted }) {
       <div className="rounded-[14px] border border-[#F3D4D4] p-4">
         <p className="text-[15px] font-bold text-navy-900">מחיקת החשבון</p>
         <p className="mt-1 text-[14px] leading-relaxed text-ink-600">
-          מוחקת את המשתמש שלכם. אם אתם היחידים בארגון, נמחקים גם הנכסים, ההזמנות, הלידים, התשלומים וכל שאר הנתונים. אי אפשר לשחזר.
+          החשבון שלכם יימחק. אם אין עוד אנשים בחשבון העסק, יימחקו גם היחידות, ההזמנות, הלידים, התשלומים וכל שאר הנתונים. אי אפשר לשחזר.
         </p>
         <Button
           variant="outline"
@@ -167,7 +167,7 @@ function DeleteAccount({ onDeleted }) {
           <DialogHeader>
             <DialogTitle className="text-right">למחוק את החשבון לצמיתות?</DialogTitle>
             <DialogDescription className="text-right leading-relaxed">
-              כדי לאשר, הקלידו <b className="text-navy-900">{CONFIRM_WORD}</b>. אחרי המחיקה תצאו מהמערכת, ואי אפשר לבטל.
+              כדי לאשר, הקלידו <b className="text-navy-900">{CONFIRM_WORD}</b>. אחרי המחיקה תצאו מהחשבון, ואי אפשר לבטל.
             </DialogDescription>
           </DialogHeader>
           <Input

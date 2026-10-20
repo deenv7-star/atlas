@@ -36,7 +36,7 @@ export function AppleLogo({ className }) {
   );
 }
 
-const LABEL = { google: 'המשך עם Google', apple: 'המשך עם Apple' };
+const LABEL = { google: 'המשיכו עם Google', apple: 'המשיכו עם Apple' };
 const GOING = { google: 'מעבירים ל-Google…', apple: 'מתחברים עם Apple…' };
 
 /** The "או" separator between the providers and the email form. */
@@ -129,7 +129,7 @@ export default function SocialButtons({ intent = 'login', returnTo = null, getCo
                 ? <Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden />
                 : p === 'google' ? <GoogleG className="h-5 w-5" /> : <AppleLogo className="h-5 w-5 -translate-y-px" />}
             </span>
-            <span>{isBusy ? GOING[p] : <><span>המשך עם </span><span dir="ltr">{p === 'google' ? 'Google' : 'Apple'}</span></>}</span>
+            <span>{isBusy ? GOING[p] : <><span>המשיכו עם </span><span dir="ltr">{p === 'google' ? 'Google' : 'Apple'}</span></>}</span>
           </button>
         );
       })}

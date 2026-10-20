@@ -44,13 +44,13 @@ export const NAV_GROUPS = [
     label: 'אורחים',
     items: [
       ...(DB_FEATURES.guestPages ? [{ page: 'GuestPortal', label: 'דף אורח והזמנה ישירה', icon: Globe }] : []),
-      { page: 'GuestJourney', label: 'מסע אורח', icon: Route },
-      { page: 'AIAssistant', label: 'עוזר AI', icon: SparklesIcon },
+      { page: 'GuestJourney', label: 'שלבי האירוח', icon: Route },
+      { page: 'AIAssistant', label: 'עוזר אישי', icon: SparklesIcon },
     ],
   },
   {
     id: 'insights',
-    label: 'ניתוח',
+    label: 'דוחות',
     items: [
       { page: 'RevenueIntelligence', label: 'הכנסות', icon: BarChart3 },
       { page: 'DynamicPricing', label: 'תמחור חגים', icon: Tags },

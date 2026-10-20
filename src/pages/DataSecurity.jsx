@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import Logo from '@/components/common/Logo';
 import { Button } from '@/components/ui/button';
-import { Shield, Lock, Eye, Server, CheckCircle2, Clock, KeyRound, Globe } from 'lucide-react';
+import { Shield, Lock, Eye, Server, CheckCircle2, KeyRound, Globe } from 'lucide-react';
 
 export default function DataSecurity() {
   return (
@@ -28,44 +28,26 @@ export default function DataSecurity() {
             אבטחת מידע והגנת פרטיות
           </h1>
           <p className="text-xl text-ink-600 mb-8">
-            אבטחת המידע שלכם היא בראש סדר העדיפויות שלנו
+            מה אנחנו עושים כדי לשמור על הנתונים שלכם, בלי הגזמות
           </p>
-          {/* Quick stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl mx-auto">
-            {[
-              { label: 'הצפנה', value: 'AES-256' },
-              { label: 'זמינות SLA', value: '99.9%' },
-              { label: 'תקן תשתית', value: 'SOC 2' },
-              { label: 'עמידה בתקנים', value: 'GDPR' },
-            ].map((s) => (
-              <div key={s.label} className="bg-white border border-line shadow-card rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-brand-600">{s.value}</div>
-                <div className="text-sm text-ink-400 mt-1">{s.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* Content */}
       <section className="max-w-4xl mx-auto px-4 py-16 space-y-8">
 
-        {/* Encryption */}
         <div className="bg-white rounded-2xl shadow-sm p-8">
           <div className="flex items-center gap-3 mb-4">
             <Lock className="w-6 h-6 text-brand-600" />
-            <h2 className="text-2xl font-bold text-[#1B2656]">הצפנת נתונים</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656]">הצפנה</h2>
           </div>
           <p className="text-gray-600 leading-relaxed mb-4">
-            כל המידע שלכם מוצפן באמצעות תקן הצפנה <strong>AES-256 / TLS 1.3</strong>: אותו תקן המשמש בנקים ומוסדות פיננסיים.
-            הנתונים מוצפנים הן בתעבורה (בזמן העברה) והן במנוחה (באחסון).
+            אנחנו לא בונים הצפנה משלנו. אנחנו משתמשים בתשתית של ספקים מוכרים, וכותבים כאן רק מה שבאמת קיים.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-3">
             {[
-              'הצפנה מלאה בתעבורה (TLS 1.3)',
-              'הצפנה במנוחה (AES-256)',
-              'מפתחות הצפנה מנוהלים ב-AWS KMS',
-              'הצפנת גיבויים בנפרד',
+              'כל התעבורה בין הדפדפן שלכם ל-atlas מוצפנת (HTTPS).',
+              'מסד הנתונים מתארח ב-Supabase, שמצפינה את הנתונים באחסון.',
             ].map((item) => (
               <div key={item} className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />
@@ -75,19 +57,17 @@ export default function DataSecurity() {
           </div>
         </div>
 
-        {/* Infrastructure */}
         <div className="bg-white rounded-2xl shadow-sm p-8">
           <div className="flex items-center gap-3 mb-4">
             <Server className="w-6 h-6 text-brand-600" />
-            <h2 className="text-2xl font-bold text-[#1B2656]">תשתית מאובטחת</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656]">איפה הנתונים נשמרים</h2>
           </div>
           <div className="space-y-3">
             {[
-              'אחסון בענן מאובטח ב-AWS עם תקני SOC 2 Type II ו-ISO 27001',
-              'גיבויים אוטומטיים מרובי אזורים, שחזור תוך פחות מ-4 שעות',
-              'מערכות מוניטורינג 24/7 לזיהוי ותגובה לאיומי אבטחה',
-              'הפרדת סביבות: ייצור, בדיקות ופיתוח מבודדים לחלוטין',
-              'סריקות אוטומטיות לפרצות אבטחה (SAST/DAST) בכל גרסה',
+              'מסד הנתונים, ההתחברות והקבצים: Supabase, על שרתי AWS בפרנקפורט, גרמניה.',
+              'האתר והאפליקציה: Vercel.',
+              'מיילים של מערכת (אימות חשבון, איפוס סיסמה): Resend.',
+              'השאלות לעוזר החכם: OpenAI, בארצות הברית.',
             ].map((item) => (
               <div key={item} className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />
@@ -97,24 +77,16 @@ export default function DataSecurity() {
           </div>
         </div>
 
-        {/* SSO & Access Control */}
         <div className="bg-white rounded-2xl shadow-sm p-8">
           <div className="flex items-center gap-3 mb-4">
             <KeyRound className="w-6 h-6 text-brand-600" />
-            <h2 className="text-2xl font-bold text-[#1B2656]">בקרת גישה ו-SSO</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656]">מי רואה את הנתונים</h2>
           </div>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            atlas תומכת ב-<strong>Single Sign-On (SSO)</strong> באמצעות SAML 2.0 ו-OAuth 2.0, זמין בחבילת Business.
-            כלל המשתמשים נהנים מאימות דו-שלבי (2FA) ובקרת הרשאות מפורטת.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="space-y-3">
             {[
-              'SSO עם SAML 2.0 / OAuth 2.0 (חבילת Business)',
-              'אימות דו-שלבי (2FA) לכל המשתמשים',
-              'ניהול הרשאות מבוסס תפקידים (RBAC)',
-              'התנתקות אוטומטית לאחר חוסר פעילות',
-              'לוג גישה מלא לכל פעולה במערכת',
-              'סיסמאות מוצפנות (bcrypt), לא נשמרות בטקסט גלוי',
+              'כל עסק רואה רק את הנתונים שלו. ההפרדה נאכפת במסד הנתונים עצמו (Row Level Security).',
+              'סיסמאות לא נשמרות כטקסט. Supabase שומרת רק גיבוב (hash) שלהן.',
+              'אפשר להתחבר גם עם Google או Apple, בלי סיסמה נוספת.',
             ].map((item) => (
               <div key={item} className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />
@@ -122,59 +94,21 @@ export default function DataSecurity() {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* SLA */}
-        <div className="bg-white rounded-2xl shadow-sm p-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Clock className="w-6 h-6 text-brand-600" />
-            <h2 className="text-2xl font-bold text-[#1B2656]">SLA: הסכם רמת שירות</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {[
-              { label: 'זמינות מובטחת', value: '99.9%', desc: 'Uptime שנתי' },
-              { label: 'זמן תגובה לתקלות קריטיות', value: '< 1 שעה', desc: 'בשעות עסקים' },
-              { label: 'שחזור נתונים (RTO)', value: '< 4 שעות', desc: 'במקרה של כשל' },
-            ].map((s) => (
-              <div key={s.label} className="bg-[#F4F3FF] rounded-xl p-4 text-center">
-                <div className="text-xl font-bold text-brand-600">{s.value}</div>
-                <div className="text-sm font-semibold text-[#1B2656] mt-1">{s.label}</div>
-                <div className="text-xs text-gray-500 mt-0.5">{s.desc}</div>
-              </div>
-            ))}
-          </div>
-          <p className="text-gray-600 leading-relaxed">
-            חבילת <strong>Business</strong> כוללת SLA מובטח בכתב עם פיצוי כספי במקרה של חריגה.{' '}
-            <Link to="/sla" className="text-brand-600 underline">ראה את מסמך ה-SLA המלא</Link>.
-          </p>
         </div>
 
         {/* Compliance — anchor for marketing footer "security whitepaper" link */}
         <div id="security-compliance" className="bg-white rounded-2xl shadow-sm p-8 scroll-mt-24">
           <div className="flex items-center gap-3 mb-4">
             <Globe className="w-6 h-6 text-brand-600" />
-            <h2 className="text-2xl font-bold text-[#1B2656]">עמידה בתקנים ורגולציה</h2>
+            <h2 className="text-2xl font-bold text-[#1B2656]">תקנים ורגולציה</h2>
           </div>
-          <div className="rounded-xl border border-teal-100 bg-teal-50/40 p-4 mb-6 text-gray-700 text-sm leading-relaxed">
-            <strong className="text-[#1B2656]">שקיפות לגבי SOC 2 / ISO:</strong>{' '}
-            דוחות תאימות של ספקי הענן (למשל AWS, SOC 2 Type II, ISO 27001) ותיעוד תהליכי אבטחה פנימיים
-            זמינים ללקוחות <strong>Enterprise</strong> לפי בקשה, בכפוף ל-NDA ולסיווג המידע.
-            אין כאן תעודת SOC 2 על חברת atlas עצמה, אנחנו בונים על תשתית מאושרת ושכבות אבטחה נוספות באפליקציה.
-          </div>
-          <div className="space-y-3">
-            {[
-              'GDPR: תקנות הגנת מידע אירופאיות',
-              'חוק הגנת הפרטיות, התשמ"א-1981 (ישראל)',
-              'SOC 2 Type II: ביקורת אבטחה שנתית',
-              'ISO 27001: תקן ניהול אבטחת מידע',
-              'PCI DSS: לעיבוד תשלומים מאובטח (דרך Stripe)',
-            ].map((item) => (
-              <div key={item} className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />
-                <p className="text-gray-600">{item}</p>
-              </div>
-            ))}
-          </div>
+          <p className="text-gray-600 leading-relaxed mb-3">
+            אנחנו פועלים לפי חוק הגנת הפרטיות, התשמ"א-1981. ל-atlas עצמה אין כרגע הסמכה כמו SOC 2 או ISO 27001.
+            לספקי התשתית שלנו יש הסמכות משלהם, ואפשר לקרוא עליהן באתרים שלהם.
+          </p>
+          <p className="text-gray-600 leading-relaxed">
+            רוצים לדעת עוד? <Link to="/privacy" className="inline-flex min-h-[44px] items-center text-brand-600 underline">מדיניות הפרטיות</Link> מפרטת מה נאסף ולמה.
+          </p>
         </div>
 
         {/* Data Rights */}
@@ -199,14 +133,14 @@ export default function DataSecurity() {
               to="/contact"
               className="inline-flex items-center gap-2 px-5 py-3 border border-gray-200 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors"
             >
-              צור קשר
+              צרו קשר
             </Link>
           </div>
         </div>
 
         <div className="bg-brand-50/60 rounded-xl p-6">
           <h3 className="text-lg font-bold text-[#1B2656] mb-2">עדכון אחרון</h3>
-          <p className="text-gray-600">מסמך זה עודכן לאחרונה בתאריך: 10 בפברואר 2026</p>
+          <p className="text-gray-600">מסמך זה עודכן לאחרונה בתאריך: 20 באוקטובר 2026</p>
         </div>
       </section>
 
@@ -217,7 +151,7 @@ export default function DataSecurity() {
           <div className="flex gap-6 text-sm">
             <Link to="/privacy" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">פרטיות</Link>
             <Link to="/terms" className="inline-flex min-h-[44px] items-center px-1 text-ink-400 hover:text-navy-900 transition-colors">תנאי שימוש</Link>
-            <Link to="/sla" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center px-1 text-ink-400 hover:text-navy-900 transition-colors">SLA</Link>
+            <Link to="/sla" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center px-1 text-ink-400 hover:text-navy-900 transition-colors">מחויבות השירות</Link>
           </div>
           <p className="text-ink-400 text-sm">© {new Date().getFullYear()} atlas. כל הזכויות שמורות</p>
         </div>

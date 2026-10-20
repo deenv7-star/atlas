@@ -53,13 +53,13 @@ export default function Register() {
           <div className="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center py-6 lg:py-10">
             <div className="mb-5 lg:hidden"><LivePreviewCompact business={form.business} level={level} /></div>
 
-            <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 sm:text-[36px]">בונים את המערכת שלכם</h1>
-            <p className="mt-2 text-[16px] text-ink-600">14 ימים חינם, אחר כך מחליטים. דקה אחת והיא מוכנה.</p>
+            <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 sm:text-[36px]">פותחים לכם חשבון</h1>
+            <p className="mt-2 text-[16px] text-ink-600">14 יום חינם, ואז מחליטים. דקה אחת וזה מוכן.</p>
 
             {emailExists ? (
               <div className="mt-8 space-y-4">
                 <div className="rounded-[16px] border border-[#D9DCFB] bg-brand-50 p-4 text-center" role="alert">
-                  <p className="font-semibold text-navy-900">כתובת המייל הזו כבר רשומה במערכת</p>
+                  <p className="font-semibold text-navy-900">המייל הזה כבר רשום אצלנו</p>
                 </div>
                 <Link to={`/login?email=${encodeURIComponent(form.email)}`} className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-brand-600 text-[16px] font-bold text-white">
                   התחברו עם המייל הזה<ArrowLeft className="h-5 w-5" aria-hidden />
