@@ -9,7 +9,7 @@
 import HelpHint from '@/components/help/HelpHint';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ChevronLeft, LogIn, LogOut, Sparkles, ArrowUpLeft, AlertTriangle, Moon } from 'lucide-react';
+import { Check, ChevronLeft, LogIn, LogOut, Sparkles, ArrowUpLeft, Moon } from 'lucide-react';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
 import { todayISO, addDays, formatDayHe, nightsBetween } from '@/lib/stay/format';
@@ -33,6 +33,8 @@ import { SegmentedControl, SkelLine, DeltaPill, CardArrow } from '@/components/d
 import { cn } from '@/lib/utils';
 import { heCount } from '@/lib/hebrewCount';
 import SetupResumeCard from '@/components/today/SetupResumeCard';
+import InsightsFeed from '@/components/today/InsightsFeed';
+import { useTodayInsights } from '@/hooks/useTodayInsights';
 
 const HHMM = /^([01]?\d|2[0-3]):([0-5]\d)/;
 /** "15:00" from a booking/property time field ("15:00", "15:00:00", "1500"); '' when unusable. */
@@ -160,7 +162,7 @@ function DayRow({ property, guest, time, title, detail, attention, action, i }) 
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-semibold text-navy-900">{title}</p>
         <p className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
-          {attention ? <span aria-label="דחוף" className="h-1.5 w-1.5 shrink-0 rounded-full bg-attention" /> : null}
+          {attention ? <span role="img" aria-label="דחוף" className="h-1.5 w-1.5 shrink-0 rounded-full bg-attention" /> : null}
           {time && time !== '—' ? <span className="tabular font-semibold text-ink-600">{time}</span> : null}
           {time && time !== '—' && detail ? <span aria-hidden className="text-ink-300">·</span> : null}
           <span className="truncate">{detail}</span>
@@ -194,7 +196,7 @@ function FoldLine({ label, to, onClick, open }) {
 export default function TodayBoard({ user, orgId }) {
   const day = todayISO();
   const tomorrow = addDays(day, 1);
-  const data = useStayData();
+  const data = useStayData({ withExpenses: true });
   const { updateBooking, createCleaning, updateCleaning } = useStayMutations();
   const quick = useQuickBooking();
   const [composer, setComposer] = useState(null);
@@ -203,6 +205,9 @@ export default function TodayBoard({ user, orgId }) {
   const queue = useMessageQueue({ orgId });
   const sendWa = useWhatsAppSend({ orgId });
   const [showQueue, setShowQueue] = useState(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const syncProblems = useMemo(() => queue.syncProblems, [queue.syncs]);
+  const insights = useTodayInsights({ data, user, orgId, syncProblems, syncs: queue.syncs });
 
   const board = useMemo(() => buildDayBoard({
     day, bookings: data.bookings, paymentsByBooking: data.paymentsByBooking, sentByBooking: data.sentByBooking,
@@ -280,6 +285,16 @@ export default function TodayBoard({ user, orgId }) {
 
   const prop = (id) => data.propertyById.get(id) || null;
   const bookingById = useMemo(() => new Map((data.bookings || []).map((b) => [b.id, b])), [data.bookings]);
+  /** An insight's own action: WhatsApp opens the composer with the right template; new booking opens the quick form. */
+  const onInsight = (item) => {
+    const a = item.action || {};
+    if (a.kind === 'new_booking') { quick?.open?.(); return; }
+    if (a.kind === 'whatsapp') {
+      const booking = bookingById.get(a.bookingId);
+      if (!booking) return;
+      setComposer({ booking, template: a.template, balance: balanceOf(booking, data.paymentsByBooking.get(booking.id) || [], day) });
+    }
+  };
   const queueRows = queue.due.map((item) => ({ item, booking: bookingById.get(item.booking_id) })).filter((r) => r.booking);
   const upcomingCount = queue.upcoming.filter((x) => bookingById.has(x.booking_id)).length;
   const sendQueued = (item, booking) => {
@@ -502,17 +517,6 @@ export default function TodayBoard({ user, orgId }) {
         </ul>
       )}
       <ul className="mt-auto space-y-0.5 border-t border-[#F0F0F6] px-2 py-2 md:px-3">
-        {queue.syncProblems.length ? (
-          <li>
-            <Link to="/integrations" className="press c-row flex min-h-[48px] w-full items-center gap-3 rounded-[16px] px-3 text-right" data-testid="sync-problem">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-attention" strokeWidth={1.75} aria-hidden />
-              <span className="flex-1 truncate text-[14px] font-semibold text-navy-900">
-                {queue.syncProblems.some((x) => Array.isArray(x.conflicts) && x.conflicts.length) ? 'אותם תאריכים נתפסו בשני ערוצים' : 'הלוח לא התעדכן מהערוץ. בדקו את החיבור'}
-              </span>
-              <ChevronLeft className="h-4 w-4 shrink-0 text-ink-300" strokeWidth={1.75} />
-            </Link>
-          </li>
-        ) : null}
         {queueRows.length > 0 || upcomingCount > 0 ? (
           <li data-testid="send-queue">
             <FoldLine open={showQueue} onClick={() => setShowQueue((v) => !v)} label={queueRows.length ? `לשלוח עכשיו: ${queueRows.length} ${queueRows.length === 1 ? 'הודעה' : 'הודעות'}` : `${upcomingCount} הודעות מתוכננות ל-24 השעות הקרובות`} />
@@ -596,10 +600,11 @@ export default function TodayBoard({ user, orgId }) {
         <div className="v7-card mt-4 p-6">
           <p className="text-[15px] font-semibold text-navy-900">לא הצלחנו לטעון את היום</p>
           <p className="mt-1 text-[14px] text-ink-400">בדקו את החיבור ונסו שוב.</p>
-          <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>נסו שוב</Button>
+          <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>לנסות שוב</Button>
         </div>
       ) : data.isLoading ? skeleton : (
         <>
+          <InsightsFeed insights={insights} onAction={onInsight} />
           <section aria-label="מספרים" className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-12">
             {hero}
             {donut}

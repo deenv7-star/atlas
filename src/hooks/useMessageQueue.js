@@ -82,6 +82,8 @@ export function useMessageQueue({ orgId } = {}) {
     isLoading: q.isLoading,
     due: items.filter((x) => Date.parse(x.due_at) <= now),
     upcoming: items.filter((x) => Date.parse(x.due_at) > now),
+    /** every calendar link of the account; undefined until loaded (so nobody claims "not connected" too early). */
+    syncs: syncHealth.isSuccess ? (syncHealth.data || []) : undefined,
     syncProblems: (syncHealth.data || []).filter((s) => s.sync_status === 'ERROR' || (Array.isArray(s.conflicts) && s.conflicts.length)),
     markSent,
     skip,

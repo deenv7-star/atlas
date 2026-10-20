@@ -82,6 +82,8 @@ export function useStayData({ withExpenses = false, withCleaning = true } = {}) 
     messageLogs,
     cleaningTasks: cleaningQ.data || [],
     expenses: expensesQ.data || [],
+    /** true once the expenses list is really loaded (feature on + query succeeded). */
+    expensesLoaded: expensesQ.isSuccess,
     propertyById,
     paymentsByBooking,
     sentByBooking,
