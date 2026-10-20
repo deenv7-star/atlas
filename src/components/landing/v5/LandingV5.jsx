@@ -266,7 +266,7 @@ export function Pricing() {
   );
 }
 
-const TRIAL_LINE_SHORT = 'כל המערכת פתוחה לכם, בלי כרטיס אשראי ובלי התחייבות.';
+const TRIAL_LINE_SHORT = 'כל הכלים של atlas פתוחים לכם, בלי כרטיס אשראי ובלי התחייבות.';
 
 /**
  * FAQ accordion. `openFirst` opens the first answer on load (it carries the strongest benefit), and
