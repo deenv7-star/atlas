@@ -273,7 +273,7 @@ const TRIAL_LINE_SHORT = 'כל המערכת פתוחה לכם, בלי כרטיס
  * `cta` adds a closing "try it yourself" card under the list, so the last thing read is the free trial.
  * Older landings call <Faq /> without either and render exactly as before.
  */
-export function Faq({ limit = FAQ.length, openFirst = false, cta = false }) {
+export function Faq({ items = FAQ, limit = items.length, openFirst = false, cta = false }) {
   return (
     <section id="faq" className="l5-sec l5-faq-sec" aria-labelledby="faq-title">
       <div className="l5-wrap l5-faq-grid">
@@ -287,7 +287,7 @@ export function Faq({ limit = FAQ.length, openFirst = false, cta = false }) {
           </a>
         </div>
         <div className="l5-faq" data-reveal>
-          {FAQ.slice(0, limit).map((f, i) => (
+          {items.slice(0, limit).map((f, i) => (
             <details key={f.q} open={openFirst && i === 0 ? true : undefined}>
               <summary>
                 <span>{f.q}</span>

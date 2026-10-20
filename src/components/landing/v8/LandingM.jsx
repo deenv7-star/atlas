@@ -7,184 +7,87 @@
  * on scroll, each one feature = a large real UI crop + one bold line + real people photos.
  * Pricing, FAQ and an indigo CTA.
  *
+ * 20.10.2026 (UI/UX research, qa/uiux-research/report.md, mock1/mock2): 6 parts only — hero, one features
+ * section (3 rows + the channels it works with), growth offer, pricing, 5 questions, final CTA. The four colour
+ * blocks, facts and trust sections are no longer rendered (removed from this file; see git history before 20.10.2026; TrustB.jsx is kept).
+ * One bottom bar: the dark cookie row first, the sticky sign-up bar only after it is answered.
+ *
  * All screens are real ATLAS screens in demo mode; every name, booking and amount is example data
  * and is labelled as such. No testimonials, logos or customer counts.
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
-import CookieConsent from '@/components/landing/CookieConsent';
+import { CalendarDays, MessageCircle, Wallet, Sparkles } from 'lucide-react';
+import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { Faq, Footer } from '../v5/LandingV5';
-import { V7Header, Chip } from '../v7/shared7';
-import { UI, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8, useScrollProgress } from './shared8';
+import { LANDING_FAQ, CTA_SIGNUP, CTA_NOTE } from '../v5/content';
+import { V7Header } from '../v7/shared7';
+import { UI, FACES, Face, FaceStack, Pricing8, CtaLinks, Credits8 } from './shared8';
 import { Pic } from './people/Pic';
 import '../v5/landing-v5.css';
 import '../v7/landing-v7.css';
 import './shared8.css';
 import './landing-v8m.css';
 import './faq-m.css';
+import './landing-ux-1020.css';
 import HeroPhoto from './HeroPhoto';
-import TrustB from './TrustB';
 import LazyGrowth from './growth/LazyGrowth';
 
 const loadGrowth = () => import('./growth/GrowthD');
 
-const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
+const NAV = [['#features', 'המוצר'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
-/* ---------------- channels strip ---------------- */
-function Channels() {
-  return (
-    <section className="lm-ch" aria-label="עובד עם">
-      <div className="l5-wrap lm-ch-in">
-        <p>עובד עם מה שכבר יש לכם</p>
-        <ul>
-          <li><Mark ch="airbnb" size={20} />Airbnb</li>
-          <li><Mark ch="booking" size={20} />Booking.com</li>
-          <li><Mark ch="whatsapp" size={20} />WhatsApp</li>
-          <li><Mark ch="google" size={20} />Google Calendar</li>
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- full-bleed feature blocks ---------------- */
-function Block({ tone, layout, I, kicker, title, text, points, children, id }) {
-  const ref = useRef(null);
-  useScrollProgress(ref);
-  // stacking cards: a block taller than the screen sticks only once its bottom is in view
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !('ResizeObserver' in window)) return undefined;
-    const set = () => el.style.setProperty('--stick', `${Math.min(0, window.innerHeight - el.offsetHeight)}px`);
-    const ro = new ResizeObserver(set);
-    ro.observe(el);
-    window.addEventListener('resize', set);
-    set();
-    return () => { ro.disconnect(); window.removeEventListener('resize', set); };
-  }, []);
-  return (
-    <section ref={ref} id={id} className={`lm-blk is-${tone} is-${layout}`} aria-labelledby={`${tone}-title`}>
-      <div className="l5-wrap lm-blk-in">
-        <div className="lm-blk-copy" data-reveal>
-          <p className="lm-kick"><I size={18} strokeWidth={2.2} aria-hidden="true" />{kicker}</p>
-          <h2 id={`${tone}-title`} className="lm-blk-h">{title}</h2>
-          <p className="lm-blk-txt">{text}</p>
-          {points && (
-            <ul className="lm-pts">
-              {points.map((t) => <li key={t}><Check size={16} strokeWidth={2.8} aria-hidden="true" />{t}</li>)}
-            </ul>
-          )}
-        </div>
-        <div className="lm-blk-vis">{children}</div>
-      </div>
-    </section>
-  );
-}
-
-function Blocks() {
-  return (
-    <div className="lm-blocks" id="features">
-      <Block
-        tone="indigo"
-        layout="stage"
-        I={CalendarDays}
-        kicker="לוח שנה"
-        title={<>כל הערוצים. לוח אחד.</>}
-        text="Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח, ומתעדכנות כל 15 דקות. תאריך תפוס נשאר תפוס. בלי כפל הזמנות, בלי אקסל."
-      >
-        <div className="lm-v lm-v-cal">
-          <img className="lm-ui is-cal" src={`${UI}/c-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
-          <div className="lm-chip is-a"><Chip av={FACES.maya.src} ch="airbnb" title="הזמנה מ-Airbnb נכנסה ללוח" sub="מאיה כ. · 3 לילות · התאנה" /></div>
-          <div className="lm-chip is-b"><span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />התאריכים נחסמו ב-Booking.com</span></div>
-        </div>
-      </Block>
-
-      <Block
-        tone="sky"
-        layout="split"
-        I={MessageCircle}
-        kicker="הודעות"
-        title={<>וואטסאפ לאורחים. מוכן מראש.</>}
-        text="atlas מכין כל הודעה בזמן: שם האורח, התאריכים והניווט. אתם שולחים בלחיצה, מהוואטסאפ שלכם. בשבת שקט."
-        points={['אישור מיד אחרי ההזמנה', 'הוראות הגעה יום לפני', 'תזכורת ליתרה, בלי מבוכה']}
-      >
-        <div className="lm-v lm-v-msg">
-          <img className="lm-ui is-msg" src={`${UI}/c-messages.webp`} alt="מסך ההודעות של atlas: שיחת וואטסאפ עם אורחים (נתוני דוגמה)" width="1800" height="1125" loading="lazy" decoding="async" />
-          <div className="lm-chip is-c">
-            <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר מחכה לכם. קוד לדלת: 2419. נסיעה טובה" time="18:00" />
-          </div>
-        </div>
-      </Block>
-
-      <Block
-        tone="lilac"
-        layout="collage"
-        I={Wallet}
-        kicker="תשלומים"
-        title={<>הכסף נכנס. אתם רואים הכל.</>}
-        text="הכסף נכנס כמו תמיד. atlas רושם כל מקדמה ויתרה, מכין תזכורת ליתרה ומראה כמה נכנס החודש."
-      >
-        <div className="lm-v lm-v-pay">
-          <img className="lm-ui is-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
-          <figure className="lm-ph is-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 900px) 26vw, 46vw" /></figure>
-          <img className="lm-ui is-chart" src={`${UI}/c-chart.webp`} alt="גרף הכנסות לפי חודש (נתוני דוגמה)" width="1256" height="966" loading="lazy" decoding="async" />
-          <img className="lm-ui is-rec" src={`${UI}/c-received.webp`} alt="" width="704" height="220" loading="lazy" decoding="async" />
-        </div>
-      </Block>
-
-      <Block
-        tone="mint"
-        layout="split is-flip"
-        I={Sun}
-        kicker="היום"
-        title={<>היום שלכם, מסודר מראש.</>}
-        text="כניסות, יציאות וניקיונות על ציר אחד. מסמנים ״בוצע״ בלחיצה, ורואים מה נשאר."
-        points={['כל בוקר: מה מחכה היום', 'ניקיון בין אורח לאורח', 'הכל מוכן? רואים מיד']}
-      >
-        <div className="lm-v lm-v-today pp-b-today">
-          <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 900px) 34vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
-          <div className="pp-b-phone" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
-            <img src="/landing-hero/ui-m-today.webp" alt="" width="780" height="1594" loading="lazy" decoding="async" />
-          </div>
-          <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
-          <p className="pp-b-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
-        </div>
-      </Block>
-    </div>
-  );
-}
-
-/* ---------------- facts ---------------- */
-const FACTS = [
-  { n: '3', u: 'ערוצים', t: 'Airbnb, Booking.com וישיר על לוח אחד' },
-  { n: '10', u: 'דקות', t: 'מההרשמה עד לוח מעודכן' },
-  { n: '14', u: 'ימים', t: 'ניסיון חינם, בלי כרטיס אשראי' },
-  { n: '₪0', u: 'עמלה', t: 'על הזמנות מעמוד ההזמנה הישירה' },
+/* ---------------- features: 3 rows + channels (replaces the 4 colour blocks, facts and trust) ---------------- */
+const FEATS = [
+  { I: CalendarDays, t: 'כל הערוצים. לוח אחד.', d: 'Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח. בלי כפל הזמנות.' },
+  { I: MessageCircle, t: 'וואטסאפ לאורחים. מוכן מראש.', d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.' },
+  { I: Wallet, t: 'הכסף נכנס. אתם רואים הכל.', d: 'כל מקדמה ויתרה נרשמות, ורואים כמה נכנס החודש.' },
 ];
 
-function Facts() {
+function Features() {
   return (
-    <section id="facts" className="lm-facts" aria-labelledby="facts-title">
+    <section id="features" className="lm-feat" aria-labelledby="feat-title">
       <div className="l5-wrap">
-        <div className="lm-facts-top" data-reveal>
-          <h2 id="facts-title" className="v8-h2">אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
-          <div className="lm-facts-people">
-            <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={48} />
-            <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
-          </div>
+        <h2 id="feat-title" className="v8-h2 lm-feat-h" data-reveal>אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
+        <div className="lm-feat-faces" data-reveal>
+          <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={44} />
+          <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
         </div>
-        <ul className="lm-facts-row">
-          {FACTS.map((f, i) => (
-            <li key={f.u} data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <b className="num" dir="ltr">{f.n}</b>
-              <span>{f.u}</span>
-              <p>{f.t}</p>
+        <ul className="lm-feat-list">
+          {FEATS.map(({ I, t, d }, i) => (
+            <li key={t} data-reveal style={{ '--d': `${i * 40}ms` }}>
+              <span className="lm-feat-ic" aria-hidden="true"><I size={22} strokeWidth={2.2} /></span>
+              <h3>{t}</h3>
+              <p>{d}</p>
             </li>
           ))}
         </ul>
+        {/* people photos B (#144): the owner in action with the real Today screen, and the host checking payments */}
+        <div className="lm-feat-ppl">
+          <div className="lm-feat-today pp-b-today" data-reveal>
+            <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 1200px) 480px, (min-width: 900px) 40vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
+            <div className="pp-b-phone" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
+              <img src="/landing-hero/ui-m-today.webp" alt="" width="780" height="1594" loading="lazy" decoding="async" />
+            </div>
+            <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
+          </div>
+          <div className="lm-feat-pay" data-reveal>
+            <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
+            <img className="lm-feat-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
+          </div>
+          <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
+        </div>
+        <div className="lm-feat-ch">
+          <p>עובד עם מה שכבר יש לכם</p>
+          <ul>
+            <li><Mark ch="airbnb" size={20} />Airbnb</li>
+            <li><Mark ch="booking" size={20} />Booking.com</li>
+            <li><Mark ch="whatsapp" size={20} />WhatsApp</li>
+            <li><Mark ch="google" size={20} />Google Calendar</li>
+          </ul>
+        </div>
       </div>
     </section>
   );
@@ -214,9 +117,17 @@ function Final() {
 /* ---------------- sticky mobile CTA: after the hero, hidden again at the final CTA / footer ---------------- */
 function StickyCta() {
   const [on, setOn] = useState(false);
+  // One bottom bar: while the cookie row is waiting for an answer, this bar stays away.
+  const [answered, setAnswered] = useState(false);
+  useEffect(() => {
+    if (readChoice()) { setAnswered(true); return undefined; }
+    const done = () => setAnswered(true);
+    window.addEventListener('atlas:cookie-choice', done);
+    return () => window.removeEventListener('atlas:cookie-choice', done);
+  }, []);
   useEffect(() => {
     const hero = document.querySelector('.ph-hero');
-    const ends = [...document.querySelectorAll('.lm-x, .l5-ftr')];
+    const ends = [...document.querySelectorAll('#pricing, .lm-x, .l5-ftr')];
     if (!hero || typeof IntersectionObserver === 'undefined') return undefined;
     let heroVisible = true;
     const endVisible = new Set();
@@ -233,9 +144,11 @@ function StickyCta() {
     ends.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
+  const show = on && answered;
   return (
-    <aside className={`lm-sticky${on ? ' is-on' : ''}`} aria-label="התחלת ניסיון חינם" aria-hidden={on ? undefined : 'true'}>
-      <Link to="/register" tabIndex={on ? 0 : -1}>התחילו 14 יום חינם</Link>
+    <aside className={`lm-sticky${show ? ' is-on' : ''}`} aria-label="התחלת ניסיון חינם" aria-hidden={show ? undefined : 'true'}>
+      <Link to="/register" tabIndex={show ? 0 : -1}>{CTA_SIGNUP}</Link>
+      <span className="lm-sticky-note">{CTA_NOTE}</span>
     </aside>
   );
 }
@@ -256,19 +169,16 @@ export default function LandingM() {
       <V7Header links={NAV} />
       <main id="main">
         <HeroPhoto />
-        <Part><Channels /></Part>
-        <Part><Blocks /></Part>
-        <Part><Facts /></Part>
-        <Part><TrustB /></Part>
+        <Part><Features /></Part>
         <LazyGrowth load={loadGrowth} className="lg-ph-d" />
         <Part><Pricing8 /></Part>
-        <Part><Faq openFirst cta /></Part>
+        <Part><Faq items={LANDING_FAQ} openFirst cta /></Part>
         <Part><Final /></Part>
         <Part><Credits8 /></Part>
       </main>
       <Part><Footer /></Part>
       <Part><StickyCta /></Part>
-      <CookieConsent revealAfter=".ph-hero" />
+      <CookieConsent revealAfter=".ph-hero" variant="row" />
     </div>
   );
 }

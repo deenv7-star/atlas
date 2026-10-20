@@ -8,7 +8,7 @@
  * Each selector ends in its own class, so dropping the html class at the end restyles only these elements,
  * not the whole document.
  */
-export const DEFER_PARTS = ['.lm-ch', '.lm-blk', '.lm-facts', '.tb', '.v8p', '.l5-faq-sec', '.lm-x', '.v8-credits', '.l5-ftr']
+export const DEFER_PARTS = ['.lm-feat', '.lm-ch', '.lm-blk', '.lm-facts', '.tb', '.v8p', '.l5-faq-sec', '.lm-x', '.v8-credits', '.l5-ftr']
   .map((c) => `.lm.has-ph ${c}`);
 
 export const DEFER_CLASS = 'atlas-prerender';

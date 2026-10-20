@@ -12,7 +12,7 @@ import { POSTS } from '@/site/content/posts';
 import { SITE_PAGES } from '@/site/pages';
 import { mdToText } from '@/site/lib/md';
 import { missingLegalKeys } from '@/config/legal';
-import { FAQ } from '@/components/landing/v5/content';
+import { FAQ, LANDING_FAQ } from '@/components/landing/v5/content';
 import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE } from '@/config/pricing';
 import { RootTree } from '@/RootTree';
 import LandingPage from '@/pages/Landing';
@@ -59,7 +59,7 @@ export function appRouteMeta(pathname) {
 
 /** Landing JSON-LD. FAQPage mirrors every question the landing actually shows (<Faq /> renders all of FAQ). */
 export function landingLd() {
-  return graph([organizationLd(), websiteLd(), softwareLd(), faqLd(FAQ, 'https://atlas-il.com/')]);
+  return graph([organizationLd(), websiteLd(), softwareLd(), faqLd(LANDING_FAQ, 'https://atlas-il.com/')]);
 }
 
 /** /pricing JSON-LD: the product with one Offer per plan (monthly price, ILS), plus breadcrumbs. */
