@@ -38,7 +38,7 @@ export function V7Header({ links = DEFAULT_NAV }) {
         </nav>
         <div className="l7-hdr-end">
           <Link to="/login" className="l7-login">כניסה</Link>
-          <Link to="/register" className="l7-hdr-cta">להתחיל חינם</Link>
+          <Link to="/register" className="l7-hdr-cta">התחילו 14 יום חינם</Link>
         </div>
       </div>
     </header>

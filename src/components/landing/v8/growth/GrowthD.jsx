@@ -1,5 +1,5 @@
 /**
- * Landing growth section, version D "product-led" (19.10.2026, proposal).
+ * Landing growth section, version D "product-led" (19.10.2026; prices and founding terms approved by Deen 20.10.2026).
  * The real atlas UI does the selling: three real screens (direct-booking page, its date picker with price,
  * the lead it creates), captured from the app in demo mode, inside the official Apple iPhone 17 Pro bezel
  * (Apple Design Resources). The phone stays put while three short chapters scroll past; each chapter swaps

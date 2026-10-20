@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const STORAGE_KEY = 'atlas_cookie_consent';
 
-function readChoice() {
+export function readChoice() {
   try {
     return localStorage.getItem(STORAGE_KEY);
   } catch {
@@ -16,7 +16,7 @@ function readChoice() {
  * visitor has scrolled a little (or after a short delay on short pages) and sits
  * at the very bottom edge of the viewport. Styles live in landing.css (.lp-cookie).
  */
-export default function CookieConsent({ revealAfter = null }) {
+export default function CookieConsent({ revealAfter = null, variant = 'card' }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -56,16 +56,22 @@ export default function CookieConsent({ revealAfter = null }) {
   const choose = (value) => {
     try { localStorage.setItem(STORAGE_KEY, value); } catch { /* storage blocked: just hide */ }
     setVisible(false);
+    // The landing's sticky sign-up bar waits for this, so only one bar is ever at the bottom.
+    try { window.dispatchEvent(new CustomEvent('atlas:cookie-choice', { detail: value })); } catch { /* old browser */ }
   };
 
   if (!visible) return null;
 
   return (
-    <div className="lp-cookie" dir="rtl" role="region" aria-label="הסכמה לעוגיות">
-      <p>
-        אנחנו משתמשים בעוגיות כדי שהאתר יעבוד טוב יותר.{' '}
-        <Link to="/cookies">מדיניות העוגיות</Link>
-      </p>
+    <div className={`lp-cookie${variant === 'row' ? ' is-row' : ''}`} dir="rtl" role="region" aria-label="הסכמה לעוגיות">
+      {variant === 'row' ? (
+        <p>עוגיות לשיפור האתר. <Link to="/cookies">מדיניות</Link></p>
+      ) : (
+        <p>
+          אנחנו משתמשים בעוגיות כדי שהאתר יעבוד טוב יותר.{' '}
+          <Link to="/cookies">מדיניות העוגיות</Link>
+        </p>
+      )}
       <div className="lp-cookie-actions">
         <button type="button" className="no" onClick={() => choose('declined')}>לא תודה</button>
         <button type="button" className="ok" onClick={() => choose('accepted')}>אישור</button>

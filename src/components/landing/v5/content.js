@@ -8,7 +8,7 @@ import { PRICING_PLANS } from '../../../config/pricing.js';
 
 export const WHATSAPP_URL = 'https://wa.me/972525979520';
 export const PHONE_DISPLAY = '052-597-9520';
-export const CTA_SIGNUP = '14 ימי ניסיון חינם';
+export const CTA_SIGNUP = 'התחילו 14 יום חינם';
 
 export const CTA_NOTE = 'בלי כרטיס אשראי';
 
@@ -120,3 +120,7 @@ export const DEMO = {
 };
 
 export const CHANNEL_LABEL = { airbnb: 'Airbnb', booking: 'Booking.com', direct: 'ישיר' };
+
+/** The 5 questions the landing shows (research 20.10.2026: 9 → 5). Price is answered by the pricing section;
+ *  receipts, data and per-unit prices stay in FAQ (llms.txt, support). The FAQPage JSON-LD uses this list. */
+export const LANDING_FAQ = [0, 1, 2, 4, 8].map((i) => FAQ[i]);
