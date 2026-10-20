@@ -17,7 +17,7 @@ import { ChevronLeft, LogOut, Settings, CreditCard, Compass } from 'lucide-react
 import { startTour } from '@/lib/tour/tourState';
 
 export function Wordmark({ className, inverted = false, size = 22 }) {
-  return <span className={cn('inline-flex items-center leading-none', className)} style={{ color: inverted ? '#fff' : '#202334' }} dir="ltr"><BrandWordmark size={size} inverted={inverted} /></span>;
+  return <span className={cn('inline-flex items-center leading-none', className)} style={{ color: inverted ? '#fff' : '#1B2656' }} dir="ltr"><BrandWordmark size={size} inverted={inverted} /></span>;
 }
 
 /** Same query + cache key the header always used, so nothing new hits the backend. */

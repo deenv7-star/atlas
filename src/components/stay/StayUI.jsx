@@ -131,7 +131,7 @@ export function Segmented({ value, onChange, options, label }) {
 }
 
 export function Wordmark({ size = 22 }) {
-  return <span className="inline-flex items-center" style={{ color: '#202334' }} dir="ltr"><BrandWordmark size={size} /></span>;
+  return <span className="inline-flex items-center" style={{ color: '#1B2656' }} dir="ltr"><BrandWordmark size={size} /></span>;
 }
 
 export function StatTile({ label, value, hint, tone, hero = false }) {

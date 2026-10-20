@@ -21,6 +21,9 @@ const fontUrl = (file) => `data:font/woff2;base64,${fs.readFileSync(path.join(RO
 const FONT = (w) => fontUrl(`heebo-hebrew-${w}-normal.woff2`);
 const FONT_L = (w) => fontUrl(`heebo-latin-${w}-normal.woff2`);
 
+// approved wordmark (white) inlined as SVG, from public/atlas-logo-white.svg
+const WM_WHITE = fs.readFileSync(path.join(ROOT, 'public/atlas-logo-white.svg'), 'utf8').replace('<svg ', '<svg style="height:40px;width:auto;display:block" ');
+
 const postsSrc = fs.readFileSync(path.join(ROOT, 'src/site/content/posts.js'), 'utf8');
 const POSTS = [...postsSrc.matchAll(/slug: '([^']+)',\s*\n\s*title: '((?:[^'\\]|\\.)+)'/g)].map((m) => ({ slug: m[1], title: m[2].replace(/\\'/g, "'") }));
 
@@ -199,7 +202,7 @@ const M = {
 function ogHtml(title, kicker) {
   return `<div class="stage og" style="background:#3E2BF1;color:#fff">
     <div class="grid" style="background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px)"></div>
-    <div style="position:absolute;right:80px;left:80px;top:70px"><span class="wm" style="color:#fff">atlas<i style="background:#fff"></i></span></div>
+    <div style="position:absolute;right:80px;left:80px;top:70px"><span class="wm" style="direction:ltr">${WM_WHITE}</span></div>
     ${kicker ? `<div style="position:absolute;right:80px;top:180px;font-size:26px;font-weight:700;color:#DCD9FF">${kicker}</div>` : ''}
     <div style="position:absolute;right:80px;left:80px;top:230px;font-size:${title.length > 60 ? 54 : 62}px;line-height:1.12;font-weight:800;letter-spacing:-.01em">${title}</div>
     <div style="position:absolute;right:80px;bottom:64px;font-size:24px;color:#DCD9FF">atlas-il.com</div>
@@ -223,6 +226,7 @@ async function shot(html, h, out, fmt) {
 
 const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null;
 for (const p of POSTS) {
+  if (process.env.OG_ONLY) { await shot(ogHtml(p.title, 'בלוג atlas'), 630, path.join(ROOT, `public/og/blog-${p.slug}.png`), 'png'); continue; }
   if (ONLY && !ONLY.includes(p.slug)) continue;
   if (!M[p.slug]) { console.warn('no motif for', p.slug); continue; }
   await shot(`<div class="stage"><div class="grid"></div>${M[p.slug]}</div>`, 675, path.join(ROOT, `public/blog/covers/${p.slug}.webp`), 'webp');
