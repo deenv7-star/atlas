@@ -1,0 +1,35 @@
+/* Landing visual v2 (20.10.2026): the colour blocks, facts and trust sections back on the page, held to the
+   #162 rules. Loaded after landing-ux-1020.css. Palette: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white. */
+
+/* surfaces: the light blocks and fact cards use canvas, not an indigo tint */
+.l5.l7.v8.lm :is(.lm-blk.is-sky, .lm-blk.is-mint) { background: var(--canvas); }
+.l5.l7.v8.lm .lm-blk.is-lilac { background: #fff; }
+.l5.l7.v8.lm .lm-facts-row li:nth-child(n + 2) { background: var(--canvas); box-shadow: inset 0 0 0 1px #e6e8f0; }
+
+/* Hebrew headlines: -0.01em, lh 1.08 (pairs like ם/ס stick together when tighter) */
+.l5.l7.v8.lm :is(.lm-blk-h, .tb-h) { letter-spacing: -0.01em; line-height: 1.08; }
+.l5.l7.v8.lm .lm-facts-row b { letter-spacing: -0.02em; }
+
+/* body copy 17px; card captions 16px; nothing under 14px */
+.l5.l7.v8.lm :is(.lm-blk-txt, .lm-facts-people p) { font-size: 17px; line-height: 1.6; }
+@media (min-width: 900px) { .l5.l7.v8.lm .lm-blk-txt { font-size: 20px; } }
+.l5.l7.v8.lm .lm-pts li { font-size: 17px; }
+.l5.l7.v8.lm .lm-facts-row p { font-size: 16px; line-height: 1.5; }
+.l5.l7.v8.lm :is(.lm-ch p, .tb-src, .tb-quote-tag, .v8-cap, .v8-wa-top small, .v8-wa-meta) { font-size: 14px; }
+.l5.l7.v8.lm .v8-wa-msg { font-size: 15px; }
+.l5.l7.v8.lm .l7-chip-txt small { font-size: 14px; }
+/* trust mock-ups (decorative, aria-hidden) read at 14px at every width */
+.l5.l7.v8.lm .tm { --tm-fs: 14px; }
+.l5.l7.v8.lm :is(.tm-chat-hd small, .tm-export em) { font-size: 14px; }
+
+/* phones: the face stack sits above its line (17px needs the width); trust tiles one per row so the
+   14px mock-ups fit; the Airbnb chip stays inside the screen edge */
+@media (max-width: 479px) {
+  .l5.l7.v8.lm .lm-facts-people { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .l5.l7.v8.lm .lm-facts-people p { max-width: none; }
+  .l5.l7.v8.lm .tb-grid { grid-template-columns: 1fr; }
+  .l5.l7.v8.lm .tb-tile { padding: 16px 16px 2px; }
+}
+@media (max-width: 899px) {
+  .l5.l7.v8.lm .lm-v-cal .lm-chip.is-a { inset-inline-end: 4px; }
+}
