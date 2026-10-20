@@ -40,6 +40,7 @@ import './landing-ux-1020.css';
 import './landing-visual-v2.css';
 import './magic/magic.css';
 import HeroPhoto from './HeroPhoto';
+import { WhatIs, Benefits } from './WhatIs';
 import LazyGrowth from './growth/LazyGrowth';
 
 const loadGrowth = () => import('./growth/GrowthS');
@@ -281,6 +282,8 @@ export default function LandingM() {
       <V7Header links={NAV} />
       <main id="main">
         <HeroPhoto />
+        <Part><WhatIs /></Part>
+        <Part><Benefits /></Part>
         <Part><Features /></Part>
         <Part><Facts /></Part>
         <LazyGrowth load={loadGrowth} className="lg-ph-s" />
