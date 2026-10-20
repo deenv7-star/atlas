@@ -40,3 +40,5 @@
 /* nothing under 14px; descriptions read as body copy */
 .l5.l7.v8.lm :is(.v8p-tag, .v8p-mini, .l5-ftr-b-legal a, .l5-ftr-copy) { font-size: 14px; }
 .l5.l7.v8.lm :is(.ph-end-sub, .v8p-desc) { font-size: 17px; line-height: 1.55; }
+/* cookie row: the short "מדיניות" link still gets a 44px-wide target */
+.lp-cookie.is-row p a { min-width: 44px; text-align: center; }

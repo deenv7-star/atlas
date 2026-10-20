@@ -154,8 +154,8 @@ export default function LandingM() {
         <Part><Pricing8 /></Part>
         <Part><Faq items={LANDING_FAQ} openFirst cta /></Part>
         <Part><Final /></Part>
+        <Part><Credits8 /></Part>
       </main>
-      <Part><Credits8 /></Part>
       <Part><Footer /></Part>
       <Part><StickyCta /></Part>
       <CookieConsent revealAfter=".ph-hero" variant="row" />
