@@ -2,7 +2,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import './b.css';
 import Shell from './Shell';
-import { Overview, Customers, CustomerDetail } from './pagesCustomers';
+import { Overview } from './pagesCustomers';
+import { CustomersPage, CustomerPage } from '../v2/version';
 import { Payments, Plans, Team, Health, Audit } from './pagesSystem';
 import { Support } from './pagesSupport';
 import { Inbox } from './pagesInbox';
@@ -12,8 +13,8 @@ export default function AdminAppB() {
     <Shell>
       <Routes>
         <Route index element={<Overview />} />
-        <Route path="customers" element={<Customers />} />
-        <Route path="customers/:id" element={<CustomerDetail />} />
+        <Route path="customers" element={<CustomersPage />} />
+        <Route path="customers/:id" element={<CustomerPage />} />
         <Route path="support" element={<Support />} />
         <Route path="inbox" element={<Inbox />} />
         <Route path="payments" element={<Payments />} />

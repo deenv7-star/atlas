@@ -5,7 +5,7 @@
  */
 import { DEFAULT_PLANS } from './config';
 
-const KEY = 'atlas_admin_demo_v2';
+const KEY = 'atlas_admin_demo_v3';
 const DAY = 864e5;
 
 function rng(seed) {
@@ -174,6 +174,48 @@ export function generateDemo(now = Date.now()) {
       notes.push({ id: uid(r), org_id: orgId, body: pick(r, NOTES), author_email: 'deenv7@gmail.com', author_id: null, created_at: iso(now - Math.floor(r() * 40) * DAY) });
     }
   }
+  // v3 (admin v2): logins, team members, iCal health, WhatsApp, and a few obvious test accounts like the live DB has.
+  const members = {};
+  const syncs = {};
+  const wa = {};
+  const TESTS = ['qa+onb1@atlas-il.com', 'roast+scout_a38e9b@gonogo.team', 'roast+scout_0f5f2b@gonogo.team', 'qa+hark@atlas-il.com', 'roast+scout_dfb47a@gonogo.team'];
+  TESTS.forEach((email, k) => {
+    const created = now - (3 + k * 4) * DAY;
+    customers.push({
+      org_id: uid(r), org_name: email.startsWith('qa+hark') ? 'QA Hark Org' : '', org_email: null, org_phone: null, created_at: iso(created),
+      owner_id: uid(r), owner_name: null, owner_email: email, owner_phone: null, properties_count: k === 3 ? 1 : 0, units_count: k === 3 ? 1 : 0,
+      bookings_count: k === 3 ? 2 : 0, bookings_30d: k === 3 ? 2 : 0, last_active_at: iso(created + 3600e3), plan_key: 'starter', status: created + 14 * DAY > now ? 'trialing' : 'expired',
+      billing_cycle: 'monthly', price_ils: null, trial_ends_at: iso(created + 14 * DAY), current_period_end: null, provider: 'manual',
+      suspended_at: null, suspended_reason: null, canceled_at: null, onboarding_completed: k === 3,
+    });
+  });
+  customers.forEach((c, i) => {
+    const t = /qa\+|scout/.test(c.owner_email);
+    const never = t ? i % 2 === 0 : i % 9 === 4;
+    c.last_sign_in_at = never ? null : c.last_active_at;
+    c.email_confirmed = !never;
+    c.leads_count = Math.round(c.bookings_count * 0.6);
+    const extra = !t && c.units_count > 4 ? 1 + (i % 2) : 0;
+    members[c.org_id] = [
+      { user_id: c.owner_id, email: c.owner_email, full_name: c.owner_name, is_owner: true, created_at: c.created_at, last_sign_in_at: c.last_sign_in_at, email_confirmed: c.email_confirmed, is_staff: false },
+      ...Array.from({ length: extra }, (_, k) => ({ user_id: uid(r), email: `team${k + 1}.${i + 1}@demo-atlas.co.il`, full_name: `${pick(r, FIRST)} ${pick(r, LAST)}`, is_owner: false, created_at: iso(new Date(c.created_at).getTime() + (5 + k) * DAY), last_sign_in_at: k ? null : iso(now - (1 + (i % 6)) * DAY), email_confirmed: !k, is_staff: false })),
+    ];
+    c.members_count = members[c.org_id].length;
+    const nFeeds = t ? 0 : c.units_count ? Math.min(2, (i % 3)) : 0;
+    syncs[c.org_id] = Array.from({ length: nFeeds }, (_, k) => {
+      const bad = (i + k) % 7 === 3;
+      return { id: uid(r), provider: k ? 'BOOKING_COM' : 'AIRBNB', label: k ? 'Booking.com' : 'Airbnb', property: units[c.org_id]?.[k]?.name || c.org_name, is_active: true,
+        sync_status: bad ? 'ERROR' : 'OK', last_success_at: iso(now - (bad ? 3 * DAY : (5 + i % 10) * 60e3)), last_attempt_at: iso(now - (5 + i % 10) * 60e3),
+        error_message: bad ? 'http_404' : null, events_count: 4 + (i % 9), conflicts: bad ? 1 : 0 };
+    });
+    c.ical_feeds = nFeeds;
+    c.ical_errors = syncs[c.org_id].filter((x) => x.error_message).length;
+    c.ical_last_success = syncs[c.org_id].reduce((m, x) => (!m || x.last_success_at > m ? x.last_success_at : m), null);
+    const ready = !t && i % 4 !== 1;
+    wa[c.org_id] = { host_phone: ready ? c.owner_phone : null, setup_done: ready, queue_pending: ready ? i % 4 : 0, sent_30d: ready ? Math.round(c.bookings_30d * 2.5) : 0, failed_30d: 0 };
+    c.wa_ready = ready;
+  });
+
   const team = [
     { user_id: uid(r), email: 'deenv7@gmail.com', full_name: 'דין וינוקור', role: 'owner', created_at: iso(now - 200 * DAY), last_sign_in_at: iso(now - 3600e3) },
     { user_id: uid(r), email: 'qa+hark@atlas-il.com', full_name: 'QA Hark', role: 'admin', created_at: iso(now - 60 * DAY), last_sign_in_at: iso(now - 2 * DAY) },
@@ -189,7 +231,7 @@ export function generateDemo(now = Date.now()) {
   push({ action: 'team.add', target_type: 'admin', org_id: null, org_name: null, target_id: team[2].user_id, details: { email: team[2].email, to: 'support' }, created_at: iso(now - 30 * DAY) });
   audit.sort((a, b) => b.created_at.localeCompare(a.created_at));
   charges.sort((a, b) => b.created_at.localeCompare(a.created_at));
-  return { v: 2, generated_at: iso(now), plans, customers, units, bookings, charges, notes, team, audit };
+  return { v: 3, generated_at: iso(now), plans, customers, units, bookings, charges, notes, team, audit, members, syncs, wa, flags: {} };
 }
 
 export function loadDemo() {
@@ -197,7 +239,7 @@ export function loadDemo() {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const d = JSON.parse(raw);
-      if (d?.v === 2 && Array.isArray(d.customers)) return d;
+      if (d?.v === 3 && Array.isArray(d.customers)) return d;
     }
   } catch {
     /* regenerate */

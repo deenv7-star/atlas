@@ -4,6 +4,7 @@ import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { adminApi } from './api';
 import { DEFAULT_PLANS, can } from './config';
 import { computeOverview } from './metrics';
+import { isTest } from './v2/testAccounts';
 import { heMessage } from './ui';
 
 export const AdminCtx = createContext({ me: null, role: null });
@@ -29,15 +30,18 @@ export const useHealth = () => useQuery({ queryKey: ['admin', 'health'], queryFn
 }, ...Q, staleTime: 10_000 });
 
 export function useOverview() {
-  const c = useCustomers();
+  const c = useQuery({ queryKey: ['admin', 'customers', 'v2'], queryFn: adminApi.listCustomersV2, ...Q });
   const ch = useCharges();
   const { plans } = usePlans();
   const ready = c.data && ch.data;
+  const real = (c.data || []).filter((x) => !isTest(x));
+  const testIds = new Set((c.data || []).filter(isTest).map((x) => x.org_id));
   return {
     isLoading: c.isLoading || ch.isLoading,
     error: c.error || ch.error,
-    data: ready ? computeOverview(c.data, ch.data, plans) : null,
-    customers: c.data || [],
+    data: ready ? computeOverview(real, ch.data.filter((x) => !testIds.has(x.org_id)), plans) : null,
+    tests: testIds.size,
+    customers: real,
     charges: ch.data || [],
     plans,
   };
