@@ -1,0 +1,78 @@
+/* Onboarding v3. Palette only: #3E2BF1, #1B2656, #F7F8FB, white (+ indigo tint #E4E1FD). Heebo, RTL.
+   Motion: transform + opacity only, ease-out, exits faster than enters, nothing moves under reduced motion. */
+.ob3 { --ob-ease: cubic-bezier(0.23, 1, 0.32, 1); }
+.ob3 h1, .ob3 h2, .ob3 p, .ob3-kind-label, .ob3-kind-line { text-wrap: balance; }
+.ob3 p.ob3-pretty { text-wrap: pretty; }
+
+/* kind rows (large, photo + label + line): no 3-column squeeze, so "מתחם אירוח" never breaks */
+.ob3-kind {
+  position: relative; display: flex; align-items: center; gap: 16px; width: 100%; min-height: 104px; padding: 10px;
+  padding-inline-end: 18px; background: #fff; border-radius: 24px; border: 2px solid transparent; text-align: start;
+  box-shadow: 0 1px 2px rgba(27, 38, 86, 0.05), 0 10px 26px -16px rgba(27, 38, 86, 0.22);
+  transition: border-color 160ms var(--ob-ease), box-shadow 200ms var(--ob-ease), transform 160ms var(--ob-ease);
+}
+.ob3-kind[aria-checked='true'] { border-color: #3E2BF1; box-shadow: 0 0 0 3px rgba(62, 43, 241, 0.18), 0 14px 30px -14px rgba(62, 43, 241, 0.45); }
+.ob3-kind img { transition: transform 500ms var(--ob-ease); }
+@media (hover: hover) and (pointer: fine) {
+  .ob3-kind:hover { box-shadow: 0 2px 4px rgba(27, 38, 86, 0.06), 0 18px 36px -16px rgba(27, 38, 86, 0.3); }
+  .ob3-kind:hover img { transform: scale(1.05); }
+}
+.ob3-kind-label { display: block; font-size: 21px; font-weight: 800; line-height: 1.2; color: #1B2656; white-space: nowrap; }
+.ob3-kind-line { display: block; margin-top: 3px; font-size: 16px; line-height: 1.35; color: #4A5578; }
+@media (max-width: 359px) {
+  .ob3-kind { min-height: 92px; gap: 12px; }
+  .ob3-kind-label { font-size: 19px; }
+  .ob3-kind-line { font-size: 15px; }
+}
+
+/* "נשמר ✓" */
+.ob3-saved {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: #3E2BF1;
+  opacity: 0; transform: translateY(3px); transition: transform 220ms var(--ob-ease); white-space: nowrap; /* opacity snaps (a half-faded label fails contrast) */
+}
+.ob3-saved.is-on { opacity: 1; transform: none; }
+
+/* inline hint under the primary button (instead of a pale disabled button) */
+.ob3-hint { min-height: 22px; font-size: 15px; font-weight: 600; color: #3E2BF1; text-align: center; }
+.ob3-nudge { animation: ob3-nudge 360ms var(--ob-ease); }
+@keyframes ob3-nudge { 0%, 100% { transform: none; } 25% { transform: translateX(-6px); } 60% { transform: translateX(5px); } }
+
+/* segmented progress */
+.ob3-steps { display: flex; gap: 6px; flex: 1; }
+.ob3-steps > span { position: relative; flex: 1; height: 6px; border-radius: 999px; background: #E4E1FD; overflow: hidden; }
+.ob3-steps > span::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: #3E2BF1; transform: scaleX(0); transform-origin: right; transition: transform 420ms var(--ob-ease); }
+.ob3-steps > span.is-on::after { transform: scaleX(1); }
+
+/* preview */
+.ob3-preview {
+  width: 100%; max-width: 460px; overflow: hidden; border-radius: 28px; background: #fff;
+  box-shadow: 0 2px 4px rgba(27, 38, 86, 0.06), 0 34px 70px -34px rgba(27, 38, 86, 0.5);
+}
+.ob3-cal { padding: 16px 18px 18px; border-top: 1px solid #EEF0F5; }
+.ob3-cal.is-compact { padding: 12px 14px 14px; }
+.ob3-badge { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; background: #E4E1FD; color: #2A1AC9; font-size: 12px; font-weight: 800; }
+.ob3-bar { animation: ob3-bar-in 420ms var(--ob-ease) both; transform-origin: right center; }
+@keyframes ob3-bar-in { from { opacity: 0; transform: scaleX(0.6); } to { opacity: 1; transform: none; } }
+.ob3-fade { animation: ob3-fade 320ms var(--ob-ease) both; }
+@keyframes ob3-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* mobile peek of the preview (A) */
+.ob3-peek { display: flex; align-items: center; gap: 12px; padding: 8px; padding-inline-end: 14px; border-radius: 18px; background: #fff; box-shadow: 0 1px 2px rgba(27, 38, 86, 0.05), 0 8px 20px -14px rgba(27, 38, 86, 0.25); }
+
+/* B: the review rows */
+.ob3-row { display: flex; width: 100%; min-height: 64px; align-items: center; gap: 12px; padding: 12px 18px; text-align: start; }
+.ob3-row + .ob3-row, .ob3-row-wrap + .ob3-row-wrap { border-top: 1px solid #EEF0F5; }
+
+/* B: link field state */
+.ob3-link-ok { color: #2A1AC9; }
+.ob3-link-bad { color: #B4303A; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ob3 *, .ob3 *::before, .ob3 *::after { animation: none !important; transition-duration: 1ms !important; }
+}
+
+/* the peek is the phone's preview; on desktop the side preview takes over (lg:hidden loses to .ob3-peek's display) */
+@media (min-width: 1024px) { .ob3-peek { display: none; } }
+
+/* B: the kind rows share the screen with the name field, so they are a little shorter */
+.ob3-kind.is-compact { min-height: 84px; padding: 8px; padding-inline-end: 18px; }

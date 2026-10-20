@@ -1,5 +1,5 @@
 /**
- * "בונים לך את המערכת": the moment after the last answer. Each line is a real save that runs while it
+ * The building moment ("מסדרים לכם את הכל"): the moment after the last answer. Each line is a real save that runs while it
  * is shown (profile → calendar → guest messages → trial / plan), so the check appears because the
  * write finished, not because a timer did. Their own answers assemble on the right: the place card,
  * one calendar row per unit, the first guest message. No invented numbers.
@@ -10,22 +10,30 @@ import { MotionConfig, motion, useReducedMotion } from 'framer-motion';
 import { Check, ArrowLeft, Loader2, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getPlanByKey, TRIAL_DAYS } from '@/config/pricing';
-import { kindInfo, clampInt, UNITS_LIMIT, guestsLabel } from '@/lib/onboarding/v2/model';
-import { commitProfile, commitUnits, commitTimes, commitStart } from '@/lib/onboarding/v2/actions';
+import { kindInfo, clampInt, UNITS_LIMIT, guestsLabel, unitsLabel } from '@/lib/onboarding/v2/model';
+import { commitProfile, commitUnits, commitTimes, commitStart, commitLinks } from '@/lib/onboarding/v2/actions';
 import { Primary, Ghost } from '@/components/onboarding/kit';
+import { HelpLink } from './ui';
 
 const EASE = [0.23, 1, 0.32, 1];
 const STEP_MS = 1150;
 
 export function buildSteps(a) {
   const n = clampInt(a.unitCount, 1, UNITS_LIMIT);
-  const k = kindInfo(a.kind);
+  const links = linkList(a);
+  const names = Array.from(new Set(links.map((l) => (l.provider === 'AIRBNB' ? 'Airbnb' : 'Booking.com'))));
   return [
-    { id: 'profile', title: 'בונים את הפרופיל המנצח לעסק שלך', detail: a.name.trim() || 'העסק שלך', run: commitProfile },
-    { id: 'calendar', title: 'מכינים את לוח ההזמנות', detail: n === 1 ? `ה${k.unit} שלך בלוח` : `${n} ${k.units} בלוח`, run: commitUnits },
-    { id: 'messages', title: 'מכינים את ההודעות לאורחים', detail: a.timesVary ? 'שעות שמשתנות, בנוסח מוכן' : `כניסה ${a.checkIn} · יציאה ${a.checkOut}`, run: commitTimes },
-    { id: 'start', title: 'מתחילים לחסוך לך זמן וכסף', detail: a.plan && a.plan !== 'trial' ? `מסלול ${getPlanByKey(a.plan).nameHe} · ${TRIAL_DAYS} הימים הראשונים חינם` : `${TRIAL_DAYS} יום ניסיון חינם התחילו`, run: commitStart },
+    { id: 'profile', title: 'שומרים את פרטי המתחם', detail: a.name.trim() || 'המתחם שלכם', run: commitProfile },
+    { id: 'calendar', title: 'מכינים יומן לכל יחידה', detail: `${unitsLabel(a.kind, n)} ביומן`, run: commitUnits },
+    ...(links.length ? [{ id: 'links', title: `מחברים את ${names.join(' ו-')}`, detail: links.length === 1 ? 'קישור אחד נשמר' : `${links.length} קישורים נשמרו`, run: commitLinks }] : []),
+    { id: 'messages', title: 'מכינים הודעות לאורחים', detail: a.timesVary ? 'שעות משתנות, ההודעה מוכנה' : `כניסה ${a.checkIn} · יציאה ${a.checkOut}`, run: commitTimes },
+    { id: 'start', title: a.plan && a.plan !== 'trial' ? `שומרים את מסלול ${getPlanByKey(a.plan).nameHe}` : `פותחים ${TRIAL_DAYS} יום חינם`, detail: a.plan && a.plan !== 'trial' ? `${TRIAL_DAYS} הימים הראשונים חינם` : 'בלי כרטיס אשראי', run: commitStart },
   ];
+}
+
+/** Valid calendar links the owner pasted during onboarding (version B). */
+export function linkList(a) {
+  return (Array.isArray(a.links) ? a.links : []).filter((l) => l && l.ok && String(l.url || '').trim());
 }
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -48,7 +56,8 @@ export default function BuildMoment({ user, answers: a, onSetup, onApp, tone = '
         await steps[i].run(user, a);
       } catch (e) {
         running.current = false;
-        setError(e?.message && e.message.length < 120 ? `לא הצלחנו לשמור: ${e.message}` : 'לא הצלחנו לשמור. בדקו את החיבור לאינטרנט.');
+        if (typeof console !== 'undefined') console.warn('onboarding save', steps[i].id, e?.message);
+        setError('לא הצלחנו לשמור את השלב הזה. בדקו שיש אינטרנט ונסו שוב. מה שכבר נשמר לא ילך לאיבוד.');
         return;
       }
       const left = (still ? 250 : STEP_MS) - (Date.now() - t0);
@@ -62,7 +71,8 @@ export default function BuildMoment({ user, answers: a, onSetup, onApp, tone = '
   const done = at >= steps.length;
   const k = kindInfo(a.kind);
   const n = clampInt(a.unitCount, 1, UNITS_LIMIT);
-  const name = a.name.trim() || 'העסק שלך';
+  const name = a.name.trim() || 'המתחם שלכם';
+  const linked = linkList(a).length > 0;
 
   return (
     <MotionConfig reducedMotion="user">
@@ -71,13 +81,13 @@ export default function BuildMoment({ user, answers: a, onSetup, onApp, tone = '
         <main className="relative mx-auto flex w-full max-w-[1080px] flex-1 flex-col gap-6 px-5 pb-[calc(150px+env(safe-area-inset-bottom))] pt-[max(20px,env(safe-area-inset-top))] md:px-10 lg:flex-row lg:items-center lg:gap-16 lg:pb-16">
           {/* the owner's system assembling (their answers) */}
           <div className="order-1 flex justify-center lg:order-2 lg:flex-1" aria-hidden>
-            <Assembly a={a} k={k} n={n} name={name} at={at} still={still} />
+            <Assembly a={a} k={k} n={n} name={name} at={at} still={still} total={steps.length} msgAt={steps.findIndex((x) => x.id === 'messages')} />
           </div>
 
           <div className="order-2 flex flex-col lg:order-1 lg:w-[460px] lg:shrink-0">
-            <p className="text-[15px] font-bold text-brand-600" aria-live="polite">{done ? 'הכל מוכן' : tone === 'b' ? 'רגע, בונה לך…' : 'בונים לך את המערכת'}</p>
+            <p className="text-[15px] font-bold text-brand-600" aria-live="polite">{done ? name : 'עוד רגע'}</p>
             <h1 className="mt-1 text-[28px] font-extrabold leading-[1.12] tracking-[-0.02em] text-navy-900 md:text-[40px]">
-              {done ? <>{name}<br />מוכן להתחלה</> : 'משהו טוב מתחיל כאן'}
+              {done ? 'הכל מוכן.' : 'מסדרים לכם את הכל'}
             </h1>
             <ol className="mt-4 flex flex-col gap-2 md:mt-6 md:gap-2.5" aria-label="מה נבנה עכשיו">
               {steps.map((s, i) => {
@@ -98,12 +108,13 @@ export default function BuildMoment({ user, answers: a, onSetup, onApp, tone = '
             {error ? (
               <div className="mt-4 rounded-[16px] bg-[var(--st-red-bg,#FDEEEE)] px-4 py-3 text-[15px] font-medium text-[var(--st-red-fg,#B4303A)]" role="alert">
                 {error}
-                <button type="button" onClick={() => run(at)} className="ob-press mt-2 flex min-h-[48px] items-center gap-2 font-bold text-navy-900"><RotateCcw className="h-4 w-4" aria-hidden />לנסות שוב</button>
+                <button type="button" onClick={() => run(at)} className="ob-press mt-2 flex min-h-[48px] items-center gap-2 font-bold text-navy-900"><RotateCcw className="h-4 w-4" aria-hidden />נסו שוב</button>
+                <HelpLink className="mt-1 !min-h-[44px] !bg-transparent !px-0 !shadow-none" />
               </div>
             ) : null}
             {done ? (
               <motion.p initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.2 }} className="mt-5 text-[17px] leading-relaxed text-ink-600">
-                {tone === 'b' ? 'עכשיו נחבר יחד את ההזמנות שלך. אני אראה בדיוק איפה ללחוץ.' : 'עכשיו נחבר את ההזמנות, צעד אחר צעד. נראה לך בדיוק איפה ללחוץ.'}
+                {linked ? 'היומן מחובר. נשאר להכין את הוואטסאפ לאורחים, דקה אחת.' : 'עכשיו נחבר את ההזמנות מ-Booking ו-Airbnb. נראה לכם בדיוק איפה ללחוץ.'}
               </motion.p>
             ) : null}
           </div>
@@ -112,9 +123,9 @@ export default function BuildMoment({ user, answers: a, onSetup, onApp, tone = '
         <footer className="ob2-bar is-flow lg:pb-12">
           <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-2 md:px-5 lg:flex-row lg:justify-start lg:px-10">
             <Primary className="w-full lg:w-auto" onClick={onSetup} disabled={!done} aria-disabled={!done}>
-              {done ? <>מתחילים בהגדרה<ArrowLeft className="h-5 w-5" aria-hidden /></> : <><Loader2 className="h-5 w-5 ob2-spin" aria-hidden />בונים…</>}
+              {done ? <>המשיכו להגדרה<ArrowLeft className="h-5 w-5" aria-hidden /></> : <><Loader2 className="h-5 w-5 ob2-spin" aria-hidden />בונים…</>}
             </Primary>
-            {done ? <Ghost className="w-full lg:w-auto" onClick={onApp}>קודם להציץ במערכת</Ghost> : null}
+            {done ? <Ghost className="w-full lg:w-auto" onClick={onApp}>קודם להציץ ביומן</Ghost> : null}
           </div>
         </footer>
       </div>
@@ -148,7 +159,7 @@ function StepIcon({ state }) {
 }
 
 /** Their place card, their calendar rows, their first message: each lands when its save finishes. */
-function Assembly({ a, k, n, name, at, still }) {
+function Assembly({ a, k, n, name, at, still, total = 4, msgAt = 2 }) {
   const rows = Math.min(n, 5);
   const show = (i) => at > i;
   const card = (i) => (still ? {} : {
@@ -156,7 +167,7 @@ function Assembly({ a, k, n, name, at, still }) {
     animate: show(i) ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 26, scale: 0.94 },
     transition: { type: 'spring', stiffness: 260, damping: 26 },
   });
-  const allDone = at >= 4;
+  const allDone = at >= total;
   return (
     <div className="ob2-assembly relative h-[250px] w-full max-w-[380px] sm:h-[360px] lg:h-[440px] lg:max-w-[460px]">
       {/* calm base: the space the cards land in, so nothing jumps when they arrive */}
@@ -166,7 +177,7 @@ function Assembly({ a, k, n, name, at, still }) {
       <motion.div {...card(0)} style={still && !show(0) ? { opacity: 0 } : undefined}
         className="absolute end-0 top-0 w-[60%] overflow-hidden rounded-[20px] bg-white shadow-[0_2px_4px_rgba(27,38,86,0.06),0_24px_48px_-20px_rgba(27,38,86,0.35)] lg:w-[66%]">
         <div className="aspect-[16/7] overflow-hidden bg-[#E9ECF4] lg:aspect-[16/8]"><img src={k.photo || '/demo/complex-pool.webp'} alt="" className="h-full w-full object-cover" /></div>
-        <div className="px-3.5 py-2.5 lg:px-4 lg:py-3">
+        <div className="py-2.5 pe-3.5 ps-[30%] lg:py-3 lg:pe-4 lg:ps-[48%]">
           <p className="truncate text-[16px] font-extrabold text-navy-900 lg:text-[17px]">{name}</p>
           <p className="truncate text-[13px] text-ink-600">{k.label} · {guestsLabel(a)}</p>
         </div>
@@ -175,7 +186,7 @@ function Assembly({ a, k, n, name, at, still }) {
       {/* 2. calendar: one row per unit (the bars fill as it lands) */}
       <motion.div {...card(1)} style={still && !show(1) ? { opacity: 0 } : undefined}
         className="absolute start-0 top-[20%] w-[56%] rounded-[20px] bg-white p-3 shadow-[0_2px_4px_rgba(27,38,86,0.06),0_24px_48px_-20px_rgba(27,38,86,0.35)] lg:top-[30%] lg:w-[64%] lg:p-4">
-        <p className="mb-2.5 text-[13px] font-bold text-navy-900">לוח ההזמנות</p>
+        <p className="mb-2.5 text-[13px] font-bold text-navy-900">יומן ההזמנות</p>
         <div className="flex flex-col gap-1.5">
           {Array.from({ length: rows }, (_, r) => (
             <div key={r} className="flex items-center gap-2">
@@ -190,7 +201,7 @@ function Assembly({ a, k, n, name, at, still }) {
       </motion.div>
 
       {/* 3. first guest message */}
-      <motion.div {...card(2)} style={still && !show(2) ? { opacity: 0 } : undefined}
+      <motion.div {...card(msgAt)} style={still && !show(msgAt) ? { opacity: 0 } : undefined}
         className="absolute bottom-0 end-[2%] w-[56%] rounded-[20px] bg-white p-3 shadow-[0_2px_4px_rgba(27,38,86,0.06),0_24px_48px_-20px_rgba(27,38,86,0.35)] lg:w-[62%] lg:p-3.5">
         <p className="mb-1.5 text-[12px] font-bold text-ink-600">הודעה לאורח</p>
         <p className="rounded-[14px] rounded-se-[4px] bg-[#E4E1FD] px-3 py-2 text-[13px] leading-snug text-navy-900">

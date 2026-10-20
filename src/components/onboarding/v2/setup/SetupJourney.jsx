@@ -122,8 +122,8 @@ function Checklist({ facts, variant, steps, prog, flash, onOpen }) {
   const plan = facts.planChoice?.kind === 'plan' ? getPlanByKey(facts.planChoice.key) : null;
   return (
     <Shell variant={variant} kicker="הגדרת המערכת"
-      title={prog.complete ? 'הכל מוגדר. כל הכבוד!' : variant === 'b' ? 'נמשיך מכאן. כל שלב לוקח כמה דקות.' : 'בואו נגדיר את המערכת, צעד אחר צעד'}
-      intro={prog.complete ? ['אפשר לחזור לכל שלב מתי שרוצים, גם מההגדרות.'] : variant === 'b' ? ['אני אראה לך בדיוק איפה ללחוץ. אפשר לדלג על כל דבר ולחזור אחר כך.'] : ['כל שלב מוסבר במילים פשוטות. אפשר לדלג ולחזור מתי שרוצים.']}
+      title={prog.complete ? 'הכל מוגדר.' : variant === 'b' ? 'נמשיך מכאן. כל שלב לוקח כמה דקות.' : 'בואו נגדיר את המערכת, צעד אחר צעד'}
+      intro={prog.complete ? ['אפשר לחזור לכל שלב מתי שרוצים, גם מההגדרות.'] : variant === 'b' ? ['נראה לכם בדיוק איפה ללחוץ. אפשר לדלג על כל שלב ולחזור אחר כך.'] : ['כל שלב מוסבר במילים פשוטות. אפשר לדלג ולחזור מתי שרוצים.']}
       footer={(
         <>
           {prog.complete ? (
@@ -179,7 +179,7 @@ function Checklist({ facts, variant, steps, prog, flash, onOpen }) {
 
 /* ───────────────────────── calendars ───────────────────────── */
 
-function LinkField({ id, label, value, onChange, check, connected }) {
+export function LinkField({ id, label, value, onChange, check, connected }) {
   const paste = async () => { try { const t = await navigator.clipboard.readText(); if (t) onChange(t.trim()); } catch { /* not allowed: type or long-press paste */ } };
   return (
     <div className="flex flex-col gap-1.5">
@@ -278,7 +278,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
           </div>
           {units.length ? units.map((u) => (
             <LinkField key={u.id} id={`link-${u.id}`} label={u.name} value={links[u.id] || ''} onChange={(v) => setLinks((l) => ({ ...l, [u.id]: v }))} check={checks[u.id]} connected={connectedIds.has(u.id)} />
-          )) : <p className="text-[16px] text-ink-600">קודם מוסיפים יחידה אחת לפחות, בשלב "היחידות שלך".</p>}
+          )) : <p className="text-[16px] text-ink-600">קודם מוסיפים יחידה אחת לפחות, בשלב "היחידות שלכם".</p>}
           <p className="text-[14px] leading-snug text-ink-400">
             {DB_FEATURES.realCore ? 'אחרי השמירה atlas מושכת את ההזמנות מיד, ומשם מתעדכנת כל 15 דקות.' : 'במצב הדגמה הקישור נשמר, אבל לא מתבצע סנכרון אמיתי.'}
           </p>
@@ -310,7 +310,7 @@ function WhatsAppStep({ facts, user, variant, step, onBack, onDone, prog }) {
   return (
     <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title="וואטסאפ לאורחים"
       intro={variant === 'b'
-        ? ['אכין לך את ההודעות לאורחים: אישור הזמנה, יום לפני, יום ההגעה. שולחים בלחיצה אחת, מהוואטסאפ שלך.', 'רק צריך את המספר שהאורחים מכירים.']
+        ? ['atlas מכין את ההודעות לאורחים: אישור הזמנה, יום לפני ויום ההגעה. אתם שולחים בלחיצה, מהוואטסאפ שלכם.', 'רק צריך את המספר שהאורחים מכירים.']
         : ['atlas מכין את ההודעות לאורחים בזמן הנכון. אתם שולחים בלחיצה אחת, מהוואטסאפ שלכם.', 'שליחה אוטומטית בלי לגעת תגיע בקרוב.']}
       footer={(
         <>
@@ -366,8 +366,8 @@ function UnitsStep({ facts, variant, step, onBack, onDone, prog }) {
     } catch { setErr('לא הצלחנו לשמור. נסו שוב.'); setBusy(false); }
   };
   return (
-    <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title="היחידות שלך"
-      intro={variant === 'b' ? ['הנה מה שבנינו מהתשובות שלך. אפשר לשנות כל דבר, או להוסיף יחידה.'] : ['לכל יחידה: שם, כמה אורחים ומחיר. אפשר לשנות הכל גם אחר כך.']}
+    <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title="היחידות שלכם"
+      intro={variant === 'b' ? ['זה מה שבנינו מהתשובות שלכם. אפשר לשנות כל דבר או להוסיף יחידה.'] : ['לכל יחידה: שם, כמה אורחים ומחיר. אפשר לשנות הכל גם אחר כך.']}
       footer={(
         <>
           {err ? <p className="rounded-[14px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}
