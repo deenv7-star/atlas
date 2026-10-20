@@ -24,10 +24,10 @@ import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
-import { useReveal } from '../v5/motion';
+import { useReveal, prefersReducedMotion } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { Faq, Footer } from '../v5/LandingV5';
-import { LANDING_FAQ, CTA_SIGNUP, CTA_NOTE } from '../v5/content';
+import { LANDING_FAQ, CTA_SIGNUP, CTA_NOTE, STEPS } from '../v5/content';
 import { V7Header } from '../v7/shared7';
 import { UI, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8 } from './shared8';
 import { Pic } from './people/Pic';
@@ -38,10 +38,18 @@ import './landing-v8m.css';
 import './faq-m.css';
 import './landing-ux-1020.css';
 import './landing-visual-v2.css';
+import './magic/magic.css';
 import HeroPhoto from './HeroPhoto';
+import { WhatIs, Benefits } from './WhatIs';
 import LazyGrowth from './growth/LazyGrowth';
 
 const loadGrowth = () => import('./growth/GrowthS');
+
+/* UI/UX polish v1 (20.10.2026, qa/uiux-polish-v1/spells.md): micro-interactions inspired by designspells.com.
+   'subtle' = P1 (6 spells), 'magical' = P2 (12). The CSS-only ones ride on the reveal observer (.is-in); the
+   pointer ones load as one small chunk on idle after hydration. Reduced motion: nothing loads, final states only. */
+const MAGIC = 'magical';
+const castMagic = () => import('./magic/spells').then((m) => m.cast(MAGIC));
 
 const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
@@ -62,6 +70,7 @@ const TILES = [
     d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.',
     vis: (
       <div className="lm-tile-vis is-msg">
+        <span className="mg-typing" aria-hidden="true"><i /><i /><i /></span>
         <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר מחכה לכם. קוד לדלת: 2419. נסיעה טובה" time="18:00" />
       </div>
     ),
@@ -91,6 +100,7 @@ function Features() {
     <section id="features" className="lm-feat is-tiles" aria-labelledby="feat-title">
       <div className="l5-wrap">
         <h2 id="feat-title" className="v8-h2 lm-feat-h" data-reveal>מההזמנה <span className="is-ind">ועד הניקיון.</span></h2>
+        <p className="lm-feat-sub" data-reveal>ארבעה דברים ש-atlas עושה בשבילכם, כל יום.</p>
         <ul className="lm-tiles">
           {TILES.map(({ tone, I, k, t, d, vis }, i) => (
             <li key={k} className={`lm-tile is-${tone}`} data-reveal style={{ '--d': `${i * 60}ms` }}>
@@ -116,7 +126,7 @@ function Features() {
             <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
             <img className="lm-feat-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
           </div>
-          <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
+          <p className="pp-b-cap lm-feat-cap">להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
         </div>
         <div className="lm-feat-ch">
           <p>עובד עם מה שכבר יש לכם</p>
@@ -140,6 +150,23 @@ const FACTS = [
   { n: '₪0', u: 'עמלה', t: 'על הזמנות מעמוד ההזמנה הישירה' },
 ];
 
+/** Facts number that rolls like a counter (spell 6). The text is real (sr-only + an invisible ghost that keeps the
+ *  width); the rolling 0-9 strips are aria-hidden and end on the same digits, so no fake value ever shows. */
+const STRIP = Array.from({ length: 20 }, (_, i) => String(i % 10));
+function Odo({ text }) {
+  return (
+    <b className="num mg-odo" dir="ltr">
+      <span className="sr-only">{text}</span>
+      <span className="mg-odo-ghost" aria-hidden="true">{text}</span>
+      <span className="mg-odo-roll" aria-hidden="true">
+        {text.split('').map((c, i) => (/\d/.test(c)
+          ? <span key={i} className="mg-odo-col" style={{ '--n': c, '--i': i }}><span className="mg-odo-strip">{STRIP.map((d, k) => <span key={k}>{d}</span>)}</span></span>
+          : <span key={i} className="mg-odo-ch">{c}</span>))}
+      </span>
+    </b>
+  );
+}
+
 function Facts() {
   return (
     <section id="facts" className="lm-facts" aria-labelledby="facts-title">
@@ -154,7 +181,7 @@ function Facts() {
         <ul className="lm-facts-row">
           {FACTS.map((f, i) => (
             <li key={f.u} data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <b className="num" dir="ltr">{f.n}</b>
+              <Odo text={f.n} />
               <span>{f.u}</span>
               <p>{f.t}</p>
             </li>
@@ -175,7 +202,16 @@ function Final() {
             {['noa', 'tom', 'maya', 'yossi'].map((k, i) => <Face key={k} f={FACES[k]} size={64} className={`lm-x-face is-${i + 1}`} />)}
           </div>
           <h2 id="final-title" className="lm-x-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
-          <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים את Booking ו-Airbnb ב-10 דקות, והלוח מתחיל להתמלא.</p>
+          <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. שלושה צעדים, <span className="nw">10 דקות</span>, והלוח שלכם מוכן.</p>
+          <ol className="mg-steps" data-reveal aria-label="איך מתחילים">
+            {STEPS.map((s, i) => (
+              <li key={s.title} style={{ '--i': i }}>
+                <span className="mg-step-dot" aria-hidden="true"><span className="num">{i + 1}</span></span>
+                <b>{s.title}</b>
+                <small className="num">{s.time}</small>
+              </li>
+            ))}
+          </ol>
           <div data-reveal><CtaLinks /></div>
           <div className="lm-x-shot" aria-hidden="true">
             <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="lazy" decoding="async" />
@@ -235,12 +271,19 @@ const Part = ({ children }) => <Suspense fallback={null}>{children}</Suspense>;
 export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
+  useEffect(() => {
+    if (prefersReducedMotion()) return undefined;
+    const idle = window.requestIdleCallback ? window.requestIdleCallback(castMagic, { timeout: 2500 }) : window.setTimeout(castMagic, 1200);
+    return () => (window.cancelIdleCallback ? window.cancelIdleCallback(idle) : window.clearTimeout(idle));
+  }, []);
   return (
     <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <V7Header links={NAV} />
       <main id="main">
         <HeroPhoto />
+        <Part><WhatIs /></Part>
+        <Part><Benefits /></Part>
         <Part><Features /></Part>
         <Part><Facts /></Part>
         <LazyGrowth load={loadGrowth} className="lg-ph-s" />
