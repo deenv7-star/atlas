@@ -151,6 +151,15 @@
           "value": "no-store, max-age=0"
         }
       ]
+    },
+    {
+      "source": "/:page(reset-password|update-password|verify-email|onboarding|setup|auth)/:rest*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
     }
   ]
 }
