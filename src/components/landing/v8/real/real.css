@@ -67,7 +67,7 @@
   .rp-par img { animation: rp-par linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
   @keyframes rp-par { from { transform: translateY(-6%) scale(1.14); } to { transform: translateY(6%) scale(1.14); } }
 }
-.rp-loop { position: relative; overflow: hidden; border-radius: 24px; aspect-ratio: 9 / 16; max-width: 360px; background: var(--canvas); }
+.rp-loop { position: relative; width: 100%; overflow: hidden; border-radius: 24px; aspect-ratio: 9 / 16; max-width: 360px; background: var(--canvas); }
 .rp-loop video, .rp-loop .rp-pic { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .rp-loop video { opacity: 0; transition: opacity 0.6s ease; }
 .rp-loop video.is-on { opacity: 1; }
