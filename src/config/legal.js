@@ -80,8 +80,9 @@ export const SUBPROCESSORS = [
   { name: 'Supabase', role: 'מסד נתונים, התחברות לחשבון ואחסון קבצים', where: 'שרתי AWS באזור eu-central-1 (פרנקפורט, גרמניה)', url: 'https://supabase.com/privacy' },
   { name: 'Vercel', role: 'אירוח האתר והאפליקציה והגשתם לדפדפן', where: 'רשת שרתים גלובלית', url: 'https://vercel.com/legal/privacy-policy' },
   { name: 'Resend', role: 'שליחת מיילים של מערכת (אימות חשבון, איפוס סיסמה)', where: 'ארצות הברית', url: 'https://resend.com/legal/privacy-policy' },
-  // OpenAI: the in-app help bot code can call OpenAI, but no OPENAI_API_KEY secret is set on the
-  // live project (18.10.2026). Add it here the day an AI provider is switched on.
+  // OpenAI: live since 20.10.2026 — the ai-chat edge function ("שאלו את atlas") sends the question plus the
+  // business facts it needs to OpenAI; OPENAI_API_KEY is a Supabase secret (verified 19.10.2026).
+  { name: 'OpenAI', role: 'מענה לשאלות בעוזר "שאלו את atlas" (השאלה ונתוני העסק הנדרשים לתשובה)', where: 'ארצות הברית', url: 'https://openai.com/policies/privacy-policy' },
 ];
 
 /** Returns the value, or null when it still needs to be filled. */

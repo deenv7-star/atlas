@@ -12,7 +12,6 @@
 | `VITE_APP_BASE_URL` | אופציונלי | `http://localhost:5173` | כתובת הבסיס של הפרונטאנד |
 | `VITE_SUPABASE_URL` | אופציונלי* | `https://xxxx.supabase.co` | כתובת פרויקט Supabase |
 | `VITE_SUPABASE_ANON_KEY` | אופציונלי* | `eyJhbGc...` | מפתח ציבורי של Supabase |
-| `VITE_OPENAI_API_KEY` | אופציונלי | `sk-...` | מפתח OpenAI לתכונות AI |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | אופציונלי | `pk_live_...` | מפתח ציבורי של Stripe לתשלומים |
 
 > \* אם `VITE_SUPABASE_URL` ו-`VITE_SUPABASE_ANON_KEY` מוגדרים — המערכת תשתמש ב-Supabase.

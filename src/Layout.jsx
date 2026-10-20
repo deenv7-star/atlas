@@ -12,9 +12,12 @@ import ConnectionNotice from '@/components/app/shell/ConnectionNotice';
 import { Sidebar, Header, TabBar, shellClass } from '@/ui-direction';
 import TourHost from '@/components/tour/TourHost';
 import { prefetchMainPagesWhenIdle } from '@/lib/appPreload';
+import { useAssistantOpen } from '@/assistant/launcher';
 
 // Help bot + human handoff (supabase/functions/support-chat). Lazy: not part of the first paint.
 const SupportWidget = React.lazy(() => import('@/support/SupportWidget'));
+// "שאלו את atlas" side panel / sheet (version B). Lazy and mounted only after the first open.
+const AssistantPanel = React.lazy(() => import('@/assistant/AssistantPanel'));
 
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans'];
 
@@ -39,6 +42,7 @@ function LayoutContent({ children, currentPageName }) {
   const orgId = user?.organization_id ?? user?.org_id ?? null;
 
   const isPublicPage = publicPages.includes(currentPageName);
+  const assistant = useAssistantOpen();
 
   useEffect(() => {
     let link = document.querySelector("link[rel='icon'][type='image/svg+xml']");
@@ -117,6 +121,11 @@ function LayoutContent({ children, currentPageName }) {
           <ErrorBoundary section="support-widget" variant="silent">
             <Suspense fallback={null}><SupportWidget /></Suspense>
           </ErrorBoundary>
+          {assistant.mounted ? (
+            <ErrorBoundary section="assistant-panel" variant="silent">
+              <Suspense fallback={null}><AssistantPanel /></Suspense>
+            </ErrorBoundary>
+          ) : null}
           <IOSInstallBanner />
         </div>
         <TourHost user={user} />
