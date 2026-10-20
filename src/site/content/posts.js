@@ -119,7 +119,7 @@ export const POSTS = [
     sources: [
       { title: 'הרשות להגנת הצרכן ולסחר הוגן: ביטול עסקת תיירות שנעשתה במכר מרחוק', url: 'https://www.gov.il/he/pages/qaflight23' },
       { title: 'המועצה הישראלית לצרכנות: ביטול עסקת מכר מרחוק', url: 'https://www.consumers.org.il/category/remote-deal-cancellation-guide5b' },
-      { title: 'תקנות הגנת הצרכן (ביטול עסקה), התשע"א-2010', url: 'https://tourism-law.info/pdf/bitul.pdf' },
+      { title: 'תקנות הגנת הצרכן (ביטול עסקה), התשע"א-2010', url: 'https://www.nevo.co.il/law_html/law00/84257.htm' },
       { title: 'ישרוטל: ביטול הזמנה, לפי חוק הגנת הצרכן', url: 'https://www.isrotel.co.il/about-isrotel/about/canceling-orders-beresheet' },
       { title: 'מלון פסטורל כפר בלום: תקנון ומדיניות ביטול', url: 'https://www.kfarblum-hotel.co.il/regulations' },
     ],
