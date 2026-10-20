@@ -72,3 +72,5 @@
 @media (max-width: 899px) {
   .l5.l7.v8.lm .lm-v-cal .lm-chip.is-a { inset-inline-end: 4px; }
 }
+.lg-ph-s { min-height: 1900px; }
+@media (min-width: 900px) { .lg-ph-s { min-height: 1300px; } }

@@ -41,7 +41,7 @@ import './landing-visual-v2.css';
 import HeroPhoto from './HeroPhoto';
 import LazyGrowth from './growth/LazyGrowth';
 
-const loadGrowth = () => import('./growth/GrowthD');
+const loadGrowth = () => import('./growth/GrowthS');
 
 const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
@@ -243,8 +243,8 @@ export default function LandingM() {
         <HeroPhoto />
         <Part><Features /></Part>
         <Part><Facts /></Part>
-        <LazyGrowth load={loadGrowth} className="lg-ph-d" />
-        <Part><Pricing8 /></Part>
+        <LazyGrowth load={loadGrowth} className="lg-ph-s" />
+        <Part><Pricing8 growth /></Part>
         <Part><Faq items={LANDING_FAQ} openFirst cta /></Part>
         <Part><Final /></Part>
         <Part><Credits8 /></Part>
