@@ -1,6 +1,5 @@
 /** Shell building blocks shared by both layout directions. */
 import React from 'react';
-import BrandWordmark from '@/components/common/BrandWordmark';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -16,9 +15,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { ChevronLeft, LogOut, Settings, CreditCard, Compass } from 'lucide-react';
 import { startTour } from '@/lib/tour/tourState';
 
-export function Wordmark({ className, inverted = false, size = 22 }) {
-  return <span className={cn('inline-flex items-center leading-none', className)} style={{ color: inverted ? '#fff' : '#1B2656' }} dir="ltr"><BrandWordmark size={size} inverted={inverted} /></span>;
-}
+export { Wordmark } from './wordmark';
 
 /** Same query + cache key the header always used, so nothing new hits the backend. */
 export function useShellProperties(user) {

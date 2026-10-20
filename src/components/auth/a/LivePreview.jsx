@@ -11,7 +11,7 @@ import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarDays, Home, Inbox, Wallet, MessageCircle, Settings, Check, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Wordmark } from '@/components/app/shell/shared';
+import { Wordmark } from '@/components/app/shell/wordmark';
 
 const EASE = [0.23, 1, 0.32, 1];
 const DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
