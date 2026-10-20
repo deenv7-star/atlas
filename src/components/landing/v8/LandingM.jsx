@@ -1,195 +1,57 @@
 /**
- * Landing v8 M "Product theatre". The real ATLAS v8 dashboard (C, bento) is the star: shown big in
- * 3D perspective on a soft indigo glow floor, with real UI widgets of the same screen lifting out of it
- * in layers (income card, occupancy ring, property tile) plus a WhatsApp bubble, a payment card and
- * guest faces around it. Pointer parallax on desktop; on scroll the screen settles flat and the
- * widgets drop back into it. Then four full-bleed colour blocks (indigo, sky, lilac, mint) that stack
- * on scroll, each one feature = a large real UI crop + one bold line + real people photos.
- * Pricing, FAQ and an indigo CTA.
- *
- * 20.10.2026 (UI/UX research, qa/uiux-research/report.md, mock1/mock2): 6 parts only — hero, one features
- * section (3 rows + the channels it works with), growth offer, pricing, 5 questions, final CTA. The four colour
- * blocks, facts and trust sections are no longer rendered (removed from this file; see git history before 20.10.2026; TrustB.jsx is kept).
- * One bottom bar: the dark cookie row first, the sticky sign-up bar only after it is answered.
- *
- * 20.10.2026 visual v2, version A: the same short page, but the 3 plain feature cards are the four colour
- * blocks again, condensed into a bento of four tiles (indigo, canvas, canvas, navy), each with its real UI crop;
- * the facts section (four numbers + the face stack) is back after the features. Photos row, 5 questions and
- * one bottom bar stay as in #162.
- *
- * All screens are real ATLAS screens in demo mode; every name, booking and amount is example data
- * and is labelled as such. No testimonials, logos or customer counts.
+ * Landing R2 "living" (20.10.2026): real photography leads (Pexels, qa/real-photos-v1/assets.md).
+ * Deen 20.10 22:55: no extra text sections, no fake UI graphics; 23:06: keep it airy, few strong photos.
+ * Previous product-theatre landing: see git history before this commit (HeroPhoto.jsx, GrowthS kept in tree).
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
-import { useReveal } from '../v5/motion';
+import { useReveal, prefersReducedMotion } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { Faq, Footer } from '../v5/LandingV5';
 import { LANDING_FAQ, CTA_SIGNUP, CTA_NOTE } from '../v5/content';
 import { V7Header } from '../v7/shared7';
-import { UI, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8 } from './shared8';
-import { Pic } from './people/Pic';
+import { Pricing8, CtaLinks } from './shared8';
+import { Photo, HeroStill } from './real/Photo';
 import '../v5/landing-v5.css';
 import '../v7/landing-v7.css';
 import './shared8.css';
 import './landing-v8m.css';
 import './faq-m.css';
 import './landing-ux-1020.css';
-import './landing-visual-v2.css';
-import HeroPhoto from './HeroPhoto';
-import LazyGrowth from './growth/LazyGrowth';
+import './hero-photo.css';
+import './real/real.css';
 
-const loadGrowth = () => import('./growth/GrowthS');
+const NAV = [['#story', 'איך זה עובד'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
-const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
-
-/* ---------------- features: the four colour blocks as a bento of tiles + photos + channels ---------------- */
-const TILES = [
-  {
-    tone: 'indigo', I: CalendarDays, k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
-    d: 'Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח. בלי כפל הזמנות.',
-    vis: (
-      <div className="lm-tile-vis is-cal">
-        <img src={`${UI}/c-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
-        <span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />התאריכים נחסמו ב-Booking.com</span>
-      </div>
-    ),
-  },
-  {
-    tone: 'canvas', I: MessageCircle, k: 'הודעות', t: 'וואטסאפ לאורחים. מוכן מראש.',
-    d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.',
-    vis: (
-      <div className="lm-tile-vis is-msg">
-        <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר מחכה לכם. קוד לדלת: 2419. נסיעה טובה" time="18:00" />
-      </div>
-    ),
-  },
-  {
-    tone: 'canvas', I: Wallet, k: 'תשלומים', t: 'הכסף נכנס. אתם רואים הכל.',
-    d: 'כל מקדמה ויתרה נרשמות, ורואים כמה נכנס החודש.',
-    vis: (
-      <div className="lm-tile-vis is-chart">
-        <img src={`${UI}/c-chart.webp`} alt="גרף הכנסות לפי חודש (נתוני דוגמה)" width="1256" height="966" loading="lazy" decoding="async" />
-      </div>
-    ),
-  },
-  {
-    tone: 'navy', I: Sun, k: 'היום', t: 'היום שלכם, מסודר מראש.',
-    d: 'כניסות, יציאות וניקיונות ברשימה אחת. מסמנים ״בוצע״ בלחיצה.',
-    vis: (
-      <div className="lm-tile-vis is-today">
-        <img src={`${UI}/c-todaylist.webp`} alt="רשימת ״היום במתחם״: כניסה, יציאה וניקיון (נתוני דוגמה)" width="888" height="966" loading="lazy" decoding="async" />
-      </div>
-    ),
-  },
-];
-
-function Features() {
+function HeroCopy() {
   return (
-    <section id="features" className="lm-feat is-tiles" aria-labelledby="feat-title">
-      <div className="l5-wrap">
-        <h2 id="feat-title" className="v8-h2 lm-feat-h" data-reveal>מההזמנה <span className="is-ind">ועד הניקיון.</span></h2>
-        <ul className="lm-tiles">
-          {TILES.map(({ tone, I, k, t, d, vis }, i) => (
-            <li key={k} className={`lm-tile is-${tone}`} data-reveal style={{ '--d': `${i * 60}ms` }}>
-              <div className="lm-tile-copy">
-                <p className="lm-kick"><I size={18} strokeWidth={2.2} aria-hidden="true" />{k}</p>
-                <h3>{t}</h3>
-                <p className="lm-tile-txt">{d}</p>
-              </div>
-              {vis}
-            </li>
-          ))}
-        </ul>
-        {/* people photos B (#144): the owner in action with the real Today screen, and the host checking payments */}
-        <div className="lm-feat-ppl">
-          <div className="lm-feat-today pp-b-today" data-reveal>
-            <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 1200px) 480px, (min-width: 900px) 40vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
-            <div className="pp-b-phone" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
-              <img src="/landing-hero/ui-m-today.webp" alt="" width="780" height="1594" loading="lazy" decoding="async" />
-            </div>
-            <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
-          </div>
-          <div className="lm-feat-pay" data-reveal>
-            <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
-            <img className="lm-feat-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
-          </div>
-          <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
-        </div>
-        <div className="lm-feat-ch">
-          <p>עובד עם מה שכבר יש לכם</p>
-          <ul>
-            <li><Mark ch="airbnb" size={20} />Airbnb</li>
-            <li><Mark ch="booking" size={20} />Booking.com</li>
-            <li><Mark ch="whatsapp" size={20} />WhatsApp</li>
-            <li><Mark ch="google" size={20} />Google Calendar</li>
-          </ul>
-        </div>
+    <div className="rp-hero-in">
+      <h1 id="hero-title" className="rp-h1">כל המתחם.<br />במבט אחד.</h1>
+      <p className="rp-sub">הזמנות מכל הערוצים, הודעות לאורחים ותשלומים. במקום אחד.</p>
+      <div className="rp-ctas">
+        <Link to="/register" className="rp-btn">{CTA_SIGNUP}<ArrowLeft size={18} strokeWidth={2.2} aria-hidden="true" /></Link>
+        <span className="rp-note"><Check size={15} strokeWidth={2.6} aria-hidden="true" /> {CTA_NOTE} · הגדרה תוך 10 דקות</span>
+      </div>
+    </div>
+  );
+}
+
+function Final({ living = false }) {
+  return (
+    <section className="rp-final" aria-labelledby="final-title">
+      <Photo name="dinner" alt="משפחה וחברים בארוחת ערב בחצר, תחת שרשרת אורות" sizes="(min-width: 1200px) 1200px, 100vw" className={living ? "rp-par" : ""} />
+      <div className="rp-final-in">
+        <h2 id="final-title" className="rp-final-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
+        <div data-reveal><CtaLinks /></div>
       </div>
     </section>
   );
 }
-
-/* ---------------- facts ---------------- */
-const FACTS = [
-  { n: '3', u: 'ערוצים', t: 'Airbnb, Booking.com וישיר על לוח אחד' },
-  { n: '10', u: 'דקות', t: 'מההרשמה עד לוח מעודכן' },
-  { n: '14', u: 'ימים', t: 'ניסיון חינם, בלי כרטיס אשראי' },
-  { n: '₪0', u: 'עמלה', t: 'על הזמנות מעמוד ההזמנה הישירה' },
-];
-
-function Facts() {
-  return (
-    <section id="facts" className="lm-facts" aria-labelledby="facts-title">
-      <div className="l5-wrap">
-        <div className="lm-facts-top" data-reveal>
-          <h2 id="facts-title" className="v8-h2">אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
-          <div className="lm-facts-people">
-            <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={48} />
-            <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
-          </div>
-        </div>
-        <ul className="lm-facts-row">
-          {FACTS.map((f, i) => (
-            <li key={f.u} data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <b className="num" dir="ltr">{f.n}</b>
-              <span>{f.u}</span>
-              <p>{f.t}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- final CTA ---------------- */
-function Final() {
-  return (
-    <section className="lm-x" aria-labelledby="final-title">
-      <div className="l7-inset">
-        <div className="lm-x-box">
-          <div className="lm-x-faces" aria-hidden="true">
-            {['noa', 'tom', 'maya', 'yossi'].map((k, i) => <Face key={k} f={FACES[k]} size={64} className={`lm-x-face is-${i + 1}`} />)}
-          </div>
-          <h2 id="final-title" className="lm-x-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
-          <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים את Booking ו-Airbnb ב-10 דקות, והלוח מתחיל להתמלא.</p>
-          <div data-reveal><CtaLinks /></div>
-          <div className="lm-x-shot" aria-hidden="true">
-            <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="lazy" decoding="async" />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- sticky mobile CTA: after the hero, hidden again at the final CTA / footer ---------------- */
+/* ---------------- sticky mobile CTA: after the hero, hidden again at pricing / final CTA / footer ---------------- */
 function StickyCta() {
   const [on, setOn] = useState(false);
-  // One bottom bar: while the cookie row is waiting for an answer, this bar stays away.
   const [answered, setAnswered] = useState(false);
   useEffect(() => {
     if (readChoice()) { setAnswered(true); return undefined; }
@@ -198,8 +60,8 @@ function StickyCta() {
     return () => window.removeEventListener('atlas:cookie-choice', done);
   }, []);
   useEffect(() => {
-    const hero = document.querySelector('.ph-hero');
-    const ends = [...document.querySelectorAll('#pricing, .lm-x, .l5-ftr')];
+    const hero = document.querySelector('.rp-hero');
+    const ends = [...document.querySelectorAll('#pricing, .rp-final, .l5-ftr')];
     if (!hero || typeof IntersectionObserver === 'undefined') return undefined;
     let heroVisible = true;
     const endVisible = new Set();
@@ -225,33 +87,124 @@ function StickyCta() {
   );
 }
 
-/**
- * Performance (qa/landing-perf/report.md): the page is prerendered and hydrated. Each part below the hero is
- * its own Suspense boundary (nothing in it suspends; the markup is the same), so React hydrates the header
- * and the hero first and the rest in small slices in the background, instead of one long main-thread task.
- */
+function Channels() {
+  return (
+    <div className="rp-channels" data-reveal>
+      <p>עובד עם מה שכבר יש לכם</p>
+      <ul>
+        <li><Mark ch="airbnb" size={20} />Airbnb</li>
+        <li><Mark ch="booking" size={20} />Booking.com</li>
+        <li><Mark ch="whatsapp" size={20} />WhatsApp</li>
+        <li><Mark ch="google" size={20} />Google Calendar</li>
+      </ul>
+    </div>
+  );
+}
+
 const Part = ({ children }) => <Suspense fallback={null}>{children}</Suspense>;
+
+/** Muted autoplay loop over its poster photo. Reduced motion / save-data: never loads, the photo stays. */
+function useLoop(ref) {
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return undefined;
+    const saveData = navigator.connection && navigator.connection.saveData;
+    if (prefersReducedMotion() || saveData) return undefined;
+    const start = () => {
+      if (!v.dataset.src) return;
+      // VP9 WebM where supported (Chrome, Firefox, Edge, Android), H.264 MP4 elsewhere (Safari)
+      const webm = v.canPlayType('video/webm; codecs="vp9"') ? v.dataset.src.replace(/\.mp4$/, '.webm') : v.dataset.src;
+      v.src = webm; v.removeAttribute('data-src');
+      v.addEventListener('playing', () => v.classList.add('is-on'), { once: true });
+      v.play().catch(() => {});
+    };
+    if (typeof IntersectionObserver === 'undefined') { start(); return undefined; }
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { start(); if (v.paused && v.src) v.play().catch(() => {}); } else if (!v.paused) v.pause();
+    }, { rootMargin: '200px 0px' });
+    io.observe(v);
+    return () => io.disconnect();
+  }, [ref]);
+}
+
+function Hero() {
+  const vid = useRef(null);
+  const [src, setSrc] = useState(null);
+  useEffect(() => { setSrc(window.matchMedia('(max-aspect-ratio: 1/1)').matches ? '/landing-real/hero-p.mp4' : '/landing-real/hero-l.mp4'); }, []);
+  useEffect(() => { if (src && vid.current) vid.current.dataset.src = src; }, [src]);
+  useLoop(src ? vid : { current: null });
+  return (
+    <section className="rp-hero" aria-labelledby="hero-title">
+      <div className="rp-hero-media">
+        <HeroStill alt="צימר עם בריכה ודק עץ בין עצי זית" />
+        <video ref={vid} muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />
+      </div>
+      <HeroCopy />
+    </section>
+  );
+}
+
+function CoffeeLoop() {
+  const vid = useRef(null);
+  useLoop(vid);
+  return (
+    <div className="rp-loop" data-reveal>
+      <picture className="rp-pic">
+        <source type="image/avif" srcSet="/landing-real/coffee-poster-540.avif" />
+        <img src="/landing-real/coffee-poster-540.webp" alt="קפה נמזג לארוחת בוקר במרפסת" width="540" height="960" loading="lazy" decoding="async" />
+      </picture>
+      <video ref={vid} data-src="/landing-real/coffee.mp4" muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1} />
+    </div>
+  );
+}
+
+function Story() {
+  return (
+    <section id="story" className="rp-story" aria-labelledby="story-title">
+      <div className="l5-wrap">
+        <h2 id="story-title" className="rp-lead" data-reveal>אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
+        <figure className="rp-moment" data-reveal>
+          <div className="rp-frame is-wide rp-kb"><Photo name="arrive" alt="משפחה מגיעה לבקתת עץ ביער" sizes="(min-width: 1200px) 1200px, 100vw" /></div>
+          <figcaption className="rp-line"><small>כניסות, יציאות וניקיונות</small>האורחים מגיעים. הצימר כבר מוכן.</figcaption>
+        </figure>
+        <div className="rp-moment rp-split">
+          <CoffeeLoop />
+          <p className="rp-line" data-reveal><small>וואטסאפ לאורחים</small>הודעת ההגעה יוצאת בזמן.</p>
+        </div>
+        <div className="rp-moment rp-split">
+          <figure data-reveal>
+            <div className="rp-frame is-tall rp-par"><Photo name="couple" alt="זוג בבריכה של מתחם אירוח, מתחת לפרגולה" sizes="(min-width: 900px) 580px, 100vw" /></div>
+            <figcaption className="rp-line"><small>Airbnb, Booking.com וישיר</small>כל הזמנה נכנסת ללוח לבד.</figcaption>
+          </figure>
+          <figure data-reveal>
+            <div className="rp-shot"><img src="/landing-hero/ui-m-today.webp" alt="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)" width="780" height="1594" loading="lazy" decoding="async" /></div>
+            <figcaption className="rp-cap">מסך ״היום״ של atlas. נתוני דוגמה.</figcaption>
+          </figure>
+        </div>
+        <Channels />
+      </div>
+    </section>
+  );
+}
 
 export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
   return (
-    <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
+    <div ref={root} className="l5 l7 v8 lm has-ph rp is-living" dir="rtl" lang="he">
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <V7Header links={NAV} />
       <main id="main">
-        <HeroPhoto />
-        <Part><Features /></Part>
-        <Part><Facts /></Part>
-        <LazyGrowth load={loadGrowth} className="lg-ph-s" />
+        <Hero />
+        <Part><Story /></Part>
         <Part><Pricing8 growth /></Part>
         <Part><Faq items={LANDING_FAQ} openFirst cta /></Part>
-        <Part><Final /></Part>
-        <Part><Credits8 /></Part>
+        <Part><Final living /></Part>
+        <p className="v8-credits">צילומים וסרטונים אמיתיים מ-Pexels (רישיון חופשי). האנשים בתמונות אינם לקוחות של atlas. המסך הוא מסך atlas אמיתי עם נתוני דוגמה.</p>
       </main>
       <Part><Footer /></Part>
       <Part><StickyCta /></Part>
-      <CookieConsent revealAfter=".ph-hero" variant="row" />
+      <CookieConsent revealAfter=".rp-hero" variant="row" />
     </div>
   );
 }
