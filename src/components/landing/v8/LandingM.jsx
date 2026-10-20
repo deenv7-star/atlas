@@ -48,7 +48,7 @@ const loadGrowth = () => import('./growth/GrowthS');
 /* UI/UX polish v1 (20.10.2026, qa/uiux-polish-v1/spells.md): micro-interactions inspired by designspells.com.
    'subtle' = P1 (6 spells), 'magical' = P2 (12). The CSS-only ones ride on the reveal observer (.is-in); the
    pointer ones load as one small chunk on idle after hydration. Reduced motion: nothing loads, final states only. */
-const MAGIC = 'subtle';
+const MAGIC = 'magical';
 const castMagic = () => import('./magic/spells').then((m) => m.cast(MAGIC));
 
 const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
