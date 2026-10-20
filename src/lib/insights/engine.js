@@ -358,7 +358,7 @@ function ruleSetup({ bookings, properties, syncs, setupInProgress }) {
   if ((properties || []).length) {
     out.push(make('setup', 'first_booking', 'idea', {
       title: 'להכניס את ההזמנה הראשונה',
-      why: 'מכאן יתחילו להופיע כאן תזכורות על יתרות, ניקיונות וביקורות.',
+      why: 'אחריה יופיעו כאן תזכורות על יתרות, ניקיון וביקורות.',
       action: { label: 'הזמנה חדשה', kind: 'new_booking' },
     }));
   }

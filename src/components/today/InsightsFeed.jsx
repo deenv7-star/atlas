@@ -115,7 +115,7 @@ export default function InsightsFeed({ insights, onAction }) {
     <section aria-labelledby="ins-title" className="v7-card v5-rise mb-3 overflow-hidden md:mb-4" style={{ '--i': 0 }} data-testid="insights-feed">
       <div className="flex min-h-[60px] items-center justify-between gap-3 px-5 pt-3 md:px-6">
         <h2 id="ins-title" className="text-[17px] font-bold text-navy-900">מה דורש תשומת לב</h2>
-        {items.length ? (
+        {items.length > 1 ? (
           <p className="shrink-0 text-[13px] text-ink-400">
             {urgent ? <><span className="tabular font-semibold text-navy-900">{urgent}</span> דחופים · </> : null}
             <span className="tabular font-semibold text-navy-900">{items.length}</span> בסך הכל
