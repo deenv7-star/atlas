@@ -17,14 +17,15 @@
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, MessageCircle, Wallet } from 'lucide-react';
+import { CalendarDays, MessageCircle, Wallet, Sparkles } from 'lucide-react';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { Faq, Footer } from '../v5/LandingV5';
 import { LANDING_FAQ, CTA_SIGNUP, CTA_NOTE } from '../v5/content';
 import { V7Header } from '../v7/shared7';
-import { UI, FACES, Face, Pricing8, CtaLinks, Credits8 } from './shared8';
+import { UI, FACES, Face, FaceStack, Pricing8, CtaLinks, Credits8 } from './shared8';
+import { Pic } from './people/Pic';
 import '../v5/landing-v5.css';
 import '../v7/landing-v7.css';
 import './shared8.css';
@@ -50,6 +51,10 @@ function Features() {
     <section id="features" className="lm-feat" aria-labelledby="feat-title">
       <div className="l5-wrap">
         <h2 id="feat-title" className="v8-h2 lm-feat-h" data-reveal>אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
+        <div className="lm-feat-faces" data-reveal>
+          <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={44} />
+          <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
+        </div>
         <ul className="lm-feat-list">
           {FEATS.map(({ I, t, d }, i) => (
             <li key={t} data-reveal style={{ '--d': `${i * 40}ms` }}>
@@ -59,6 +64,21 @@ function Features() {
             </li>
           ))}
         </ul>
+        {/* people photos B (#144): the owner in action with the real Today screen, and the host checking payments */}
+        <div className="lm-feat-ppl">
+          <div className="lm-feat-today pp-b-today" data-reveal>
+            <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 1200px) 480px, (min-width: 900px) 40vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
+            <div className="pp-b-phone" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
+              <img src="/landing-hero/ui-m-today.webp" alt="" width="780" height="1594" loading="lazy" decoding="async" />
+            </div>
+            <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
+          </div>
+          <div className="lm-feat-pay" data-reveal>
+            <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
+            <img className="lm-feat-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
+          </div>
+          <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
+        </div>
         <div className="lm-feat-ch">
           <p>עובד עם מה שכבר יש לכם</p>
           <ul>
