@@ -53,7 +53,7 @@ export default function ResetPassword() {
 
   if (sent) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#F7F8FB' }}>
+      <main className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#F7F8FB' }}>
         <div className="w-full max-w-[440px] text-center">
           <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           <div className="v7-card p-6">
@@ -62,12 +62,12 @@ export default function ResetPassword() {
           </div>
           <Link to="/login" className="inline-flex min-h-[44px] items-center mt-6 text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#F7F8FB' }}>
+    <main className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#F7F8FB' }}>
       <div className="w-full max-w-[440px]">
         <div className="text-center mb-10">
           <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
@@ -101,6 +101,6 @@ export default function ResetPassword() {
           <Link to="/login" className="inline-flex min-h-[44px] items-center text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }
