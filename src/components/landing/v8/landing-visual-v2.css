@@ -1,0 +1,74 @@
+/* Landing visual v2 (20.10.2026): the colour blocks, facts and trust sections back on the page, held to the
+   #162 rules. Loaded after landing-ux-1020.css. Palette: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white. */
+
+/* surfaces: the light blocks and fact cards use canvas, not an indigo tint */
+.l5.l7.v8.lm :is(.lm-blk.is-sky, .lm-blk.is-mint) { background: var(--canvas); }
+.l5.l7.v8.lm .lm-blk.is-lilac { background: #fff; }
+.l5.l7.v8.lm .lm-facts-row li:nth-child(n + 2) { background: var(--canvas); box-shadow: inset 0 0 0 1px #e6e8f0; }
+
+/* Hebrew headlines: -0.01em, lh 1.08 (pairs like ם/ס stick together when tighter) */
+.l5.l7.v8.lm :is(.lm-blk-h, .tb-h) { letter-spacing: -0.01em; line-height: 1.08; }
+.l5.l7.v8.lm .lm-facts-row b { letter-spacing: -0.02em; }
+
+/* body copy 17px; card captions 16px; nothing under 14px */
+.l5.l7.v8.lm :is(.lm-blk-txt, .lm-facts-people p) { font-size: 17px; line-height: 1.6; }
+@media (min-width: 900px) { .l5.l7.v8.lm .lm-blk-txt { font-size: 20px; } }
+.l5.l7.v8.lm .lm-pts li { font-size: 17px; }
+.l5.l7.v8.lm .lm-facts-row p { font-size: 16px; line-height: 1.5; }
+.l5.l7.v8.lm :is(.lm-ch p, .tb-src, .tb-quote-tag, .v8-cap, .v8-wa-top small, .v8-wa-meta) { font-size: 14px; }
+.l5.l7.v8.lm .v8-wa-msg { font-size: 15px; }
+.l5.l7.v8.lm .l7-chip-txt small { font-size: 14px; }
+/* trust mock-ups (decorative, aria-hidden) read at 14px at every width */
+.l5.l7.v8.lm .tm { --tm-fs: 14px; }
+.l5.l7.v8.lm :is(.tm-chat-hd small, .tm-export em) { font-size: 14px; }
+
+/* ---------- version A: the four colour blocks, condensed into a bento of tiles ---------- */
+.lm-feat.is-tiles .lm-feat-h { max-width: 18ch; }
+.lm-tiles { list-style: none; margin: 40px 0 0; padding: 0; display: grid; gap: 12px; }
+.lm-tile { position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; border-radius: 28px; padding: 28px 22px 0; }
+.lm-tile.is-indigo { background: var(--indigo); color: #fff; }
+.lm-tile.is-canvas { background: var(--canvas); box-shadow: inset 0 0 0 1px #e6e8f0; }
+.lm-tile.is-navy { background: var(--navy); color: #fff; }
+.lm-tile:is(.is-indigo, .is-navy) .lm-kick { background: rgba(255, 255, 255, 0.14); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25); }
+.lm-tile h3 { margin: 16px 0 0; font-size: 30px; line-height: 1.08; font-weight: 800; letter-spacing: -0.01em; color: var(--navy); text-wrap: balance; }
+.lm-tile:is(.is-indigo, .is-navy) h3 { color: #fff; }
+.lm-tile-txt { margin: 10px 0 0; font-size: 17px; line-height: 1.6; color: var(--ink); max-width: 30em; text-wrap: pretty; }
+.lm-tile:is(.is-indigo, .is-navy) .lm-tile-txt { color: rgba(255, 255, 255, 0.88); }
+.lm-tile-vis { position: relative; flex: 1 1 auto; display: flex; align-items: flex-end; justify-content: center; margin-top: 28px; min-height: 200px; }
+.lm-tile-vis img { display: block; height: auto; border-radius: 18px 18px 0 0; box-shadow: 0 2px 6px rgba(27, 38, 86, 0.08), 0 30px 60px -24px rgba(10, 8, 80, 0.5); background: #fff; }
+/* calendar: wide crop anchored to the right (unit names), the left runs off the tile */
+.lm-tile-vis.is-cal { justify-content: flex-start; margin-inline-end: -22px; padding-top: 30px; }
+.lm-tile-vis.is-cal img { width: 190%; max-width: none; flex: none; border-start-end-radius: 0; }
+.lm-tile-vis.is-cal .lm-sync { position: absolute; z-index: 2; top: 0; inset-inline-start: 0; }
+/* messages: the WhatsApp bubble on canvas */
+.lm-tile-vis.is-msg { align-items: center; padding-bottom: 28px; }
+.lm-tile-vis.is-msg .v8-wa { width: min(320px, 100%); }
+.lm-tile-vis.is-chart img { width: min(100%, 420px); }
+.lm-tile-vis.is-today { max-height: 300px; align-items: flex-start; }
+.lm-tile-vis.is-today img { width: min(84%, 340px); }
+@media (min-width: 900px) {
+  .lm-tiles { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; margin-top: 56px; }
+  .lm-tile { padding: 40px 40px 0; border-radius: 36px; }
+  .lm-tile:nth-child(1), .lm-tile:nth-child(4) { grid-column: span 7; }
+  .lm-tile:nth-child(2), .lm-tile:nth-child(3) { grid-column: span 5; }
+  .lm-tile h3 { font-size: 40px; }
+  .lm-tile-vis { min-height: 260px; margin-top: 36px; }
+  .lm-tile-vis.is-cal { margin-inline-end: -40px; }
+  .lm-tile-vis.is-cal img { width: 125%; }
+  .lm-tile-vis.is-today { max-height: 320px; }
+  .lm-tile-vis.is-today img { width: min(70%, 380px); }
+}
+/* the face stack now lives in the facts section; facts follow the tiles directly */
+.lm-feat.is-tiles + .lm-facts, .lm-feat.is-tiles ~ .lm-facts { padding-top: 24px; }
+
+/* phones: the face stack sits above its line (17px needs the width); trust tiles one per row so the
+   14px mock-ups fit; the Airbnb chip stays inside the screen edge */
+@media (max-width: 479px) {
+  .l5.l7.v8.lm .lm-facts-people { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .l5.l7.v8.lm .lm-facts-people p { max-width: none; }
+  .l5.l7.v8.lm .tb-grid { grid-template-columns: 1fr; }
+  .l5.l7.v8.lm .tb-tile { padding: 16px 16px 2px; }
+}
+@media (max-width: 899px) {
+  .l5.l7.v8.lm .lm-v-cal .lm-chip.is-a { inset-inline-end: 4px; }
+}
