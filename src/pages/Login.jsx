@@ -36,10 +36,15 @@ export default function Login() {
   }, [prefilledEmail]);
 
   // While the owner types, fetch the app shell + the screen they land on, so sign-in does not wait for it.
+  // Starts on the first tap or key press (not on a timer or the autofocus), so the screen itself paints
+  // and settles first, and a visitor who only looks does not download the whole app.
   useEffect(() => {
     const target = getSafeReturnUrl(searchParams.get('return')) || '/dashboard';
-    const t = setTimeout(() => preloadAppShell(String(target).split('?')[0]), 600);
-    return () => clearTimeout(t);
+    const evs = ['pointerdown', 'keydown'];
+    const off = () => evs.forEach((e) => window.removeEventListener(e, warm, true));
+    function warm() { off(); preloadAppShell(String(target).split('?')[0]); }
+    evs.forEach((e) => window.addEventListener(e, warm, { capture: true, passive: true }));
+    return off;
   }, [searchParams]);
 
 

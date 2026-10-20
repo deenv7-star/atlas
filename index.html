@@ -71,6 +71,12 @@
           ['hebrew-400', 'hebrew-500', 'hebrew-700', 'hebrew-800', 'latin-400', 'latin-700'].forEach(font);
           return;
         }
+        // Sign-in screens: the headline (800) and the form text (400/500) paint with their final font,
+        // fetched in parallel with the app code instead of after it (Lighthouse mobile /login 66).
+        if (/^\/(login|register|reset-password|update-password|verify-email)\/?$/.test(location.pathname)) {
+          ['hebrew-800', 'hebrew-400', 'hebrew-500', 'latin-400'].forEach(font);
+          return;
+        }
         if (location.pathname !== '/') return;
         var p = window.matchMedia && matchMedia('(max-aspect-ratio: 2/3)').matches;
         var l = document.createElement('link');
