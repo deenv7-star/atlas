@@ -58,13 +58,13 @@ export const TRUST = [
 const FROM_PRICE = PRICING_PLANS[0].price;
 export const FAQ = [
   // 05-channels (two-way calendar link, import every 15 min), BookingOverlapGuard (same unit, same nights: warns and asks for an explicit 'save anyway')
-  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד, יחד עם ההזמנות הישירות שלכם. מנסים לרשום הזמנה על לילות תפוסים? המערכת עוצרת ומתריעה לפני ששומרים, ואף הזמנה לא נדרסת.' },
+  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד, יחד עם ההזמנות הישירות שלכם. מנסים לרשום הזמנה על לילות תפוסים? atlas עוצר ומתריע לפני ששומרים, ואף הזמנה לא נדרסת.' },
   // 01-getting-started (one question per screen, about five minutes), 15-support (a person on WhatsApp)
-  { q: 'קשה להתחיל? מישהו יעזור לי?', a: `לא קשה: המערכת שואלת שאלה אחת בכל פעם, בעברית פשוטה, ותוך כמה דקות הלוח שלכם מוכן. נתקעתם? בן אדם אמיתי עונה לכם בוואטסאפ ב-${PHONE_DISPLAY} ועוזר גם להעביר את מה שיש לכם היום.` },
+  { q: 'קשה להתחיל? מישהו יעזור לי?', a: `לא קשה: atlas שואל שאלה אחת בכל פעם, בעברית פשוטה, ותוך כמה דקות הלוח שלכם מוכן. נתקעתם? בן אדם אמיתי עונה לכם בוואטסאפ ב-${PHONE_DISPLAY} ועוזר גם להעביר את מה שיש לכם היום.` },
   // 06-whatsapp-messages (guest journey prepared on schedule, one tap from the owner's own WhatsApp, Shabbat quiet), 13 #2
-  { q: 'ההודעות לאורחים בוואטסאפ יוצאות לבד?', a: 'כמעט: אישור הזמנה, הוראות הגעה יום לפני והודעת תודה מוכנות לבד בזמן הנכון, עם השם של האורח והניווט אליכם. אתם רק מאשרים, והן יוצאות מהוואטסאפ שלכם בלחיצה אחת, ובשבת המערכת שומרת על שקט.' },
+  { q: 'ההודעות לאורחים בוואטסאפ יוצאות לבד?', a: 'כמעט: אישור הזמנה, הוראות הגעה יום לפני והודעת תודה מוכנות לבד בזמן הנכון, עם השם של האורח והניווט אליכם. אתם רק מאשרים, והן יוצאות מהוואטסאפ שלכם בלחיצה אחת, ובשבת atlas שומר על שקט.' },
   // 02-units (name, guests and nightly price per unit; another total per booking), 13 #9 (weekend/holiday price suggestions)
-  { q: 'יש לי כמה יחידות, כל אחת במחיר אחר. זה מתאים?', a: 'בדיוק בשביל זה. לכל יחידה יש שורה בלוח, מספר אורחים ומחיר משלה, ובכל הזמנה אפשר לרשום מחיר אחר. המערכת גם מציעה לכם מחיר לסופ״ש ולחגים.' },
+  { q: 'יש לי כמה יחידות, כל אחת במחיר אחר. זה מתאים?', a: 'בדיוק בשביל זה. לכל יחידה יש שורה בלוח, מספר אורחים ומחיר משלה, ובכל הזמנה אפשר לרשום מחיר אחר. atlas גם מציע לכם מחיר לסופ״ש ולחגים.' },
   // 01-getting-started #install (works in the browser, add to home screen), 13 #13 (no store app)
   { q: 'זה עובד גם בטלפון?', a: 'כן. atlas עובד בטלפון כמו במחשב, בלי להוריד אפליקציה מהחנות. מוסיפים אותו למסך הבית ופותחים בלחיצה, מכל מקום.' },
   // 07-money (payments recorded, balances, monthly report; documents are for records only, no tax allocation number), 13 #5 #11
@@ -72,7 +72,7 @@ export const FAQ = [
   // security.md (isolation per business, encrypted connection), privacy.md (no selling, no ads), terms #your-data + csvExport.js
   { q: 'המידע שלי ושל האורחים שמור?', a: 'כן. כל עסק רואה רק את המידע שלו, החיבור מוצפן, ואנחנו לא מוכרים מידע ולא מציגים פרסומות. הנתונים שייכים לכם, ואפשר להוריד אותם לאקסל בכל רגע.' },
   // pricing.js PRICING_PLANS[0] (one complex, whole system included); yearly and multi-complex plans shown in #pricing
-  { q: 'כמה זה עולה?', a: `₪${FROM_PRICE} לחודש למתחם אחד, וכל המערכת כלולה. יש גם מסלול שנתי משתלם יותר ומסלול לכמה מתחמים, הכל מופיע למעלה במחירים.` },
+  { q: 'כמה זה עולה?', a: `₪${FROM_PRICE} לחודש למתחם אחד, והכל כלול. יש גם מסלול שנתי משתלם יותר ומסלול לכמה מתחמים, הכל מופיע למעלה במחירים.` },
   // 11-subscription (no card, no automatic charge, account and data kept), terms #cancellation, cancellation.md #how
   { q: 'ומה קורה אחרי 14 ימי הניסיון?', a: '14 הימים הראשונים חינם, בלי כרטיס אשראי, ובסופם לא יורד שקל לבד. ממשיכים רק אם בוחרים מסלול, והחשבון וכל הנתונים נשמרים. בלי התחייבות: מפסיקים בהודעה אחת בוואטסאפ.' },
 ];
