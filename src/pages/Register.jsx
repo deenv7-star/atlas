@@ -8,7 +8,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import { ArrowLeft, Shield, Loader2 } from 'lucide-react';
-import { Wordmark } from '@/components/app/shell/shared';
+import { Wordmark } from '@/components/app/shell/wordmark';
 import TermsConsent from '@/components/legal/TermsConsent';
 import AuthField, { StrengthMeter } from '@/components/auth/AuthField';
 import { useRegister } from '@/lib/auth/useRegister';

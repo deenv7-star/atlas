@@ -8,7 +8,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ArrowUpRight } from 'lucide-react';
 import { GuestAvatar } from '@/components/app/atoms';
-import { Wordmark } from '@/components/app/shell/shared';
+import { Wordmark } from '@/components/app/shell/wordmark';
 import { Sparkline } from '@/components/today/Sparkline';
 import { cn } from '@/lib/utils';
 

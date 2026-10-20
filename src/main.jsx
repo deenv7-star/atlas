@@ -51,6 +51,15 @@ if (ssrEl) {
 const lean = isLeanUrl(window.location)
 if (!lean) loadFullApp()
 
+// Sign-in screens: request the screen's own code together with the app code, not after the app has
+// rendered (entry → App → Login was a 3-step waterfall; Lighthouse mobile /login 66, LCP 5 s).
+// Same module as the lazy() in src/App.jsx, so it is fetched once and the route renders without waiting.
+const AUTH_SCREENS = {
+  '/login': () => import('@/pages/Login'),
+  '/register': () => import('@/pages/Register'),
+}
+if (!lean) AUTH_SCREENS[window.location.pathname.replace(/\/$/, '')]?.().catch(() => {})
+
 // "/" and /pricing are prerendered (scripts/prerender.mjs → <div id="root" data-hydrate>): React adopts
 // that HTML (hydration) instead of replacing it, so the page the visitor already sees stays as it is.
 const hydrate = lean && rootEl.hasAttribute('data-hydrate')
