@@ -169,3 +169,10 @@
 @media (prefers-reduced-motion: reduce) {
   .lm-v .lm-ui, .lm-v .lm-ph { transform: none; }
 }
+
+/* growth D placeholder (LazyGrowth): close to the mounted section's height, measured on the production build
+   (20.10.2026), so mounting never shifts layout
+   (390x844: 2861px, chapters 130svh of it; 1440x900: 3417px, chapters 234vh of it; short phones 2110-2160px) */
+.lg-ph-d { min-height: calc(1790px + 134svh); }
+@media (max-width: 899px) and (max-height: 640px) { .lg-ph-d { min-height: 2150px; } }
+@media (min-width: 900px) { .lg-ph-d { min-height: calc(1311px + 214vh); } }

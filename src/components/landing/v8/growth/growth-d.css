@@ -1,0 +1,130 @@
+/* Growth D "product-led". Palette strictly: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white.
+   Real atlas screens in the official iPhone 17 Pro bezel; the phone holds still while chapters scroll past.
+   Motion: opacity + transform only, driven by one IntersectionObserver. */
+.gd { --gd-ind: #3E2BF1; --gd-navy: #1B2656; --gd-ink: #48527A; --gd-line: rgba(27, 38, 86, 0.1); --gd-bg: #F7F8FB; --gd-top: 76px;
+  padding: 96px 0 104px; background: var(--gd-bg); color: var(--gd-navy); }
+@media (min-width: 900px) { .gd { padding: 152px 0 160px; } }
+.gd-ind { color: var(--gd-ind); }
+
+.gd-head { max-width: 15em; }
+@media (min-width: 900px) { .gd-head { max-width: 820px; } }
+.gd-kick { font-size: 16px; font-weight: 700; color: var(--gd-ind); }
+.gd-h { margin-top: 14px; font-size: 40px; line-height: 1.04; font-weight: 800; letter-spacing: -0.045em; text-wrap: balance; }
+.gd-h .gd-ind { display: block; }
+@media (min-width: 900px) { .gd-h { margin-top: 18px; font-size: 72px; line-height: 1; letter-spacing: -0.05em; } }
+.gd-lede { margin-top: 18px; max-width: 24em; font-size: 19px; line-height: 1.55; color: var(--gd-ink); text-wrap: pretty; }
+@media (min-width: 900px) { .gd-lede { font-size: 21px; } }
+
+/* story: sticky phone + chapters */
+.gd-story { position: relative; margin-top: 40px; }
+.gd-stick { position: sticky; top: var(--gd-top); z-index: 2; display: flex; flex-direction: column; align-items: center; padding: 12px 0 14px; background: var(--gd-bg); }
+.gd-stick::after { content: ''; position: absolute; inset-inline: 0; top: 100%; height: 28px; background: linear-gradient(180deg, var(--gd-bg), rgba(247, 248, 251, 0)); pointer-events: none; }
+.gd-phone { position: relative; width: clamp(170px, 50vw, 214px); aspect-ratio: 675 / 1380; filter: drop-shadow(0 28px 32px rgba(27, 38, 86, 0.16)); }
+/* screen hole of the Apple bezel: x 72..1278 / 1350, y 69..2691 / 2760 */
+.gd-screen { position: absolute; left: 5.333%; top: 2.5%; width: 89.333%; height: 95%; overflow: hidden; border-radius: 15% / 6.9%; background: #fff; }
+.gd-screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; }
+.gd-screen img.is-on { opacity: 1; }
+.gd-bezel { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; user-select: none; }
+.gd-ex { margin-top: 12px; font-size: 14px; color: var(--gd-ink); }
+
+.gd-ch { position: relative; z-index: 1; }
+.gd-chap { min-height: 56svh; padding-top: 28px; }
+.gd-chap:last-child { min-height: 30svh; }
+.gd-chap-h { font-size: 28px; line-height: 1.12; font-weight: 800; letter-spacing: -0.035em; }
+.gd-chap-p { margin-top: 10px; max-width: 22em; font-size: 18px; line-height: 1.55; color: var(--gd-ink); text-wrap: pretty; }
+
+@media (min-width: 900px) {
+  .gd-story { display: grid; grid-template-columns: 1fr minmax(320px, 0.8fr); gap: 64px; margin-top: 48px; }
+  .gd-ch { grid-column: 1; grid-row: 1; }
+  .gd-stick { grid-column: 2; grid-row: 1; align-self: start; top: 112px; padding: 0; background: none; }
+  .gd-stick::after { display: none; }
+  .gd-phone { width: 330px; }
+  .gd-chap { display: flex; flex-direction: column; justify-content: center; min-height: 66vh; padding: 0; }
+  .gd-chap:last-child { min-height: 82vh; }
+  .gd-chap-h { font-size: 48px; line-height: 1.05; }
+  .gd-chap-p { font-size: 21px; }
+}
+
+/* what opens next */
+.gd-next { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--gd-line); }
+.gd-next-k { font-size: 15px; font-weight: 700; color: var(--gd-ind); }
+.gd-next-l { display: grid; gap: 6px; margin-top: 10px; }
+.gd-next-l li { font-size: 22px; line-height: 1.3; font-weight: 700; letter-spacing: -0.02em; }
+
+/* one offer, set like a receipt */
+.gd-offer { margin-top: 56px; padding: 26px 22px 22px; border-radius: 28px; background: #fff; box-shadow: 0 1px 2px rgba(27, 38, 86, 0.04), 0 24px 48px -32px rgba(27, 38, 86, 0.2); }
+@media (min-width: 900px) {
+  .gd-next { margin-top: 96px; }
+  .gd-next-l { grid-auto-flow: column; justify-content: start; gap: 40px; }
+  .gd-next-l li { font-size: 28px; }
+  .gd-offer { max-width: 640px; margin-top: 72px; padding: 40px 44px 32px; border-radius: 36px; }
+}
+.gd-offer-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.gd-offer-h { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; }
+.gd-offer-sub { font-size: 16px; color: var(--gd-ink); }
+.gd-rows { margin: 18px 0 0; }
+.gd-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 0; border-top: 1px solid var(--gd-line); }
+.gd-row dt { display: grid; gap: 2px; font-size: 17px; color: var(--gd-ink); }
+.gd-row dt b { color: var(--gd-navy); font-weight: 800; }
+.gd-row dt span { font-size: 15px; line-height: 1.45; }
+.gd-row dd { margin: 0; font-size: 36px; line-height: 1; font-weight: 800; letter-spacing: -0.04em; color: var(--gd-navy); }
+.gd-row.is-found dd { font-size: 48px; color: var(--gd-ind); }
+@media (min-width: 900px) { .gd-row dd { font-size: 44px; } .gd-row.is-found dd { font-size: 64px; } }
+.gd-left { font-size: 15px; font-weight: 700; color: var(--gd-ind); }
+.gd-cta { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; margin-top: 8px; padding: 0 24px; border-radius: 999px;
+  background: var(--gd-ind); color: #fff; font-size: 17px; font-weight: 700; transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms ease; }
+.gd-cta:active { transform: scale(0.97); }
+.gd-cta svg { transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+@media (hover: hover) and (pointer: fine) { .gd-cta:hover { background: #3422E0; } .gd-cta:hover svg { transform: translateX(-3px); } }
+.gd-fine { margin-top: 14px; font-size: 15px; line-height: 1.5; color: var(--gd-ink); }
+.gd-fine a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--gd-navy); text-decoration: underline; text-decoration-color: rgba(27, 38, 86, 0.3); text-underline-offset: 5px; }
+.gd :focus-visible { outline: 2px solid var(--gd-ind); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .gd-screen img { transform: scale(1.035); transition: opacity 420ms ease, transform 640ms cubic-bezier(0.23, 1, 0.32, 1); }
+  .gd-screen img.is-on { transform: none; }
+  .gd-chap::before { transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1); }
+}
+@media (min-width: 900px) {
+  .gd-chap { position: relative; padding-inline-start: 28px; }
+  .gd-chap::before { content: ''; position: absolute; inset-inline-start: 0; top: calc(50% - 56px); width: 3px; height: 112px; border-radius: 3px; background: var(--gd-ind); transform: scaleY(0); }
+  .gd-chap.is-on::before { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) { .gd-screen img { transition: opacity 200ms ease; } }
+
+/* phones (< 900px): the phone and the active chapter's words stick together under the floating header (bottom 70px)
+   and above the sticky CTA (72px). The chapter list keeps its height as the scroll track; its words are read by
+   screen readers only, the visible copy is .gd-cap. Phone width follows the viewport height so the pair always fits. */
+.gd-cap { display: none; }
+@media (max-width: 899px) and (min-height: 641px) {
+  .gd-phone { width: min(52vw, 220px, calc((100svh - 400px) * 0.489)); }
+  .gd-stick { padding: 8px 0 12px; }
+  .gd-ex { margin-top: 8px; font-size: 14px; }
+  .gd-cap { display: grid; width: 100%; margin-top: 14px; }
+  .gd-cap-i { grid-area: 1 / 1; opacity: 0; }
+  .gd-cap-i.is-on { opacity: 1; }
+  .gd-cap .gd-chap-h { font-size: 24px; }
+  .gd-cap .gd-chap-p { margin-top: 6px; font-size: 17px; line-height: 1.5; }
+  .gd-chap { min-height: 42svh; padding: 0; }
+  .gd-chap:last-child { min-height: 30svh; }
+  .gd-ch .gd-chap-h, .gd-ch .gd-chap-p { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .gd-stick::after { height: 20px; }
+}
+@media (max-width: 899px) and (min-height: 641px) and (prefers-reduced-motion: no-preference) {
+  .gd-cap-i { transform: translateY(8px); transition: opacity 320ms ease, transform 420ms cubic-bezier(0.23, 1, 0.32, 1); }
+  .gd-cap-i.is-on { transform: none; }
+}
+/* short phones (<= 640px tall): no sticky pair, the phone sits above the chapters and still swaps screens */
+@media (max-width: 899px) and (max-height: 640px) {
+  .gd-stick { position: relative; top: auto; }
+  .gd-stick::after { display: none; }
+  .gd-chap { min-height: 0; padding-top: 28px; }
+  .gd-chap:last-child { min-height: 0; }
+}
+@media (max-width: 899px) and (min-height: 641px) { .gd-chap:last-child { min-height: 50svh; } }
+/* narrow phones (320-379): the price rows stack so the numbers never squeeze the terms into a column */
+@media (max-width: 379px) {
+  .gd-offer { padding: 22px 18px 18px; }
+  .gd-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .gd-cta { padding: 0 16px; font-size: 16px; white-space: nowrap; }
+}
