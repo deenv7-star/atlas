@@ -42,7 +42,7 @@ export default function IOSInstallBanner() {
       </button>
 
       <div className="flex items-start gap-3">
-        <img src="/apple-touch-icon.png" alt="atlas" className="w-12 h-12 rounded-xl flex-shrink-0" />
+        <img src="/apple-touch-icon.png?v=2" alt="atlas" className="w-12 h-12 rounded-xl flex-shrink-0" />
         <div>
           <p className="font-semibold text-sm leading-snug">הוסיפו את atlas למסך הבית</p>
           <p className="text-xs text-gray-400 mt-0.5 leading-snug">

@@ -52,7 +52,7 @@ function LayoutContent({ children, currentPageName }) {
       link.type = 'image/svg+xml';
       document.head.appendChild(link);
     }
-    link.href = '/favicon.svg';
+    link.href = '/favicon.svg?v=2';
   }, []);
 
   // Once the first screen is up, fetch the code of the other main screens in the background (idle time),
