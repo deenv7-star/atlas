@@ -188,6 +188,6 @@ export function validatePassword(value) {
   const v = value || '';
   if (v.length < 8) return { valid: false, error: 'לפחות 8 תווים' };
   if (!/\d/.test(v)) return { valid: false, error: 'הוסיפו לפחות ספרה אחת' };
-  if (!/[a-zA-Z]/.test(v)) return { valid: false, error: 'הוסיפו לפחות אות אחת באנגלית' };
+  if (!/\p{L}/u.test(v)) return { valid: false, error: 'הוסיפו לפחות אות אחת (עברית או אנגלית)' };
   return { valid: true };
 }

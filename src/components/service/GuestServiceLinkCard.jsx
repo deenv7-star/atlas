@@ -4,8 +4,9 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useEnsureGuestToken } from '@/hooks/useGuestToken';
+import { todayIsrael } from '@/lib/localDate';
 
-const todayIso = () => new Date().toISOString().slice(0, 10);
+const todayIso = () => todayIsrael();
 
 /**
  * Each guest gets a personal service link (/guest-service?t=<booking guest_token>).
