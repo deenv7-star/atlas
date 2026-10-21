@@ -5,7 +5,7 @@
  */
 import { DEFAULT_PLANS } from './config';
 
-const KEY = 'atlas_admin_demo_v3';
+const KEY = 'atlas_admin_demo_v4'; // v4: neutral demo staff / test emails (no real addresses)
 const DAY = 864e5;
 
 function rng(seed) {
@@ -171,18 +171,18 @@ export function generateDemo(now = Date.now()) {
       }
     }
     if (r() < 0.35) {
-      notes.push({ id: uid(r), org_id: orgId, body: pick(r, NOTES), author_email: 'deenv7@gmail.com', author_id: null, created_at: iso(now - Math.floor(r() * 40) * DAY) });
+      notes.push({ id: uid(r), org_id: orgId, body: pick(r, NOTES), author_email: 'owner@demo-atlas.co.il', author_id: null, created_at: iso(now - Math.floor(r() * 40) * DAY) });
     }
   }
   // v3 (admin v2): logins, team members, iCal health, WhatsApp, and a few obvious test accounts like the live DB has.
   const members = {};
   const syncs = {};
   const wa = {};
-  const TESTS = ['qa+onb1@atlas-il.com', 'roast+scout_a38e9b@gonogo.team', 'roast+scout_0f5f2b@gonogo.team', 'qa+hark@atlas-il.com', 'roast+scout_dfb47a@gonogo.team'];
+  const TESTS = ['qa+onb1@example.com', 'scout_a38e9b@example.com', 'scout_0f5f2b@example.com', 'qa+demo@example.com', 'scout_dfb47a@example.com'];
   TESTS.forEach((email, k) => {
     const created = now - (3 + k * 4) * DAY;
     customers.push({
-      org_id: uid(r), org_name: email.startsWith('qa+hark') ? 'QA Hark Org' : '', org_email: null, org_phone: null, created_at: iso(created),
+      org_id: uid(r), org_name: email.startsWith('qa+demo') ? 'חשבון בדיקה' : '', org_email: null, org_phone: null, created_at: iso(created),
       owner_id: uid(r), owner_name: null, owner_email: email, owner_phone: null, properties_count: k === 3 ? 1 : 0, units_count: k === 3 ? 1 : 0,
       bookings_count: k === 3 ? 2 : 0, bookings_30d: k === 3 ? 2 : 0, last_active_at: iso(created + 3600e3), plan_key: 'starter', status: created + 14 * DAY > now ? 'trialing' : 'expired',
       billing_cycle: 'monthly', price_ils: null, trial_ends_at: iso(created + 14 * DAY), current_period_end: null, provider: 'manual',
@@ -217,13 +217,13 @@ export function generateDemo(now = Date.now()) {
   });
 
   const team = [
-    { user_id: uid(r), email: 'deenv7@gmail.com', full_name: 'דין וינוקור', role: 'owner', created_at: iso(now - 200 * DAY), last_sign_in_at: iso(now - 3600e3) },
-    { user_id: uid(r), email: 'qa+hark@atlas-il.com', full_name: 'QA Hark', role: 'admin', created_at: iso(now - 60 * DAY), last_sign_in_at: iso(now - 2 * DAY) },
+    { user_id: uid(r), email: 'owner@demo-atlas.co.il', full_name: 'בעלים (דוגמה)', role: 'owner', created_at: iso(now - 200 * DAY), last_sign_in_at: iso(now - 3600e3) },
+    { user_id: uid(r), email: 'admin@demo-atlas.co.il', full_name: 'מנהל (דוגמה)', role: 'admin', created_at: iso(now - 60 * DAY), last_sign_in_at: iso(now - 2 * DAY) },
     { user_id: uid(r), email: 'support@demo-atlas.co.il', full_name: 'צוות תמיכה (דוגמה)', role: 'support', created_at: iso(now - 30 * DAY), last_sign_in_at: iso(now - 5 * DAY) },
   ];
   const audit = [];
   let aid = 1;
-  const push = (a) => audit.push({ id: aid++, actor_email: 'deenv7@gmail.com', target_type: 'organization', details: {}, ...a });
+  const push = (a) => audit.push({ id: aid++, actor_email: 'owner@demo-atlas.co.il', target_type: 'organization', details: {}, ...a });
   const c0 = customers[2];
   const c1 = customers[7];
   push({ action: 'trial.extend', org_id: c0.org_id, org_name: c0.org_name, target_id: c0.org_id, details: { days: 7 }, created_at: iso(now - 9 * DAY) });

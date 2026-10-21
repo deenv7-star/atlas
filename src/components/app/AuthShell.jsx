@@ -42,7 +42,9 @@ function ProductPreview({ caption }) {
         <p className="text-[24px] font-bold leading-[1.2] tracking-[-0.02em] text-navy-900">{caption}</p>
         <p className="mt-2 text-[15px] text-ink-600">הזמנות מכל הערוצים, תשלומים וניקיון. מסך אחד, בעברית.</p>
 
-        <div className="relative mt-9">
+        {/* the numbers below are illustrative, not a customer's: say so, quietly */}
+        <span className="mt-7 inline-flex h-6 items-center rounded-full bg-white px-2.5 text-[12px] font-semibold text-ink-600 ring-1 ring-inset ring-navy-900/[0.06]">דוגמה</span>
+        <div className="relative mt-2.5">
           {/* revenue card: the one solid-indigo hero */}
           <div className="v5-rise v7-hero relative z-10 p-6" style={{ '--i': 1 }}>
             <div className="flex items-start justify-between">

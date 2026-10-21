@@ -86,7 +86,7 @@ export default function GuestService() {
 
   if (submitted) {
     return (
-      <div dir="rtl" className="min-h-screen bg-canvas flex items-center justify-center p-6">
+      <main dir="rtl" className="min-h-screen bg-canvas flex items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -102,20 +102,20 @@ export default function GuestService() {
               >
                 <CheckCircle2 className="h-10 w-10 text-white" />
               </motion.div>
-              <h2 className="text-2xl font-bold text-navy-900 mb-3">הבקשה נשלחה</h2>
+              <h1 className="text-2xl font-bold text-navy-900 mb-3">הבקשה נשלחה</h1>
               <p className="text-[#475569] leading-relaxed">
                 הבקשה הגיעה למארחים, והם יחזרו אליכם בהקדם.
               </p>
             </CardContent>
           </Card>
         </motion.div>
-      </div>
+      </main>
     );
   }
 
   if (needsToken) {
     return (
-      <div dir="rtl" className="min-h-screen bg-canvas flex items-center justify-center p-6">
+      <main dir="rtl" className="min-h-screen bg-canvas flex items-center justify-center p-6">
         <div className="max-w-md w-full text-center">
           <div className="mb-6 flex justify-center"><Wordmark size={28} /></div>
           <div className="v7-card p-8">
@@ -127,12 +127,12 @@ export default function GuestService() {
             </p>
           </div>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-canvas">
+    <main dir="rtl" className="min-h-screen bg-canvas">
       <div className="max-w-3xl mx-auto p-6">
         <div className="mb-8 text-center">
           <div className="flex justify-center"><Wordmark size={28} /></div>
@@ -259,6 +259,6 @@ export default function GuestService() {
           הבקשה עוברת ישירות למארחים של השהייה שלכם
         </p>
       </div>
-    </div>
+    </main>
   );
 }

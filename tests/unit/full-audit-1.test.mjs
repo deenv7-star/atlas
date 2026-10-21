@@ -20,6 +20,11 @@ test('password: Hebrew letters count as letters', () => {
   assert.equal(validatePassword('abc1').valid, false);
 });
 
+test('password: minimum 8 characters (matches Supabase auth min length 8)', () => {
+  assert.deepEqual(validatePassword('abcdef1'), { valid: false, error: 'הסיסמה צריכה לכלול לפחות 8 תווים' });
+  assert.equal(validatePassword('abcdefg1').valid, true);
+});
+
 test('today in Israel, not UTC', () => {
   assert.equal(todayIsrael(new Date('2026-10-31T22:30:00Z')), '2026-11-01'); // 00:30 IST on Nov 1
   assert.equal(todayIsrael(new Date('2026-06-30T21:30:00Z')), '2026-07-01'); // 00:30 IDT on Jul 1

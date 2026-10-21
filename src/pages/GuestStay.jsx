@@ -172,9 +172,9 @@ export default function GuestStayPage() {
     return (
       <Shell>
         <div className="h-48" style={{ background: 'linear-gradient(180deg, #EEF0FF 0%, #F7F8FB 100%)' }} />
-        <div className="max-w-xl mx-auto px-4 -mt-10 space-y-3">
+        <main className="max-w-xl mx-auto px-4 -mt-10 space-y-3">
           {[0, 1, 2].map((i) => <div key={i} className="ab-card h-28 animate-pulse" />)}
-        </div>
+        </main>
       </Shell>
     );
   }
@@ -182,11 +182,11 @@ export default function GuestStayPage() {
   if (q.isError || !q.data) {
     return (
       <Shell>
-        <div className="max-w-md mx-auto px-6 pt-24 text-center">
+        <main className="max-w-md mx-auto px-6 pt-24 text-center">
           <span className="ab-icon-tile mx-auto"><KeyRound size={20} strokeWidth={1.75} /></span>
           <h1 className="ab-h3 mt-4">הקישור לא נמצא</h1>
           <p className="ab-meta mt-2">אולי ההזמנה עודכנה. בקשו מהמארחים קישור חדש.</p>
-        </div>
+        </main>
       </Shell>
     );
   }

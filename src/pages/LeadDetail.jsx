@@ -116,8 +116,9 @@ export default function LeadDetail({ orgId }) {
 
   if (!lead) {
     return (
-      <div className="p-6 text-center text-gray-500">
-        לא מצאנו את הליד
+      <div className="p-10 text-center">
+        <h1 className="text-[18px] font-bold text-navy-900">לא מצאנו את הליד</h1>
+        <p className="mt-1 text-[16px] text-ink-600">אולי הוא נמחק, או שהקישור ישן.</p>
       </div>
     );
   }

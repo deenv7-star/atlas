@@ -442,7 +442,8 @@ class SupabaseEntityCollection {
     }
     const msg = error?.message || String(error);
     const err = new Error(msg);
-    err.status = error?.code === 'PGRST116' ? 404 : 500;
+    // PGRST116: no row; 22P02: the id is not a valid uuid (an old or mistyped link). Both mean "not found".
+    err.status = error?.code === 'PGRST116' || error?.code === '22P02' ? 404 : 500;
     if (id) err.resourceId = id;
     return err;
   }

@@ -24,7 +24,7 @@ export const SUPPORT_ADMIN_READY = String(import.meta.env.VITE_SUPPORT_CHAT || '
 export const ADMIN_DEMO = !isSupabaseConfigured;
 
 /** Demo mode only: which local demo logins see the console. Real mode asks the DB (admin_whoami). */
-export const DEMO_ADMIN_EMAILS = ['deenv7@gmail.com', 'qa+hark@atlas-il.com'];
+export const DEMO_ADMIN_EMAILS = ['owner@demo-atlas.co.il', 'admin@demo-atlas.co.il'];
 
 export const ROLES = {
   owner: { label: 'בעלים', rank: 3, desc: 'הכל, כולל מחירים וצוות' },

@@ -53,7 +53,7 @@ export default function GuestServiceLinkCard({ orgId }) {
 
   return (
     <div className="v7-card p-4 shadow-card">
-      <h3 className="mb-1 text-[15px] font-bold text-navy-900">קישור אישי לטופס שירות</h3>
+      <h2 className="mb-1 text-[15px] font-bold text-navy-900">קישור אישי לטופס שירות</h2>
       <p className="mb-3 text-[14px] text-ink-600">
         כל הזמנה מקבלת קישור משלה, כך שהבקשה מגיעה אליכם עם שם האורח והיחידה. בחרו הזמנה והעתיקו.
       </p>

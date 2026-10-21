@@ -41,9 +41,6 @@ export default function HowItWorks() {
             <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           </Link>
           <div className="flex items-center gap-2 flex-wrap justify-end">
-            <Link to={createPageUrl('ApiDocs')}>
-              <Button variant="ghost" size="sm">תיעוד API</Button>
-            </Link>
             <Link to={createPageUrl('PricingPlans')}>
               <Button variant="ghost" size="sm">תמחור</Button>
             </Link>
@@ -65,11 +62,6 @@ export default function HowItWorks() {
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed mb-10">
             בלי הבטחות קסם: איך הזמנות מכל הערוצים מגיעות ללוח אחד, ומה קורה כשיש חפיפה.
-            לפרטי ממשק REST ראו{' '}
-            <Link to={createPageUrl('ApiDocs')} className="text-brand-600 font-semibold underline-offset-2 hover:underline">
-              תיעוד ה-API
-            </Link>
-            .
           </p>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm mb-12">

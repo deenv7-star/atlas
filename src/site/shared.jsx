@@ -232,7 +232,7 @@ export function ContactForm({ className = '' }) {
     <form className={`s-form ${className}`} onSubmit={submit} noValidate>
       <div className="s-field">
         <label htmlFor="cf-name">שם</label>
-        <input id="cf-name" name="name" autoComplete="name" maxLength={120} value={form.name} onChange={set('name')} aria-invalid={!!errors.name} aria-describedby={errors.name ? 'cf-name-e' : undefined} />
+        <input id="cf-name" type="text" name="name" autoComplete="name" maxLength={120} value={form.name} onChange={set('name')} aria-invalid={!!errors.name} aria-describedby={errors.name ? 'cf-name-e' : undefined} />
         {errors.name && <p className="s-err" id="cf-name-e">{errors.name}</p>}
       </div>
       <div className="s-field">
@@ -257,7 +257,7 @@ export function ContactForm({ className = '' }) {
       </div>
       <div className="s-hp" aria-hidden="true">
         <label htmlFor="cf-website">אתר</label>
-        <input id="cf-website" name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={set('website')} />
+        <input id="cf-website" type="text" name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={set('website')} />
       </div>
       <p className="s-hint" id="cf-hint">ההודעה נשמרת אצלנו ונענה לאימייל שכתבתם.</p>
       {state.status === 'error' && (
@@ -273,7 +273,7 @@ export function ContactForm({ className = '' }) {
 export function ContactDetails() {
   const rows = [
     { label: 'וואטסאפ', value: <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" dir="ltr">{LEGAL.WHATSAPP_DISPLAY}<span className="s-sr"> (נפתח בוואטסאפ)</span></a> },
-    legalValue('BUSINESS_PHONE') && { label: 'טלפון', value: <a href={`tel:+972${String(LEGAL.BUSINESS_PHONE).replace(/\D/g, '').replace(/^0/, '')}`} dir="ltr">{LEGAL.BUSINESS_PHONE}</a> },
+    legalValue('BUSINESS_PHONE') && { label: 'טלפון', value: <a href={`tel:+972${String(LEGAL.BUSINESS_PHONE).replace(/\D/g, '').replace(/^0/, '')}`} dir="ltr">{String(LEGAL.BUSINESS_PHONE).replace(/-/g, '\u2011')}</a> },
     legalValue('SUPPORT_EMAIL') && { label: 'מייל', value: <a href={`mailto:${LEGAL.SUPPORT_EMAIL}`} dir="ltr">{LEGAL.SUPPORT_EMAIL}</a> },
     legalValue('BUSINESS_ADDRESS') && { label: 'כתובת למכתבים', value: <Placeholder name="BUSINESS_ADDRESS" /> },
     BUSINESS_LINE && { label: 'פרטי העסק', value: <span>{BUSINESS_LINE}</span> },

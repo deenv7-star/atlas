@@ -12,7 +12,7 @@ export default function BookingDetail({ orgId }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: booking, isLoading, isError } = useQuery({
+  const { data: booking, isLoading, isError, error } = useQuery({
     queryKey: ['booking', id],
     queryFn: () => base44.entities.Booking.get(id),
     enabled: !!id,
@@ -31,9 +31,10 @@ export default function BookingDetail({ orgId }) {
     );
   }
 
-  if (isError) {
+  if (isError && error?.status !== 404) {
     return (
       <div className="p-6 max-w-md mx-auto">
+        <h1 className="sr-only">פרטי הזמנה</h1>
         <ErrorFallback />
       </div>
     );
@@ -41,8 +42,10 @@ export default function BookingDetail({ orgId }) {
 
   if (!booking) {
     return (
-      <div className="p-10 text-center text-[16px] text-ink-600">
-        לא מצאנו את ההזמנה. אולי היא נמחקה.
+      <div className="p-10 text-center">
+        <h1 className="text-[18px] font-bold text-navy-900">לא מצאנו את ההזמנה</h1>
+        <p className="mt-1 text-[16px] text-ink-600">אולי היא נמחקה, או שהקישור ישן.</p>
+        <button type="button" onClick={() => navigate(createPageUrl('Bookings'))} className="mt-4 inline-flex min-h-11 items-center rounded-full px-5 text-[15px] font-semibold text-brand-600 hover:bg-brand-50">לכל ההזמנות</button>
       </div>
     );
   }

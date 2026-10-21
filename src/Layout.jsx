@@ -19,7 +19,7 @@ const SupportWidget = React.lazy(() => import('@/support/SupportWidget'));
 // "שאלו את atlas" side panel / sheet (version B). Lazy and mounted only after the first open.
 const AssistantPanel = React.lazy(() => import('@/assistant/AssistantPanel'));
 
-const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans'];
+const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Status', 'HowItWorks', 'PricingPlans'];
 
 function PageLoader() {
   return (

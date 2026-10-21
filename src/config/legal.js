@@ -82,7 +82,14 @@ export const SUBPROCESSORS = [
   { name: 'Resend', role: 'שליחת מיילים של מערכת (אימות חשבון, איפוס סיסמה)', where: 'ארצות הברית', url: 'https://resend.com/legal/privacy-policy' },
   // OpenAI: live since 20.10.2026 — the ai-chat edge function ("שאלו את atlas") sends the question plus the
   // business facts it needs to OpenAI; OPENAI_API_KEY is a Supabase secret (verified 19.10.2026).
-  { name: 'OpenAI', role: 'מענה לשאלות בעוזר "שאלו את atlas" (השאלה ונתוני העסק הנדרשים לתשובה)', where: 'ארצות הברית', url: 'https://openai.com/policies/privacy-policy' },
+  // support-chat (help widget) uses the same OPENAI_API_KEY for its answers.
+  { name: 'OpenAI', role: 'מענה בצ׳אט העזרה ובעוזר "שאלו את atlas" (השאלה ונתוני העסק הנדרשים לתשובה)', where: 'ארצות הברית', url: 'https://openai.com/policies/privacy-policy' },
+  // ImprovMX: MX for atlas-il.com, forwards support@ to the team inbox (live since 18.10.2026).
+  { name: 'ImprovMX', role: 'העברת מיילים שנשלחים לכתובת התמיכה', where: 'ארצות הברית', url: 'https://improvmx.com/privacy/' },
+  // Google: optional "המשך עם Google" sign-in, and the Gmail inbox that support@ forwards to.
+  { name: 'Google', role: 'התחברות עם חשבון Google (למי שבוחר בה) ותיבת הדואר של התמיכה', where: 'ארצות הברית', url: 'https://policies.google.com/privacy' },
+  // Apple: optional "המשך עם Apple" sign-in.
+  { name: 'Apple', role: 'התחברות עם Apple (למי שבוחר בה)', where: 'ארצות הברית', url: 'https://www.apple.com/legal/privacy/' },
 ];
 
 /** Returns the value, or null when it still needs to be filled. */

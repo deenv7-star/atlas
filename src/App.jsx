@@ -79,7 +79,7 @@ function LegacyLeadDetailRedirect() {
   return <Navigate to={`/lead/${id}`} replace />;
 }
 
-const PUBLIC_LAYOUT_PAGES = new Set(['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Changelog', 'Status', 'ApiDocs', 'HowItWorks', 'PricingPlans']);
+const PUBLIC_LAYOUT_PAGES = new Set(['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Status', 'HowItWorks', 'PricingPlans']);
 
 function AppFallback() {
   return (
@@ -175,7 +175,6 @@ const AuthenticatedApp = () => {
 
       {/* Public static pages — no auth required */}
       <Route path="/about" element={<S><SitePage /></S>} />
-      <Route path="/changelog" element={<LayoutWrapper currentPageName="Changelog"><Pages.Changelog /></LayoutWrapper>} />
       <Route path="/status" element={<LayoutWrapper currentPageName="Status"><Pages.Status /></LayoutWrapper>} />
       <Route path="/privacy" element={<S><SitePage /></S>} />
       <Route path="/terms" element={<S><SitePage /></S>} />
@@ -189,7 +188,6 @@ const AuthenticatedApp = () => {
       <Route path="/blog" element={<S><SitePage /></S>} />
       <Route path="/blog/:slug" element={<S><SitePage /></S>} />
       <Route path="/sla" element={<LayoutWrapper currentPageName="SLA"><Pages.SLA /></LayoutWrapper>} />
-      <Route path="/api-docs" element={<LayoutWrapper currentPageName="ApiDocs"><Pages.ApiDocs /></LayoutWrapper>} />
       <Route path="/how-it-works" element={<LayoutWrapper currentPageName="HowItWorks"><Pages.HowItWorks /></LayoutWrapper>} />
       <Route path="/pricing" element={<LayoutWrapper currentPageName="PricingPlans"><Pages.PricingPlans /></LayoutWrapper>} />
 

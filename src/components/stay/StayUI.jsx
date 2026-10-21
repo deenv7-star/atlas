@@ -119,7 +119,7 @@ export function Segmented({ value, onChange, options, label }) {
             aria-selected={active}
             type="button"
             onClick={() => onChange(o.value)}
-            className={cn('press inline-flex h-10 shrink-0 items-center rounded-full px-4 text-[14px] font-semibold',
+            className={cn('press inline-flex h-11 shrink-0 items-center rounded-full px-4 text-[14px] font-semibold',
               active ? 'bg-navy-900 text-white shadow-[0_6px_14px_-6px_rgba(27,38,86,0.5)]' : 'bg-white text-ink-600 ring-1 ring-inset ring-[#E3E6EF] hover:text-navy-900')}
           >
             {o.label}

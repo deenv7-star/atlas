@@ -173,9 +173,9 @@ function StageCard({ stage, theme, index, total, onToggle }) {
             <StageIcon className="w-4.5 h-4.5" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className={cn('font-bold text-sm', stage.active ? 'text-navy-900' : 'text-ink-400')}>
+            <h2 className={cn('font-bold text-sm', stage.active ? 'text-navy-900' : 'text-ink-400')}>
               {stage.name}
-            </h3>
+            </h2>
           </div>
         </div>
 
@@ -266,7 +266,7 @@ function TemplateCard({ template, onUse }) {
   return (
     <div className="bg-white rounded-xl border border-line p-4 shadow-sm hover:shadow-md transition-[background-color,border-color,color,box-shadow,transform] hover:border-brand-100 group">
       <div className="flex items-center gap-2 mb-2">
-        <h3 className="font-bold text-sm text-navy-900">{template.name}</h3>
+        <h2 className="font-bold text-sm text-navy-900">{template.name}</h2>
         <span className={cn('text-[12px] font-semibold px-2 py-0.5 rounded-full', template.badgeColor)}>
           {template.badge}
         </span>

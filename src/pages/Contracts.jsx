@@ -255,7 +255,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                   <TableHead className="text-right">תבנית</TableHead>
                   <TableHead className="text-right">סטטוס</TableHead>
                   <TableHead className="text-right">נוצר</TableHead>
-                  <TableHead className="w-32"></TableHead>
+                  <TableHead className="w-32"><span className="sr-only">פעולות</span></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

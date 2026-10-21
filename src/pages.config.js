@@ -11,7 +11,6 @@ import { lazy } from 'react';
 /** One loader per page: lazy() uses it, and preloadPage() can start the same download early. */
 export const PAGE_LOADERS = {
   AIAssistant: () => import('./pages/AIAssistant'),
-  ApiDocs: () => import('./pages/ApiDocs'),
   About: () => import('./pages/About'),
   Accessibility: () => import('./pages/Accessibility'),
   Automations: () => import('./pages/Automations'),
@@ -19,7 +18,6 @@ export const PAGE_LOADERS = {
   BookingDetail: () => import('./pages/BookingDetail'),
   Bookings: () => import('./pages/Bookings'),
   Cleaning: () => import('./pages/Cleaning'),
-  Changelog: () => import('./pages/Changelog'),
   Contact: () => import('./pages/Contact'),
   Contracts: () => import('./pages/Contracts'),
   Dashboard: () => import('./pages/Dashboard'),
@@ -59,7 +57,6 @@ export const PAGE_LOADERS = {
 };
 
 const AIAssistant = lazy(PAGE_LOADERS.AIAssistant);
-const ApiDocs = lazy(PAGE_LOADERS.ApiDocs);
 const About = lazy(PAGE_LOADERS.About);
 const Accessibility = lazy(PAGE_LOADERS.Accessibility);
 const Automations = lazy(PAGE_LOADERS.Automations);
@@ -67,7 +64,6 @@ const Billing = lazy(PAGE_LOADERS.Billing);
 const BookingDetail = lazy(PAGE_LOADERS.BookingDetail);
 const Bookings = lazy(PAGE_LOADERS.Bookings);
 const Cleaning = lazy(PAGE_LOADERS.Cleaning);
-const Changelog = lazy(PAGE_LOADERS.Changelog);
 const Contact = lazy(PAGE_LOADERS.Contact);
 const Contracts = lazy(PAGE_LOADERS.Contracts);
 const Dashboard = lazy(PAGE_LOADERS.Dashboard);
@@ -114,8 +110,8 @@ export function preloadPage(key) {
 // /guest-portal now opens the working guest-page + direct-booking settings (was a static mock).
 
 export const PAGES = {
-  AIAssistant, ApiDocs, About, Accessibility, Automations,
-  Billing, BookingDetail, Bookings, Cleaning, Changelog,
+  AIAssistant, About, Accessibility, Automations,
+  Billing, BookingDetail, Bookings, Cleaning,
   Contact, Contracts, Dashboard, DataSecurity, DynamicPricing,
   GuestJourney, GuestPortal, GuestService, HowItWorks,
   Integrations, Invoices, ExpenseTracker, Landing,

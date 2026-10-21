@@ -1,4 +1,5 @@
 {
+  "trailingSlash": false,
   "redirects": [
     {
       "source": "/how-it-works",
@@ -7,6 +8,16 @@
     },
     {
       "source": "/how-it-works/",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/changelog",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/api-docs",
       "destination": "/",
       "statusCode": 301
     }
@@ -37,7 +48,11 @@
       "destination": "/:page/index.html"
     },
     {
-      "source": "/:seg(AIAssistant|Automations|Billing|BookingDetail|Bookings|Cleaning|Contracts|Dashboard|DynamicPricing|ExpenseTracker|GuestJourney|GuestPortal|GuestService|HowItWorks|Integrations|Invoices|Landing|LeadDetail|Leads|Legal|Login|Messages|MultiCalendar|Onboarding|OwnerReports|Payments|PlatformAdmin|Pricing|PricingPlans|Register|RevenueIntelligence|Reviews|Security|ServiceRequests|Settings|Subscription|admin|ai-assistant|api-docs|auth|automations|balances|billing|book|booking|bookings|calendar|changelog|cleaning|contracts|dashboard|dev|dynamic-pricing|expense-tracker|g|guest-journey|guest-portal|guest-service|how-it-works|integrations|invoices|lead|leads|legal|messages|monthly-report|onboarding|owner-reports|payments|platform-admin|reset-password|revenue-intelligence|reviews|security|service-requests|settings|setup|sla|status|subscription|today|update-password|verify-email)/:rest*",
+      "source": "/book/:slug",
+      "destination": "/book.html"
+    },
+    {
+      "source": "/:seg(AIAssistant|Automations|Billing|BookingDetail|Bookings|Cleaning|Contracts|Dashboard|DynamicPricing|ExpenseTracker|GuestJourney|GuestPortal|GuestService|HowItWorks|Integrations|Invoices|Landing|LeadDetail|Leads|Legal|Login|Messages|MultiCalendar|Onboarding|OwnerReports|Payments|PlatformAdmin|Pricing|PricingPlans|Register|RevenueIntelligence|Reviews|Security|ServiceRequests|Settings|Subscription|admin|ai-assistant|auth|automations|balances|billing|book|booking|bookings|calendar|cleaning|contracts|dashboard|dev|dynamic-pricing|expense-tracker|g|guest-journey|guest-portal|guest-service|how-it-works|integrations|invoices|lead|leads|legal|messages|monthly-report|onboarding|owner-reports|payments|platform-admin|reset-password|revenue-intelligence|reviews|security|service-requests|settings|setup|sla|status|subscription|today|update-password|verify-email)/:rest*",
       "destination": "/app.html"
     }
   ],
@@ -64,6 +79,10 @@
         {
           "key": "Permissions-Policy",
           "value": "geolocation=(), microphone=(), camera=()"
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; script-src 'self' 'sha256-8wUgboqOByFQSfQnkulH/WVMpxa7+2Wa1GgGVihhv5c=' 'sha256-ZKWG+4zkv5Po7qpkBL+qFfKg9yB10AvB3a1vCtrMVc4=' 'sha256-r+XbxZXRohJ5M37DBK9jsdvptSZZvcHZi918BSXZXHs='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://romvmqbcinurscwdsskx.supabase.co https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://romvmqbcinurscwdsskx.supabase.co wss://romvmqbcinurscwdsskx.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         },
         {
           "key": "Cache-Control",

@@ -2,6 +2,9 @@
 /pricing    /pricing/index.html   200
 /register    /register/index.html   200
 /login    /login/index.html   200
+/changelog    /   301
+/api-docs    /   301
+/book/*    /book.html   200
 /AIAssistant    /app.html   200
 /AIAssistant/*    /app.html   200
 /Automations    /app.html   200
@@ -78,8 +81,6 @@
 /admin/*    /app.html   200
 /ai-assistant    /app.html   200
 /ai-assistant/*    /app.html   200
-/api-docs    /app.html   200
-/api-docs/*    /app.html   200
 /auth    /app.html   200
 /auth/*    /app.html   200
 /automations    /app.html   200
@@ -96,8 +97,6 @@
 /bookings/*    /app.html   200
 /calendar    /app.html   200
 /calendar/*    /app.html   200
-/changelog    /app.html   200
-/changelog/*    /app.html   200
 /cleaning    /app.html   200
 /cleaning/*    /app.html   200
 /contracts    /app.html   200
