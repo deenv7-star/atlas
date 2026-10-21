@@ -23,13 +23,11 @@ export const PUBLIC_PAGE_KEYS = [
   'Privacy',
   'Terms',
   'Contact',
-  'Changelog',
   'Status',
   'GuestService',
   'DataSecurity',
   'Accessibility',
   'SLA',
-  'ApiDocs',
   'HowItWorks',
   'PricingPlans',
 ];

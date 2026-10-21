@@ -28,7 +28,7 @@ export function ErrorFallback({
       <div className="flex flex-col items-center text-center gap-1.5">
         <AlertCircle className={cn('text-red-500 shrink-0', compact ? 'w-4 h-4' : 'w-5 h-5')} aria-hidden />
         <p className={cn('font-semibold text-red-900', compact ? 'text-xs' : 'text-sm')}>{title}</p>
-        <p className={cn('text-red-700/90', compact ? 'text-[11px] leading-snug' : 'text-xs leading-relaxed')}>
+        <p className={cn('text-red-700', compact ? 'text-[11px] leading-snug' : 'text-xs leading-relaxed')}>
           {description}
         </p>
       </div>

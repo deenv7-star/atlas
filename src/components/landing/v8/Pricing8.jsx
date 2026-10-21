@@ -118,12 +118,12 @@ export function CompareTable() {
         </tr>
         <tr>
           <th scope="row">14 יום ניסיון חינם</th>
-          {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} aria-label="כלול" /></td>)}
+          {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} role="img" aria-label="כלול" /></td>)}
         </tr>
         {['כל היכולות', 'תמיכה בעברית, בוואטסאפ'].map((f) => (
           <tr key={f}>
             <th scope="row">{f}</th>
-            {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} aria-label="כלול" /></td>)}
+            {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} role="img" aria-label="כלול" /></td>)}
           </tr>
         ))}
       </tbody>
@@ -154,7 +154,7 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
           {PRICING_PLANS.map((p, i) => {
             const prev = PRICING_PLANS[i - 1];
             return (
-              <li key={p.key} className={`v8p-plan${p.popular ? ' is-pop' : ''}`} aria-label={`${p.nameHe}, ${p.limit}`}>
+              <li key={p.key} className={`v8p-plan${p.popular ? ' is-pop' : ''}`}>
                 <div className="v8p-top">
                   <PlanH>{p.nameHe}</PlanH>
                   {p.popular && <span className="v8p-tag">מומלץ</span>}

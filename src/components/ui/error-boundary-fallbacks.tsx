@@ -38,7 +38,7 @@ export function ErrorFallbackInline({ error, reset, section, componentStack }: F
     >
       <AlertCircle className="mx-auto mb-1.5 h-4 w-4 text-red-500" aria-hidden />
       <p className="text-xs font-semibold text-red-900">החלק הזה לא נטען</p>
-      <p className="mt-0.5 text-[11px] text-red-700/90">שאר המסך עובד. נסו לטעון אותו שוב.</p>
+      <p className="mt-0.5 text-[11px] text-red-700">שאר המסך עובד. נסו לטעון אותו שוב.</p>
       <Button
         type="button"
         variant="outline"

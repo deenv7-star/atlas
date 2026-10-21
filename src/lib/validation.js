@@ -186,7 +186,7 @@ export function getPasswordStrength(password) {
 
 export function validatePassword(value) {
   const v = value || '';
-  if (v.length < 8) return { valid: false, error: 'לפחות 8 תווים' };
+  if (v.length < 8) return { valid: false, error: 'הסיסמה צריכה לכלול לפחות 8 תווים' };
   if (!/\d/.test(v)) return { valid: false, error: 'הוסיפו לפחות ספרה אחת' };
   if (!/\p{L}/u.test(v)) return { valid: false, error: 'הוסיפו לפחות אות אחת (עברית או אנגלית)' };
   return { valid: true };

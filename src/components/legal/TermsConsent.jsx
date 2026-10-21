@@ -22,6 +22,8 @@ const SR_NEW_TAB = <span className="sr-only"> (נפתח בכרטיסייה חד�
 export const CONSENT_ERROR = 'כדי להמשיך, סמנו שקראתם ואתם מסכימים לתקנון ולמדיניות הפרטיות.';
 
 function Box({ id, checked, onChange, error, describedBy, size = 20 }) {
+  // The real checkbox is a transparent 44×44 hit area centred on the visual box (WCAG 2.5.5 / Apple HIG),
+  // so taps just outside the 20px square still toggle it. The square itself is drawn by the sibling span.
   return (
     <span className="relative inline-grid shrink-0 place-items-center" style={{ width: size, height: size }}>
       <input
@@ -34,12 +36,16 @@ function Box({ id, checked, onChange, error, describedBy, size = 20 }) {
         aria-required="true"
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={describedBy}
+        className="peer absolute left-1/2 top-1/2 z-[1] m-0 h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer appearance-none rounded-full bg-transparent opacity-0 focus-visible:outline-none"
+      />
+      <span
+        aria-hidden="true"
         className={cn(
-          'peer m-0 cursor-pointer appearance-none rounded-[6px] border-[1.5px] bg-white',
+          'pointer-events-none rounded-[6px] border-[1.5px] bg-white',
           'transition-[background-color,border-color,box-shadow] duration-150 ease-out motion-reduce:transition-none',
-          'checked:border-brand-600 checked:bg-brand-600',
-          'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-600/25 focus-visible:ring-offset-0',
-          error ? 'border-danger-600' : 'border-[#BCC2D3] hover:border-brand-400',
+          'peer-checked:border-brand-600 peer-checked:bg-brand-600',
+          'peer-focus-visible:ring-[3px] peer-focus-visible:ring-brand-600/25',
+          error ? 'border-danger-600' : 'border-[#BCC2D3] peer-hover:border-brand-400',
         )}
         style={{ width: size, height: size }}
       />
@@ -84,7 +90,7 @@ export default function TermsConsent({ id = 'terms-consent', checked, onChange, 
           <label htmlFor={id} className="absolute inset-0 cursor-pointer rounded-[14px]" aria-hidden="true" />
           <span className="relative mt-[1px]"><Box id={id} checked={checked} onChange={onChange} error={error} describedBy={describedBy} size={22} /></span>
           <span className="relative min-w-0">
-            <label htmlFor={id} className="block cursor-pointer text-[15px] font-medium leading-[1.5] text-navy-900">
+            <label htmlFor={id} className="-my-[11px] block cursor-pointer py-[11px] text-[15px] font-medium leading-[1.5] text-navy-900">
               <ConsentText />
             </label>
             {refundLine ? <span className="mt-1 block text-[13px] leading-[1.5] text-ink-400">
@@ -104,7 +110,7 @@ export default function TermsConsent({ id = 'terms-consent', checked, onChange, 
         {/* The whole row (≥44px tall) toggles the box, except the two links. */}
         <label htmlFor={id} className="absolute inset-0 cursor-pointer" aria-hidden="true" />
         <span className="relative mt-[2px]"><Box id={id} checked={checked} onChange={onChange} error={error} describedBy={describedBy} /></span>
-        <label htmlFor={id} className="relative cursor-pointer select-none text-[14px] leading-[1.6] text-ink-600">
+        <label htmlFor={id} className="relative -my-[11px] cursor-pointer select-none py-[11px] text-[14px] leading-[1.6] text-ink-600">
           <ConsentText />
         </label>
       </div>

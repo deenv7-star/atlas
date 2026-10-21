@@ -40,19 +40,24 @@ export default function BookDirectPage() {
 
   useEffect(() => {
     if (q.data?.property?.name) document.title = `${q.data.property.name} · הזמנה ישירה`;
-  }, [q.data]);
+    // A closed or unknown booking page should not be indexed (book.html ships index,follow for live ones).
+    if (q.isError || (!q.isLoading && !q.data)) {
+      const meta = document.querySelector('meta[name="robots"]');
+      if (meta) meta.setAttribute('content', 'noindex, follow');
+    }
+  }, [q.data, q.isError, q.isLoading]);
 
   if (q.isLoading) {
-    return <Shell><div className="h-56" style={{ background: 'linear-gradient(180deg, #EEF0FF 0%, #F7F8FB 100%)' }} /><div className="max-w-3xl mx-auto px-4 -mt-10"><div className="ab-card h-80 animate-pulse" /></div></Shell>;
+    return <Shell><div className="h-56" style={{ background: 'linear-gradient(180deg, #EEF0FF 0%, #F7F8FB 100%)' }} /><main className="max-w-3xl mx-auto px-4 -mt-10"><div className="ab-card h-80 animate-pulse" /></main></Shell>;
   }
   if (q.isError || !q.data) {
     return (
       <Shell>
-        <div className="max-w-md mx-auto px-6 pt-24 text-center">
+        <main className="max-w-md mx-auto px-6 pt-24 text-center">
           <span className="ab-icon-tile mx-auto"><CalendarSearch size={20} strokeWidth={1.75} /></span>
           <h1 className="ab-h3 mt-4">הדף לא זמין כרגע</h1>
           <p className="ab-meta mt-2">ייתכן שהמארחים סגרו את ההזמנות הישירות. נסו ליצור איתם קשר.</p>
-        </div>
+        </main>
       </Shell>
     );
   }

@@ -50,10 +50,6 @@ const EXACT = {
     title: 'תקנון ותנאי שימוש | atlas',
     description: 'תנאי השימוש בשירות atlas.',
   },
-  '/changelog': {
-    title: 'יומן שינויים | atlas',
-    description: 'עדכוני מוצר וגרסאות atlas.',
-  },
   '/status': {
     title: 'סטטוס מערכת | atlas',
     description: 'מצב זמינות השירות והמערכת.',
@@ -73,10 +69,6 @@ const EXACT = {
   '/sla': {
     title: 'SLA | atlas',
     description: 'הסכם רמת שירות (SLA) של atlas.',
-  },
-  '/api-docs': {
-    title: 'תיעוד API | atlas',
-    description: 'תיעוד ממשק ה-API של atlas.',
   },
   '/how-it-works': {
     title: 'איך זה עובד | atlas',

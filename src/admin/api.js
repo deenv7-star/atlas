@@ -49,7 +49,7 @@ let demo = null;
 const D = () => (demo ||= loadDemo());
 const wait = (v) => new Promise((res) => setTimeout(() => res(structuredClone(v)), 120));
 const nowIso = () => new Date().toISOString();
-let demoActor = 'deenv7@gmail.com';
+let demoActor = 'owner@demo-atlas.co.il';
 
 function demoLog(action, target_type, target_id, org_id, details) {
   const d = D();

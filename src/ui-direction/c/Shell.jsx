@@ -160,15 +160,16 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
   const greeting = `${dayPart().greeting}${name ? `, ${name}` : ''}`;
   return (
     <header className="sticky top-0 z-20 shrink-0 bg-[color-mix(in_srgb,var(--canvas)_88%,transparent)] px-5 pb-2 pt-3 backdrop-blur-md lg:px-10 lg:pb-3 lg:pt-6">
-      <div className="mx-auto flex w-full max-w-[var(--page-max,1200px)] items-center gap-3">
+      {/* Under 360px there is no room beside the avatar and icons, so the greeting drops to its own full-width row (never truncated). */}
+      <div className="mx-auto flex w-full max-w-[var(--page-max,1200px)] flex-wrap items-center gap-x-3 gap-y-2 min-[360px]:flex-nowrap">
         <UserMenu user={user} onLogout={onLogout}>
           <button type="button" aria-label="החשבון שלי" className="press inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full lg:h-[52px] lg:w-[52px]">
             <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={48} ring className="shadow-[0_6px_16px_-8px_rgba(27,38,86,0.45)] lg:!h-[52px] lg:!w-[52px]" />
           </button>
         </UserMenu>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-[17px] font-extrabold leading-tight tracking-[-0.01em] text-navy-900 lg:text-[24px] lg:tracking-[-0.02em]">{greeting}</p>
-          <p className="mt-0.5 truncate text-[13px] text-ink-400 lg:text-[14px]">{formatDayHe(todayISO())}{user?.organization_name ? <span className="hidden sm:inline"> · {user.organization_name}</span> : null}</p>
+        <div className="order-last min-w-0 basis-full min-[360px]:order-none min-[360px]:flex-1 min-[360px]:basis-auto">
+          <p className="line-clamp-2 break-words text-[17px] font-extrabold leading-tight tracking-[-0.01em] text-navy-900 lg:text-[24px] lg:tracking-[-0.02em]">{greeting}</p>
+          <p className="mt-0.5 text-[13px] leading-snug text-ink-400 lg:truncate lg:text-[14px]">{formatDayHe(todayISO())}{user?.organization_name ? <span className="hidden sm:inline"> · {user.organization_name}</span> : null}</p>
         </div>
 
         <button
@@ -179,7 +180,7 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
           <Search className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
           חיפוש אורח, הזמנה או יחידה
         </button>
-        <IconButton label="חיפוש" onClick={onOpenCommandPalette} className="ring-0 xl:hidden">
+        <IconButton label="חיפוש" onClick={onOpenCommandPalette} className="ms-auto ring-0 min-[360px]:ms-0 xl:hidden">
           <Search strokeWidth={1.75} />
         </IconButton>
         <div className="hidden lg:block">

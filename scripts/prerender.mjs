@@ -124,11 +124,11 @@ function headFor(template, meta) {
 
 function bodyFor(html, appHtml, css, extra = '') {
   const withCss = html.replace('</head>', `    <style id="site-css">${css}</style>\n  </head>`);
-  // replace the SPA loading placeholder (everything inside #root, up to the next <style> / <script>)
+  // replace the SPA loading placeholder (everything inside #root, up to the next <style> / <script> / </body>)
   const start = withCss.indexOf('<div id="root">');
   if (start < 0) throw new Error('template has no #root');
   const after = withCss.slice(start);
-  const end = after.search(/\n\s*<(style|script)/);
+  const end = after.search(/\n\s*(<(style|script)|<\/body>)/);
   if (end < 0) throw new Error('could not find the end of #root');
   return withCss.slice(0, start) + `<div id="root"><div data-ssr>${appHtml}</div></div>${extra}` + after.slice(end);
 }
@@ -259,12 +259,14 @@ function withRevealOn(html) {
  * Nothing on screen changes when it starts (hydration adopts the HTML). Hidden tabs start at once; a 2.5 s
  * timer is the safety net.
  */
+// The entry URL rides in data-entry so the inline script body never changes between builds: its sha256
+// is listed in the Content-Security-Policy in vercel.json (a hashed file name inside it would break that).
 function deferEntry(html) {
   const re = /<script type="module" crossorigin src="(\/assets\/[^"]+\.js)"><\/script>/;
   const m = html.match(re);
   if (!m) throw new Error('entry <script type="module"> not found in the template');
   const src = m[1];
-  const boot = `<script>(function(){var d=0;function go(){if(d)return;d=1;var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=${JSON.stringify(src)};document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}var later=function(){setTimeout(go,0)};try{if(PerformanceObserver.supportedEntryTypes.indexOf('paint')<0)throw 0;if(performance.getEntriesByName('first-contentful-paint').length){later()}else{new PerformanceObserver(function(l,o){if(l.getEntriesByName('first-contentful-paint').length){o.disconnect();later()}}).observe({type:'paint',buffered:true})}}catch(e){requestAnimationFrame(later)}setTimeout(go,2500)})()</script>`;
+  const boot = `<script data-entry="${src}">(function(){var e=document.currentScript.getAttribute('data-entry'),d=0;function go(){if(d)return;d=1;var s=document.createElement('script');s.type='module';s.crossOrigin='anonymous';s.src=e;document.body.appendChild(s)}if(document.visibilityState!=='visible'||typeof requestAnimationFrame!=='function'){go();return}var later=function(){setTimeout(go,0)};try{if(PerformanceObserver.supportedEntryTypes.indexOf('paint')<0)throw 0;if(performance.getEntriesByName('first-contentful-paint').length){later()}else{new PerformanceObserver(function(l,o){if(l.getEntriesByName('first-contentful-paint').length){o.disconnect();later()}}).observe({type:'paint',buffered:true})}}catch(e){requestAnimationFrame(later)}setTimeout(go,2500)})()</script>`;
   return html.replace(re, '').replace('</body>', `    ${boot}\n  </body>`);
 }
 
@@ -292,7 +294,7 @@ function leanBody(html, appHtml, assets) {
   const start = head.indexOf('<div id="root">');
   if (start < 0) throw new Error('template has no #root');
   const after = head.slice(start);
-  const end = after.search(/\n\s*<(style|script)/);
+  const end = after.search(/\n\s*(<(style|script)|<\/body>)/);
   if (end < 0) throw new Error('could not find the end of #root');
   return head.slice(0, start) + `<div id="root" data-hydrate>${appHtml}</div>` + after.slice(end);
 }
@@ -301,6 +303,16 @@ function appMeta(mod, route) {
   const m = mod.appRouteMeta(route);
   const jsonLd = route === '/pricing' ? mod.pricingLd() : null;
   return { title: m.title, description: m.description, canonical: `${ORIGIN}${route}`, ogImage: LANDING_OG, jsonLd };
+}
+
+/** The plain SPA shell with its own robots tag and without the landing's canonical / hreflang / og:url. */
+function spaShell(index, robots) {
+  let html = index.replace(/\s*<link rel="canonical"[^>]*>/g, '')
+    .replace(/\s*<link rel="alternate" hreflang[^>]*>/g, '')
+    .replace(/\s*<meta property="og:url"[^>]*>/g, '');
+  if (!/<meta name="robots"[^>]*>/.test(html)) throw new Error('index.html has no robots meta');
+  html = html.replace(/<meta name="robots"[^>]*>/, `<meta name="robots" content="${robots}" />`);
+  return html;
 }
 
 /** /register, /login: the SPA shell with their own head, and real text (visually hidden) ahead of the spinner. */
@@ -330,8 +342,11 @@ function withBelowFoldDeferred(mod, html) {
 
 function prerenderLean(mod, template, index) {
   const manifest = readManifest();
-  // every URL that is not a prerendered file gets the plain SPA shell (vercel.json / _redirects / netlify.toml)
-  fs.writeFileSync(path.join(DIST, 'app.html'), index);
+  // every URL that is not a prerendered file gets the plain SPA shell (vercel.json / _redirects / netlify.toml).
+  // App screens, /admin and guest links are private: noindex, and no canonical pointing at the landing.
+  fs.writeFileSync(path.join(DIST, 'app.html'), spaShell(index, 'noindex,nofollow'));
+  // /book/:slug is a host's public direct-booking page: indexable, but it is not the landing (no canonical to "/").
+  fs.writeFileSync(path.join(DIST, 'book.html'), spaShell(index, 'index,follow'));
 
   const landing = withRevealOn(mod.renderLean('/'));
   fs.writeFileSync(path.join(DIST, 'index.html'), withBelowFoldDeferred(mod, withUiFlag(leanBody(index, landing, chunkAssets(manifest, 'src/pages/Landing.jsx')))));

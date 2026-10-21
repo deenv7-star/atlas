@@ -288,7 +288,7 @@ export function PreviewCard({ a, at }) {
       </div>
       <div className="px-6 pb-4 pt-4">
         <p className="text-[13px] font-bold text-brand-600">{a.kind ? k.label : COPY.kind.group}</p>
-        <p className={cn('truncate text-[26px] font-extrabold', a.name.trim() ? 'text-navy-900' : 'text-navy-900/45')}>{a.name.trim() || COPY.preview.placeholderName}</p>
+        <p className={cn('truncate text-[26px] font-extrabold', a.name.trim() ? 'text-navy-900' : 'text-navy-900/60')}>{a.name.trim() || COPY.preview.placeholderName}</p>
         {chips.length ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {chips.map((c) => <span key={c} className="ob3-fade rounded-full bg-[#F7F8FB] px-3 py-1.5 text-[13px] font-semibold text-navy-900">{c}</span>)}
