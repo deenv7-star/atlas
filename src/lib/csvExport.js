@@ -1,3 +1,4 @@
+import { todayIsrael } from './localDate';
 /**
  * csvExport.js — Atlas CSV export utility
  * Usage: exportToCSV(rows, 'bookings', columns)
@@ -17,7 +18,7 @@ export function exportToCSV(data, filename, columns) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${filename}_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `${filename}_${todayIsrael()}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

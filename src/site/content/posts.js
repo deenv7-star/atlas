@@ -276,7 +276,7 @@ export const POSTS = [
       { q: 'מתי כדאי לתת הנחת רגע אחרון?', a: 'בעונת שפל, לילה שעדיין פנוי חמישה עד שבעה ימים לפני יכול לרדת ב-10% עד 15%. בעונת שיא ובחגים בדרך כלל אין צורך. חשוב לא פחות לפתוח "חורים" של לילה אחד בין הזמנות, שאחרת אף אחד לא יכול להזמין בגלל מינימום הלילות.' },
     ],
     sources: [
-      { title: 'הרשות לפיתוח הגליל: הפעלת צימרים בגליל', url: 'http://www.romgalil.org.il/art/a_70.asp' },
+      { title: 'הרשות לפיתוח הגליל: הפעלת צימרים בגליל', url: 'https://www.romgalil.org.il/art/a_70.asp' },
       { title: 'Hebcal: Jewish holidays 2027', url: 'https://www.hebcal.com/holidays/2027' },
       { title: 'Airbnb Help Center: Airbnb service fees', url: 'https://www.airbnb.com/help/article/1857' },
       { title: 'Airbnb Resource Center: Simplifying Airbnb service fees', url: 'https://www.airbnb.com/resources/hosting-homes/a/simplifying-airbnb-service-fees-746' },
@@ -413,7 +413,7 @@ export const POSTS = [
     sources: [
       { title: 'מבקר המדינה: פיקוח הרשויות המקומיות על יחידות אירוח במרחב הכפרי', url: 'https://www.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/955-8.aspx' },
       { title: 'רישוי ועסקים (עו"ד שושי יוסקוביץ\'): יחידות אירוח וצימרים, פריט 7.1ב', url: 'https://www.buslic.co.il/2016/12/06/zimerunits/' },
-      { title: 'הרשות לפיתוח הגליל: הפעלת צימרים בגליל', url: 'http://www.romgalil.org.il/art/a_70.asp' },
+      { title: 'הרשות לפיתוח הגליל: הפעלת צימרים בגליל', url: 'https://www.romgalil.org.il/art/a_70.asp' },
       { title: 'משרד התיירות: תקנים פיזיים לתכנון וסיווג מתקני אכסון תיירותי', url: 'https://www.gov.il/BlobFolder/policy/hoverttkanim2012/he/hoverttkanim2012.pdf' },
       { title: 'משרד הפנים: מפרט אחיד לפריט 7.1א', url: 'https://www.gov.il/BlobFolder/generalpage/uniform-spec-07-01a/he/07_2026_uniform-spec-07-01a-12-7-26-clean.pdf' },
     ],

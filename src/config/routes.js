@@ -80,7 +80,10 @@ export const LEGACY_REDIRECTS = [
  */
 export function getSafeReturnUrl(returnUrl) {
   if (!returnUrl || typeof returnUrl !== 'string') return null;
-  const decoded = decodeURIComponent(returnUrl.trim());
-  if (!decoded.startsWith('/') || decoded.startsWith('//')) return null;
+  let decoded;
+  try { decoded = decodeURIComponent(returnUrl.trim()); } catch { return null; }
+  // Same-origin paths only. Browsers treat "/\\host" like "//host", and control characters can hide a scheme.
+  if (!decoded.startsWith('/') || decoded.startsWith('//') || decoded.startsWith('/\\')) return null;
+  if (/[\u0000-\u001f\u007f\\]/.test(decoded)) return null;
   return decoded;
 }

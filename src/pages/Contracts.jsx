@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { PageHeader, EmptyState } from '@/components/ds';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -139,8 +140,10 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
       // Replace placeholders in template
       let body = template?.content || '';
       if (booking) {
+        // Guest names can come from public forms and iCal feeds: escape before they go into HTML.
+        const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         body = body
-          .replace(/\{guest_name\}/g, booking.guest_name || '')
+          .replace(/\{guest_name\}/g, esc(booking.guest_name))
           .replace(/\{checkin_date\}/g, booking.check_in_date ? format(parseISO(booking.check_in_date), 'd/M/yyyy') : '')
           .replace(/\{checkout_date\}/g, booking.check_out_date ? format(parseISO(booking.check_out_date), 'd/M/yyyy') : '')
           .replace(/\{total_amount\}/g, booking.total_price?.toLocaleString() || '')
@@ -625,7 +628,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
             <div 
               className="prose prose-sm max-w-none p-4 bg-white border rounded-[10px]" 
               dir="rtl"
-              dangerouslySetInnerHTML={{ __html: selectedContract.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedContract.content || '') }}
             />
           )}
 

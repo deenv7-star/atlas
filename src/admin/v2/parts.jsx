@@ -18,6 +18,7 @@ import { computeKpis, KPI_HELP, monthlyValue } from './kpis';
 import { testInfo } from './testAccounts';
 import { SIGNUP, ACTIVE, SIGNUP_ORDER, ACTIVE_ORDER, UNITS, TESTS, activeFilterCount } from './listModel';
 import { useV2Actions, logEvent, downloadJson, slug } from './hooks2';
+import { todayIsrael } from '@/lib/localDate';
 
 export const initials = (s) => String(s || '').replace(/[^\p{L}\s]/gu, '').split(/\s+/).filter(Boolean).map((x) => x[0]).join('').slice(0, 2).toUpperCase();
 export const displayName = (c) => c?.org_name || c?.owner_email?.split('@')[0] || 'ללא שם';
@@ -351,7 +352,7 @@ export function UnitsCard({ data }) {
 /** Read-only "view as": what the owner sees today, no guest PII. Opening it writes an audit row. */
 export function ViewAsCard({ c, data }) {
   useEffect(() => { logEvent('customer.view_as', c.org_id, { surface: 'today' }); }, [c.org_id]);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayIsrael();
   const upcoming = data.recent_bookings.filter((b) => (b.check_out_date || '') >= today);
   return (
     <section className="x-card x-viewas" aria-labelledby="h-va2">
