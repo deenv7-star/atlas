@@ -26,14 +26,14 @@ Owner rule (Deen, 16.10.2026): one unified language, one unified branding, one c
 - Icons: lucide, 1.75 stroke, 20px; inside a 36px tinted square (--brand-50) when used as a card icon. No emoji.
 - Motion: 150-220ms, ease-out cubic-bezier(.2,.8,.2,1); press scale .98; respect prefers-reduced-motion.
 
-## Logo
-- Source of truth: Deen's final logo, docs/brand/atlas-logo-deen-source.svg (single compound path). Used exactly: the path data is unchanged; only the fill colour, the viewBox (padding trimmed) and the title ("atlas") differ. Never redraw, trace or re-letter it.
-- Version A: navy #1B2656 wordmark; symbol = indigo #3E2BF1 orb "a" on white (favicon tile, app icon).
-- The symbol (app icon / favicon / avatar) is the orb "a" alone: the first two subpaths of the same compound path (arm + orb), split out with no new curves. Component: `BrandMark`; wordmark: `BrandWordmark` (same file).
-- White on navy/indigo when inverted. Colours only #1B2656, #3E2BF1, white.
-- Files: public/atlas-logo.svg (+ -navy / -indigo / -white), atlas-mark.svg, atlas-mark-white.svg, favicon.svg/.ico/16/32, apple-touch-icon.png, icons/icon-*.png, icons/maskable-192/512.png (mark inside the 80% safe zone), public/brand/icons/<colourway>/.
-- Rebuild: `python3 scripts/brand-logo/export_final.py A .` (cairosvg + pillow), then OG: `OG_ONLY=1 CHROME=... node scripts/site-assets/gen-covers.mjs` and copy public/og/og-default.png to public/og-image.png.
-- Heebo remains the interface/body typeface; never set the logo in a font.
+## Logo (v2, Deen 21.10.2026)
+- Source of truth: Deen's own two PNGs, kept in brand/logo-v2/src of the project (wordmark: squared geometric lowercase "atlas"; icon: white single-stroke script "a" on indigo). Faithfully vectorised by `scripts/brand-logo/v2/trace.py` into `scripts/brand-logo/geom-v2.json` (overlay IoU wordmark 0.998, icon 0.995; exact H/V straight edges, G1 cubic curves). Never redraw or re-letter: change the PNG and re-run the tracer.
+- Wordmark: navy #1B2656 on light, white on navy/indigo. Component `BrandWordmark` keeps the v1 height (1.3599em) so headers do not shift; width follows the new aspect (2.847).
+- Symbol (app icon / favicon / avatar): the script "a" in white on brand indigo #3E2BF1 (`BrandMark`, indigo on light). App icon = Deen's composition, full-bleed (iOS/Android apply their mask); maskable = mark inside the 80% safe circle; favicon 16/32 get optical stroke weight only.
+- Colours only #1B2656, #3E2BF1, white.
+- Files: public/atlas-logo.svg (+ -navy / -indigo / -white), atlas-mark.svg, atlas-mark-white.svg, favicon.svg/.ico/16/32, apple-touch-icon.png, icons/icon-*.png, icons/maskable-192/512.png, public/brand/icons/<colourway>/. All referenced with ?v=2.
+- Rebuild: see scripts/brand-logo/v2/README.md (trace -> `python3 scripts/brand-logo/export_v2.py .` -> apply_refs -> OG via gen-covers.mjs, copy og-default.png to og-image.png).
+- Heebo remains the interface/body typeface; never set the logo in a font. Supabase auth emails use a text wordmark (unchanged).
 
 ## Voice (Hebrew)
 - Speak to the owner in plural "אתם" (landing) / imperative short verbs in app buttons ("הוסיפו הזמנה" → app buttons use infinitive-free short form: "הזמנה חדשה", "שמירה", "שליחה בוואטסאפ").

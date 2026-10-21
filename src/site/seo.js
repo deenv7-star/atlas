@@ -32,7 +32,7 @@ export function organizationLd() {
     '@id': ORG_ID,
     name: 'atlas',
     url: `${SITE_ORIGIN}/`,
-    logo: `${SITE_ORIGIN}/icons/icon-512x512.png`,
+    logo: `${SITE_ORIGIN}/icons/icon-512x512.png?v=2`,
     description: ATLAS_ONE_LINER,
     areaServed: { '@type': 'Country', name: 'Israel' },
     knowsLanguage: ['he'],
