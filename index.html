@@ -82,8 +82,8 @@
         var l = document.createElement('link');
         l.rel = 'preload'; l.as = 'image'; l.type = 'image/avif'; l.setAttribute('fetchpriority', 'high');
         l.setAttribute('imagesrcset', p
-          ? '/landing-hero/pool-p480.avif 480w, /landing-hero/pool-p720.avif 720w, /landing-hero/pool-p1080.avif 1080w'
-          : '/landing-hero/pool-960.avif 960w, /landing-hero/pool-1280.avif 1280w, /landing-hero/pool-1920.avif 1920w, /landing-hero/pool-2560.avif 2560w, /landing-hero/pool-3840.avif 3840w');
+          ? '/landing-real/hero-p-480.avif 480w, /landing-real/hero-p-720.avif 720w, /landing-real/hero-p-1080.avif 1080w'
+          : '/landing-real/hero-960.avif 960w, /landing-real/hero-1440.avif 1440w, /landing-real/hero-1920.avif 1920w');
         l.setAttribute('imagesizes', '100vw');
         document.head.appendChild(l);
         // the hero's Hebrew weights, plus Latin 700 (the digits in the "14" CTA and "₪1,250"), so the

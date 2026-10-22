@@ -1,0 +1,83 @@
+/* Real-photo landing (20.10.2026). Photos carry the page; UI chrome stays indigo / navy / canvas / white. */
+.rp-pic { display: block; }
+.rp-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- hero: full-bleed photo (R2: a muted loop on top of it) ---------- */
+.rp-hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; color: #fff; overflow: hidden; background: var(--navy); }
+@media (min-width: 900px) { .rp-hero { min-height: min(100svh, 980px); } }
+.rp-hero-media { position: absolute; inset: 0; }
+.rp-hero-media .rp-pic, .rp-hero-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rp-hero-media video { opacity: 0; transition: opacity 0.8s ease; }
+.rp-hero-media video.is-on { opacity: 1; }
+.rp-hero::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(14, 20, 48, 0.78) 0%, rgba(14, 20, 48, 0.42) 34%, rgba(14, 20, 48, 0) 62%),
+              linear-gradient(to bottom, rgba(14, 20, 48, 0.32), rgba(14, 20, 48, 0) 22%); }
+.rp-hero-in { position: relative; z-index: 1; width: 100%; max-width: calc(1200px + var(--gut) * 2); margin-inline: auto; padding: 0 var(--gut) 44px; }
+@media (min-width: 900px) { .rp-hero-in { padding-bottom: 80px; } }
+.rp-h1 { color: #fff; font-size: 46px; line-height: 1.02; font-weight: 800; letter-spacing: -0.04em; text-wrap: balance; text-shadow: 0 2px 24px rgba(14, 20, 48, 0.25); }
+@media (min-width: 900px) { .rp-h1 { font-size: 84px; } }
+.rp-sub { margin-top: 14px; font-size: 18px; line-height: 1.5; max-width: 26em; color: rgba(255, 255, 255, 0.92); text-wrap: pretty; }
+@media (min-width: 900px) { .rp-sub { font-size: 21px; } }
+.rp-ctas { margin-top: 26px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.rp-btn { display: inline-flex; align-items: center; gap: 10px; min-height: 54px; padding: 0 26px; border-radius: 999px; background: var(--indigo); color: #fff; font-weight: 700; font-size: 17px; box-shadow: 0 10px 30px -10px rgba(62, 43, 241, 0.7); transition: transform 0.2s ease, background 0.2s ease; }
+.rp-btn:hover { background: var(--indigo-700); }
+.rp-btn:active { transform: scale(0.97); }
+.rp-note { font-size: 15px; color: rgba(255, 255, 255, 0.85); }
+
+/* ---------- story: few strong photos, one short line each, lots of air ---------- */
+.rp-story { background: #fff; padding: 96px 0 40px; }
+@media (min-width: 900px) { .rp-story { padding: 160px 0 64px; } }
+.rp-lead { font-size: 30px; line-height: 1.12; font-weight: 800; letter-spacing: -0.035em; color: var(--navy); max-width: 15em; text-wrap: balance; }
+.rp-lead .is-ind { color: var(--indigo); }
+@media (min-width: 900px) { .rp-lead { font-size: 52px; } }
+.rp-moment { margin-top: 64px; }
+@media (min-width: 900px) { .rp-moment { margin-top: 120px; } }
+.rp-frame { position: relative; overflow: hidden; border-radius: 24px; background: var(--canvas); }
+.rp-frame.is-wide { aspect-ratio: 3 / 2; }
+.rp-frame.is-tall { aspect-ratio: 4 / 5; }
+@media (min-width: 900px) { .rp-frame.is-wide { aspect-ratio: 16 / 9; border-radius: 32px; } }
+.rp-line { margin-top: 18px; font-size: 22px; line-height: 1.25; font-weight: 700; letter-spacing: -0.02em; color: var(--navy); text-wrap: balance; }
+.rp-line small { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; letter-spacing: 0; color: var(--indigo); }
+@media (min-width: 900px) { .rp-line { font-size: 30px; margin-top: 24px; } }
+.rp-pair { display: grid; gap: 56px; }
+@media (min-width: 900px) { .rp-pair { grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; } .rp-pair > :nth-child(2) { margin-top: 140px; } }
+
+.rp-channels { margin-top: 72px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 26px; color: var(--ink-2); font-size: 15px; }
+.rp-channels p { width: 100%; text-align: center; font-weight: 600; color: var(--ink); }
+.rp-channels ul { display: contents; }
+.rp-channels li { display: inline-flex; align-items: center; gap: 8px; }
+@media (min-width: 900px) { .rp-channels { margin-top: 120px; } }
+
+/* ---------- final: one photo, one line, the CTA ---------- */
+.rp-final { position: relative; overflow: hidden; color: #fff; background: var(--navy); margin: 40px var(--gut) 0; border-radius: 28px; min-height: 560px; display: flex; align-items: flex-end; }
+@media (min-width: 900px) { .rp-final { margin: 80px auto 0; max-width: 1200px; border-radius: 36px; min-height: 640px; } }
+.rp-final .rp-pic { position: absolute; inset: 0; }
+.rp-final::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(14, 20, 48, 0.86), rgba(14, 20, 48, 0.25) 55%, rgba(14, 20, 48, 0.1)); }
+.rp-final-in { position: relative; z-index: 1; padding: 36px 24px; width: 100%; }
+@media (min-width: 900px) { .rp-final-in { padding: 64px; } }
+.rp-final-h { color: #fff; font-size: 40px; line-height: 1.04; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 22px; text-wrap: balance; }
+@media (min-width: 900px) { .rp-final-h { font-size: 64px; } }
+.rp-final .v8x-note { color: rgba(255, 255, 255, 0.85); }
+
+/* ---------- R2 living: slow Ken Burns, gentle parallax, short loops (all off for reduced motion) ---------- */
+.rp-kb img { transform-origin: 50% 60%; }
+.is-in .rp-kb img, .rp-kb.is-in img { animation: rp-kb 22s ease-out both; }
+@keyframes rp-kb { from { transform: scale(1.12); } to { transform: scale(1.0); } }
+@supports (animation-timeline: view()) {
+  .rp-par img { animation: rp-par linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+  @keyframes rp-par { from { transform: translateY(-6%) scale(1.14); } to { transform: translateY(6%) scale(1.14); } }
+}
+.rp-loop { position: relative; width: 100%; overflow: hidden; border-radius: 24px; aspect-ratio: 9 / 16; max-width: 360px; background: var(--canvas); }
+.rp-loop video, .rp-loop .rp-pic { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rp-loop video { opacity: 0; transition: opacity 0.6s ease; }
+.rp-loop video.is-on { opacity: 1; }
+.rp-split { display: grid; gap: 28px; align-items: center; }
+@media (min-width: 900px) { .rp-split { grid-template-columns: 1fr 1fr; gap: 80px; } .rp-split .rp-loop { justify-self: center; } }
+.rp-shot { max-width: 300px; margin: 0 auto; border-radius: 32px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 30px 60px -30px rgba(27, 38, 86, 0.35); background: #fff; }
+.rp-shot img { display: block; width: 100%; height: auto; }
+.rp-cap { margin-top: 12px; font-size: 14px; color: var(--ink-2); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-in .rp-kb img, .rp-kb.is-in img, .rp-par img { animation: none !important; transform: none !important; }
+  .rp-hero-media video, .rp-loop video { display: none; }
+}
