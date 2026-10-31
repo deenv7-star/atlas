@@ -152,7 +152,7 @@ function EndHead() {
   return (
     <>
       <h2 className="ph-end-h">בוקר טוב. <span>הכל כבר כאן.</span></h2>
-      <p className="ph-end-sub">ככה נראה מסך הבית של atlas כל בוקר. נתוני דוגמה.</p>
+      <p className="ph-end-sub">ככה נראה מסך הבית של atlas כל בוקר. <span className="nw">נתוני דוגמה.</span></p>
     </>
   );
 }
