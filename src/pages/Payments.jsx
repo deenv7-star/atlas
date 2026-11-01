@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { askConfirm } from '@/components/common/confirmDialog';
 import FinanceTabs from '@/components/app/FinanceTabs';
 import { paymentFormToPayload } from '@/lib/entityPayloads';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -27,7 +28,7 @@ const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer
 const PAYMENT_STATUSES = [
   { value: 'PENDING',  label: 'ממתין', color: 'bg-amber-100 text-amber-700 border-amber-200' },
   { value: 'PAID',     label: 'שולם',  color: 'bg-green-100 text-green-700 border-green-200' },
-  { value: 'PARTIAL',  label: 'חלקי',  color: 'bg-blue-100 text-blue-700 border-blue-200' },
+  { value: 'PARTIAL',  label: 'שולם חלקית',  color: 'bg-blue-100 text-blue-700 border-blue-200' },
   { value: 'FAILED',   label: 'לא עבר',  color: 'bg-red-100 text-red-700 border-red-200' },
   { value: 'REFUNDED', label: 'הוחזר', color: 'bg-gray-100 text-gray-500 border-gray-200' },
   { value: 'OVERDUE',  label: 'באיחור', color: 'bg-orange-100 text-orange-700 border-orange-200' },
@@ -164,7 +165,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
   const handlePaymentSubmit = async (data) => {
     if (!orgId) {
-      throw new Error('קודם צריך לסיים את הקמת העסק');
+      throw new Error('כדי לרשום תשלומים, קודם מסיימים את ההגדרה הקצרה.');
     }
     if (editingPayment) {
       await updateMutation.mutateAsync({ id: editingPayment.id, data: paymentFormToPayload(data) });
@@ -178,7 +179,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   // ── CSV Export ───────────────────────────────────────────────────────────────
   const handleExport = () => {
     exportToCSV(filtered, 'payments', PAYMENT_COLUMNS);
-    toast({ title: `${filtered.length === 1 ? 'יוצא תשלום אחד' : `יוצאו ${filtered.length} תשלומים`} ל-CSV` });
+    toast({ title: `ירד קובץ לאקסל עם ${filtered.length === 1 ? 'תשלום אחד' : `${filtered.length} תשלומים`}` });
   };
 
   return (
@@ -187,8 +188,8 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
       {!orgId && (
         <div className="rounded-2xl border border-line bg-white px-4 py-3 text-sm text-navy-900 text-right">
-          <p className="font-semibold">התשלומים יופיעו אחרי הקמת העסק</p>
-          <p className="text-ink-600 mt-1">אחרי שתסיימו את הקמת העסק, רעננו את הדף.</p>
+          <p className="font-semibold">התשלומים יופיעו אחרי ההגדרה הקצרה</p>
+          <p className="text-ink-600 mt-1">כדי לרשום תשלומים, קודם מסיימים את ההגדרה הקצרה. <a href="/setup" className="font-semibold text-brand-700 underline underline-offset-2">המשך ההגדרה</a></p>
         </div>
       )}
 
@@ -231,7 +232,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       {/* Financial / payments table */}
       <div className="v7-card overflow-hidden">
         {!orgId ? (
-          <div className="p-6 text-center text-sm text-ink-600">התשלומים יופיעו כאן אחרי שתסיימו את הקמת העסק.</div>
+          <div className="p-6 text-center text-sm text-ink-600">התשלומים יופיעו כאן אחרי שתסיימו את ההגדרה הקצרה.</div>
         ) : filtered.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Wallet}
@@ -271,10 +272,12 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
             error={isError ? (paymentsError instanceof Error ? paymentsError : new Error('לא הצלחנו לטעון את התשלומים')) : null}
             onEdit={openEdit}
             onDelete={(id) => {
-              if (confirm('למחוק את התשלום?')) deleteMutation.mutate(id);
+              askConfirm({ title: 'למחוק את התשלום?', description: 'התשלום יימחק לצמיתות.' })
+                .then((ok) => { if (ok) deleteMutation.mutate(id); });
             }}
-            onBulkDelete={(rows) => {
-              if (!confirm(`למחוק ${heCount(rows.length, 'payment')}?`)) return;
+            onBulkDelete={async (rows) => {
+              const ok = await askConfirm({ title: `למחוק ${heCount(rows.length, 'payment')}?`, description: 'התשלומים יימחקו לצמיתות.' });
+              if (!ok) return;
               rows.forEach((r) => deleteMutation.mutate(r.id));
             }}
           />

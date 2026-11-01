@@ -4,7 +4,8 @@ import { Page, PageHeader, Card, fmtMoney } from '@/components/ds';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Check, Zap, Crown, Rocket } from 'lucide-react';
-import { PRICING_PLANS, TRIAL_LINE } from '@/config/pricing';
+import { PRICING_PLANS, TRIAL_LINE, VAT_LINE } from '@/config/pricing';
+import { heError } from '@/lib/heError';
 import { submitPublicContact } from '@/lib/submitPublicContact';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import TermsConsent from '@/components/legal/TermsConsent';
@@ -57,7 +58,7 @@ export default function SubscriptionPage({ user }) {
       setRequested(plan.id);
       atlasToastApi.success('הבקשה התקבלה. נחזור אליכם תוך יום עסקים כדי להפעיל את החבילה.');
     } catch (e) {
-      atlasToastApi.error(e?.message || 'לא הצלחנו לשלוח. כתבו לנו ל־support@atlas-il.com');
+      atlasToastApi.error(heError(e, 'לא הצלחנו לשלוח את הבקשה. כתבו לנו בוואטסאפ 052-597-9520, אנחנו זמינים 24/7.'));
     } finally {
       setBusy('');
     }
@@ -65,7 +66,7 @@ export default function SubscriptionPage({ user }) {
 
   return (
     <Page className="space-y-6">
-      <PageHeader title="מנוי" subtitle={isTrial ? TRIAL_LINE : 'אפשר להחליף חבילה או לבטל בכל רגע.'} className="!mb-0" />
+      <PageHeader title="מנוי" subtitle={isTrial ? `${TRIAL_LINE} בוחרים חבילה, ונחזור אליכם תוך יום עסקים כדי להפעיל אותה.` : 'אפשר להחליף חבילה או לבטל בכל רגע. נחזור אליכם תוך יום עסקים.'} className="!mb-0" />
 
       <TermsConsent id="sub-consent" className="max-w-[560px]" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
 
@@ -82,7 +83,7 @@ export default function SubscriptionPage({ user }) {
                   <h2 className="text-[18px] font-bold text-navy-900">{plan.name}</h2>
                 </div>
                 {isCurrent ? (
-                  <span className="inline-flex h-6 items-center rounded-full bg-success-50 px-2.5 text-[13px] font-bold text-success-600">התוכנית שלכם</span>
+                  <span className="inline-flex h-6 items-center rounded-full bg-success-50 px-2.5 text-[13px] font-bold text-success-600">החבילה שלכם</span>
                 ) : plan.popular ? (
                   <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">מומלץ</span>
                 ) : null}
@@ -106,7 +107,7 @@ export default function SubscriptionPage({ user }) {
                 onClick={() => !isCurrent && !isRequested && handleSelectPlan(plan)}
                 disabled={isCurrent || isRequested || Boolean(busy)}
               >
-                {isCurrent ? 'התוכנית הנוכחית' : isRequested ? 'הבקשה נשלחה' : busy === plan.id ? 'שולחים…' : `בחירת ${plan.name}`}
+                {isCurrent ? 'החבילה הנוכחית' : isRequested ? 'הבקשה נשלחה' : busy === plan.id ? 'שולחים…' : `בחירת ${plan.name}`}
               </Button>
             </Card>
           );
@@ -115,7 +116,7 @@ export default function SubscriptionPage({ user }) {
 
       <div className="flex flex-col items-center gap-3 pt-2 text-center">
         <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[14px] text-ink-600">
-          {['ניסיון חינם 14 יום', 'ביטול בכל רגע', 'בלי התחייבות'].map((t) => (
+          {['14 יום חינם', 'ביטול בכל רגע', 'בלי התחייבות', VAT_LINE].map((t) => (
             <li key={t} className="flex items-center gap-1.5"><Check className="h-4 w-4 text-success-600" strokeWidth={2} />{t}</li>
           ))}
         </ul>

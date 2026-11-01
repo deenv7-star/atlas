@@ -150,25 +150,26 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="INVOICE">חשבונית</SelectItem>
-              <SelectItem value="RECEIPT">קבלה</SelectItem>
-              <SelectItem value="TAX_INVOICE">חשבונית מס</SelectItem>
-              <SelectItem value="PROFORMA">חשבונית עסקה</SelectItem>
+              {/* record-only (COPY-044): no tax-document types; legacy values stay readable on old rows */}
+              <SelectItem value="INVOICE">מסמך מהתוכנה שלכם</SelectItem>
+              <SelectItem value="PROFORMA">חשבון עסקה</SelectItem>
+              {formData.type === 'RECEIPT' ? <SelectItem value="RECEIPT">קבלה (מהתוכנה שלכם)</SelectItem> : null}
+              {formData.type === 'TAX_INVOICE' ? <SelectItem value="TAX_INVOICE">חשבונית מס (מהתוכנה שלכם)</SelectItem> : null}
             </SelectContent>
           </Select>
         </div>
 
         <div>
-          <Label>מספר חשבונית</Label>
+          <Label>מספר המסמך</Label>
           <Input
             value={formData.invoice_number}
             onChange={(e) => setFormData(prev => ({ ...prev, invoice_number: e.target.value }))}
-            placeholder="נמלא לבד אם תשאירו ריק"
+            placeholder="המספר מהתוכנה שלכם"
           />
         </div>
 
         <div>
-          <Label>סטטוס</Label>
+          <Label>מצב</Label>
           <Select value={formData.status} onValueChange={(v) => setFormData(prev => ({ ...prev, status: v }))}>
             <SelectTrigger>
               <SelectValue />
@@ -235,7 +236,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
         <h3 className="font-semibold mb-4">תאריכים</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label>תאריך הנפקה *</Label>
+            <Label>תאריך המסמך *</Label>
             <Input
               type="date"
               required
@@ -356,7 +357,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
           ביטול
         </Button>
         <Button type="submit" className="bg-brand-600 hover:bg-brand-600/90">
-          שמירת חשבונית
+          שמירת הרישום
         </Button>
       </div>
     </form>

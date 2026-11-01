@@ -604,7 +604,7 @@ export default function TodayBoard({ user, orgId }) {
         <div className="v7-card mt-4 p-6">
           <p className="text-[15px] font-semibold text-navy-900">לא הצלחנו לטעון את היום</p>
           <p className="mt-1 text-[14px] text-ink-400">בדקו את החיבור ונסו שוב.</p>
-          <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>לנסות שוב</Button>
+          <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>נסו שוב</Button>
         </div>
       ) : data.isLoading ? skeleton : (
         <>

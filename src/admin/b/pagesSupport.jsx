@@ -13,7 +13,7 @@ import '@/support/support.css';
 
 const FILTERS = [['waiting', 'ממתינות לנציג'], ['open', 'פתוחות'], ['closed', 'סגורות'], ['all', 'הכל']];
 const MODE = { human: { label: 'נציג', tone: 'lilac' }, bot: { label: 'בוט', tone: 'gray' } };
-const REASON = { button: 'לחץ "דבר עם נציג"', keyword: 'ביקש נציג', unhelpful: 'הבוט לא עזר', bot_error: 'תקלה בבוט', agent: 'נציג נכנס לשיחה' };
+const REASON = { button: 'לחץ "שיחה עם נציג"', keyword: 'ביקש נציג', unhelpful: 'הבוט לא עזר', bot_error: 'תקלה בבוט', agent: 'נציג נכנס לשיחה' };
 const CHANNEL = { BOOKING_COM: 'Booking.com', AIRBNB: 'Airbnb', GOOGLE: 'Google', OUTLOOK: 'Outlook', ICAL: 'iCal' };
 const PLAN = { starter: 'מתחיל', pro: 'מקצועי', business: 'עסקי' };
 const initials = (s) => String(s || '').replace(/[^\p{L}\s]/gu, '').split(/\s+/).filter(Boolean).map((x) => x[0]).join('').slice(0, 2) || '·';

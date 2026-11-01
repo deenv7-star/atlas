@@ -1,4 +1,5 @@
 import { Wordmark } from '@/components/app/shell/shared';
+import { heError } from '@/lib/heError';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -36,15 +37,15 @@ export default function ResetPassword() {
       });
       if (err) throw err;
       setSent(true);
-      atlasToastApi.success('אם הכתובת רשומה, שלחנו אליה קישור לאיפוס');
     } catch (err) {
+      // COPY-027: one neutral answer whether or not the address has an account (no account enumeration)
       const msg = (err.message || '').toLowerCase();
       if (msg.includes('rate limit')) {
-        atlasToastApi.error('יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.');
+        atlasToastApi.error('יותר מדי ניסיונות. חכו כמה דקות ונסו שוב.');
       } else if (msg.includes('invalid') || msg.includes('not found')) {
-        setError('אין חשבון עם המייל הזה. בדקו את הכתובת או פתחו חשבון.');
+        setSent(true);
       } else {
-        atlasToastApi.error(err.message || 'לא הצלחנו לשלוח את הקישור. נסו שוב בעוד רגע.');
+        atlasToastApi.error(heError(err, 'לא הצלחנו לשלוח את הקישור. בדקו את החיבור ונסו שוב.'));
       }
     } finally {
       setIsLoading(false);
@@ -57,8 +58,8 @@ export default function ResetPassword() {
         <div className="w-full max-w-[440px] text-center">
           <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           <div className="v7-card p-6">
-            <p className="text-navy-900 font-bold text-lg">שלחנו לכם קישור לאיפוס הסיסמה</p>
-            <p className="text-ink-600 text-sm mt-2">בדקו את תיבת המייל (וגם את הספאם). הקישור תקף לשעה.</p>
+            <p className="text-navy-900 font-bold text-lg">בדקו את המייל</p>
+            <p className="text-ink-600 text-sm mt-2">אם יש חשבון עם {email.trim()}, שלחנו אליו קישור לאיפוס הסיסמה. חפשו גם בספאם. הקישור תקף לשעה.</p>
           </div>
           <Link to="/login" className="inline-flex min-h-[44px] items-center mt-6 text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
         </div>
@@ -72,13 +73,13 @@ export default function ResetPassword() {
         <div className="text-center mb-10">
           <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
           <h1 className="text-2xl font-extrabold text-gray-900">איפוס סיסמה</h1>
-          <p className="text-gray-500 text-sm mt-2">כתבו את כתובת האימייל, ונשלח לכם קישור לאיפוס</p>
+          <p className="text-gray-500 text-sm mt-2">כתבו את המייל שאיתו נרשמתם, ונשלח קישור לאיפוס</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-1.5">
-              <Label htmlFor="email">כתובת אימייל</Label>
+              <Label htmlFor="email">מייל</Label>
               <Input
                 id="email"
                 type="email"

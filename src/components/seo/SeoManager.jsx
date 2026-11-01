@@ -74,13 +74,13 @@ export default function SeoManager() {
       return () => { alive = false; };
     }
 
-    const { title, description, canonicalPath, notFound } = getRouteMeta(pathname);
+    const { title, description, canonicalPath, notFound, robots } = getRouteMeta(pathname);
     const canonicalUrl = canonicalPath === '/' ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${canonicalPath}`;
     apply({
       title,
       description,
       canonical: notFound ? null : canonicalUrl,
-      robots: notFound ? 'noindex, follow' : undefined,
+      robots: notFound ? 'noindex, follow' : robots,
       jsonLd: null,
     });
     return () => { alive = false; };

@@ -20,7 +20,7 @@ export default function TrialBanner() {
         to={createPageUrl('Subscription')}
         className="inline-flex min-h-[44px] shrink-0 whitespace-nowrap items-center gap-0.5 rounded-[8px] px-1 font-semibold text-brand-600 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
       >
-        בחירת מסלול
+        בחירת חבילה
         <ChevronLeft className="h-4 w-4" strokeWidth={1.75} aria-hidden />
       </Link>
     </div>

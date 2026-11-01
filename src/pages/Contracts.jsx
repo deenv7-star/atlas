@@ -55,7 +55,7 @@ const statusColors = {
 
 const statusLabels = {
   DRAFT: 'טיוטה',
-  SENT: 'נשלח',
+  SENT: 'סומן כנשלח', // COPY-051: atlas does not send or collect signatures
   SIGNED: 'נחתם'
 };
 
@@ -221,7 +221,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader title="חוזים" subtitle="חוזים לאורחים ותבניות לחתימה דיגיטלית." className="!mb-0" />
+      <PageHeader title="חוזים" subtitle="תבניות חוזה לאורחים, להדפסה או לשליחה כקובץ. חתימה דיגיטלית מהטלפון: בקרוב." className="!mb-0" />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
@@ -253,7 +253,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 <TableRow className="bg-canvas">
                   <TableHead className="text-right">הזמנה</TableHead>
                   <TableHead className="text-right">תבנית</TableHead>
-                  <TableHead className="text-right">סטטוס</TableHead>
+                  <TableHead className="text-right">מצב</TableHead>
                   <TableHead className="text-right">נוצר</TableHead>
                   <TableHead className="w-32"><span className="sr-only">פעולות</span></TableHead>
                 </TableRow>
@@ -272,7 +272,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 ) : contracts.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="p-0">
-                      <EmptyState compact icon={FileText} title="אין עדיין חוזים" description="שלחו לאורח חוזה לחתימה דיגיטלית, הוא חותם מהטלפון." action={<Button onClick={() => setIsSendDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />חוזה חדש</Button>} />
+                      <EmptyState compact icon={FileText} title="אין עדיין חוזים" description="יוצרים חוזה מתבנית, מורידים ושולחים לאורח. חתימה דיגיטלית מהטלפון: בקרוב." action={<Button onClick={() => setIsSendDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />חוזה חדש</Button>} />
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -325,7 +325,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                                 onClick={() => updateContractMutation.mutate({ id: contract.id, data: { status: 'SENT' } })}
                               >
                                 <Send className="h-3 w-3 ml-1" />
-                                שליחה
+                                סימון כנשלח
                               </Button>
                             )}
                           </div>
@@ -352,7 +352,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                 ))
                 ) : contracts.length === 0 ? (
                 <Card>
-                  <EmptyState compact icon={FileText} title="אין עדיין חוזים" description="שלחו לאורח חוזה לחתימה דיגיטלית, הוא חותם מהטלפון." action={<Button onClick={() => setIsSendDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />חוזה חדש</Button>} />
+                  <EmptyState compact icon={FileText} title="אין עדיין חוזים" description="יוצרים חוזה מתבנית, מורידים ושולחים לאורח. חתימה דיגיטלית מהטלפון: בקרוב." action={<Button onClick={() => setIsSendDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />חוזה חדש</Button>} />
                 </Card>
                 ) : (
                 contracts.map(contract => {
@@ -398,7 +398,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                               onClick={() => updateContractMutation.mutate({ id: contract.id, data: { status: 'SENT' } })}
                             >
                               <Send className="h-3 w-3 ml-1" />
-                              שליחה
+                              סימון כנשלח
                             </Button>
                           )}
                         </div>

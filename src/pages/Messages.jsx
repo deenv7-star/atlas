@@ -58,10 +58,11 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
         org_id: orgId,
       });
     },
-    onSuccess: () => {
+    onSuccess: (_data, vars) => {
       queryClient.invalidateQueries({ queryKey: ['message-logs'] });
       setReplyText('');
-      toast({ title: 'וואטסאפ נפתח עם ההודעה', description: 'שלחו אותה בוואטסאפ. היא נשמרה בשיחה כאן.' });
+      if (vars?.status === 'logged') toast({ title: 'ההודעה נרשמה כאן', description: 'היא לא נשלחה. שליחה ב-SMS ובמייל מתוך atlas תגיע בקרוב.' });
+      else toast({ title: 'וואטסאפ נפתח עם ההודעה', description: 'שלחו אותה בוואטסאפ. היא נשמרה בשיחה כאן.' });
     },
     onError: () => toast({ title: 'ההודעה לא נשלחה. בדקו את המספר ונסו שוב.', variant: 'destructive' }),
   });
@@ -109,7 +110,8 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
     // No WhatsApp API is connected yet: the message goes out from the owner's own WhatsApp (wa.me, prefilled),
     // opened inside the tap so mobile browsers allow it. We only log what the owner chose to send.
     const phone = currentThread.messages.map((m) => m.recipient).filter(Boolean).pop() || '';
-    if (String(currentThread.channel || 'whatsapp').toLowerCase().includes('whatsapp')) {
+    const isWa = String(currentThread.channel || 'whatsapp').toLowerCase().includes('whatsapp');
+    if (isWa) {
       window.open(waLink(phone, replyText.trim()), '_blank', 'noopener,noreferrer');
     }
     sendMutation.mutate({
@@ -122,8 +124,10 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
       body: replyText.trim(),
       channel: currentThread.channel,
       direction: 'outbound',
-      status: 'sent',
-      subject: 'וואטסאפ · הודעה ידנית',
+      // ENG-05d: only WhatsApp actually opens with the text (wa.me). Other channels have no sender yet, so the
+      // row is recorded as a note ('logged', shown as "נרשם"), never as 'sent'.
+      status: isWa ? 'sent' : 'logged',
+      subject: isWa ? 'וואטסאפ · הודעה ידנית' : 'נרשם · לא נשלח מ-atlas',
     });
   };
 
@@ -150,7 +154,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
   return (
     <div className="flex h-full flex-col overflow-hidden" dir="rtl">
       <div className="mx-auto w-full max-w-[var(--page-max,1200px)] flex-shrink-0 px-5 pt-3 md:px-10 md:pt-5">
-        <PageHeader title="הודעות" help="messages.page" tour="messages-page" subtitle="כל השיחות עם האורחים." className="!mb-4 md:!mb-5" />
+        <PageHeader title="הודעות" help="messages.page" tour="messages-page" subtitle="ההודעות ששלחתם לאורחים מתוך atlas. התשובות שלהם מגיעות לוואטסאפ שלכם." className="!mb-4 md:!mb-5" />
       </div>
       <div className="mx-auto flex min-h-0 w-full max-w-[var(--page-max,1200px)] flex-1 flex-col overflow-hidden md:mb-6 md:px-10">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[22px] md:border md:shadow-card">
@@ -253,7 +257,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                     )}>
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.body}</p>
                       <p className={cn('tabular mt-1 text-[12px]', isOutbound ? 'text-white/85' : 'text-ink-400')}>
-                        {msg.created_at ? format(parseISO(msg.created_at), 'HH:mm') : ''}
+                        {msg.created_at ? format(parseISO(msg.created_at), 'HH:mm') : ''}{msg.status === 'logged' ? ' · נרשם' : ''}
                       </p>
                     </div>
                   </div>
