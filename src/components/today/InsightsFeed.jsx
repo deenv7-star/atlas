@@ -109,12 +109,12 @@ function Row({ item, primary, onAction, onSnooze, onDismiss, leaving }) {
   );
 }
 
-export default function InsightsFeed({ insights, onAction }) {
+export default function InsightsFeed({ insights, onAction, className }) {
   const { items, ready, snooze, dismiss, restore } = insights;
   const [open, setOpen] = useState(false);
   const [leaving, setLeaving] = useState(null);
   const wide = useWide();
-  if (!ready) return <div className="mb-3 h-[76px] rounded-[24px] bg-white/60 md:mb-4" aria-hidden />;
+  if (!ready) return <div className={cn('mb-3 h-[76px] rounded-[24px] bg-white/60 md:mb-4', className)} aria-hidden />;
 
   const hide = (item, fn, msg) => {
     setLeaving(item.id);
@@ -134,7 +134,7 @@ export default function InsightsFeed({ insights, onAction }) {
   const rest = items.length - shown.length;
 
   return (
-    <section aria-labelledby="ins-title" className="v7-card v5-rise mb-3 overflow-hidden md:mb-4" style={{ '--i': 0 }} data-testid="insights-feed">
+    <section aria-labelledby="ins-title" className={cn('v7-card v5-rise mb-3 overflow-hidden md:mb-4', className)} style={{ '--i': 0 }} data-testid="insights-feed">
       <div className="flex min-h-[60px] items-center justify-between gap-3 px-5 pt-3 md:px-6">
         <h2 id="ins-title" className="text-[17px] font-bold text-navy-900">מה דורש תשומת לב</h2>
         {urgent > 0 ? (

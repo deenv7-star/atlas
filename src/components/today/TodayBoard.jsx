@@ -479,7 +479,7 @@ export default function TodayBoard({ user, orgId }) {
   );
 
   const today = (
-    <Rise i={5} as="section" aria-label="היום" data-tour="today-board" className="v7-card flex h-full min-w-0 flex-col overflow-hidden">
+    <Rise i={0} as="section" aria-label="היום" data-tour="today-board" className="v7-card flex h-full min-w-0 flex-col overflow-hidden">
       <div className="flex min-h-[64px] items-center justify-between gap-3 px-5 pt-3 md:px-6">
         <div className="min-w-0">
           <h2 className="flex items-center gap-0.5 text-[17px] font-bold text-navy-900">היום במתחם<HelpHint id="today.board" /></h2>
@@ -500,7 +500,7 @@ export default function TodayBoard({ user, orgId }) {
         </Link>
       </div>
       {nothingToday ? (
-        <div className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center">
+        <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 text-center lg:py-10">
           <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--st-mint-bg)] text-[var(--st-mint-fg)]">
             <Check className="h-5 w-5" strokeWidth={2.25} />
           </span>
@@ -514,7 +514,7 @@ export default function TodayBoard({ user, orgId }) {
               <GroupLabel icon={g.icon}>{g.label}</GroupLabel>
               {g.rows.map((r) => {
                 rowIdx += 1;
-                return <DayRow key={r.key} i={5 + rowIdx} {...r} />;
+                return <DayRow key={r.key} i={rowIdx} {...r} />;
               })}
             </React.Fragment>
           ))}
@@ -607,18 +607,19 @@ export default function TodayBoard({ user, orgId }) {
           <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>לנסות שוב</Button>
         </div>
       ) : data.isLoading ? skeleton : (
-        <>
-          <InsightsFeed insights={insights} onAction={onInsight} />
-          <section aria-label="מספרים" className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-12">
+        /* Version A (APP-D01): "היום במתחם" is the first thing on a phone: who arrives, who leaves, what to clean.
+           DOM order = phone reading order (today → attention → numbers → chart); from lg the grid puts each
+           block back in its desktop cell (numbers on top, chart beside today). */
+        <div className="flex flex-col gap-3 md:gap-4 lg:grid lg:grid-cols-12">
+          <div className="min-w-0 lg:col-span-5 lg:col-start-8 lg:row-start-3">{today}</div>
+          <div className="min-w-0 lg:col-span-12 lg:row-start-1"><InsightsFeed insights={insights} onAction={onInsight} className="mb-0 md:mb-0" /></div>
+          <section aria-label="מספרים" className="grid grid-cols-2 gap-3 md:gap-4 lg:col-span-12 lg:row-start-2 lg:grid-cols-12">
             {hero}
             {donut}
             {photoTile}
           </section>
-          <div className="mt-3 grid gap-3 md:mt-4 md:gap-4 lg:grid-cols-12">
-            <div className="order-2 min-w-0 lg:order-1 lg:col-span-7">{chart}</div>
-            <div className="order-1 min-w-0 lg:order-2 lg:col-span-5">{today}</div>
-          </div>
-        </>
+          <div className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-3">{chart}</div>
+        </div>
       )}
 
       <WhatsAppComposer

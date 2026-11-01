@@ -25,6 +25,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { trialShortText, TRIAL_DAYS } from '@/lib/trial';
 import { formatDayHe, todayISO, firstName } from '@/lib/stay/format';
 import { AskAtlasButton } from '@/assistant/launcher';
+import { useNewLeads } from '@/hooks/useNewLeads';
 
 export const shellClass = 'bg-canvas';
 
@@ -222,8 +223,12 @@ export function TabBar({ user, onLogout }) {
   const isActive = useIsActive();
   const quick = useQuickBooking();
   const [moreOpen, setMoreOpen] = useState(false);
-  const slots = ['Dashboard', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
-  const primaryPages = ['Dashboard', 'MultiCalendar', 'Bookings'];
+  // Version A (APP-D03): "לידים" takes the fourth slot, one tap from every screen, with a count of new ones.
+  // "הזמנות" moves into "עוד" (bookings are also one tap away from the calendar and from search).
+  const slots = ['Dashboard', 'MultiCalendar', '__new__', 'Leads', '__more__'];
+  const primaryPages = ['Dashboard', 'MultiCalendar', 'Leads'];
+  const leads = useNewLeads();
+  const helpUnread = useHelpUnread();
   const moreActive = !primaryPages.some((p) => isActive(p));
   const tab = (active) => cn(
     'press mx-auto flex h-[52px] w-full max-w-[76px] flex-col items-center justify-center gap-0.5 rounded-[20px] text-[11px] transition-colors duration-200',
@@ -251,9 +256,11 @@ export function TabBar({ user, onLogout }) {
             if (slot === '__more__') {
               return (
                 <li key={slot}>
-                  <button type="button" onClick={() => setMoreOpen(true)} className={tab(moreActive)}>
-                    <MoreHorizontal className="h-[21px] w-[21px]" strokeWidth={1.75} />
+                  <button type="button" onClick={() => setMoreOpen(true)} className={cn(tab(moreActive), 'relative')}>
+                    <MoreHorizontal className="h-[21px] w-[21px]" strokeWidth={1.75} aria-hidden />
                     עוד
+                    {helpUnread ? <span className="sr-only">, הודעה חדשה מנציג</span> : null}
+                    {helpUnread ? <span aria-hidden className="absolute end-3 top-2 h-2.5 w-2.5 rounded-full bg-brand-600 ring-2 ring-white" /> : null}
                   </button>
                 </li>
               );
@@ -261,11 +268,22 @@ export function TabBar({ user, onLogout }) {
             const item = navItem(slot);
             const Icon = item.icon;
             const active = isActive(slot);
+            const badge = slot === 'Leads' && leads.count > 0 ? leads.count : 0;
             return (
               <li key={slot}>
-                <Link to={createPageUrl(slot)} aria-current={active ? 'page' : undefined} className={tab(active)}>
-                  <Icon className="h-[21px] w-[21px]" strokeWidth={active ? 2 : 1.6} />
+                <Link
+                  to={createPageUrl(slot)}
+                  aria-current={active ? 'page' : undefined}
+                  className={cn(tab(active), 'relative')}
+                >
+                  <Icon className="h-[21px] w-[21px]" strokeWidth={active ? 2 : 1.6} aria-hidden />
                   {item.label}
+                  {badge ? <span className="sr-only">, {badge === 1 ? 'ליד חדש אחד' : `${badge} חדשים`}</span> : null}
+                  {badge ? (
+                    <span aria-hidden className="tabular absolute end-2 top-1 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand-600 px-1 text-[11px] font-bold leading-none text-white ring-2 ring-white">
+                      {badge > 9 ? '9+' : badge}
+                    </span>
+                  ) : null}
                 </Link>
               </li>
             );
