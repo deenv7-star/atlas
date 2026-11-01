@@ -25,11 +25,12 @@ import { nightsBetween } from '@/lib/entityPayloads';
 
 const STATUS = {
   NEW: { label: 'חדש', tone: 'brand' },
-  CONTACTED: { label: 'נוצר קשר', tone: 'warning' },
+  CONTACTED: { label: 'בטיפול', tone: 'warning' },
   OFFER_SENT: { label: 'הצעה נשלחה', tone: 'sky' },
-  CONFIRMED: { label: 'מאושר', tone: 'sky' },
+  CONFIRMED: { label: 'נסגר', tone: 'sky' },
   WON: { label: 'נסגר', tone: 'success' },
-  LOST: { label: 'לא רלוונטי', tone: 'neutral' },
+  REJECTED: { label: 'לא מתאים לנו', tone: 'neutral' },
+  LOST: { label: 'הזמין במקום אחר', tone: 'neutral' },
 };
 
 const SOURCE = {
@@ -177,7 +178,7 @@ export default function LeadDetail() {
     return (
       <div className="p-10 text-center">
         <h1 className="text-[18px] font-bold text-navy-900">לא מצאנו את הליד</h1>
-        <p className="mt-1 text-[16px] text-ink-600">אולי הוא נמחק, או שהקישור ישן.</p>
+        <p className="mt-1 text-[16px] text-ink-600">ייתכן שנמחק, או שהקישור ישן. חזרו לרשימת הלידים.</p>
       </div>
     );
   }
@@ -295,7 +296,7 @@ export default function LeadDetail() {
 
           <Section title="הערות" className={cn(notesInvalid && 'ring-2 ring-red-500/70 ring-offset-2')}>
             <Label htmlFor="lead-notes" className="mb-1.5 block text-[13px] text-ink-400">
-              נשמר לבד
+              נשמר אוטומטית
             </Label>
             <Textarea
               id="lead-notes"
@@ -316,7 +317,7 @@ export default function LeadDetail() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(STATUS).map(([key, s]) => (
+                {Object.entries(STATUS).filter(([key]) => key !== 'CONFIRMED' || lead.status === 'CONFIRMED').map(([key, s]) => (
                   <SelectItem key={key} value={key}>
                     {s.label}
                   </SelectItem>

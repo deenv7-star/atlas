@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Controller } from 'react-hook-form';
 import { Check, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { StickySheetFooter } from '@/components/ui/sheet-footer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -315,7 +316,7 @@ export function BookingForm({
             </div>
           )}
         </div>
-        <div className="flex gap-2 flex-col-reverse sm:flex-row sm:justify-start pt-3">
+        <StickySheetFooter>
           <Button
             variant="outline"
             type="button"
@@ -362,7 +363,7 @@ export function BookingForm({
               </>
             )}
           </Button>
-        </div>
+        </StickySheetFooter>
       </div>
     </>
   );

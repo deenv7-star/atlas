@@ -31,7 +31,8 @@ const STATUS_OPTIONS = [
   { value: 'REJECTED',   label: 'לא מתאים לנו',          color: 'bg-red-100 text-red-700 border-red-200' },
   { value: 'LOST',       label: 'הזמין במקום אחר',   color: 'bg-gray-100 text-gray-500 border-gray-200' },
 ];
-const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
+// WON is what 'הפיכה להזמנה' writes on the lead page; show it like CONFIRMED (נסגר).
+const STATUS_MAP = { ...Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s])), WON: { value: 'WON', label: 'נסגר', color: 'bg-green-100 text-green-700 border-green-200' } };
 
 const STATUS_VALUE_SET = new Set(STATUS_OPTIONS.map((s) => s.value));
 
