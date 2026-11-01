@@ -174,7 +174,7 @@ export default function WizardA({ user, again = false }) {
     },
     plan: {
       title: 'איך מתחילים?',
-      sub: 'הניסיון חינם ובלי כרטיס. אפשר גם לבחור מסלול כבר עכשיו.',
+      sub: 'הניסיון חינם ובלי כרטיס. אפשר גם לבחור חבילה כבר עכשיו.',
       body: <PlanPick value={a.plan} onChange={(v) => update({ plan: v })} />,
     },
   };
@@ -245,7 +245,7 @@ export function ProfileCard({ a, at, onJump }) {
     { q: 4, label: 'מחיר', value: priceLabel(a) },
     { q: 5, label: 'שעות', value: timesLabel(a) },
     { q: 6, label: 'הזמנות מ-', value: (a.channels || []).length ? CHANNELS.filter((c) => a.channels.includes(c.value)).map((c) => c.label).join(', ') : 'נחבר בשלב הבא' },
-    { q: 7, label: 'התחלה', value: plan ? `מסלול ${plan.nameHe}` : `${TRIAL_DAYS} יום חינם` },
+    { q: 7, label: 'התחלה', value: plan ? `חבילת ${plan.nameHe}` : `${TRIAL_DAYS} יום חינם` },
   ], [a, n, k, plan]);
   return (
     <div className="relative w-full max-w-[420px] overflow-hidden rounded-[28px] bg-white shadow-[0_2px_4px_rgba(27,38,86,0.06),0_30px_60px_-30px_rgba(27,38,86,0.45)]">

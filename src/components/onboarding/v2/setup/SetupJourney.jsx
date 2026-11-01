@@ -142,7 +142,7 @@ function Checklist({ facts, variant, steps, prog, flash, onOpen }) {
         </Ring>
         <div className="min-w-0">
           <p className="text-[17px] font-extrabold text-navy-900">{prog.complete ? 'ההגדרה הושלמה' : `${prog.handled} מתוך ${prog.total} שלבים`}</p>
-          <p className="text-[15px] text-ink-600">{plan ? `מסלול ${plan.nameHe} · ${TRIAL_DAYS} יום חינם` : `${TRIAL_DAYS} יום ניסיון חינם · בלי כרטיס אשראי`}</p>
+          <p className="text-[15px] text-ink-600">{plan ? `חבילת ${plan.nameHe} · ${TRIAL_DAYS} יום חינם` : `${TRIAL_DAYS} יום ניסיון חינם · בלי כרטיס אשראי`}</p>
         </div>
       </div>
       {flash ? (

@@ -9,6 +9,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MotionConfig, motion, useReducedMotion } from 'framer-motion';
 import { Check, ArrowLeft, Loader2, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { withPrefix } from '@/lib/stay/format';
 import { getPlanByKey, TRIAL_DAYS } from '@/config/pricing';
 import { kindInfo, clampInt, UNITS_LIMIT, guestsLabel, unitsLabel } from '@/lib/onboarding/v2/model';
 import { commitProfile, commitUnits, commitTimes, commitStart, commitLinks } from '@/lib/onboarding/v2/actions';
@@ -27,7 +28,7 @@ export function buildSteps(a) {
     { id: 'calendar', title: 'מכינים יומן לכל יחידה', detail: `${unitsLabel(a.kind, n)} ביומן`, run: commitUnits },
     ...(links.length ? [{ id: 'links', title: `מחברים את ${names.join(' ו-')}`, detail: links.length === 1 ? 'קישור אחד נשמר' : `${links.length} קישורים נשמרו`, run: commitLinks }] : []),
     { id: 'messages', title: 'מכינים הודעות לאורחים', detail: a.timesVary ? 'שעות משתנות, ההודעה מוכנה' : `כניסה ${a.checkIn} · יציאה ${a.checkOut}`, run: commitTimes },
-    { id: 'start', title: a.plan && a.plan !== 'trial' ? `שומרים את מסלול ${getPlanByKey(a.plan).nameHe}` : `פותחים ${TRIAL_DAYS} יום חינם`, detail: a.plan && a.plan !== 'trial' ? `${TRIAL_DAYS} הימים הראשונים חינם` : 'בלי כרטיס אשראי', run: commitStart },
+    { id: 'start', title: a.plan && a.plan !== 'trial' ? `שומרים את חבילת ${getPlanByKey(a.plan).nameHe}` : `פותחים ${TRIAL_DAYS} יום חינם`, detail: a.plan && a.plan !== 'trial' ? `${TRIAL_DAYS} הימים הראשונים חינם` : 'בלי כרטיס אשראי', run: commitStart },
   ];
 }
 
@@ -123,7 +124,7 @@ export default function BuildMoment({ user, answers: a, onSetup, onApp, tone = '
         <footer className="ob2-bar is-flow lg:pb-12">
           <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-2 md:px-5 lg:flex-row lg:justify-start lg:px-10">
             <Primary className="w-full lg:w-auto" onClick={onSetup} disabled={!done} aria-disabled={!done}>
-              {done ? <>המשיכו להגדרה<ArrowLeft className="h-5 w-5" aria-hidden /></> : <><Loader2 className="h-5 w-5 ob2-spin" aria-hidden />בונים…</>}
+              {done ? <>המשך להגדרה<ArrowLeft className="h-5 w-5" aria-hidden /></> : <><Loader2 className="h-5 w-5 ob2-spin" aria-hidden />בונים…</>}
             </Primary>
             {done ? <Ghost className="w-full lg:w-auto" onClick={onApp}>קודם להציץ ביומן</Ghost> : null}
           </div>
@@ -205,7 +206,8 @@ function Assembly({ a, k, n, name, at, still, total = 4, msgAt = 2 }) {
         className="absolute bottom-0 end-[2%] w-[56%] rounded-[20px] bg-white p-3 shadow-[0_2px_4px_rgba(27,38,86,0.06),0_24px_48px_-20px_rgba(27,38,86,0.35)] lg:w-[62%] lg:p-3.5">
         <p className="mb-1.5 text-[12px] font-bold text-ink-600">הודעה לאורח</p>
         <p className="rounded-[14px] rounded-se-[4px] bg-[#E4E1FD] px-3 py-2 text-[13px] leading-snug text-navy-900">
-          שלום! מחכים לכם ב{name}. {a.timesVary ? 'נשלח שעת כניסה מדויקת לפני ההגעה.' : `הכניסה מ-${a.checkIn}.`}
+          {/* COPY-032: withPrefix (ב + הזית = בזית); the placeholder name is never glued ("בהמתחם שלכם") */}
+          {a.name?.trim() ? `שלום, מחכים לכם ${withPrefix('ב', a.name.trim())}.` : 'שלום, מחכים לכם.'} {a.timesVary ? 'נשלח שעת כניסה מדויקת לפני ההגעה.' : `הכניסה מ-${a.checkIn}.`}
         </p>
       </motion.div>
 
