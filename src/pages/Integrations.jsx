@@ -95,6 +95,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
   const p = PROVIDERS[sync.provider] || PROVIDERS.ICAL;
   const paused = sync.sync_status === 'PAUSED';
   const error = sync.sync_status === 'ERROR';
+  const warning = sync.sync_status === 'WARNING';
   const conflicts = Array.isArray(sync.conflicts) ? sync.conflicts : [];
   const [confirm, setConfirm] = useState(false);
   return (
@@ -104,7 +105,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
         <div className="min-w-[160px] flex-1">
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] font-semibold text-navy-900">
             <span className="min-w-0 truncate">{sync.label || p.name}</span>
-            <StatusPill tone={error ? 'red' : paused ? 'slate' : conflicts.length ? 'amber' : 'mint'} label={error ? 'לא מתעדכן' : paused ? 'מושהה' : conflicts.length ? 'חפיפה' : 'פעיל'} />
+            <StatusPill tone={error ? 'red' : paused ? 'slate' : warning || conflicts.length ? 'amber' : 'mint'} label={error ? 'לא מתעדכן' : paused ? 'מושהה' : warning ? 'לבדיקה' : conflicts.length ? 'חפיפה' : 'פעיל'} />
           </p>
           <p className="mt-0.5 truncate text-[13px] text-ink-400">
             <span data-testid="sync-ago">{minutesAgoHe(sync.last_success_at || sync.last_sync_at)}</span>
@@ -123,6 +124,11 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
       </div>
       {sync.error_message && error ? (
         <p role="alert" className="mt-2 flex items-start gap-2 rounded-[12px] bg-[var(--st-red-bg,#FDECEC)] px-3 py-2 text-[13px] text-[var(--st-red-fg,#B42318)]">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />{sync.error_message}
+        </p>
+      ) : null}
+      {sync.error_message && warning ? (
+        <p role="alert" className="mt-2 flex items-start gap-2 whitespace-pre-line rounded-[12px] bg-[#FFF6E5] px-3 py-2 text-[13px] text-[#8A5A00]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />{sync.error_message}
         </p>
       ) : null}
@@ -298,6 +304,8 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
   const report = (r, url = '') => {
     if (!r) return;
     if (!r.ok) { atlasToastApi.error('לא הצלחנו לעדכן את הלוח. הפרטים מופיעים ליד הערוץ'); return; }
+    if (r.skipped === 'rate_limited') { atlasToastApi.success('הלוח התעדכן לפני רגע. אפשר לסנכרן שוב בעוד דקה.'); return; }
+    if (r.warning) { atlasToastApi.error('היומן של הערוץ חזר ריק או חלקי, ולא ביטלנו הזמנות.', 'הפרטים מופיעים ליד הערוץ.'); return; }
     // A link that is not Airbnb / Booking.com with this many busy dates is probably not one unit's export
     // (a holidays or a whole-hotel calendar): say so instead of a plain "synced".
     if (isSuspiciousFeed(url, r.events)) {
