@@ -1,61 +1,254 @@
 <!doctype html>
-<html lang="en" data-resolution="portrait">
+<html lang="he" data-resolution="portrait">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1080, height=1920" />
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <script src="assets/lib/gsap.min.js"></script>
+    <script type="importmap">
+      { "imports": { "three": "./assets/lib/three.module.js" } }
+    </script>
     <style>
-      /* Placeholders: replace all three with the film's own palette and display face. */
+      @font-face { font-family: "Heebo"; font-weight: 300; src: url("assets/fonts/heebo-hebrew-300-normal.woff2") format("woff2"); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+      @font-face { font-family: "Heebo"; font-weight: 300; src: url("assets/fonts/heebo-latin-300-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Heebo"; font-weight: 400; src: url("assets/fonts/heebo-hebrew-400-normal.woff2") format("woff2"); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+      @font-face { font-family: "Heebo"; font-weight: 400; src: url("assets/fonts/heebo-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Heebo"; font-weight: 500; src: url("assets/fonts/heebo-hebrew-500-normal.woff2") format("woff2"); unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+      @font-face { font-family: "Heebo"; font-weight: 500; src: url("assets/fonts/heebo-latin-500-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
       :root {
-        --ground: #000;
-        --ink: #ffffff;
-        --font-display: sans-serif;
+        --indigo: #3e2bf1;
+        --navy: #1b2656;
+        --ground: #f7f8fb;
+        --white: #ffffff;
       }
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        margin: 0;
-        width: 1080px;
-        height: 1920px;
-        overflow: hidden;
-        background: var(--ground);
-      }
-      #root {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-display);
-      }
-      #title {
-        color: var(--ink);
-        font-size: 72px;
-        font-weight: 600;
-        letter-spacing: -0.03em;
-      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); font-family: "Heebo", sans-serif; font-weight: 300; color: var(--navy); }
+      #bg { position: absolute; inset: 0; overflow: hidden; background: linear-gradient(180deg, var(--white) 0%, var(--ground) 55%, var(--ground) 100%); }
+      .halo { position: absolute; border-radius: 50%; pointer-events: none; will-change: transform; }
+      #halo-a { width: 1500px; height: 1500px; left: 330px; top: -820px; background: radial-gradient(circle at 50% 50%, rgba(62, 43, 241, 0.34) 0%, rgba(62, 43, 241, 0.16) 32%, rgba(62, 43, 241, 0.05) 55%, rgba(62, 43, 241, 0) 70%); }
+      #halo-b { width: 900px; height: 900px; left: 640px; top: -420px; background: radial-gradient(circle at 50% 50%, rgba(62, 43, 241, 0.22) 0%, rgba(62, 43, 241, 0.06) 45%, rgba(62, 43, 241, 0) 68%); }
+      #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+      .wheel { position: absolute; inset: 0; pointer-events: none; }
+      .wheel-in { position: absolute; left: 0; top: 0; width: 1080px; height: 0; will-change: transform; }
+      .wi { position: absolute; left: 0; width: 1080px; top: 0; text-align: center; white-space: nowrap; direction: rtl; font-weight: 300; line-height: 1; letter-spacing: -0.01em; color: var(--navy); will-change: transform, filter, opacity; }
+      .wi img { display: block; margin: 0 auto; }
+      .kw { display: inline-block; color: var(--indigo); will-change: transform; }
+      .ltr { unicode-bidi: isolate; direction: ltr; display: inline-block; }
+      #endcard { position: absolute; inset: 0; pointer-events: none; }
+      #end-logo { position: absolute; left: 290px; top: 818px; width: 500px; height: auto; will-change: transform, filter, opacity; }
+      #end-url { position: absolute; left: 0; width: 1080px; top: 1060px; text-align: center; direction: ltr; font-size: 54px; font-weight: 300; letter-spacing: 0.02em; color: var(--navy); line-height: 1; will-change: transform, filter, opacity; }
     </style>
   </head>
   <body>
-    <div
-      id="root"
-      data-composition-id="main"
-      data-start="0"
-      data-duration="10"
-      data-width="1080"
-      data-height="1920"
-    >
-      <h1 id="title" class="clip" data-start="0" data-duration="10" data-track-index="0">Title</h1>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="24" data-fps="60" data-width="1080" data-height="1920">
+      <div id="bg" class="clip" data-start="0" data-duration="24" data-track-index="0" data-layout-ignore>
+        <div id="halo-a" class="halo"></div>
+        <div id="halo-b" class="halo"></div>
+      </div>
+
+      <canvas id="stage" class="clip" data-start="0" data-duration="24" data-track-index="1" width="1080" height="1920" data-layout-ignore></canvas>
+
+      <!-- Scene 1-2: chaos word wheel lands on the logo file, then the first sentence -->
+      <div id="w1" class="clip wheel" data-start="0" data-duration="5" data-track-index="2" data-layout-allow-overlap>
+        <div class="wheel-in">
+          <div class="wi" data-fs="124">וואטסאפ</div>
+          <div class="wi" data-fs="124"><span class="ltr">Booking</span></div>
+          <div class="wi" data-fs="124"><span class="ltr">Airbnb</span></div>
+          <div class="wi" data-fs="124">טלפון</div>
+          <div class="wi" data-fs="124">מחברת</div>
+          <div class="wi" data-fs="124" data-logo="1"><img src="assets/logo/atlas-logo.svg" alt="atlas" style="height: 128px; width: auto" /></div>
+          <div class="wi" data-fs="78">אתם מארחים. <span class="ltr">atlas</span> <span class="kw">מסדר</span>.</div>
+        </div>
+      </div>
+
+      <!-- Scene 3 -->
+      <div id="w2" class="clip wheel" data-start="5.9" data-duration="2.6" data-track-index="3" data-layout-allow-overlap>
+        <div class="wheel-in">
+          <div class="wi" data-fs="78">שבת <span class="kw">פנויה</span>.</div>
+          <div class="wi" data-fs="78">הליד נשמר.</div>
+        </div>
+      </div>
+
+      <!-- Scene 4 -->
+      <div id="w3" class="clip wheel" data-start="8.55" data-duration="3.45" data-track-index="4" data-layout-allow-overlap>
+        <div class="wheel-in">
+          <div class="wi" data-fs="72">ההזמנות נכנסות <span class="kw">ליחידה</span> הנכונה.</div>
+        </div>
+      </div>
+
+      <!-- Scene 5 -->
+      <div id="w4" class="clip wheel" data-start="12" data-duration="4" data-track-index="5" data-layout-allow-overlap>
+        <div class="wheel-in">
+          <div class="wi" data-fs="78">שישי, 15:00.</div>
+          <div class="wi" data-fs="78">ההודעה כבר <span class="kw">מוכנה</span>.</div>
+          <div class="wi" data-fs="78">לחיצה אחת.</div>
+        </div>
+      </div>
+
+      <!-- Scene 6 -->
+      <div id="w5" class="clip wheel" data-start="16" data-duration="4.2" data-track-index="6" data-layout-allow-overlap>
+        <div class="wheel-in">
+          <div class="wi" data-fs="78">סוף החודש.</div>
+          <div class="wi" data-fs="78">הכול <span class="kw">מסודר</span>.</div>
+        </div>
+      </div>
+
+      <!-- Scene 7: end card -->
+      <div id="endcard" class="clip" data-start="20.4" data-duration="3.3" data-track-index="7">
+        <img id="end-logo" src="assets/logo/atlas-logo.svg" alt="atlas" />
+        <div id="end-url">atlas-il.com</div>
+      </div>
     </div>
+
     <script>
-      const tl = gsap.timeline({ paused: true });
-      // Example: tl.fromTo("#title", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, 0);
-      window.__timelines["main"] = tl;
-      tl.seek(0);
+      (function () {
+        const E = (n) => gsap.parseEase(n);
+        const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+        const prog = (t, a, b, ease) => {
+          const p = clamp((t - a) / (b - a), 0, 1);
+          return ease ? E(ease)(p) : p;
+        };
+        window.__hfUtil = { E, clamp, prog };
+
+        // ---------- word wheels ----------
+        // segs: [t0, t1, from, to, ease]; between segments the wheel holds (with drift)
+        const WHEELS = [
+          { id: "w1", pitch: 200, Y: () => 960, S: () => 1,
+            segs: [[0, 0.42, -0.55, 0, "power3.out"], [0.5, 0.74, 0, 1, "power3.inOut"], [1.0, 1.27, 1, 2, "power3.inOut"], [1.5, 1.82, 2, 3, "power3.inOut"], [2.0, 2.4, 3, 4, "power3.inOut"], [2.5, 3.05, 4, 5, "power4.out"], [3.75, 4.12, 5, 6, "power3.inOut"], [4.66, 4.98, 6, 7.75, "power2.in"]],
+            breathe: { 5: 3.05, 6: 4.12 } },
+          { id: "w2", pitch: 112, Y: () => 352, S: () => 1,
+            segs: [[5.95, 6.36, -1.75, 0, "power3.out"], [7.5, 7.86, 0, 1, "power3.inOut"], [8.12, 8.46, 1, 2.75, "power2.in"]],
+            breathe: { 0: 6.38 } },
+          { id: "w3", pitch: 112, Y: () => 352, S: () => 1,
+            segs: [[8.6, 9.0, -1.75, 0, "power3.out"], [11.62, 11.97, 0, 1.75, "power2.in"]],
+            breathe: { 0: 9.5 } },
+          { id: "w4", pitch: 112,
+            Y: (t) => 930 + (352 - 930) * prog(t, 12.5, 12.98, "power3.inOut"),
+            S: (t) => 1.55 + (1 - 1.55) * prog(t, 12.5, 12.98, "power3.inOut"),
+            segs: [[12.0, 12.36, -1.75, 0, "power3.out"], [13.45, 13.8, 0, 1, "power3.inOut"], [14.4, 14.7, 1, 2, "power3.inOut"], [15.6, 15.95, 2, 3.75, "power2.in"]],
+            breathe: { 1: 13.82 } },
+          { id: "w5", pitch: 112, Y: () => 352, S: () => 1,
+            segs: [[16.02, 16.4, -1.75, 0, "power3.out"], [17.5, 17.86, 0, 1, "power3.inOut"], [19.74, 20.1, 1, 2.75, "power2.in"]],
+            breathe: { 1: 17.9 } },
+        ];
+        function wheelPos(w, t) {
+          let v = w.segs[0][2];
+          for (const [a, b, f, to, e] of w.segs) {
+            if (t >= b) v = to;
+            else if (t > a) { v = f + (to - f) * E(e)(clamp((t - a) / (b - a), 0, 1)); break; }
+            else break;
+          }
+          return v;
+        }
+        for (const w of WHEELS) {
+          w.el = document.getElementById(w.id);
+          w.inner = w.el.querySelector(".wheel-in");
+          w.items = Array.from(w.el.querySelectorAll(".wi")).map((el) => ({ el, kw: el.querySelector(".kw"), logo: el.dataset.logo === "1", img: el.querySelector("img") }));
+        }
+        function fitItems() {
+          for (const w of WHEELS)
+            for (const it of w.items) {
+              let fs = parseFloat(it.el.dataset.fs);
+              it.el.style.fontSize = fs + "px";
+              if (!it.logo) {
+                // keep every line inside 940px (title-safe)
+                const r = document.createRange();
+                r.selectNodeContents(it.el);
+                const wpx = r.getBoundingClientRect().width / (w.lastScale || 1);
+                if (wpx > 940) { fs = Math.floor((fs * 940) / wpx); it.el.style.fontSize = fs + "px"; }
+              }
+              it.h = it.logo ? 128 : fs;
+            }
+        }
+        function renderWheels(t) {
+          for (const w of WHEELS) {
+            const p = wheelPos(w, t);
+            const Y = w.Y(t) + 5 * Math.sin(t * 0.9 + w.pitch);
+            const S = w.S(t) * (1 + 0.006 * Math.sin(t * 0.7));
+            w.inner.style.transform = `translate3d(0, ${Y.toFixed(2)}px, 0) scale(${S.toFixed(4)})`;
+            w.inner.style.transformOrigin = "540px 0px";
+            w.items.forEach((it, i) => {
+              const d = i - p;
+              const ad = Math.abs(d);
+              const s = 1 - 0.34 * Math.min(ad, 1.6);
+              const y = w.pitch * Math.sign(d) * (ad <= 1 ? ad : 1 + (ad - 1) * 0.75);
+              const op = ad <= 1 ? 1 - 0.66 * ad : Math.max(0, 0.34 * (1 - (ad - 1) / 0.6));
+              const blur = Math.min(14, 11 * ad);
+              const rx = clamp(-d * 26, -50, 50);
+              const el = it.el;
+              if (op <= 0.003) { el.style.opacity = "0"; return; }
+              el.style.opacity = op.toFixed(3);
+              el.style.filter = blur > 0.05 ? `blur(${blur.toFixed(2)}px)` : "none";
+              el.style.transform = `translate3d(0, ${(y - it.h * 0.55).toFixed(2)}px, 0) perspective(900px) rotateX(${rx.toFixed(2)}deg) scale(${s.toFixed(4)})`;
+              const bt = w.breathe[i];
+              if (bt !== undefined) {
+                const k = prog(t, bt, bt + 0.7);
+                const pulse = Math.sin(Math.PI * k);
+                const target = it.kw || it.img;
+                if (target) {
+                  target.style.transform = `scale(${(1 + 0.085 * pulse).toFixed(4)})`;
+                  if (it.kw) it.kw.style.textShadow = pulse > 0.01 ? `0 0 ${(22 * pulse).toFixed(1)}px rgba(62,43,241,${(0.35 * pulse).toFixed(3)})` : "none";
+                }
+              }
+            });
+          }
+        }
+
+        // ---------- halo, end card ----------
+        const haloA = document.getElementById("halo-a");
+        const haloB = document.getElementById("halo-b");
+        const endLogo = document.getElementById("end-logo");
+        const endUrl = document.getElementById("end-url");
+        function renderBg(t) {
+          const ax = 40 * Math.sin(t * 0.23) - 30 * Math.sin(t * 0.11);
+          const ay = 34 * Math.sin(t * 0.19 + 1.2);
+          haloA.style.transform = `translate3d(${ax.toFixed(2)}px, ${ay.toFixed(2)}px, 0) scale(${(1 + 0.05 * Math.sin(t * 0.31)).toFixed(4)})`;
+          const bx = -50 * Math.sin(t * 0.17 + 0.5);
+          const by = 40 * Math.sin(t * 0.27 + 2.0);
+          haloB.style.transform = `translate3d(${bx.toFixed(2)}px, ${by.toFixed(2)}px, 0) scale(${(1 + 0.08 * Math.sin(t * 0.21 + 1)).toFixed(4)})`;
+        }
+        function renderEnd(t) {
+          const inL = prog(t, 20.45, 21.1, "power3.out");
+          const outL = prog(t, 22.95, 23.45, "power2.in");
+          const hold = prog(t, 20.45, 23.45);
+          const breathe = Math.sin(Math.PI * prog(t, 21.1, 21.8));
+          const lS = 0.93 + 0.07 * inL + 0.025 * hold + 0.03 * breathe - 0.05 * outL;
+          const lY = 70 * (1 - inL) - 14 * hold - 110 * outL;
+          endLogo.style.opacity = (inL * (1 - outL)).toFixed(3);
+          endLogo.style.filter = `blur(${(16 * (1 - inL) + 18 * outL).toFixed(2)}px)`;
+          endLogo.style.transform = `translate3d(0, ${lY.toFixed(2)}px, 0) scale(${lS.toFixed(4)})`;
+          const inU = prog(t, 20.75, 21.35, "power3.out");
+          const outU = prog(t, 23.05, 23.5, "power2.in");
+          endUrl.style.opacity = (inU * (1 - outU)).toFixed(3);
+          endUrl.style.filter = `blur(${(12 * (1 - inU) + 14 * outU).toFixed(2)}px)`;
+          endUrl.style.transform = `translate3d(0, ${(40 * (1 - inU) + 10 * hold + 90 * outU).toFixed(2)}px, 0)`;
+        }
+
+        let fitted = false;
+        function renderAll(t) {
+          renderBg(t);
+          renderWheels(t);
+          renderEnd(t);
+          if (window.__render3d) window.__render3d(t);
+          window.__lastT = t;
+        }
+        window.__renderAll = renderAll;
+
+        window.__hf = window.__hf || {};
+        window.__hf.buildReady = window.__hf.buildReady || {};
+        let fontsResolve;
+        window.__hf.buildReady["fonts"] = new Promise((r) => (fontsResolve = r));
+        document.fonts.ready.then(() => { fitItems(); fitted = true; renderAll(window.__lastT || 0); fontsResolve(); });
+
+        const clock = { t: 0 };
+        const tl = gsap.timeline({ paused: true });
+        tl.to(clock, { t: 24, duration: 24, ease: "none", onUpdate: () => renderAll(clock.t) });
+        window.addEventListener("hf-seek", (e) => renderAll(e.detail.time));
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+        renderAll(0);
+      })();
     </script>
+    <script type="module" src="stage.js"></script>
   </body>
 </html>
