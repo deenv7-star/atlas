@@ -18,7 +18,7 @@ export const APP_ID = `${SITE_ORIGIN}/#software`;
 export const DEFAULT_OG = `${SITE_ORIGIN}/og/og-default.png`;
 
 export const ATLAS_ONE_LINER =
-  'atlas היא מערכת ניהול בעברית לצימרים, וילות ומתחמי נופש בישראל: לוח שנה אחד לכל היחידות והערוצים (Booking.com, Airbnb והזמנות ישירות), לידים, מעקב מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן, משימות ניקיון ודוח הכנסות חודשי. עובדת מהדפדפן במחשב ובטלפון, עם 14 ימי ניסיון בחינם.';
+  'atlas הוא מערכת ניהול בעברית לצימרים, וילות ומתחמי נופש בישראל: לוח שנה אחד לכל היחידות והערוצים (Booking.com, Airbnb והזמנות ישירות), לידים, מעקב מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן, משימות ניקיון ודוח הכנסות חודשי. עובד מהדפדפן במחשב ובטלפון, עם 14 יום חינם ותמיכה אנושית 24/7.';
 
 export function abs(path) {
   if (!path) return SITE_ORIGIN + '/';
@@ -43,6 +43,8 @@ export function organizationLd() {
       telephone: `+${LEGAL.WHATSAPP_NUMBER_INTL}`,
       url: WHATSAPP_URL,
       availableLanguage: ['he'],
+      // support hours decided by Deen (01.11.2026): a person answers 24/7
+      hoursAvailable: { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '00:00', closes: '23:59' },
     }],
   };
   if (legalValue('BUSINESS_NAME')) org.legalName = LEGAL.BUSINESS_NAME;

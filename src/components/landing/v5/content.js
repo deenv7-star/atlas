@@ -4,7 +4,7 @@
  * amber only as a tiny "today" dot. No photos. No invented customer numbers or testimonials:
  * every number on the page is example data inside the product UI or a real price from pricing.js.
  */
-import { PRICING_PLANS } from '../../../config/pricing.js';
+import { PRICING_PLANS, SUPPORT_LINE } from '../../../config/pricing.js';
 
 export const WHATSAPP_URL = 'https://wa.me/972525979520';
 export const PHONE_DISPLAY = '052-597-9520';
@@ -14,7 +14,6 @@ export const CTA_NOTE = 'בלי כרטיס אשראי';
 
 /** Support hours, decided by Deen (01.11.2026): a person answers 24/7. No response-time promise (not decided). */
 export const SUPPORT_247 = '24/7, גם בשבת ובאמצע הלילה';
-export const SUPPORT_LINE = 'תמיכה אנושית 24/7, גם בשבת ובאמצע הלילה';
 
 export const HERO = {
   title: ['יותר הזמנות.', 'אפס כפילויות.', 'כל שקל במעקב.'],

@@ -39,6 +39,8 @@
 .v8p-diff summary { min-height: 60px; font-size: 17px; color: var(--navy); }
 .v8p-diff-body { padding: 0 0 20px; }
 .v8p-diff-note { margin-bottom: 12px; font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+.v8p-diff-note.is-after { margin: 14px 0 0; }
+.v8p-diff-note a { color: var(--indigo); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
 /* compact table: label column + three narrow plan columns, fits 320px without scrolling */
 .v8p-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 14px; }

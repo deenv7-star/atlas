@@ -39,7 +39,8 @@
 .v8p-bill { display: grid; margin: 0 0 22px; font-size: 14px; line-height: 28px; color: var(--ink-2); }
 .v8p-plan.is-pop .v8p-bill { color: rgba(255, 255, 255, 0.85); }
 .v8p-bill > span { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: opacity 200ms var(--ease-out, ease-out), visibility 0s linear 200ms; }
-.v8p-bill-y { opacity: 0; visibility: hidden; }
+.v8p-bill-y { opacity: 0; visibility: hidden; flex-wrap: wrap; row-gap: 2px; white-space: normal; }
+.v8p-bill-y .v8p-nw { white-space: nowrap; }
 .v8p.is-yearly .v8p-bill-m { opacity: 0; visibility: hidden; }
 .v8p.is-yearly .v8p-bill-y { opacity: 1; visibility: visible; transition: opacity 220ms var(--ease-out, ease-out) 80ms, visibility 0s; }
 .v8p-save {

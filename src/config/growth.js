@@ -3,6 +3,10 @@
  * PROPOSAL awaiting Deen's approval: names, prices, founding-member terms and monthly slot caps
  * come from qa/growth-offer/plan.md. Change them here only.
  *
+ * Scope decided by Deen (01.11.2026, A05): growth = campaigns (Meta, Google) + a landing page / website for
+ * the complex, separate from the three management packages, and sold only after a call: every growth CTA
+ * opens WhatsApp to schedule the call (GROWTH_LINKS.call), never /register.
+ *
  * Honesty rules (consumer protection law, voice guide):
  *  - Every limit and date here must be real. FOUNDING.remaining stays null until a real counter
  *    exists (then the UI shows "נשארו X מתוך 20"); never hard-code a remaining number.
@@ -55,9 +59,9 @@ export const GROWTH_TIERS = [
     priceYearly: 599,
     popular: true,
     lead: 'הכל בניהול, ועוד:',
-    items: ['דף הזמנה ישירה מהתמונות', '4 סרטונים בחודש לאינסטגרם וטיקטוק', 'מודעות מוכנות לכל עונה', 'פניות מהמודעה ישר לוואטסאפ', 'דוח חודשי: כמה זה הביא', 'בקשת ביקורת אחרי כל עזיבה'],
+    items: ['קמפיינים ב-Meta וב-Google', 'דף נחיתה או אתר למתחם', 'פניות מהמודעה ישר לוואטסאפ', 'דוח חודשי: כמה זה הביא'],
     note: 'תקציב הפרסום שלכם, משולם ישירות ל-Meta ול-Google',
-    cta: { kind: 'founding', label: 'שמירת מקום כמייסדים' },
+    cta: { kind: 'call', label: 'קביעת שיחה בוואטסאפ' },
   },
   {
     key: 'guided',
@@ -75,7 +79,7 @@ export const GROWTH_TIERS = [
 /** What exists today vs. opening to founding members first (keeps the landing honest). */
 export const GROWTH_STATUS = {
   ready: ['דף הזמנה ישירה', 'בקשת ביקורת בוואטסאפ'],
-  soon: ['סרטונים מהתמונות', 'מודעות עונתיות', 'דוח "כמה הביא"'],
+  soon: ['סרטונים לקמפיינים', 'קמפיין לכל עונה', 'דוח "כמה הביא"'],
 };
 
 /** ROI example (assumptions stated next to it on the page). */
@@ -93,7 +97,12 @@ export const GROWTH_OFFER = GROWTH_TIERS.find((t) => t.key === 'growth');
 export const nis = (n) => `₪${Number(n).toLocaleString('en-US')}`;
 
 const msg = (t) => `${WHATSAPP_URL}?text=${encodeURIComponent(t)}`;
+/** What the growth package is, in one line (pricing card, /pricing, FAQ, llms.txt, terms). */
+export const GROWTH_SCOPE = 'קמפיינים ב-Meta וב-Google, ודף נחיתה או אתר למתחם';
+export const GROWTH_CTA = 'קביעת שיחה בוואטסאפ';
+
 export const GROWTH_LINKS = {
+  call: msg('היי דין, אשמח לקבוע שיחה על חבילת הצמיחה של atlas: קמפיינים ואתר למתחם.'),
   founding: msg('היי דין, אשמח לשמור מקום כמייסדים בחבילת הצמיחה של atlas.'),
   guided: msg('היי דין, יש מקום פנוי החודש בצמיחה מלווה?'),
   launch: msg('היי דין, אשמח לפרטים על חבילת ההשקה.'),

@@ -141,7 +141,7 @@ function outPath(route) {
 function sitemap(routes, posts) {
   const lastmod = { '/': '2026-10-18' };
   posts.forEach((p) => { lastmod[`/blog/${p.slug}`] = p.updated; });
-  const all = ['/', '/pricing', '/register', ...routes];
+  const all = ['/', '/pricing', ...routes]; // /register and /login are noindex (A18/SEO-003), so not in the sitemap
   const prio = (r) => (r === '/' ? '1.0' : r === '/blog' || r === '/pricing' ? '0.9' : r.startsWith('/blog/') ? '0.8' : r === '/register' ? '0.8' : '0.5');
   const urls = all.map((r) => [
     '  <url>',
@@ -154,8 +154,8 @@ function sitemap(routes, posts) {
 }
 
 function llms(mod) {
-  const { POSTS, SITE_PAGES, ATLAS_ONE_LINER, FAQ, PRICING_PLANS } = mod;
-  const plan = (p) => `- ${p.nameHe} (${p.name}): ‏₪${p.price} לחודש, או ‏₪${p.priceYearly} לחודש בתשלום שנתי. ${p.limit}.`;
+  const { POSTS, SITE_PAGES, ATLAS_ONE_LINER, PRICING_FAQ, PRICING_PLANS, GROWTH_OFFER, GROWTH_NAME, GROWTH_SCOPE, yearlyTotal } = mod;
+  const plan = (p) => `- ${p.nameHe} (${p.name}): ‏₪${p.price} לחודש, או ‏₪${p.priceYearly} לחודש בחיוב שנתי מראש (‏₪${yearlyTotal(p).toLocaleString('en-US')} לשנה). ${p.limit}.`;
   return [
     '# atlas',
     '',
@@ -165,18 +165,20 @@ function llms(mod) {
     '',
     '## עובדות',
     '- מה זה: מערכת ניהול (SaaS) לצימרים ומתחמי נופש בישראל, בעברית.',
-    '- מה יש בה: לוח שנה אחד לכל היחידות, הזמנות לפי ערוץ (Booking.com, Airbnb, ישיר) עם התראה על חפיפה, לידים, מעקב מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן שנשלחות בלחיצה מהוואטסאפ של המארח, משימות ניקיון, דוח חודשי לרואה החשבון (CSV / PDF).',
-    '- מה אין בה (נכון ל-18.10.2026): סליקת כרטיסי אשראי, חשבוניות מס רשמיות עם מספר הקצאה, ערוץ מנהל (Channel Manager) מלא.',
+    '- מה יש בו: לוח שנה אחד לכל היחידות, התאריכים התפוסים מ-Booking.com ו-Airbnb (ייבוא iCal) והזמנות ישירות, התראה לפני שרושמים הזמנה על לילות תפוסים, ייצוא iCal שהערוצים מושכים בקצב שלהם, דף הזמנה ישירה בלי עמלה, לידים, רישום מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן שנשלחות בלחיצה מהוואטסאפ של המארח, משימות ניקיון, דוח חודשי לרואה החשבון (CSV / PDF).',
+    '- מה אין בו: סליקת כרטיסי אשראי, הפקת קבלות או חשבוניות מס (מפיקים בתוכנה של המארח, וב-atlas רק רושמים את מספר המסמך), מנהל ערוצים (Channel Manager) מלא: הסנכרון בין הערוצים אינו בזמן אמת, ולכן atlas לא מבטיח שלא תהיה הזמנה כפולה.',
     '- ניסיון: 14 ימים בחינם, בלי כרטיס אשראי.',
     '- אחסון נתונים: Supabase, שרתי AWS באזור eu-central-1 (פרנקפורט, גרמניה).',
-    '- תמיכה: בוט עזרה בעברית עם נציג אנושי, וואטסאפ.',
+    '- תמיכה: אנושית 24/7, גם בשבת ובלילה, בוואטסאפ ובטלפון, ובוט עזרה בעברית עם מעבר לנציג.',
+    '- מע״מ: המפעיל עוסק פטור, המחירים סופיים וללא מע״מ.',
     '',
     '## מחירים',
     ...PRICING_PLANS.map(plan),
+    `- ${GROWTH_NAME}: ${GROWTH_SCOPE}. חבילה נפרדת מחבילות הניהול, שמתחילה בשיחת תיאום בוואטסאפ (לא בהרשמה עצמית). ‏₪${GROWTH_OFFER.price} לחודש, בקרוב.`,
     `- פרטים: ${ORIGIN}/pricing`,
     '',
-    '## שאלות נפוצות (מדף הבית)',
-    ...FAQ.slice(0, 5).map((f) => `- ${f.q} ${f.a}`),
+    '## שאלות נפוצות (מדף הבית ומעמוד המחירים)',
+    ...PRICING_FAQ.map((f) => `- ${f.q} ${f.a}`),
     '',
     '## בלוג',
     ...POSTS.map((p) => `- [${p.title}](${ORIGIN}/blog/${p.slug}): ${p.description}`),
@@ -302,7 +304,7 @@ function leanBody(html, appHtml, assets) {
 function appMeta(mod, route) {
   const m = mod.appRouteMeta(route);
   const jsonLd = route === '/pricing' ? mod.pricingLd() : null;
-  return { title: m.title, description: m.description, canonical: `${ORIGIN}${route}`, ogImage: LANDING_OG, jsonLd };
+  return { title: m.title, description: m.description, canonical: `${ORIGIN}${route}`, ogImage: LANDING_OG, jsonLd, robots: m.robots };
 }
 
 /** The plain SPA shell with its own robots tag and without the landing's canonical / hreflang / og:url. */
