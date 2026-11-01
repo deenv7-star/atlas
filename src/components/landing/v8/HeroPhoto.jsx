@@ -167,13 +167,13 @@ function Device({ deskRef, mobRef }) {
       <div className="ph-win ph-dev">
         <div className="ph-win-bar" aria-hidden="true"><i /><i /><i /><span dir="ltr">app.atlas-il.com/today</span></div>
         <div className="ph-win-shot">
-          <img ref={deskRef} src={`${P}/ui-d-today.webp`} alt="מסך הבית של atlas, נתוני דוגמה" width="2400" height="1500" loading="lazy" decoding="async" />
+          <img ref={deskRef} src={`${P}/ui-d-today.webp`} srcSet={`${P}/ui-d-today-1200.webp 1200w, ${P}/ui-d-today-1600.webp 1600w, ${P}/ui-d-today-2080.webp 2080w, ${P}/ui-d-today.webp 2400w`} sizes="min(1040px, 90vw)" alt="מסך הבית של atlas, נתוני דוגמה" width="2400" height="1500" loading="lazy" decoding="async" />
         </div>
       </div>
       <div className="ph-phone ph-dev" role="img" aria-label="מסך הבית של atlas בטלפון, נתוני דוגמה">
         <div className="ph-phone-scr">
           <span className="ph-phone-status" aria-hidden="true"><span className="num" dir="ltr">9:41</span><span className="ph-phone-island" /><i className="ph-phone-bat" /></span>
-          <img ref={mobRef} src={`${P}/ui-m-today.webp`} alt="" width="780" height="1594" loading="lazy" decoding="async" />
+          <img ref={mobRef} src={`${P}/ui-m-today.webp`} srcSet={`${P}/ui-m-today-540.webp 540w, ${P}/ui-m-today.webp 780w`} sizes="260px" alt="" width="780" height="1594" loading="lazy" decoding="async" />
         </div>
       </div>
     </>
