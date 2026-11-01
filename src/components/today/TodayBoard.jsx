@@ -50,9 +50,10 @@ export function checkOutTime(booking, property) {
   return hhmm(booking?.check_out_time) || hhmm(property?.check_out_time) || hhmm(guestInfoOf(property).check_out_time) || '11:00';
 }
 
+/** A finished step: a quiet status chip (not a button), ✓ + past tense. The action before it is an imperative "סימון …" button. (APP-019) */
 function Done({ children = 'בוצע' }) {
   return (
-    <span className="inline-flex h-10 items-center gap-1.5 rounded-full bg-[var(--st-mint-bg)] px-3 text-[13px] font-semibold text-[var(--st-mint-fg)]">
+    <span role="status" className="inline-flex h-10 items-center gap-1.5 rounded-full bg-[var(--st-mint-bg)] px-3 text-[13px] font-semibold text-[var(--st-mint-fg)]">
       <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden />
       {children}
     </span>
@@ -279,7 +280,7 @@ export default function TodayBoard({ user, orgId }) {
           booking_id: c.departure.id, scheduled_date: day, status: 'DONE', created_at: new Date().toISOString(),
         });
       }
-      atlasToastApi.success(`${c.unit} מוכנה לאורחים הבאים`);
+      atlasToastApi.success(`הניקיון של ${c.unit} סומן. אפשר לקבל אורחים`);
     } catch { atlasToastApi.error('לא הצלחנו לעדכן את הניקיון'); }
   };
 
@@ -319,7 +320,8 @@ export default function TodayBoard({ user, orgId }) {
     { label: 'ניקיון', value: openCleanings },
   ];
   const sm = 'h-11 px-4 text-[14px]';
-  const pill = (label, onClick) => <Button variant="secondary" className={sm} onClick={onClick}>{label}</Button>;
+  /** aria-label starts with the visible verb (WCAG 2.5.3) and adds who it is for. */
+  const pill = (label, onClick, who) => <Button variant="secondary" className={sm} onClick={onClick} aria-label={who ? `${label}: ${who}` : undefined}>{label}</Button>;
 
   const groups = [
     {
@@ -329,7 +331,7 @@ export default function TodayBoard({ user, orgId }) {
         title: booking.guest_name || 'אורח', detail: [unit, booking.nights ? heCount(booking.nights, 'night') : null].filter(Boolean).join(' · '),
         action: booking.status === 'CHECKED_IN'
           ? <Done>נכנסו</Done>
-          : pill('נכנסו', () => setStatus(booking, 'CHECKED_IN', `${booking.guest_name || 'האורחים'} נכנסו`)),
+          : pill('סימון כניסה', () => setStatus(booking, 'CHECKED_IN', `הכניסה של ${booking.guest_name || 'האורחים'} סומנה`), booking.guest_name || 'אורח'),
       })),
     },
     {
@@ -339,7 +341,7 @@ export default function TodayBoard({ user, orgId }) {
         title: booking.guest_name || 'אורח', detail: unit,
         action: booking.status === 'CHECKED_OUT'
           ? <Done>יצאו</Done>
-          : pill('יצאו', () => setStatus(booking, 'CHECKED_OUT', `${booking.guest_name || 'האורחים'} יצאו`)),
+          : pill('סימון יציאה', () => setStatus(booking, 'CHECKED_OUT', `היציאה של ${booking.guest_name || 'האורחים'} סומנה`), booking.guest_name || 'אורח'),
       })),
     },
     {
@@ -348,7 +350,7 @@ export default function TodayBoard({ user, orgId }) {
         key: `clean-${c.key}`, property: prop(c.departure.property_id), time: c.sameDayTurnover ? `עד ${checkInTime(c.nextArrival, prop(c.departure.property_id))}` : '—',
         title: c.unit, attention: c.sameDayTurnover && !c.done,
         detail: c.sameDayTurnover ? 'אורחים חדשים נכנסים היום' : c.nextArrival ? `הכניסה הבאה ${formatDayHe(c.nextArrival.check_in_date, { weekday: false })}` : 'אין כניסה קרובה',
-        action: c.done ? <Done /> : pill('בוצע', () => markCleaned(c)),
+        action: c.done ? <Done>ניקיון בוצע</Done> : pill('סימון ניקיון', () => markCleaned(c), c.unit),
       })),
     },
   ].filter((g) => g.rows.length);
@@ -400,6 +402,7 @@ export default function TodayBoard({ user, orgId }) {
     </Tile>
   );
 
+  const freeNights = Math.max(0, kpi.units * kpi.daysInMonth - kpi.nights);
   const donut = (
     <Tile i={2} to="/calendar" help="today.occupancy" ariaLabel={`תפוסה ${kpi.occupancy}% החודש, ללוח השנה`} className="min-h-[196px] p-4 md:p-5 lg:col-span-3 lg:min-h-[214px]">
       <div className="pointer-events-none flex items-start justify-between gap-2">
@@ -409,8 +412,8 @@ export default function TodayBoard({ user, orgId }) {
       <div className="pointer-events-none mt-auto flex flex-col items-center gap-2.5 pt-1 2xl:flex-row 2xl:justify-between">
         <Donut value={kpi.occupancy} size={108} stroke={14} label={`תפוסה ${kpi.occupancy}% החודש`} />
         <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[12px] text-ink-400 2xl:flex-col 2xl:items-start" aria-hidden>
-          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand-600" /><span className="tabular font-bold text-navy-900">{kpi.nights}</span> מוזמנות</span>
-          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#DCD8FC]" /><span className="tabular font-bold text-navy-900">{Math.max(0, kpi.units * kpi.daysInMonth - kpi.nights)}</span> פנויות</span>
+          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand-600" /><span className="tabular font-bold text-navy-900">{kpi.nights}</span> {kpi.nights === 1 ? 'לילה תפוס' : 'לילות תפוסים'}</span>
+          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#DCD8FC]" /><span className="tabular font-bold text-navy-900">{freeNights}</span> {freeNights === 1 ? 'לילה פנוי' : 'לילות פנויים'}</span>
         </p>
       </div>
     </Tile>

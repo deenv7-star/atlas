@@ -137,9 +137,21 @@ export function stayLabel(s) {
 }
 
 export function stayAria(s, unitName) {
-  const who = s.isBlock ? 'תאריכים חסומים' : (s.guest || 'הזמנה');
+  // starts with the bar's visible text (stayLabel), so voice control ("tap דנה כהן") finds it: WCAG 2.5.3
+  const who = stayLabel(s);
   const ch = s.isBlock ? '' : `, ${CHANNEL_LABEL[s.channel]}`;
   return `${who}${unitName ? `, ${unitName}` : ''}${ch}, ${shortDay(s.start)} עד ${shortDay(s.end)}, ${heCount(s.nights, 'night')}${s.pending ? ', ממתינה לאישור' : ''}`;
+}
+
+/** Timeline bar name: exactly the text the bar shows (in its order), then the details. WCAG 2.5.3 label-in-name. */
+export function stayBarAria(s, unitName, w) {
+  const seen = [stayLabel(s)];
+  if (w >= 3 && !s.isBlock && s.channel && s.channel !== 'direct') seen.push(CHANNEL_LABEL[s.channel]);
+  if (w >= 2) seen.push(s.pending ? 'ממתינה לאישור' : s.isBlock ? `עד ${shortDay(s.end)}` : heCount(s.nights, 'night'));
+  const rest = [unitName, `${shortDay(s.start)} עד ${shortDay(s.end)}`];
+  if (!s.isBlock && w < 2) rest.push(heCount(s.nights, 'night'));
+  if (s.pending && w < 2) rest.push('ממתינה לאישור');
+  return `${seen.filter(Boolean).join(' ')}, ${rest.filter(Boolean).join(', ')}`;
 }
 
 /* ── day sheet: tap a day → what's there + add booking / block ───────────── */

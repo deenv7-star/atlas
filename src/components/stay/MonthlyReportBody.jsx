@@ -4,9 +4,9 @@ import { formatMoney, pct, formatDayHe } from '@/lib/stay/format';
 import { Money, StatTile } from './StayUI';
 import { heCount } from '@/lib/hebrewCount';
 
-function Table({ head, rows, foot, align }) {
+function Table({ head, rows, foot, align, label = 'טבלה' }) {
   return (
-    <div tabIndex={0} role="region" aria-label="טבלה" className="overflow-x-auto -mx-4 sm:mx-0">
+    <div tabIndex={0} role="region" aria-label={label} className="overflow-x-auto -mx-4 sm:mx-0">
       <table className="w-full text-[14px] ab-num min-w-[480px]" style={{ borderCollapse: 'collapse' }}>
         <thead>
           <tr>
@@ -104,6 +104,7 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
 
       <Block title="לפי יחידה">
         <Table
+            label="טבלה: לפי יחידה"
           head={['יחידה', 'לילות', 'תפוסה', 'ממוצע ללילה', 'הכנסות']}
           align={['right', 'left', 'left', 'left', 'left']}
           rows={r.unitRows.map((u) => [u.name, u.nights, pct(u.occupancy), formatMoney(u.adr), formatMoney(u.income)])}
@@ -114,6 +115,7 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
       <Block title="הזמנות בחודש">
         {r.lines.length === 0 ? <p className="ab-meta">אין הזמנות בחודש הזה.</p> : (
           <Table
+            label="טבלה: הזמנות בחודש"
             head={['אורח', 'יחידה', 'ערוץ', 'תאריכים', 'לילות בחודש', 'הכנסה בחודש']}
             align={['right', 'right', 'right', 'right', 'left', 'left']}
             rows={r.lines.map((l) => [l.guest, l.unit, l.channel, `${formatDayHe(l.check_in, { weekday: false })} - ${formatDayHe(l.check_out, { weekday: false })}`, l.nightsInMonth, formatMoney(l.income)])}
@@ -124,6 +126,7 @@ export function MonthlyReportBody({ report: r, emptyExpensesAction }) {
       {r.expenseRows.length > 0 ? (
         <Block title="פירוט הוצאות">
           <Table
+            label="טבלה: פירוט הוצאות"
             head={['תאריך', 'תיאור', 'קטגוריה', 'יחידה', 'סכום']}
             align={['right', 'right', 'right', 'right', 'left']}
             rows={r.expenseRows.map((x) => [formatDayHe(x.date, { weekday: false }), x.description || '-', x.category, x.unit || '-', formatMoney(x.amount)])}

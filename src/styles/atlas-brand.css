@@ -72,8 +72,7 @@
 .ab-btn-secondary:hover { border-color: #CDD1E0; background: #FAFBFD; }
 .ab-btn-ghost { background: transparent; color: var(--brand-600); }
 .ab-btn-ghost:hover { background: var(--brand-50); }
-.ab-btn-sm { min-height: 40px; padding: 0 12px; font-size: 14px; }
-@media (pointer: coarse) { .ab-btn-sm { min-height: 44px; } }
+.ab-btn-sm { min-height: 44px; padding: 0 14px; font-size: 14px; } /* 44px at every width (APP-018) */
 .ab-btn-lg { min-height: 48px; padding: 0 20px; font-size: 16px; }
 
 .ab-pill {

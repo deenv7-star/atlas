@@ -18,7 +18,7 @@ import { UnitPhoto } from '@/components/app/atoms';
 import {
   HE_DAYS_LONG, HE_DAYS_SHORT, longDay, monthDays, monthKey, monthMatrix, parseIso, rangeSegment, shortDay,
 } from '@/lib/calendar/calendarModel';
-import { SourceBadge, stayAria, stayLabel } from './shared';
+import { SourceBadge, stayBarAria, stayLabel } from './shared';
 
 /* ── compact month: one dot per unit per night ───────────────────────────── */
 
@@ -43,7 +43,7 @@ function CompactMonth({ month, today, units, occ, gapSet, holidays, onDay, selec
           const booked = units.filter((u) => occ.get(u.id)?.has(d)).length;
           const free = units.length - booked;
           const dt = parseIso(d);
-          const label = `${HE_DAYS_LONG[dt.getDay()]} ${shortDay(d)}${hol ? `, ${hol.map((h) => h.title).join(', ')}` : ''}, ${free === 0 ? 'הכל תפוס' : units.length > 1 ? `${heCount(free, 'unit')} פנויות` : 'פנוי'}`;
+          const label = `${HE_DAYS_LONG[dt.getDay()]} ${shortDay(d)}${hol ? `, ${hol.map((h) => h.title).join(', ')}` : ''}, ${free === 0 ? 'הכל תפוס' : units.length > 1 ? (free === 1 ? 'יחידה אחת פנויה' : `${free} יחידות פנויות`) : 'פנוי'}`;
           return (
             <button
               key={d}
@@ -206,7 +206,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                   <span
                     key={`g-${d}`}
                     aria-hidden
-                    className="pointer-events-none absolute top-[18px] flex h-[48px] items-center justify-center rounded-[14px] border border-dashed border-brand-600/60 bg-brand-600/[0.04] text-[11px] font-semibold text-brand-600"
+                    className="pointer-events-none absolute top-[8px] flex h-[44px] items-center justify-center rounded-[14px] border border-dashed border-brand-600/60 bg-brand-600/[0.04] text-[11px] font-semibold text-brand-600"
                     style={{ right: `calc(${((i + 0.5) / n) * 100}% + 2px)`, width: `calc(${100 / n}% - 4px)` }}
                   >
                     פנוי
@@ -223,12 +223,12 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                   const Bar = sliver ? 'span' : Link;
                   const barProps = sliver
                     ? { 'aria-hidden': true }
-                    : { to: `${createPageUrl('BookingDetail')}/${s.id}`, 'aria-label': stayAria(s, u.name), title: `${stayLabel(s)} · ${shortDay(s.start)}–${shortDay(s.end)}` };
+                    : { to: `${createPageUrl('BookingDetail')}/${s.id}`, 'aria-label': stayBarAria(s, u.name, w), title: `${stayLabel(s)} · ${shortDay(s.start)}–${shortDay(s.end)}` };
                   return (
                     <Bar
                       key={s.id}
                       {...barProps}
-                      className={cn('absolute top-[18px] z-10 block h-[48px]', sliver && 'pointer-events-none', optimisticEntityClassName(s.id))}
+                      className={cn('absolute top-[8px] z-10 block h-[44px]', sliver && 'pointer-events-none', optimisticEntityClassName(s.id))}
                       style={{ right: `calc(${(seg.from / n) * 100}% + 1px)`, width: `calc(${(w / n) * 100}% - 2px)` }}
                     >
                       <span className={cn(
@@ -324,7 +324,7 @@ function Agenda({ month, today, units, stays, gaps, holidays, onDay, onNewBookin
                 const verb = it.kind === 'in' ? 'מגיעים' : it.kind === 'out' ? 'יוצאים' : 'חסום';
                 return (
                   <li key={`${it.kind}-${s.id}`}>
-                    <Link to={`${createPageUrl('BookingDetail')}/${s.id}`} aria-label={`${verb}: ${stayAria(s, name(s.propertyId))}`} className="flex min-h-[60px] items-center gap-3 px-4 py-2 hover:bg-[#F7F8FB]">
+                    <Link to={`${createPageUrl('BookingDetail')}/${s.id}`} className="flex min-h-[60px] items-center gap-3 px-4 py-2 hover:bg-[#F7F8FB]">
                       <span aria-hidden className={cn('inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full', it.kind === 'in' ? 'bg-brand-600 text-white' : 'bg-[#F7F8FB] text-navy-900')}>
                         <Icon className="h-4 w-4" strokeWidth={1.75} />
                       </span>

@@ -12,7 +12,8 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { ChevronLeft, LogOut, Settings, CreditCard, Compass } from 'lucide-react';
+import { ChevronLeft, LogOut, Settings, CreditCard, Compass, LifeBuoy } from 'lucide-react';
+import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
 import { startTour } from '@/lib/tour/tourState';
 
 export { Wordmark } from './wordmark';
@@ -75,6 +76,11 @@ export function UserMenu({ user, onLogout, children, align = 'end', side }) {
         <DropdownMenuItem onSelect={() => startTour(0)} className="min-h-11 gap-2.5 text-[15px]">
           <Compass className="h-[18px] w-[18px] text-ink-600" />סיור מודרך
         </DropdownMenuItem>
+        {HELP_ENABLED ? (
+          <DropdownMenuItem onSelect={() => window.setTimeout(openHelp, 0)} className="min-h-11 gap-2.5 text-[15px]">
+            <LifeBuoy className="h-[18px] w-[18px] text-ink-600" />עזרה
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onLogout} className="min-h-11 gap-2.5 text-[15px] text-danger-600 focus:text-danger-700">
           <LogOut className="h-[18px] w-[18px]" />יציאה מהחשבון
@@ -85,7 +91,25 @@ export function UserMenu({ user, onLogout, children, align = 'end', side }) {
 }
 
 /** iOS-style grouped list of every destination — the mobile "עוד" sheet. */
-export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) {
+/** Help row: opens the help panel (no floating button over the content, APP-020). */
+export function HelpRow({ onDone, className }) {
+  const unread = useHelpUnread();
+  if (!HELP_ENABLED) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => { onDone?.(); window.setTimeout(openHelp, 0); }}
+      className={cn('press flex min-h-[56px] w-full items-center gap-3.5 px-4 text-start active:bg-neutral-100', className)}
+    >
+      <LifeBuoy className="h-5 w-5 shrink-0 text-ink-600" strokeWidth={1.5} aria-hidden />
+      <span className="flex-1 text-[16px] font-medium text-navy-900">עזרה</span>
+      {unread ? <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-brand-600 px-1.5 text-[12px] font-bold text-white" aria-label={`${unread} הודעות חדשות מנציג`}>{unread}</span> : null}
+      <ChevronLeft className="h-4 w-4 text-ink-400" aria-hidden />
+    </button>
+  );
+}
+
+export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [], top = null }) {
   const groups = useNavGroups(user)
     .map((g) => ({ ...g, items: g.items.filter((i) => !exclude.includes(i.page)) }))
     .filter((g) => g.items.length);
@@ -95,6 +119,7 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) 
       <DialogContent className="max-h-[85dvh] gap-3 overflow-y-auto bg-canvas sm:max-w-md">
         <DialogTitle className="px-1 text-[20px] font-bold text-navy-900">עוד</DialogTitle>
         <div className="space-y-4">
+          {top}
           {groups.map((g) => (
             <div key={g.id}>
               {g.label ? <p className="mb-1.5 px-3 text-[13px] font-medium text-ink-400">{g.label}</p> : null}
@@ -121,6 +146,7 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) 
               </div>
             </div>
           ))}
+          {HELP_ENABLED ? <div className="overflow-hidden v7-card"><HelpRow onDone={() => onOpenChange(false)} /></div> : null}
           <button
             type="button"
             onClick={onLogout}

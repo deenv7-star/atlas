@@ -13,6 +13,7 @@ import { useShellProperties } from '@/components/app/shell/shared';
 import { supportApi } from './api';
 import { SUPPORT_ENABLED, SUPPORT_WHATSAPP_DISPLAY, suggestionsFor, waSupportLink } from './config';
 import Markdown from './Markdown';
+import { onHelpOpen, reportHelpUnread } from './openHelp';
 import './support.css';
 
 const DESK = '(min-width: 1024px)';
@@ -119,7 +120,6 @@ export default function SupportWidget() {
   const SUPPORT_DB_READY = ready !== false;
   const listRef = useRef(null);
   const inputRef = useRef(null);
-  const launcherRef = useRef(null);
   const device = isDesktop ? 'desktop' : 'mobile';
   const page = location.pathname;
   const suggestions = useMemo(() => suggestionsFor(page), [page]);
@@ -165,7 +165,18 @@ export default function SupportWidget() {
   useEffect(() => { const el = listRef.current; if (el) el.scrollTo({ top: el.scrollHeight, behavior: messages.length > 1 ? 'smooth' : 'auto' }); }, [messages, typing, offer, open, view]);
 
   // open / close + focus
-  const close = useCallback(() => { setOpen(false); setTimeout(() => launcherRef.current?.focus(), 0); }, []);
+  // focus goes back to whatever opened the panel (a nav row, the sidebar item), else the hidden launcher's spot
+  const openerRef = useRef(null);
+  const close = useCallback(() => {
+    setOpen(false);
+    setTimeout(() => {
+      const el = openerRef.current;
+      if (el && el.isConnected && typeof el.focus === 'function') el.focus();
+    }, 0);
+  }, []);
+  // opened from the navigation (openHelp)
+  useEffect(() => onHelpOpen(({ opener }) => { openerRef.current = opener || null; setOpen(true); setView('chat'); }), []);
+  useEffect(() => { reportHelpUnread(unread); }, [unread]);
   useEffect(() => {
     if (!open) return undefined;
     const t = setTimeout(() => inputRef.current?.focus({ preventScroll: true }), isDesktop ? 60 : 260);
@@ -243,19 +254,7 @@ export default function SupportWidget() {
 
   return (
     <>
-      <button
-        ref={launcherRef}
-        type="button"
-        className={`sp-launcher${open ? ' is-hidden' : ''}`}
-        onClick={() => { setOpen(true); setView('chat'); }}
-        aria-label={unread ? `עזרה, ${unread} הודעות חדשות מנציג` : 'עזרה'}
-        aria-expanded={open}
-        aria-controls="atlas-support"
-      >
-        <LifeBuoy size={20} strokeWidth={1.75} aria-hidden />
-        <span className="sp-launcher-label">עזרה</span>
-        {unread ? <span className="sp-badge" aria-hidden>{unread}</span> : null}
-      </button>
+      {/* no floating launcher (APP-020): help opens from the navigation via openHelp() */}
 
       {open ? (
         <section id="atlas-support" className={`sp-panel ${isDesktop ? 'sp-panel--desk' : 'sp-panel--sheet'}`} role="dialog" aria-modal={!isDesktop} aria-labelledby="sp-title" dir="rtl">

@@ -12,7 +12,8 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { heCount } from '@/lib/hebrewCount';
-import { MoreHorizontal, Search, Bell, Settings, Building2, Check, Plus, ArrowUpLeft, Gem } from 'lucide-react';
+import { MoreHorizontal, Search, Bell, Settings, Building2, Check, Plus, ArrowUpLeft, Gem, LifeBuoy } from 'lucide-react';
+import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -76,6 +77,7 @@ export function Sidebar({ onLogout, user }) {
   const primary = groups[0].items;
   const isActive = useIsActive();
   const [moreOpen, setMoreOpen] = useState(false);
+  const helpUnread = useHelpUnread();
   const moreActive = groups.slice(1).some((g) => g.items.some((i) => isActive(i.page)));
   const linkCls = (active) => cn(
     'press flex h-12 items-center gap-3 rounded-[16px] px-3.5 text-[15px] transition-colors duration-150',
@@ -112,6 +114,15 @@ export function Sidebar({ onLogout, user }) {
                 <span className="truncate">עוד</span>
               </button>
             </li>
+            {HELP_ENABLED ? (
+              <li>
+                <button type="button" onClick={() => openHelp()} className={cn(linkCls(false), 'w-full')}>
+                  <LifeBuoy className="h-[19px] w-[19px] shrink-0 text-ink-400" strokeWidth={1.6} aria-hidden />
+                  <span className="flex-1 truncate text-start">עזרה</span>
+                  {helpUnread ? <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-brand-600 px-1.5 text-[12px] font-bold text-white" aria-label={`${helpUnread} הודעות חדשות מנציג`}>{helpUnread}</span> : null}
+                </button>
+              </li>
+            ) : null}
           </ul>
         </nav>
         <div className="p-3">

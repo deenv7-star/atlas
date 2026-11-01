@@ -127,6 +127,7 @@ const SEGMENT_TITLE = {
   g: 'פרטי השהייה | atlas',
   book: 'הזמנה ישירה | atlas',
   'service-requests': 'בקשות שירות | atlas',
+  setup: 'הגדרה ראשונית | atlas',
 };
 
 function normalizePath(pathname) {

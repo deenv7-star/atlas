@@ -129,7 +129,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="טבלת הוצאות">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-line bg-canvas">
