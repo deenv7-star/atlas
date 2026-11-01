@@ -5,6 +5,12 @@
       "source": "emilkowalski/skill",
       "sourceType": "github",
       "computedHash": "ac3fc5b4e206488ffc408a2806f829bb2e5eaf518fded09be34790685c2b3a0d"
+    },
+    "video-shotcraft": {
+      "source": "Vincentwei1021/video-shotcraft",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "6cfdaf39a61de80067414e3225c7ac31bcc784ef7dfe2e2042ea03caeca81622"
     }
   }
 }
