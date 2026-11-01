@@ -275,7 +275,7 @@ export function ContactDetails() {
   // COPY-024: one row when the phone is the WhatsApp number (it is, 18.10.2026)
   const samePhone = tel && String(LEGAL.BUSINESS_PHONE).replace(/\D/g, '') === String(LEGAL.WHATSAPP_DISPLAY).replace(/\D/g, '');
   const rows = [
-    { label: samePhone ? 'וואטסאפ או טלפון' : 'וואטסאפ', value: <><a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" dir="ltr">{LEGAL.WHATSAPP_DISPLAY}<span className="s-sr"> (נפתח בוואטסאפ)</span></a>{samePhone && <> · <a href={tel}>חיוג</a></>}</> },
+    { label: samePhone ? 'וואטסאפ או טלפון' : 'וואטסאפ', value: <><a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" dir="ltr">{LEGAL.WHATSAPP_DISPLAY}<span className="s-sr"> (נפתח בוואטסאפ)</span></a>{samePhone && <> · <a href={tel} style={{ display: 'inline-block', padding: '12px 10px', margin: '-12px -10px' }}>חיוג</a></>}</> },
     { label: 'שעות תמיכה', value: <span>24/7, גם בשבת ובאמצע הלילה. עונה בן אדם.</span> }, // Deen, 01.11.2026; no response-time promise
     !samePhone && tel && { label: 'טלפון', value: <a href={tel} dir="ltr">{String(LEGAL.BUSINESS_PHONE).replace(/-/g, '\u2011')}</a> },
     legalValue('SUPPORT_EMAIL') && { label: 'מייל', value: <a href={`mailto:${LEGAL.SUPPORT_EMAIL}`} dir="ltr">{LEGAL.SUPPORT_EMAIL}</a> },

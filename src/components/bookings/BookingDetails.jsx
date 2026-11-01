@@ -446,11 +446,10 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               to={createPageUrl('MultiCalendar')}
               className={cn('v5-rise c-photo press v7-lift flex min-h-[168px] flex-col justify-end p-4 text-white', !bookingUnitPhoto && 'c-photo--empty')}
               style={{ '--i': 3 }}
-              aria-label={`${unitName}, ללוח השנה`}
             >
               {bookingUnitPhoto ? <img src={bookingUnitPhoto} alt="" decoding="async" draggable={false} /> : null}
               <p className="text-[18px] font-bold leading-tight">{unitName}</p>
-              <p className="mt-0.5 text-[13px] text-white/90">{fmtShort(booking.check_in_date)} עד {fmtShort(booking.check_out_date)}</p>
+              <p className="mt-0.5 text-[13px] text-white/90">{fmtShort(booking.check_in_date)} עד {fmtShort(booking.check_out_date)}<span className="sr-only">, ללוח השנה</span></p>
             </Link>
 
           </div>

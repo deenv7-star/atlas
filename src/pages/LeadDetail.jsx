@@ -255,10 +255,10 @@ export default function LeadDetail() {
                   </a>
                   <a
                     href={telHref(lead.phone)}
-                    aria-label={`שיחה ל-${lead.full_name || 'ליד'}`}
                     className="press inline-flex h-12 min-w-[48px] items-center justify-center gap-2 rounded-full bg-[#F1F1F8] px-4 text-[15px] font-semibold text-navy-900 hover:bg-[#E8E8F2]"
                   >
                     <Phone className="h-[18px] w-[18px]" aria-hidden />
+                    <span className="sr-only">שיחה ל-{lead.full_name || 'ליד'}: </span>
                     <span dir="ltr" className="tabular">{lead.phone}</span>
                   </a>
                 </>
