@@ -110,7 +110,12 @@ function Row({ item, primary, onAction, onSnooze, onDismiss, leaving }) {
 }
 
 export default function InsightsFeed({ insights, onAction }) {
-  const { items, ready, snooze, dismiss, restore } = insights;
+  const { items: raw, ready, snooze, dismiss, restore } = insights;
+  // what really can't wait comes first, then what is late, then by due day (stable: engine order inside a tier)
+  const items = React.useMemo(() => {
+    const rank = { urgent: 0, late: 1, soon: 2, worth: 3, idea: 4 };
+    return (raw || []).map((x, i) => ({ x, i, r: rank[tierOf(x).key] ?? 5 })).sort((a, b) => a.r - b.r || a.i - b.i).map((y) => y.x);
+  }, [raw]);
   const [open, setOpen] = useState(false);
   const [leaving, setLeaving] = useState(null);
   const wide = useWide();
