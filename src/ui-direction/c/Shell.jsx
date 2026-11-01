@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { heCount } from '@/lib/hebrewCount';
-import { MoreHorizontal, Search, Bell, Settings, Building2, Check, Plus, ArrowUpLeft, Gem, LifeBuoy } from 'lucide-react';
+import { MoreHorizontal, Search, Bell, Settings, Building2, Check, Plus, ArrowUpLeft, Gem, LifeBuoy, ChevronLeft } from 'lucide-react';
 import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -25,6 +25,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { trialShortText, TRIAL_DAYS } from '@/lib/trial';
 import { formatDayHe, todayISO, firstName } from '@/lib/stay/format';
 import { AskAtlasButton } from '@/assistant/launcher';
+import { useNewLeads } from '@/hooks/useNewLeads';
 
 export const shellClass = 'bg-canvas';
 
@@ -225,6 +226,27 @@ export function TabBar({ user, onLogout }) {
   const slots = ['Dashboard', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
   const primaryPages = ['Dashboard', 'MultiCalendar', 'Bookings'];
   const moreActive = !primaryPages.some((p) => isActive(p));
+  // Version B (APP-D03): the four tabs stay; "עוד" carries the count of new leads, and "לידים" is the first,
+  // pinned row of the sheet with the same count. On "היום" the strip at the top links straight to them.
+  const leads = useNewLeads();
+  const helpUnread = useHelpUnread();
+  const leadsItem = navItem('Leads');
+  const leadsActive = isActive('Leads');
+  const pinned = leadsItem ? (
+    <div className="overflow-hidden v7-card">
+      <Link to={createPageUrl('Leads')} onClick={() => setMoreOpen(false)} className="press flex min-h-[56px] items-center gap-3.5 px-4 active:bg-neutral-100">
+        <leadsItem.icon className={cn('h-5 w-5 shrink-0', leadsActive ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.5} aria-hidden />
+        <span className={cn('flex-1 text-[16px]', leadsActive ? 'font-bold text-brand-700' : 'font-medium text-navy-900')}>{leadsItem.label}</span>
+        {leads.count ? (
+          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-brand-600 px-2 text-[12px] font-bold text-white">
+            <span aria-hidden className="tabular">{leads.count}</span>
+            <span className="sr-only">{leads.count === 1 ? 'ליד חדש אחד' : `${leads.count} חדשים`}</span>
+          </span>
+        ) : null}
+        <ChevronLeft className="h-4 w-4 text-ink-400" aria-hidden />
+      </Link>
+    </div>
+  ) : null;
   const tab = (active) => cn(
     'press mx-auto flex h-[52px] w-full max-w-[76px] flex-col items-center justify-center gap-0.5 rounded-[20px] text-[11px] transition-colors duration-200',
     active ? 'bg-[#ECEAFE] font-bold text-brand-700' : 'font-medium text-ink-400',
@@ -251,9 +273,16 @@ export function TabBar({ user, onLogout }) {
             if (slot === '__more__') {
               return (
                 <li key={slot}>
-                  <button type="button" onClick={() => setMoreOpen(true)} className={tab(moreActive)}>
-                    <MoreHorizontal className="h-[21px] w-[21px]" strokeWidth={1.75} />
+                  <button type="button" onClick={() => setMoreOpen(true)} className={cn(tab(moreActive), 'relative')}>
+                    <MoreHorizontal className="h-[21px] w-[21px]" strokeWidth={1.75} aria-hidden />
                     עוד
+                    {leads.count ? <span className="sr-only">, {leads.count === 1 ? 'ליד חדש אחד' : `${leads.count} לידים חדשים`}</span> : null}
+                    {helpUnread ? <span className="sr-only">, הודעה חדשה מנציג</span> : null}
+                    {leads.count ? (
+                      <span aria-hidden className="tabular absolute end-2 top-1 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand-600 px-1 text-[11px] font-bold leading-none text-white ring-2 ring-white">
+                        {leads.count > 9 ? '9+' : leads.count}
+                      </span>
+                    ) : helpUnread ? <span aria-hidden className="absolute end-3 top-2 h-2.5 w-2.5 rounded-full bg-brand-600 ring-2 ring-white" /> : null}
                   </button>
                 </li>
               );
@@ -272,7 +301,7 @@ export function TabBar({ user, onLogout }) {
           })}
         </ul>
       </nav>
-      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={primaryPages} />
+      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={[...primaryPages, 'Leads']} top={pinned} />
     </>
   );
 }

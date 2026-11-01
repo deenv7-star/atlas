@@ -9,10 +9,11 @@
 import HelpHint from '@/components/help/HelpHint';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ChevronLeft, LogIn, LogOut, Sparkles, ArrowUpLeft, Moon } from 'lucide-react';
+import { Check, ChevronLeft, LogIn, LogOut, Sparkles, ArrowUpLeft, Moon, Users } from 'lucide-react';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
-import { todayISO, addDays, formatDayHe, nightsBetween } from '@/lib/stay/format';
+import { todayISO, addDays, formatDayHe, nightsBetween, firstName } from '@/lib/stay/format';
+import { useNewLeads } from '@/hooks/useNewLeads';
 import { isActiveBooking, checkOutOf, balanceOf } from '@/lib/stay/bookings';
 import { templateByKey, renderTemplate, normalizePhone } from '@/lib/stay/whatsapp';
 import { useMessageQueue } from '@/hooks/useMessageQueue';
@@ -194,6 +195,50 @@ function FoldLine({ label, to, onClick, open }) {
   return to ? <Link to={to} className={cls}>{inner}</Link> : <button type="button" onClick={onClick} aria-expanded={open} className={cls}>{inner}</button>;
 }
 
+/**
+ * Version B (APP-D01 / APP-D03): one compact strip at the top of "היום": arrivals · departures · cleaning,
+ * each with the first name and time, and a one-tap shortcut to new leads. Tapping a count jumps to the
+ * full list ("היום במתחם") further down, where the actions are.
+ */
+function TodayStrip({ cells, leads }) {
+  const jump = () => {
+    const el = document.getElementById('today-board');
+    if (!el) return;
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    el.focus?.({ preventScroll: true });
+  };
+  return (
+    <Rise i={0} as="section" aria-label="היום בקצרה" className="v7-card mb-3 overflow-hidden md:mb-4" data-testid="today-strip">
+      <ul className="grid grid-cols-3 divide-x divide-x-reverse divide-[#F0F0F6]">
+        {cells.map((c) => (
+          <li key={c.key} className="min-w-0">
+            <button type="button" onClick={jump} className="press flex min-h-[76px] w-full min-w-0 flex-col items-start justify-center gap-0.5 px-3.5 py-2.5 text-start hover:bg-[#F7F8FB] md:px-5">
+              <span className="flex items-center gap-1.5 text-[12px] font-semibold text-ink-400">
+                <c.icon className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden />
+                {c.label}
+              </span>
+              <span className="tabular text-[24px] font-extrabold leading-none tracking-[-0.02em] text-navy-900">{c.value}</span>
+              <span className={cn('w-full truncate text-[12px]', c.value ? 'text-ink-600' : 'text-ink-400')}>{c.sub}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      {leads.count > 0 ? (
+        <Link to="/leads" className="press flex min-h-[52px] items-center gap-3 border-t border-[#F0F0F6] px-3.5 text-[14px] hover:bg-[#F7F8FB] md:px-5" data-testid="today-strip-leads">
+          <span aria-hidden className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ECEAFE] text-brand-600">
+            <Users className="h-4 w-4" strokeWidth={1.75} />
+          </span>
+          <span className="min-w-0 flex-1 truncate font-semibold text-navy-900">
+            {leads.count === 1 ? 'ליד חדש מחכה לתשובה' : <><span className="tabular">{leads.count}</span> לידים חדשים מחכים לתשובה</>}
+          </span>
+          <ChevronLeft className="h-4 w-4 shrink-0 text-ink-300" strokeWidth={1.75} aria-hidden />
+        </Link>
+      ) : null}
+    </Rise>
+  );
+}
+
 export default function TodayBoard({ user, orgId }) {
   const day = todayISO();
   const tomorrow = addDays(day, 1);
@@ -314,6 +359,20 @@ export default function TodayBoard({ user, orgId }) {
     catch { atlasToastApi.error(url || 'אין עדיין קישור להזמנה הזו'); }
   };
   const openCleanings = board.cleanings.filter((c) => !c.done).length;
+  const newLeads = useNewLeads();
+  const who = (list, timeOf) => {
+    if (!list.length) return 'אין היום';
+    const [f] = list;
+    const t = timeOf(f.booking, prop(f.booking.property_id));
+    const name = firstName(f.booking.guest_name || '') || 'אורח';
+    return `${name}${t ? ` ${t}` : ''}${list.length > 1 ? ` · +${list.length - 1}` : ''}`;
+  };
+  const openClean = board.cleanings.filter((c) => !c.done);
+  const stripCells = [
+    { key: 'in', label: board.arrivals.length === 1 ? 'כניסה' : 'כניסות', icon: LogIn, value: board.arrivals.length, sub: who(board.arrivals, checkInTime) },
+    { key: 'out', label: board.departures.length === 1 ? 'יציאה' : 'יציאות', icon: LogOut, value: board.departures.length, sub: who(board.departures, checkOutTime) },
+    { key: 'clean', label: 'ניקיון', icon: Sparkles, value: openClean.length, sub: openClean.length ? `${openClean[0].unit}${openClean.length > 1 ? ` · +${openClean.length - 1}` : ''}` : (board.cleanings.length ? 'הכל נקי' : 'אין היום') },
+  ];
   const counts = [
     { label: board.arrivals.length === 1 ? 'כניסה' : 'כניסות', value: board.arrivals.length },
     { label: board.departures.length === 1 ? 'יציאה' : 'יציאות', value: board.departures.length },
@@ -479,7 +538,7 @@ export default function TodayBoard({ user, orgId }) {
   );
 
   const today = (
-    <Rise i={5} as="section" aria-label="היום" data-tour="today-board" className="v7-card flex h-full min-w-0 flex-col overflow-hidden">
+    <Rise i={5} as="section" id="today-board" tabIndex={-1} aria-label="היום" data-tour="today-board" className="v7-card flex h-full min-w-0 scroll-mt-[96px] flex-col overflow-hidden focus:outline-none">
       <div className="flex min-h-[64px] items-center justify-between gap-3 px-5 pt-3 md:px-6">
         <div className="min-w-0">
           <h2 className="flex items-center gap-0.5 text-[17px] font-bold text-navy-900">היום במתחם<HelpHint id="today.board" /></h2>
@@ -608,6 +667,7 @@ export default function TodayBoard({ user, orgId }) {
         </div>
       ) : data.isLoading ? skeleton : (
         <>
+          <TodayStrip cells={stripCells} leads={newLeads} />
           <InsightsFeed insights={insights} onAction={onInsight} />
           <section aria-label="מספרים" className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-12">
             {hero}
