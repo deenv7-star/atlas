@@ -18,7 +18,7 @@ import { UnitPhoto } from '@/components/app/atoms';
 import {
   HE_DAYS_LONG, HE_DAYS_SHORT, longDay, monthDays, monthKey, monthMatrix, parseIso, rangeSegment, shortDay,
 } from '@/lib/calendar/calendarModel';
-import { SourceBadge, stayBarAria, stayLabel } from './shared';
+import { SourceBadge, stayBarDetails, stayLabel } from './shared';
 
 /* ── compact month: one dot per unit per night ───────────────────────────── */
 
@@ -223,7 +223,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                   const Bar = sliver ? 'span' : Link;
                   const barProps = sliver
                     ? { 'aria-hidden': true }
-                    : { to: `${createPageUrl('BookingDetail')}/${s.id}`, 'aria-label': stayBarAria(s, u.name, w), title: `${stayLabel(s)} · ${shortDay(s.start)}–${shortDay(s.end)}` };
+                    : { to: `${createPageUrl('BookingDetail')}/${s.id}`, title: `${stayLabel(s)} · ${shortDay(s.start)}–${shortDay(s.end)}` };
                   return (
                     <Bar
                       key={s.id}
@@ -253,6 +253,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                           </>
                         ) : null}
                       </span>
+                      {!sliver ? <span className="sr-only">{stayBarDetails(s, u.name, w)}</span> : null}
                     </Bar>
                   );
                 })}

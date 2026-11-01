@@ -719,6 +719,7 @@ footer a[href] { display: inline-flex; align-items: center; min-height: 44px; }
    at any breakpoint (md:text-sm, text-[14px] …). Checkboxes / radios / ranges are untouched. (APP-011/012) */
 @layer base {
   input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']), textarea, select { font-size: 16px; }
+  select { min-height: 44px; } /* native selects (e.g. /service-requests) were 28px tall: 44px tap target */
 }
 :is(input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']), textarea, select):is(
   [class*='text-xs'], [class*='text-sm'], [class*='text-[11px]'], [class*='text-[12px]'], [class*='text-[13px]'], [class*='text-[14px]'], [class*='text-[15px]']

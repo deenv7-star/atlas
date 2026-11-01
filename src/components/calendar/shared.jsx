@@ -143,15 +143,15 @@ export function stayAria(s, unitName) {
   return `${who}${unitName ? `, ${unitName}` : ''}${ch}, ${shortDay(s.start)} עד ${shortDay(s.end)}, ${heCount(s.nights, 'night')}${s.pending ? ', ממתינה לאישור' : ''}`;
 }
 
-/** Timeline bar name: exactly the text the bar shows (in its order), then the details. WCAG 2.5.3 label-in-name. */
-export function stayBarAria(s, unitName, w) {
-  const seen = [stayLabel(s)];
-  if (w >= 3 && !s.isBlock && s.channel && s.channel !== 'direct') seen.push(CHANNEL_LABEL[s.channel]);
-  if (w >= 2) seen.push(s.pending ? 'ממתינה לאישור' : s.isBlock ? `עד ${shortDay(s.end)}` : heCount(s.nights, 'night'));
+/**
+ * Timeline bar: what the bar does NOT show, read after its visible text (rendered as an sr-only span inside the link,
+ * so the accessible name is the visible text + these details and always contains it: WCAG 2.5.3 label-in-name).
+ */
+export function stayBarDetails(s, unitName, w) {
   const rest = [unitName, `${shortDay(s.start)} עד ${shortDay(s.end)}`];
   if (!s.isBlock && w < 2) rest.push(heCount(s.nights, 'night'));
   if (s.pending && w < 2) rest.push('ממתינה לאישור');
-  return `${seen.filter(Boolean).join(' ')}, ${rest.filter(Boolean).join(', ')}`;
+  return `, ${rest.filter(Boolean).join(', ')}`;
 }
 
 /* ── day sheet: tap a day → what's there + add booking / block ───────────── */
