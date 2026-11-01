@@ -13,6 +13,7 @@ import { useShellProperties } from '@/components/app/shell/shared';
 import { supportApi } from './api';
 import { SUPPORT_ENABLED, SUPPORT_WHATSAPP_DISPLAY, suggestionsFor, waSupportLink } from './config';
 import Markdown from './Markdown';
+import { heError } from '@/lib/heError';
 import './support.css';
 
 const DESK = '(min-width: 1024px)';
@@ -204,7 +205,7 @@ export default function SupportWidget() {
       });
       setOffer(Boolean(r.offer_handoff));
     } catch (e) {
-      setMessages((l) => l.map((x) => (x.id === tmp.id ? { ...x, _failed: true, _error: e.message } : x)));
+      setMessages((l) => l.map((x) => (x.id === tmp.id ? { ...x, _failed: true, _error: heError(e, 'ההודעה לא נשלחה. בדקו את החיבור ונסו שוב.') } : x)));
       if (e.code === 'rate_limited') setOffer(true);
     } finally {
       setTyping(false);
@@ -220,7 +221,7 @@ export default function SupportWidget() {
       setMode('human'); setOffer(false);
       setMessages((l) => (l.some((x) => x.id === r.system_message?.id) ? l : [...l, r.system_message]));
     } catch (e) {
-      setNotice(`${e.message} אפשר גם לכתוב לנו בוואטסאפ ${SUPPORT_WHATSAPP_DISPLAY}.`);
+      setNotice(`${heError(e, 'לא הצלחנו להעביר לנציג כרגע.')} אפשר גם לכתוב לנו בוואטסאפ ${SUPPORT_WHATSAPP_DISPLAY}, 24/7.`);
     } finally { setHandingOff(false); }
   }, [handingOff, mode, convId, page, device, user]);
 
@@ -286,7 +287,7 @@ export default function SupportWidget() {
                   <span className="sp-human-on"><Headset size={16} strokeWidth={1.75} aria-hidden />השיחה אצל נציג. התשובה תגיע לכאן.</span>
                 ) : (
                   <button type="button" className="sp-human-btn" onClick={() => handoff('button')} disabled={handingOff}>
-                    <Headset size={17} strokeWidth={1.75} aria-hidden />{handingOff ? 'מעבירים…' : 'דבר עם נציג'}
+                    <Headset size={17} strokeWidth={1.75} aria-hidden />{handingOff ? 'מעבירים…' : 'שיחה עם נציג'}
                   </button>
                 )}
               </div>
@@ -325,7 +326,7 @@ export default function SupportWidget() {
                 <div className="sp-hello">
                   <p className="sp-hello-hi">{name ? `שלום ${name},` : 'שלום,'}</p>
                   <h3>במה אפשר לעזור?</h3>
-                  <p className="sp-hello-sub">אני מכיר כל מסך וכפתור כאן. אם לא אדע, נציג מהצוות ימשיך מכאן.</p>
+                  <p className="sp-hello-sub">אנחנו מכירים כל מסך וכפתור כאן. אם לא נדע, נציג מהצוות ימשיך מכאן, 24/7.</p>
                   <ul className="sp-suggest" aria-label="שאלות נפוצות">
                     {suggestions.map((q) => (
                       <li key={q}><button type="button" onClick={() => send(q)}><span>{q}</span><ArrowUpLeft size={16} strokeWidth={1.75} aria-hidden /></button></li>
@@ -346,7 +347,7 @@ export default function SupportWidget() {
                 <div className="sp-offer" role="group" aria-label="מעבר לנציג">
                   <p>רוצים שנציג מהצוות ימשיך מכאן? הוא יראה את כל השיחה.</p>
                   <div>
-                    <button type="button" className="sp-primary sp-primary--sm" onClick={() => handoff('unhelpful')} disabled={handingOff}><Headset size={16} strokeWidth={1.75} aria-hidden />דבר עם נציג</button>
+                    <button type="button" className="sp-primary sp-primary--sm" onClick={() => handoff('unhelpful')} disabled={handingOff}><Headset size={16} strokeWidth={1.75} aria-hidden />שיחה עם נציג</button>
                     <button type="button" className="sp-textbtn" onClick={() => setOffer(false)}>לא עכשיו</button>
                   </div>
                 </div>
