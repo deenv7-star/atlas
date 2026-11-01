@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { askConfirm } from '@/components/common/confirmDialog';
 import FinanceTabs from '@/components/app/FinanceTabs';
 import { PageHeader, EmptyState, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
 import { base44 } from '@/api/base44Client';
@@ -328,9 +329,8 @@ export default function InvoicesPage({ orgId }) {
                             variant="ghost"
                             aria-label="מחיקה"
                             onClick={() => {
-                              if (confirm('למחוק את הרישום? המסמך בתוכנה שלכם לא יימחק.')) {
-                                deleteMutation.mutate(invoice.id);
-                              }
+                              askConfirm({ title: 'למחוק את הרישום?', description: 'רק הרישום ב-atlas יימחק. המסמך בתוכנת החשבונות שלכם נשאר.' })
+                                .then((ok) => { if (ok) deleteMutation.mutate(invoice.id); });
                             }}
                           >
                             <Trash2 className="w-4 h-4 text-red-500" />

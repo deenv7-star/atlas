@@ -49,7 +49,7 @@ function PlanCard() {
         to={createPageUrl('Subscription')}
         className="press mt-3.5 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full bg-white text-[14px] font-bold text-brand-700 hover:bg-[#F4F3FF]"
       >
-        {trial ? 'בחירת מסלול' : 'ניהול המנוי'}
+        {trial ? 'בחירת חבילה' : 'ניהול המנוי'}
         <ArrowUpLeft className="h-4 w-4" strokeWidth={2} aria-hidden />
       </Link>
     </div>

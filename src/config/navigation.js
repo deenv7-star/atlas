@@ -73,7 +73,7 @@ export const NAV_GROUPS = [
 export const FINANCE_TABS = [
   { page: 'Payments', label: 'תשלומים' },
   { page: 'Balances', label: 'יתרות' },
-  { page: 'Invoices', label: 'חשבוניות' },
+  { page: 'Invoices', label: 'מסמכים שהוצאתם' },
   ...(DB_FEATURES.expenses ? [{ page: 'ExpenseTracker', label: 'הוצאות' }] : []),
   { page: 'MonthlyReport', label: 'דוח חודשי' },
 ];

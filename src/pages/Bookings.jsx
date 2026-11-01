@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
+import { askConfirm } from '@/components/common/confirmDialog';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { useBookings, useCreateBooking, useUpdateBooking, useDeleteBooking } from '@/data/entities';
@@ -220,8 +221,13 @@ export default function BookingsPage({ selectedPropertyId }) {
     }
   };
 
-  const handleDelete = (id) => {
-    if (!confirm('למחוק את ההזמנה?')) return;
+  const handleDelete = async (id) => {
+    const b = bookings.find((x) => x.id === id);
+    const ok = await askConfirm({
+      title: b?.guest_name ? `למחוק את ההזמנה של ${b.guest_name}?` : 'למחוק את ההזמנה?',
+      description: 'ההזמנה תיעלם מהיומן ומהרשימה. ב-5 השניות הראשונות אפשר לבטל מההודעה שתופיע.',
+    });
+    if (!ok) return;
     deleteBookingWithUndo(queryClient, id);
   };
 

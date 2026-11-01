@@ -409,7 +409,7 @@ function Ready({ d }) {
       <motion.h1 initial={still ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35, ease: EASE }}
         className="mt-7 text-[34px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[42px]">המערכת שלך מוכנה</motion.h1>
       <motion.p initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.45 }} className="mt-2 text-[17px] text-ink-600">
-        {d.businessName.trim() || 'המקום שלכם'} כבר בפנים. ההזמנה הראשונה יכולה להיכנס.
+        {d.businessName.trim() || 'המתחם שלכם'} כבר בפנים. ההזמנה הראשונה יכולה להיכנס.
       </motion.p>
       <ul className="mt-7 flex w-full flex-col gap-2">
         {items.map((t, k) => (

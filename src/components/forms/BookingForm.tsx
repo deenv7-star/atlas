@@ -231,7 +231,7 @@ export function BookingForm({
             <FormMachineFieldHint error={fm.errors.total_price} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">סטטוס</Label>
+            <Label className="text-[14px] font-medium text-ink-600">מצב ההזמנה</Label>
             <Controller
               control={fm.control}
               name="status"
@@ -243,7 +243,7 @@ export function BookingForm({
                     field.onChange(v);
                   }}
                 >
-                  <SelectTrigger aria-label="סטטוס" className="h-12 md:h-11 rounded-[10px]">
+                  <SelectTrigger aria-label="מצב ההזמנה" className="h-12 md:h-11 rounded-[10px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

@@ -105,12 +105,12 @@ export function reportToCSV(r, orgName = '') {
   out.push(row('תשלומים שהתקבלו בחודש (₪)', round(r.received)));
   out.push(row('לילות שנמכרו', r.nights));
   out.push(row('תפוסה (%)', Math.round(r.occupancy * 100)));
-  out.push(row('מחיר ממוצע ללילה ADR (₪)', round(r.adr)));
+  out.push(row('מחיר ממוצע ללילה (₪)', round(r.adr)));
   out.push('');
   out.push(row('הכנסות לפי ערוץ', 'לילות', 'הזמנות', 'הכנסות (₪)'));
   r.channels.forEach((c) => out.push(row(c.label, c.nights, c.bookings, round(c.income))));
   out.push('');
-  out.push(row('יחידה', 'לילות', 'תפוסה (%)', 'ADR (₪)', 'הכנסות (₪)'));
+  out.push(row('יחידה', 'לילות', 'תפוסה (%)', 'ממוצע ללילה (₪)', 'הכנסות (₪)'));
   r.unitRows.forEach((u) => out.push(row(u.name, u.nights, Math.round(u.occupancy * 100), round(u.adr), round(u.income))));
   out.push('');
   out.push(row('הוצאות', 'תאריך', 'קטגוריה', 'יחידה', 'סכום (₪)'));

@@ -54,7 +54,7 @@ export function renderTemplate(key, ctx) {
   const toPlace = withPrefix('ל', placeName);
   const host = info.host_name || orgName || '';
   const sign = host ? `\n\n${host}` : '';
-  const dates = `${formatDayHe(booking.check_in_date)} עד ${formatDayHe(booking.check_out_date)}`;
+  const dates = `${formatDayHe(booking.check_in_date, { long: true })} עד ${formatDayHe(booking.check_out_date, { long: true })}`;
   const link = guestPageUrl(booking);
   const nav = navigationTarget(property);
   const bal = balance?.balance > 0 ? formatMoney(balance.balance) : '';
@@ -67,7 +67,7 @@ export function renderTemplate(key, ctx) {
         `תאריכים: ${dates}.`,
         `כניסה מ-${info.check_in_time}, יציאה עד ${info.check_out_time}.`,
         bal ? `יתרה לתשלום: ${bal}.` : '',
-        link ? `כל הפרטים לשהייה, וצ'ק-אין קצר (טלפון ושעת הגעה), כאן: ${link}` : '',
+        link ? `פרטי השהייה וצ'ק-אין של דקה: ${link}` : '',
         (info.closing_line || 'נשמח לארח אתכם.').trim(),
       ].filter(Boolean).join('\n') + sign;
 
@@ -88,7 +88,7 @@ export function renderTemplate(key, ctx) {
         hello,
         `ברוכים הבאים ${toPlace}. מקווים שהגעתם בשלום.`,
         info.wifi_name ? `וויי-פיי: ${info.wifi_name}${info.wifi_password ? `, סיסמה ${info.wifi_password}` : ''}` : '',
-        `יציאה ב${formatDayHe(booking.check_out_date)} עד ${info.check_out_time}.`,
+        `יציאה ב${formatDayHe(booking.check_out_date, { long: true })} עד ${info.check_out_time}.`,
         'אם חסר משהו, כתבו לנו כאן ונדאג לזה.',
         link ? `פרטי השהייה: ${link}` : '',
       ].filter(Boolean).join('\n') + sign;
@@ -107,8 +107,8 @@ export function renderTemplate(key, ctx) {
       return [
         hello,
         `תזכורת קטנה לגבי ההזמנה ${inPlace} (${dates}).`,
-        bal ? `נותרה יתרה של ${bal} לתשלום${balance?.dueDate ? ` עד ${formatDayHe(balance.dueDate)}` : ''}.` : 'נשמח להשלים את התשלום לפני ההגעה.',
-        'אפשר להעביר בביט או בהעברה בנקאית, ונשלח קבלה.',
+        bal ? `נותרה יתרה של ${bal} לתשלום${balance?.dueDate ? ` עד ${formatDayHe(balance.dueDate, { long: true })}` : ''}.` : 'נשמח להשלים את התשלום לפני ההגעה.',
+        info.payment_methods ? `אפשר לשלם ב${String(info.payment_methods).trim()}.` : 'אשמח שתעדכנו כשהעברתם.',
         'תודה.',
       ].join('\n') + sign;
 

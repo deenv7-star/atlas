@@ -279,7 +279,7 @@ export default function TodayBoard({ user, orgId }) {
           booking_id: c.departure.id, scheduled_date: day, status: 'DONE', created_at: new Date().toISOString(),
         });
       }
-      atlasToastApi.success(`${c.unit} מוכנה לאורחים הבאים`);
+      atlasToastApi.success(`${c.unit} · נקי ומוכן לאורחים`);
     } catch { atlasToastApi.error('לא הצלחנו לעדכן את הניקיון'); }
   };
 
@@ -409,8 +409,8 @@ export default function TodayBoard({ user, orgId }) {
       <div className="pointer-events-none mt-auto flex flex-col items-center gap-2.5 pt-1 2xl:flex-row 2xl:justify-between">
         <Donut value={kpi.occupancy} size={108} stroke={14} label={`תפוסה ${kpi.occupancy}% החודש`} />
         <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[12px] text-ink-400 2xl:flex-col 2xl:items-start" aria-hidden>
-          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand-600" /><span className="tabular font-bold text-navy-900">{kpi.nights}</span> מוזמנות</span>
-          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#DCD8FC]" /><span className="tabular font-bold text-navy-900">{Math.max(0, kpi.units * kpi.daysInMonth - kpi.nights)}</span> פנויות</span>
+          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand-600" /><span className="tabular font-bold text-navy-900">{kpi.nights}</span> לילות תפוסים</span>
+          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#DCD8FC]" /><span className="tabular font-bold text-navy-900">{Math.max(0, kpi.units * kpi.daysInMonth - kpi.nights)}</span> לילות פנויים</span>
         </p>
       </div>
     </Tile>
@@ -601,7 +601,7 @@ export default function TodayBoard({ user, orgId }) {
         <div className="v7-card mt-4 p-6">
           <p className="text-[15px] font-semibold text-navy-900">לא הצלחנו לטעון את היום</p>
           <p className="mt-1 text-[14px] text-ink-400">בדקו את החיבור ונסו שוב.</p>
-          <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>לנסות שוב</Button>
+          <Button variant="outline" className="mt-4" onClick={() => data.refetch?.()}>נסו שוב</Button>
         </div>
       ) : data.isLoading ? skeleton : (
         <>

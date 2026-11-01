@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { askConfirm } from '@/components/common/confirmDialog';
 import FinanceTabs from '@/components/app/FinanceTabs';
 import { paymentFormToPayload } from '@/lib/entityPayloads';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -271,10 +272,12 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
             error={isError ? (paymentsError instanceof Error ? paymentsError : new Error('לא הצלחנו לטעון את התשלומים')) : null}
             onEdit={openEdit}
             onDelete={(id) => {
-              if (confirm('למחוק את התשלום?')) deleteMutation.mutate(id);
+              askConfirm({ title: 'למחוק את התשלום?', description: 'התשלום יימחק לצמיתות.' })
+                .then((ok) => { if (ok) deleteMutation.mutate(id); });
             }}
-            onBulkDelete={(rows) => {
-              if (!confirm(`למחוק ${heCount(rows.length, 'payment')}?`)) return;
+            onBulkDelete={async (rows) => {
+              const ok = await askConfirm({ title: `למחוק ${heCount(rows.length, 'payment')}?`, description: 'התשלומים יימחקו לצמיתות.' });
+              if (!ok) return;
               rows.forEach((r) => deleteMutation.mutate(r.id));
             }}
           />
