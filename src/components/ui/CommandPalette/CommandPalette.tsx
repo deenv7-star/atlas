@@ -434,7 +434,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                   <CommandItem
                     key={`sb-${h.id}`}
                     value={`search-booking-${h.id}-${h.title}`}
-                    keywords={[h.title, h.subtitle, ...(h.keywords ?? []), 'הזמנה']}
+                    keywords={[h.title, h.subtitle, ...(h.keywords ?? []), search.trim(), 'הזמנה']}
                     data-announce={announce(h.title, h.subtitle)}
                     onSelect={() => {
                       recordCommandPaletteVisit({ kind: 'booking', id: h.id, title: h.title, subtitle: h.subtitle });
@@ -454,7 +454,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                   <CommandItem
                     key={`sg-${h.id}`}
                     value={`search-guest-${h.id}-${h.title}`}
-                    keywords={[h.title, h.subtitle, ...(h.keywords ?? []), 'אורח']}
+                    keywords={[h.title, h.subtitle, ...(h.keywords ?? []), search.trim(), 'אורח']}
                     data-announce={announce(h.title, h.subtitle)}
                     onSelect={() => {
                       recordCommandPaletteVisit({ kind: 'guest', id: h.id, title: h.title, subtitle: h.subtitle });
