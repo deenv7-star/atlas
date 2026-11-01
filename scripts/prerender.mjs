@@ -21,6 +21,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'vite';
 import react from '@vitejs/plugin-react';
+import { criticalCss, htmlTokens } from './critical-css.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -278,9 +279,25 @@ function deferEntry(html) {
  * imported and adds nothing, so the cascade stays exactly as it was. `disabled` keeps the browser from fetching
  * it at all (an inert media="not all" link was still downloaded before the first paint).
  */
-function inlineCss(html) {
+/** The entry chunk's own stylesheet(s): the whole app's Tailwind. PERF-002: only its critical part is inlined
+ *  (so is any other sheet over 40 KB, i.e. landing-v8m); the full files load, cached, right after the first paint. */
+function entryCssHrefs() {
+  const m = readManifest();
+  return new Set(Object.values(m).filter((c) => c.isEntry).flatMap((c) => (c.css || []).map((f) => `/${f}`)));
+}
+
+function inlineCss(html, tokens) {
+  const entryCss = tokens ? entryCssHrefs() : new Set();
   return html.replace(/<link rel="stylesheet" crossorigin href="(\/assets\/[^"]+\.css)">/g, (tag, href) => {
-    const css = fs.readFileSync(path.join(DIST, href), 'utf8').replace(/<\/style/gi, '<\\/style');
+    const full = fs.readFileSync(path.join(DIST, href), 'utf8');
+    if (entryCss.has(href) || full.length > 40000) {
+      // PERF-002: the rules this page's HTML can use go inline; the full sheet (cached by the browser, shared with the
+      // app) is enabled by src/main.jsx before hydration. data-atlas-full keeps Vite's loader from adding it twice.
+      const css = criticalCss(full, tokens).replace(/<\/style/gi, '<\\/style');
+      const marker = `<link rel="stylesheet" crossorigin href="${href}" media="not all" disabled data-atlas-full>`;
+      return `<style data-href="${href}" data-critical>${css}</style>${marker}`;
+    }
+    const css = full.replace(/<\/style/gi, '<\\/style');
     // every inlined sheet keeps the inert marker, the entry's too: a lazy landing chunk (the growth section) lists the
     // entry CSS among its deps, and without the marker Vite re-adds it as a <link> after the landing CSS, which
     // reorders the cascade and shifts the hero (CLS 0.4 at 390, measured 20.10.2026)
@@ -290,7 +307,8 @@ function inlineCss(html) {
 }
 
 function leanBody(html, appHtml, assets) {
-  const head = inlineCss(deferEntry(html).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`));
+  const tokens = htmlTokens(`${html}${appHtml}`);
+  const head = inlineCss(deferEntry(html).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`), tokens);
   const start = head.indexOf('<div id="root">');
   if (start < 0) throw new Error('template has no #root');
   const after = head.slice(start);
