@@ -38,9 +38,9 @@ const PORT = [['pool-p480', 480], ['pool-p720', 720], ['pool-p1080', 1080]];
 const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['pool-2560', 2560], ['pool-3840', 3840]];
 
 const NTFS = [
-  { ch: 'booking', title: 'הזמנה חדשה מ-Booking.com', sub: 'שירן ג. · הזית · 2 לילות', time: '08:12' },
+  { ch: 'booking', title: 'Booking.com · 2 לילות נחסמו', sub: 'הזית · התאריכים נכנסו ללוח', time: '08:12' },
   { ch: 'whatsapp', title: 'אישור נשלח בוואטסאפ', sub: 'משפחת לוי · עם הוראות הגעה', time: '09:00' },
-  { face: 'noa', title: 'נועה ל. שילמה מקדמה', sub: '‏₪1,250 · האלון · נרשם לבד', time: '10:24' },
+  { face: 'noa', title: 'נועה ל. · מקדמה ‏₪1,250', sub: 'האלון · נרשמה בלחיצה', time: '10:24' },
 ];
 
 /** Scroll segments (progress 0..1 through the sticky run). */
@@ -165,7 +165,7 @@ function Device({ deskRef, mobRef }) {
   return (
     <>
       <div className="ph-win ph-dev">
-        <div className="ph-win-bar" aria-hidden="true"><i /><i /><i /><span dir="ltr">app.atlas-il.com/today</span></div>
+        <div className="ph-win-bar" aria-hidden="true"><i /><i /><i /><span dir="ltr">atlas-il.com/today</span></div>
         <div className="ph-win-shot">
           <img ref={deskRef} src={`${P}/ui-d-today.webp`} alt="מסך הבית של atlas, נתוני דוגמה" width="2400" height="1500" loading="lazy" decoding="async" />
         </div>
@@ -362,6 +362,12 @@ export default function HeroPhoto() {
     <>
     <section ref={sec} className="ph-hero is-scroll" aria-labelledby="hero-title">
       <div ref={stage} className="ph-stage">
+        {/* H1 first in the DOM (screen readers, crawlers: A16/SEO-001). Paint order is unchanged: .ph-in has
+            z-index 2, and .ph-end / .ph-clip keep their relative order (both z-index auto). */}
+        <div className="ph-in">
+          <Copy copyRef={copy} onShow={onShow} />
+          <Notifs ntfRef={ntfs} />
+        </div>
         <div className="ph-end">
           <div ref={end} className="ph-end-head" id="product"><EndHead /></div>
           <div className="ph-end-dev"><Device deskRef={shotD} mobRef={shotM} /></div>
@@ -369,10 +375,6 @@ export default function HeroPhoto() {
         <div ref={clip} className="ph-clip">
           <Photo imgRef={img} />
           <i ref={scrim} className="ph-scrim" aria-hidden="true" />
-        </div>
-        <div className="ph-in">
-          <Copy copyRef={copy} onShow={onShow} />
-          <Notifs ntfRef={ntfs} />
         </div>
       </div>
     </section>
