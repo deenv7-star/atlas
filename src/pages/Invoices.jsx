@@ -42,10 +42,12 @@ const statusConfig = {
 };
 
 const typeConfig = {
-  INVOICE: 'חשבונית',
-  RECEIPT: 'קבלה',
-  TAX_INVOICE: 'חשבונית מס',
-  PROFORMA: 'חשבונית עסקה'
+  // record-only (COPY-044): what the owner issued elsewhere. RECEIPT / TAX_INVOICE are legacy values, shown
+  // only on old rows and never offered for new ones.
+  INVOICE: 'מסמך מהתוכנה שלכם',
+  RECEIPT: 'קבלה (מהתוכנה שלכם)',
+  TAX_INVOICE: 'חשבונית מס (מהתוכנה שלכם)',
+  PROFORMA: 'חשבון עסקה'
 };
 
 function normalizeInvoiceForUi(row) {
@@ -130,9 +132,9 @@ export default function InvoicesPage({ orgId }) {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
-      atlasToastApi.success('החשבונית נשמרה');
+      atlasToastApi.success('המסמך נרשם');
     },
-    onError: () => atlasToastApi.error('לא הצלחנו לשמור את החשבונית. נסו שוב.')
+    onError: () => atlasToastApi.error('לא הצלחנו לשמור את המסמך. נסו שוב.')
   });
 
   const updateMutation = useMutation({
@@ -141,42 +143,22 @@ export default function InvoicesPage({ orgId }) {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
-      atlasToastApi.success('החשבונית עודכנה');
+      atlasToastApi.success('המסמך עודכן');
     },
-    onError: () => atlasToastApi.error('לא הצלחנו לעדכן את החשבונית. נסו שוב.')
+    onError: () => atlasToastApi.error('לא הצלחנו לעדכן את המסמך. נסו שוב.')
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Invoice.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      atlasToastApi.success('החשבונית נמחקה');
+      atlasToastApi.success('הרישום נמחק');
     },
-    onError: () => atlasToastApi.error('לא הצלחנו למחוק את החשבונית. נסו שוב.')
+    onError: () => atlasToastApi.error('לא הצלחנו למחוק את הרישום. נסו שוב.')
   });
 
-  // No mail provider is connected yet: open the owner's own mail app with the text ready (honest, nothing "sent" by us).
-  const sendEmailMutation = useMutation({
-    mutationFn: async (invoice) => {
-      const res = await base44.integrations.Core.SendEmail({
-        to: invoice.guest_email || invoice.customer_email,
-        subject: `חשבונית ${invoice.invoice_number}`,
-        body: `שלום,\nמצורפת חשבונית ${invoice.invoice_number}.\nתודה.`,
-      });
-      if (res?.success) {
-        await base44.entities.Invoice.update(invoice.id, { status: 'SENT' });
-        return { sent: true };
-      }
-      if (res?.mailto) window.location.href = res.mailto;
-      return { sent: false };
-    },
-    onSuccess: (r) => {
-      queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      if (r?.sent) atlasToastApi.success('החשבונית נשלחה וסומנה כנשלחה');
-      else atlasToastApi.success('פתחנו את תוכנת המייל שלכם עם הנוסח. צרפו את קובץ החשבונית ושלחו משם.');
-    },
-    onError: () => atlasToastApi.error('לא הצלחנו לפתוח את המייל. נסו שוב.')
-  });
+  // COPY-044 (01.11.2026): no "send to guest" mail. This screen only records documents the owner issued in
+  // their own bookkeeping software; atlas never sends a document that looks like a tax invoice or receipt.
 
   const handleSave = (data) => {
     const payload = invoiceToPayload(data, orgId);
@@ -197,15 +179,6 @@ export default function InvoicesPage({ orgId }) {
     setShowPreviewDialog(true);
   };
 
-  const handleSendEmail = (invoice) => {
-    const to = invoice.guest_email || invoice.customer_email;
-    if (!to) {
-      atlasToastApi.error('אין מייל לאורח הזה. הוסיפו אותו בחשבונית.');
-      return;
-    }
-    sendEmailMutation.mutate(invoice);
-  };
-
   const filteredInvoices = rawInvoices.filter((inv) => {
     const matchesSearch = inv.guest_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          inv.invoice_number?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -218,13 +191,13 @@ export default function InvoicesPage({ orgId }) {
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <FinanceTabs className="!mb-0" />
       <PageHeader
-        title="חשבוניות"
-        subtitle="חשבוניות וקבלות לאורחים."
+        title="מסמכים שהוצאתם"
+        subtitle="רושמים כאן את מספר הקבלה או החשבונית שהוצאתם בתוכנה שלכם, כדי שהכל יופיע בדוח החודשי. atlas לא מפיק מסמכי מס."
         className="!mb-0"
         actions={
           <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
             <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
-            חשבונית חדשה
+            רישום מסמך
           </Button>
         }
       />
@@ -242,11 +215,11 @@ export default function InvoicesPage({ orgId }) {
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger aria-label="סינון לפי סטטוס">
-              <SelectValue placeholder="סטטוס" />
+            <SelectTrigger aria-label="סינון לפי מצב">
+              <SelectValue placeholder="מצב" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">כל הסטטוסים</SelectItem>
+              <SelectItem value="ALL">כל המצבים</SelectItem>
               {Object.entries(statusConfig).map(([key, { label }]) => (
                 <SelectItem key={key} value={key}>{label}</SelectItem>
               ))}
@@ -272,12 +245,12 @@ export default function InvoicesPage({ orgId }) {
           <EmptyState
             compact
             icon={FileText}
-            title={rawInvoices.length === 0 ? 'אין עדיין חשבוניות' : 'אין חשבוניות שמתאימות'}
-            description={rawInvoices.length === 0 ? 'חשבונית שנוצרת להזמנה תופיע כאן, מוכנה לשליחה.' : 'נסו חיפוש או סינון אחר.'}
+            title={rawInvoices.length === 0 ? 'אין עדיין מסמכים רשומים' : 'אין מסמכים שמתאימים'}
+            description={rawInvoices.length === 0 ? 'הוצאתם קבלה או חשבונית בתוכנה שלכם? רשמו כאן את המספר, והיא תופיע בדוח החודשי.' : 'נסו חיפוש או סינון אחר.'}
             action={rawInvoices.length === 0 ? (
               <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
                 <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />
-                חשבונית חדשה
+                רישום מסמך
               </Button>
             ) : null}
           />
@@ -289,7 +262,7 @@ export default function InvoicesPage({ orgId }) {
               <button type="button" onClick={() => handlePreview(invoice)} className="flex min-h-[64px] w-full items-center justify-between gap-3 py-3 text-right">
                 <div className="min-w-0">
                   <p className="truncate text-[15px] font-bold text-navy-900">{invoice.guest_name || 'לקוח'}</p>
-                  <p className="truncate text-[13px] text-ink-400">{typeConfig[invoice.type] || 'חשבונית'} · {invoice.invoice_number}{invoice.issue_date ? ` · ${fmtShort(invoice.issue_date)}` : ''}</p>
+                  <p className="truncate text-[13px] text-ink-400">{typeConfig[invoice.type] || 'מסמך'} · {invoice.invoice_number}{invoice.issue_date ? ` · ${fmtShort(invoice.issue_date)}` : ''}</p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <span className="tabular text-[15px] font-bold text-navy-900">{fmtMoney(invoice.total_amount || 0)}</span>
@@ -308,7 +281,7 @@ export default function InvoicesPage({ orgId }) {
                 <TableHead>לקוח</TableHead>
                 <TableHead>תאריך</TableHead>
                 <TableHead>סכום</TableHead>
-                <TableHead>סטטוס</TableHead>
+                <TableHead>מצב</TableHead>
                 <TableHead className="text-left">פעולות</TableHead>
               </TableRow>
             </TableHeader>
@@ -322,7 +295,7 @@ export default function InvoicesPage({ orgId }) {
                   return (
                     <TableRow key={invoice.id}>
                       <TableCell className="font-mono text-sm">{invoice.invoice_number}</TableCell>
-                      <TableCell>{typeConfig[invoice.type] || 'חשבונית'}</TableCell>
+                      <TableCell>{typeConfig[invoice.type] || 'מסמך'}</TableCell>
                       <TableCell>{invoice.guest_name}</TableCell>
                       <TableCell>{issueDate}</TableCell>
                       <TableCell className="font-semibold">₪{invoice.total_amount?.toLocaleString()}</TableCell>
@@ -353,18 +326,9 @@ export default function InvoicesPage({ orgId }) {
                           <Button
                             size="icon"
                             variant="ghost"
-                            aria-label="שליחה במייל"
-                            onClick={() => handleSendEmail(invoice)}
-                            disabled={!(invoice.guest_email || invoice.customer_email)}
-                          >
-                            <Send className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
                             aria-label="מחיקה"
                             onClick={() => {
-                              if (confirm('למחוק את החשבונית?')) {
+                              if (confirm('למחוק את הרישום? המסמך בתוכנה שלכם לא יימחק.')) {
                                 deleteMutation.mutate(invoice.id);
                               }
                             }}
@@ -388,7 +352,7 @@ export default function InvoicesPage({ orgId }) {
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingInvoice ? 'עריכת חשבונית' : 'חשבונית חדשה'}
+              {editingInvoice ? 'עריכת רישום' : 'רישום מסמך'}
             </DialogTitle>
           </DialogHeader>
           <InvoiceForm

@@ -108,7 +108,7 @@ const SEGMENT_TITLE = {
   messages: 'הודעות | atlas',
   calendar: 'לוח שנה | atlas',
   settings: 'הגדרות | atlas',
-  invoices: 'חשבוניות | atlas',
+  invoices: 'מסמכים שהוצאתם | atlas',
   payments: 'תשלומים | atlas',
   reviews: 'ביקורות | atlas',
   cleaning: 'ניקיון | atlas',
