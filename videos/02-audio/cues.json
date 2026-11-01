@@ -1,0 +1,325 @@
+{
+ "placeholder": true,
+ "bpm": 120,
+ "duration": 24.0,
+ "sample_rate": 48000,
+ "align_help": "onset: sound starts at t; peak: loudest point lands at t",
+ "cues": [
+  {
+   "t": 0.5,
+   "sfx": "tick",
+   "gain_db": -6.0,
+   "align": "onset",
+   "note": "word wheel step"
+  },
+  {
+   "t": 1.0,
+   "sfx": "tick",
+   "gain_db": -5.6,
+   "align": "onset",
+   "note": "word wheel step"
+  },
+  {
+   "t": 1.5,
+   "sfx": "tick",
+   "gain_db": -5.2,
+   "align": "onset",
+   "note": "word wheel step"
+  },
+  {
+   "t": 2.0,
+   "sfx": "tick",
+   "gain_db": -4.8,
+   "align": "onset",
+   "note": "word wheel step"
+  },
+  {
+   "t": 2.5,
+   "sfx": "tick",
+   "gain_db": -4.4,
+   "align": "onset",
+   "note": "word wheel step"
+  },
+  {
+   "t": 3.0,
+   "sfx": "tick",
+   "gain_db": -4.0,
+   "align": "onset",
+   "note": "word wheel step"
+  },
+  {
+   "t": 3.5,
+   "sfx": "land",
+   "gain_db": -4.0,
+   "align": "onset",
+   "note": "wheel lands on logo"
+  },
+  {
+   "t": 3.5,
+   "sfx": "shimmer_small",
+   "gain_db": -8.0,
+   "align": "onset",
+   "note": "logo land sparkle"
+  },
+  {
+   "t": 3.8,
+   "sfx": "whoosh_in",
+   "gain_db": -4.0,
+   "align": "peak",
+   "note": "cut whoosh-in"
+  },
+  {
+   "t": 5.0,
+   "sfx": "ping",
+   "gain_db": -3.0,
+   "align": "onset",
+   "note": "23:40 notification"
+  },
+  {
+   "t": 6.0,
+   "sfx": "cut_hit",
+   "gain_db": -4.0,
+   "align": "onset",
+   "note": "cut to calendar"
+  },
+  {
+   "t": 6.5,
+   "sfx": "whoosh_lift",
+   "gain_db": -5.0,
+   "align": "peak",
+   "note": "Saturday cell lift"
+  },
+  {
+   "t": 7.5,
+   "sfx": "click",
+   "gain_db": -3.0,
+   "align": "onset",
+   "note": "save lead"
+  },
+  {
+   "t": 7.75,
+   "sfx": "success",
+   "gain_db": -4.0,
+   "align": "onset",
+   "note": "lead saved"
+  },
+  {
+   "t": 8.5,
+   "sfx": "cut_hit",
+   "gain_db": -4.0,
+   "align": "onset",
+   "note": "cut to MacBook"
+  },
+  {
+   "t": 9.0,
+   "sfx": "whoosh_lift",
+   "gain_db": -5.0,
+   "align": "peak",
+   "note": "Booking card flies"
+  },
+  {
+   "t": 9.5,
+   "sfx": "land",
+   "gain_db": -5.0,
+   "align": "onset",
+   "note": "Booking card lands"
+  },
+  {
+   "t": 9.5,
+   "sfx": "tick_lo",
+   "gain_db": -9.0,
+   "align": "onset",
+   "note": "Booking badge on"
+  },
+  {
+   "t": 10.0,
+   "sfx": "whoosh_lift",
+   "gain_db": -5.0,
+   "align": "peak",
+   "note": "Airbnb card flies"
+  },
+  {
+   "t": 10.5,
+   "sfx": "land",
+   "gain_db": -5.0,
+   "align": "onset",
+   "note": "Airbnb card lands"
+  },
+  {
+   "t": 10.5,
+   "sfx": "tick_lo",
+   "gain_db": -9.0,
+   "align": "onset",
+   "note": "Airbnb badge on"
+  },
+  {
+   "t": 11.5,
+   "sfx": "whoosh_exit",
+   "gain_db": -5.0,
+   "align": "onset",
+   "note": "exit"
+  },
+  {
+   "t": 12.0,
+   "sfx": "cut_hit",
+   "gain_db": -3.0,
+   "align": "onset",
+   "note": "Friday 15:00 clock"
+  },
+  {
+   "t": 13.0,
+   "sfx": "whoosh_lift",
+   "gain_db": -5.0,
+   "align": "peak",
+   "note": "message row lift"
+  },
+  {
+   "t": 14.0,
+   "sfx": "click",
+   "gain_db": -2.0,
+   "align": "onset",
+   "note": "tap send"
+  },
+  {
+   "t": 14.25,
+   "sfx": "sent",
+   "gain_db": -5.0,
+   "align": "onset",
+   "note": "message sent"
+  },
+  {
+   "t": 15.5,
+   "sfx": "whoosh_exit",
+   "gain_db": -5.0,
+   "align": "onset",
+   "note": "exit"
+  },
+  {
+   "t": 16.0,
+   "sfx": "cut_hit",
+   "gain_db": -4.0,
+   "align": "onset",
+   "note": "month end"
+  },
+  {
+   "t": 16.5,
+   "sfx": "tick",
+   "gain_db": -11.0,
+   "align": "onset",
+   "note": "chart bar 0",
+   "pitch": 0.8
+  },
+  {
+   "t": 16.625,
+   "sfx": "tick",
+   "gain_db": -10.5,
+   "align": "onset",
+   "note": "chart bar 1",
+   "pitch": 0.86
+  },
+  {
+   "t": 16.75,
+   "sfx": "tick",
+   "gain_db": -10.0,
+   "align": "onset",
+   "note": "chart bar 2",
+   "pitch": 0.92
+  },
+  {
+   "t": 16.875,
+   "sfx": "tick",
+   "gain_db": -9.5,
+   "align": "onset",
+   "note": "chart bar 3",
+   "pitch": 0.98
+  },
+  {
+   "t": 17.0,
+   "sfx": "tick",
+   "gain_db": -9.0,
+   "align": "onset",
+   "note": "chart bar 4",
+   "pitch": 1.04
+  },
+  {
+   "t": 17.125,
+   "sfx": "tick",
+   "gain_db": -8.5,
+   "align": "onset",
+   "note": "chart bar 5",
+   "pitch": 1.1
+  },
+  {
+   "t": 17.25,
+   "sfx": "tick",
+   "gain_db": -8.0,
+   "align": "onset",
+   "note": "chart bar 6",
+   "pitch": 1.16
+  },
+  {
+   "t": 17.375,
+   "sfx": "tick",
+   "gain_db": -7.5,
+   "align": "onset",
+   "note": "chart bar 7",
+   "pitch": 1.22
+  },
+  {
+   "t": 18.5,
+   "sfx": "click",
+   "gain_db": -3.0,
+   "align": "onset",
+   "note": "send receipt"
+  },
+  {
+   "t": 18.75,
+   "sfx": "sent",
+   "gain_db": -5.0,
+   "align": "onset",
+   "note": "receipt sent"
+  },
+  {
+   "t": 19.5,
+   "sfx": "whoosh_exit",
+   "gain_db": -5.0,
+   "align": "onset",
+   "note": "exit"
+  },
+  {
+   "t": 20.0,
+   "sfx": "cut_hit",
+   "gain_db": -3.0,
+   "align": "onset",
+   "note": "logo hit"
+  },
+  {
+   "t": 20.0,
+   "sfx": "shimmer",
+   "gain_db": -5.0,
+   "align": "onset",
+   "note": "logo resolve"
+  },
+  {
+   "t": 21.0,
+   "sfx": "tick",
+   "gain_db": -7.0,
+   "align": "onset",
+   "note": "URL in"
+  },
+  {
+   "t": 23.0,
+   "sfx": "whoosh_exit",
+   "gain_db": -6.0,
+   "align": "onset",
+   "note": "everything exits"
+  },
+  {
+   "t": 23.5,
+   "sfx": "tail",
+   "gain_db": -6.0,
+   "align": "onset",
+   "note": "final soft tail"
+  }
+ ]
+}
