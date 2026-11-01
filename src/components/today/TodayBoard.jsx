@@ -365,13 +365,13 @@ export default function TodayBoard({ user, orgId }) {
     const [f] = list;
     const t = timeOf(f.booking, prop(f.booking.property_id));
     const name = firstName(f.booking.guest_name || '') || 'אורח';
-    return `${name}${t ? ` ${t}` : ''}${list.length > 1 ? ` · +${list.length - 1}` : ''}`;
+    return `${name}${t ? ` ${t}` : ''}${list.length > 1 ? ` · ועוד ${list.length - 1}` : ''}`;
   };
   const openClean = board.cleanings.filter((c) => !c.done);
   const stripCells = [
     { key: 'in', label: board.arrivals.length === 1 ? 'כניסה' : 'כניסות', icon: LogIn, value: board.arrivals.length, sub: who(board.arrivals, checkInTime) },
     { key: 'out', label: board.departures.length === 1 ? 'יציאה' : 'יציאות', icon: LogOut, value: board.departures.length, sub: who(board.departures, checkOutTime) },
-    { key: 'clean', label: 'ניקיון', icon: Sparkles, value: openClean.length, sub: openClean.length ? `${openClean[0].unit}${openClean.length > 1 ? ` · +${openClean.length - 1}` : ''}` : (board.cleanings.length ? 'הכל נקי' : 'אין היום') },
+    { key: 'clean', label: 'ניקיון', icon: Sparkles, value: openClean.length, sub: openClean.length ? `${openClean[0].unit}${openClean.length > 1 ? ` · ועוד ${openClean.length - 1}` : ''}` : (board.cleanings.length ? 'הכל נקי' : 'אין היום') },
   ];
   const counts = [
     { label: board.arrivals.length === 1 ? 'כניסה' : 'כניסות', value: board.arrivals.length },
