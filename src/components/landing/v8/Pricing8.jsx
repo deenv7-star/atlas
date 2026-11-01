@@ -73,11 +73,11 @@ function GrowthAddon({ H }) {
         </div>
         <p className="v8p-add-line">
           <span className="v8p-nw"><bdi className="num" dir="ltr">{nis(GROWTH_OFFER.price)}</bdi> לחודש,</span>{' '}
-          <span className="v8p-nw">כולל את כל מערכת הניהול</span><span aria-hidden="true"> · </span><span className="sr-only">, </span>
+          <span className="v8p-nw">כולל את כל מערכת הניהול</span><span> · </span>
           <span className="v8p-nw"><bdi className="num is-found" dir="ltr">{nis(FOUNDING.monthly)}</bdi> למייסדים</span>
         </p>
         <p className="v8p-add-terms">
-          <span className="v8p-nw">{`${FOUNDING.cap} ראשונים, עד ${FOUNDING.deadline}`}</span><span aria-hidden="true"> · </span><span className="sr-only">, </span>
+          <span className="v8p-nw">{`${FOUNDING.cap} ראשונים, עד ${FOUNDING.deadline}`}</span><span> · </span>
           <span className="v8p-nw">{`המחיר נעול ל-${FOUNDING.lockMonths} חודשים`}</span>
         </p>
         <p className="v8p-add-what">{`${GROWTH_SCOPE}. חבילה נפרדת, שמתחילים בשיחה קצרה. תקציב הפרסום שלכם, משולם ישירות `}<span className="v8p-nw">ל-Meta ול-Google</span>.</p>

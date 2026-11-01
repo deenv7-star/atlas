@@ -20,6 +20,7 @@
 /* ---- price: ghost keeps width + baseline, rolling digits sit on top ---- */
 .v8p-num { position: relative; display: inline-block; font-variant-numeric: tabular-nums; }
 .v8p-ghost { visibility: hidden; }
+.v8p-c::before { content: attr(data-c); }
 .v8p-roll { position: absolute; inset-inline-start: 0; top: -0.1em; display: flex; direction: ltr; }
 .v8p-cur, .v8p-sep, .v8p-col, .v8p-strip > span { display: block; height: 1.2em; line-height: 1.2em; }
 .v8p-col {

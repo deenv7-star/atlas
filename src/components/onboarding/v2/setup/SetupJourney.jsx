@@ -11,6 +11,8 @@ import { useSearchParams } from 'react-router-dom';
 import { MotionConfig, motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2, Plus, ExternalLink, ClipboardPaste, X, CalendarDays, MessageCircle, CreditCard, Home, BadgeCheck, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { heError } from '@/lib/heError';
+import { withPrefix } from '@/lib/stay/format';
 import { DB_FEATURES } from '@/config/dbFeatures';
 import { getPlanByKey, TRIAL_DAYS } from '@/config/pricing';
 import { Wordmark } from '@/components/app/shell/shared';
@@ -162,7 +164,7 @@ function Checklist({ facts, variant, steps, prog, flash, onOpen }) {
                 <span className="min-w-0 flex-1">
                   <span className="block text-[17px] font-bold leading-snug text-navy-900">{s.title}</span>
                   <span className="block text-[15px] leading-snug text-ink-600">
-                    {s.status === 'done' ? 'בוצע' : s.status === 'skipped' ? 'דילגת. אפשר לחזור לכאן מתי שרוצים' : s.status === 'soon' ? s.line : `${s.line}${s.minutes ? ` · ${s.minutes === 1 ? 'כדקה' : `כ-${s.minutes} דקות`}` : ''}`}
+                    {s.status === 'done' ? 'בוצע' : s.status === 'skipped' ? 'דילגתם. אפשר לחזור לכאן מתי שרוצים' : s.status === 'soon' ? s.line : `${s.line}${s.minutes ? ` · ${s.minutes === 1 ? 'כדקה' : `כ-${s.minutes} דקות`}` : ''}`}
                   </span>
                 </span>
                 {s.status === 'soon' ? <span className="shrink-0 rounded-full bg-[#F1F2F7] px-2.5 py-1 text-[13px] font-bold text-ink-600">בקרוב</span>
@@ -218,14 +220,14 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
       for (const u of filled) await saveCalendarLink(provider, u.id, links[u.id], facts.syncs);
       onDone(`${G.name} מחובר`);
     } catch (e) {
-      setErr(e?.message && e.message.length < 120 ? `לא הצלחנו לשמור: ${e.message}` : 'לא הצלחנו לשמור. נסו שוב בעוד רגע.');
+      setErr(heError(e, 'לא הצלחנו לשמור. בדקו את החיבור לאינטרנט ונסו שוב.'));
       setBusy(false);
     }
   };
 
   const intro = variant === 'b'
-    ? [`כשמחברים את ${G.name}, כל הזמנה משם נכנסת ללוח של atlas לבד, ואין הזמנות כפולות.`, `${G.tip} נעשה את זה יחד, שלב אחד בכל פעם.`]
-    : [`כל הזמנה מ-${G.name} תיכנס ללוח לבד, בלי להקליד ובלי הזמנות כפולות.`, G.tip];
+    ? [`כשמחברים את ${G.name}, כל הזמנה משם נכנסת ללוח של atlas לבד, ו-atlas מתריע אם תאריכים חופפים.`, `${G.tip} נעשה את זה יחד, שלב אחד בכל פעם.`]
+    : [`כל הזמנה מ-${G.name} תיכנס ללוח לבד, בלי להקליד, ו-atlas מתריע אם תאריכים חופפים.`, G.tip];
 
   return (
     <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title={`מחברים את ${G.name}`} intro={intro}
@@ -280,7 +282,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
             <LinkField key={u.id} id={`link-${u.id}`} label={u.name} value={links[u.id] || ''} onChange={(v) => setLinks((l) => ({ ...l, [u.id]: v }))} check={checks[u.id]} connected={connectedIds.has(u.id)} />
           )) : <p className="text-[16px] text-ink-600">קודם מוסיפים יחידה אחת לפחות, בשלב "היחידות שלכם".</p>}
           <p className="text-[14px] leading-snug text-ink-400">
-            {DB_FEATURES.realCore ? 'אחרי השמירה atlas מושכת את ההזמנות מיד, ומשם מתעדכנת כל 15 דקות.' : 'במצב הדגמה הקישור נשמר, אבל לא מתבצע סנכרון אמיתי.'}
+            {DB_FEATURES.realCore ? 'אחרי השמירה atlas מושך את ההזמנות מיד, ומשם מתעדכן כל 15 דקות.' : 'במצב הדגמה הקישור נשמר, אבל לא מתבצע סנכרון אמיתי.'}
           </p>
         </section>
       ) : null}
@@ -300,8 +302,9 @@ function WhatsAppStep({ facts, user, variant, step, onBack, onDone, prog }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const ok = phoneValid(phone);
-  const place = user?.organization_name && user.organization_name !== 'My Organization' ? user.organization_name : 'המקום שלכם';
-  const sample = `שלום! ההזמנה שלכם ב${place} אושרה.\n${facts.timesVary ? 'נשלח שעת כניסה מדויקת יום לפני ההגעה.' : `כניסה מ-${facts.checkIn}, יציאה עד ${facts.checkOut}.`}\nמחכים לכם${host ? `, ${host.trim()}` : ''}`;
+  const place = user?.organization_name && user.organization_name !== 'My Organization' ? user.organization_name : '';
+  // COPY-032: withPrefix merges ה (ב + הזית = בזית); no name: no place at all, never "בהמקום שלכם"
+  const sample = `${place ? `שלום, ההזמנה שלכם ${withPrefix('ב', place)} אושרה.` : 'שלום, ההזמנה שלכם אושרה.'}\n${facts.timesVary ? 'נשלח שעת כניסה מדויקת יום לפני ההגעה.' : `כניסה מ-${facts.checkIn}, יציאה עד ${facts.checkOut}.`}\nמחכים לכם${host ? `, ${host.trim()}` : ''}`;
   const test = waLink(phone, sample);
   const save = async () => {
     setBusy(true); setErr('');
@@ -432,11 +435,11 @@ function UnitsStep({ facts, variant, step, onBack, onDone, prog }) {
 function PlanStep({ facts, variant, step, onBack, onDone, onSkip, prog }) {
   const p = getPlanByKey(facts.planChoice?.key);
   return (
-    <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title={`מסלול ${p.nameHe}`}
-      intro={[`${p.limit}, כל המערכת כלולה. ₪${p.price} לחודש.`, `${TRIAL_DAYS} הימים הראשונים חינם בכל מקרה. משלימים את המסלול במסך המסלולים, ושם צוות atlas חוזר אליכם.`]}
+    <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title={`חבילת ${p.nameHe}`}
+      intro={[`${p.limit}, כל המערכת כלולה. ₪${p.price} לחודש.`, `${TRIAL_DAYS} הימים הראשונים חינם בכל מקרה. משלימים את החבילה במסך החבילות, ושם צוות atlas חוזר אליכם.`]}
       footer={(
         <>
-          <Primary className="w-full" onClick={async () => { await onDone(''); window.location.assign('/subscription'); }}>למסך המסלולים<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>
+          <Primary className="w-full" onClick={async () => { await onDone(''); window.location.assign('/subscription'); }}>למסך החבילות<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>
           <Ghost className="w-full" onClick={onSkip}>אמשיך עם הניסיון בינתיים</Ghost>
         </>
       )}>
@@ -449,8 +452,8 @@ function PlanStep({ facts, variant, step, onBack, onDone, onSkip, prog }) {
 
 function PaymentsStep({ variant, step, onBack }) {
   return (
-    <Shell variant={variant} onBack={onBack} kicker={step.title} title="תשלומים וקבלות"
-      intro={variant === 'b' ? ['את זה אנחנו עדיין בונים, ואני לא רוצה להבטיח מה שלא קיים.', 'בינתיים, הנה מה שכבר עובד.'] : ['סליקה וקבלות אוטומטיות עדיין לא זמינות. כשזה יהיה מוכן, זה יופיע כאן.']}
+    <Shell variant={variant} onBack={onBack} kicker={step.title} title="תשלומים"
+      intro={variant === 'b' ? ['את זה אנחנו עדיין בונים, ואני לא רוצה להבטיח מה שלא קיים.', 'בינתיים, הנה מה שכבר עובד.'] : ['סליקה וקישור תשלום עדיין לא זמינים. כשזה יהיה מוכן, זה יופיע כאן.', 'atlas לא מפיק קבלות. מפיקים אותן בתוכנה שלכם, ורושמים כאן את המספר.']}
       footer={<Primary className="w-full" onClick={onBack}>הבנתי, חזרה לרשימה</Primary>}>
       <div className="flex flex-col gap-2.5">
         <div className="ob2-card p-4">
@@ -458,7 +461,7 @@ function PaymentsStep({ variant, step, onBack }) {
           <p className="mt-1 text-[17px] font-bold text-navy-900">מעקב מקדמות ויתרות</p>
           <p className="text-[15px] text-ink-600">רושמים כמה שולם בכל הזמנה, רואים מה פתוח, ושולחים תזכורת בוואטסאפ.</p>
         </div>
-        {['סליקת אשראי וביט', 'קבלות וחשבוניות אוטומטיות'].map((t) => (
+        {['קישור תשלום למקדמה', 'חיבור לתוכנת החשבוניות שלכם'].map((t) => (
           <div key={t} className="flex min-h-[64px] items-center justify-between gap-3 rounded-[20px] bg-white/60 px-4">
             <span className="text-[17px] font-bold text-navy-900">{t}</span>
             <span className="rounded-full bg-[#F1F2F7] px-2.5 py-1 text-[13px] font-bold text-ink-600">בקרוב</span>

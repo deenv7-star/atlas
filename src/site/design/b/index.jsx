@@ -32,7 +32,7 @@ function Header() {
           <Link to="/about" className="b-hide-sm">אודות</Link>
           <Link to="/login" className="b-hide-sm">כניסה</Link>
         </nav>
-        <Link to="/register" className="s-btn s-btn-white b-hdr-cta">14 ימי ניסיון</Link>
+        <Link to="/register" className="s-btn s-btn-white b-hdr-cta">14 יום חינם</Link>
       </div>
     </header>
   );
@@ -155,7 +155,7 @@ export function AboutPage({ path, page }) {
     <>
       <Band path={path} title={page.title} lede={page.lede}>
         <div className="b-band-actions">
-          <Link to="/register" className="s-btn s-btn-white">14 ימי ניסיון בחינם</Link>
+          <Link to="/register" className="s-btn s-btn-white">התחילו 14 יום חינם</Link>
           <WhatsAppButton className="b-band-link">דברו איתנו</WhatsAppButton>
         </div>
       </Band>
@@ -244,7 +244,7 @@ function EndCta() {
           <p>לוח אחד לכל הערוצים, מקדמות ויתרות, וואטסאפ לאורחים בנוסח מוכן ודוח חודשי לרואה החשבון.</p>
         </div>
         <div className="b-endcta-act">
-          <Link to="/register" className="s-btn s-btn-white">14 ימי ניסיון בחינם</Link>
+          <Link to="/register" className="s-btn s-btn-white">התחילו 14 יום חינם</Link>
           <span>בלי כרטיס אשראי</span>
         </div>
       </div>
