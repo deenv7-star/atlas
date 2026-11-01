@@ -1,0 +1,2212 @@
+{
+  "generated": "2026-11-01T10:33:56.299Z",
+  "build": "vite production build, VITE_ALLOW_LOCAL_DEMO=true, no Supabase (local demo mode), served statically",
+  "deviceScaleFactor": 3,
+  "devices": {
+    "iphone": {
+      "width": 393,
+      "height": 852,
+      "label": "iPhone 15/16 Pro logical 393x852",
+      "png_px": {
+        "w": 1179,
+        "h": 2556
+      }
+    },
+    "mac": {
+      "width": 1512,
+      "height": 982,
+      "label": "MacBook Pro 14\" default scaled 1512x982",
+      "png_px": {
+        "w": 4536,
+        "h": 2946
+      }
+    }
+  },
+  "bbox_note": "bbox_css is in CSS px relative to the top-left of the parent full screenshot (the viewport). Multiply by deviceScaleFactor (3) for PNG pixels.",
+  "files": [
+    {
+      "file": "iphone/automations-welcome-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Guest-message automations: step \"ביום ההגעה\" is ON (פועל) at 16:00, with the welcome text preview open.",
+      "payment_link_text_in_dom": false,
+      "bytes": 232427
+    },
+    {
+      "file": "iphone/automations-welcome-preview-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Welcome message preview bubble (template text, sample guest) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-automation-welcome-preview.png",
+      "parent": "iphone/automations-welcome-full.png",
+      "bytes": 182027
+    },
+    {
+      "file": "iphone/automations-welcome-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Automation step card \"ביום ההגעה · פועל\" with welcome preview — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-automation-welcome-card.png",
+      "parent": "iphone/automations-welcome-full.png",
+      "bytes": 143207
+    },
+    {
+      "file": "iphone/calendar-day-saturday-alon-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Row \"בקתת האלון · הלילה פנוי\" inside the Saturday sheet — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-day-sheet-alon-free.png",
+      "parent": "iphone/calendar-day-saturday-full.png",
+      "bytes": 358482
+    },
+    {
+      "file": "iphone/calendar-day-saturday-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Day sheet for Saturday 7 November: per unit \"הלילה פנוי\"/\"הלילה תפוס\" with buttons הזמנה חדשה / חסימת תאריכים.",
+      "payment_link_text_in_dom": false,
+      "bytes": 368691
+    },
+    {
+      "file": "iphone/calendar-day-saturday-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Saturday day sheet dialog (real DaySheet component) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-day-sheet-saturday.png",
+      "parent": "iphone/calendar-day-saturday-full.png",
+      "bytes": 486840
+    },
+    {
+      "file": "iphone/calendar-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Calendar, November 2026, Wednesday 23:40. Saturday 7.11 shows a free night (open ring dot) in בקתת האלון; other units busy/free per dots.",
+      "payment_link_text_in_dom": false,
+      "bytes": 236554
+    },
+    {
+      "file": "iphone/calendar-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Saturday 7 November cell in the month grid (dots: one per unit; ring = free night between bookings) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-calendar-saturday.png",
+      "parent": "iphone/calendar-full.png",
+      "bytes": 235077
+    },
+    {
+      "file": "iphone/channels-a-none.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Calendar before any channel booking (direct bookings only). No Booking/Airbnb badge anywhere.",
+      "payment_link_text_in_dom": false,
+      "bytes": 236985
+    },
+    {
+      "file": "iphone/channels-b-booking-no-booking-arrival.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Agenda row: Booking arrival in סוויטת הגפן — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-booking-arrival-b.png",
+      "parent": "iphone/channels-b-booking.png",
+      "bytes": 229551
+    },
+    {
+      "file": "iphone/channels-b-booking-no-booking-badge.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "\"Booking\" channel badge (SourceBadge) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-booking-badge-b.png",
+      "parent": "iphone/channels-b-booking.png",
+      "bytes": 240190
+    },
+    {
+      "file": "iphone/channels-b-booking.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "After the Booking.com iCal booking lands in סוויטת הגפן (5–8.11): only the \"Booking\" badge is present.",
+      "payment_link_text_in_dom": false,
+      "bytes": 244015
+    },
+    {
+      "file": "iphone/channels-c-both-no-airbnb-arrival.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Agenda row: Airbnb arrival in צימר הזית — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-airbnb-arrival-c.png",
+      "parent": "iphone/channels-c-both.png",
+      "bytes": 236352
+    },
+    {
+      "file": "iphone/channels-c-both-no-airbnb-badge.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "\"Airbnb\" channel badge (SourceBadge) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-airbnb-badge-c.png",
+      "parent": "iphone/channels-c-both.png",
+      "bytes": 245929
+    },
+    {
+      "file": "iphone/channels-c-both-no-booking-arrival.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Agenda row: Booking arrival in סוויטת הגפן — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-booking-arrival-c.png",
+      "parent": "iphone/channels-c-both.png",
+      "bytes": 235195
+    },
+    {
+      "file": "iphone/channels-c-both-no-booking-badge.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "\"Booking\" channel badge (SourceBadge) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-booking-badge-c.png",
+      "parent": "iphone/channels-c-both.png",
+      "bytes": 245429
+    },
+    {
+      "file": "iphone/channels-c-both.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "After the Airbnb iCal booking lands in צימר הזית (6–9.11): both \"Booking\" and \"Airbnb\" badges present, each on its own unit.",
+      "payment_link_text_in_dom": false,
+      "bytes": 249249
+    },
+    {
+      "file": "iphone/el-airbnb-arrival-c.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Agenda row: Airbnb arrival in צימר הזית",
+      "parent": "iphone/channels-c-both.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 475.55,
+        "w": 353,
+        "h": 60
+      },
+      "clipped_to_viewport": false,
+      "bytes": 15803
+    },
+    {
+      "file": "iphone/el-airbnb-badge-c.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "\"Airbnb\" channel badge (SourceBadge)",
+      "parent": "iphone/channels-c-both.png",
+      "bbox_css": {
+        "x": 219.45,
+        "y": 486.8,
+        "w": 44.94,
+        "h": 18
+      },
+      "clipped_to_viewport": false,
+      "bytes": 2788
+    },
+    {
+      "file": "iphone/el-automation-welcome-card.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Automation step card \"ביום ההגעה · פועל\" with welcome preview",
+      "parent": "iphone/automations-welcome-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 211.56,
+        "w": 353,
+        "h": 510.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 94892
+    },
+    {
+      "file": "iphone/el-automation-welcome-preview.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Welcome message preview bubble (template text, sample guest)",
+      "parent": "iphone/automations-welcome-full.png",
+      "bbox_css": {
+        "x": 96,
+        "y": 450.56,
+        "w": 201,
+        "h": 251.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 50501
+    },
+    {
+      "file": "iphone/el-booking-arrival-b.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Agenda row: Booking arrival in סוויטת הגפן",
+      "parent": "iphone/channels-b-booking.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 175.55,
+        "w": 353,
+        "h": 60
+      },
+      "clipped_to_viewport": false,
+      "bytes": 17125
+    },
+    {
+      "file": "iphone/el-booking-arrival-c.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Agenda row: Booking arrival in סוויטת הגפן",
+      "parent": "iphone/channels-c-both.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 175.55,
+        "w": 353,
+        "h": 60
+      },
+      "clipped_to_viewport": false,
+      "bytes": 15383
+    },
+    {
+      "file": "iphone/el-booking-badge-b.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "\"Booking\" channel badge (SourceBadge)",
+      "parent": "iphone/channels-b-booking.png",
+      "bbox_css": {
+        "x": 211.64,
+        "y": 186.8,
+        "w": 52.75,
+        "h": 18
+      },
+      "clipped_to_viewport": false,
+      "bytes": 3487
+    },
+    {
+      "file": "iphone/el-booking-badge-c.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "\"Booking\" channel badge (SourceBadge)",
+      "parent": "iphone/channels-c-both.png",
+      "bbox_css": {
+        "x": 211.64,
+        "y": 186.8,
+        "w": 52.75,
+        "h": 18
+      },
+      "clipped_to_viewport": false,
+      "bytes": 3487
+    },
+    {
+      "file": "iphone/el-calendar-saturday.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Saturday 7 November cell in the month grid (dots: one per unit; ring = free night between bookings)",
+      "parent": "iphone/calendar-full.png",
+      "bbox_css": {
+        "x": 26,
+        "y": 322.5,
+        "w": 47,
+        "h": 52
+      },
+      "clipped_to_viewport": false,
+      "bytes": 2755
+    },
+    {
+      "file": "iphone/el-day-sheet-alon-free.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Row \"בקתת האלון · הלילה פנוי\" inside the Saturday sheet",
+      "parent": "iphone/calendar-day-saturday-full.png",
+      "bbox_css": {
+        "x": 16,
+        "y": 584.5,
+        "w": 361,
+        "h": 90.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 12364
+    },
+    {
+      "file": "iphone/el-day-sheet-saturday.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Saturday day sheet dialog (real DaySheet component)",
+      "parent": "iphone/calendar-day-saturday-full.png",
+      "bbox_css": {
+        "x": 0,
+        "y": 476.7,
+        "w": 393,
+        "h": 375.3
+      },
+      "clipped_to_viewport": false,
+      "bytes": 68889
+    },
+    {
+      "file": "iphone/el-expense-row.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Expense row: ניקיון ₪1,400",
+      "parent": "iphone/expenses-row-full.png",
+      "bbox_css": {
+        "x": -49.11,
+        "y": 417.19,
+        "w": 491.11,
+        "h": 85
+      },
+      "clipped_to_viewport": true,
+      "bytes": 12456
+    },
+    {
+      "file": "iphone/el-expenses-kpis.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Expense KPI row (סה״כ הוצאות / החודש / רווח נקי משוער)",
+      "parent": "iphone/expenses-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 337.69,
+        "w": 353,
+        "h": 271
+      },
+      "clipped_to_viewport": false,
+      "bytes": 54258
+    },
+    {
+      "file": "iphone/el-income-chart.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Income bar chart card",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 64545
+    },
+    {
+      "file": "iphone/el-lead-form.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "New lead dialog (GuestForm) filled in",
+      "parent": "iphone/lead-form-filled.png",
+      "bbox_css": {
+        "x": 0,
+        "y": 68.17,
+        "w": 393,
+        "h": 783.83
+      },
+      "clipped_to_viewport": false,
+      "bytes": 106790
+    },
+    {
+      "file": "iphone/el-lead-row-new.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "New lead row \"מיכל אברהם · ל-7 בנוב׳ · לילה אחד · חדש\"",
+      "parent": "iphone/leads-after.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 507.69,
+        "w": 353,
+        "h": 76
+      },
+      "clipped_to_viewport": false,
+      "bytes": 40536
+    },
+    {
+      "file": "iphone/el-lead-save-button.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "\"שמירת ליד\" button",
+      "parent": "iphone/lead-form-filled-bottom.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 796.47,
+        "w": 353,
+        "h": 36
+      },
+      "clipped_to_viewport": false,
+      "bytes": 6924
+    },
+    {
+      "file": "iphone/el-receipt-preview.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Receipt (קבלה) preview document",
+      "parent": "iphone/receipt-preview-full.png",
+      "bbox_css": {
+        "x": 0,
+        "y": 85.2,
+        "w": 393,
+        "h": 766.8
+      },
+      "clipped_to_viewport": false,
+      "bytes": 108422
+    },
+    {
+      "file": "iphone/el-receipt-row-after.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Receipt row R-1043 (SENT)",
+      "parent": "iphone/receipts-after.png",
+      "bbox_css": {
+        "x": 36,
+        "y": 525.69,
+        "w": 321,
+        "h": 74.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 18281
+    },
+    {
+      "file": "iphone/el-receipt-row-before.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Receipt row R-1043 (DRAFT)",
+      "parent": "iphone/receipts-before.png",
+      "bbox_css": {
+        "x": 36,
+        "y": 525.69,
+        "w": 321,
+        "h": 74.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 18395
+    },
+    {
+      "file": "iphone/el-receipt-status-after.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Status chip \"נשלח\"",
+      "parent": "iphone/receipts-after.png",
+      "bbox_css": {
+        "x": 36,
+        "y": 564.19,
+        "w": 50.2,
+        "h": 24
+      },
+      "clipped_to_viewport": false,
+      "bytes": 2292
+    },
+    {
+      "file": "iphone/el-receipt-status-before.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Status chip \"טיוטה\"",
+      "parent": "iphone/receipts-before.png",
+      "bbox_css": {
+        "x": 36,
+        "y": 564.19,
+        "w": 51.97,
+        "h": 24
+      },
+      "clipped_to_viewport": false,
+      "bytes": 2318
+    },
+    {
+      "file": "iphone/el-report-expenses.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Expenses by category block",
+      "parent": "iphone/report-expenses-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": -914.31,
+        "w": 353,
+        "h": 2748
+      },
+      "clipped_to_viewport": true,
+      "bytes": 205135
+    },
+    {
+      "file": "iphone/el-report-income-by-channel.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Income by channel block with bars",
+      "parent": "iphone/report-channels-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 317.69,
+        "w": 353,
+        "h": 284
+      },
+      "clipped_to_viewport": false,
+      "bytes": 61023
+    },
+    {
+      "file": "iphone/el-report-kpis.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "KPI tiles: הכנסות / הוצאות / נטו …",
+      "parent": "iphone/report-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 397.69,
+        "w": 353,
+        "h": 238.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 40235
+    },
+    {
+      "file": "iphone/el-toast-lead-saved.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Toast \"הליד נשמר\"",
+      "parent": "iphone/lead-saved-toast.png",
+      "bbox_css": {
+        "x": 16,
+        "y": 713.5,
+        "w": 361,
+        "h": 50.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 9036
+    },
+    {
+      "file": "iphone/el-today-board.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "\"היום במתחם\" card with the message row expanded",
+      "parent": "iphone/today-message-ready-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": -60.12,
+        "w": 353,
+        "h": 823
+      },
+      "clipped_to_viewport": true,
+      "bytes": 340039
+    },
+    {
+      "file": "iphone/el-today-welcome-row.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Row: נועה ואלון ברק — welcome template ready, \"שליחה\" button",
+      "parent": "iphone/today-message-ready-full.png",
+      "bbox_css": {
+        "x": 28,
+        "y": 432.88,
+        "w": 337,
+        "h": 68
+      },
+      "clipped_to_viewport": false,
+      "bytes": 40029
+    },
+    {
+      "file": "iphone/el-whatsapp-composer.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "WhatsApp composer sheet (template chips, message text, \"שליחה בוואטסאפ\")",
+      "parent": "iphone/whatsapp-composer-full.png",
+      "bbox_css": {
+        "x": 0,
+        "y": 255.5,
+        "w": 393,
+        "h": 596.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 134827
+    },
+    {
+      "file": "iphone/el-whatsapp-sent-bubble.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "Outbound welcome bubble with time 15:00",
+      "parent": "iphone/messages-welcome-sent.png",
+      "bbox_css": {
+        "x": 88.2,
+        "y": 261.06,
+        "w": 288.8,
+        "h": 285.75
+      },
+      "clipped_to_viewport": false,
+      "bytes": 70731
+    },
+    {
+      "file": "iphone/el-whatsapp-welcome-text.png",
+      "device": "iphone",
+      "kind": "element",
+      "what": "The welcome message text as it will be sent",
+      "parent": "iphone/whatsapp-composer-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 432.5,
+        "w": 353,
+        "h": 238
+      },
+      "clipped_to_viewport": false,
+      "bytes": 72344
+    },
+    {
+      "file": "iphone/expenses-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Expenses screen: totals, this month, estimated net profit, recent expenses.",
+      "payment_link_text_in_dom": false,
+      "bytes": 232191
+    },
+    {
+      "file": "iphone/expenses-kpis-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Expense KPI row (סה״כ הוצאות / החודש / רווח נקי משוער) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-expenses-kpis.png",
+      "parent": "iphone/expenses-full.png",
+      "bytes": 177168
+    },
+    {
+      "file": "iphone/expenses-row-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Expenses table scrolled to the cleaning row.",
+      "payment_link_text_in_dom": false,
+      "bytes": 207451
+    },
+    {
+      "file": "iphone/expenses-row-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Expense row: ניקיון ₪1,400 — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-expense-row.png",
+      "parent": "iphone/expenses-row-full.png",
+      "bytes": 197130
+    },
+    {
+      "file": "iphone/lead-detail.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Lead detail page for the saved inquiry.",
+      "payment_link_text_in_dom": false,
+      "bytes": 178577
+    },
+    {
+      "file": "iphone/lead-form-filled-bottom.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "New lead dialog scrolled to its save button.",
+      "payment_link_text_in_dom": false,
+      "bytes": 187722
+    },
+    {
+      "file": "iphone/lead-form-filled.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "New lead dialog filled: מיכל אברהם, בקתת האלון, 7–8.11, source וואטסאפ, note \"פנוי בשבת\".",
+      "payment_link_text_in_dom": false,
+      "bytes": 173253
+    },
+    {
+      "file": "iphone/lead-form-save-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "\"שמירת ליד\" button — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-lead-save-button.png",
+      "parent": "iphone/lead-form-filled-bottom.png",
+      "bytes": 172217
+    },
+    {
+      "file": "iphone/lead-form-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "New lead dialog (GuestForm) filled in — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-lead-form.png",
+      "parent": "iphone/lead-form-filled.png",
+      "bytes": 383279
+    },
+    {
+      "file": "iphone/lead-saved-toast-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Toast \"הליד נשמר\" — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-toast-lead-saved.png",
+      "parent": "iphone/lead-saved-toast.png",
+      "bytes": 185611
+    },
+    {
+      "file": "iphone/lead-saved-toast.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Right after saving: toast \"הליד נשמר\".",
+      "payment_link_text_in_dom": false,
+      "bytes": 198822
+    },
+    {
+      "file": "iphone/leads-after-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "New lead row \"מיכל אברהם · ל-7 בנוב׳ · לילה אחד · חדש\" — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-lead-row-new.png",
+      "parent": "iphone/leads-after.png",
+      "bytes": 247153
+    },
+    {
+      "file": "iphone/leads-after.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Leads list after saving: מיכל אברהם appears as a new lead for 7.11, 1 night.",
+      "payment_link_text_in_dom": false,
+      "bytes": 284965
+    },
+    {
+      "file": "iphone/leads-before.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Leads list before saving the new inquiry (2 existing leads).",
+      "payment_link_text_in_dom": false,
+      "bytes": 248171
+    },
+    {
+      "file": "iphone/messages-welcome-sent-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Outbound welcome bubble with time 15:00 — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-whatsapp-sent-bubble.png",
+      "parent": "iphone/messages-welcome-sent.png",
+      "bytes": 173363
+    },
+    {
+      "file": "iphone/messages-welcome-sent.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Messages screen: thread with נועה ואלון ברק, WhatsApp tag, the welcome message logged as sent (outbound bubble, 15:00).",
+      "payment_link_text_in_dom": false,
+      "bytes": 243357
+    },
+    {
+      "file": "iphone/receipt-preview-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Receipt preview dialog for R-1043 (קבלה).",
+      "payment_link_text_in_dom": false,
+      "bytes": 173460
+    },
+    {
+      "file": "iphone/receipt-preview-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Receipt (קבלה) preview document — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-receipt-preview.png",
+      "parent": "iphone/receipt-preview-full.png",
+      "bytes": 418825
+    },
+    {
+      "file": "iphone/receipts-after-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Receipt row R-1043 (SENT) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-receipt-row-after.png",
+      "parent": "iphone/receipts-after.png",
+      "bytes": 207094
+    },
+    {
+      "file": "iphone/receipts-after-status-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Status chip \"נשלח\" — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-receipt-status-after.png",
+      "parent": "iphone/receipts-after.png",
+      "bytes": 194824
+    },
+    {
+      "file": "iphone/receipts-after.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Invoices & receipts list, R-1043 (Anna Weber, ₪2,850) marked נשלח (sent).",
+      "payment_link_text_in_dom": false,
+      "bytes": 224030
+    },
+    {
+      "file": "iphone/receipts-before-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Receipt row R-1043 (DRAFT) — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-receipt-row-before.png",
+      "parent": "iphone/receipts-before.png",
+      "bytes": 207094
+    },
+    {
+      "file": "iphone/receipts-before-status-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Status chip \"טיוטה\" — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-receipt-status-before.png",
+      "parent": "iphone/receipts-before.png",
+      "bytes": 194824
+    },
+    {
+      "file": "iphone/receipts-before.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Invoices & receipts list, R-1043 (Anna Weber, ₪2,850) still טיוטה (draft).",
+      "payment_link_text_in_dom": false,
+      "bytes": 224143
+    },
+    {
+      "file": "iphone/report-before-expenses.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Monthly report, November 2026, before expenses are logged (income only).",
+      "payment_link_text_in_dom": false,
+      "bytes": 243507
+    },
+    {
+      "file": "iphone/report-channels-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Monthly report scrolled to \"הכנסות לפי ערוץ\".",
+      "payment_link_text_in_dom": false,
+      "bytes": 238158
+    },
+    {
+      "file": "iphone/report-channels-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Income by channel block with bars — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-report-income-by-channel.png",
+      "parent": "iphone/report-channels-full.png",
+      "bytes": 178576
+    },
+    {
+      "file": "iphone/report-expenses-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Monthly report scrolled to the expenses block.",
+      "payment_link_text_in_dom": false,
+      "bytes": 217094
+    },
+    {
+      "file": "iphone/report-expenses-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Expenses by category block — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-report-expenses.png",
+      "parent": "iphone/report-expenses-full.png",
+      "bytes": 104483
+    },
+    {
+      "file": "iphone/report-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Monthly report, November 2026: income, expenses, net, income by channel (Booking / Airbnb / direct).",
+      "payment_link_text_in_dom": false,
+      "bytes": 246422
+    },
+    {
+      "file": "iphone/report-kpis-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "KPI tiles: הכנסות / הוצאות / נטו … — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-report-kpis.png",
+      "parent": "iphone/report-full.png",
+      "bytes": 205328
+    },
+    {
+      "file": "iphone/seq-income-chart-00.png",
+      "device": "iphone",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 1/8 at t=0ms of 425ms",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "bytes": 61462
+    },
+    {
+      "file": "iphone/seq-income-chart-01.png",
+      "device": "iphone",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 2/8 at t=61ms of 425ms",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "bytes": 62994
+    },
+    {
+      "file": "iphone/seq-income-chart-02.png",
+      "device": "iphone",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 3/8 at t=121ms of 425ms",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "bytes": 64106
+    },
+    {
+      "file": "iphone/seq-income-chart-03.png",
+      "device": "iphone",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 4/8 at t=182ms of 425ms",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "bytes": 65157
+    },
+    {
+      "file": "iphone/seq-income-chart-04.png",
+      "device": "iphone",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 5/8 at t=243ms of 425ms",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "bytes": 66192
+    },
+    {
+      "file": "iphone/seq-income-chart-05.png",
+      "device": "iphone",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 6/8 at t=304ms of 425ms",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "bytes": 66422
+    },
+    {
+      "file": "iphone/seq-income-chart-06.png",
+      "device": "iphone",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 7/8 at t=364ms of 425ms",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "bytes": 65942
+    },
+    {
+      "file": "iphone/seq-income-chart-07.png",
+      "device": "iphone",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 8/8 at t=425ms of 425ms",
+      "parent": "iphone/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 20,
+        "y": 249,
+        "w": 353,
+        "h": 434.5
+      },
+      "bytes": 64813
+    },
+    {
+      "file": "iphone/today-board-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "\"היום במתחם\" card with the message row expanded — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-today-board.png",
+      "parent": "iphone/today-message-ready-full.png",
+      "bytes": 115838
+    },
+    {
+      "file": "iphone/today-income-chart-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Today board at month end: income chart for the last 6 months (November highlighted).",
+      "payment_link_text_in_dom": false,
+      "bytes": 189561
+    },
+    {
+      "file": "iphone/today-income-chart-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Income bar chart card — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-income-chart.png",
+      "parent": "iphone/today-income-chart-full.png",
+      "bytes": 127312
+    },
+    {
+      "file": "iphone/today-message-ready-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "Today board, Friday 15:00: arrivals today and the prepared WhatsApp message(s) waiting for one tap.",
+      "payment_link_text_in_dom": false,
+      "bytes": 400265
+    },
+    {
+      "file": "iphone/today-welcome-row-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "Row: נועה ואלון ברק — welcome template ready, \"שליחה\" button — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-today-welcome-row.png",
+      "parent": "iphone/today-message-ready-full.png",
+      "bytes": 361921
+    },
+    {
+      "file": "iphone/whatsapp-composer-full.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "WhatsApp composer opened from the board: welcome text filled with this booking (unit, Wi-Fi, check-out).",
+      "payment_link_text_in_dom": false,
+      "bytes": 261014
+    },
+    {
+      "file": "iphone/whatsapp-composer-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "WhatsApp composer sheet (template chips, message text, \"שליחה בוואטסאפ\") — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-whatsapp-composer.png",
+      "parent": "iphone/whatsapp-composer-full.png",
+      "bytes": 359026
+    },
+    {
+      "file": "iphone/whatsapp-composer-text-slot-empty.png",
+      "device": "iphone",
+      "kind": "slot-empty",
+      "what": "The welcome message text as it will be sent — same frame with the element hidden (empty slot)",
+      "element": "iphone/el-whatsapp-welcome-text.png",
+      "parent": "iphone/whatsapp-composer-full.png",
+      "bytes": 192456
+    },
+    {
+      "file": "iphone/whatsapp-sent-toast.png",
+      "device": "iphone",
+      "kind": "full",
+      "what": "After tapping send: toast \"נפתח וואטסאפ ל… ההודעה נשמרה בהודעות\", the board no longer lists the welcome as waiting.",
+      "payment_link_text_in_dom": false,
+      "bytes": 419003
+    },
+    {
+      "file": "mac/automations-welcome-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Guest-message automations: step \"ביום ההגעה\" is ON (פועל) at 16:00, with the welcome text preview open.",
+      "payment_link_text_in_dom": false,
+      "bytes": 476607
+    },
+    {
+      "file": "mac/automations-welcome-preview-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Welcome message preview bubble (template text, sample guest) — same frame with the element hidden (empty slot)",
+      "element": "mac/el-automation-welcome-preview.png",
+      "parent": "mac/automations-welcome-full.png",
+      "bytes": 424973
+    },
+    {
+      "file": "mac/automations-welcome-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Automation step card \"ביום ההגעה · פועל\" with welcome preview — same frame with the element hidden (empty slot)",
+      "element": "mac/el-automation-welcome-card.png",
+      "parent": "mac/automations-welcome-full.png",
+      "bytes": 382452
+    },
+    {
+      "file": "mac/calendar-day-saturday-alon-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Row \"בקתת האלון · הלילה פנוי\" inside the Saturday sheet — same frame with the element hidden (empty slot)",
+      "element": "mac/el-day-sheet-alon-free.png",
+      "parent": "mac/calendar-day-saturday-full.png",
+      "bytes": 1314460
+    },
+    {
+      "file": "mac/calendar-day-saturday-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Day sheet for Saturday 7 November: per unit \"הלילה פנוי\"/\"הלילה תפוס\" with buttons הזמנה חדשה / חסימת תאריכים.",
+      "payment_link_text_in_dom": false,
+      "bytes": 1328595
+    },
+    {
+      "file": "mac/calendar-day-saturday-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Saturday day sheet dialog (real DaySheet component) — same frame with the element hidden (empty slot)",
+      "element": "mac/el-day-sheet-saturday.png",
+      "parent": "mac/calendar-day-saturday-full.png",
+      "bytes": 1309577
+    },
+    {
+      "file": "mac/calendar-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Calendar, November 2026, Wednesday 23:40. Saturday 7.11 shows a free night (open ring dot) in בקתת האלון; other units busy/free per dots.",
+      "payment_link_text_in_dom": false,
+      "bytes": 656283
+    },
+    {
+      "file": "mac/calendar-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Saturday 7 November cell in the month grid (dots: one per unit; ring = free night between bookings) — same frame with the element hidden (empty slot)",
+      "element": "mac/el-calendar-saturday.png",
+      "parent": "mac/calendar-full.png",
+      "bytes": 654865
+    },
+    {
+      "file": "mac/calendar-timeline-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Calendar timeline scrolled into view: בקתת האלון row shows a dashed \"פנוי\" pill on Saturday night between two bookings.",
+      "payment_link_text_in_dom": false,
+      "bytes": 679724
+    },
+    {
+      "file": "mac/calendar-timeline-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Dashed \"פנוי\" (free) pill on Saturday night, בקתת האלון row — same frame with the element hidden (empty slot)",
+      "element": "mac/el-calendar-saturday-free-pill.png",
+      "parent": "mac/calendar-timeline-full.png",
+      "bytes": 674909
+    },
+    {
+      "file": "mac/channels-a-none.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Calendar before any channel booking (direct bookings only). No Booking/Airbnb badge anywhere.",
+      "payment_link_text_in_dom": false,
+      "bytes": 679724
+    },
+    {
+      "file": "mac/channels-b-booking-no-booking-badge.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "\"Booking\" channel badge (SourceBadge) on the bar — same frame with the element hidden (empty slot)",
+      "element": "mac/el-booking-badge-b.png",
+      "parent": "mac/channels-b-booking.png",
+      "bytes": 683813
+    },
+    {
+      "file": "mac/channels-b-booking-no-booking-bar.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Booking booking bar in the סוויטת הגפן row (iCal import: no name, labelled \"הזמנה\") — same frame with the element hidden (empty slot)",
+      "element": "mac/el-booking-bar-b.png",
+      "parent": "mac/channels-b-booking.png",
+      "bytes": 683813
+    },
+    {
+      "file": "mac/channels-b-booking.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "After the Booking.com iCal booking lands in סוויטת הגפן (5–8.11): only the \"Booking\" badge is present.",
+      "payment_link_text_in_dom": false,
+      "bytes": 692777
+    },
+    {
+      "file": "mac/channels-c-both-no-airbnb-badge.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "\"Airbnb\" channel badge (SourceBadge) on the bar — same frame with the element hidden (empty slot)",
+      "element": "mac/el-airbnb-badge-c.png",
+      "parent": "mac/channels-c-both.png",
+      "bytes": 694959
+    },
+    {
+      "file": "mac/channels-c-both-no-airbnb-bar.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Airbnb booking bar in the צימר הזית row (iCal import: no name, labelled \"הזמנה\") — same frame with the element hidden (empty slot)",
+      "element": "mac/el-airbnb-bar-c.png",
+      "parent": "mac/channels-c-both.png",
+      "bytes": 697353
+    },
+    {
+      "file": "mac/channels-c-both-no-booking-badge.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "\"Booking\" channel badge (SourceBadge) on the bar — same frame with the element hidden (empty slot)",
+      "element": "mac/el-booking-badge-c.png",
+      "parent": "mac/channels-c-both.png",
+      "bytes": 697011
+    },
+    {
+      "file": "mac/channels-c-both-no-booking-bar.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Booking booking bar in the סוויטת הגפן row (iCal import: no name, labelled \"הזמנה\") — same frame with the element hidden (empty slot)",
+      "element": "mac/el-booking-bar-c.png",
+      "parent": "mac/channels-c-both.png",
+      "bytes": 697580
+    },
+    {
+      "file": "mac/channels-c-both.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "After the Airbnb iCal booking lands in צימר הזית (6–9.11): both \"Booking\" and \"Airbnb\" badges present, each on its own unit.",
+      "payment_link_text_in_dom": false,
+      "bytes": 705907
+    },
+    {
+      "file": "mac/el-airbnb-badge-c.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "\"Airbnb\" channel badge (SourceBadge) on the bar",
+      "parent": "mac/channels-c-both.png",
+      "bbox_css": {
+        "x": 654.16,
+        "y": 877.89,
+        "w": 44.94,
+        "h": 18
+      },
+      "clipped_to_viewport": false,
+      "bytes": 3197
+    },
+    {
+      "file": "mac/el-airbnb-bar-c.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Airbnb booking bar in the צימר הזית row (iCal import: no name, labelled \"הזמנה\")",
+      "parent": "mac/channels-c-both.png",
+      "bbox_css": {
+        "x": 614,
+        "y": 871.39,
+        "w": 136,
+        "h": 48
+      },
+      "clipped_to_viewport": false,
+      "bytes": 8537
+    },
+    {
+      "file": "mac/el-automation-welcome-card.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Automation step card \"ביום ההגעה · פועל\" with welcome preview",
+      "parent": "mac/automations-welcome-full.png",
+      "bbox_css": {
+        "x": 180,
+        "y": 347.89,
+        "w": 880,
+        "h": 373.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 97847
+    },
+    {
+      "file": "mac/el-automation-welcome-preview.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Welcome message preview bubble (template text, sample guest)",
+      "parent": "mac/automations-welcome-full.png",
+      "bbox_css": {
+        "x": 260,
+        "y": 536.89,
+        "w": 720,
+        "h": 160.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 51583
+    },
+    {
+      "file": "mac/el-booking-badge-b.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "\"Booking\" channel badge (SourceBadge) on the bar",
+      "parent": "mac/channels-b-booking.png",
+      "bbox_css": {
+        "x": 692.34,
+        "y": 793.89,
+        "w": 52.75,
+        "h": 18
+      },
+      "clipped_to_viewport": false,
+      "bytes": 3489
+    },
+    {
+      "file": "mac/el-booking-badge-c.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "\"Booking\" channel badge (SourceBadge) on the bar",
+      "parent": "mac/channels-c-both.png",
+      "bbox_css": {
+        "x": 692.34,
+        "y": 793.89,
+        "w": 52.75,
+        "h": 18
+      },
+      "clipped_to_viewport": false,
+      "bytes": 3489
+    },
+    {
+      "file": "mac/el-booking-bar-b.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Booking booking bar in the סוויטת הגפן row (iCal import: no name, labelled \"הזמנה\")",
+      "parent": "mac/channels-b-booking.png",
+      "bbox_css": {
+        "x": 660,
+        "y": 787.39,
+        "w": 136,
+        "h": 48
+      },
+      "clipped_to_viewport": false,
+      "bytes": 8673
+    },
+    {
+      "file": "mac/el-booking-bar-c.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Booking booking bar in the סוויטת הגפן row (iCal import: no name, labelled \"הזמנה\")",
+      "parent": "mac/channels-c-both.png",
+      "bbox_css": {
+        "x": 660,
+        "y": 787.39,
+        "w": 136,
+        "h": 48
+      },
+      "clipped_to_viewport": false,
+      "bytes": 8673
+    },
+    {
+      "file": "mac/el-calendar-saturday-free-pill.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Dashed \"פנוי\" (free) pill on Saturday night, בקתת האלון row",
+      "parent": "mac/calendar-timeline-full.png",
+      "bbox_css": {
+        "x": 661.03,
+        "y": 703.39,
+        "w": 41.98,
+        "h": 48
+      },
+      "clipped_to_viewport": false,
+      "bytes": 3595
+    },
+    {
+      "file": "mac/el-calendar-saturday.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Saturday 7 November cell in the month grid (dots: one per unit; ring = free night between bookings)",
+      "parent": "mac/calendar-full.png",
+      "bbox_css": {
+        "x": 816.02,
+        "y": 329.89,
+        "w": 49.14,
+        "h": 52
+      },
+      "clipped_to_viewport": false,
+      "bytes": 2757
+    },
+    {
+      "file": "mac/el-day-sheet-alon-free.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Row \"בקתת האלון · הלילה פנוי\" inside the Saturday sheet",
+      "parent": "mac/calendar-day-saturday-full.png",
+      "bbox_css": {
+        "x": 553,
+        "y": 448.65,
+        "w": 406,
+        "h": 90.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 12522
+    },
+    {
+      "file": "mac/el-day-sheet-saturday.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Saturday day sheet dialog (real DaySheet component)",
+      "parent": "mac/calendar-day-saturday-full.png",
+      "bbox_css": {
+        "x": 532,
+        "y": 353.85,
+        "w": 448,
+        "h": 274.3
+      },
+      "clipped_to_viewport": false,
+      "bytes": 60088
+    },
+    {
+      "file": "mac/el-expense-row.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Expense row: ניקיון ₪1,400",
+      "parent": "mac/expenses-row-full.png",
+      "bbox_css": {
+        "x": 60,
+        "y": 509.89,
+        "w": 1120,
+        "h": 50
+      },
+      "clipped_to_viewport": false,
+      "bytes": 19278
+    },
+    {
+      "file": "mac/el-expenses-kpis.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Expense KPI row (סה״כ הוצאות / החודש / רווח נקי משוער)",
+      "parent": "mac/expenses-full.png",
+      "bbox_css": {
+        "x": 60,
+        "y": 315.89,
+        "w": 1120,
+        "h": 134.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 48977
+    },
+    {
+      "file": "mac/el-income-chart.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Income bar chart card",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34,
+        "y": 487.5,
+        "w": 646.66,
+        "h": 374.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 74671
+    },
+    {
+      "file": "mac/el-lead-form.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "New lead dialog (GuestForm) filled in",
+      "parent": "mac/lead-form-filled.png",
+      "bbox_css": {
+        "x": 500,
+        "y": 83.35,
+        "w": 512,
+        "h": 815.3
+      },
+      "clipped_to_viewport": false,
+      "bytes": 133892
+    },
+    {
+      "file": "mac/el-lead-row-new.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "New lead row \"מיכל אברהם · ל-7 בנוב׳ · לילה אחד · חדש\"",
+      "parent": "mac/leads-after.png",
+      "bbox_css": {
+        "x": 60,
+        "y": 425.89,
+        "w": 1120,
+        "h": 76
+      },
+      "clipped_to_viewport": false,
+      "bytes": 43694
+    },
+    {
+      "file": "mac/el-lead-save-button.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "\"שמירת ליד\" button",
+      "parent": "mac/lead-form-filled-bottom.png",
+      "bbox_css": {
+        "x": 766.91,
+        "y": 837.65,
+        "w": 134.41,
+        "h": 36
+      },
+      "clipped_to_viewport": false,
+      "bytes": 6435
+    },
+    {
+      "file": "mac/el-receipt-preview.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Receipt (קבלה) preview document",
+      "parent": "mac/receipt-preview-full.png",
+      "bbox_css": {
+        "x": 500,
+        "y": 49.1,
+        "w": 512,
+        "h": 883.8
+      },
+      "clipped_to_viewport": false,
+      "bytes": 146884
+    },
+    {
+      "file": "mac/el-receipt-row-after.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Receipt row R-1043 (SENT)",
+      "parent": "mac/receipts-after.png",
+      "bbox_css": {
+        "x": 80,
+        "y": 435.89,
+        "w": 1080,
+        "h": 61
+      },
+      "clipped_to_viewport": false,
+      "bytes": 32009
+    },
+    {
+      "file": "mac/el-receipt-row-before.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Receipt row R-1043 (DRAFT)",
+      "parent": "mac/receipts-before.png",
+      "bbox_css": {
+        "x": 80,
+        "y": 435.89,
+        "w": 1080,
+        "h": 61
+      },
+      "clipped_to_viewport": false,
+      "bytes": 32088
+    },
+    {
+      "file": "mac/el-receipt-status-after.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Status chip \"נשלח\"",
+      "parent": "mac/receipts-after.png",
+      "bbox_css": {
+        "x": 491.31,
+        "y": 453.39,
+        "w": 68.2,
+        "h": 26
+      },
+      "clipped_to_viewport": false,
+      "bytes": 3893
+    },
+    {
+      "file": "mac/el-receipt-status-before.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Status chip \"טיוטה\"",
+      "parent": "mac/receipts-before.png",
+      "bbox_css": {
+        "x": 491.11,
+        "y": 453.39,
+        "w": 69.97,
+        "h": 26
+      },
+      "clipped_to_viewport": false,
+      "bytes": 4091
+    },
+    {
+      "file": "mac/el-report-expenses.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Expenses by category block",
+      "parent": "mac/report-expenses-full.png",
+      "bbox_css": {
+        "x": 60,
+        "y": -379.81,
+        "w": 1120,
+        "h": 1829.5
+      },
+      "clipped_to_viewport": true,
+      "bytes": 356013
+    },
+    {
+      "file": "mac/el-report-income-by-channel.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Income by channel block with bars",
+      "parent": "mac/report-channels-full.png",
+      "bbox_css": {
+        "x": 628,
+        "y": 367.19,
+        "w": 552,
+        "h": 335.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 65129
+    },
+    {
+      "file": "mac/el-report-kpis.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "KPI tiles: הכנסות / הוצאות / נטו …",
+      "parent": "mac/report-full.png",
+      "bbox_css": {
+        "x": 60,
+        "y": 299.19,
+        "w": 1120,
+        "h": 132.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 40172
+    },
+    {
+      "file": "mac/el-toast-lead-saved.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Toast \"הליד נשמר\"",
+      "parent": "mac/lead-saved-toast.png",
+      "bbox_css": {
+        "x": 1136,
+        "y": 911.5,
+        "w": 356,
+        "h": 50.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 9119
+    },
+    {
+      "file": "mac/el-today-board.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "\"היום במתחם\" card with the message row expanded",
+      "parent": "mac/today-message-ready-full.png",
+      "bbox_css": {
+        "x": 60.02,
+        "y": 94.5,
+        "w": 457.33,
+        "h": 823
+      },
+      "clipped_to_viewport": false,
+      "bytes": 357223
+    },
+    {
+      "file": "mac/el-today-welcome-row.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Row: נועה ואלון ברק — welcome template ready, \"שליחה\" button",
+      "parent": "mac/today-message-ready-full.png",
+      "bbox_css": {
+        "x": 72.02,
+        "y": 587.5,
+        "w": 433.33,
+        "h": 68
+      },
+      "clipped_to_viewport": false,
+      "bytes": 40477
+    },
+    {
+      "file": "mac/el-whatsapp-composer.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "WhatsApp composer sheet (template chips, message text, \"שליחה בוואטסאפ\")",
+      "parent": "mac/whatsapp-composer-full.png",
+      "bbox_css": {
+        "x": 476,
+        "y": 228,
+        "w": 560,
+        "h": 526
+      },
+      "clipped_to_viewport": false,
+      "bytes": 146569
+    },
+    {
+      "file": "mac/el-whatsapp-sent-bubble.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Outbound welcome bubble with time 15:00",
+      "parent": "mac/messages-welcome-sent.png",
+      "bbox_css": {
+        "x": 323,
+        "y": 287.89,
+        "w": 448,
+        "h": 261.38
+      },
+      "clipped_to_viewport": false,
+      "bytes": 72951
+    },
+    {
+      "file": "mac/el-whatsapp-thread-row.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "Thread row with WhatsApp tag and message preview",
+      "parent": "mac/messages-welcome-sent.png",
+      "bbox_css": {
+        "x": 796,
+        "y": 269.89,
+        "w": 383,
+        "h": 72.5
+      },
+      "clipped_to_viewport": false,
+      "bytes": 43822
+    },
+    {
+      "file": "mac/el-whatsapp-welcome-text.png",
+      "device": "mac",
+      "kind": "element",
+      "what": "The welcome message text as it will be sent",
+      "parent": "mac/whatsapp-composer-full.png",
+      "bbox_css": {
+        "x": 496,
+        "y": 391,
+        "w": 520,
+        "h": 238
+      },
+      "clipped_to_viewport": false,
+      "bytes": 75212
+    },
+    {
+      "file": "mac/expenses-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Expenses screen: totals, this month, estimated net profit, recent expenses.",
+      "payment_link_text_in_dom": false,
+      "bytes": 516739
+    },
+    {
+      "file": "mac/expenses-kpis-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Expense KPI row (סה״כ הוצאות / החודש / רווח נקי משוער) — same frame with the element hidden (empty slot)",
+      "element": "mac/el-expenses-kpis.png",
+      "parent": "mac/expenses-full.png",
+      "bytes": 465153
+    },
+    {
+      "file": "mac/expenses-row-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Expenses table scrolled to the cleaning row.",
+      "payment_link_text_in_dom": false,
+      "bytes": 513266
+    },
+    {
+      "file": "mac/expenses-row-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Expense row: ניקיון ₪1,400 — same frame with the element hidden (empty slot)",
+      "element": "mac/el-expense-row.png",
+      "parent": "mac/expenses-row-full.png",
+      "bytes": 495235
+    },
+    {
+      "file": "mac/lead-detail.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Lead detail page for the saved inquiry.",
+      "payment_link_text_in_dom": false,
+      "bytes": 382251
+    },
+    {
+      "file": "mac/lead-form-filled-bottom.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "New lead dialog scrolled to its save button.",
+      "payment_link_text_in_dom": false,
+      "bytes": 845474
+    },
+    {
+      "file": "mac/lead-form-filled.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "New lead dialog filled: מיכל אברהם, בקתת האלון, 7–8.11, source וואטסאפ, note \"פנוי בשבת\".",
+      "payment_link_text_in_dom": false,
+      "bytes": 845474
+    },
+    {
+      "file": "mac/lead-form-save-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "\"שמירת ליד\" button — same frame with the element hidden (empty slot)",
+      "element": "mac/el-lead-save-button.png",
+      "parent": "mac/lead-form-filled-bottom.png",
+      "bytes": 828290
+    },
+    {
+      "file": "mac/lead-form-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "New lead dialog (GuestForm) filled in — same frame with the element hidden (empty slot)",
+      "element": "mac/el-lead-form.png",
+      "parent": "mac/lead-form-filled.png",
+      "bytes": 715349
+    },
+    {
+      "file": "mac/lead-saved-toast-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Toast \"הליד נשמר\" — same frame with the element hidden (empty slot)",
+      "element": "mac/el-toast-lead-saved.png",
+      "parent": "mac/lead-saved-toast.png",
+      "bytes": 763277
+    },
+    {
+      "file": "mac/lead-saved-toast.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Right after saving: toast \"הליד נשמר\".",
+      "payment_link_text_in_dom": false,
+      "bytes": 876619
+    },
+    {
+      "file": "mac/leads-after-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "New lead row \"מיכל אברהם · ל-7 בנוב׳ · לילה אחד · חדש\" — same frame with the element hidden (empty slot)",
+      "element": "mac/el-lead-row-new.png",
+      "parent": "mac/leads-after.png",
+      "bytes": 431619
+    },
+    {
+      "file": "mac/leads-after.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Leads list after saving: מיכל אברהם appears as a new lead for 7.11, 1 night.",
+      "payment_link_text_in_dom": false,
+      "bytes": 470472
+    },
+    {
+      "file": "mac/leads-before.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Leads list before saving the new inquiry (2 existing leads).",
+      "payment_link_text_in_dom": false,
+      "bytes": 432253
+    },
+    {
+      "file": "mac/messages-thread-row-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Thread row with WhatsApp tag and message preview — same frame with the element hidden (empty slot)",
+      "element": "mac/el-whatsapp-thread-row.png",
+      "parent": "mac/messages-welcome-sent.png",
+      "bytes": 444571
+    },
+    {
+      "file": "mac/messages-welcome-sent-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Outbound welcome bubble with time 15:00 — same frame with the element hidden (empty slot)",
+      "element": "mac/el-whatsapp-sent-bubble.png",
+      "parent": "mac/messages-welcome-sent.png",
+      "bytes": 412972
+    },
+    {
+      "file": "mac/messages-welcome-sent.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Messages screen: thread with נועה ואלון ברק, WhatsApp tag, the welcome message logged as sent (outbound bubble, 15:00).",
+      "payment_link_text_in_dom": false,
+      "bytes": 487741
+    },
+    {
+      "file": "mac/receipt-preview-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Receipt preview dialog for R-1043 (קבלה).",
+      "payment_link_text_in_dom": false,
+      "bytes": 851505
+    },
+    {
+      "file": "mac/receipt-preview-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Receipt (קבלה) preview document — same frame with the element hidden (empty slot)",
+      "element": "mac/el-receipt-preview.png",
+      "parent": "mac/receipt-preview-full.png",
+      "bytes": 843294
+    },
+    {
+      "file": "mac/receipts-after-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Receipt row R-1043 (SENT) — same frame with the element hidden (empty slot)",
+      "element": "mac/el-receipt-row-after.png",
+      "parent": "mac/receipts-after.png",
+      "bytes": 426497
+    },
+    {
+      "file": "mac/receipts-after-status-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Status chip \"נשלח\" — same frame with the element hidden (empty slot)",
+      "element": "mac/el-receipt-status-after.png",
+      "parent": "mac/receipts-after.png",
+      "bytes": 452261
+    },
+    {
+      "file": "mac/receipts-after.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Invoices & receipts list, R-1043 (Anna Weber, ₪2,850) marked נשלח (sent).",
+      "payment_link_text_in_dom": false,
+      "bytes": 457495
+    },
+    {
+      "file": "mac/receipts-before-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Receipt row R-1043 (DRAFT) — same frame with the element hidden (empty slot)",
+      "element": "mac/el-receipt-row-before.png",
+      "parent": "mac/receipts-before.png",
+      "bytes": 426644
+    },
+    {
+      "file": "mac/receipts-before-status-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Status chip \"טיוטה\" — same frame with the element hidden (empty slot)",
+      "element": "mac/el-receipt-status-before.png",
+      "parent": "mac/receipts-before.png",
+      "bytes": 452677
+    },
+    {
+      "file": "mac/receipts-before.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Invoices & receipts list, R-1043 (Anna Weber, ₪2,850) still טיוטה (draft).",
+      "payment_link_text_in_dom": false,
+      "bytes": 457868
+    },
+    {
+      "file": "mac/report-before-expenses.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Monthly report, November 2026, before expenses are logged (income only).",
+      "payment_link_text_in_dom": false,
+      "bytes": 533684
+    },
+    {
+      "file": "mac/report-channels-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Monthly report scrolled to \"הכנסות לפי ערוץ\".",
+      "payment_link_text_in_dom": false,
+      "bytes": 546385
+    },
+    {
+      "file": "mac/report-channels-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Income by channel block with bars — same frame with the element hidden (empty slot)",
+      "element": "mac/el-report-income-by-channel.png",
+      "parent": "mac/report-channels-full.png",
+      "bytes": 488763
+    },
+    {
+      "file": "mac/report-expenses-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Monthly report scrolled to the expenses block.",
+      "payment_link_text_in_dom": false,
+      "bytes": 525967
+    },
+    {
+      "file": "mac/report-expenses-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Expenses by category block — same frame with the element hidden (empty slot)",
+      "element": "mac/el-report-expenses.png",
+      "parent": "mac/report-expenses-full.png",
+      "bytes": 275807
+    },
+    {
+      "file": "mac/report-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Monthly report, November 2026: income, expenses, net, income by channel (Booking / Airbnb / direct).",
+      "payment_link_text_in_dom": false,
+      "bytes": 535668
+    },
+    {
+      "file": "mac/report-kpis-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "KPI tiles: הכנסות / הוצאות / נטו … — same frame with the element hidden (empty slot)",
+      "element": "mac/el-report-kpis.png",
+      "parent": "mac/report-full.png",
+      "bytes": 494360
+    },
+    {
+      "file": "mac/seq-income-chart-00.png",
+      "device": "mac",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 1/8 at t=0ms of 425ms",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34375,
+        "y": 487.5,
+        "w": 646.65625,
+        "h": 374.5
+      },
+      "bytes": 71718
+    },
+    {
+      "file": "mac/seq-income-chart-01.png",
+      "device": "mac",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 2/8 at t=61ms of 425ms",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34375,
+        "y": 487.5,
+        "w": 646.65625,
+        "h": 374.5
+      },
+      "bytes": 73306
+    },
+    {
+      "file": "mac/seq-income-chart-02.png",
+      "device": "mac",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 3/8 at t=121ms of 425ms",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34375,
+        "y": 487.5,
+        "w": 646.65625,
+        "h": 374.5
+      },
+      "bytes": 74365
+    },
+    {
+      "file": "mac/seq-income-chart-03.png",
+      "device": "mac",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 4/8 at t=182ms of 425ms",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34375,
+        "y": 487.5,
+        "w": 646.65625,
+        "h": 374.5
+      },
+      "bytes": 75608
+    },
+    {
+      "file": "mac/seq-income-chart-04.png",
+      "device": "mac",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 5/8 at t=243ms of 425ms",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34375,
+        "y": 487.5,
+        "w": 646.65625,
+        "h": 374.5
+      },
+      "bytes": 76607
+    },
+    {
+      "file": "mac/seq-income-chart-05.png",
+      "device": "mac",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 6/8 at t=304ms of 425ms",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34375,
+        "y": 487.5,
+        "w": 646.65625,
+        "h": 374.5
+      },
+      "bytes": 76637
+    },
+    {
+      "file": "mac/seq-income-chart-06.png",
+      "device": "mac",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 7/8 at t=364ms of 425ms",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34375,
+        "y": 487.5,
+        "w": 646.65625,
+        "h": 374.5
+      },
+      "bytes": 76217
+    },
+    {
+      "file": "mac/seq-income-chart-07.png",
+      "device": "mac",
+      "kind": "sequence-frame",
+      "what": "Income chart bars growing (real CSS animation .v7-bar), frame 8/8 at t=425ms of 425ms",
+      "parent": "mac/today-income-chart-full.png",
+      "bbox_css": {
+        "x": 533.34375,
+        "y": 487.5,
+        "w": 646.65625,
+        "h": 374.5
+      },
+      "bytes": 75259
+    },
+    {
+      "file": "mac/today-board-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "\"היום במתחם\" card with the message row expanded — same frame with the element hidden (empty slot)",
+      "element": "mac/el-today-board.png",
+      "parent": "mac/today-message-ready-full.png",
+      "bytes": 357582
+    },
+    {
+      "file": "mac/today-income-chart-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Today board at month end: income chart for the last 6 months (November highlighted).",
+      "payment_link_text_in_dom": false,
+      "bytes": 1853268
+    },
+    {
+      "file": "mac/today-income-chart-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Income bar chart card — same frame with the element hidden (empty slot)",
+      "element": "mac/el-income-chart.png",
+      "parent": "mac/today-income-chart-full.png",
+      "bytes": 1788919
+    },
+    {
+      "file": "mac/today-message-ready-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "Today board, Friday 15:00: arrivals today and the prepared WhatsApp message(s) waiting for one tap.",
+      "payment_link_text_in_dom": false,
+      "bytes": 713728
+    },
+    {
+      "file": "mac/today-welcome-row-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "Row: נועה ואלון ברק — welcome template ready, \"שליחה\" button — same frame with the element hidden (empty slot)",
+      "element": "mac/el-today-welcome-row.png",
+      "parent": "mac/today-message-ready-full.png",
+      "bytes": 672115
+    },
+    {
+      "file": "mac/whatsapp-composer-full.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "WhatsApp composer opened from the board: welcome text filled with this booking (unit, Wi-Fi, check-out).",
+      "payment_link_text_in_dom": false,
+      "bytes": 746397
+    },
+    {
+      "file": "mac/whatsapp-composer-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "WhatsApp composer sheet (template chips, message text, \"שליחה בוואטסאפ\") — same frame with the element hidden (empty slot)",
+      "element": "mac/el-whatsapp-composer.png",
+      "parent": "mac/whatsapp-composer-full.png",
+      "bytes": 645585
+    },
+    {
+      "file": "mac/whatsapp-composer-text-slot-empty.png",
+      "device": "mac",
+      "kind": "slot-empty",
+      "what": "The welcome message text as it will be sent — same frame with the element hidden (empty slot)",
+      "element": "mac/el-whatsapp-welcome-text.png",
+      "parent": "mac/whatsapp-composer-full.png",
+      "bytes": 668538
+    },
+    {
+      "file": "mac/whatsapp-sent-toast.png",
+      "device": "mac",
+      "kind": "full",
+      "what": "After tapping send: toast \"נפתח וואטסאפ ל… ההודעה נשמרה בהודעות\", the board no longer lists the welcome as waiting.",
+      "payment_link_text_in_dom": false,
+      "bytes": 1076473
+    }
+  ]
+}

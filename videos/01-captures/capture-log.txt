@@ -1,0 +1,30 @@
+[lead] iphone
+  full  iphone/leads-before.png
+  full  iphone/lead-form-filled.png
+  el    iphone/el-lead-form.png  @ 0,68.17 393x783.83
+  slot  iphone/lead-form-slot-empty.png
+  full  iphone/lead-form-filled-bottom.png
+  el    iphone/el-lead-save-button.png  @ 20,796.47 353x36
+  slot  iphone/lead-form-save-slot-empty.png
+  full  iphone/lead-saved-toast.png
+  el    iphone/el-toast-lead-saved.png  @ 16,713.5 361x50.5
+  slot  iphone/lead-saved-toast-slot-empty.png
+  full  iphone/leads-after.png
+  el    iphone/el-lead-row-new.png  @ 20,507.69 353x76
+  slot  iphone/leads-after-slot-empty.png
+  full  iphone/lead-detail.png
+[lead] mac
+  full  mac/leads-before.png
+  full  mac/lead-form-filled.png
+  el    mac/el-lead-form.png  @ 500,83.35 512x815.3
+  slot  mac/lead-form-slot-empty.png
+  full  mac/lead-form-filled-bottom.png
+  el    mac/el-lead-save-button.png  @ 766.91,837.65 134.41x36
+  slot  mac/lead-form-save-slot-empty.png
+  full  mac/lead-saved-toast.png
+  el    mac/el-toast-lead-saved.png  @ 1136,911.5 356x50.5
+  slot  mac/lead-saved-toast-slot-empty.png
+  full  mac/leads-after.png
+  el    mac/el-lead-row-new.png  @ 60,425.89 1120x76
+  slot  mac/leads-after-slot-empty.png
+  full  mac/lead-detail.png
