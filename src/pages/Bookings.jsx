@@ -238,7 +238,7 @@ export default function BookingsPage({ selectedPropertyId }) {
       await updateMutation.mutateAsync({ id: row.id, data: { status } }).catch(() => {});
       done++;
     }
-    success(`${done === 1 ? 'עודכנה הזמנה אחת' : `עודכנו ${done} הזמנות`} ל-${STATUS_MAP[status]?.label || status}`);
+    success(`${done === 1 ? 'הזמנה אחת עכשיו במצב' : `${done} הזמנות עכשיו במצב`}: ${STATUS_MAP[status]?.label || status}`);
   };
 
   const handleBulkDeleteRows = rows => {
@@ -251,7 +251,7 @@ export default function BookingsPage({ selectedPropertyId }) {
       property_name: properties.find(p => p.id === b.property_id)?.name || '',
     }));
     exportToCSV(data, 'bookings', BOOKING_COLUMNS);
-    success(`${data.length === 1 ? 'יוצאה הזמנה אחת' : `יוצאו ${data.length} הזמנות`} ל-CSV`);
+    success(`ירד קובץ לאקסל עם ${data.length === 1 ? 'הזמנה אחת' : `${data.length} הזמנות`}`);
   };
 
   const dateInputValue = (d) => (d ? format(d, 'yyyy-MM-dd') : '');

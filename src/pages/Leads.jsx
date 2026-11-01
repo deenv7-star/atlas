@@ -28,8 +28,8 @@ const STATUS_OPTIONS = [
   { value: 'CONTACTED',  label: 'בטיפול',     color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
   { value: 'OFFER_SENT', label: 'הצעה נשלחה',   color: 'bg-brand-100 text-brand-700 border-brand-200' },
   { value: 'CONFIRMED',  label: 'נסגר',         color: 'bg-green-100 text-green-700 border-green-200' },
-  { value: 'REJECTED',   label: 'לא רלוונטי',          color: 'bg-red-100 text-red-700 border-red-200' },
-  { value: 'LOST',       label: 'לא רלוונטי',   color: 'bg-gray-100 text-gray-500 border-gray-200' },
+  { value: 'REJECTED',   label: 'לא מתאים לנו',          color: 'bg-red-100 text-red-700 border-red-200' },
+  { value: 'LOST',       label: 'הזמין במקום אחר',   color: 'bg-gray-100 text-gray-500 border-gray-200' },
 ];
 const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
 
@@ -190,7 +190,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       await updateMutation.mutateAsync({ id: row.id, data: { status } }).catch(() => {});
       done++;
     }
-    success(`${done === 1 ? 'עודכן ליד אחד' : `עודכנו ${done} לידים`} ל-${STATUS_MAP[status]?.label || status}`);
+    success(`${done === 1 ? 'ליד אחד עכשיו במצב' : `${done} לידים עכשיו במצב`}: ${STATUS_MAP[status]?.label || status}`);
   };
 
   const handleBulkDeleteRows = (rows) => {
@@ -202,7 +202,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       ...l, property_name: properties.find(p => p.id === l.property_id)?.name || '',
     }));
     exportToCSV(data, 'leads', LEAD_COLUMNS);
-    success(`${data.length === 1 ? 'יוצא ליד אחד' : `יוצאו ${data.length} לידים`} ל-CSV`);
+    success(`ירד קובץ לאקסל עם ${data.length === 1 ? 'ליד אחד' : `${data.length} לידים`}`);
   };
 
   const setStatusTagFilter = (value) => {
