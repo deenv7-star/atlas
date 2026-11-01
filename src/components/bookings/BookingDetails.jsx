@@ -47,6 +47,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { parseISO, differenceInDays } from 'date-fns';
+import { isDialable, telHref } from '@/lib/phone';
 import { heCount } from '@/lib/hebrewCount';
 import { renderTemplate, waLink, logSubjectFor } from '@/lib/stay/whatsapp';
 import { useAuth } from '@/lib/AuthContext';
@@ -190,9 +191,13 @@ export default function BookingDetails({ booking, onClose, orgId }) {
     }
   });
 
-  const nights = booking.check_in_date && booking.check_out_date
+  // APP-001: never show negative/zero nights for legacy rows saved before validation existed.
+  const rawNights = booking.check_in_date && booking.check_out_date
     ? differenceInDays(parseISO(booking.check_out_date), parseISO(booking.check_in_date))
     : 0;
+  const nights = rawNights > 0 ? rawNights : 0;
+  const datesInvalid = !!(booking.check_in_date && booking.check_out_date && rawNights <= 0);
+  const phoneOk = isDialable(booking.guest_phone);
 
   const totalPaid = payments.filter(p => p.status === 'PAID').reduce((sum, p) => sum + (p.amount || 0), 0);
   const totalDue = payments.filter(p => p.status === 'DUE').reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -328,16 +333,21 @@ export default function BookingDetails({ booking, onClose, orgId }) {
                   </div>
                 ))}
               </div>
+              {datesInvalid ? (
+                <p role="alert" className="mt-2 rounded-[12px] bg-[#FFF6E5] px-3 py-2 text-[14px] font-medium text-[#8A5A00]">
+                  יש כאן טעות בתאריכים: היציאה לא אחרי הכניסה. ערכו את ההזמנה ותקנו.
+                </p>
+              ) : null}
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                {booking.guest_phone ? (
+                {phoneOk ? (
                   <a href={waHref} onClick={logWhatsApp} target="_blank" rel="noreferrer" className="press inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-brand-600 px-6 text-[15px] font-bold text-white shadow-[0_10px_22px_-10px_rgba(62,43,241,0.7)] hover:bg-brand-500 sm:flex-none">
                     <MessageSquare className="h-5 w-5" />
                     שליחה בוואטסאפ
                   </a>
                 ) : null}
-                {booking.guest_phone ? (
-                  <a href={`tel:${booking.guest_phone}`} aria-label={`שיחה ל־${booking.guest_phone}`} className="press inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#F1F1F8] px-4 text-[15px] font-semibold text-navy-900 hover:bg-[#E8E8F2]">
+                {phoneOk ? (
+                  <a href={telHref(booking.guest_phone)} aria-label={`שיחה ל־${booking.guest_phone}`} className="press inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#F1F1F8] px-4 text-[15px] font-semibold text-navy-900 hover:bg-[#E8E8F2]">
                     <Phone className="h-[18px] w-[18px]" />
                     <span dir="ltr" className="hidden sm:inline">{booking.guest_phone}</span>
                   </a>

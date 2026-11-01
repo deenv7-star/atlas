@@ -50,3 +50,23 @@ jobs:
       - name: Dependency vulnerability scan
         continue-on-error: true
         run: npm audit --audit-level=high
+
+  unit-tests:
+    # Frontend + edge-function unit tests (tests/unit/*.test.mjs). Node 22 runs the .ts imports natively
+    # (type stripping); TZ is set inside the npm script.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Unit tests
+        run: npm run test:unit

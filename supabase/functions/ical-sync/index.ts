@@ -1,13 +1,18 @@
 // ical-sync: pulls every active calendar_syncs row (Airbnb / Booking.com / any iCal URL), parses VEVENTs and
 // upserts them as blocking bookings on the unit (source + external_uid). Events that disappear from the feed are
 // cancelled (never deleted). Overlaps are rejected by the DB (bookings_no_overlap) and recorded as conflicts.
+// Safety (fix/360-data): an empty or cut-off feed never cancels anything (status WARNING instead, ENG-01);
+// each sync row runs at most once a minute and a parallel run is skipped, not an ERROR (ENG-03, SEC-03);
+// the feed host is resolved and private addresses are refused (SEC-03); the unit must belong to the
+// sync's own org (SEC-01).
 //
 // Callers:
 //   pg_cron every 15 min  -> header x-atlas-cron: <ATLAS_CRON_SECRET>, body {"all": true}
 //   "סנכרן עכשיו" button  -> Authorization: Bearer <user JWT>, body {"sync_id"?: uuid}  (own org only, via RLS)
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
 import { parseIcs, addDaysISO, type IcsEvent } from "../_shared/ics.ts";
-import { isPublicFeedUrl } from "../_shared/feedUrl.ts";
+import { isPublicFeedUrl, checkResolvedHost, type DnsResolver } from "../_shared/feedUrl.ts";
+import { planCancellations, warningMessage, isDuplicateInsert, SYNC_MIN_GAP_MS } from "../_shared/syncPlan.ts";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -22,6 +27,18 @@ const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANON = Deno.env.get("SUPABASE_ANON_KEY")!;
 const CRON_SECRET = Deno.env.get("ATLAS_CRON_SECRET") || "";
 const INACTIVE = new Set(["CANCELLED", "CANCELED", "WAITLIST", "DECLINED"]);
+
+// Deno.resolveDns may be missing or not permitted in some runtimes: then the text-only check still applies.
+const resolver: DnsResolver | null = typeof (Deno as unknown as { resolveDns?: unknown }).resolveDns === "function"
+  ? (host, type) => Deno.resolveDns(host, type) as Promise<string[]>
+  : null;
+
+async function assertSafeHost(u: string) {
+  const host = new URL(u).hostname;
+  const verdict = await checkResolvedHost(host, resolver);
+  if (verdict === "private") throw new Error("bad_url");
+  if (verdict === "unsupported") console.warn("ical-sync: DNS check unavailable, text-only SSRF filter", host);
+}
 
 const PROVIDER: Record<string, { source: string; label: string }> = {
   AIRBNB: { source: "airbnb", label: "Airbnb" },
@@ -48,6 +65,7 @@ async function fetchFeed(url: string): Promise<string> {
   let u = url.trim();
   if (/^webcal:\/\//i.test(u)) u = "https://" + u.slice(9);
   if (!/^https?:\/\//i.test(u) || !isPublicFeedUrl(u)) throw new Error("bad_url");
+  await assertSafeHost(u);
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 25_000);
   try {
@@ -57,6 +75,7 @@ async function fetchFeed(url: string): Promise<string> {
       if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {
         u = new URL(res.headers.get("location")!, u).toString();
         if (!isPublicFeedUrl(u)) throw new Error("bad_url");
+        await assertSafeHost(u);
         continue;
       }
       break;
@@ -82,12 +101,13 @@ function hebrewError(code: string): string {
   return "לא הצלחנו לקרוא את היומן. ננסה שוב בסנכרון הבא";
 }
 
-type SyncRow = { id: string; org_id: string; property_id: string | null; provider: string; ical_url: string | null; sync_status: string | null; is_active: boolean | null; sync_direction: string | null; label: string | null };
+type SyncRow = { id: string; org_id: string; property_id: string | null; provider: string; ical_url: string | null; sync_status: string | null; is_active: boolean | null; sync_direction: string | null; label: string | null; events_count: number | null };
 
-async function overlapping(db: SupabaseClient, propertyId: string, start: string, end: string, excludeId?: string) {
+// SEC-01: only ever look at the sync's own org (service role bypasses RLS).
+async function overlapping(db: SupabaseClient, orgId: string, propertyId: string, start: string, end: string, excludeId?: string) {
   const { data } = await db.from("bookings")
     .select("id, guest_name, source, check_in_date, check_out_date, status, external_sync_id")
-    .eq("property_id", propertyId).lt("check_in_date", end).gt("check_out_date", start).limit(5);
+    .eq("org_id", orgId).eq("property_id", propertyId).lt("check_in_date", end).gt("check_out_date", start).limit(5);
   return (data || []).find((b) => !INACTIVE.has(String(b.status || "").toUpperCase()) && b.id !== excludeId) || null;
 }
 
@@ -95,10 +115,30 @@ async function syncOne(db: SupabaseClient, s: SyncRow) {
   const startedAt = new Date().toISOString();
   const prov = PROVIDER[s.provider] || PROVIDER.ICAL;
   const label = s.label || prov.label;
-  const result = { id: s.id, ok: false, events: 0, created: 0, updated: 0, cancelled: 0, conflicts: 0, error: "" as string };
+  const result = { id: s.id, ok: false, events: 0, created: 0, updated: 0, cancelled: 0, conflicts: 0, error: "" as string, warning: "" as string, skipped: "" as string };
   if (!s.property_id || !s.ical_url) {
     result.error = "missing_url";
     await db.from("calendar_syncs").update({ last_attempt_at: startedAt, sync_status: "ERROR", error_message: "חסר קישור יומן או יחידה" }).eq("id", s.id);
+    return result;
+  }
+  // ENG-03 + SEC-03: claim the row atomically. A parallel run (cron + button) or a second click within a
+  // minute gets 0 rows back and is skipped quietly instead of racing to a false ERROR.
+  const gapIso = new Date(Date.now() - SYNC_MIN_GAP_MS).toISOString();
+  const { data: claimed, error: claimErr } = await db.from("calendar_syncs")
+    .update({ last_attempt_at: startedAt })
+    .eq("id", s.id)
+    .or(`last_attempt_at.is.null,last_attempt_at.lt."${gapIso}"`)
+    .select("id");
+  if (!claimErr && (!claimed || claimed.length === 0)) {
+    result.ok = true;
+    result.skipped = "rate_limited";
+    return result;
+  }
+  // SEC-01: the unit must belong to the same org as the sync row.
+  const { data: ownProp } = await db.from("properties").select("id").eq("id", s.property_id).eq("org_id", s.org_id).maybeSingle();
+  if (!ownProp) {
+    result.error = "foreign_property";
+    await db.from("calendar_syncs").update({ last_attempt_at: startedAt, sync_status: "ERROR", error_message: "היחידה של הסנכרון הזה לא נמצאה בחשבון. הסירו אותו וחברו מחדש." }).eq("id", s.id);
     return result;
   }
   try {
@@ -137,10 +177,11 @@ async function syncOne(db: SupabaseClient, s: SyncRow) {
         const r = await db.from("bookings").insert({ ...row, guest_name: guestNameFor(ev, label), notes: `נוסף אוטומטית מסנכרון ${label}${ev.summary ? ` (${ev.summary})` : ""}` });
         err = r.error;
         if (!err) result.created += 1;
+        else if (isDuplicateInsert(err)) err = null; // ENG-03: a parallel run already inserted it
       }
       if (err) {
         if (err.code === "23P01") {
-          const other = await overlapping(db, s.property_id, ev.start, ev.end, ex?.id);
+          const other = await overlapping(db, s.org_id, s.property_id, ev.start, ev.end, ex?.id);
           conflicts.push({
             uid: ev.uid, start: ev.start, end: ev.end, summary: ev.summary, channel: label,
             with_booking_id: other?.id || null, with_guest: other?.guest_name || null, with_source: other?.source || null,
@@ -152,11 +193,11 @@ async function syncOne(db: SupabaseClient, s: SyncRow) {
       }
     }
 
-    // gone from the feed: cancelled or moved on the channel. Cancel (not delete) future/current ones.
-    for (const ex of existingRows || []) {
-      if (seen.has(ex.external_uid as string)) continue;
-      if (INACTIVE.has(String(ex.status || "").toUpperCase())) continue;
-      if ((ex.check_out_date || "") < today) continue;
+    // gone from the feed: cancelled or moved on the channel. Cancel (not delete) future/current ones,
+    // unless the feed looks empty/cut off (ENG-01): then cancel nothing and warn.
+    const plan = planCancellations({ existing: existingRows || [], seenUids: seen, today, feedEvents: events.length, previousEvents: s.events_count });
+    if (plan.suspicious) result.warning = plan.reason;
+    for (const ex of plan.toCancel) {
       const note = [ex.notes, `בוטל אוטומטית: ההזמנה נעלמה מיומן ${label} (${today})`].filter(Boolean).join("\n");
       const r = await db.from("bookings").update({ status: "CANCELLED", notes: note.slice(0, 2000) }).eq("id", ex.id);
       if (!r.error) result.cancelled += 1;
@@ -164,10 +205,17 @@ async function syncOne(db: SupabaseClient, s: SyncRow) {
 
     result.conflicts = conflicts.length;
     result.ok = true;
+    const msgs = [
+      plan.suspicious ? warningMessage(plan, label) : "",
+      conflicts.length ? `${conflicts.length} התנגשויות: תאריכים שתפוסים כבר ביומן atlas` : "",
+    ].filter(Boolean);
     await db.from("calendar_syncs").update({
       last_attempt_at: startedAt, last_sync_at: new Date().toISOString(), last_success_at: new Date().toISOString(),
-      sync_status: s.sync_status === "PAUSED" ? "PAUSED" : "ACTIVE", error_message: conflicts.length ? `${conflicts.length} התנגשויות: תאריכים שתפוסים כבר ביומן atlas` : null,
-      events_count: events.length, conflicts,
+      sync_status: s.sync_status === "PAUSED" ? "PAUSED" : plan.suspicious ? "WARNING" : "ACTIVE",
+      error_message: msgs.length ? msgs.join("\n") : null,
+      // keep the last good baseline while warning, so the next round compares against it too
+      ...(plan.suspicious ? {} : { events_count: events.length }),
+      conflicts,
     }).eq("id", s.id);
   } catch (e) {
     const code = String((e as Error)?.message || e);
@@ -200,7 +248,7 @@ Deno.serve(async (req) => {
     if (!ids.length) return json({ ok: true, results: [] });
   }
 
-  let q = db.from("calendar_syncs").select("id, org_id, property_id, provider, ical_url, sync_status, is_active, sync_direction, label");
+  let q = db.from("calendar_syncs").select("id, org_id, property_id, provider, ical_url, sync_status, is_active, sync_direction, label, events_count");
   if (ids) q = q.in("id", ids);
   else q = q.neq("sync_status", "PAUSED");
   const { data: syncs, error } = await q.limit(2000);

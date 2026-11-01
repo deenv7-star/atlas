@@ -19,11 +19,55 @@ function unescapeText(v: string): string {
   return v.replace(/\\n/gi, "\n").replace(/\\,/g, ",").replace(/\\;/g, ";").replace(/\\\\/g, "\\");
 }
 
-/** DTSTART;VALUE=DATE:20261020 | DTSTART:20261020T140000Z | DTSTART;TZID=Asia/Jerusalem:20261020T150000 → 2026-10-20 */
-export function icsDate(value: string): string | null {
-  const m = /^(\d{4})(\d{2})(\d{2})/.exec(value.trim());
+export const ICS_HOME_TZ = "Asia/Jerusalem";
+
+/** Offset (ms) of `tz` from UTC at the instant `utcMs`. Throws RangeError for an unknown zone. */
+function tzOffsetMs(utcMs: number, tz: string): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit",
+  }).formatToParts(new Date(utcMs));
+  const g = (t: string) => Number(parts.find((p) => p.type === t)?.value);
+  const asUtc = Date.UTC(g("year"), g("month") - 1, g("day"), g("hour") % 24, g("minute"), g("second"));
+  return asUtc - utcMs;
+}
+
+/** Calendar date (YYYY-MM-DD) of a UTC instant on the wall clock of `tz`. */
+export function dateInZone(utcMs: number, tz = ICS_HOME_TZ): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(utcMs));
+}
+
+/** Wall-clock time in `tz` → UTC instant (two passes, correct across DST changes). */
+function zonedWallToUtc(y: number, mo: number, d: number, h: number, mi: number, s: number, tz: string): number {
+  const wall = Date.UTC(y, mo - 1, d, h, mi, s);
+  let utc = wall - tzOffsetMs(wall, tz);
+  utc = wall - tzOffsetMs(utc, tz);
+  return utc;
+}
+
+/**
+ * DTSTART/DTEND value → the stay date in Israel (YYYY-MM-DD).
+ *   VALUE=DATE:20261020            → 2026-10-20 (all-day, taken as is)
+ *   20261019T220000Z (UTC)         → converted to Asia/Jerusalem → 2026-10-20
+ *   TZID=Europe/London:20261020T230000 → that zone's wall time → Israel date (2026-10-21)
+ *   20261020T150000 (floating)     → read as Israel local time → 2026-10-20
+ * `params` is the raw property parameter string (e.g. "VALUE=DATE" or "TZID=Asia/Jerusalem").
+ */
+export function icsDate(value: string, params = ""): string | null {
+  const v = value.trim();
+  const m = /^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?/i.exec(v);
   if (!m) return null;
-  return `${m[1]}-${m[2]}-${m[3]}`;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const dateOnly = `${m[1]}-${m[2]}-${m[3]}`;
+  if (m[4] === undefined) return dateOnly; // all-day
+  const [h, mi, s] = [Number(m[4]), Number(m[5]), Number(m[6] || 0)];
+  if (m[7]) return dateInZone(Date.UTC(y, mo - 1, d, h, mi, s));
+  const tzid = /(?:^|;)TZID=("?)([^;":]+)\1/i.exec(params)?.[2]?.trim();
+  if (!tzid || tzid === ICS_HOME_TZ) return dateOnly; // floating or already Israel time
+  try {
+    return dateInZone(zonedWallToUtc(y, mo, d, h, mi, s, tzid));
+  } catch {
+    return dateOnly; // unknown/Windows zone name: keep the wall date
+  }
 }
 
 export function addDaysISO(iso: string, n: number): string {
@@ -34,6 +78,8 @@ export function addDaysISO(iso: string, n: number): string {
 
 export function parseIcs(text: string): IcsEvent[] {
   if (!/BEGIN:VCALENDAR/i.test(text)) throw new Error("not_ical");
+  // An empty or cut-off feed parses to [] (or fewer events). Callers must not read that as "everything was
+  // cancelled": see planCancellations in syncPlan.ts.
   const lines = unfold(text);
   const events: IcsEvent[] = [];
   let cur: Record<string, string> | null = null;
@@ -43,8 +89,8 @@ export function parseIcs(text: string): IcsEvent[] {
     if (/^BEGIN:VEVENT$/i.test(line)) { cur = {}; continue; }
     if (/^END:VEVENT$/i.test(line)) {
       if (cur) {
-        const start = icsDate(cur.DTSTART || "");
-        let end = icsDate(cur.DTEND || "");
+        const start = icsDate(cur.DTSTART || "", cur["DTSTART;"] || "");
+        let end = icsDate(cur.DTEND || "", cur["DTEND;"] || "");
         if (start) {
           if (!end || end <= start) {
             // DURATION or missing DTEND: all-day events are one night
@@ -67,9 +113,20 @@ export function parseIcs(text: string): IcsEvent[] {
     if (!cur) continue;
     const idx = line.indexOf(":");
     if (idx < 0) continue;
-    const name = line.slice(0, idx).split(";")[0].toUpperCase();
-    const value = line.slice(idx + 1);
-    if (!(name in cur)) cur[name] = value;
+    // TZID values may be quoted and contain ":" only inside quotes; split at the first ":" outside quotes.
+    let cut = idx;
+    if (line.slice(0, idx).split('"').length % 2 === 0) {
+      const close = line.indexOf('"', idx);
+      cut = close >= 0 ? line.indexOf(":", close) : idx;
+      if (cut < 0) continue;
+    }
+    const head = line.slice(0, cut).split(";");
+    const name = head[0].toUpperCase();
+    const value = line.slice(cut + 1);
+    if (!(name in cur)) {
+      cur[name] = value;
+      cur[`${name};`] = head.slice(1).join(";");
+    }
   }
   return events;
 }
