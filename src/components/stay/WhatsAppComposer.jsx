@@ -81,7 +81,7 @@ export function WhatsAppComposer({ open, onOpenChange, booking: bookingProp, pro
               role="radio"
               aria-checked={active}
               onClick={() => { setTemplateKey(t.key); setDirty(false); }}
-              className="ab-btn ab-btn-sm shrink-0"
+              className="ab-btn ab-btn-sm shrink-0 !min-h-[44px]"
               style={active
                 ? { background: 'var(--brand-600)', color: '#fff' }
                 : { background: 'var(--surface)', color: 'var(--ink-900)', borderColor: 'var(--line)' }}

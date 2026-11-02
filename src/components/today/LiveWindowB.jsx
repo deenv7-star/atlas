@@ -9,9 +9,9 @@
  * All data is real (useStayData / buildDayBoard); nothing invented. iCal bookings have no guest names,
  * so they read "הזמנה מ-Booking.com". No guest photos, no weather, no bell, no payment link.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, LifeBuoy } from 'lucide-react';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { useMessageQueue } from '@/hooks/useMessageQueue';
 import { useAuth } from '@/lib/AuthContext';
@@ -142,6 +142,12 @@ export default function LiveWindowB({ user, orgId }) {
   const [composer, setComposer] = useState(null);
   const [sentNow, setSentNow] = useState(() => new Set());
   const [heroKey, replayHero] = useReplay();
+  // phones: the floating help button would sit on the last card above the tab bar, so this screen hides it
+  // (CSS on html[data-lwb-today]) and offers help in the page flow instead (lwb-help).
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-lwb-today', '');
+    return () => h.removeAttribute('data-lwb-today');
+  }, []);
 
   const settings = readOrgSettings();
   const firstProp = (data.properties || [])[0];
@@ -310,6 +316,12 @@ export default function LiveWindowB({ user, orgId }) {
     )
   ) : null;
 
+  const helpRow = (
+    <button type="button" className="lwb-help press" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}>
+      <LifeBuoy size={18} strokeWidth={1.75} aria-hidden />צריכים עזרה?
+    </button>
+  );
+
   /* ── new owner ── */
   if (newOwner) {
     const firstOpen = steps.find((s) => !s.done);
@@ -327,7 +339,7 @@ export default function LiveWindowB({ user, orgId }) {
             </div>
           </section>
           </div>
-          <div className="lwb-sheet">
+          <div className="lwb-sheet lwb-sheet--start">
             <div className="lwb-shh"><h2 className="lwb-h22">מתחילים</h2><span className="lwb-t13 lwb-mute">תמיד אפשר לשנות</span></div>
             <div className="lwb-stack">
               {steps.map((s, idx) => (s === firstOpen ? (
@@ -347,6 +359,7 @@ export default function LiveWindowB({ user, orgId }) {
                 </Link>
               )))}
             </div>
+            {helpRow}
           </div>
         </div>
       </div>
@@ -403,6 +416,7 @@ export default function LiveWindowB({ user, orgId }) {
                 </Link>
               </div>
             </div>
+            {helpRow}
           </div>
         ) : null}
       </div>

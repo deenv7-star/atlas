@@ -109,13 +109,21 @@ a.lwb-card:active, button.lwb-card:active { transform: scale(.985); }
 .lwb-ring { transform: rotate(-90deg); flex: none; }
 @media (max-width: 360px) { .lwb-ring { width: 40px; height: 40px; } .lwb-stat .li { width: 32px; height: 32px; } }
 
+/* help: in the page flow on phones (the floating launcher is hidden on this screen, it covered the last card) */
+.lwb-help { display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 20px; margin: 24px auto 0;
+  border-radius: 24px; font-size: 15px; font-weight: 700; color: var(--navy); background: var(--tint); }
+.lwb-help svg { color: var(--ind); }
+.lwb[data-glass="1"] .lwb-help { color: #fff; background: rgba(18, 26, 63, .26); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.lwb[data-glass="1"] .lwb-help svg { color: #fff; }
+@media (max-width: 1023px) { html[data-lwb-today] .sp-launcher { display: none !important; } }
+
 /* entrance: one soft rise, staggered */
 .lwb-rise { animation: lwb-rise 520ms var(--out) both; animation-delay: calc(var(--i, 0) * 50ms); }
 @keyframes lwb-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* ── desktop: fallback A layout, the photo becomes the hero banner ── */
 @media (min-width: 1024px) {
-  .lwb { --px: 40px; padding-bottom: 48px; }
+  .lwb { --px: 40px; }
   .lwb-bg { display: none; }
   .lwb-top { display: none; }
   .lwb-head { margin: 8px var(--px) 0; border-radius: 32px; overflow: hidden; padding: 0; }
@@ -131,6 +139,11 @@ a.lwb-card:active, button.lwb-card:active { transform: scale(.985); }
   .lwb-cols { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: start; }
   .lwb-stats { grid-template-columns: 1fr; }
   .lwb-shh { max-width: calc(58.33% - 10px); }
+  .lwb-help { display: none; } /* desktop keeps the floating help pill */
+  /* new owner: steps read as a column, not 1100px-wide bars, and stay clear of the help pill bottom-left */
+  .lwb-sheet--start { max-width: calc(58.33% + 2 * var(--px) - 10px); }
+  .lwb-sheet--start .lwb-shh { max-width: none; }
+  .lwb { padding-bottom: 96px; } /* last row can scroll above the floating help pill */
 }
 
 @media (prefers-reduced-motion: reduce) {

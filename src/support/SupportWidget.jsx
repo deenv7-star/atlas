@@ -180,6 +180,12 @@ export default function SupportWidget() {
     window.addEventListener('atlas:tour-active', onTour);
     return () => window.removeEventListener('atlas:tour-active', onTour);
   }, []);
+  // screens that hide the floating launcher (phone Today) open help from an in-page button
+  useEffect(() => {
+    const onOpen = () => { setOpen(true); setView('chat'); };
+    window.addEventListener('atlas:open-support', onOpen);
+    return () => window.removeEventListener('atlas:open-support', onOpen);
+  }, []);
   useEffect(() => { const el = inputRef.current; if (el) { el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 132)}px`; } }, [draft]);
 
   const send = useCallback(async (textIn, retryOf = null) => {
