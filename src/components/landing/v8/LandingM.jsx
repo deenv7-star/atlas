@@ -40,6 +40,8 @@ import './landing-ux-1020.css';
 import './landing-visual-v2.css';
 import HeroPhoto from './HeroPhoto';
 import LazyGrowth from './growth/LazyGrowth';
+import { useLandingMotion } from './motion/landingMotion';
+import './motion/landing-motion.css';
 
 const loadGrowth = () => import('./growth/GrowthS');
 
@@ -95,11 +97,11 @@ function Features() {
           {TILES.map(({ tone, I, k, t, d, vis }, i) => (
             <li key={k} className={`lm-tile is-${tone}`} data-reveal style={{ '--d': `${i * 60}ms` }}>
               <div className="lm-tile-copy">
-                <p className="lm-kick"><I size={18} strokeWidth={2.2} aria-hidden="true" />{k}</p>
+                <p className="lm-kick" data-draw><I size={18} strokeWidth={2.2} aria-hidden="true" />{k}</p>
                 <h3>{t}</h3>
                 <p className="lm-tile-txt">{d}</p>
               </div>
-              {vis}
+              {React.cloneElement(vis, { 'data-sd': 'settle' })}
             </li>
           ))}
         </ul>
@@ -154,7 +156,7 @@ function Facts() {
         <ul className="lm-facts-row">
           {FACTS.map((f, i) => (
             <li key={f.u} data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <b className="num" dir="ltr">{f.n}</b>
+              <b className="num" dir="ltr" data-count={/^\d+$/.test(f.n) ? f.n : undefined}>{f.n}</b>
               <span>{f.u}</span>
               <p>{f.t}</p>
             </li>
@@ -235,6 +237,7 @@ const Part = ({ children }) => <Suspense fallback={null}>{children}</Suspense>;
 export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
+  useLandingMotion(root);
   return (
     <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
