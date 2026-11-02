@@ -28,7 +28,7 @@
 .lwb-grow { flex: 1; min-width: 0; }
 .lwb-trunc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* card titles never cut: wrap to two lines instead (mixed Hebrew/Latin ellipses read badly) */
-.lwb-stay .lwb-trunc { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
+.lwb-stay .lwb-trunc { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: break-word; }
 
 /* ── background: the complex photo, blurred under the content, light navy layer ── */
 .lwb-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: var(--navy); }

@@ -66,8 +66,8 @@ function Dots({ journey }) {
 function guestLabel(b) {
   if (b.guest_name) return b.guest_name;
   const ch = channelOf(b);
-  if (ch.key === 'booking') return 'הזמנה מ-Booking';
-  if (ch.key === 'airbnb') return 'הזמנה מ-Airbnb';
+  if (ch.key === 'booking') return 'הזמנה מ\u2011Booking';
+  if (ch.key === 'airbnb') return 'הזמנה מ\u2011Airbnb';
   return 'אורח';
 }
 function guestsOf(b) {
