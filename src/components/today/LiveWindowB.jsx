@@ -77,7 +77,7 @@ function guestsOf(b) {
 function IconTile({ name, playKey, tone = 'soft' }) {
   return (
     <span className={cn('lwb-itile', tone === 'onIndigo' && 'lwb-itile--ind')} aria-hidden>
-      <LiveIcon name={name} size={36} playKey={playKey} />
+      <LiveIcon name={name} size={44} playKey={playKey} />
     </span>
   );
 }
