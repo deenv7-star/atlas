@@ -313,8 +313,8 @@ export default function LiveWindowB({ user, orgId }) {
     const firstOpen = steps.find((s) => !s.done);
     return (
       <div className="lwb" data-glass="0" dir="rtl">
-        <div className="lwb-bg" aria-hidden><div className="lwb-navyfill" /></div>
         <div className="lwb-in">
+          <div className="lwb-head">
           {top}
           <section className="lwb-hero">
             <h1 className="lwb-h30">כאן תראו את היום שלכם</h1>
@@ -324,6 +324,7 @@ export default function LiveWindowB({ user, orgId }) {
               <span className="lwb-t15 lwb-soft">צעדים · כ-5 דקות בסך הכל</span>
             </div>
           </section>
+          </div>
           <div className="lwb-sheet">
             <div className="lwb-shh"><h2 className="lwb-h22">מתחילים</h2><span className="lwb-t13 lwb-mute">תמיד אפשר לשנות</span></div>
             <div className="lwb-stack">
@@ -351,17 +352,16 @@ export default function LiveWindowB({ user, orgId }) {
   }
 
   return (
-    <div className="lwb" data-glass={glass ? '1' : '0'} dir="rtl">
-      <div className="lwb-bg" aria-hidden>
-        {glass ? (
-          <>
-            <img className="lwb-ph" src={photo} alt="" decoding="async" draggable={false} />
-            <div className="lwb-blur" style={{ backgroundImage: `url(${photo})` }} />
-            <div className="lwb-navy" />
-          </>
-        ) : <div className="lwb-navyfill" />}
-      </div>
+    <div className="lwb" data-glass={glass ? '1' : '0'} dir="rtl" style={glass ? { '--lwb-photo': `url(${photo})` } : undefined}>
+      {glass ? (
+        <div className="lwb-bg" aria-hidden>
+          <img className="lwb-ph" src={photo} alt="" decoding="async" draggable={false} />
+          <div className="lwb-blur" />
+          <div className="lwb-navy" />
+        </div>
+      ) : null}
       <div className="lwb-in">
+        <div className="lwb-head">
         {top}
         {data.isLoading ? (
           <section className="lwb-hero" role="status" aria-busy="true" aria-label="טוען"><span className="lwb-skel" /></section>
@@ -372,6 +372,7 @@ export default function LiveWindowB({ user, orgId }) {
             <button type="button" className="lwb-btn lwb-btn-w press lwb-w-auto" onClick={() => data.refetch?.()}>טענו שוב</button>
           </section>
         ) : hero}
+        </div>
 
         {!data.isLoading && !data.isError ? (
           <div className="lwb-sheet">
