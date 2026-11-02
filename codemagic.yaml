@@ -47,8 +47,7 @@ workflows:
         VITE_APP_BASE_URL: "https://atlas-il.com"
         VITE_SUPABASE_URL: "https://romvmqbcinurscwdsskx.supabase.co"
         VITE_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvbXZtcWJjaW51cnNjd2Rzc2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MDUyMTMsImV4cCI6MjA4OTI4MTIxM30.dQ3nwHPWzxPxy188c3Fn0AbDdtSL-7mqMhcxofOXIVA"
-        # Optional: numeric Apple ID of the App Store Connect app. When empty it is looked up by bundle id.
-        APP_STORE_APPLE_ID: ""
+        # APP_STORE_APPLE_ID is optional (set it in Codemagic env vars if needed); when unset the app is looked up by bundle id.
 
     scripts:
       - name: Install npm dependencies
