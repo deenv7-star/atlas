@@ -9,6 +9,7 @@
  *         finish step asks for it once).
  */
 import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
+import { isNativeApp } from '@/lib/native';
 import {
   OAUTH_CALLBACK_PATH, buildPending, writePending, readPending, clearPending, parseFlag, profilePatch,
 } from '@/lib/auth/oauthFlow';
@@ -32,6 +33,9 @@ export const APPLE_MODE = (() => {
 /** Social sign-in needs a real Supabase project (not the local demo / REST backend). */
 export function socialProviders() {
   if (!isSupabaseConfigured || !supabase) return [];
+  // iOS app: Google / Apple need the system-browser flow (com.atlasil.app://auth-callback), not built yet.
+  // Hidden in the app for now; email + password works inside the WebView.
+  if (isNativeApp()) return [];
   return ['google', 'apple'].filter((p) => SOCIAL_FLAGS[p]);
 }
 

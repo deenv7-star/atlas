@@ -5,6 +5,7 @@ import { DEFER_CLASS, revealDeferredParts } from '@/lib/prerenderDefer'
 import '@/index.css'
 import '@/ui-direction/flag'
 import { registerServiceWorker } from '@/lib/swUpdate'
+import { isNativeApp, nativeStartRedirect } from '@/lib/native'
 
 // Minimal fallback when app crashes (no external deps)
 function CrashFallback({ error }) {
@@ -21,6 +22,12 @@ function CrashFallback({ error }) {
     </div>
   )
 }
+
+// iOS app (Capacitor): never open on the marketing landing / pricing. Rewrite the first URL to /login before
+// anything reads it; /login sends a signed-in owner straight on to /dashboard (src/App.jsx).
+const nativeStart = nativeStartRedirect()
+if (nativeStart) window.history.replaceState(null, '', nativeStart)
+if (isNativeApp()) document.documentElement.classList.add('atlas-native')
 
 const rootEl = document.getElementById('root')
 if (!rootEl) throw new Error('Root element not found')
@@ -97,4 +104,4 @@ window.onerror = (msg, src, line, col, err) => {
 
 // Service worker update loop: periodic/focus update checks + one safe reload when a new deploy takes over (see src/lib/swUpdate.js).
 // /registerSW.js (vite-plugin-pwa) still registers the SW too; registering the same /sw.js twice is a no-op.
-registerServiceWorker()
+if (!isNativeApp()) registerServiceWorker()

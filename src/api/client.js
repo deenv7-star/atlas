@@ -22,6 +22,7 @@
  */
 
 import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
+import { publicOrigin } from '@/lib/native';
 
 // =============================================================================
 // Local REST API client (talks to server/index.js)
@@ -556,7 +557,7 @@ const supabaseAuth = {
         // terms_* = record of the active consent checkbox on /register (Upay/Bit requirement).
         data: { full_name, organization_name, ...(terms_accepted_at ? { terms_accepted_at, terms_version } : {}) },
         // The confirmation link lands on the verify page, which shows "confirmed → continue" or "expired".
-        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/verify-email?confirmed=1` : undefined,
+        emailRedirectTo: typeof window !== 'undefined' ? `${publicOrigin()}/verify-email?confirmed=1` : undefined,
       },
     });
     if (error) {
