@@ -1,0 +1,72 @@
+/* atlas animated line icons. One-shot motion on mount / replay, transform + opacity + stroke-draw only. */
+.li { display: block; flex: none; overflow: visible; color: #1B2656; }
+.li * { transform-box: fill-box; }
+.li .li-acc { fill: #3E2BF1; stroke: none; }
+.li .li-white { stroke: #fff; }
+.li .li-ground { fill: none; stroke: #3E2BF1; stroke-opacity: .26; stroke-width: 2; transform-origin: center; }
+
+/* shared curves */
+.li { --li-out: cubic-bezier(.22, 1, .36, 1); --li-land: cubic-bezier(.34, 1.4, .64, 1); }
+
+/* key: turns in the lock */
+.li--key .li-key { transform-origin: 16px 23px; transform-box: view-box; animation: li-key 620ms var(--li-out) both; }
+@keyframes li-key { 0% { transform: rotate(-38deg) translateX(-3px); opacity: .4; } 60% { transform: rotate(6deg); opacity: 1; } 100% { transform: none; } }
+
+/* door: swings open, settles ajar-closed */
+.li--door .li-door { transform-origin: 14px 24px; transform-box: view-box; animation: li-door 680ms var(--li-out) both; }
+@keyframes li-door { 0% { transform: none; } 45% { transform: scaleX(.55); } 100% { transform: none; } }
+
+/* broom: one sweep, dust lifts and fades */
+.li--broom .li-broom { transform-origin: 31px 6px; transform-box: view-box; animation: li-sweep 640ms var(--li-out) both; }
+@keyframes li-sweep { 0% { transform: rotate(14deg); } 45% { transform: rotate(-10deg); } 100% { transform: none; } }
+.li--broom .li-dust { fill: #1B2656; stroke: none; opacity: 0; animation: li-dust 640ms var(--li-out) 200ms both; }
+@keyframes li-dust { 0% { opacity: 0; transform: translate(4px, 3px); } 50% { opacity: .55; } 100% { opacity: 0; transform: translate(-3px, -4px); } }
+
+/* WhatsApp: bubble pops, three dots type in turn */
+.li--whatsapp .li-bubble { transform-origin: 12px 36px; transform-box: view-box; animation: li-pop 480ms var(--li-land) both; }
+@keyframes li-pop { 0% { transform: scale(.7); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.li--whatsapp .li-t1, .li--whatsapp .li-t2, .li--whatsapp .li-t3 { transform-origin: center; animation: li-type 420ms var(--li-out) both; }
+.li--whatsapp .li-t1 { animation-delay: 180ms; }
+.li--whatsapp .li-t2 { animation-delay: 270ms; }
+.li--whatsapp .li-t3 { animation-delay: 360ms; }
+@keyframes li-type { 0% { transform: scale(0); } 60% { transform: scale(1.25); } 100% { transform: none; } }
+
+/* coin: drops and lands, the ground squashes in sync */
+.li--coin .li-coin { animation: li-drop 620ms var(--li-land) both; }
+@keyframes li-drop { 0% { transform: translateY(-12px); opacity: 0; } 55% { transform: translateY(1.5px); opacity: 1; } 100% { transform: none; } }
+.li--coin .li-ground, .li--home .li-ground, .li--inbox .li-ground { animation: li-squash 620ms var(--li-out) both; }
+@keyframes li-squash { 0%, 40% { transform: scaleX(.6); opacity: .4; } 60% { transform: scaleX(1.15); } 100% { transform: none; opacity: 1; } }
+
+/* calendar: the page flips down from the rings, today's cell pops */
+.li--calendar .li-page { transform-origin: 24px 20px; transform-box: view-box; animation: li-flip 560ms var(--li-out) both; }
+@keyframes li-flip { 0% { transform: scaleY(0); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.li--calendar .li-page .li-acc { transform-origin: center; animation: li-type 420ms var(--li-out) 300ms both; }
+
+/* receipt: prints upward */
+.li--receipt .li-receipt { animation: li-print 560ms var(--li-out) both; }
+@keyframes li-print { 0% { transform: translateY(8px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+
+/* check: the circle settles, the tick draws itself */
+.li--check .li-chk .li-acc { transform-origin: center; animation: li-pop 420ms var(--li-land) both; }
+.li--check .li-draw { stroke-dasharray: 1; stroke-dashoffset: 1; stroke-width: 2.6; animation: li-draw 460ms var(--li-out) 180ms forwards; }
+@keyframes li-draw { to { stroke-dashoffset: 0; } }
+
+/* today: the sun rises, rays open */
+.li--today .li-sun { animation: li-rise 560ms var(--li-out) both; }
+@keyframes li-rise { 0% { transform: translateY(5px); opacity: .3; } 100% { transform: none; opacity: 1; } }
+.li--today .li-rays { transform-origin: 24px 23px; transform-box: view-box; animation: li-rays 620ms var(--li-out) 80ms both; }
+@keyframes li-rays { 0% { transform: rotate(-30deg) scale(.7); opacity: 0; } 100% { transform: none; opacity: 1; } }
+
+/* inquiries: a letter drops into the tray */
+.li--inbox .li-letter { animation: li-letter 620ms var(--li-land) both; }
+@keyframes li-letter { 0% { transform: translateY(-9px); opacity: 0; } 60% { transform: translateY(2px); opacity: 1; } 100% { transform: none; } }
+
+/* home: lands, the window lights */
+.li--home .li-home { animation: li-drop 600ms var(--li-land) both; }
+.li--home .li-win { transform-origin: center; animation: li-type 380ms var(--li-out) 360ms both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .li *, .li { animation: none !important; }
+  .li--check .li-draw { stroke-dashoffset: 0; }
+  .li--broom .li-dust { opacity: 0; }
+}
