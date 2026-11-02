@@ -112,7 +112,7 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [] }) 
                         i > 0 && 'border-t border-line',
                       )}
                     >
-                      <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.5} />
+                      <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.75} />
                       <span className={cn('flex-1 text-[16px]', active ? 'font-bold text-brand-700' : 'font-medium text-navy-900')}>{item.label}</span>
                       <ChevronLeft className="h-4 w-4 text-ink-400" />
                     </Link>

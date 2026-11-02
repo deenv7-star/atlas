@@ -455,7 +455,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               <ol className="mt-3 flex flex-wrap gap-2">
                 {timelineItems.map((item, i) => (
                   <li key={i} className={cn('inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px]', item.done ? 'bg-[var(--st-mint-bg)] font-semibold text-[var(--st-mint-fg)]' : 'bg-[#F1F1F8] text-ink-600')}>
-                    {item.done ? <CheckCircle2 className="h-4 w-4" /> : <item.icon className="h-4 w-4" strokeWidth={1.6} />}
+                    {item.done ? <CheckCircle2 className="h-4 w-4" /> : <item.icon className="h-4 w-4" strokeWidth={1.75} />}
                     {item.label}
                   </li>
                 ))}

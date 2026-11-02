@@ -96,7 +96,7 @@ export default function BalancesPage({ user, orgId }) {
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-3">
             <Segmented label="סינון" value={filter} onChange={setFilter} options={FILTERS} />
             <div className="relative flex-1 sm:max-w-xs">
-              <Search size={18} strokeWidth={1.5} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--ink-400)' }} aria-hidden />
+              <Search size={18} strokeWidth={1.75} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--ink-400)' }} aria-hidden />
               <input className="ab-input" style={{ paddingRight: 40 }} placeholder="חיפוש אורח או יחידה" value={q} onChange={(e) => setQ(e.target.value)} aria-label="חיפוש" />
             </div>
           </div>
@@ -104,7 +104,7 @@ export default function BalancesPage({ user, orgId }) {
           <div className="ab-card overflow-hidden">
             {visible.length === 0 ? (
               <div className="px-5 py-8 text-center">
-                <span className="ab-icon-tile mx-auto"><Wallet size={20} strokeWidth={1.5} /></span>
+                <span className="ab-icon-tile mx-auto"><Wallet size={20} strokeWidth={1.75} /></span>
                 <p className="font-bold mt-3">{filter === 'overdue' ? 'אין יתרות באיחור.' : 'אין הזמנות שמתאימות לסינון.'}</p>
                 <p className="ab-meta mt-1">יתרות מחושבות מהמחיר הכולל פחות התשלומים שנרשמו.</p>
               </div>

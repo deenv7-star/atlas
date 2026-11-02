@@ -22,8 +22,7 @@
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { RefreshCw, Sparkles } from 'lucide-react';
-import { IcCalendar, IcBubble, IcShekel, IcToday } from './motion/StoryIcons';
+import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
@@ -52,7 +51,7 @@ const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing
 /* ---------------- features: the four colour blocks as a bento of tiles + photos + channels ---------------- */
 const TILES = [
   {
-    tone: 'indigo', I: IcCalendar, k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
+    tone: 'indigo', I: CalendarDays, k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
     d: 'Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח. בלי כפל הזמנות.',
     vis: (
       <div className="lm-tile-vis is-cal">
@@ -62,7 +61,7 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: IcBubble, k: 'הודעות', t: 'וואטסאפ לאורחים. מוכן מראש.',
+    tone: 'canvas', I: MessageCircle, k: 'הודעות', t: 'וואטסאפ לאורחים. מוכן מראש.',
     d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.',
     vis: (
       <div className="lm-tile-vis is-msg">
@@ -71,7 +70,7 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: IcShekel, k: 'תשלומים', t: 'הכסף נכנס. אתם רואים הכל.',
+    tone: 'canvas', I: Wallet, k: 'תשלומים', t: 'הכסף נכנס. אתם רואים הכל.',
     d: 'כל מקדמה ויתרה נרשמות, ורואים כמה נכנס החודש.',
     vis: (
       <div className="lm-tile-vis is-chart">
@@ -80,7 +79,7 @@ const TILES = [
     ),
   },
   {
-    tone: 'navy', I: IcToday, k: 'היום', t: 'היום שלכם, מסודר מראש.',
+    tone: 'navy', I: Sun, k: 'היום', t: 'היום שלכם, מסודר מראש.',
     d: 'כניסות, יציאות וניקיונות ברשימה אחת. מסמנים ״בוצע״ בלחיצה.',
     vis: (
       <div className="lm-tile-vis is-today">
@@ -99,7 +98,7 @@ function Features() {
           {TILES.map(({ tone, I, k, t, d, vis }, i) => (
             <li key={k} className={`lm-tile is-${tone}`} data-reveal style={{ '--d': `${i * 60}ms` }}>
               <div className="lm-tile-copy">
-                <p className="lm-kick" data-draw><I size={22} />{k}</p>
+                <p className="lm-kick" data-ic><I size={20} strokeWidth={2} aria-hidden="true" focusable="false" />{k}</p>
                 <h3>{t}</h3>
                 <p className="lm-tile-txt">{d}</p>
               </div>
