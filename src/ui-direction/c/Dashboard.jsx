@@ -1,7 +1,7 @@
-/** Direction C: the home screen is the bento command center. */
+/** Direction C home: "היום" is live window B (Deen's pick, 02.11.2026). */
 import React from 'react';
-import TodayBoard from '@/components/today/TodayBoard';
+import LiveWindowB from '@/components/today/LiveWindowB';
 
 export default function DashboardView({ user, orgId }) {
-  return <TodayBoard user={user} orgId={orgId} variant="c" />;
+  return <LiveWindowB user={user} orgId={orgId} />;
 }
