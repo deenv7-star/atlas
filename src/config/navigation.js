@@ -4,7 +4,7 @@
  * Labels follow the glossary in docs/brand.md.
  */
 import {
-  Sun, CalendarRange, CalendarDays, Users, MessageSquare, Star,
+  Sun, CalendarRange, BedDouble, Users, MessageSquare, Star,
   Brush, Headset, FileSignature, Zap, Wallet, FileText, TrendingDown, BarChart3,
   FileBarChart, Tags, Link2, Route, Globe, CreditCard, Receipt, Settings, Shield,
 } from 'lucide-react';
@@ -22,7 +22,7 @@ export const NAV_GROUPS = [
     items: [
       { page: 'Dashboard', label: 'היום', icon: Sun },
       { page: 'MultiCalendar', label: 'לוח שנה', icon: CalendarRange },
-      { page: 'Bookings', label: 'הזמנות', icon: CalendarDays },
+      { page: 'Bookings', label: 'הזמנות', icon: BedDouble },
       { page: 'Leads', label: 'לידים', icon: Users },
       { page: 'Payments', label: 'כספים', icon: Wallet },
       { page: 'Messages', label: 'הודעות', icon: MessageSquare },

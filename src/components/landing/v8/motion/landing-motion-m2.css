@@ -1,17 +1,16 @@
 /* Landing motion M2 (2.11.2026): M1 plus a little more life, still only on what is already there.
    Each element once, 360-600ms, 8-16px. Reduced motion: none of this runs. */
 
-.lm .lm-tile.is-canvas { --mo-acc: var(--indigo); }
-.lm .lm-tile:is(.is-indigo, .is-navy) { --mo-acc: rgba(255, 255, 255, 0.55); }
-.mo-ic .mo-gnd { opacity: 0.18; }
+/* tile label icons: lucide (the app's set), crisp at rest; they only fade in, never draw (icons-fix, 2.11.2026) */
+.lm .lm-kick[data-ic] svg { flex-shrink: 0; display: block; }
 
 @media (prefers-reduced-motion: no-preference) {
   /* ---- hero: the header pill settles in from above with the headline ---- */
   .lm.has-ph .l7-hdr-in { animation: mo-drop 520ms var(--mo-ease) 40ms both; }
 
-  /* ---- story icons (swap for the tile label icons): line draws, then the one accent fades in ---- */
-  .lm.mo-on [data-draw] svg .mo-acc { stroke-dasharray: none; stroke-dashoffset: 0; opacity: 0; transform: translateY(3px); transform-box: fill-box; transition: opacity 360ms var(--mo-ease) 680ms, transform 420ms var(--mo-ease) 680ms; }
-  .lm.mo-on .is-in [data-draw] svg .mo-acc, .lm.mo-on [data-draw] svg.is-drawn .mo-acc { opacity: 1; transform: none; }
+  /* ---- tile label icons: a short fade once the tile is in (opacity only, no stroke drawing) ---- */
+  .lm.mo-on .lm-tile[data-reveal] .lm-kick[data-ic] svg { opacity: 0; transition: opacity 360ms var(--mo-ease) 220ms; }
+  .lm.mo-on .lm-tile[data-reveal].is-in .lm-kick[data-ic] svg { opacity: 1; }
 
   /* ---- facts: the guest faces settle in one after another ---- */
   .lm.mo-on .lm-facts-top .v8f { opacity: 0; transform: translateY(10px); transition: opacity 420ms var(--mo-ease), transform 480ms var(--mo-ease); }
