@@ -1,0 +1,116 @@
+# atlas — Codemagic cloud macOS / Xcode -> Internal TestFlight (Capacitor 8, Swift Package Manager)
+#
+# Workflow:
+#   atlas_ios_testflight — web build -> cap sync ios -> signed IPA -> upload to TestFlight (internal).
+#
+# Manual start only for now (no `triggering` block). To build on every push to main later,
+# un-comment the triggering block below.
+#
+# Never put .p8 keys, certificates, Supabase keys or any other secret in this file.
+# Everything marked REPLACE_ME is set by Deen in the Codemagic UI / App Store Connect.
+
+workflows:
+  atlas_ios_testflight:
+    name: atlas iOS -> Internal TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    # triggering:
+    #   events:
+    #     - push
+    #   branch_patterns:
+    #     - pattern: 'main'
+    #       include: true
+    #       source: true
+    #   cancel_previous_builds: true
+
+    # Exact name of the Codemagic "Developer Portal" (App Store Connect API key) integration,
+    # Codemagic -> Team settings -> Integrations -> Developer Portal.
+    integrations:
+      app_store_connect: REPLACE_ME_ASC_INTEGRATION_NAME
+
+    environment:
+      node: 20
+      xcode: latest
+      ios_signing:
+        # Automatic code signing: Codemagic fetches/creates the App Store cert + profile
+        # through the integration above.
+        distribution_type: app_store
+        bundle_identifier: com.atlas-il.app
+      groups:
+        # App-level variable group in the Codemagic UI (REPLACE_ME: create it).
+        # Must hold the same public build-time values Netlify uses for atlas-il.com:
+        #   VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (+ any other VITE_* the web build needs)
+        # and optionally APP_STORE_APPLE_ID (numeric Apple ID of the App Store Connect app record).
+        - atlas_ios
+      vars:
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
+        XCODE_SCHEME: "App"
+        BUNDLE_ID: "com.atlas-il.app"
+
+    scripts:
+      - name: Check required build variables
+        script: |
+          set -e
+          for v in VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY; do
+            if [ -z "$(printenv $v)" ]; then
+              echo "$v is not set. Add it to the 'atlas_ios' variable group in Codemagic."
+              exit 1
+            fi
+          done
+          echo "Build variables present."
+
+      - name: Install npm dependencies
+        script: |
+          npm ci
+
+      - name: Build web app
+        script: |
+          npm run build
+
+      - name: Sync Capacitor iOS
+        script: |
+          npx cap sync ios
+
+      - name: Set build number
+        script: |
+          set -e
+          cd ios/App
+          NEW_BUILD="${BUILD_NUMBER:-1}"
+          if [ -n "${APP_STORE_APPLE_ID:-}" ]; then
+            set +e
+            LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" --platform IOS 2>/dev/null | grep -E '^[0-9]+$' | tail -n 1)
+            set -e
+            if [ -n "$LATEST" ] && [ $((LATEST + 1)) -gt "$NEW_BUILD" ]; then
+              NEW_BUILD=$((LATEST + 1))
+            fi
+          fi
+          echo "CFBundleVersion / CURRENT_PROJECT_VERSION = $NEW_BUILD"
+          agvtool new-version -all "$NEW_BUILD"
+
+      - name: Set up code signing profiles
+        script: |
+          xcode-project use-profiles \
+            --project "$XCODE_PROJECT" \
+            --custom-export-options='{"testFlightInternalTestingOnly": true}'
+
+      - name: Build signed IPA
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Internal Testing only: no external beta review.
+        submit_to_testflight: false
+        submit_to_app_store: false
+        # Optional: name of an Internal Testing group in App Store Connect
+        # beta_groups:
+        #   - REPLACE_ME_INTERNAL_GROUP
