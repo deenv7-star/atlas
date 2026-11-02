@@ -100,7 +100,7 @@ export function Sidebar({ onLogout, user }) {
               return (
                 <li key={item.page}>
                   <Link to={createPageUrl(item.page)} aria-current={active ? 'page' : undefined} className={linkCls(active)}>
-                    <Icon className={cn('h-[19px] w-[19px] shrink-0', active ? 'text-white' : 'text-ink-400')} strokeWidth={active ? 2 : 1.6} />
+                    <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-white' : 'text-ink-400')} strokeWidth={active ? 2 : 1.75} />
                     <span className="truncate">{item.label}</span>
                   </Link>
                 </li>
@@ -108,7 +108,7 @@ export function Sidebar({ onLogout, user }) {
             })}
             <li>
               <button type="button" onClick={() => setMoreOpen(true)} className={cn(linkCls(moreActive), 'w-full')}>
-                <MoreHorizontal className={cn('h-[19px] w-[19px] shrink-0', moreActive ? 'text-white' : 'text-ink-400')} strokeWidth={1.6} />
+                <MoreHorizontal className={cn('h-5 w-5 shrink-0', moreActive ? 'text-white' : 'text-ink-400')} strokeWidth={moreActive ? 2 : 1.75} />
                 <span className="truncate">עוד</span>
               </button>
             </li>
@@ -138,7 +138,7 @@ function UnitSwitcher({ properties, selectedPropertyId, onPropertyChange }) {
           )}
           aria-label={current ? `יחידה: ${current.name}` : 'בחירת יחידה, כל היחידות'}
         >
-          <Building2 className="h-[19px] w-[19px]" strokeWidth={1.75} />
+          <Building2 className="h-5 w-5" strokeWidth={1.75} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 rounded-[16px]" dir="rtl">
@@ -241,7 +241,7 @@ export function TabBar({ user, onLogout }) {
               return (
                 <li key={slot}>
                   <button type="button" onClick={() => setMoreOpen(true)} className={tab(moreActive)}>
-                    <MoreHorizontal className="h-[21px] w-[21px]" strokeWidth={1.75} />
+                    <MoreHorizontal className="h-6 w-6" strokeWidth={moreActive ? 2 : 1.75} />
                     עוד
                   </button>
                 </li>
@@ -253,7 +253,7 @@ export function TabBar({ user, onLogout }) {
             return (
               <li key={slot}>
                 <Link to={createPageUrl(slot)} aria-current={active ? 'page' : undefined} className={tab(active)}>
-                  <Icon className="h-[21px] w-[21px]" strokeWidth={active ? 2 : 1.6} />
+                  <Icon className="h-6 w-6" strokeWidth={active ? 2 : 1.75} />
                   {item.label}
                 </Link>
               </li>
