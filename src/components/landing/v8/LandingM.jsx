@@ -22,7 +22,8 @@
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
+import { RefreshCw, Sparkles } from 'lucide-react';
+import { IcCalendar, IcBubble, IcShekel, IcToday } from './motion/StoryIcons';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
@@ -42,6 +43,7 @@ import HeroPhoto from './HeroPhoto';
 import LazyGrowth from './growth/LazyGrowth';
 import { useLandingMotion } from './motion/landingMotion';
 import './motion/landing-motion.css';
+import './motion/landing-motion-m2.css';
 
 const loadGrowth = () => import('./growth/GrowthS');
 
@@ -50,7 +52,7 @@ const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing
 /* ---------------- features: the four colour blocks as a bento of tiles + photos + channels ---------------- */
 const TILES = [
   {
-    tone: 'indigo', I: CalendarDays, k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
+    tone: 'indigo', I: IcCalendar, k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
     d: 'Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח. בלי כפל הזמנות.',
     vis: (
       <div className="lm-tile-vis is-cal">
@@ -60,7 +62,7 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: MessageCircle, k: 'הודעות', t: 'וואטסאפ לאורחים. מוכן מראש.',
+    tone: 'canvas', I: IcBubble, k: 'הודעות', t: 'וואטסאפ לאורחים. מוכן מראש.',
     d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.',
     vis: (
       <div className="lm-tile-vis is-msg">
@@ -69,7 +71,7 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: Wallet, k: 'תשלומים', t: 'הכסף נכנס. אתם רואים הכל.',
+    tone: 'canvas', I: IcShekel, k: 'תשלומים', t: 'הכסף נכנס. אתם רואים הכל.',
     d: 'כל מקדמה ויתרה נרשמות, ורואים כמה נכנס החודש.',
     vis: (
       <div className="lm-tile-vis is-chart">
@@ -78,7 +80,7 @@ const TILES = [
     ),
   },
   {
-    tone: 'navy', I: Sun, k: 'היום', t: 'היום שלכם, מסודר מראש.',
+    tone: 'navy', I: IcToday, k: 'היום', t: 'היום שלכם, מסודר מראש.',
     d: 'כניסות, יציאות וניקיונות ברשימה אחת. מסמנים ״בוצע״ בלחיצה.',
     vis: (
       <div className="lm-tile-vis is-today">
@@ -97,7 +99,7 @@ function Features() {
           {TILES.map(({ tone, I, k, t, d, vis }, i) => (
             <li key={k} className={`lm-tile is-${tone}`} data-reveal style={{ '--d': `${i * 60}ms` }}>
               <div className="lm-tile-copy">
-                <p className="lm-kick" data-draw><I size={18} strokeWidth={2.2} aria-hidden="true" />{k}</p>
+                <p className="lm-kick" data-draw><I size={22} />{k}</p>
                 <h3>{t}</h3>
                 <p className="lm-tile-txt">{d}</p>
               </div>
@@ -109,24 +111,24 @@ function Features() {
         <div className="lm-feat-ppl">
           <div className="lm-feat-today pp-b-today" data-reveal>
             <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 1200px) 480px, (min-width: 900px) 40vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
-            <div className="pp-b-phone" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
+            <div className="pp-b-phone" data-sd="lift" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
               <img src="/landing-hero/ui-m-today.webp" alt="" width="780" height="1594" loading="lazy" decoding="async" />
             </div>
             <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
           </div>
           <div className="lm-feat-pay" data-reveal>
             <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
-            <img className="lm-feat-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
+            <img className="lm-feat-paid" data-sd="lift" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
           </div>
           <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
         </div>
-        <div className="lm-feat-ch">
+        <div className="lm-feat-ch" data-reveal>
           <p>עובד עם מה שכבר יש לכם</p>
           <ul>
-            <li><Mark ch="airbnb" size={20} />Airbnb</li>
-            <li><Mark ch="booking" size={20} />Booking.com</li>
-            <li><Mark ch="whatsapp" size={20} />WhatsApp</li>
-            <li><Mark ch="google" size={20} />Google Calendar</li>
+            <li style={{ '--i': 0 }}><Mark ch="airbnb" size={20} />Airbnb</li>
+            <li style={{ '--i': 1 }}><Mark ch="booking" size={20} />Booking.com</li>
+            <li style={{ '--i': 2 }}><Mark ch="whatsapp" size={20} />WhatsApp</li>
+            <li style={{ '--i': 3 }}><Mark ch="google" size={20} />Google Calendar</li>
           </ul>
         </div>
       </div>
@@ -179,7 +181,7 @@ function Final() {
           <h2 id="final-title" className="lm-x-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
           <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים את Booking ו-Airbnb ב-10 דקות, והלוח מתחיל להתמלא.</p>
           <div data-reveal><CtaLinks /></div>
-          <div className="lm-x-shot" aria-hidden="true">
+          <div className="lm-x-shot" data-sd="tilt" aria-hidden="true">
             <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="lazy" decoding="async" />
           </div>
         </div>
