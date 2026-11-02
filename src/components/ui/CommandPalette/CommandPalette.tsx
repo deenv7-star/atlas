@@ -433,7 +433,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                 {remote.bookings.map((h) => (
                   <CommandItem
                     key={`sb-${h.id}`}
-                    value={`search-booking-${h.id}-${h.title}`}
+                    value={`search-booking-${h.id}-${h.title}-${search.trim()}`}
                     keywords={[h.title, h.subtitle, ...(h.keywords ?? []), search.trim(), 'הזמנה']}
                     data-announce={announce(h.title, h.subtitle)}
                     onSelect={() => {
@@ -453,7 +453,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                 {remote.guests.map((h) => (
                   <CommandItem
                     key={`sg-${h.id}`}
-                    value={`search-guest-${h.id}-${h.title}`}
+                    value={`search-guest-${h.id}-${h.title}-${search.trim()}`}
                     keywords={[h.title, h.subtitle, ...(h.keywords ?? []), search.trim(), 'אורח']}
                     data-announce={announce(h.title, h.subtitle)}
                     onSelect={() => {
