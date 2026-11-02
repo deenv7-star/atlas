@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { askConfirm } from '@/components/common/confirmDialog';
 import DOMPurify from 'dompurify';
 import { PageHeader, EmptyState } from '@/components/ds';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -497,7 +498,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
                         variant="outline" 
                         className="rounded-lg text-red-600 hover:bg-red-50"
                         aria-label={`מחיקת התבנית ${template.name || ''}`}
-                        onClick={() => { if (window.confirm('למחוק את התבנית?')) deleteTemplateMutation.mutate(template.id); }}
+                        onClick={() => { askConfirm({ title: 'למחוק את התבנית?', description: 'התבנית תימחק מהרשימה.' }).then((ok) => { if (ok) deleteTemplateMutation.mutate(template.id); }); }}
                       >
                         <Trash2 className="h-3 w-3" />
                       </Button>

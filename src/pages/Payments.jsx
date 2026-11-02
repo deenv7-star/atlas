@@ -21,7 +21,6 @@ import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
 import { PaymentForm } from '@/components/forms/PaymentForm';
 import { emptyPaymentFormValues } from '@/components/forms/atlasFormSchemas';
 import { Page, PageHeader, StatTile, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
-import { heCount } from '@/lib/hebrewCount';
 
 const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer: 'העברה', card: 'כרטיס', credit_card: 'כרטיס אשראי', bit: 'ביט', paybox: 'פייבוקס' };
 
@@ -275,9 +274,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
               askConfirm({ title: 'למחוק את התשלום?', description: 'התשלום יימחק לצמיתות.' })
                 .then((ok) => { if (ok) deleteMutation.mutate(id); });
             }}
-            onBulkDelete={async (rows) => {
-              const ok = await askConfirm({ title: `למחוק ${heCount(rows.length, 'payment')}?`, description: 'התשלומים יימחקו לצמיתות.' });
-              if (!ok) return;
+            onBulkDelete={(rows) => {
               rows.forEach((r) => deleteMutation.mutate(r.id));
             }}
           />

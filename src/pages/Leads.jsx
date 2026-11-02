@@ -1,4 +1,5 @@
 import { createPageUrl } from '@/utils';
+import { askConfirm } from '@/components/common/confirmDialog';
 import { GuestAvatar, Rise } from '@/components/app/atoms';
 import { Page, PageHeader, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtShort } from '@/components/ds';
 import React, { useMemo, useRef, useEffect, useState } from 'react';
@@ -177,8 +178,9 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
     }
   };
 
-  const handleDelete = id => {
-    if (!confirm('למחוק את הליד?')) return;
+  const handleDelete = async (id) => {
+    const ok = await askConfirm({ title: 'למחוק את הליד?', description: 'הליד יימחק מהרשימה.' });
+    if (!ok) return;
     deleteMutation.mutate(id, {
       onSuccess: () => success('הליד נמחק'),
       onError: () => toastError('לא הצלחנו למחוק את הליד. נסו שוב.'),
