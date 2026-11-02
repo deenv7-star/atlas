@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { base44 } from '@/api/base44Client';
@@ -17,6 +17,10 @@ import { preloadAppShell } from '@/lib/appPreload';
 import SocialButtons from '@/components/auth/SocialButtons';
 import { socialProviders } from '@/lib/auth/socialAuth';
 import { SOCIAL_LAYOUT } from '@/config/socialAuth';
+import { isNativeApp } from '@/lib/native';
+
+// iOS app only: "כניסה עם Face ID" (renders nothing until Face ID was turned on). Never loaded on the web.
+const BiometricLoginButton = lazy(() => import('@/components/auth/BiometricLoginButton'));
 
 export default function Login() {
   const { loginUser, isLoadingAuth } = useAuth();
@@ -61,6 +65,13 @@ export default function Login() {
       const r = form.email.trim() ? validateEmail(form.email) : { valid: true };
       setErrors(e => ({ ...e, email: r.valid ? null : r.error }));
     }
+  };
+
+  // Face ID sign-in (app): the session is already set; same finish as the password form.
+  const finishBiometric = async () => {
+    await loginUser(null);
+    try { localStorage.setItem('login_just_completed', String(Date.now())); } catch { /* ignore */ }
+    navigate(getSafeReturnUrl(searchParams.get('return')) || '/dashboard', { replace: true });
   };
 
   const handleSubmit = async (e) => {
@@ -140,6 +151,9 @@ export default function Login() {
         <p role="status" className="mt-6 rounded-[12px] border border-[#CDEBD9] bg-[#EEF9F2] px-4 py-3 text-[15px] font-medium text-[#14532D]">
           {successMsg}
         </p>
+      ) : null}
+      {isNativeApp() ? (
+        <Suspense fallback={null}><BiometricLoginButton className="mt-8" onSignedIn={finishBiometric} /></Suspense>
       ) : null}
       {hasSocial && SOCIAL_LAYOUT === 'above' ? (
         <div className="mt-8">{social('after')}</div>

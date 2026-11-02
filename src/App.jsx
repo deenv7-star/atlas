@@ -25,6 +25,8 @@ const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
 // Google / Apple sign-in lands here (Supabase redirectTo). Not behind the signed-in redirects: the session appears on this page.
 const AuthCallback = lazy(() => import('@/pages/AuthCallback'));
+// iOS app only: Face ID Keychain sync + the one-time "next time with Face ID?" sheet.
+const NativeAuthHost = lazy(() => import('@/components/auth/NativeAuthHost'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const SetupPage = lazy(() => import('@/pages/Setup'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
@@ -325,6 +327,7 @@ function App() {
           <NuqsAdapter>
             <NavigationTracker />
             <AuthenticatedApp />
+            {isNativeApp() ? <Suspense fallback={null}><NativeAuthHost /></Suspense> : null}
           </NuqsAdapter>
           <Toaster />
           <ConflictModalHost />

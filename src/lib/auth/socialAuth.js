@@ -3,6 +3,7 @@
  * Pure rules (flags, return URL, profile fill, routing, Hebrew errors) live in oauthFlow.js.
  *
  * Google: supabase.auth.signInWithOAuth (full-page redirect) → /auth/callback.
+ * iOS app: both providers through SFSafariViewController + PKCE → com.atlas-il.app://auth-callback (nativeOAuth.js).
  * Apple:  with VITE_APPLE_SERVICES_ID set, Sign in with Apple JS (popup) → signInWithIdToken. This is the
  *         only web path where Apple hands over the person's name (first authorisation only), so it is kept
  *         right away in user_metadata. Without it, the same Supabase redirect as Google (no name: the
@@ -33,9 +34,8 @@ export const APPLE_MODE = (() => {
 /** Social sign-in needs a real Supabase project (not the local demo / REST backend). */
 export function socialProviders() {
   if (!isSupabaseConfigured || !supabase) return [];
-  // iOS app: Google / Apple need the system-browser flow (com.atlasil.app://auth-callback), not built yet.
-  // Hidden in the app for now; email + password works inside the WebView.
-  if (isNativeApp()) return [];
+  // iOS app: same buttons, run in SFSafariViewController and returned to com.atlas-il.app://auth-callback
+  // (src/lib/auth/nativeOAuth.js).
   return ['google', 'apple'].filter((p) => SOCIAL_FLAGS[p]);
 }
 
@@ -96,6 +96,18 @@ export async function startSocialSignIn(provider, { intent = 'login', returnTo =
   const enabled = await fetchEnabled();
   if (enabled && enabled[provider] === false) throw new Error('provider is not enabled');
   writePending(store(), buildPending({ provider, intent, returnTo, consent, business }));
+
+  // iOS app: the provider runs in SFSafariViewController (Apple JS popups and redirects to
+  // capacitor://localhost do not work in the WebView). Resolves with the session already set.
+  if (isNativeApp()) {
+    try {
+      const { nativeOAuthSignIn } = await import('@/lib/auth/nativeOAuth');
+      return await nativeOAuthSignIn(provider);
+    } catch (err) {
+      clearPending(store());
+      throw err;
+    }
+  }
 
   if (provider === 'apple' && APPLE_MODE === 'js') {
     await appleJsSignIn();

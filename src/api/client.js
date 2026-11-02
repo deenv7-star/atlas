@@ -22,7 +22,7 @@
  */
 
 import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
-import { publicOrigin } from '@/lib/native';
+import { publicOrigin, isNativeApp } from '@/lib/native';
 
 // =============================================================================
 // Local REST API client (talks to server/index.js)
@@ -579,6 +579,8 @@ const supabaseAuth = {
   },
 
   async logout() {
+    // iOS app: signing out also forgets the Face ID sign-in (signOut revokes that refresh token anyway).
+    if (isNativeApp()) await import('@/lib/auth/biometric').then((m) => m.clearBiometric()).catch(() => {});
     await supabase.auth.signOut();
     return { success: true };
   },
@@ -610,6 +612,7 @@ const supabaseAuth = {
     }
     // The auth user no longer exists: drop the local session without calling the server.
     // Drop the stored session directly: signOut() would call /logout for a user that no longer exists (403).
+    if (isNativeApp()) await import('@/lib/auth/biometric').then((m) => m.clearBiometric({ keepOffered: false })).catch(() => {});
     try {
       Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
     } catch { /* ignore */ }
