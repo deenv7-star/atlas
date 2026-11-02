@@ -30,7 +30,7 @@
       #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
       .wheel { position: absolute; inset: 0; pointer-events: none; }
       .wheel-in { position: absolute; left: 0; top: 0; width: 1080px; height: 0; will-change: transform; }
-      .wi { position: absolute; left: 0; width: 1080px; top: 0; text-align: center; white-space: nowrap; direction: rtl; font-weight: 300; line-height: 1; letter-spacing: -0.01em; color: var(--navy); will-change: transform, filter, opacity; }
+      .wi { position: absolute; left: 0; width: 1080px; top: 0; text-align: center; white-space: nowrap; direction: rtl; unicode-bidi: isolate; font-weight: 300; line-height: 1; letter-spacing: -0.01em; color: var(--navy); will-change: transform, filter, opacity; }
       .wi img { display: block; margin: 0 auto; }
       .kw { display: inline-block; color: var(--indigo); will-change: transform; }
       .ltr { unicode-bidi: isolate; direction: ltr; display: inline-block; }
@@ -51,50 +51,50 @@
       <!-- Scene 1-2: chaos word wheel lands on the logo file, then the first sentence -->
       <div id="w1" class="clip wheel" data-start="0" data-duration="5" data-track-index="2" data-layout-allow-overlap>
         <div class="wheel-in">
-          <div class="wi" data-fs="124">וואטסאפ</div>
-          <div class="wi" data-fs="124"><span class="ltr">Booking</span></div>
-          <div class="wi" data-fs="124"><span class="ltr">Airbnb</span></div>
-          <div class="wi" data-fs="124">טלפון</div>
-          <div class="wi" data-fs="124">מחברת</div>
-          <div class="wi" data-fs="124" data-logo="1"><img src="assets/logo/atlas-logo.svg" alt="atlas" style="height: 128px; width: auto" /></div>
-          <div class="wi" data-fs="78">אתם מארחים. <span class="ltr">atlas</span> <span class="kw">מסדר</span>.</div>
+          <div class="wi" dir="rtl" data-fs="124">וואטסאפ</div>
+          <div class="wi" dir="rtl" data-fs="124"><bdi dir="ltr">Booking</bdi></div>
+          <div class="wi" dir="rtl" data-fs="124"><bdi dir="ltr">Airbnb</bdi></div>
+          <div class="wi" dir="rtl" data-fs="124">טלפון</div>
+          <div class="wi" dir="rtl" data-fs="124">מחברת</div>
+          <div class="wi" dir="rtl" data-fs="124" data-logo="1"><img src="assets/logo/atlas-logo.svg" alt="atlas" style="height: 128px; width: auto" /></div>
+          <div class="wi" dir="rtl" data-fs="78">אתם מארחים. <bdi dir="ltr">atlas</bdi> <span class="kw">מסדר</span>.</div>
         </div>
       </div>
 
       <!-- Scene 3 -->
       <div id="w2" class="clip wheel" data-start="5.9" data-duration="2.6" data-track-index="3" data-layout-allow-overlap>
         <div class="wheel-in">
-          <div class="wi" data-fs="78">שבת <span class="kw">פנויה</span>.</div>
-          <div class="wi" data-fs="78">הליד נשמר.</div>
+          <div class="wi" dir="rtl" data-fs="78">שבת <span class="kw">פנויה</span>.</div>
+          <div class="wi" dir="rtl" data-fs="78">הליד נשמר.</div>
         </div>
       </div>
 
       <!-- Scene 4 -->
       <div id="w3" class="clip wheel" data-start="8.55" data-duration="3.45" data-track-index="4" data-layout-allow-overlap>
         <div class="wheel-in">
-          <div class="wi" data-fs="72">ההזמנות נכנסות <span class="kw">ליחידה</span> הנכונה.</div>
+          <div class="wi" dir="rtl" data-fs="72">ההזמנות נכנסות <span class="kw">ליחידה</span> הנכונה.</div>
         </div>
       </div>
 
       <!-- Scene 5 -->
       <div id="w4" class="clip wheel" data-start="12" data-duration="4" data-track-index="5" data-layout-allow-overlap>
         <div class="wheel-in">
-          <div class="wi" data-fs="78">שישי, 15:00.</div>
-          <div class="wi" data-fs="78">ההודעה כבר <span class="kw">מוכנה</span>.</div>
-          <div class="wi" data-fs="78">לחיצה אחת.</div>
+          <div class="wi" dir="rtl" data-fs="78">שישי, <bdi dir="ltr">15:00</bdi>.</div>
+          <div class="wi" dir="rtl" data-fs="78">ההודעה כבר <span class="kw">מוכנה</span>.</div>
+          <div class="wi" dir="rtl" data-fs="78">לחיצה אחת.</div>
         </div>
       </div>
 
       <!-- Scene 6 -->
       <div id="w5" class="clip wheel" data-start="16" data-duration="4.2" data-track-index="6" data-layout-allow-overlap>
         <div class="wheel-in">
-          <div class="wi" data-fs="78">סוף החודש.</div>
-          <div class="wi" data-fs="78">הכול <span class="kw">מסודר</span>.</div>
+          <div class="wi" dir="rtl" data-fs="78">סוף החודש.</div>
+          <div class="wi" dir="rtl" data-fs="78">הכול <span class="kw">מסודר</span>.</div>
         </div>
       </div>
 
       <!-- Scene 7: end card -->
-      <div id="endcard" class="clip" data-start="20.4" data-duration="3.3" data-track-index="7">
+      <div id="endcard" class="clip" data-start="20" data-duration="3.7" data-track-index="7">
         <img id="end-logo" src="assets/logo/atlas-logo.svg" alt="atlas" />
         <div id="end-url">atlas-il.com</div>
       </div>
@@ -114,21 +114,21 @@
         // segs: [t0, t1, from, to, ease]; between segments the wheel holds (with drift)
         const WHEELS = [
           { id: "w1", pitch: 200, Y: () => 960, S: () => 1,
-            segs: [[0, 0.42, -0.55, 0, "power3.out"], [0.5, 0.74, 0, 1, "power3.inOut"], [1.0, 1.27, 1, 2, "power3.inOut"], [1.5, 1.82, 2, 3, "power3.inOut"], [2.0, 2.4, 3, 4, "power3.inOut"], [2.5, 3.05, 4, 5, "power4.out"], [3.75, 4.12, 5, 6, "power3.inOut"], [4.66, 4.98, 6, 7.75, "power2.in"]],
-            breathe: { 5: 3.05, 6: 4.12 } },
+            segs: [[0, 0.42, -0.55, 0, "power3.out"], [0.5, 0.74, 0, 1, "power3.inOut"], [1.0, 1.27, 1, 2, "power3.inOut"], [1.5, 1.82, 2, 3, "power3.inOut"], [2.0, 2.4, 3, 4, "power3.inOut"], [2.5, 3.0, 4, 4.42, "power2.out"], [3.0, 3.5, 4.42, 5, "power3.in"], [3.64, 3.96, 5, 6, "power3.inOut"], [4.66, 4.98, 6, 7.75, "power2.in"]],
+            breathe: { 5: 3.5, 6: 4.0 } },
           { id: "w2", pitch: 112, Y: () => 352, S: () => 1,
             segs: [[5.95, 6.36, -1.75, 0, "power3.out"], [7.5, 7.86, 0, 1, "power3.inOut"], [8.12, 8.46, 1, 2.75, "power2.in"]],
-            breathe: { 0: 6.38 } },
-          { id: "w3", pitch: 112, Y: () => 352, S: () => 1,
-            segs: [[8.6, 9.0, -1.75, 0, "power3.out"], [11.62, 11.97, 0, 1.75, "power2.in"]],
+            breathe: { 0: 6.5 } },
+          { id: "w3", pitch: 112, Y: () => 1440, S: () => 1,
+            segs: [[8.6, 9.0, -1.75, 0, "power3.out"], [11.5, 11.85, 0, 1.75, "power2.in"]],
             breathe: { 0: 9.5 } },
           { id: "w4", pitch: 112,
             Y: (t) => 930 + (352 - 930) * prog(t, 12.5, 12.98, "power3.inOut"),
             S: (t) => 1.55 + (1 - 1.55) * prog(t, 12.5, 12.98, "power3.inOut"),
-            segs: [[12.0, 12.36, -1.75, 0, "power3.out"], [13.45, 13.8, 0, 1, "power3.inOut"], [14.4, 14.7, 1, 2, "power3.inOut"], [15.6, 15.95, 2, 3.75, "power2.in"]],
+            segs: [[12.0, 12.36, -1.75, 0, "power3.out"], [13.45, 13.8, 0, 1, "power3.inOut"], [14.4, 14.7, 1, 2, "power3.inOut"], [15.5, 15.85, 2, 3.75, "power2.in"]],
             breathe: { 1: 13.82 } },
           { id: "w5", pitch: 112, Y: () => 352, S: () => 1,
-            segs: [[16.02, 16.4, -1.75, 0, "power3.out"], [17.5, 17.86, 0, 1, "power3.inOut"], [19.74, 20.1, 1, 2.75, "power2.in"]],
+            segs: [[16.02, 16.4, -1.75, 0, "power3.out"], [17.5, 17.86, 0, 1, "power3.inOut"], [19.5, 19.85, 1, 2.75, "power2.in"]],
             breathe: { 1: 17.9 } },
         ];
         function wheelPos(w, t) {
@@ -208,16 +208,16 @@
           haloB.style.transform = `translate3d(${bx.toFixed(2)}px, ${by.toFixed(2)}px, 0) scale(${(1 + 0.08 * Math.sin(t * 0.21 + 1)).toFixed(4)})`;
         }
         function renderEnd(t) {
-          const inL = prog(t, 20.45, 21.1, "power3.out");
-          const outL = prog(t, 22.95, 23.45, "power2.in");
-          const hold = prog(t, 20.45, 23.45);
-          const breathe = Math.sin(Math.PI * prog(t, 21.1, 21.8));
+          const inL = prog(t, 20.0, 20.55, "power3.out");
+          const outL = prog(t, 23.0, 23.45, "power2.in");
+          const hold = prog(t, 20.0, 23.45);
+          const breathe = Math.sin(Math.PI * prog(t, 20.55, 21.2));
           const lS = 0.93 + 0.07 * inL + 0.025 * hold + 0.03 * breathe - 0.05 * outL;
           const lY = 70 * (1 - inL) - 14 * hold - 110 * outL;
           endLogo.style.opacity = (inL * (1 - outL)).toFixed(3);
           endLogo.style.filter = `blur(${(16 * (1 - inL) + 18 * outL).toFixed(2)}px)`;
           endLogo.style.transform = `translate3d(0, ${lY.toFixed(2)}px, 0) scale(${lS.toFixed(4)})`;
-          const inU = prog(t, 20.75, 21.35, "power3.out");
+          const inU = prog(t, 21.0, 21.5, "power3.out");
           const outU = prog(t, 23.05, 23.5, "power2.in");
           endUrl.style.opacity = (inU * (1 - outU)).toFixed(3);
           endUrl.style.filter = `blur(${(12 * (1 - inU) + 14 * outU).toFixed(2)}px)`;

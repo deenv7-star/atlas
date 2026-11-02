@@ -266,6 +266,7 @@ const macScreenMat = new THREE.MeshBasicMaterial({ toneMapped: false });
 const macScreen = new THREE.Mesh(macScreenGeo, macScreenMat);
 macScreen.position.set(0, MB.dispY, 0.06);
 lid.add(macScreen);
+let macSheen = null;
 const macDisp = new THREE.Group();
 macDisp.position.set(0, MB.dispY, 0.08);
 lid.add(macDisp);
@@ -289,6 +290,7 @@ lid.add(macDisp);
   sh.position.z = 0.9;
   sh.renderOrder = 20;
   macDisp.add(sh);
+  macSheen = sh;
 }
 world.add(mac);
 
@@ -571,22 +573,22 @@ function lerpArr(a, b, k) { return a.map((v, i) => lerp(v, b[i], k)); }
 
 const SHOTS = [
   // t0, t1, device, from{pt,ppm,fy,yaw,pitch}, to{...}, ease. pt = capture point (pt) placed at frame (540, fy) at ppm px/mm
-  { t0: 5.0, t1: 6.0, dev: "phone", a: { pt: [196, 430], ppm: 8.4, fy: 990, yaw: -16, pitch: 4 }, b: { pt: [196, 570], ppm: 9.0, fy: 1010, yaw: -7, pitch: 2 }, ease: "power2.inOut" },
-  { t0: 6.0, t1: 7.5, dev: "phone", a: { pt: [130, 330], ppm: 9.6, fy: 1160, yaw: 12, pitch: 3 }, b: { pt: [100, 340], ppm: 10.8, fy: 1250, yaw: 6, pitch: 1 }, ease: "power2.out" },
+  { t0: 5.0, t1: 6.0, dev: "phone", a: { pt: [196, 430], ppm: 8.4, fy: 990, yaw: -14, pitch: 4 }, b: { pt: [196, 677], ppm: 15, fy: 980, yaw: -2, pitch: 1 }, ease: "power3.inOut" },
+  { t0: 6.0, t1: 7.5, dev: "phone", a: { pt: [110, 330], ppm: 10, fy: 1170, yaw: 12, pitch: 3 }, b: { pt: [110, 340], ppm: 12.5, fy: 1300, yaw: 5, pitch: 1 }, ease: "power2.out" },
   { t0: 7.5, t1: 8.5, dev: "phone", a: { pt: [196, 560], ppm: 8.6, fy: 1400, yaw: -10, pitch: 5 }, b: { pt: [196, 640], ppm: 9.2, fy: 1590, yaw: -3, pitch: 2 }, ease: "power2.out" },
-  { t0: 8.5, t1: 12.0, dev: "mac", a: { pt: [760, 860], ppm: 6.3, fy: 1730, yaw: 12, pitch: 13 }, b: { pt: [720, 870], ppm: 6.7, fy: 1800, yaw: 4, pitch: 11 }, ease: "power1.inOut" },
+  { t0: 8.5, t1: 12.0, dev: "mac", a: { pt: [700, 880], ppm: 9.2, fy: 820, yaw: 8, pitch: -21.5 }, b: { pt: [700, 880], ppm: 10.6, fy: 800, yaw: 2, pitch: -21.5 }, ease: "power1.inOut" },
   { t0: 12.0, t1: 16.0, dev: "phone", a: { pt: [196, 470], ppm: 8.6, fy: 1270, yaw: 9, pitch: 3 }, b: { pt: [196, 500], ppm: 8.9, fy: 1330, yaw: -4, pitch: 2 }, ease: "power1.inOut" },
-  { t0: 16.0, t1: 17.5, dev: "mac", a: { pt: [860, 660], ppm: 3.9, fy: 1130, yaw: -12, pitch: 7 }, b: { pt: [860, 680], ppm: 4.4, fy: 1180, yaw: -6, pitch: 5 }, ease: "power2.out" },
+  { t0: 16.0, t1: 17.5, dev: "mac", a: { pt: [860, 660], ppm: 3.9, fy: 1190, yaw: -12, pitch: 7 }, b: { pt: [860, 680], ppm: 4.4, fy: 1240, yaw: -6, pitch: 5 }, ease: "power2.out" },
   { t0: 17.5, t1: 18.5, dev: "mac", a: { pt: [620, 380], ppm: 3.7, fy: 1020, yaw: 10, pitch: 6 }, b: { pt: [620, 380], ppm: 4.1, fy: 1040, yaw: 5, pitch: 4 }, ease: "power2.out" },
   { t0: 18.5, t1: 20.7, dev: "phone", a: { pt: [196, 520], ppm: 9.0, fy: 1380, yaw: -11, pitch: 4 }, b: { pt: [150, 560], ppm: 10.2, fy: 1560, yaw: -3, pitch: 2 }, ease: "power2.out" },
 ];
 
 // screen state per time (phone / mac)
 const PHONE_STATES = [
-  [5.0, "lock"], [6.0, "calendar-full"], [6.18, "calendar-slot-empty"], [7.5, "lead-saved-toast"], [7.62, "lead-saved-toast-slot-empty"],
-  [12.0, "today-message-ready-full"], [13.02, "today-welcome-row-slot-empty"], [13.5, "today-message-ready-full"], [13.5, "whatsapp-composer-full"], [13.56, "whatsapp-composer-text-slot-empty"], [14.05, "whatsapp-composer-full"],
-  [14.5, "whatsapp-sent-toast"], [15.0, "messages-welcome-sent"], [15.04, "messages-welcome-sent-slot-empty"],
-  [18.5, "receipts-before"], [18.66, "receipts-before-status-slot-empty"], [19.62, "receipts-after"],
+  [5.0, "lock"], [6.0, "calendar-full"], [6.3, "calendar-slot-empty"], [7.5, "lead-saved-toast"], [7.75, "lead-saved-toast-slot-empty"],
+  [12.0, "today-message-ready-full"], [12.88, "today-welcome-row-slot-empty"], [13.5, "today-message-ready-full"], [13.5, "whatsapp-composer-full"], [13.56, "whatsapp-composer-text-slot-empty"], [14.05, "whatsapp-composer-full"],
+  [14.25, "whatsapp-sent-toast"], [15.0, "messages-welcome-sent"], [15.04, "messages-welcome-sent-slot-empty"],
+  [18.5, "receipts-before"], [18.55, "receipts-before-status-slot-empty"], [19.25, "receipts-after"],
 ];
 const PHONE_TIME = { lock: "23:40", "calendar-full": "23:40", "calendar-slot-empty": "23:40", "lead-saved-toast": "23:41", "lead-saved-toast-slot-empty": "23:41", "receipts-before": "20:00", "receipts-before-status-slot-empty": "20:00", "receipts-after": "20:00" };
 const MAC_STATES = [
@@ -637,7 +639,7 @@ function render3d(t) {
     camFrame(phoneDisp, phoneRect, P.pt, P.ppm, P.fy, P.yaw, P.pitch);
     // entrances / exits of the device itself
     if (t >= 12.0 && t < 13.3) { const e = prog(t, 12.62, 13.12, "power3.out"); devOffY = -330 * (1 - e); devRotX = 8 * (1 - e) * DEG; }
-    if (t >= 19.9) { const e = prog(t, 19.95, 20.6, "power3.in"); devOffY = -380 * e; devRotZ = -10 * e * DEG; devRotX = 6 * e * DEG; }
+    if (t >= 19.45) { const e = prog(t, 19.5, 20.05, "power3.in"); devOffY = -380 * e; devRotZ = -10 * e * DEG; devRotX = 6 * e * DEG; }
     if (t >= 5.0 && t < 5.5) { const e = prog(t, 5.0, 5.5, "power3.out"); devOffY = -26 * (1 - e); }
     phone.position.y = devOffY;
     phone.rotation.set(devRotX, 0, devRotZ);
@@ -660,7 +662,10 @@ function render3d(t) {
   camera.updateMatrixWorld();
 
   // pass 1: floor reflection (mirror world about y = 0), faded with distance from the device
-  const reflect = Math.abs(devOffY) < 1;
+  const lowMac = shot.dev === "mac" && shot.a.pitch < 0;
+  if (lowMac) macShadow.visible = false;
+  macSheen.visible = !lowMac;
+  const reflect = Math.abs(devOffY) < 1 && !lowMac;
   if (reflect) {
     world.scale.y = -1;
     shadowsGroup.visible = false;
@@ -687,32 +692,33 @@ function render3d(t) {
 function phoneScene(t) {
   // Scene 3a: lock screen banner
   if (t < 6.0) {
-    const e = prog(t, 5.22, 5.62, "back.out(1.6)");
-    const o = prog(t, 5.22, 5.42);
+    const e = prog(t, 5.0, 5.36, "back.out(1.6)");
+    const o = prog(t, 5.0, 5.14);
+    const lift = prog(t, 5.36, 5.85, "power2.out");
     bannerMesh.visible = true;
     bannerMesh.material.map = bannerTex; bannerMesh.material.opacity = o;
     const y0 = IP.DH / 2 - (650 + BANNER.h / 2) * IP.k;
-    bannerMesh.position.set(0, y0 + 10 * (1 - e), 0.3 + 4 * (1 - e) + 1.2 * prog(t, 5.62, 6.0));
-    const sc = 0.9 + 0.1 * e;
+    bannerMesh.position.set(0, y0 + 10 * (1 - e), 0.3 + 4 * (1 - e) + 6 * lift);
+    const sc = 0.9 + 0.1 * e + 0.05 * lift;
     bannerMesh.scale.set(sc, sc, 1);
   }
   // Scene 3b: Saturday cell lifts
   if (t >= 6.0 && t < 7.5) {
     const b = bb("iphone/el-calendar-saturday");
-    const up = prog(t, 6.18, 6.62, "power3.out");
-    poseLift(phoneLift, elemTex("iphone/el-calendar-saturday"), phoneRect(b), up, 16, 1.25, 1, { rz: 0, ry: -4 * up * DEG, dz: 0.6 * Math.sin(t * 2.2) * up });
+    const up = prog(t, 6.3, 6.72, "power3.out");
+    poseLift(phoneLift, elemTex("iphone/el-calendar-saturday"), phoneRect(b), up, 34, 1.9, 1, { dx: 9 * up, dy: 4 * up, ry: -8 * up * DEG, rx: 4 * up * DEG, dz: 0.8 * Math.sin(t * 2.2) * up });
   }
   // Scene 3c: lead-saved toast lifts
   if (t >= 7.5 && t < 8.5) {
     const b = bb("iphone/el-toast-lead-saved");
-    const up = prog(t, 7.62, 8.0, "power3.out");
+    const up = prog(t, 7.75, 8.1, "power3.out");
     poseLift(phoneLift, elemTex("iphone/el-toast-lead-saved"), phoneRect(b), up, 14, 0.12, 1, { rx: 5 * up * DEG, dz: 0.5 * Math.sin(t * 2.4) * up });
   }
   // Scene 5: welcome row lifts and settles; composer text lifts; tap; sent bubble lifts
   if (t >= 12.0 && t < 13.5) {
     const b = bb("iphone/el-today-welcome-row");
-    const up = prog(t, 13.02, 13.28, "power3.out") * (1 - prog(t, 13.36, 13.5, "power2.in"));
-    if (t >= 13.02) poseLift(phoneLift, elemTex("iphone/el-today-welcome-row"), phoneRect(b), up, 13, 0.1, 1);
+    const up = prog(t, 12.88, 13.12, "power3.out") * (1 - prog(t, 13.34, 13.5, "power2.in"));
+    if (t >= 12.88) poseLift(phoneLift, elemTex("iphone/el-today-welcome-row"), phoneRect(b), up, 13, 0.1, 1);
   }
   if (t >= 13.5 && t < 14.5) {
     const b = bb("iphone/el-whatsapp-welcome-text");
@@ -740,11 +746,11 @@ function phoneScene(t) {
   // Scene 6b: receipt status flips טיוטה -> נשלח
   if (t >= 18.5) {
     const bBefore = bb("iphone/el-receipt-status-before"), bAfter = bb("iphone/el-receipt-status-after");
-    const up = prog(t, 18.66, 18.98, "power3.out") * (1 - prog(t, 19.42, 19.62, "power2.in"));
-    const flip = prog(t, 19.0, 19.32, "power2.inOut");
+    const up = prog(t, 18.55, 18.7, "power3.out") * (1 - prog(t, 19.05, 19.25, "power2.in"));
+    const flip = prog(t, 18.6, 18.75, "power2.inOut");
     const after = flip > 0.5;
     const r = phoneRect(after ? bAfter : bBefore);
-    if (t < 19.62) poseLift(phoneLift, elemTex(after ? "iphone/el-receipt-status-after" : "iphone/el-receipt-status-before"), r, up, 14, 1.4, 1, { rx: (after ? flip - 1 : flip) * Math.PI });
+    if (t < 19.25) poseLift(phoneLift, elemTex(after ? "iphone/el-receipt-status-after" : "iphone/el-receipt-status-before"), r, up, 14, 1.4, 1, { rx: (after ? flip - 1 : flip) * Math.PI });
   }
 }
 
@@ -752,8 +758,8 @@ function macScene(t) {
   // Scene 4: channel bookings fly in and land in their unit row; badge lights on landing
   if (t >= 8.5 && t < 12.0) {
     const legs = [
-      { el: "mac/el-booking-bar-b", badge: "mac/el-booking-badge-b", t0: 8.8, t1: 9.5, from: [150, 95, 230, 16] },
-      { el: "mac/el-airbnb-bar-c", badge: "mac/el-airbnb-badge-c", t0: 9.8, t1: 10.5, from: [-160, 60, 230, -14] },
+      { el: "mac/el-booking-bar-b", badge: "mac/el-booking-badge-b", t0: 8.8, t1: 9.5, from: [48, 34, 85, 14] },
+      { el: "mac/el-airbnb-bar-c", badge: "mac/el-airbnb-badge-c", t0: 9.8, t1: 10.5, from: [-55, 26, 85, -12] },
     ];
     for (const L of legs) {
       if (t < L.t0 || t >= L.t1 + 0.45) continue;
@@ -763,7 +769,7 @@ function macScene(t) {
       const op = prog(t, L.t0, L.t0 + 0.12);
       poseLift(macLift, elemTex(L.el), r, 0, 0, 0, op, { dx: L.from[0] * inv, dy: L.from[1] * inv, dz: L.from[2] * inv, rz: L.from[3] * inv * DEG, ry: -10 * inv * DEG });
       macLift.card.scale.set(r.w * (1 + 0.15 * inv), r.h * (1 + 0.15 * inv), 1);
-      macLift.shadow.material.opacity = 0.28 * Math.min(1, inv * 3) * op;
+      macLift.shadow.material.opacity = 0.13 * Math.min(1, inv * 3) * op;
       macLift.shadow.position.set(0, -4 * inv - 0.5, -L.from[2] * inv * 0.97 - 0.1);
       // the badge is "unlit" in flight: covered by the bar's own colour, uncovered when it lands
       const rb = macRect(bb(L.badge), 14);
@@ -781,8 +787,8 @@ function macScene(t) {
   // Scene 6a: income chart card lifts, bars grow (real 8-step capture of the CSS animation)
   if (t >= 16.0 && t < 17.5) {
     const b = { x: 533.34375, y: 487.5, w: 646.65625, h: 374.5 };
-    const up = prog(t, 16.12, 16.5, "power3.out");
-    const fi = Math.round(clamp((t - 16.55) / 0.48, 0, 1) * 7);
+    const up = prog(t, 16.1, 16.45, "power3.out");
+    const fi = clamp(Math.floor((t - 16.5) / 0.125) + 1, 0, 7);
     poseLift(macLift, elemTex("mac/seq-income-chart-0" + fi), macRect(b), up, 48, 0.1, 1, { ry: -9 * up * DEG, rx: 3 * up * DEG });
   }
   // Scene 6b: KPI row (income / expenses / net) lifts

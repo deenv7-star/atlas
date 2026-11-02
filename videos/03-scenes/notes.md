@@ -77,3 +77,20 @@ public/fonts for the iOS/macOS system text on the device screens.
 out/atlas-v1-silent.mp4 out/frames out/contact-sheet-v1.png` (48 frames at t = 0.25 + 0.5 n).
 `hyperframes check`: ok (warnings only: single-file structure, silent film, two short-read lines whose timing is fixed
 by the storyboard).
+
+## v1 fixes after coordinator review
+- Bidi: every wheel line has dir="rtl" + unicode-bidi:isolate; "atlas", "15:00", "Booking", "Airbnb" wrapped in
+  <bdi dir="ltr">. Verified visually: the final period sits at the left end (end of the RTL sentence), e.g.
+  "שישי, 15:00." renders right-to-left as שישי , 15:00 . (period leftmost).
+- Lock screen: camera pushes from the whole phone to the banner (ppm 8.4 -> 15 px/mm), banner lifts 6 mm; banner text
+  is ~42 px tall in frame.
+- Saturday cell: lifts 34 mm toward camera, scales x2.9 and drifts off its slot (empty slot visible), camera pushes in.
+- Scene 4: low camera at deck height (lid seen almost straight on, keyboard edge-on) at 9-10.6 px/mm on the unit rows,
+  so the lid top is out of frame; the headline sits BELOW the device (y~1440) for this scene, ~100 px under the base.
+  Reflection/contact shadow off for this shot. Flights shortened so the cards travel inside the frame.
+- Scene 6: Mac lowered ~60 px for a clear gap under the headline's blurred neighbour.
+- Hits aligned to 02-audio/cues.json: wheel ticks 0.5..3.0, logo lands 3.5 (impact ease), sentence roll centred on the
+  3.8 whoosh peak, banner drops at 5.0 (ping), Saturday lift centred on 6.5 (peak), toast lift 7.75 (success),
+  flights centred ~9.05/10.05 (peaks), landings 9.5/10.5, headline exit 11.5, row lift centred 13.0 (peak),
+  tap 14.0, sent toast 14.25, scene-5 exit 15.5, chart bars step every 0.125 s from 16.5 to 17.375,
+  receipt chip flips to נשלח by 18.75 (sent), exits 19.5, logo in at 20.0, URL in at 21.0, everything out at 23.0.
