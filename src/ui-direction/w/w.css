@@ -176,3 +176,5 @@ body:has(.w3-shell) { background: #1B2656; }
 .ws-steps li.cur { color: #1B2656; font-weight: 800; }
 .ws-steps li.cur i { border-color: #3E2BF1; box-shadow: 0 0 0 4px rgba(62,43,241,.15); }
 .ws-mini { margin-inline-start: auto; height: 44px; padding: 0 16px; border-radius: 999px; background: #3E2BF1; color: #fff; font-size: 14px; font-weight: 700; }
+.w3-link.w3-only-d { display: none; }
+@media (min-width: 1024px) { .w3-link.w3-only-d { display: inline-flex; } }
