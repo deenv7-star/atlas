@@ -38,7 +38,7 @@ const PORT = [['pool-p480', 480], ['pool-p720', 720], ['pool-p1080', 1080]];
 const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['pool-2560', 2560], ['pool-3840', 3840]];
 
 const NTFS = [
-  { ch: 'booking', title: 'Booking.com · 2 לילות נחסמו', sub: 'הזית · התאריכים נכנסו ללוח', time: '08:12' },
+  { ch: 'booking', title: 'Booking.com · 2 לילות תפוסים', sub: 'הזית · התאריכים נכנסו ללוח', time: '08:12' },
   { ch: 'whatsapp', title: 'אישור נשלח בוואטסאפ', sub: 'משפחת לוי · עם הוראות הגעה', time: '09:00' },
   { face: 'noa', title: 'נועה ל. · מקדמה ‏₪1,250', sub: 'האלון · נרשמה בלחיצה', time: '10:24' },
 ];
