@@ -7,8 +7,10 @@
 @media (prefers-reduced-motion: no-preference) {
   /* ---- hero copy: the headline line by line, then sub, buttons, note (CSS only: starts with the first
      paint, never waits for JS; the photo stays the LCP element and is not animated here) ---- */
-  .ph-hero .ph-l { display: inline-block; animation: mo-rise 560ms var(--mo-ease) both; animation-delay: calc(80ms + var(--l, 0) * 90ms); }
-  .ph-hero .ph-sub { animation: mo-rise 520ms var(--mo-ease) 260ms both; }
+  /* the headline lines and the sub are the LCP candidates: they settle by transform only and are visible
+     from the first paint (a fade from opacity 0 pushed mobile LCP back by ~1s in Lighthouse) */
+  .ph-hero .ph-l { display: inline-block; animation: mo-settle-y 560ms var(--mo-ease) both; animation-delay: calc(80ms + var(--l, 0) * 90ms); }
+  .ph-hero .ph-sub { animation: mo-settle-y 520ms var(--mo-ease) 200ms both; }
   .ph-hero .ph-ctas { animation: mo-rise 520ms var(--mo-ease) 340ms both; }
   .ph-hero .ph-note { animation: mo-rise 520ms var(--mo-ease) 400ms both; }
 
@@ -39,4 +41,5 @@
 }
 
 @keyframes mo-rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes mo-settle-y { from { transform: translateY(14px); } }
 @keyframes mo-settle { from { transform: translateY(16px) scale(0.965); } to { transform: none; } }
