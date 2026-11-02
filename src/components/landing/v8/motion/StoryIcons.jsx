@@ -25,16 +25,15 @@ export const IcCalendar = (p) => (
 
 export const IcBubble = (p) => (
   <Svg {...p}>
-    <path className="mo-acc" d="M17 23.5h0M24 23.5h0M31 23.5h0" stroke="var(--mo-acc)" strokeWidth="4.5" style={ns} />
+    <g className="mo-acc" fill="var(--mo-acc)" stroke="none"><circle cx="17" cy="22.5" r="2.6" /><circle cx="24" cy="22.5" r="2.6" /><circle cx="31" cy="22.5" r="2.6" /></g>
     <path d="M24 8c-8.8 0-16 6.1-16 14.2 0 3.8 1.6 7.2 4.4 9.8L11 39l7.4-3c1.8.6 3.7.9 5.6.9 8.8 0 16-6.3 16-14.6S32.8 8 24 8z" style={ns} />
   </Svg>
 );
 
 export const IcShekel = (p) => (
   <Svg {...p}>
-    <circle className="mo-acc" cx="24" cy="23" r="11" fill="var(--mo-acc)" stroke="none" fillOpacity="0.22" />
-    <circle cx="24" cy="23" r="16" style={ns} />
-    <path d="M18 30V17h5.5a4 4 0 0 1 4 4v3M30 16v13h-5.5a4 4 0 0 1-4-4v-3" style={ns} />
+    <circle className="mo-acc" cx="24" cy="23" r="19" fill="var(--mo-acc)" stroke="none" fillOpacity="0.16" />
+    <path d="M12 36V11h11a7 7 0 0 1 7 7v9M36 10v25H25a7 7 0 0 1-7-7v-9" style={ns} />
   </Svg>
 );
 
