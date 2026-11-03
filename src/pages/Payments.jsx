@@ -235,6 +235,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         ) : filtered.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Wallet}
+            mascot={searchTerm || statusFilter !== 'all' ? undefined : 'sleepy'}
             title={searchTerm || statusFilter !== 'all' ? 'אין תשלומים שמתאימים' : 'עדיין אין תשלומים'}
             description={searchTerm || statusFilter !== 'all' ? 'נסו חיפוש אחר.' : 'אורח שילם מקדמה או יתרה? לוחצים "תשלום חדש" ורושמים כמה. זה יופיע גם בהזמנה.'}
             action={!searchTerm && statusFilter === 'all' ? <Button variant="outline" onClick={openNew} disabled={!orgId}><Plus strokeWidth={2.25} />תשלום חדש</Button> : null}
