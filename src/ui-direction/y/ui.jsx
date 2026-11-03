@@ -6,7 +6,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { isActiveBooking, checkOutOf, channelOf } from '@/lib/stay/bookings';
-import { addDays, parseDay } from '@/lib/stay/format';
+import { addDays, parseDay, formatRangeHe } from '@/lib/stay/format';
 import Face from './Face';
 import './y-ui.css';
 
@@ -148,6 +148,8 @@ export function useBookingList(model) {
 }
 
 export function whenOf(b, day) {
+  if (String(b.status || '').toUpperCase() === 'CANCELLED') return 'בוטלה';
+  if (checkOutOf(b) < day) return formatRangeHe(b.check_in_date, checkOutOf(b));
   if (checkOutOf(b) === day) return 'יוצאים היום';
   if (b.check_in_date === day) return 'מגיעים היום';
   if (b.check_in_date < day) return 'שוהים עכשיו';

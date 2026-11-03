@@ -208,3 +208,18 @@
 
 .y2-tn .y-num { align-self: flex-start; }
 @media (max-width: 1023px) { .y2-photo { order: -1; } }
+
+/* ── every other page (calendar, leads, money, settings, booking, messages…): a calm canvas window over the photo,
+   so page titles, grey helper text and white cards read exactly as designed ── */
+.y2-shell[data-page]:not([data-page="Dashboard"]):not([data-page="Today"]):not([data-page="Bookings"]) #atlas-main-scroll {
+  margin: 4px 0 0; border-radius: 28px 28px 0 0; background: rgba(247,248,251,.94);
+  backdrop-filter: blur(30px) saturate(1.2); -webkit-backdrop-filter: blur(30px) saturate(1.2);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.7), 0 30px 60px -30px rgba(27,38,86,.5); }
+@media (min-width: 1024px) {
+  .y2-shell[data-page]:not([data-page="Dashboard"]):not([data-page="Today"]):not([data-page="Bookings"]) #atlas-main-scroll { margin: 8px 28px 22px 6px; border-radius: 40px; }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .y2-shell[data-page] #atlas-main-scroll { background-color: rgba(247,248,251,.985); }
+  .y2-shell[data-page="Dashboard"] #atlas-main-scroll, .y2-shell[data-page="Today"] #atlas-main-scroll, .y2-shell[data-page="Bookings"] #atlas-main-scroll { background-color: transparent; }
+  .y2-side, .y3-panel { background: rgba(27,38,86,.96); }
+}

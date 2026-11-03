@@ -16,6 +16,7 @@ import { formatDayHe, firstName, parseDay } from '@/lib/stay/format';
 import { isActiveBooking, checkOutOf, channelOf } from '@/lib/stay/bookings';
 import { dayPart, GuestAvatar } from '@/components/app/atoms';
 import { cn } from '@/lib/utils';
+import { createPageUrl } from '@/utils';
 import { useTodayModel, money, moneyNum, guestLabel, MONTHS } from './model';
 import Face from './Face';
 import { Num, Ticks, Wave, DotGrid, Ring, FaceStack, useBookingList, whenOf } from './ui';
@@ -47,7 +48,7 @@ function MonthCal({ model }) {
     <div className="y2-cal">
       <div className="y2-cal-h">
         <p>{MONTHS[mth]} {y}</p>
-        <span><Link to="/multicalendar" className="y2-cal-nav press" aria-label="החודש הקודם ביומן"><ChevronRight strokeWidth={1.75} /></Link><Link to="/multicalendar" className="y2-cal-nav press" aria-label="החודש הבא ביומן"><ChevronLeft strokeWidth={1.75} /></Link></span>
+        <span><Link to={createPageUrl('MultiCalendar')} className="y2-cal-nav press" aria-label="החודש הקודם ביומן"><ChevronRight strokeWidth={1.75} /></Link><Link to={createPageUrl('MultiCalendar')} className="y2-cal-nav press" aria-label="החודש הבא ביומן"><ChevronLeft strokeWidth={1.75} /></Link></span>
       </div>
       <div className="y2-cal-g">
         {DAYS.map((d) => <b key={d}>{d}</b>)}
@@ -111,7 +112,7 @@ export default function DashboardView({ user, orgId }) {
               <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
               <p className="y2-sub">{formatDayHe(m.day)} · {arrivals.length} מגיעים, {departures.length} יוצאים</p>
             </div>
-            <Link to="/messages" className="y2-hello-chip press"><i aria-hidden />{m.queue.length} דברים מחכים לכם</Link>
+            <Link to="/messages" className="y2-hello-chip press"><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'הכל בוצע להיום'}</Link>
           </div>
 
           <section className="y2-tiles" aria-label="היום במספרים">
@@ -157,13 +158,13 @@ export default function DashboardView({ user, orgId }) {
             </motion.section>
 
             {hero ? (
-              <motion.button type="button" className="y2-photo press" onClick={() => openBooking(hero)} {...rise(6)} aria-label={`פרטי ההזמנה של ${guestLabel(hero)}`}>
+              <motion.button type="button" className={cn('y2-photo press', !unitPhoto(heroUnit) && 'y2-photo--none')} onClick={() => openBooking(hero)} {...rise(6)} aria-label={`פרטי ההזמנה של ${guestLabel(hero)}`}>
                 {unitPhoto(heroUnit) ? <img src={unitPhoto(heroUnit)} alt="" decoding="async" /> : null}
                 <span className="y2-photo-shade" aria-hidden />
                 <span className="y2-photo-t">
                   <small>{whenOf(hero, m.day)}</small>
-                  <b>{guestLabel(hero)}</b>
-                  <em>{heroUnit?.name}</em>
+                  <b dir="auto">{guestLabel(hero)}</b>
+                  <em><bdi>{heroUnit?.name}</bdi></em>
                 </span>
                 <span className="y2-photo-face"><Face name={hero.guest_name || ''} size={46} ring /></span>
                 <span className="y2-photo-s">
@@ -223,11 +224,11 @@ export default function DashboardView({ user, orgId }) {
               return (
                 <motion.li key={`${dir}-${b.id}`} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.4 + i * 0.06 }}>
                   <button type="button" className="y2-arr-row press" onClick={() => openBooking(b)}>
-                    <span className="y2-arr-img">{unitPhoto(p) ? <img src={unitPhoto(p)} alt="" loading="lazy" decoding="async" /> : null}<Face name={b.guest_name || ''} size={26} ring /></span>
+                    {unitPhoto(p) ? <span className="y2-arr-img"><img src={unitPhoto(p)} alt="" loading="lazy" decoding="async" /><Face name={b.guest_name || ''} size={26} ring /></span> : <span className="y2-arr-img y3-row-img--face"><Face name={b.guest_name || ''} size={46} /></span>}
                     <span className="y2-arr-t">
                       <em className={cn('y2-src', `y2-src--${ch.key}`)}>{dir === 'in' ? 'הגעה' : dir === 'out' ? 'יציאה' : 'בקרוב'} · {ch.key === 'direct' ? 'ישיר' : ch.label.replace('.com', '')}</em>
-                      <b>{guestLabel(b)}</b>
-                      <small>{p?.name}{dir === 'soon' ? ` · ${whenOf(b, m.day)}` : ''}</small>
+                      <b dir="auto">{guestLabel(b)}</b>
+                      <small><bdi>{p?.name}</bdi>{dir === 'soon' ? ` · ${whenOf(b, m.day)}` : ''}</small>
                     </span>
                     <span className="y2-arr-time" dir="ltr">{dir === 'out' ? (p?.check_out_time || '11:00') : dir === 'in' ? (p?.check_in_time || '15:00') : formatDayHe(b.check_in_date, { weekday: false })}</span>
                   </button>

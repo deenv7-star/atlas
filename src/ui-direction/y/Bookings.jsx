@@ -14,8 +14,10 @@ import { formatRangeHe, nightsBetween } from '@/lib/stay/format';
 import { checkOutOf, channelOf, isPaid } from '@/lib/stay/bookings';
 import { dueTemplateFor, templateByKey, logSubjectFor } from '@/lib/stay/whatsapp';
 import { cn } from '@/lib/utils';
+import { createPageUrl } from '@/utils';
 import { guestLabel, guestsOf } from './model';
 import Face from './Face';
+import './y3.css';
 import { Num, StripeBar, whenOf } from './ui';
 
 const EASE = [0.23, 1, 0.32, 1];
@@ -59,13 +61,13 @@ function Detail({ booking, model, onWhatsApp, Title = 'p' }) {
 
   return (
     <div className="y3d" dir="rtl">
-      <div className="y3d-photo">
+      <div className={cn('y3d-photo', !photo && 'y3d-photo--none')}>
         {photo ? <img src={photo} alt="" decoding="async" /> : null}
         <span className="y3d-shade" aria-hidden />
         <span className="y3d-when">{whenOf(booking, model.day)}</span>
         <div className="y3d-id">
           <Face name={booking.guest_name || ''} size={50} ring />
-          <span><Title className="y3d-gn">{guestLabel(booking)}</Title><small>{[property?.name, ch.key === 'direct' ? 'ישיר' : ch.label, guestsOf(booking)].filter(Boolean).join(' · ')}</small></span>
+          <span><Title className="y3d-gn" dir="auto">{guestLabel(booking)}</Title><small>{[property?.name, ch.key === 'direct' ? 'ישיר' : ch.label, guestsOf(booking)].filter(Boolean).join(' · ')}</small></span>
         </div>
       </div>
       <div className="y3d-stay">
@@ -93,21 +95,30 @@ function Detail({ booking, model, onWhatsApp, Title = 'p' }) {
 }
 
 /** the navy glass panel: tabs, rows, the chosen booking beside them (desktop) */
-export const BookingsPanel = forwardRef(function BookingsPanel({ model: m, list, selId, setSelId, onOpen, onWhatsApp, delay = 0 }, ref) {
-  const [tab, setTab] = useState('all');
+export const BookingsPanel = forwardRef(function BookingsPanel({
+  model: m, list, selId, setSelId, onOpen, onWhatsApp, delay = 0,
+  // page mode (/bookings): the page owns the tabs + filtering and passes the already-filtered page of rows
+  tabs: tabsIn = null, tab: tabIn, onTab, limit = 6, title = 'ההזמנות', headingLevel = 'h2', toolbar = null, footer = null, empty = null, loading = false, className = '', ...rest
+}, ref) {
+  const [tabOwn, setTabOwn] = useState('all');
+  const controlled = Array.isArray(tabsIn);
+  const tab = controlled ? tabIn : tabOwn;
+  const setTab = controlled ? (k) => onTab?.(k) : setTabOwn;
+  const H = headingLevel;
   const todayOf = (b) => b.check_in_date === m.day || checkOutOf(b) === m.day;
   const shown = useMemo(() => {
+    if (controlled) return list;
     if (tab === 'today') return list.filter(todayOf);
     if (tab === 'due') return list.filter((b) => m.balanceFor(b).balance > 0);
     return list;
-  }, [tab, list, m]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tab, list, m, controlled]);
   const sel = shown.find((b) => b.id === selId) || shown.find((b) => b.check_in_date === m.day) || shown[0] || null;
-  const tabs = [['all', 'הכל', list.length], ['today', 'היום', list.filter(todayOf).length], ['due', 'יתרות', list.filter((b) => m.balanceFor(b).balance > 0).length]];
+  const tabs = controlled ? tabsIn.map((t) => [t.key, t.label, t.count]) : [['all', 'הכל', list.length], ['today', 'היום', list.filter(todayOf).length], ['due', 'יתרות', list.filter((b) => m.balanceFor(b).balance > 0).length]];
 
   return (
-    <motion.section ref={ref} className="y3-panel" aria-label="ההזמנות" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay }}>
+    <motion.section ref={ref} className={cn('y3-panel', className)} aria-label={title} {...rest} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay }}>
       <div className="y3-panel-h">
-        <h2 className="y3-panel-t">ההזמנות</h2>
+        <H className="y3-panel-t">{title}</H>
         <div className="y3-seg" role="tablist" aria-label="סינון הזמנות">
           {tabs.map(([k, l, n]) => (
             <button key={k} type="button" role="tab" aria-selected={tab === k} className={cn('y3-st press', tab === k && 'on')} onClick={() => { setTab(k); setSelId(null); }}>
@@ -116,28 +127,36 @@ export const BookingsPanel = forwardRef(function BookingsPanel({ model: m, list,
             </button>
           ))}
         </div>
-        <Link to="/multicalendar" className="y2-gb y2-gb--d press y3-hide-m" aria-label="ליומן"><CalendarRange strokeWidth={1.75} /></Link>
+        <Link to={createPageUrl('MultiCalendar')} className="y2-gb y2-gb--d press y3-hide-m" aria-label="ליומן"><CalendarRange strokeWidth={1.75} /></Link>
       </div>
+      {toolbar}
       <div className="y3-split">
+        <div className="y3-split-l">
         <ul className="y3-list">
-          {shown.slice(0, 6).map((b, i) => {
+          {loading ? [0, 1, 2, 3].map((i) => <li key={`sk${i}`} className="y3-row y3-row--sk" aria-hidden />) : null}
+          {!loading && shown.slice(0, limit).map((b, i) => {
             const bal = m.balanceFor(b);
             const on = sel?.id === b.id;
             const p = m.prop(b.property_id);
+            const photo = unitPhoto(p);
             return (
-              <motion.li key={b.id} initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE, delay: delay + 0.15 + i * 0.05 }}>
+              <motion.li key={b.id} initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE, delay: delay + 0.15 + Math.min(i, 8) * 0.05 }}>
                 <button type="button" className={cn('y3-row press', on && 'on')} aria-pressed={on} onClick={() => { setSelId(b.id); if (isPhone()) onOpen(b); }}>
-                  <span className="y3-row-img">{unitPhoto(p) ? <img src={unitPhoto(p)} alt="" loading="lazy" decoding="async" /> : null}<Face name={b.guest_name || ''} size={26} ring /></span>
-                  <span className="y3-row-n"><b>{guestLabel(b)}</b><small>{p?.name || ''} · {whenOf(b, m.day)}</small></span>
+                  {photo ? (
+                    <span className="y3-row-img"><img src={photo} alt="" loading="lazy" decoding="async" /><Face name={b.guest_name || ''} size={26} ring /></span>
+                  ) : <span className="y3-row-img y3-row-img--face"><Face name={b.guest_name || ''} size={46} /></span>}
+                  <span className="y3-row-n"><b dir="auto">{guestLabel(b)}</b><small>{p?.name ? <><bdi>{p.name}</bdi> · </> : null}{whenOf(b, m.day)}</small></span>
                   <span className={cn('y3-pay', bal.balance > 0 ? 'due' : 'ok')}>{bal.total === 0 ? 'בלי מחיר' : bal.balance > 0 ? (bal.paid > 0 ? 'מקדמה' : 'לא שולם') : 'שולם'}</span>
                   <span className="y3-row-a" dir="ltr"><small>₪</small>{Math.round(Number(b.total_price) || 0).toLocaleString('he-IL')}</span>
                 </button>
               </motion.li>
             );
           })}
-          {!shown.length ? <li className="y3-empty">אין הזמנות כאן כרגע</li> : null}
-          {shown.length > 6 ? <li><Link to="/bookings" className="y3-more press">עוד {shown.length - 6} הזמנות<ChevronLeft strokeWidth={1.75} /></Link></li> : null}
+          {!loading && !shown.length ? (empty ? <li className="y3-empty">{empty}</li> : <li className="y3-empty">{tab === 'due' ? 'אין יתרות פתוחות' : tab === 'today' ? 'אין כניסות או יציאות היום' : 'עדיין אין הזמנות. הזמנות חדשות יופיעו כאן.'}</li>) : null}
+          {shown.length > limit ? <li><Link to={createPageUrl('Bookings')} className="y3-more press">עוד {shown.length - limit} הזמנות<ChevronLeft strokeWidth={1.75} /></Link></li> : null}
         </ul>
+        {footer}
+        </div>
         <div className="y3-split-d">
           <AnimatePresence mode="wait">
             {sel ? (

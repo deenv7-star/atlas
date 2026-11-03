@@ -3,7 +3,7 @@
  * zimmer: a frosted vertical rail (desktop), a floating glass toolbar on top, and a glass capsule at the
  * bottom on the phone. Active item: a white pill, indigo icon. lucide 1.75, nothing filled under icons.
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
@@ -61,13 +61,20 @@ export function Sidebar({ user, onLogout }) {
   );
 }
 
-export function Header({ user, onOpenCommandPalette, onLogout }) {
+export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }) {
   const quick = useQuickBooking();
+  // the shell paints Today and Bookings straight on the photo; every other page sits in a calm canvas window
+  useEffect(() => {
+    const shell = document.querySelector('.y2-shell');
+    if (!shell) return undefined;
+    shell.dataset.page = currentPageName || '';
+    return () => { delete shell.dataset.page; };
+  }, [currentPageName]);
   return (
     <header className="y2-head">
       <div className="y2-bar">
         <Link to={createPageUrl('Dashboard')} aria-label="atlas, מסך היום" className="y2-bar-logo"><Wordmark size={19} /></Link>
-        <button type="button" onClick={onOpenCommandPalette} className="y2-search press">
+        <button type="button" onClick={onOpenCommandPalette} className="y2-search press" aria-label="חיפוש אורח, הזמנה או יחידה">
           <Search strokeWidth={1.75} /><span>חיפוש אורח, הזמנה או יחידה</span>
         </button>
         <button type="button" className="y2-gb press y2-hide-m" aria-label="עזרה" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /></button>

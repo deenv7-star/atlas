@@ -54,9 +54,7 @@ export function useTodayModel({ orgId } = {}) {
     day: d, bookings: data.bookings, paymentsByBooking: data.paymentsByBooking, sentByBooking: data.sentByBooking,
     cleaningTasks: data.cleaningTasks, propertyById: data.propertyById,
   });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const board = useMemo(() => boardOf(day), [day, data.bookings, data.paymentsByBooking, data.sentByBooking, data.cleaningTasks, data.propertyById]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const boardT = useMemo(() => boardOf(tomorrow), [tomorrow, data.bookings, data.paymentsByBooking, data.sentByBooking, data.cleaningTasks, data.propertyById]);
 
   const prop = (id) => data.propertyById.get(id) || null;
@@ -96,7 +94,7 @@ export function useTodayModel({ orgId } = {}) {
       : pending[0] ? { kind: 'balance', ...pending[0] } : null;
 
   /** The day as a time-ordered list of rows (arrivals, departures, cleanings). */
-  const rowsFor = (b, d) => {
+  const rowsFor = (b) => {
     const out = [];
     for (const { booking, unit, balance } of b.departures) {
       const st = String(booking.status || '').toUpperCase();
