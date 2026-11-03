@@ -34,7 +34,7 @@ export default function StaySheet({ open, onOpenChange, booking, model, onWhatsA
   const nights = nightsBetween(booking.check_in_date, checkOutOf(booking));
   const ch = channelOf(booking);
   const due = dueTemplateFor(booking, sent, model.day);
-  const item = held || model.queue.find((q) => q.booking?.id === booking.id) || null;
+  const item = held || (model.queue.find((q) => q.kind !== 'clean' && q.booking?.id === booking.id) || model.queue.find((q) => q.booking?.id === booking.id)) || null;
   const photo = unitPhoto(property);
   const isToday = booking.check_in_date === model.day; const leaving = checkOutOf(booking) === model.day;
 
