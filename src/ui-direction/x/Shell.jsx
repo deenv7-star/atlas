@@ -8,7 +8,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { Search, Plus, Sun, CalendarRange, Inbox, Wallet, MoreHorizontal, Bell } from 'lucide-react';
+import { Search, Plus, Sun, CalendarRange, Inbox, Wallet, MoreHorizontal, Bell, LifeBuoy } from 'lucide-react';
 import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -54,6 +54,7 @@ export function Header({ user, onOpenCommandPalette, onLogout }) {
         </nav>
         <span className="x1-grow" />
         <button type="button" onClick={onOpenCommandPalette} className="x1-ib press" aria-label="חיפוש אורח, הזמנה או יחידה"><Search strokeWidth={1.75} /></button>
+        <button type="button" className="x1-ib press x1-desk" aria-label="עזרה" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /></button>
         <Link to={createPageUrl('Messages')} className="x1-ib press x1-desk" aria-label="הודעות"><Bell strokeWidth={1.75} /></Link>
         <button type="button" onClick={() => quick.open()} className="x1-new press"><Plus strokeWidth={2} /><span>הזמנה חדשה</span></button>
         <UserMenu user={user} onLogout={onLogout}>

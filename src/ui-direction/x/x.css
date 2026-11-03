@@ -2,7 +2,6 @@
    Muted text and hairlines are navy at lower opacity. Amber only as the one "due" dot. Heebo 400/500/700/800. */
 .x1-shell { background: #F7F8FB; --ind: #3E2BF1; --navy: #1B2656; --mute: rgba(27,38,86,.62); --soft: rgba(27,38,86,.45); --line: rgba(27,38,86,.09); --ease: cubic-bezier(.23,1,.32,1); }
 .x1-shell .sp-launcher { display: none; }
-@media (min-width: 1024px) { .x1-shell .sp-launcher { display: inline-flex; } }
 .x1-shell .press { transition: transform .16s var(--ease); }
 .x1-shell .press:active { transform: scale(.97); }
 
