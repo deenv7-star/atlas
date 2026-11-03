@@ -30,6 +30,8 @@ const FALLBACK = {
 };
 
 const HOME = ['/dashboard', '/today'];
+/** Their Today has rendered: the classic board, or the Y3 glass window (ui-direction/y, which has no data-tour). */
+const todayOnScreen = () => !!(visibleEl('today-board') || document.querySelector('.y2-win'));
 const samePath = (a, b) => a === b || (HOME.includes(a) && HOME.includes(b));
 
 function visibleEl(name) {
@@ -126,7 +128,7 @@ export default function TourHost({ user }) {
       off = () => evs.forEach((e) => window.removeEventListener(e, poke));
       const board = () => {
         if (!alive) return;
-        if (visibleEl('today-board') || Date.now() - t0 > 8000) { shown = Date.now(); wait(reduced ? 1200 : 2800); return; }
+        if (todayOnScreen() || Date.now() - t0 > 5000) { shown = Date.now(); wait(reduced ? 1200 : 2800); return; }
         timer = setTimeout(board, 150);
       };
       board();
