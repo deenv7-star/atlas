@@ -1,0 +1,40 @@
+/* Landing motion M1 (2.11.2026). Only what is already on the page comes to life; nothing is added.
+   Restrained: 300-600ms, 8-16px, every element once, transform + opacity only.
+   Reduced motion: none of this runs (all rules sit inside no-preference). */
+
+.lm { --mo-ease: cubic-bezier(0.23, 1, 0.32, 1); }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---- hero copy: the headline line by line, then sub, buttons, note (CSS only: starts with the first
+     paint, never waits for JS; the photo stays the LCP element and is not animated here) ---- */
+  /* the headline lines and the sub are the LCP candidates: they settle by transform only and are visible
+     from the first paint (a fade from opacity 0 pushed mobile LCP back by ~1s in Lighthouse) */
+  .ph-hero .ph-l { display: inline-block; animation: mo-settle-y 560ms var(--mo-ease) both; animation-delay: calc(80ms + var(--l, 0) * 90ms); }
+  .ph-hero .ph-sub { animation: mo-settle-y 520ms var(--mo-ease) 200ms both; }
+  .ph-hero .ph-ctas { animation: mo-rise 520ms var(--mo-ease) 340ms both; }
+  .ph-hero .ph-note { animation: mo-rise 520ms var(--mo-ease) 400ms both; }
+
+  /* ---- counting numbers keep their width steady while they count ---- */
+  [data-count] { font-variant-numeric: tabular-nums; }
+
+  /* ---- scroll-driven: product screens settle into their card as it scrolls in ---- */
+  @supports (animation-timeline: view()) {
+    .lm [data-sd='settle'] { animation: mo-settle linear both; animation-timeline: view(); animation-range: entry 0% cover 32%; }
+  }
+  .lm.mo-sd-fb [data-sd='settle'] { transition: transform 600ms var(--mo-ease) 120ms; }
+  .lm.mo-sd-fb [data-sd='settle']:not(.is-sd) { transform: translateY(16px) scale(0.965); }
+
+  /* ---- light hover on fine pointers: translate (its own property) so it never fights the reveal transform ---- */
+  @media (hover: hover) and (pointer: fine) {
+    .lm .lm-tile .lm-tile-vis, .lm .v8p-plan { transition: translate 360ms var(--mo-ease); }
+    .l5.lm.l4-reveal-on .lm-facts-row li[data-reveal] { transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out), translate 360ms var(--mo-ease); transition-delay: var(--d, 0ms), var(--d, 0ms), 0ms; }
+    .lm .lm-tile:hover .lm-tile-vis { translate: 0 -6px; }
+    .lm .lm-facts-row li:hover, .lm .v8p-plan:hover { translate: 0 -4px; }
+    .lm .l5-btn, .lm .ph-btn { transition-property: background-color, transform, box-shadow, translate; transition-duration: 180ms, 160ms, 180ms, 220ms; }
+    .lm .l5-btn:hover, .lm .ph-btn:hover { translate: 0 -2px; }
+  }
+}
+
+@keyframes mo-rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes mo-settle-y { from { transform: translateY(14px); } }
+@keyframes mo-settle { from { transform: translateY(16px) scale(0.965); } to { transform: none; } }

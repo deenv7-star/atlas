@@ -51,7 +51,7 @@ export function Sidebar({ onLogout, user }) {
             })}
             <li>
               <button type="button" onClick={() => setMoreOpen(true)} className={cn(linkCls(moreActive), 'w-full')}>
-                <MoreHorizontal className={cn('h-[19px] w-[19px] shrink-0', moreActive ? 'text-white' : 'text-ink-400')} strokeWidth={1.6} />
+                <MoreHorizontal className={cn('h-[19px] w-[19px] shrink-0', moreActive ? 'text-white' : 'text-ink-400')} strokeWidth={1.75} />
                 <span className="truncate">עוד</span>
               </button>
             </li>

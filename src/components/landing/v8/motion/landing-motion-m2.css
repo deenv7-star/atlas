@@ -1,0 +1,45 @@
+/* Landing motion M2 (2.11.2026): M1 plus a little more life, still only on what is already there.
+   Each element once, 360-600ms, 8-16px. Reduced motion: none of this runs. */
+
+/* tile label icons: lucide (the app's set), crisp at rest; they only fade in, never draw (icons-fix, 2.11.2026) */
+.lm .lm-kick[data-ic] svg { flex-shrink: 0; display: block; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---- hero: the header pill settles in from above with the headline ---- */
+  .lm.has-ph .l7-hdr-in { animation: mo-drop 520ms var(--mo-ease) 40ms both; }
+
+  /* ---- tile label icons: a short fade once the tile is in (opacity only, no stroke drawing) ---- */
+  .lm.mo-on .lm-tile[data-reveal] .lm-kick[data-ic] svg { opacity: 0; transition: opacity 360ms var(--mo-ease) 220ms; }
+  .lm.mo-on .lm-tile[data-reveal].is-in .lm-kick[data-ic] svg { opacity: 1; }
+
+  /* ---- facts: the guest faces settle in one after another ---- */
+  .lm.mo-on .lm-facts-top .v8f { opacity: 0; transform: translateY(10px); transition: opacity 420ms var(--mo-ease), transform 480ms var(--mo-ease); }
+  .lm.mo-on .lm-facts-top .v8f:nth-child(2) { transition-delay: 70ms; }
+  .lm.mo-on .lm-facts-top .v8f:nth-child(3) { transition-delay: 140ms; }
+  .lm.mo-on .lm-facts-top .v8f:nth-child(4) { transition-delay: 210ms; }
+  .lm.mo-on .lm-facts-top .v8f:nth-child(5) { transition-delay: 280ms; }
+  .lm.mo-on .lm-facts-top.is-in .v8f { opacity: 1; transform: none; }
+
+  /* ---- channels it works with: the four chips come in one by one ---- */
+  .lm.mo-on .lm-feat-ch li { opacity: 0; transform: translateY(8px); transition: opacity 400ms var(--mo-ease), transform 440ms var(--mo-ease); transition-delay: calc(var(--i, 0) * 60ms); }
+  .lm.mo-on .lm-feat-ch.is-in li { opacity: 1; transform: none; }
+
+  /* ---- scroll-driven ---- */
+  @supports (animation-timeline: view()) {
+    /* the two people photos drift a few px against the scroll (parallax inside their rounded frame) */
+    .lm :is(.pp-b-host, .lm-feat-host) img { animation: mo-par linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+    /* the ₪5,200 card and the phone settle onto the photos */
+    .lm [data-sd='lift'] { animation: mo-lift linear both; animation-timeline: view(); animation-range: entry 10% cover 40%; }
+    /* the final CTA screen tilts up into place */
+    .lm [data-sd='tilt'] img { animation: mo-tilt linear both; animation-timeline: view(); animation-range: entry 0% cover 45%; }
+  }
+  .lm.mo-sd-fb [data-sd='lift'] { transition: transform 600ms var(--mo-ease) 160ms; }
+  .lm.mo-sd-fb [data-sd='lift']:not(.is-sd) { transform: translateY(16px); }
+  .lm.mo-sd-fb [data-sd='tilt'] img { transition: transform 700ms var(--mo-ease) 120ms; }
+  .lm.mo-sd-fb [data-sd='tilt']:not(.is-sd) img { transform: rotateX(26deg) translateY(16px); }
+}
+
+@keyframes mo-drop { from { opacity: 0; transform: translateY(-10px); } }
+@keyframes mo-par { from { transform: translateY(-12px) scale(1.06); } to { transform: translateY(12px) scale(1.06); } }
+@keyframes mo-lift { from { transform: translateY(16px); } to { transform: none; } }
+@keyframes mo-tilt { from { transform: rotateX(26deg) translateY(16px); } to { transform: rotateX(16deg); } }

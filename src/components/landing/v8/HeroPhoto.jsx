@@ -126,7 +126,7 @@ function Photo({ imgRef }) {
 function Copy({ copyRef, onShow }) {
   return (
     <div ref={copyRef} className="ph-copy">
-      <h1 id="hero-title" className="ph-h1">כל המתחם.<br />במבט אחד.</h1>
+      <h1 id="hero-title" className="ph-h1"><span className="ph-l">כל המתחם.</span><br /><span className="ph-l" style={{ '--l': 1 }}>במבט אחד.</span></h1>
       <p className="ph-sub">הזמנות מכל הערוצים, הודעות לאורחים ומקדמות. הכל על מסך אחד.</p>
       <div className="ph-ctas">
         <Link to="/register" className="ph-btn">

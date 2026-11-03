@@ -28,7 +28,7 @@ export default function PageNotFound() {
         <div className="v5-rise w-full max-w-md text-center">
           <span className="relative mx-auto mb-6 inline-flex h-14 w-14 items-center justify-center rounded-[16px] border border-line bg-white shadow-card" aria-hidden>
             <span className="absolute inset-[5px] rounded-[11px] bg-[#F4F3FF]" />
-            <Compass className="relative h-6 w-6 text-brand-600" strokeWidth={1.5} />
+            <Compass className="relative h-6 w-6 text-brand-600" strokeWidth={1.75} />
           </span>
           <p className="text-[13px] font-semibold tabular text-ink-400" dir="ltr">404</p>
           <h1 className="mt-2 text-[28px] font-bold leading-[1.15] tracking-[-0.02em] text-navy-900">הדף לא נמצא</h1>

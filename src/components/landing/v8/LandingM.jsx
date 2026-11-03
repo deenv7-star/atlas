@@ -40,6 +40,9 @@ import './landing-ux-1020.css';
 import './landing-visual-v2.css';
 import HeroPhoto from './HeroPhoto';
 import LazyGrowth from './growth/LazyGrowth';
+import { useLandingMotion } from './motion/landingMotion';
+import './motion/landing-motion.css';
+import './motion/landing-motion-m2.css';
 
 const loadGrowth = () => import('./growth/GrowthS');
 
@@ -95,11 +98,11 @@ function Features() {
           {TILES.map(({ tone, I, k, t, d, vis }, i) => (
             <li key={k} className={`lm-tile is-${tone}`} data-reveal style={{ '--d': `${i * 60}ms` }}>
               <div className="lm-tile-copy">
-                <p className="lm-kick"><I size={18} strokeWidth={2.2} aria-hidden="true" />{k}</p>
+                <p className="lm-kick" data-ic><I size={20} strokeWidth={2} aria-hidden="true" focusable="false" />{k}</p>
                 <h3>{t}</h3>
                 <p className="lm-tile-txt">{d}</p>
               </div>
-              {vis}
+              {React.cloneElement(vis, { 'data-sd': 'settle' })}
             </li>
           ))}
         </ul>
@@ -107,24 +110,24 @@ function Features() {
         <div className="lm-feat-ppl">
           <div className="lm-feat-today pp-b-today" data-reveal>
             <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 1200px) 480px, (min-width: 900px) 40vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
-            <div className="pp-b-phone" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
+            <div className="pp-b-phone" data-sd="lift" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
               <img src="/landing-hero/ui-m-today.webp" alt="" width="780" height="1594" loading="lazy" decoding="async" />
             </div>
             <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
           </div>
           <div className="lm-feat-pay" data-reveal>
             <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
-            <img className="lm-feat-paid" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
+            <img className="lm-feat-paid" data-sd="lift" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
           </div>
           <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
         </div>
-        <div className="lm-feat-ch">
+        <div className="lm-feat-ch" data-reveal>
           <p>עובד עם מה שכבר יש לכם</p>
           <ul>
-            <li><Mark ch="airbnb" size={20} />Airbnb</li>
-            <li><Mark ch="booking" size={20} />Booking.com</li>
-            <li><Mark ch="whatsapp" size={20} />WhatsApp</li>
-            <li><Mark ch="google" size={20} />Google Calendar</li>
+            <li style={{ '--i': 0 }}><Mark ch="airbnb" size={20} />Airbnb</li>
+            <li style={{ '--i': 1 }}><Mark ch="booking" size={20} />Booking.com</li>
+            <li style={{ '--i': 2 }}><Mark ch="whatsapp" size={20} />WhatsApp</li>
+            <li style={{ '--i': 3 }}><Mark ch="google" size={20} />Google Calendar</li>
           </ul>
         </div>
       </div>
@@ -154,7 +157,7 @@ function Facts() {
         <ul className="lm-facts-row">
           {FACTS.map((f, i) => (
             <li key={f.u} data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <b className="num" dir="ltr">{f.n}</b>
+              <b className="num" dir="ltr" data-count={/^\d+$/.test(f.n) ? f.n : undefined}>{f.n}</b>
               <span>{f.u}</span>
               <p>{f.t}</p>
             </li>
@@ -177,7 +180,7 @@ function Final() {
           <h2 id="final-title" className="lm-x-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
           <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים את Booking ו-Airbnb ב-10 דקות, והלוח מתחיל להתמלא.</p>
           <div data-reveal><CtaLinks /></div>
-          <div className="lm-x-shot" aria-hidden="true">
+          <div className="lm-x-shot" data-sd="tilt" aria-hidden="true">
             <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="lazy" decoding="async" />
           </div>
         </div>
@@ -235,6 +238,7 @@ const Part = ({ children }) => <Suspense fallback={null}>{children}</Suspense>;
 export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
+  useLandingMotion(root);
   return (
     <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
       <a href="#main" className="l5-skip">דלגו לתוכן</a>

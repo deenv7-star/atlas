@@ -145,7 +145,7 @@ export const IconButton = React.forwardRef(function IconButton({ as: Comp = 'but
     glass: 'bg-white/15 text-white hover:bg-white/25',
   }[tone];
   return (
-    <Comp ref={ref} aria-label={label} {...(Comp === 'button' ? { type: 'button' } : {})} className={cn('press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full [&_svg]:h-[19px] [&_svg]:w-[19px]', toneCls, className)} {...rest}>
+    <Comp ref={ref} aria-label={label} {...(Comp === 'button' ? { type: 'button' } : {})} className={cn('press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full [&_svg]:h-5 [&_svg]:w-5', toneCls, className)} {...rest}>
       {children}
     </Comp>
   );
@@ -291,7 +291,7 @@ export function EmptyState({ icon: Icon, title, description, actionLabel, onActi
     <div className={cn('v5-rise flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
       {Icon || photo ? (
         <span className="relative mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#ECEAFE]" aria-hidden>
-          {Icon ? <Icon className="relative h-7 w-7 text-brand-600" strokeWidth={1.5} /> : null}
+          {Icon ? <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.75} /> : null}
         </span>
       ) : null}
       <p className="text-[17px] font-semibold text-navy-900">{title}</p>
@@ -311,7 +311,7 @@ export function ComingSoon({ icon: Icon, title, description, className }) {
         {Icon ? (
           <span className="relative mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] border border-line bg-white shadow-card" aria-hidden>
             <span className="absolute inset-[5px] rounded-[11px] bg-[#F4F3FF]" />
-            <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.5} />
+            <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.75} />
           </span>
         ) : null}
         <span className="mb-3 inline-flex h-7 items-center rounded-full border border-line bg-white px-3 text-[13px] font-medium text-ink-600">בקרוב</span>
