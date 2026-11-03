@@ -2,18 +2,18 @@
  * Onboarding Y1, phone: the full-bleed zimmer photo behind the card stack (from Y2). It changes with every step,
  * crossfades, and pushes in slowly. From the name step on it is "your place" (a photo for the kind they picked).
  * Sources are ≥2000px licensed photos (credits in brand/book/README.md), served as responsive webp:
- * a 2:3 portrait crop at 640/1000w for phones, a 1600w landscape for tablets. Desktop never loads them.
+ * a 4:5 crop at 640/1000w for phones (it fills the band above the sheet), a 1600w landscape for tablets. Desktop never loads them.
  */
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export const ARRIVE_KEY = 'atlas.onb.arrive'; // the finish → /today: TourHost lets Today land before the tour
 
-const BG = { hello: 'valley', kind: 'infinity', units: 'mountain', channels: 'lake', times: 'fields', whatsapp: 'villa' };
-const KIND_BG = { zimmer: 'aframe', villa: 'villa', complex: 'infinity', zimmer_complex: 'mountain' };
+const BG = { hello: 'valley', kind: 'lake', units: 'mountain', channels: 'villa', times: 'infinity', whatsapp: 'aframe' };
+const KIND_BG = { zimmer: 'aframe', villa: 'villa', complex: 'infinity', zimmer_complex: 'mountain' }; // others: aframe
 export function bgFor(q, phase, kind) {
   if (!q) return null;
-  if (phase !== 'ask' || q === 'name') return KIND_BG[kind] || 'lake';
+  if (phase !== 'ask' || q === 'name') return KIND_BG[kind] || 'aframe';
   return BG[q] || 'valley';
 }
 const SRCSET = (id) => `/onboarding/bg/${id}-p640.webp 640w, /onboarding/bg/${id}-p1000.webp 1000w`;

@@ -93,8 +93,7 @@ export default function TourHost({ user }) {
     let timer = null;
     let off = () => {};
     // Straight from the onboarding finish ("פתחו את atlas"): the finish already said welcome, so Today gets its
-    // own moment first. The tour waits ~3s, skips its welcome card, and never lands on a tap in progress
-    // (it waits for 2.5s without input, and if the owner keeps going for 15s it stays in Settings for now).
+    // own moment first: the tour skips its welcome card and opens ~3s after the Today board is on screen.
     let arrived = 0;
     try { arrived = Number(sessionStorage.getItem(ARRIVE_KEY)) || 0; sessionStorage.removeItem(ARRIVE_KEY); } catch { /* private mode */ }
     const fromOnboarding = arrived > 0 && Date.now() - arrived < 60000;
@@ -112,13 +111,25 @@ export default function TourHost({ user }) {
         setActive(true);
       };
       if (!fromOnboarding) { timer = setTimeout(open, 700); return; }
+      // Count from when their Today is on screen (it loads its data first), not from when the app shell mounted.
+      // Any input pushes the tour back to 2.5s after the last one; after 20s of use it waits for Settings instead.
       const t0 = Date.now();
+      let shown = 0; // when the board appeared
       const wait = (ms) => { clearTimeout(timer); timer = setTimeout(open, ms); };
-      const poke = () => { if (Date.now() - t0 > 15000) { clearTimeout(timer); off(); return; } wait(2500); };
+      const poke = () => {
+        if (!shown) return;
+        if (Date.now() - shown > 20000) { clearTimeout(timer); off(); return; }
+        wait(2500);
+      };
       const evs = ['pointerdown', 'keydown', 'wheel', 'touchmove'];
       evs.forEach((e) => window.addEventListener(e, poke, { passive: true }));
       off = () => evs.forEach((e) => window.removeEventListener(e, poke));
-      wait(reduced ? 1500 : 3200);
+      const board = () => {
+        if (!alive) return;
+        if (visibleEl('today-board') || Date.now() - t0 > 8000) { shown = Date.now(); wait(reduced ? 1200 : 2800); return; }
+        timer = setTimeout(board, 150);
+      };
+      board();
     });
     return () => { alive = false; clearTimeout(timer); off(); };
   }, [user?.id]);

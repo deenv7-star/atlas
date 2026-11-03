@@ -165,12 +165,13 @@
 @media (prefers-reduced-motion: reduce) { .oy1-chip i, .oy1-skel { animation: none !important; } }
 
 /* ── ship polish (03.11): phone gets Y2's per-step photo behind the card stack ── */
-.oy1-pbg { position: absolute; inset: 0; display: block; overflow: hidden; }
-.oy1-pbg img { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; transform: scale(1.1); animation: oy1-push 14s linear forwards; will-change: transform; }
+.oy1-pbg { position: absolute; inset: 0 0 auto; height: 440px; display: block; overflow: hidden; }
+.oy1-pbg img { width: 100%; height: 100%; object-fit: cover; object-position: center 55%; transform: scale(1.1); animation: oy1-push 14s linear forwards; will-change: transform; }
 @keyframes oy1-push { from { transform: scale(1.12); } to { transform: scale(1.02); } }
 .oy1-bg::after { z-index: 1; }
 @media (max-width: 1023px) {
-  .oy1-bg::after { background: linear-gradient(180deg, rgba(27,38,86,.42) 0%, rgba(27,38,86,.08) 26%, rgba(27,38,86,.04) 40%, rgba(27,38,86,.3) 100%); }
+  .oy1-bg { background: #F7F8FB; }
+  .oy1-bg::after { height: 440px; bottom: auto; background: linear-gradient(180deg, rgba(27,38,86,.42) 0%, rgba(27,38,86,.08) 26%, rgba(27,38,86,.04) 40%, rgba(27,38,86,.3) 100%); }
   /* the live card becomes a window onto the photo: no fill of its own, a hairline frame, glass stats */
   .oy1-card { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.42), 0 30px 50px -36px rgba(27,38,86,.7); }
   .oy1-card-shade { background: linear-gradient(180deg, rgba(27,38,86,.42), rgba(27,38,86,0) 42%, rgba(27,38,86,0) 58%, rgba(27,38,86,.4)); }
