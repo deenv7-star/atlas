@@ -68,14 +68,14 @@
 .y2-tab-cap .y2-ti { -webkit-touch-callout: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; }
 .y2-tab[data-lens] .y2-tab-cap { transform: scale(1.03); }
 .y2-ti-on { transition: opacity .22s var(--ease); }
-.y2-tab[data-lens] .y2-ti-on { opacity: 0; }
+.y2-tab[data-lens] .y2-ti-on { opacity: 0 !important; } /* framer writes inline opacity on layout items */
 .y2-tab[data-lens] .y2-ti.on { color: rgba(27,38,86,.75); }
 .y2-tab[data-lens] li[data-hot] .y2-ti { color: var(--ind); }
 .y2-tab[data-lens] .press:active { transform: none; }
 .y2-lens { position: absolute; left: 0; top: 0; width: 76px; height: 60px; border-radius: 999px; overflow: hidden; pointer-events: none; opacity: 0;
   transform-origin: 50% 50%; will-change: transform, opacity; contain: layout paint;
-  background: rgba(255,255,255,.42);
-  -webkit-backdrop-filter: blur(6px) saturate(1.9) brightness(1.06); backdrop-filter: blur(6px) saturate(1.9) brightness(1.06);
+  background: rgba(255,255,255,.24);
+  -webkit-backdrop-filter: blur(5px) saturate(2.1) brightness(1.08); backdrop-filter: blur(5px) saturate(2.1) brightness(1.08);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), inset 0 1.5px 1px rgba(255,255,255,1), inset 0 -3px 8px -2px rgba(62,43,241,.18),
     inset 4px 0 8px -5px rgba(62,43,241,.28), inset -4px 0 8px -5px rgba(62,43,241,.28), 0 14px 28px -14px rgba(27,38,86,.5), 0 2px 6px -3px rgba(27,38,86,.2); }
 .y2-lens-row { position: absolute; left: 0; top: 0; display: flex; gap: 2px; padding: 6px; }
@@ -85,6 +85,13 @@
   background: radial-gradient(70% 55% at 32% 0%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%), radial-gradient(60% 45% at 72% 100%, rgba(255,255,255,.5), rgba(255,255,255,0) 65%);
   box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55), inset 0 0 10px rgba(62,43,241,.12); opacity: .75; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .y2-lens { background: rgba(255,255,255,.94); } }
+/* 320px phones: the capsule + "+" were 346px wide and spilled off both edges (pre-existing). Narrower tabs, still ≥44px targets. */
+@media (max-width: 359px) {
+  .y2-tab { gap: 6px; padding-inline: 8px; }
+  .y2-tab ul, .y2-lens-row { gap: 0; }
+  .y2-ti { width: 46px; }
+  .y2-tab-new { width: 48px; height: 48px; }
+}
 @media (prefers-reduced-motion: reduce) { .y2-tab-cap, .y2-ti-on { transition: none; } .y2-tab[data-lens] .y2-tab-cap { transform: none; } }
 
 /* ── window ── */
