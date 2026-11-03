@@ -9,7 +9,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { Conversation, useKeyboardInset } from './ui.jsx';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { useAssistantFacts } from './useAssistant.js';
 import { SAFE_LINK } from './insights.js';
 import { setAssistantOpen, useAssistantOpen } from './launcher.jsx';

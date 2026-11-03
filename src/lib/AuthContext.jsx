@@ -5,6 +5,11 @@ import { clearPersistedQueries } from '@/lib/queryPersist';
 import { queryClientInstance } from '@/lib/query-client';
 import { setActiveOrg, syncOrgSettingsFromDb } from '@/lib/onboarding/orgSettings';
 import { fetchAccountStatus } from '@/lib/accountStatus';
+import { settle, clearAuthStorage, hardRedirectToLogin } from '@/lib/auth/signOutCore';
+
+/** Whole sign-out, server call included, may take at most this long before we leave for /login anyway. */
+const LOGOUT_MAX_MS = 6000;
+
 
 const AuthContext = createContext();
 
@@ -59,9 +64,13 @@ export const AuthProvider = ({ children }) => {
   const inflightRef = useRef(null);
   const lastUidRef = useRef(null);
   const userRef = useRef(null);
+  // Bumped on sign-out: a hydration that started before it must not put the old user back.
+  const authGenRef = useRef(0);
+  const loggingOutRef = useRef(false);
 
   const hydrateUser = useCallback(() => {
     if (inflightRef.current) return inflightRef.current;
+    const gen = authGenRef.current;
     const run = (async () => {
       try {
         let me, status;
@@ -77,6 +86,7 @@ export const AuthProvider = ({ children }) => {
         const currentUser = me && status?.suspended
           ? { ...me, account_suspended: true, account_suspended_reason: status.reason || '' }
           : me;
+        if (gen !== authGenRef.current || loggingOutRef.current) return null;
         setActiveOrg(currentUser?.organization_id);
         syncOrgSettingsFromDb(currentUser?.organization_id); // background; local copy is used meanwhile
         lastUidRef.current = currentUser?.id || null;
@@ -188,12 +198,24 @@ export const AuthProvider = ({ children }) => {
 
   // ── actions ────────────────────────────────────────────────────────────────
 
-  const logout = async (shouldRedirect = true) => {
+  /**
+   * Sign out. Never throws and never hangs: the server call is time-limited (a dead network or a stuck
+   * native plugin cannot keep the owner inside), and the session is cleared locally whatever happens.
+   * shouldRedirect: true → full reload on /login (or `to`); false → the caller navigates.
+   */
+  const logout = async (shouldRedirect = true, to = '/login') => {
+    if (loggingOutRef.current) return;
+    loggingOutRef.current = true;
+    authGenRef.current += 1;
+    lastUidRef.current = null;
+    userRef.current = null;
     try {
-      await base44.auth.logout();
-    } finally {
-      clearSessionState();
-      if (shouldRedirect) window.location.href = '/login';
+      await settle(() => base44.auth.logout(), LOGOUT_MAX_MS);
+    } catch { /* settle never throws */ } finally {
+      clearAuthStorage();
+      try { clearSessionState(); } catch { /* ignore */ }
+      if (shouldRedirect) hardRedirectToLogin(to);
+      else loggingOutRef.current = false;
     }
   };
 

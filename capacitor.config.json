@@ -10,13 +10,13 @@
     "preferredContentMode": "mobile",
     "allowsLinkPreview": false,
     "scrollEnabled": true,
-    "limitsNavigationsToAppBoundDomains": true,
-    "backgroundColor": "#0B1220"
+    "limitsNavigationsToAppBoundDomains": false,
+    "backgroundColor": "#1B2656"
   },
   "plugins": {
     "StatusBar": {
       "style": "Dark",
-      "backgroundColor": "#0B1220",
+      "backgroundColor": "#1B2656",
       "overlaysWebView": false
     },
     "Keyboard": {
@@ -25,7 +25,7 @@
     },
     "SplashScreen": {
       "launchShowDuration": 2000,
-      "backgroundColor": "#0B1220",
+      "backgroundColor": "#1B2656",
       "androidSplashResourceName": "splash",
       "androidScaleType": "CENTER_CROP",
       "showSpinner": false,
@@ -33,6 +33,15 @@
       "spinnerColor": "#FFFFFF",
       "splashFullScreen": true,
       "splashImmersive": true
+    },
+    "SocialLogin": {
+      "providers": {
+        "google": true,
+        "apple": true,
+        "facebook": false,
+        "twitter": false
+      },
+      "logLevel": 1
     }
   }
 }

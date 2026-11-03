@@ -1,0 +1,126 @@
+# atlas — Codemagic cloud macOS / Xcode -> Internal TestFlight (Capacitor 8, Swift Package Manager)
+# Same pattern as HaKis (deenv7-star/hakis, codemagic.yaml → hakis_internal_testflight).
+#
+# Workflow:
+#   atlas_ios_testflight — web build -> cap sync ios -> signed IPA -> upload to TestFlight (internal).
+#
+# Manual start only (no `triggering` block): Codemagic → atlas → Start new build → pick the branch
+# (feat/ios-prep for now) and this workflow. See qa/ios-prep/ready-for-build.md.
+#
+# Never put .p8 keys, certificates or any server secret in this file. The two VITE_SUPABASE_* values below are
+# PUBLIC by design: the same anon key ships in every atlas-il.com JS bundle; RLS protects the data.
+
+workflows:
+  atlas_ios_testflight:
+    name: atlas iOS -> Internal TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    # triggering:
+    #   events:
+    #     - push
+    #   branch_patterns:
+    #     - pattern: 'main'
+    #       include: true
+    #       source: true
+    #   cancel_previous_builds: true
+
+    # Codemagic "Developer Portal" (App Store Connect API key) integration — the same one HaKis uses.
+    integrations:
+      app_store_connect: HakIs_ASC_API
+
+    environment:
+      # Capacitor 8 CLI requires Node >= 22.
+      node: 22
+      xcode: latest
+      ios_signing:
+        # Automatic code signing through the integration above (App Store cert + profile).
+        distribution_type: app_store
+        bundle_identifier: com.atlas-il.app
+      vars:
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
+        XCODE_SCHEME: "App"
+        BUNDLE_ID: "com.atlas-il.app"
+        MARKETING_VERSION: "1.0.0"
+        # Public web build values (same as Netlify / atlas-il.com).
+        VITE_APP_ID: "atlas-standalone"
+        VITE_APP_BASE_URL: "https://atlas-il.com"
+        VITE_SUPABASE_URL: "https://romvmqbcinurscwdsskx.supabase.co"
+        VITE_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvbXZtcWJjaW51cnNjd2Rzc2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MDUyMTMsImV4cCI6MjA4OTI4MTIxM30.dQ3nwHPWzxPxy188c3Fn0AbDdtSL-7mqMhcxofOXIVA"
+        # APP_STORE_APPLE_ID is optional (set it in Codemagic env vars if needed); when unset the app is looked up by bundle id.
+
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          npm ci
+
+      - name: Unit tests
+        script: |
+          npm run test:unit
+
+      - name: Build web app
+        script: |
+          npm run build
+
+      - name: Sync Capacitor iOS
+        script: |
+          npx cap sync ios
+
+      - name: Set build number
+        script: |
+          set -e
+          cd ios/App
+          APP_ID="${APP_STORE_APPLE_ID:-}"
+          if [ -z "$APP_ID" ]; then
+            set +e
+            APP_ID=$(app-store-connect apps list --bundle-id-identifier "$BUNDLE_ID" --strict-match-identifier --json 2>/dev/null \
+              | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[0]["id"] if d else "")' 2>/dev/null)
+            set -e
+          fi
+          if [ -z "$APP_ID" ]; then
+            echo "No App Store Connect app record found for $BUNDLE_ID."
+            echo "Create it first: App Store Connect → Apps → + → New App → bundle ID $BUNDLE_ID."
+            exit 1
+          fi
+          echo "App Store Connect app id: $APP_ID"
+          LATEST=0
+          set +e
+          OUT=$(app-store-connect get-latest-testflight-build-number "$APP_ID" --platform IOS 2>&1)
+          set -e
+          N=$(printf '%s\n' "$OUT" | grep -E '^[0-9]+$' | tail -n 1 || true)
+          if [ -n "$N" ]; then LATEST=$N; fi
+          NEW_BUILD=$((LATEST + 1))
+          if [ -n "${BUILD_NUMBER:-}" ] && [ "$BUILD_NUMBER" -gt "$NEW_BUILD" ] 2>/dev/null; then
+            NEW_BUILD=$BUILD_NUMBER
+          fi
+          echo "CFBundleVersion / CURRENT_PROJECT_VERSION = $NEW_BUILD, MARKETING_VERSION = $MARKETING_VERSION"
+          agvtool new-version -all "$NEW_BUILD"
+          agvtool new-marketing-version "$MARKETING_VERSION"
+
+      - name: Set up code signing profiles
+        script: |
+          xcode-project use-profiles \
+            --project "$XCODE_PROJECT" \
+            --custom-export-options='{"testFlightInternalTestingOnly": true}'
+
+      - name: Build signed IPA
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Internal Testing only. Exported with testFlightInternalTestingOnly; submit_to_testflight: true
+        # (external beta review) is rejected by App Store Connect with 422 for such builds (seen on HaKis).
+        submit_to_testflight: false
+        submit_to_app_store: false
+        # Optional: name of an Internal Testing group in App Store Connect
+        # beta_groups:
+        #   - Internal

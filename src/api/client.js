@@ -22,6 +22,8 @@
  */
 
 import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
+import { publicOrigin, isNativeApp } from '@/lib/native';
+import { safeSignOut } from '@/lib/auth/signOutCore';
 
 // =============================================================================
 // Local REST API client (talks to server/index.js)
@@ -556,7 +558,7 @@ const supabaseAuth = {
         // terms_* = record of the active consent checkbox on /register (Upay/Bit requirement).
         data: { full_name, organization_name, ...(terms_accepted_at ? { terms_accepted_at, terms_version } : {}) },
         // The confirmation link lands on the verify page, which shows "confirmed → continue" or "expired".
-        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/verify-email?confirmed=1` : undefined,
+        emailRedirectTo: typeof window !== 'undefined' ? `${publicOrigin()}/verify-email?confirmed=1` : undefined,
       },
     });
     if (error) {
@@ -578,8 +580,14 @@ const supabaseAuth = {
   },
 
   async logout() {
-    await supabase.auth.signOut();
-    return { success: true };
+    // Never blocks: every step is time-limited (signOut → local signOut fallback), and the stored session is
+    // removed at the end whatever the network did. iOS app: also forgets the Face ID sign-in.
+    const { server } = await safeSignOut(supabase, {
+      beforeSignOut: isNativeApp()
+        ? () => import('@/lib/auth/biometric').then((m) => m.clearBiometric())
+        : undefined,
+    });
+    return { success: true, server };
   },
 
   async updateMe(profileData) {
@@ -609,6 +617,7 @@ const supabaseAuth = {
     }
     // The auth user no longer exists: drop the local session without calling the server.
     // Drop the stored session directly: signOut() would call /logout for a user that no longer exists (403).
+    if (isNativeApp()) await import('@/lib/auth/biometric').then((m) => m.clearBiometric({ keepOffered: false })).catch(() => {});
     try {
       Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
     } catch { /* ignore */ }
