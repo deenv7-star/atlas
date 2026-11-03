@@ -5,7 +5,7 @@
  */
 import React, { useEffect } from 'react';
 import { Conversation } from '@/assistant/ui';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { useAssistantFacts } from '@/assistant/useAssistant';
 
 export default function AIAssistantPage({ user, orgId: orgIdProp }) {
