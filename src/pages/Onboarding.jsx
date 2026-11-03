@@ -1,16 +1,14 @@
 /**
  * /onboarding: first run after signup (ProtectedRoute sends new orgs here) and "פתיחת ההגדרה" in Settings
- * (/onboarding?again=1). v3 B (20.10.2026): 3 screens (the place, bookings + calendar links, "זה נראה נכון?"),
- * then the building moment and the guided setup journey (/setup).
+ * (/onboarding?again=1). Round Y2 (03.11.2026): "קולנוע", one question per screen over a full-bleed zimmer photo on a glass card
+ * (their name written across the photo), the same real saves as v3 B, then a finish that lands on /today. v3 B stays in
+ * components/onboarding/v3 (WizardB3) for rollback.
  */
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import WizardB3 from '@/components/onboarding/v3/WizardB3';
+import WizardY2 from '@/components/onboarding/y/WizardY2';
 
 export default function Onboarding() {
   const { user } = useAuth();
-  const { search } = useLocation();
-  const again = new URLSearchParams(search).get('again') === '1';
-  return <WizardB3 user={user} again={again} />;
+  return <WizardY2 user={user} />;
 }
