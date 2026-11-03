@@ -1,211 +1,171 @@
 /**
- * אוטומציות = מסע האורח (014). Four steps the server really runs every 15 minutes (automation-runner):
- * it prepares each message at the right time, keeps quiet on Shabbat and Yom Tov, and puts it in
- * "לשלוח עכשיו" on the Today board, where one tap opens WhatsApp with the text ready.
- * Older free-form rules stay listed; the ones the runner cannot execute say so.
+ * ההודעות לאורחים — version A, "atlas already does it for you".
+ * One deep hero that says what is happening in one sentence, the guest's stay as four lit stops,
+ * then the messages as plain sentences with one switch each. Tap a sentence → the real WhatsApp
+ * text in a sheet. No node chart, no stat tiles, no triggers/channels/offsets.
+ * Data: the same four automation_rules journey steps the automation-runner executes (014).
  */
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { MessageCircle, Moon, Trash2, ChevronDown } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
-import { PageHeader, SkelLine, Card, StatusPill } from '@/components/ds';
-import { Button } from '@/components/ui/button';
+import { motion, useReducedMotion } from 'framer-motion';
+import { BadgeCheck, Navigation, KeyRound, Star, Moon, ChevronLeft, Check, Trash2 } from 'lucide-react';
+import { SkelLine } from '@/components/ds';
 import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
-import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { DB_FEATURES } from '@/config/dbFeatures';
-import { JOURNEY_STEPS, stepOfRule, ruleForStep } from '@/lib/real/journey';
-import { renderTemplate } from '@/lib/stay/whatsapp';
-import { todayISO, addDays } from '@/lib/stay/format';
+import { useGuestMessages, hhmm } from '@/components/magic/useGuestMessages';
+import { MessageSheet } from '@/components/magic/MessageSheet';
+import { DoneMoment } from '@/components/magic/WaBubble';
+import { isRunnableRule } from '@/lib/real/journey';
 import { cn } from '@/lib/utils';
+import '@/components/magic/magic.css';
 
-const TEMPLATES_OK = new Set(['confirmation', 'arrival_eve', 'welcome', 'thanks_review', 'balance_reminder', 'checkin_link']);
-function runnable(rule) {
-  if (!['BOOKING_CONFIRMED', 'BOOKING_CREATED', 'CHECKIN_DAY', 'CHECKOUT_DAY'].includes(rule?.trigger)) return false;
-  const acts = Array.isArray(rule?.actions) ? rule.actions : [];
-  return acts.some((a) => a?.type === 'REQUEST_REVIEW' || (a?.type === 'SEND_WHATSAPP' && TEMPLATES_OK.has(a?.config?.template)));
+const ICONS = { confirmation: BadgeCheck, arrival_eve: Navigation, welcome: KeyRound, thanks_review: Star };
+
+function Hero({ gm, onAllOn }) {
+  const reduce = useReducedMotion();
+  const n = gm.steps.length;
+  const title = gm.allOn ? 'הכל יוצא לאורחים לבד' : gm.onCount ? `${gm.onCount} מתוך ${n} הודעות פועלות` : `${n} הודעות מוכנות לצאת`;
+  const sub = gm.allOn
+    ? 'כל אורח מקבל את ההודעה הנכונה בזמן. אתם רק לוחצים שלח.'
+    : 'מפעילים פעם אחת, ומכאן כל אורח מקבל את ההודעה הנכונה בזמן.';
+  const fill = gm.onCount ? Math.max(0, gm.steps.reduce((m, s, i) => (gm.isOn(s) ? i : m), 0)) / (n - 1) : 0;
+  return (
+    <section className="mg-photo rounded-[32px] px-6 pb-6 pt-7 text-white md:px-10 md:pb-9 md:pt-10" aria-labelledby="mg-title">
+      <img className="mg-photo-img" src="/onboarding/bg/lake-p640.webp" srcSet="/onboarding/bg/lake-p640.webp 640w, /onboarding/bg/lake-p1000.webp 1000w, /onboarding/bg/lake-1600.webp 1600w" sizes="(min-width: 960px) 900px, 100vw" alt="" loading="eager" decoding="async" />
+      <p className="text-[15px] font-semibold text-white/70">ההודעות לאורחים</p>
+      <h1 id="mg-title" className="mt-1 text-[30px] font-bold leading-[1.12] tracking-[-0.01em] md:text-[40px]">{title}</h1>
+      <p className="mt-2 max-w-[30rem] text-[16px] leading-snug text-white/75">{sub}</p>
+
+      <div className="mg-line mt-8" aria-label="המסע של האורח">
+        <motion.span className="mg-line-fill" aria-hidden style={{ width: `${75 * fill}%` }}
+          initial={reduce ? false : { scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.2 }} />
+        {gm.steps.map((s, i) => {
+          const on = gm.isOn(s);
+          return (
+            <motion.div key={s.key} className={cn('mg-node', on && 'is-on')}
+              initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.08 }}>
+              <span className="mg-dot">{on ? <Check className="h-3 w-3" strokeWidth={3} aria-hidden /> : null}</span>
+              <span className={cn('text-[13px] font-semibold', on ? 'text-white' : 'text-white/55')}>{s.moment}</span>
+              <span className="sr-only">{on ? 'פועל' : 'כבוי'}</span>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {!gm.allOn ? (
+        <button type="button" onClick={onAllOn} disabled={gm.busy || !gm.canWrite} className="mg-cta mt-8 w-full disabled:opacity-60 sm:w-auto">
+          {gm.onCount ? 'הפעילו גם את השאר' : 'הפעילו את כולן'}
+        </button>
+      ) : (
+        <p className="mg-glass mt-8 inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 text-[15px] font-semibold">
+          <span className="mg-live inline-block h-2 w-2 rounded-[3px] bg-white" aria-hidden />
+          atlas עוקב אחרי כל הזמנה חדשה
+        </p>
+      )}
+    </section>
+  );
 }
 
-const SAMPLE = {
-  booking: { guest_name: 'נועה לוי', check_in_date: addDays(todayISO(), 7), check_out_date: addDays(todayISO(), 9), guest_token: 'example' },
-  property: { name: 'הצימר שלכם', guest_info: { check_in_time: '15:00', check_out_time: '11:00', wifi_name: 'atlas-guest' } },
-};
-
-function StepCard({ step, rule, onSave, busy, respectShabbat }) {
-  const on = !!rule?.is_active;
-  const cond = rule && !Array.isArray(rule.conditions) ? rule.conditions || {} : {};
-  const [time, setTime] = useState(cond.send_time || step.defaultTime || '');
-  const [preview, setPreview] = useState(false);
-  const text = useMemo(() => renderTemplate(step.template, { ...SAMPLE, orgName: '' }), [step.template]);
+function Row({ step, gm, onOpen }) {
+  const on = gm.isOn(step);
+  const Icon = ICONS[step.key] || BadgeCheck;
+  const t = step.defaultTime ? hhmm(gm.timeOf(step)) : '';
   return (
-    <Card as="li" className="p-5 md:p-6" data-step={step.key}>
-      <div className="flex items-start gap-3">
-        <span className={cn('inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full', on ? 'bg-[#E9E7FE] text-brand-600' : 'bg-[#F1F3FA] text-ink-400')} aria-hidden>
-          <MessageCircle className="h-5 w-5" strokeWidth={1.75} />
+    <li className={cn('mg-row', !on && 'is-off')}>
+      <button type="button" onClick={() => onOpen(step)} className="flex min-h-[48px] min-w-0 flex-1 items-center gap-3.5 text-start" aria-label={`${step.sentence}, ${step.whenPlain}. הצגת ההודעה`}>
+        <span className="mg-ico" aria-hidden><Icon className="h-5 w-5" strokeWidth={1.75} /></span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[16px] font-bold leading-snug text-navy-900">{step.sentence}</span>
+          <span className="mt-0.5 block text-[14px] text-ink-600">{step.whenPlain}{t ? `, ${t}` : ''}</span>
         </span>
-        <div className="min-w-0 flex-1">
-          <p className="flex flex-wrap items-center gap-2 text-[16px] font-bold text-navy-900">
-            {step.title}
-            {on ? <StatusPill tone="mint" label="פועל" /> : <StatusPill tone="slate" label="כבוי" />}
-          </p>
-          <p className="mt-1 text-[14px] text-ink-600">{step.why}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-3 text-[14px] text-ink-600">
-            <span>{step.when}</span>
-            {step.defaultTime ? (
-              <label className="inline-flex items-center gap-2">
-                <span>בשעה</span>
-                <Input
-                  type="time" value={time} step={900} aria-label={`שעת שליחה: ${step.title}`}
-                  onChange={(e) => setTime(e.target.value)}
-                  onBlur={() => { if (on && time && time !== cond.send_time) onSave(step, { on: true, sendTime: time }); }}
-                  className="h-11 w-[110px] tabular" dir="ltr"
-                />
-              </label>
-            ) : null}
-          </div>
-          <button type="button" onClick={() => setPreview((v) => !v)} aria-expanded={preview} className="press mt-2 inline-flex min-h-[44px] items-center gap-1 text-[14px] font-semibold text-brand-600">
-            {preview ? 'הסתרת ההודעה' : 'איך ההודעה נראית'}
-            <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', preview && 'rotate-180')} strokeWidth={1.75} />
-          </button>
-          {preview ? <p className="mt-1 whitespace-pre-line rounded-[16px] bg-[#E7F8EE] p-3 text-[14px] leading-relaxed text-navy-900">{text}</p> : null}
-        </div>
-        <Switch
-          checked={on} disabled={busy}
-          onCheckedChange={(v) => onSave(step, { on: v, sendTime: time, respectShabbat })}
-          aria-label={on ? `כיבוי: ${step.title}` : `הפעלה: ${step.title}`}
-        />
-      </div>
-    </Card>
+        <ChevronLeft className="h-4 w-4 shrink-0 text-ink-400" strokeWidth={1.75} aria-hidden />
+      </button>
+      <Switch checked={on} disabled={gm.busy || !gm.canWrite} onCheckedChange={(v) => gm.save(step, { on: v })}
+        aria-label={on ? `כיבוי: ${step.sentence}` : `הפעלה: ${step.sentence}`} />
+    </li>
   );
 }
 
 export default function AutomationsPage({ orgId }) {
-  const qc = useQueryClient();
-  const q = useQuery({
-    queryKey: ['automations', orgId],
-    queryFn: () => (orgId ? base44.entities.AutomationRule.filter({ org_id: orgId }, 'created_at', 200) : Promise.resolve([])),
-    enabled: !!orgId,
-  });
-  const rules = q.data || [];
-  const byStep = useMemo(() => {
-    const m = new Map();
-    for (const r of rules) { const s = stepOfRule(r); if (s && !m.has(s.key)) m.set(s.key, r); }
-    return m;
-  }, [rules]);
-  const others = rules.filter((r) => !stepOfRule(r));
-  const journeyRules = [...byStep.values()];
-  const respectShabbat = journeyRules.length ? journeyRules.every((r) => (r.conditions || {}).respect_shabbat !== false) : true;
-  const [busy, setBusy] = useState(false);
+  const base = useGuestMessages(orgId);
+  const gm = { ...base, canWrite: !!orgId };
+  const [sheet, setSheet] = useState(null);
+  const [done, setDone] = useState(null);
 
-  const save = async (step, { on, sendTime, respectShabbat: rs = respectShabbat }) => {
-    setBusy(true);
-    try {
-      const existing = byStep.get(step.key);
-      const payload = { ...ruleForStep(step, { sendTime, respectShabbat: rs }), is_active: on };
-      if (existing) await base44.entities.AutomationRule.update(existing.id, payload);
-      else await base44.entities.AutomationRule.create({ ...payload, org_id: orgId, execution_count: 0 });
-      atlasToastApi.success(on ? `${step.title}: פועל` : `${step.title}: כבוי`);
-    } catch {
-      atlasToastApi.error('לא הצלחנו לשמור. נסו שוב.');
-    } finally {
-      setBusy(false);
-      qc.invalidateQueries({ queryKey: ['automations'] });
-      qc.invalidateQueries({ queryKey: ['message_queue'] });
-    }
-  };
-
-  const setShabbat = async (v) => {
-    setBusy(true);
-    try {
-      await Promise.all(journeyRules.map((r) => base44.entities.AutomationRule.update(r.id, { conditions: { ...(r.conditions || {}), respect_shabbat: v } })));
-      atlasToastApi.success(v ? 'לא נשלח הודעות בשבת ובחג' : 'הודעות יישלחו גם בשבת ובחג');
-    } catch { atlasToastApi.error('לא הצלחנו לשמור. נסו שוב.'); }
-    finally { setBusy(false); qc.invalidateQueries({ queryKey: ['automations'] }); }
-  };
-
-  const turnAllOn = async () => {
-    for (const s of JOURNEY_STEPS) if (!byStep.get(s.key)?.is_active) await save(s, { on: true, sendTime: s.defaultTime });
-  };
-
-  const removeOther = useMutation({
-    mutationFn: (id) => base44.entities.AutomationRule.delete(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['automations'] }); atlasToastApi.success('האוטומציה נמחקה'); },
-  });
-  const toggleOther = useMutation({
-    mutationFn: ({ id, is_active }) => base44.entities.AutomationRule.update(id, { is_active }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['automations'] }),
-  });
-
-  if (q.isLoading) {
+  if (gm.loading) {
     return (
       <div className="mx-auto w-full max-w-[960px] px-5 pt-6 md:px-10 md:pt-10" role="status" aria-busy="true" aria-label="טוען">
-        <SkelLine className="h-8 w-40" /><div className="mt-6 space-y-3">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-28 rounded-[22px]" />)}</div>
+        <SkelLine className="h-[320px] rounded-[32px]" /><div className="mt-6 space-y-3">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-[76px] rounded-[22px]" />)}</div>
       </div>
     );
   }
 
-  const allOn = JOURNEY_STEPS.every((s) => byStep.get(s.key)?.is_active);
+  const allOn = async () => { const ok = await gm.turnAllOn(); if (ok) setDone({ title: 'מעכשיו זה קורה לבד', line: 'כל אורח יקבל את 4 ההודעות בזמן. הן יחכו לכם מוכנות בלוח היום.' }); };
+  const nextIdea = gm.onCount > 0 ? gm.steps.find((s) => !gm.isOn(s)) : null;
 
   return (
-    <div className="mx-auto w-full max-w-[960px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader
-        title="ההודעות לאורחים"
-        subtitle="atlas מכין כל הודעה בזמן הנכון, ואתם שולחים בלחיצה מלוח היום."
-        className="!mb-0"
-        actions={!allOn ? <Button className="h-11" onClick={turnAllOn} disabled={busy}>הפעלת כל ההודעות</Button> : null}
-      />
+    <div className="mx-auto w-full max-w-[960px] space-y-6 px-5 pb-28 pt-5 md:px-10 md:pt-10" dir="rtl">
+      <Hero gm={gm} onAllOn={allOn} />
 
-      {!DB_FEATURES.realCore ? (
-        <Card className="p-5"><p className="text-[14px] text-ink-600">ההודעות האוטומטיות יעבדו אחרי שתתחברו לחשבון. בהדגמה רק רואים איך זה נראה.</p></Card>
+      {nextIdea ? (
+        <section className="mg-navy flex flex-col gap-4 rounded-[28px] p-5 md:flex-row md:items-center md:p-6" aria-label="הצעה">
+          <p className="min-w-0 flex-1 text-[17px] font-bold leading-snug">{nextIdea.ask}</p>
+          <div className="flex gap-2">
+            <button type="button" className="mg-cta flex-1 md:flex-none" disabled={gm.busy || !gm.canWrite}
+              onClick={async () => { if (await gm.save(nextIdea, { on: true, quiet: true })) setDone({ title: `${nextIdea.short}: פועל`, line: `${nextIdea.whenPlain}, ההודעה תחכה לכם מוכנה.` }); }}>כן, תפעילו</button>
+            <button type="button" className="mg-chip mg-chip-dark" onClick={() => setSheet(nextIdea)}>איך זה נראה</button>
+          </div>
+        </section>
       ) : null}
 
-      <Card className="flex items-center gap-3 p-5 md:px-6">
-        <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F1F3FA] text-navy-900" aria-hidden><Moon className="h-5 w-5" strokeWidth={1.75} /></span>
-        <div className="min-w-0 flex-1">
-          <p className="text-[15px] font-bold text-navy-900">שקט בשבת ובחג</p>
-          <p className="text-[13px] text-ink-400">הודעה שמגיע זמנה בין הדלקת נרות לצאת השבת או החג תחכה ל-20 דקות אחרי ההבדלה (לפי זמני ירושלים).</p>
-        </div>
-        <Switch checked={respectShabbat} disabled={busy || !journeyRules.length} onCheckedChange={setShabbat} aria-label="שקט בשבת ובחג" />
-      </Card>
+      <section aria-labelledby="mg-list">
+        <h2 id="mg-list" className="px-1 text-[20px] font-bold text-navy-900">מה יוצא לאורחים</h2>
+        <ul className="mt-3 space-y-2.5">
+          {gm.steps.map((s) => <Row key={s.key} step={s} gm={gm} onOpen={setSheet} />)}
+          <li className="mg-row">
+            <span className="flex min-w-0 flex-1 items-center gap-3.5">
+              <span className="mg-ico" aria-hidden><Moon className="h-5 w-5" strokeWidth={1.75} /></span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[16px] font-bold leading-snug text-navy-900">לא שולחים בשבת ובחג</span>
+                <span className="mt-0.5 block text-[14px] text-ink-600">הודעה שנופלת על שבת יוצאת במוצאי שבת</span>
+              </span>
+            </span>
+            <Switch checked={gm.respectShabbat} disabled={gm.busy || !gm.hasRules} onCheckedChange={gm.setShabbat} aria-label="לא שולחים בשבת ובחג" />
+          </li>
+        </ul>
+      </section>
 
-      <ol className="space-y-3" aria-label="שלבי ההודעות">
-        {JOURNEY_STEPS.map((s) => <StepCard key={s.key} step={s} rule={byStep.get(s.key)} onSave={save} busy={busy} respectShabbat={respectShabbat} />)}
-      </ol>
+      <p className="px-1 text-[14px] leading-relaxed text-ink-600">
+        כל הודעה מחכה מוכנה ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link>. לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח.
+        {!DB_FEATURES.realCore ? ' בהדגמה ההודעות לא נשלחות באמת.' : ''}
+      </p>
 
-      <Card className="p-5 md:px-6">
-        <p className="text-[15px] font-bold text-navy-900">איך זה נשלח היום</p>
-        <p className="mt-1 text-[14px] leading-relaxed text-ink-600">
-          כל 15 דקות atlas בודק את ההזמנות ומכין את ההודעות שהגיע זמנן. הן מחכות ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link> תחת "לשלוח עכשיו": לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח, ואחרי השליחה ההודעה מסומנת כנשלחה.
-          בהמשך אפשר יהיה לשלוח גם בלי לחיצה, דרך וואטסאפ עסקי.
-        </p>
-      </Card>
-
-      {others.length ? (
-        <section aria-label="אוטומציות נוספות" className="space-y-2">
-          <h2 className="pt-2 text-[15px] font-bold text-navy-900">אוטומציות נוספות שנשמרו</h2>
+      {gm.others.length ? (
+        <section aria-label="הודעות ישנות" className="space-y-2">
+          <h2 className="px-1 pt-2 text-[15px] font-bold text-navy-900">הודעות שהגדרתם בעבר</h2>
           <ul className="space-y-2">
-            {others.map((r) => {
-              const ok = runnable(r);
+            {gm.others.map((r) => {
+              const ok = isRunnableRule(r);
               return (
-                <Card as="li" key={r.id} className="flex items-center gap-3 p-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="flex flex-wrap items-center gap-2 truncate text-[15px] font-semibold text-navy-900">
-                      {r.name || 'אוטומציה'}
-                      {ok ? <StatusPill tone="mint" label="פועלת" /> : <StatusPill tone="slate" label="עוד לא נתמכת" />}
-                    </p>
-                    {!ok ? <p className="text-[13px] text-ink-400">הפעולה הזו עוד לא עובדת, ולכן לא תצא.</p> : null}
-                  </div>
-                  <Switch checked={!!r.is_active} onCheckedChange={(v) => toggleOther.mutate({ id: r.id, is_active: v })} aria-label={`הפעלה: ${r.name || 'אוטומציה'}`} />
-                  <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={`מחיקה: ${r.name || 'אוטומציה'}`} onClick={() => removeOther.mutate(r.id)}>
+                <li key={r.id} className="mg-row">
+                  <span className="min-w-0 flex-1 ps-2">
+                    <span className="block truncate text-[15px] font-semibold text-navy-900">{r.name || 'הודעה'}</span>
+                    <span className="block text-[13px] text-ink-600">{ok ? 'פועלת' : 'עוד לא נתמכת, ולכן לא יוצאת'}</span>
+                  </span>
+                  <Switch checked={!!r.is_active} onCheckedChange={(v) => gm.toggleOther(r.id, v)} aria-label={`הפעלה: ${r.name || 'הודעה'}`} />
+                  <button type="button" className="inline-flex h-11 w-11 items-center justify-center rounded-[14px]" aria-label={`מחיקה: ${r.name || 'הודעה'}`} onClick={() => gm.removeOther(r.id)}>
                     <Trash2 className="h-4 w-4 text-ink-400" strokeWidth={1.75} />
-                  </Button>
-                </Card>
+                  </button>
+                </li>
               );
             })}
           </ul>
         </section>
       ) : null}
+
+      <MessageSheet step={sheet} open={!!sheet} onOpenChange={(v) => !v && setSheet(null)} gm={gm}
+        onEnabled={(s) => setDone({ title: `${s.short}: פועל`, line: `${s.whenPlain}, ההודעה תחכה לכם מוכנה.` })} />
+      <DoneMoment open={!!done} title={done?.title} line={done?.line} onDone={() => setDone(null)} />
     </div>
   );
 }
