@@ -77,6 +77,19 @@
           ['hebrew-800', 'hebrew-400', 'hebrew-500', 'latin-400'].forEach(font);
           return;
         }
+        // Onboarding (phone): its hello photo is the LCP. Fetch it with the app code, not after it, and the
+        // weights the first screen paints with (components/onboarding/y/StepPhoto.jsx picks the same file).
+        if (/^\/onboarding\/?$/.test(location.pathname)) {
+          if (window.matchMedia && matchMedia('(max-width: 1023px)').matches) {
+            var o = document.createElement('link');
+            o.rel = 'preload'; o.as = 'image'; o.type = 'image/webp'; o.setAttribute('fetchpriority', 'high');
+            if (matchMedia('(min-width: 700px)').matches) o.href = '/onboarding/bg/valley-1600.webp';
+            else { o.setAttribute('imagesrcset', '/onboarding/bg/valley-p640.webp 640w, /onboarding/bg/valley-p1000.webp 1000w'); o.setAttribute('imagesizes', '100vw'); }
+            document.head.appendChild(o);
+          }
+          ['hebrew-300', 'hebrew-400', 'hebrew-700'].forEach(font);
+          return;
+        }
         if (location.pathname !== '/') return;
         var p = window.matchMedia && matchMedia('(max-aspect-ratio: 2/3)').matches;
         var l = document.createElement('link');
