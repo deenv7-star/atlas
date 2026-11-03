@@ -8,10 +8,14 @@
  * same way before the JS bundle arrives as after; HeroPhoto then re-measures with the same numbers.
  */
 export function heroGeometry(st, s, im, fr, desk) {
-  /* the property photo tile inside the real captures, as fractions of the screen image (from ea07f10) */
+  /* the photo tile inside the real captures, as fractions of the screen image */
+  /* new UI (Y3, 03.11.2026). Desktop 1440x900 capture: the "מגיעים היום" photo card at 434,428 336x306,
+     radius 30 (its unit photo is this hero's pool photo in the capture, so the morph lands on the same picture).
+     Phone 390x844 capture: the app floats over a full-screen photo, so the photo shrinks into the whole phone
+     screen (radius 0.149 of the screen width) and the app fades in over it. */
   var T = desk
-    ? { x: 80 / 2880, y: 202 / 1800, w: 704 / 2880, h: 432 / 1800, r: 28 / 1440 }
-    : { x: 40 / 780, y: 568 / 1594, w: 338 / 780, h: 460 / 1594, r: 28 / 390 };
+    ? { x: 434 / 1440, y: 428 / 900, w: 336 / 1440, h: 306 / 900, r: 30 / 1440 }
+    : { x: 0, y: 0, w: 1, h: 1, r: 0.149 };
   var W = st.offsetWidth; var H = st.offsetHeight;
   var sr = st.getBoundingClientRect();
   var r = s.getBoundingClientRect();
