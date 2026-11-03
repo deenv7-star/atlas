@@ -53,7 +53,7 @@
 .lm-feat-today .lm-chip.is-d { inset-inline-start: 0; top: 24px; }
 .lm-feat-pay { position: relative; padding-bottom: 56px; }
 .lm-feat-host { margin: 0; width: 78%; aspect-ratio: 840 / 903; border-radius: 28px; overflow: hidden; box-shadow: 0 0 0 6px #fff, 0 30px 60px -24px rgba(27, 38, 86, 0.45); }
-.lm-feat-paid { position: absolute; z-index: 2; inset-inline-end: 0; bottom: 0; width: 64%; max-width: 340px; height: auto; border-radius: 18px; box-shadow: 0 30px 60px -24px rgba(62, 43, 241, 0.55); }
+.lm-feat-paid { position: absolute; z-index: 2; inset-inline-end: 0; bottom: 0; width: 64%; max-width: 340px; height: auto; border-radius: 5.9% / 6.9%; background: transparent; box-shadow: 0 30px 60px -24px rgba(62, 43, 241, 0.55); }
 .lm-feat-cap { margin: 0; text-align: center; }
 .pp-b-note { font-size: 14px; }
 @media (max-width: 479px) {

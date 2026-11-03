@@ -18,7 +18,8 @@
  * one bottom bar stay as in #162.
  *
  * All screens are real ATLAS screens in demo mode; every name, booking and amount is example data
- * and is labelled as such. No testimonials, logos or customer counts.
+ * and is labelled as such. 03.11.2026: every capture is the new UI Y3 (glass over a zimmer photo, navy bookings
+ * panel: Today, calendar, money cards, booking detail), from a demo build of main 1d7426a. No testimonials, logos or customer counts.
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -55,7 +56,7 @@ const TILES = [
     d: 'Airbnb, Booking.com והזמנות ישירות על לוח אחד. תאריך תפוס מסומן לפני שמאשרים.',
     vis: (
       <div className="lm-tile-vis is-cal">
-        <img src={`${UI}/c-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
+        <img src={`${UI}/y3-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2182" height="934" loading="lazy" decoding="async" />
         <span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />Booking.com מושך את הלוח ב-iCal</span>
       </div>
     ),
@@ -65,7 +66,8 @@ const TILES = [
     d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.',
     vis: (
       <div className="lm-tile-vis is-msg">
-        <WaBubble who="נועה ל." text="היי נועה, מחר מ-15:00 הצימר מחכה לכם. קוד לדלת: 2419. נסיעה טובה" time="18:00" />
+        <img className="lm-next-card" src={`${UI}/y3-next.webp`} alt="כרטיס ״הדבר הבא״ במסך היום של atlas: הודעת ״ברוכים הבאים״ למיכל לוי מוכנה לשליחה (נתוני דוגמה)" width="676" height="304" loading="lazy" decoding="async" />
+        <WaBubble who="מיכל לוי" text="שלום מיכל, ברוכים הבאים לזית. מקווים שהגעתם בשלום. אם חסר משהו, כתבו לנו כאן ונדאג לזה." time="15:20" />
       </div>
     ),
   },
@@ -74,7 +76,7 @@ const TILES = [
     d: 'רושמים כל מקדמה ויתרה בלחיצה, ורואים מה פתוח ומה נכנס החודש.',
     vis: (
       <div className="lm-tile-vis is-chart">
-        <img src={`${UI}/c-chart.webp`} alt="גרף הכנסות לפי חודש (נתוני דוגמה)" width="1256" height="966" loading="lazy" decoding="async" />
+        <img src={`${UI}/y3-money.webp`} alt="כרטיסי הכסף במסך היום של atlas: כמה נכנס החודש וכמה ממתין לתשלום (נתוני דוגמה)" width="676" height="340" loading="lazy" decoding="async" />
       </div>
     ),
   },
@@ -83,7 +85,7 @@ const TILES = [
     d: 'כניסות, יציאות וניקיונות ברשימה אחת. מסמנים ״בוצע״ בלחיצה.',
     vis: (
       <div className="lm-tile-vis is-today">
-        <img src={`${UI}/c-todaylist.webp`} alt="רשימת ״היום במתחם״: כניסה, יציאה וניקיון (נתוני דוגמה)" width="888" height="966" loading="lazy" decoding="async" />
+        <img src={`${UI}/y3-today.webp`} alt="ההזמנות של היום ב-atlas: מי מגיע ומי יוצא היום, בכל יחידה (נתוני דוגמה)" width="676" height="1038" loading="lazy" decoding="async" />
       </div>
     ),
   },
@@ -110,14 +112,14 @@ function Features() {
         <div className="lm-feat-ppl">
           <div className="lm-feat-today pp-b-today" data-reveal>
             <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 1200px) 480px, (min-width: 900px) 40vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
-            <div className="pp-b-phone" data-sd="lift" role="img" aria-label="מסך ״היום״ של atlas בטלפון: כניסות, יציאות וניקיונות (נתוני דוגמה)">
-              <img src="/landing-hero/ui-m-today.webp" alt="" width="780" height="1594" loading="lazy" decoding="async" />
+            <div className="pp-b-phone" data-sd="lift" role="img" aria-label="מסך ״היום״ של atlas בטלפון: מי מגיע היום, כמה נכנס החודש ותפוסה (נתוני דוגמה)">
+              <img src="/landing-hero/ui-m-today-y3.webp" srcSet="/landing-hero/ui-m-today-y3-540.webp 540w, /landing-hero/ui-m-today-y3.webp 780w" sizes="230px" alt="" width="780" height="1688" loading="lazy" decoding="async" />
             </div>
             <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
           </div>
           <div className="lm-feat-pay" data-reveal>
             <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
-            <img className="lm-feat-paid" data-sd="lift" src={`${UI}/c-paid.webp`} alt="כרטיס תשלום בהזמנה: ‏₪5,200 שולם במלואו (נתוני דוגמה)" width="848" height="576" loading="lazy" decoding="async" />
+            <img className="lm-feat-paid" data-sd="lift" src={`${UI}/y3-paid.webp`} alt="כרטיס ההזמנה ב-atlas: ‏₪2,440 סה״כ, ‏₪1,200 שולם ו-‏₪1,240 יתרה (נתוני דוגמה)" width="740" height="642" loading="lazy" decoding="async" />
           </div>
           <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
         </div>
@@ -181,7 +183,7 @@ function Final() {
           <p className="lm-x-sub" data-reveal>14 יום חינם. מחברים את Booking ו-Airbnb ב-10 דקות, ותמיכה אנושית 24/7 לאורך כל הדרך.</p>
           <div data-reveal><CtaLinks /></div>
           <div className="lm-x-shot" data-sd="tilt" aria-hidden="true">
-            <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="lazy" decoding="async" />
+            <img src="/landing-hero/ui-d-today-y3.webp" srcSet="/landing-hero/ui-d-today-y3-1200.webp 1200w, /landing-hero/ui-d-today-y3-1600.webp 1600w, /landing-hero/ui-d-today-y3-2080.webp 2080w, /landing-hero/ui-d-today-y3.webp 2400w" sizes="min(1040px, 90vw)" alt="" width="2400" height="1500" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
