@@ -2,6 +2,7 @@ import React from 'react';
 import { toast } from 'sonner';
 import { completeUndoSlot, enqueueUndoJob } from './undoQueue';
 import { usePersistentToastStore } from './persistentToastStore';
+import { Mascot } from '@/components/mascot/Mascot';
 
 const DURATION_MS = {
   success: 3000,
@@ -55,6 +56,25 @@ export const atlasToastApi = {
       duration: DURATION_MS.error,
       className: `${baseToast} border-red-200 bg-red-50 text-red-950`,
     });
+  },
+
+  /**
+   * A real win (payment received, document saved): white card, the atlas character, a soft spring in.
+   * pose: 'celebrating' for money in, 'thumbsup' for done.
+   */
+  celebrate(message: string, pose: 'celebrating' | 'thumbsup' = 'celebrating', detail?: string): void {
+    toast.custom(
+      () => (
+        <div dir="rtl" role="status" className="am-toast">
+          <Mascot pose={pose} crop="bust" size={44} alt="" eager />
+          <div className="am-toast-txt">
+            <p className="am-toast-title">{message}</p>
+            {detail ? <p className="am-toast-sub">{detail}</p> : null}
+          </div>
+        </div>
+      ),
+      { duration: 3600 },
+    );
   },
 
   info(message: string): void {

@@ -133,7 +133,7 @@ export default function InvoicesPage({ orgId }) {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       setShowCreateDialog(false);
       setEditingInvoice(null);
-      atlasToastApi.success('המסמך נרשם');
+      atlasToastApi.celebrate('המסמך נרשם', 'thumbsup');
     },
     onError: () => atlasToastApi.error('לא הצלחנו לשמור את המסמך. נסו שוב.')
   });

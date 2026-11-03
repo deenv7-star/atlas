@@ -48,7 +48,7 @@ export function RecordPaymentSheet({ open, onOpenChange, booking, balance, orgId
         due_date: today,
         created_at: new Date().toISOString(),
       });
-      atlasToastApi.success(`נרשם תשלום של ${formatMoney(n)}`);
+      atlasToastApi.celebrate(`נכנסו ${formatMoney(n)}`, 'celebrating', `${kind === 'DEPOSIT' ? 'מקדמה' : 'יתרה'} מ${booking.guest_name || 'האורחים'}`);
       onOpenChange(false);
     } catch (e) {
       atlasToastApi.error(e?.message ? `התשלום לא נשמר: ${e.message}` : 'התשלום לא נשמר. נסו שוב.');

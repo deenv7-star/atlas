@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
 import { useTodayModel, money, moneyNum, guestLabel, MONTHS } from './model';
 import Face from './Face';
+import { Mascot } from '@/components/mascot/Mascot';
 import { Num, Ticks, Wave, DotGrid, Ring, FaceStack, useBookingList, whenOf } from './ui';
 import { BookingsPanel, BookingSheet, isPhone } from './Bookings';
 import './y3.css';
@@ -109,7 +110,10 @@ export default function DashboardView({ user, orgId }) {
         <div className="y2-main">
           <div className="y2-hello">
             <div>
-              <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
+              <div className="am-hello">
+                <Mascot pose={dayPart().key === 'morning' ? 'waving' : 'neutral'} crop="bust" size={44} alt="" eager />
+                <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
+              </div>
               <p className="y2-sub">{formatDayHe(m.day)} · {arrivals.length} מגיעים, {departures.length} יוצאים</p>
             </div>
             <Link to="/messages" className="y2-hello-chip press"><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'הכל בוצע להיום'}</Link>

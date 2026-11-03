@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
+import { Mascot } from '@/components/mascot/Mascot';
 
 export type FallbackRenderProps = {
   error: Error | null;
@@ -59,9 +60,7 @@ export function ErrorFallbackPage({ error, reset, section, componentStack }: Fal
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center bg-slate-50 p-6" dir="rtl">
       <div className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-8 text-center shadow-lg">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
-          <AlertCircle className="h-7 w-7 text-red-500" aria-hidden />
-        </div>
+        <Mascot pose="concerned" size={112} className="am-empty" />
         <h1 className="mb-2 text-xl font-bold text-gray-900">המסך לא נטען</h1>
         <p className="mb-4 text-sm leading-relaxed text-gray-600">
           לא הצלחנו להציג את העמוד. אפשר לחזור למסך הבית או לטעון את החלק מחדש.
