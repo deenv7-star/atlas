@@ -57,3 +57,4 @@
 @keyframes mg-pulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
 .mg-live { animation: mg-pulse 2.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .mg-live { animation: none; } .mg-row, .mg-cta { transition: none; } }
+.mg-link { color: #3E2BF1; text-decoration: underline; text-underline-offset: 2px; text-decoration-color: rgba(62,43,241,.35); unicode-bidi: isolate; }

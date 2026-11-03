@@ -166,7 +166,7 @@ export default function AutomationsPage({ orgId }) {
           <AssistantFace size={40} />
           <p className="text-[15px] font-semibold text-white/75">ההודעות לאורחים</p>
         </div>
-        <h1 id="mg-title" className="mt-4 max-w-[34rem] text-[28px] font-bold leading-[1.15] tracking-[-0.01em] md:text-[38px]">{title}</h1>
+        <h1 id="mg-title" className="!text-white mt-4 max-w-[34rem] text-[28px] font-bold leading-[1.15] tracking-[-0.01em] md:text-[38px]">{title}</h1>
         {active.length ? (
           <ul className="mt-5 flex flex-wrap gap-2" aria-label="פועל עכשיו">
             <AnimatePresence initial={false}>
