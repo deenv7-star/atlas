@@ -23,9 +23,9 @@ export default function AIAssistantPage({ user, orgId: orgIdProp }) {
         page="/ai-assistant"
         variant="page"
         autoFocus
-        header={({ clear, hasThread, mood }) => (
+        header={({ clear, hasThread }) => (
           <header className={`as-head${hasThread ? ' has-thread' : ''}`}>
-            <AtlasFace mood={mood} size={48} className="as-head-face" />
+            <AtlasFace live size={48} className="as-head-face" />
             <div className="as-head-txt">
               <h1>שאלו את atlas</h1>
               <p>תשובות מההזמנות, הכסף והלידים שלכם.</p>

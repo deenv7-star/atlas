@@ -291,7 +291,7 @@ export function EmptyState({ icon: Icon, title, description, actionLabel, onActi
   return (
     <div className={cn('v5-rise flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
       {face ? (
-        <AtlasFace mood={face} size={compact ? 72 : 84} className="af-empty" />
+        <AtlasFace live mood={face} size={compact ? 72 : 84} className="af-empty" />
       ) : Icon || photo ? (
         <span className="relative mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#ECEAFE]" aria-hidden>
           {Icon ? <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.75} /> : null}

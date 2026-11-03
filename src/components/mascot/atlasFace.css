@@ -4,8 +4,12 @@
 .af .af-eyes,.af .af-eye,.af .af-pill,.af .af-halo,.af .af-lid,.af .af-smile,.af .af-glow{transition:transform 420ms cubic-bezier(.23,1,.32,1),opacity 260ms cubic-bezier(.23,1,.32,1)}
 .af .af-smile{opacity:0}
 .af .af-lid{transform-origin:50% 100%}
+/* gaze: the eyes turn toward a point (set by AtlasFace live via --af-gx/--af-gy) */
+.af .af-gaze{transform:translate(var(--af-gx,0px),var(--af-gy,0px));transition:transform 380ms cubic-bezier(.23,1,.32,1)}
+/* attentive: you are typing, the eyes open a touch */
+.af[data-mood="attentive"] .af-pill,.af[data-mood="attentive"] .af-halo{transform:scale(1.06,1.1)}
 /* idle blink */
-.af:not(.af--still)[data-mood="neutral"] .af-eye,.af:not(.af--still)[data-mood="look"] .af-eye{animation:af-blink 5.2s cubic-bezier(.45,0,.55,1) infinite}
+.af:not(.af--still)[data-mood="neutral"] .af-eye,.af:not(.af--still)[data-mood="look"] .af-eye,.af:not(.af--still)[data-mood="attentive"] .af-eye{animation:af-blink var(--af-blink,5.2s) cubic-bezier(.45,0,.55,1) var(--af-blink-delay,0s) infinite}
 @keyframes af-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
 .af[data-mood="blink"] .af-eye{transform:scaleY(.08)}
 /* look toward the new message (below, at the reading start) */
@@ -36,5 +40,10 @@
 .af[data-mood="concerned"] .af-lid--l{transform:translateY(29px) rotate(-16deg)}
 .af[data-mood="concerned"] .af-lid--r{transform:translateY(29px) rotate(16deg)}
 .af[data-mood="concerned"] .af-eyes{transform:translateY(3px)}
-@media (prefers-reduced-motion:reduce){.af *{animation:none!important;transition:none!important}}
+/* live face: a slow float + breath; sleepy breathes slower */
+.af-wrap.is-live{animation:af-float 6.4s cubic-bezier(.45,0,.55,1) infinite;will-change:transform}
+@keyframes af-float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1.5px) scale(1.015)}}
+.af:not(.af--still)[data-mood="sleepy"] .af-glow{animation:af-breathe 4.8s cubic-bezier(.45,0,.55,1) infinite}
+html[data-mascot-paused] .af-wrap,html[data-mascot-paused] .af *{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){.af *,.af-wrap{animation:none!important;transition:none!important}}
 .af-empty{margin:0 auto 14px;display:block!important;filter:drop-shadow(0 12px 18px rgba(62,43,241,.22))}

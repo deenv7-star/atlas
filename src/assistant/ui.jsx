@@ -14,6 +14,7 @@ import './assistant.css';
 
 export { SparkMark } from './mark.jsx';
 import { AtlasFace, useFaceMood } from '@/components/mascot/AtlasFace';
+import { emitMascot } from '@/components/mascot/useMascotMood';
 
 /* ── keyboard + safe area ─────────────────────────────────────────────── */
 /** Writes --as-kb (px hidden by the on-screen keyboard) on the given element, from visualViewport. */
@@ -76,7 +77,7 @@ export function Composer({ onSend, onStop, busy, autoFocus = false, inputRef: ou
         maxLength={2000}
         placeholder={placeholder}
         enterKeyHint={touch.current ? 'enter' : 'send'}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => { setText(e.target.value); emitMascot('user-typing', { el: e.target }); }}
         onKeyDown={onKeyDown}
       />
       <button
@@ -129,7 +130,7 @@ function Markdown({ text, onNavigate }) {
 export function Thinking() {
   return (
     <p className="as-thinking" role="status">
-      <AtlasFace mood="thinking" size={30} decorative />
+      <AtlasFace live mood="thinking" size={30} decorative />
       <span className="as-shimmer">בודקים בנתונים שלכם</span>
     </p>
   );
@@ -213,7 +214,7 @@ export function Suggestions({ items, onPick, label = 'אפשר לשאול' }) {
 function EmptyNoData({ onNavigate }) {
   return (
     <section className="as-insight as-insight--quiet as-insight--mascot">
-      <AtlasFace mood="sleepy" size={84} className="af-empty" />
+      <AtlasFace live mood="sleepy" size={84} className="af-empty" />
       <p className="as-insight-title">כאן יופיעו תשובות מההזמנות שלכם</p>
       <p className="as-insight-body">אחרי הזמנה ראשונה ביומן אפשר לשאול על כסף, לילות פנויים ואורחים.</p>
       <div className="as-insight-row">

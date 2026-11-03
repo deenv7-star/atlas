@@ -8,6 +8,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
+import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { setAssistantOpen, useAssistantOpen } from '@/assistant/launcher';
 import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, MoreHorizontal, Bell, LifeBuoy, Settings } from 'lucide-react';
 import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
@@ -78,6 +80,7 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         <button type="button" onClick={onOpenCommandPalette} className="y2-search press" aria-label="חיפוש אורח, הזמנה או יחידה">
           <Search strokeWidth={1.75} /><span>חיפוש אורח, הזמנה או יחידה</span>
         </button>
+        <AskFace />
         <button type="button" className="y2-gb press y2-hide-m" aria-label="עזרה" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /></button>
         <Link to={createPageUrl('Messages')} className="y2-gb press" aria-label="הודעות"><Bell strokeWidth={1.75} /><i className="y2-gb-dot" aria-hidden /></Link>
         <button type="button" className="y2-gb y2-gb--ind press y2-hide-m" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
@@ -88,6 +91,19 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         </UserMenu>
       </div>
     </header>
+  );
+}
+
+/** The living atlas face in the top bar: opens "שאלו את atlas" and reacts to what happens in the app. */
+function AskFace() {
+  const { isOpen } = useAssistantOpen();
+  const { pathname } = useLocation();
+  if (pathname.startsWith('/ai-assistant')) return null;
+  return (
+    <button type="button" className="y2-gb y2-gb--face press" aria-label="שאלו את atlas" aria-expanded={isOpen} aria-haspopup="dialog"
+      onClick={(e) => setAssistantOpen(!isOpen, e.currentTarget)}>
+      <AtlasFace live size={34} decorative />
+    </button>
   );
 }
 

@@ -16,6 +16,7 @@ import { DB_FEATURES } from '@/config/dbFeatures';
 import { useGuestMessages, hhmm } from '@/components/magic/useGuestMessages';
 import { MessageSheet } from '@/components/magic/MessageSheet';
 import { WaBubble, DoneMoment, AssistantFace } from '@/components/magic/WaBubble';
+import { emitMascot } from '@/components/mascot/useMascotMood';
 import { parseIntent, EXAMPLES } from '@/components/magic/intent';
 import { isRunnableRule } from '@/lib/real/journey';
 import { cn } from '@/lib/utils';
@@ -206,7 +207,7 @@ export default function AutomationsPage({ orgId }) {
         <h2 id="mg-ask" className="px-1 text-[16px] font-bold text-navy-900">רוצים משהו אחר? כתבו במילים שלכם</h2>
         <form onSubmit={submit} className="mt-3 flex items-center gap-2 rounded-full bg-[#F7F8FB] p-1.5 ps-4">
           <label htmlFor="mg-input" className="sr-only">מה לעשות עם ההודעות לאורחים</label>
-          <input id="mg-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="למשל: הוראות הגעה יום לפני ב-9"
+          <input id="mg-input" value={text} onChange={(e) => { setText(e.target.value); emitMascot('user-typing', { el: e.target }); }} placeholder="למשל: הוראות הגעה יום לפני ב-9"
             className="min-h-[44px] min-w-0 flex-1 bg-transparent text-[16px] text-navy-900 outline-none placeholder:text-ink-400" autoComplete="off" enterKeyHint="send" />
           {SR ? (
             <button type="button" onClick={listen} className={cn('inline-flex h-11 w-11 items-center justify-center rounded-full text-navy-900', listening && 'mg-live')} aria-label="אמרו בקול">

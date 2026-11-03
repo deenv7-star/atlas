@@ -4,10 +4,11 @@
  * Single source for the app component and the brand sheet / static SVGs.
  * Palette: #1B2656 #3E2BF1 #F7F8FB white (+ alpha tints).
  */
-export const FACE_MOODS = ['neutral', 'look', 'happy', 'thinking', 'typing', 'sleepy', 'surprised', 'concerned', 'blink'];
+export const FACE_MOODS = ['neutral', 'attentive', 'look', 'happy', 'thinking', 'typing', 'sleepy', 'surprised', 'concerned', 'blink'];
 
 export const FACE_ALT = {
   neutral: 'atlas, העוזר האישי שלכם',
+  attentive: 'atlas מקשיב',
   look: 'atlas מסתכל על ההודעה החדשה',
   happy: 'atlas מחייך',
   thinking: 'atlas חושב',
@@ -41,11 +42,11 @@ export function faceMarkup(id = 'af', mood = 'neutral', { still = false } = {}) 
 <ellipse cx="54" cy="16" rx="34" ry="8" fill="#fff" opacity=".07"/>
 </g>
 <path d="${BODY}" fill="none" stroke="url(#${u('rim')})" stroke-width="1.4"/>
-<g class="af-eyes">
+<g class="af-gaze"><g class="af-eyes">
 <g class="af-eye af-eye--l" clip-path="url(#${u('lidL')})"><rect class="af-halo" x="38" y="41" width="16" height="26" rx="8" fill="#fff" opacity=".55" filter="url(#${u('soft')})"/><rect class="af-pill" x="38" y="41" width="16" height="26" rx="8" fill="url(#${u('eye')})"/></g>
 <g class="af-eye af-eye--r" clip-path="url(#${u('lidR')})"><rect class="af-halo" x="66" y="41" width="16" height="26" rx="8" fill="#fff" opacity=".55" filter="url(#${u('soft')})"/><rect class="af-pill" x="66" y="41" width="16" height="26" rx="8" fill="url(#${u('eye')})"/></g>
 <path class="af-smile" d="M38.5 57.5Q46 46.5 53.5 57.5M66.5 57.5Q74 46.5 81.5 57.5" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-</g>
+</g></g>
 </svg>`;
 }
 

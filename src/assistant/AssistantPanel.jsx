@@ -80,9 +80,9 @@ export default function AssistantPanel() {
           variant="panel"
           inputRef={inputRef}
           onNavigate={desktop ? undefined : close}
-          header={({ clear, hasThread, mood }) => (
+          header={({ clear, hasThread }) => (
             <div className="as-ph">
-              <AtlasFace mood={mood} size={38} />
+              <AtlasFace live size={38} />
               <div className="as-ph-title">
                 <b id="as-panel-title">שאלו את atlas</b>
                 <span>{where ? `מתוך: ${where}` : 'על ההזמנות, הכסף והלידים'}</span>

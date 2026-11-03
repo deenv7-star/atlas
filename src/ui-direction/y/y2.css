@@ -40,6 +40,9 @@
 .y2-gb { position: relative; display: inline-grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 999px; color: var(--navy); background: rgba(255,255,255,.5); }
 .y2-gb:hover { background: rgba(255,255,255,.8); }
 .y2-gb svg { width: 19px; height: 19px; }
+.y2-gb--face { background: transparent; }
+.y2-gb--face:hover { background: rgba(255,255,255,.5); }
+.y2-gb--face svg.af { width: 100%; height: 100%; }
 .y2-gb--ind { background: var(--ind); color: #fff; box-shadow: 0 10px 22px -10px rgba(62,43,241,.9); }
 .y2-gb--ind:hover { background: #2A1AC9; }
 .y2-gb--d { background: rgba(255,255,255,.12); color: #fff; }

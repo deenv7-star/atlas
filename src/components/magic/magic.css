@@ -25,7 +25,8 @@
 .mg-done-fly { position: absolute; left: 50%; top: 50%; width: 120px; height: 46px; margin: -23px 0 0 -60px; border-radius: 18px 18px 18px 6px; background: #fff; }
 .mg-done-fly::after { content: ''; position: absolute; inset: 14px 18px auto 18px; height: 6px; border-radius: 3px; background: rgba(27,38,86,.14); box-shadow: 0 12px 0 rgba(27,38,86,.10); }
 
-.mg-face { display: inline-flex; align-items: center; justify-content: center; border-radius: 30%; background: linear-gradient(160deg, #5B4BFF, #3E2BF1 60%, #2a1fc0); flex: none; }
+.mg-face { display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.mg-face .af-wrap { filter: drop-shadow(0 6px 12px rgba(62,43,241,.28)); }
 
 /* journey line (A hero) */
 .mg-line { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }

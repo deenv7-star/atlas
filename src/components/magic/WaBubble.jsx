@@ -7,6 +7,9 @@ import { createPortal } from 'react-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { CheckCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { emitMascot } from '@/components/mascot/useMascotMood';
+import { URL_RE, TRAIL, shortLink } from './links';
 import './magic.css';
 
 function initials(name) {
@@ -15,13 +18,12 @@ function initials(name) {
 }
 
 /** Long links (Waze, the guest page) read as a short underlined host, like WhatsApp's link previews. */
-const URL_RE = /(https?:\/\/[^\s]+)/g;
 function withShortLinks(text) {
-  return String(text || '').split(URL_RE).map((part, i) => {
-    if (!/^https?:\/\//.test(part)) return part;
-    let host = part;
-    try { const u = new URL(part); host = u.hostname.replace(/^www\./, '') + (u.pathname.length > 1 ? '/…' : ''); } catch { /* keep */ }
-    return <span key={i} className="mg-link" dir="ltr">{host}</span>;
+  return String(text || '').split(URL_RE).flatMap((part, i) => {
+    if (!part || i % 2 === 0) return part ? [part] : [];
+    const trail = (part.match(TRAIL) || [''])[0];
+    const url = trail ? part.slice(0, -trail.length) : part;
+    return [<span key={i} className="mg-link" dir="ltr">{shortLink(url)}</span>, trail];
   });
 }
 
@@ -57,6 +59,7 @@ export function DoneMoment({ open, title, line, onDone }) {
   const reduce = useReducedMotion();
   React.useEffect(() => {
     if (!open) return undefined;
+    emitMascot('success');
     const t = setTimeout(() => onDone?.(), reduce ? 900 : 1900);
     return () => clearTimeout(t);
   }, [open, onDone, reduce]);
@@ -89,14 +92,11 @@ export function DoneMoment({ open, title, line, onDone }) {
   );
 }
 
-/** Slot for the assistant's face (mascot v2 lands here later). Until then the atlas spark on indigo. */
-export function AssistantFace({ size = 40, className }) {
+/** The assistant's face on the guest-message screen: the living atlas glow face (mascot C). */
+export function AssistantFace({ size = 40, className, mood = 'neutral' }) {
   return (
     <span className={cn('mg-face', className)} style={{ width: size, height: size }} data-slot="mascot" aria-hidden>
-      <svg width={size * 0.55} height={size * 0.55} viewBox="0 0 24 24" fill="none">
-        <path d="M12 1.6c.5 3.9 1.3 6.9 2.4 8.4L12 12l-2.4-2C10.7 8.5 11.5 5.5 12 1.6Z" fill="#fff" />
-        <path d="M12 22.4c-.35-2.6-.9-4.6-1.65-5.7L12 12l1.65 4.7c-.75 1.1-1.3 3.1-1.65 5.7ZM21.4 12c-2.6.35-4.6.9-5.7 1.65L12 12l3.7-1.65c1.1.75 3.1 1.3 5.7 1.65ZM2.6 12c2.6-.35 4.6-.9 5.7-1.65L12 12l-3.7 1.65C7.2 12.9 5.2 12.35 2.6 12Z" fill="#fff" opacity=".45" />
-      </svg>
+      <AtlasFace live mood={mood} size={size} decorative />
     </span>
   );
 }
