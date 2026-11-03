@@ -81,7 +81,7 @@ function TopBar() {
 
 function SavedLine() {
   return (
-    <p className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[14px] font-medium text-[#1B2656] shadow-[0_1px_2px_rgba(27,38,86,0.06)]">
+    <p className="mt-5 inline-flex items-center gap-2 rounded-[16px] bg-white px-4 py-2 text-[14px] font-medium leading-snug text-[#1B2656] shadow-[0_1px_2px_rgba(27,38,86,0.06)] [text-wrap:balance]">
       <ShieldCheck className="h-4 w-4 shrink-0 text-[#3E2BF1]" strokeWidth={2} aria-hidden />
       שום דבר לא נמחק: הזמנות, יומן, אורחים ותשלומים
     </p>
@@ -97,7 +97,7 @@ function NativeLocked() {
       </span>
       <h1 className="mt-5 text-[28px] font-bold leading-tight tracking-[-0.01em] text-[#1B2656]">המנוי לא פעיל</h1>
       <p className="mt-3 max-w-[340px] text-[16px] leading-relaxed text-[#4A5170]">
-        המידע שלכם שמור ולא נמחק. לחידוש היכנסו ל־<bdi dir="ltr">atlas-il.com</bdi> מהמחשב.
+        המידע שלכם שמור. לחידוש היכנסו <span className="whitespace-nowrap">ל־<bdi dir="ltr">atlas-il.com</bdi></span> מהמחשב.
       </p>
       <SavedLine />
       <div className="mt-8 flex w-full max-w-[340px] flex-col gap-3">
@@ -235,7 +235,7 @@ function WebPaywall({ user, reason }) {
       <h1 className="mt-10 text-[30px] font-bold leading-tight tracking-[-0.015em] text-[#1B2656] md:mt-14 md:text-[40px]">
         {reason === 'subscription_ended' ? 'המנוי הסתיים' : 'תקופת הניסיון הסתיימה'}
       </h1>
-      <p className="mt-3 max-w-[440px] text-[17px] leading-relaxed text-[#4A5170]">
+      <p className="mt-3 max-w-[560px] text-[17px] leading-relaxed text-[#4A5170]">
         המידע שלכם שמור. בוחרים חבילה, והכל חוזר ברגע שהיא מופעלת.
       </p>
       <SavedLine />
@@ -243,16 +243,17 @@ function WebPaywall({ user, reason }) {
       {requested ? <Requested plan={requested} yearly={yearly} /> : (
         <>
           <CycleToggle yearly={yearly} onChange={setYearly} />
-          <ul className="mt-6 grid w-full gap-4 md:grid-cols-3" aria-label="החבילות">
+          {/* Consent before the plan buttons (Upay/Bit requirement), so the blocked tap never sends people scrolling. */}
+          <div className="mt-5 flex w-full justify-center">
+            <TermsConsent id="pw-consent" variant="inline" className="text-right" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
+          </div>
+          {error ? <p role="alert" className="mt-2 text-[14px] font-medium text-danger-600">{error}</p> : null}
+          <ul className="mt-4 grid w-full gap-4 md:grid-cols-3" aria-label="החבילות">
             {PRICING_PLANS.map((p) => (
               <PlanCard key={p.key} plan={p} yearly={yearly} busy={busy === p.key} disabled={Boolean(busy)} onChoose={choose} />
             ))}
           </ul>
-          <div className="mt-5 w-full max-w-[520px] text-right">
-            <TermsConsent id="pw-consent" variant="inline" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
-            {error ? <p role="alert" className="mt-2 text-[14px] font-medium text-danger-600">{error}</p> : null}
-          </div>
-          <ul className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[14px] text-[#4A5170]">
+          <ul className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[14px] text-[#4A5170]">
             {['כל היכולות בכל חבילה', 'ביטול בכל רגע', VAT_LINE].map((t) => (
               <li key={t} className="flex items-center gap-1.5"><Check className="h-4 w-4 text-[#3E2BF1]" strokeWidth={2} aria-hidden />{t}</li>
             ))}
