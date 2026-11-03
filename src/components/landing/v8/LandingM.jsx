@@ -76,7 +76,7 @@ const TILES = [
     d: 'רושמים כל מקדמה ויתרה בלחיצה, ורואים מה פתוח ומה נכנס החודש.',
     vis: (
       <div className="lm-tile-vis is-chart">
-        <img src={`${UI}/y3-money.webp`} alt="כרטיסי הכסף במסך היום של atlas: כמה נכנס החודש וכמה ממתין לתשלום (נתוני דוגמה)" width="328" height="704" loading="lazy" decoding="async" />
+        <img src={`${UI}/y3-money.webp`} alt="כרטיסי הכסף במסך היום של atlas: כמה נכנס החודש וכמה ממתין לתשלום (נתוני דוגמה)" width="676" height="340" loading="lazy" decoding="async" />
       </div>
     ),
   },
