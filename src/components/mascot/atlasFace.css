@@ -1,0 +1,40 @@
+/* generated from atlasFace.js FACE_CSS (brand/mascot-v2/abstract) */
+.af{display:block;width:100%;height:100%;overflow:visible}
+.af *{transform-box:fill-box;transform-origin:center}
+.af .af-eyes,.af .af-eye,.af .af-pill,.af .af-halo,.af .af-lid,.af .af-smile,.af .af-glow{transition:transform 420ms cubic-bezier(.23,1,.32,1),opacity 260ms cubic-bezier(.23,1,.32,1)}
+.af .af-smile{opacity:0}
+.af .af-lid{transform-origin:50% 100%}
+/* idle blink */
+.af:not(.af--still)[data-mood="neutral"] .af-eye,.af:not(.af--still)[data-mood="look"] .af-eye{animation:af-blink 5.2s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes af-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+.af[data-mood="blink"] .af-eye{transform:scaleY(.08)}
+/* look toward the new message (below, at the reading start) */
+.af[data-mood="look"] .af-eyes{transform:translate(-6px,4px)}
+/* happy squint */
+.af[data-mood="happy"] .af-pill,.af[data-mood="happy"] .af-halo{opacity:0;transform:scaleY(.3)}
+.af[data-mood="happy"] .af-smile{opacity:1}
+/* thinking: eyes drift up and aside, one a little narrower */
+.af[data-mood="thinking"] .af-eyes{transform:translate(6px,-7px)}
+.af[data-mood="thinking"] .af-eye--l .af-pill,.af[data-mood="thinking"] .af-eye--l .af-halo{transform:scaleY(.82)}
+.af:not(.af--still)[data-mood="thinking"] .af-eyes{animation:af-drift 3.2s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes af-drift{0%,100%{transform:translate(6px,-7px)}50%{transform:translate(-4px,-8px)}}
+/* typing: looking down at the work, the glow breathes */
+.af[data-mood="typing"] .af-eyes{transform:translateY(7px)}
+.af[data-mood="typing"] .af-pill,.af[data-mood="typing"] .af-halo{transform:scaleY(.72)}
+.af:not(.af--still)[data-mood="typing"] .af-glow{animation:af-breathe 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes af-breathe{0%,100%{opacity:1}50%{opacity:.55}}
+/* sleepy: heavy lids */
+.af[data-mood="sleepy"] .af-lid{transform:translateY(34px)}
+.af[data-mood="sleepy"] .af-eyes{transform:translateY(3px)}
+.af[data-mood="sleepy"] .af-glow{opacity:.5}
+.af[data-mood="sleepy"] .af-halo,.af[data-mood="concerned"] .af-halo{opacity:0}
+/* surprised: wide and round */
+.af[data-mood="surprised"] .af-pill,.af[data-mood="surprised"] .af-halo{transform:scale(1.32,1.08)}
+.af[data-mood="surprised"] .af-eyes{transform:translateY(-3px)}
+/* concerned: lids slope down to the outside */
+.af[data-mood="concerned"] .af-lid{transform-origin:50% 0}
+.af[data-mood="concerned"] .af-lid--l{transform:translateY(29px) rotate(-16deg)}
+.af[data-mood="concerned"] .af-lid--r{transform:translateY(29px) rotate(16deg)}
+.af[data-mood="concerned"] .af-eyes{transform:translateY(3px)}
+@media (prefers-reduced-motion:reduce){.af *{animation:none!important;transition:none!important}}
+.af-empty{margin:0 auto 14px;display:block!important;filter:drop-shadow(0 12px 18px rgba(62,43,241,.22))}

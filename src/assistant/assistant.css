@@ -149,3 +149,10 @@ html[data-tour-running] .as-layer { display: none !important; }
   .as-shimmer { color: rgba(27, 38, 86, 0.72); background: none; }
   .as-chip, .as-send, .as-new, .as-tool, .as-open, .as-composer { transition: none; }
 }
+
+/* ── atlas glow face (abstract mascot) ────────────────────────────────── */
+.as-head-face { filter: drop-shadow(0 8px 14px rgba(62, 43, 241, 0.28)); }
+.as-error { display: flex; align-items: center; gap: 10px; }
+.as-insight--mascot { text-align: center; padding-top: 24px; }
+.as-insight--mascot .as-insight-row { justify-content: center; }
+.af-empty { margin: 0 auto 14px; display: block !important; filter: drop-shadow(0 12px 18px rgba(62, 43, 241, 0.22)); }
