@@ -17,6 +17,8 @@ import { TOUR_STEPS } from '@/content/help.he';
 import { getTourState, setTourState, onTourStart, voicePref, setVoicePref } from '@/lib/tour/tourState';
 import TourView from './TourView';
 
+const ARRIVE_KEY = 'atlas.onb.arrive'; // set by the onboarding finish (components/onboarding/y/StepPhoto.jsx)
+
 const FALLBACK = {
   'today-board': ['today-board'],
   'calendar-grid': ['calendar-grid'],
@@ -28,6 +30,8 @@ const FALLBACK = {
 };
 
 const HOME = ['/dashboard', '/today'];
+/** Their Today has rendered: the classic board, or the Y3 glass window (ui-direction/y, which has no data-tour). */
+const todayOnScreen = () => !!(visibleEl('today-board') || document.querySelector('.y2-win'));
 const samePath = (a, b) => a === b || (HOME.includes(a) && HOME.includes(b));
 
 function visibleEl(name) {
@@ -88,19 +92,48 @@ export default function TourHost({ user }) {
   useEffect(() => {
     if (!user?.id) return undefined;
     let alive = true;
+    let timer = null;
+    let off = () => {};
+    // Straight from the onboarding finish ("פתחו את atlas"): the finish already said welcome, so Today gets its
+    // own moment first: the tour skips its welcome card and opens ~3s after the Today board is on screen.
+    let arrived = 0;
+    try { arrived = Number(sessionStorage.getItem(ARRIVE_KEY)) || 0; sessionStorage.removeItem(ARRIVE_KEY); } catch { /* private mode */ }
+    const fromOnboarding = arrived > 0 && Date.now() - arrived < 60000;
     getTourState(user).then((st) => {
       if (!alive || st?.status !== 'pending') return;
-      const at = Math.min(st.step || 0, total - 1);
-      setTimeout(() => {
+      const saved = Math.min(st.step || 0, total - 1);
+      const at = fromOnboarding && saved === 0 ? 1 : saved;
+      const open = () => {
+        off();
         if (!alive) return;
         if (!samePath(window.location.pathname, TOUR_STEPS[at]?.path)) return;
         returnFocus.current = document.activeElement;
         navRef.current = null;
         setIdx(at);
         setActive(true);
-      }, 700);
+      };
+      if (!fromOnboarding) { timer = setTimeout(open, 700); return; }
+      // Count from when their Today is on screen (it loads its data first), not from when the app shell mounted.
+      // Any input pushes the tour back to 2.5s after the last one; after 20s of use it waits for Settings instead.
+      const t0 = Date.now();
+      let shown = 0; // when the board appeared
+      const wait = (ms) => { clearTimeout(timer); timer = setTimeout(open, ms); };
+      const poke = () => {
+        if (!shown) return;
+        if (Date.now() - shown > 20000) { clearTimeout(timer); off(); return; }
+        wait(2500);
+      };
+      const evs = ['pointerdown', 'keydown', 'wheel', 'touchmove'];
+      evs.forEach((e) => window.addEventListener(e, poke, { passive: true }));
+      off = () => evs.forEach((e) => window.removeEventListener(e, poke));
+      const board = () => {
+        if (!alive) return;
+        if (todayOnScreen() || Date.now() - t0 > 5000) { shown = Date.now(); wait(reduced ? 1200 : 2800); return; }
+        timer = setTimeout(board, 150);
+      };
+      board();
     });
-    return () => { alive = false; };
+    return () => { alive = false; clearTimeout(timer); off(); };
   }, [user?.id]);
 
   useEffect(() => onTourStart((s) => {
