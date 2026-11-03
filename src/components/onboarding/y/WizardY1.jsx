@@ -19,6 +19,8 @@ import { Ticks, DotGrid } from '@/ui-direction/y/ui';
 import Confetti from '@/components/onboarding/Confetti';
 import { YC, greeting } from './copy';
 import { STEPS, QUESTIONS, kindPhoto, firstName, placeName, unitNamesOf, badLinks, phoneOkOrEmpty, useBuild } from './model';
+import { linksFromAnswers } from '../v3/linksB';
+import { StepPhoto, bgFor, useIsPhone, ARRIVE_KEY } from './StepPhoto';
 import { KindPicker, NameField, UnitsFields, ChannelsFields, TimesFields, PhoneField, BuildList } from './parts';
 import './y1.css';
 
@@ -40,6 +42,7 @@ export default function WizardY1({ user }) {
   const phoneRef = useRef(null);
   const i = Math.max(0, Math.min(STEPS.length - 1, Number(a.ystep) || 0));
   const q = STEPS[i];
+  const phone = useIsPhone();
 
   const setStep = useCallback((to, fromPop = false) => {
     setHint('');
@@ -100,7 +103,7 @@ export default function WizardY1({ user }) {
     <MotionConfig reducedMotion="user">
       <div className="oy-root oy1" dir="rtl" data-version="y1" data-step={phase === 'ask' ? q : phase}
         onKeyDown={(e) => { if (e.key === 'Enter' && (e.target.id === 'oy-name' || e.target.id === 'oy-phone')) { e.preventDefault(); next(); } }}>
-        <div className="oy1-bg" aria-hidden />
+        <div className="oy1-bg" aria-hidden>{phone ? <StepPhoto id={bgFor(q, phase, a.kind)} next={phase === 'ask' ? bgFor(STEPS[i + 1], 'ask', a.kind) : null} /> : null}</div>
         <div className="oy1-grid">
           {/* questions */}
           <section className="oy1-ask" aria-label="הקמת החשבון">
@@ -163,7 +166,7 @@ export default function WizardY1({ user }) {
                 <button type="button" className="oy-primary w-full" disabled aria-disabled><Loader2 strokeWidth={1.75} className="oy-rot" aria-hidden />בונים…</button>
               ) : (
                 <div className="flex flex-col gap-2 lg:flex-row">
-                  <button type="button" className="oy-primary oy-press flex-1" onClick={() => window.location.replace('/today')}>{YC.done.cta}<ArrowLeft strokeWidth={1.75} aria-hidden /></button>
+                  <button type="button" className="oy-primary oy-press flex-1" onClick={() => { try { sessionStorage.setItem(ARRIVE_KEY, String(Date.now())); } catch { /* private mode */ } window.location.replace('/today'); }}>{YC.done.cta}<ArrowLeft strokeWidth={1.75} aria-hidden /></button>
                   <button type="button" className="oy-ghost oy-press" onClick={() => window.location.replace('/setup')}>{YC.done.setup}</button>
                 </div>
               )}
@@ -212,7 +215,9 @@ function useLive(a, i, phase) {
   const k = kindInfo(a.kind || 'zimmer');
   const { names, n } = unitNamesOf(a, 4);
   const src = CHANNELS.filter((c) => (a.channels || []).includes(c.value));
-  return { built, seen, live, k, names, n, src, name: placeName(a), gmax: clampInt(a.guestsMax, 1, 60) };
+  const ota = src.filter((c) => c.value === 'booking' || c.value === 'airbnb');
+  const linked = linksFromAnswers(a).map((l) => (l.provider === 'AIRBNB' ? 'Airbnb' : 'Booking'));
+  return { built, seen, live, k, names, n, src, ota, linked, name: placeName(a), gmax: clampInt(a.guestsMax, 1, 60) };
 }
 
 /** Desktop: a real-scale Y3 Today (glass window, white tiles, photo card, navy side column) built from the answers. */
@@ -287,7 +292,7 @@ function LiveToday({ a, i, phase, first }) {
               {nm ? <img src={L.n === 1 && a.kind ? kindPhoto(a.kind) : UNIT_PHOTOS[r % UNIT_PHOTOS.length]} alt="" /> : <span className="oy1-unit-ph" />}
               <span className="min-w-0 flex-1">
                 {nm ? <b>{nm}</b> : <Skel w={70} dark />}
-                <small>{L.src.length && L.seen('channels') ? L.src.filter((c) => c.value === 'booking' || c.value === 'airbnb').map((c) => (c.value === 'booking' ? 'Booking' : 'Airbnb')).join(' · ') || 'הזמנות ישירות' : YC.preview.empty}</small>
+                <UnitLine L={L} r={r} />
               </span>
             </motion.li>
           ))}
@@ -296,6 +301,15 @@ function LiveToday({ a, i, phase, first }) {
       </div>
     </div>
   );
+}
+
+/** What a calendar row says about its sources: a pasted link connects unit 1 only (that is what the build saves);
+ *  every other unit, and every unit when no link was pasted, is connected later in /setup. */
+function UnitLine({ L, r }) {
+  if (!L.seen('channels')) return <small>{YC.preview.empty}</small>;
+  if (!L.ota.length) return <small>{YC.preview.direct}</small>;
+  if (r === 0 && L.linked.length) return <small className="is-linked"><Check strokeWidth={2.5} aria-hidden />{YC.preview.linked(L.linked)}</small>;
+  return <small>{YC.preview.later(L.ota.length)}</small>;
 }
 
 function Tile({ k, live, on, children }) {
@@ -346,13 +360,9 @@ function Month() {
 /** Phone: the same Today as one live card (photo, name, three numbers, sources). */
 function LiveCard({ a, i, phase, first }) {
   const L = useLive(a, i, phase);
-  const photo = a.kind ? kindPhoto(a.kind) : '/demo/shell-bg-m.webp';
   const ready = phase === 'done';
   return (
     <div className={cn('oy1-card', ready && 'is-ready')} aria-hidden>
-      <AnimatePresence initial={false}>
-        <motion.img key={photo} src={photo} alt="" className="oy1-card-img" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8, ease: EASE }} />
-      </AnimatePresence>
       <span className="oy1-card-shade" />
       <div className="oy1-card-top">
         <span className="min-w-0">

@@ -17,6 +17,8 @@ import { TOUR_STEPS } from '@/content/help.he';
 import { getTourState, setTourState, onTourStart, voicePref, setVoicePref } from '@/lib/tour/tourState';
 import TourView from './TourView';
 
+const ARRIVE_KEY = 'atlas.onb.arrive'; // set by the onboarding finish (components/onboarding/y/StepPhoto.jsx)
+
 const FALLBACK = {
   'today-board': ['today-board'],
   'calendar-grid': ['calendar-grid'],
@@ -88,19 +90,37 @@ export default function TourHost({ user }) {
   useEffect(() => {
     if (!user?.id) return undefined;
     let alive = true;
+    let timer = null;
+    let off = () => {};
+    // Straight from the onboarding finish ("פתחו את atlas"): the finish already said welcome, so Today gets its
+    // own moment first. The tour waits ~3s, skips its welcome card, and never lands on a tap in progress
+    // (it waits for 2.5s without input, and if the owner keeps going for 15s it stays in Settings for now).
+    let arrived = 0;
+    try { arrived = Number(sessionStorage.getItem(ARRIVE_KEY)) || 0; sessionStorage.removeItem(ARRIVE_KEY); } catch { /* private mode */ }
+    const fromOnboarding = arrived > 0 && Date.now() - arrived < 60000;
     getTourState(user).then((st) => {
       if (!alive || st?.status !== 'pending') return;
-      const at = Math.min(st.step || 0, total - 1);
-      setTimeout(() => {
+      const saved = Math.min(st.step || 0, total - 1);
+      const at = fromOnboarding && saved === 0 ? 1 : saved;
+      const open = () => {
+        off();
         if (!alive) return;
         if (!samePath(window.location.pathname, TOUR_STEPS[at]?.path)) return;
         returnFocus.current = document.activeElement;
         navRef.current = null;
         setIdx(at);
         setActive(true);
-      }, 700);
+      };
+      if (!fromOnboarding) { timer = setTimeout(open, 700); return; }
+      const t0 = Date.now();
+      const wait = (ms) => { clearTimeout(timer); timer = setTimeout(open, ms); };
+      const poke = () => { if (Date.now() - t0 > 15000) { clearTimeout(timer); off(); return; } wait(2500); };
+      const evs = ['pointerdown', 'keydown', 'wheel', 'touchmove'];
+      evs.forEach((e) => window.addEventListener(e, poke, { passive: true }));
+      off = () => evs.forEach((e) => window.removeEventListener(e, poke));
+      wait(reduced ? 1500 : 3200);
     });
-    return () => { alive = false; };
+    return () => { alive = false; clearTimeout(timer); off(); };
   }, [user?.id]);
 
   useEffect(() => onTourStart((s) => {
