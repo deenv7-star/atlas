@@ -180,7 +180,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
           {isLoading ? (
             <div className="p-4"><SkelRows rows={5} /></div>
           ) : filteredThreads.length === 0 ? (
-            <EmptyState compact icon={MessageSquare} title={searchTerm ? 'אין שיחה בשם הזה' : 'עוד לא נשלחו הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'פותחים הזמנה ולוחצים "שליחה בוואטסאפ". השיחה תופיע כאן.'} action={searchTerm ? null : <Button asChild><Link to={createPageUrl('Bookings')}>להזמנות</Link></Button>} />
+            <EmptyState compact icon={MessageSquare} face={searchTerm ? undefined : 'neutral'} title={searchTerm ? 'אין שיחה בשם הזה' : 'עוד לא נשלחו הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'פותחים הזמנה ולוחצים "שליחה בוואטסאפ". השיחה תופיע כאן.'} action={searchTerm ? null : <Button asChild><Link to={createPageUrl('Bookings')}>להזמנות</Link></Button>} />
           ) : (
             filteredThreads.map(thread => {
               const last = thread.messages[thread.messages.length - 1];
@@ -291,7 +291,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
         </div>
       ) : (
         <div className="hidden flex-1 items-center justify-center bg-canvas md:flex">
-          <EmptyState compact icon={MessageSquare} title="בחרו שיחה מהרשימה" description="לוחצים על שם של אורח כדי לראות את ההודעות ולכתוב לו." />
+          <EmptyState compact icon={MessageSquare} face={searchTerm ? undefined : 'neutral'} title="בחרו שיחה מהרשימה" description="לוחצים על שם של אורח כדי לראות את ההודעות ולכתוב לו." />
         </div>
       )}
       </div>

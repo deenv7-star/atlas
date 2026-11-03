@@ -13,7 +13,8 @@ import { ASSISTANT_DEMO } from './api.js';
 import './assistant.css';
 
 export { SparkMark } from './mark.jsx';
-import { SparkMark } from './mark.jsx';
+import { AtlasFace, useFaceMood } from '@/components/mascot/AtlasFace';
+import { emitMascot } from '@/components/mascot/useMascotMood';
 
 /* ── keyboard + safe area ─────────────────────────────────────────────── */
 /** Writes --as-kb (px hidden by the on-screen keyboard) on the given element, from visualViewport. */
@@ -76,7 +77,7 @@ export function Composer({ onSend, onStop, busy, autoFocus = false, inputRef: ou
         maxLength={2000}
         placeholder={placeholder}
         enterKeyHint={touch.current ? 'enter' : 'send'}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => { setText(e.target.value); emitMascot('user-typing', { el: e.target }); }}
         onKeyDown={onKeyDown}
       />
       <button
@@ -129,7 +130,7 @@ function Markdown({ text, onNavigate }) {
 export function Thinking() {
   return (
     <p className="as-thinking" role="status">
-      <SparkMark size={18} live />
+      <AtlasFace live mood="thinking" size={30} decorative />
       <span className="as-shimmer">בודקים בנתונים שלכם</span>
     </p>
   );
@@ -167,7 +168,7 @@ export function Answer({ msg, onRetry, onNavigate, last }) {
   return (
     <article className={`as-answer${msg.status === 'streaming' ? ' is-streaming' : ''}`} aria-busy={msg.status === 'streaming'}>
       {body ? <Markdown text={body} onNavigate={onNavigate} /> : null}
-      {msg.status === 'error' ? <p className="as-error" role="alert">{msg.error}</p> : null}
+      {msg.status === 'error' ? <p className="as-error" role="alert"><AtlasFace mood="concerned" size={30} decorative /><span>{msg.error}</span></p> : null}
       {msg.status === 'stopped' ? <p className="as-note">{body ? 'התשובה נעצרה באמצע.' : 'התשובה נעצרה.'}</p> : null}
       {actions.length ? (
         <div className="as-actions">
@@ -212,7 +213,8 @@ export function Suggestions({ items, onPick, label = 'אפשר לשאול' }) {
 
 function EmptyNoData({ onNavigate }) {
   return (
-    <section className="as-insight as-insight--quiet">
+    <section className="as-insight as-insight--quiet as-insight--mascot">
+      <AtlasFace live mood="sleepy" size={84} className="af-empty" />
       <p className="as-insight-title">כאן יופיעו תשובות מההזמנות שלכם</p>
       <p className="as-insight-body">אחרי הזמנה ראשונה ביומן אפשר לשאול על כסף, לילות פנויים ואורחים.</p>
       <div className="as-insight-row">
@@ -229,6 +231,7 @@ function EmptyNoData({ onNavigate }) {
  */
 export function Conversation({ facts, loading, page = '', variant = 'page', onNavigate, inputRef, autoFocus, header = null }) {
   const { messages, busy, send, stop, retry, clear } = useAssistant({ facts, page });
+  const mood = useFaceMood(messages);
   const scrollRef = useRef(null);
   const rootRef = useRef(null);
   const pinned = useRef(true);
@@ -262,7 +265,7 @@ export function Conversation({ facts, loading, page = '', variant = 'page', onNa
 
   return (
     <div ref={rootRef} className={`as-root as-root--${variant}`} dir="rtl">
-      {header ? header({ clear, hasThread: !empty, busy }) : null}
+      {header ? header({ clear, hasThread: !empty, busy, mood }) : null}
       <div ref={scrollRef} className="as-scroll">
         <div className="as-thread">
           {empty ? (

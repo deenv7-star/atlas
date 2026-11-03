@@ -2,6 +2,15 @@ import React from 'react';
 import { toast } from 'sonner';
 import { completeUndoSlot, enqueueUndoJob } from './undoQueue';
 import { usePersistentToastStore } from './persistentToastStore';
+import { emitMascot } from '@/components/mascot/useMascotMood';
+
+/** The glow face turns toward the toast (bottom centre on phones, bottom right on desktop) and reacts. */
+function toastPoint() {
+  if (typeof window === 'undefined') return undefined;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  return { at: { x: w < 768 ? w / 2 : w - 180, y: h - 60 } };
+}
 
 const DURATION_MS = {
   success: 3000,
@@ -24,6 +33,7 @@ export type PersistentToastAction = {
  */
 export const atlasToastApi = {
   success(message: string): void {
+    emitMascot('success', toastPoint());
     toast.success(message, {
       duration: DURATION_MS.success,
       className: `${baseToast} border-emerald-200 bg-emerald-50 text-emerald-950`,
@@ -31,6 +41,7 @@ export const atlasToastApi = {
   },
 
   error(message: string, detail?: string): void {
+    emitMascot('error', toastPoint());
     if (detail) {
       toast.custom(
         () => (
@@ -65,6 +76,7 @@ export const atlasToastApi = {
   },
 
   realtime(message: string): void {
+    emitMascot('look', toastPoint());
     toast(message, {
       duration: DURATION_MS.realtime,
       className: `${baseToast} border-blue-300 bg-blue-50 text-blue-950`,
