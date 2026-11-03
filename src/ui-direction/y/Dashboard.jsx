@@ -158,8 +158,9 @@ export default function DashboardView({ user, orgId }) {
             </motion.section>
 
             {hero ? (
-              <motion.button type="button" className={cn('y2-photo press', !unitPhoto(heroUnit) && 'y2-photo--none')} onClick={() => openBooking(hero)} {...rise(6)} aria-label={`פרטי ההזמנה של ${guestLabel(hero)}`}>
-                {unitPhoto(heroUnit) ? <img src={unitPhoto(heroUnit)} alt="" decoding="async" /> : null}
+              <motion.button type="button" className={cn('y2-photo press', !unitPhoto(heroUnit) && 'y2-photo--none')} onClick={() => openBooking(hero)}
+                initial={{ y: 16, scale: 0.985 }} animate={{ y: 0, scale: 1 }} transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}>
+                {unitPhoto(heroUnit) ? <img src={unitPhoto(heroUnit)} alt="" fetchPriority="high" /> : null}
                 <span className="y2-photo-shade" aria-hidden />
                 <span className="y2-photo-t">
                   <small>{whenOf(hero, m.day)}</small>

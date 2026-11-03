@@ -62,7 +62,7 @@ function Detail({ booking, model, onWhatsApp, Title = 'p' }) {
   return (
     <div className="y3d" dir="rtl">
       <div className={cn('y3d-photo', !photo && 'y3d-photo--none')}>
-        {photo ? <img src={photo} alt="" decoding="async" /> : null}
+        {photo ? <img src={photo} alt="" loading="lazy" decoding="async" /> : null}
         <span className="y3d-shade" aria-hidden />
         <span className="y3d-when">{whenOf(booking, model.day)}</span>
         <div className="y3d-id">
