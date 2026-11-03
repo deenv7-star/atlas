@@ -41,7 +41,7 @@ export function StayDetail({ booking, model, onWhatsApp, Title = 'h2' }) {
   const nights = nightsBetween(booking.check_in_date, checkOutOf(booking));
   const ch = channelOf(booking);
   const due = dueTemplateFor(booking, sent, model.day);
-  const item = held || model.queue.find((q) => q.booking?.id === booking.id) || null;
+  const item = held || (model.queue.find((q) => q.kind !== 'clean' && q.booking?.id === booking.id) || model.queue.find((q) => q.booking?.id === booking.id)) || null;
   const pct = bal.total > 0 ? Math.round((bal.paid / bal.total) * 100) : 0;
   const T = Title;
   return (

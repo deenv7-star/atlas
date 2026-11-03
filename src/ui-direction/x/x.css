@@ -136,8 +136,8 @@
 .x2d { color: var(--navy); padding-bottom: 8px; }
 .x2d-photo { height: 150px; overflow: hidden; }
 .x2d-img { width: 100%; height: 100%; }
-.x2d-id { display: flex; align-items: flex-end; gap: 12px; padding: 0 20px; margin-top: -28px; }
-.x2d-idt { min-width: 0; padding-bottom: 2px; }
+.x2d-id { position: relative; z-index: 1; display: flex; align-items: flex-start; gap: 12px; padding: 0 20px; margin-top: -28px; }
+.x2d-idt { min-width: 0; padding-top: 32px; }
 .x2d-name { font-size: 22px; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; }
 .x2d-sub { font-size: 13.5px; color: var(--mute); }
 .x2d-facts { margin: 18px 20px 0; display: grid; grid-template-columns: 1.3fr .7fr 1fr; border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line); }
@@ -150,7 +150,7 @@
 .x2d-bar i { display: block; height: 100%; border-radius: 3px; background: var(--navy); }
 .x2d-next { margin: 18px 20px 0; display: flex; flex-direction: column; gap: 8px; }
 .x2d-k { font-size: 12.5px; font-weight: 700; color: var(--soft); }
-.x2-go--wide { width: 100%; }
+.x2-go--wide { width: 100%; flex: none; }
 .x2-go--wide.is-busy, .x2-go--wide.is-done { width: 48px; align-self: center; }
 .x2d-j { margin: 18px 20px 0; position: relative; }
 .x2d-j li { position: relative; display: flex; align-items: center; gap: 12px; min-height: 30px; font-size: 14px; color: var(--soft); }
