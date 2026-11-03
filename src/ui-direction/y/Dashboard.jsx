@@ -1,11 +1,12 @@
 /**
- * Y2 · "זכוכית" (after the visionOS glass board). One frosted window over a real zimmer photo.
+ * Y3 · "השילוב" = Y2 "זכוכית" (after the visionOS glass board). One frosted window over a real zimmer photo.
  * Four white metric tiles, each with its own tiny live viz; the month's income as a glowing wave next to
  * a real photo card of who arrives next; "הדבר הבא" as three cards, the first one indigo. A darker glass
  * column on the side: the month calendar with colored days and who comes and goes today, with photos.
- * A booking opens as a floating glass card (desktop) or a glass sheet (phone).
+ * Y3: below them Y1's bookings panel in navy glass (list + the chosen booking beside it); on the phone a row
+ * opens the same detail as a navy glass sheet.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, MoreHorizontal, Sparkles } from 'lucide-react';
@@ -18,7 +19,8 @@ import { cn } from '@/lib/utils';
 import { useTodayModel, money, moneyNum, guestLabel, MONTHS } from './model';
 import Face from './Face';
 import { Num, Ticks, Wave, DotGrid, Ring, FaceStack, useBookingList, whenOf } from './ui';
-import StaySheet from './Sheet';
+import { BookingsPanel, BookingSheet, isPhone } from './Bookings';
+import './y3.css';
 
 const EASE = [0.23, 1, 0.32, 1];
 const rise = (i = 0) => ({ initial: { opacity: 0, y: 16, scale: 0.985 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { duration: 0.7, ease: EASE, delay: 0.05 + i * 0.07 } });
@@ -62,6 +64,14 @@ export default function DashboardView({ user, orgId }) {
   const m = useTodayModel({ orgId });
   const list = useBookingList(m);
   const [sheet, setSheet] = useState(null);
+  const [selId, setSelId] = useState(null);
+  const panelRef = useRef(null);
+  // phone: the navy sheet; desktop: pick it in the bookings panel and bring the panel into view
+  const openBooking = (b) => {
+    if (isPhone()) { setSheet(b); return; }
+    setSelId(b.id);
+    panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
   const [composer, setComposer] = useState(null);
   const [going, setGoing] = useState(null);
   const name = firstName(user?.full_name || '');
@@ -147,7 +157,7 @@ export default function DashboardView({ user, orgId }) {
             </motion.section>
 
             {hero ? (
-              <motion.button type="button" className="y2-photo press" onClick={() => setSheet(hero)} {...rise(6)} aria-label={`פרטי ההזמנה של ${guestLabel(hero)}`}>
+              <motion.button type="button" className="y2-photo press" onClick={() => openBooking(hero)} {...rise(6)} aria-label={`פרטי ההזמנה של ${guestLabel(hero)}`}>
                 {unitPhoto(heroUnit) ? <img src={unitPhoto(heroUnit)} alt="" decoding="async" /> : null}
                 <span className="y2-photo-shade" aria-hidden />
                 <span className="y2-photo-t">
@@ -212,7 +222,7 @@ export default function DashboardView({ user, orgId }) {
               const p = m.prop(b.property_id); const ch = channelOf(b);
               return (
                 <motion.li key={`${dir}-${b.id}`} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.4 + i * 0.06 }}>
-                  <button type="button" className="y2-arr-row press" onClick={() => setSheet(b)}>
+                  <button type="button" className="y2-arr-row press" onClick={() => openBooking(b)}>
                     <span className="y2-arr-img">{unitPhoto(p) ? <img src={unitPhoto(p)} alt="" loading="lazy" decoding="async" /> : null}<Face name={b.guest_name || ''} size={26} ring /></span>
                     <span className="y2-arr-t">
                       <em className={cn('y2-src', `y2-src--${ch.key}`)}>{dir === 'in' ? 'הגעה' : dir === 'out' ? 'יציאה' : 'בקרוב'} · {ch.key === 'direct' ? 'ישיר' : ch.label.replace('.com', '')}</em>
@@ -226,9 +236,12 @@ export default function DashboardView({ user, orgId }) {
             })}
           </ul>
         </aside>
+
+        <BookingsPanel ref={panelRef} model={m} list={list} selId={selId} setSelId={setSelId} onOpen={setSheet} delay={0.45}
+          onWhatsApp={(b, t) => setComposer({ booking: b, template: t })} />
       </motion.div>
 
-      <StaySheet open={!!sheet} onOpenChange={(o) => !o && setSheet(null)} booking={sheet} model={m}
+      <BookingSheet open={!!sheet} onOpenChange={(o) => !o && setSheet(null)} booking={sheet} model={m}
         onWhatsApp={(b, t) => { setSheet(null); setComposer({ booking: b, template: t }); }} />
       <WhatsAppComposer
         open={!!composer}

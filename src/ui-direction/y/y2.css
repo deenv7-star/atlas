@@ -1,6 +1,6 @@
 /* Y2 · "זכוכית" — frosted panels over a real zimmer photo (visionOS board). White tiles with tiny viz,
    ONE indigo card per row, navy glass side column. Palette: #3E2BF1, #1B2656, #F7F8FB, white; amber = due dot. */
-.y2-shell, .y2s { --ind: #3E2BF1; --navy: #1B2656; --mute: rgba(27,38,86,.6); --soft: rgba(27,38,86,.42); --line: rgba(27,38,86,.08); --ease: cubic-bezier(.23,1,.32,1); --amber: #F5A524;
+.y2-shell, .y3s { --ind: #3E2BF1; --navy: #1B2656; --mute: rgba(27,38,86,.6); --soft: rgba(27,38,86,.42); --line: rgba(27,38,86,.08); --ease: cubic-bezier(.23,1,.32,1); --amber: #F5A524;
   --glass: rgba(255,255,255,.3); --gb: inset 0 0 0 1px rgba(255,255,255,.55), inset 0 1px 0 rgba(255,255,255,.7); }
 .y2-shell { color: var(--navy); background: #8a7a6a url('/demo/welcome.webp') center 40% / cover no-repeat; }
 .y2-shell::before { content: ''; position: fixed; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(27,38,86,.18), rgba(27,38,86,.05) 40%, rgba(27,38,86,.22)); z-index: 0; }
@@ -8,8 +8,8 @@
 .y2-shell .sp-launcher { display: none; }
 .y2-shell #atlas-main-scroll { padding-bottom: calc(118px + env(safe-area-inset-bottom)) !important; }
 @media (min-width: 1024px) { .y2-shell #atlas-main-scroll { padding-bottom: 28px !important; } }
-.y2-shell .press, .y2s .press { transition: transform .18s var(--ease), background-color .2s, color .2s, box-shadow .25s var(--ease); }
-.y2-shell .press:active, .y2s .press:active { transform: scale(.97); }
+.y2-shell .press, .y3s .press { transition: transform .18s var(--ease), background-color .2s, color .2s, box-shadow .25s var(--ease); }
+.y2-shell .press:active, .y3s .press:active { transform: scale(.97); }
 .y2-amber { display: inline-block; width: 7px; height: 7px; border-radius: 99px; background: var(--amber); flex-shrink: 0; }
 
 /* ── rail (desktop) ── */
@@ -202,59 +202,9 @@
 .y2-arr-t small { font-size: 12px; color: rgba(255,255,255,.65); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .y2-arr-time { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.85); white-space: nowrap; }
 
-/* ── floating booking card ── */
-.y2s-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(27,38,86,.28); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); animation: y-fade .3s ease both; }
-.y2s { position: fixed; z-index: 61; inset-inline: 0; bottom: 0; max-height: 94dvh; overflow-y: auto; padding: 0 10px calc(10px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; animation: y2s-up .5s var(--ease) both; color: var(--navy); }
-@keyframes y2s-up { from { transform: translateY(40px); opacity: 0; } }
-@media (min-width: 1024px) { .y2s { inset-inline: auto; bottom: auto; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 680px; padding: 0; animation: y2s-in .55s var(--ease) both; } }
-@keyframes y2s-in { from { transform: translate(-50%, -46%) scale(.96); opacity: 0; } }
-.y2s-tools { align-self: center; display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: rgba(255,255,255,.45); backdrop-filter: blur(24px) saturate(1.5); -webkit-backdrop-filter: blur(24px) saturate(1.5); box-shadow: var(--gb), 0 16px 30px -18px rgba(27,38,86,.6); }
-.y2s-tool { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 13px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--navy); white-space: nowrap; }
-.y2s-tool:hover { background: rgba(255,255,255,.7); }
-.y2s-tool svg { width: 16px; height: 16px; }
-@media (max-width: 420px) { .y2s-tool { padding: 0 9px; font-size: 12px; } }
-.y2s-card { border-radius: 32px; overflow: hidden; background: rgba(255,255,255,.62); backdrop-filter: blur(40px) saturate(1.5); -webkit-backdrop-filter: blur(40px) saturate(1.5); box-shadow: var(--gb), 0 60px 100px -40px rgba(27,38,86,.7); }
-.y2s-photo { position: relative; height: 220px; }
-@media (min-width: 1024px) { .y2s-photo { height: 260px; } }
-.y2s-photo img { width: 100%; height: 100%; object-fit: cover; }
-.y2s-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(27,38,86,.25), rgba(27,38,86,0) 40%, rgba(27,38,86,.65)); }
-.y2s-close { position: absolute; top: 14px; inset-inline-end: 14px; display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 99px; color: #fff; background: rgba(255,255,255,.2); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
-.y2s-close svg { width: 19px; height: 19px; }
-.y2s-when { position: absolute; top: 18px; inset-inline-start: 18px; height: 30px; display: inline-flex; align-items: center; padding: 0 13px; border-radius: 99px; font-size: 12.5px; font-weight: 700; color: var(--navy); background: rgba(255,255,255,.88); }
-.y2s-id { position: absolute; bottom: 16px; inset-inline-start: 18px; inset-inline-end: 18px; display: flex; align-items: center; gap: 12px; color: #fff; }
-.y2s-name { font-size: 28px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
-.y2s-unit { font-size: 13.5px; opacity: .88; margin-top: 2px; }
-.y2s-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-@media (min-width: 1024px) { .y2s-body { padding: 22px 24px 24px; } }
-.y2s-stay { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 8px; }
-.y2s-stay > div { display: flex; flex-direction: column; gap: 2px; }
-.y2s-stay span { font-size: 12px; color: var(--mute); }
-.y2s-stay b { font-size: 22px; font-weight: 300; letter-spacing: -.02em; white-space: nowrap; }
-.y2s-money { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.y2s-money > div { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 20px; background: rgba(255,255,255,.75); box-shadow: inset 0 0 0 1px #fff; }
-.y2s-money > div > span { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--mute); }
-.y2s-money .y-num { font-size: 26px; color: var(--navy); }
-.y2s-money .y-stripe { height: 6px; }
-.y2s-j { padding: 14px 16px; border-radius: 20px; background: rgba(255,255,255,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.8); }
-.y2s-j p { display: flex; justify-content: space-between; font-size: 13px; }
-.y2s-j p span { color: var(--mute); }
-.y2s-j ol { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-.y2s-j li { display: flex; flex-direction: column; gap: 8px; font-size: 10.5px; color: var(--soft); }
-.y2s-j li i { height: 7px; border-radius: 99px; background: rgba(27,38,86,.1); transform-origin: right; animation: y-grow-x .8s var(--ease) both; }
-.y2s-j li.ok { color: var(--navy); } .y2s-j li.ok i { background: var(--navy); }
-.y2s-j li.cur { color: var(--ind); font-weight: 700; } .y2s-j li.cur i { background: repeating-linear-gradient(-55deg, #3E2BF1 0 5px, #6A5BF5 5px 9px); box-shadow: 0 0 12px rgba(62,43,241,.6); }
-.y2s-go { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 62px; padding: 0 8px; padding-inline-start: 22px; border-radius: 999px; background: var(--ind); color: #fff; text-align: start; box-shadow: 0 20px 36px -16px rgba(62,43,241,.9); }
-.y2s-go > span { display: flex; flex-direction: column; font-size: 15px; font-weight: 700; line-height: 1.2; min-width: 0; }
-.y2s-go small { font-size: 12px; font-weight: 400; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.y2s-go i { display: inline-grid; place-items: center; width: 46px; height: 46px; border-radius: 99px; background: #fff; color: var(--ind); flex-shrink: 0; transition: transform .35s var(--ease); }
-.y2s-go i svg { width: 19px; height: 19px; }
-.y2s-go:hover i { transform: translateX(-3px); }
-.y2s-go.is-go { background: var(--navy); }
-
 @media (prefers-reduced-motion: reduce) {
-  .y2-hello-chip i, .y2-tip, .y2-cd, .y2s, .y2s-overlay, .y2s-j li i { animation: none !important; }
+  .y2-hello-chip i, .y2-tip, .y2-cd { animation: none !important; }
 }
 
-.y2s-name { color: #fff !important; }
-.y2s-money .y-num, .y2-tn .y-num { align-self: flex-start; }
+.y2-tn .y-num { align-self: flex-start; }
 @media (max-width: 1023px) { .y2-photo { order: -1; } }
