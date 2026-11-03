@@ -23,6 +23,7 @@
 
 import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
 import { publicOrigin, isNativeApp } from '@/lib/native';
+import { safeSignOut } from '@/lib/auth/signOutCore';
 
 // =============================================================================
 // Local REST API client (talks to server/index.js)
@@ -579,10 +580,14 @@ const supabaseAuth = {
   },
 
   async logout() {
-    // iOS app: signing out also forgets the Face ID sign-in (signOut revokes that refresh token anyway).
-    if (isNativeApp()) await import('@/lib/auth/biometric').then((m) => m.clearBiometric()).catch(() => {});
-    await supabase.auth.signOut();
-    return { success: true };
+    // Never blocks: every step is time-limited (signOut → local signOut fallback), and the stored session is
+    // removed at the end whatever the network did. iOS app: also forgets the Face ID sign-in.
+    const { server } = await safeSignOut(supabase, {
+      beforeSignOut: isNativeApp()
+        ? () => import('@/lib/auth/biometric').then((m) => m.clearBiometric())
+        : undefined,
+    });
+    return { success: true, server };
   },
 
   async updateMe(profileData) {

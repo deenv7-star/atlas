@@ -17,8 +17,17 @@ import {
 const ACCESS_BIOMETRY_CURRENT_SET = 1; // AccessControl.BIOMETRY_CURRENT_SET
 
 let pluginP = null;
+/**
+ * Resolves { NB } — never the plugin itself. A Capacitor plugin is a Proxy that answers every property,
+ * `then` included, so a promise resolved with it (or an async function returning it) calls NB.then() on
+ * the native side, which does not exist: the promise never settles. That is what made sign-out (and every
+ * Face ID call) hang forever in the app.
+ */
 function plugin() {
-  if (!pluginP) pluginP = import('@capgo/capacitor-native-biometric').then((m) => m.NativeBiometric);
+  if (!pluginP) {
+    pluginP = import('@capgo/capacitor-native-biometric').then((m) => ({ NB: m.NativeBiometric }));
+    pluginP.catch(() => { pluginP = null; });
+  }
   return pluginP;
 }
 
@@ -33,7 +42,7 @@ export const markBiometricOffered = () => writeBiometricPrefs(store(), { offered
 export async function biometricAvailability() {
   if (!isNativeApp()) return { available: false, label: 'Face ID' };
   try {
-    const NB = await plugin();
+    const { NB } = await plugin();
     const r = await NB.isAvailable({ useFallback: false });
     const type = Number(r?.biometryType);
     return { available: Boolean(r?.isAvailable) && (type === 1 || type === 2), label: biometryLabel(type) };
@@ -46,7 +55,7 @@ export async function biometricAvailability() {
 export async function biometricSaved() {
   if (!isNativeApp()) return false;
   try {
-    const NB = await plugin();
+    const { NB } = await plugin();
     const r = await NB.isDataSaved({ key: BIOMETRIC_SECRET_KEY });
     return Boolean(r?.isSaved);
   } catch {
@@ -55,7 +64,7 @@ export async function biometricSaved() {
 }
 
 async function writeToken(refreshToken) {
-  const NB = await plugin();
+  const { NB } = await plugin();
   await NB.setData({ key: BIOMETRIC_SECRET_KEY, value: refreshToken, accessControl: ACCESS_BIOMETRY_CURRENT_SET });
 }
 
@@ -71,7 +80,7 @@ export async function clearBiometric({ keepOffered = true } = {}) {
   if (!isNativeApp()) return;
   writeBiometricPrefs(store(), { enabled: false, userId: '', ...(keepOffered ? {} : { offered: false }) });
   try {
-    const NB = await plugin();
+    const { NB } = await plugin();
     await NB.deleteData({ key: BIOMETRIC_SECRET_KEY });
   } catch { /* nothing saved */ }
 }
@@ -81,7 +90,7 @@ export async function clearBiometric({ keepOffered = true } = {}) {
  * Throws the plugin / Supabase error; the caller maps it with biometricErrorKind().
  */
 export async function signInWithBiometric(supabase, { reason } = {}) {
-  const NB = await plugin();
+  const { NB } = await plugin();
   const { value } = await NB.getSecureData({ key: BIOMETRIC_SECRET_KEY, reason: reason || 'כניסה ל-atlas' });
   if (!value) {
     const e = new Error('No protected data found for key');

@@ -388,8 +388,7 @@ export default function SettingsPage({ user }) {
             <SecuritySettings
               user={user}
               onDeleted={async () => {
-                try { await logout(false); } catch { /* session is already gone */ }
-                window.location.href = '/login?success=' + encodeURIComponent('החשבון נמחק. תודה שהייתם איתנו.');
+                await logout(true, '/login?success=' + encodeURIComponent('החשבון נמחק. תודה שהייתם איתנו.'));
               }}
             />
           )}
