@@ -56,7 +56,7 @@
   background: rgba(255, 255, 255, 0.86); -webkit-backdrop-filter: saturate(1.8) blur(20px); backdrop-filter: saturate(1.8) blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 1px 2px rgba(27, 38, 86, 0.06), 0 18px 40px -16px rgba(27, 38, 86, 0.3);
   color: var(--navy); text-align: start;
-  animation: ph-in 760ms var(--ph-ease) both; animation-delay: calc(450ms + var(--i) * 650ms);
+  animation: ph-in 600ms var(--ph-ease) both; animation-delay: calc(250ms + var(--i) * 300ms); /* PERF-001: the three cards land by ~1.45 s (was ~2.5 s), same motion */
 }
 .ph-ntf:nth-child(3) { display: none; }
 @media (min-height: 760px) { .ph-ntf:nth-child(3) { display: flex; } }

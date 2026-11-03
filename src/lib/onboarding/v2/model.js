@@ -38,7 +38,7 @@ export function unitsLabel(kind, n) {
 
 /** The word in "איך קוראים ל…?" */
 export function placeWord(kind) {
-  return { complex: 'מתחם', zimmer: 'צימר', villa: 'וילה', zimmer_complex: 'מתחם' }[kind] || 'מקום';
+  return { complex: 'מתחם', zimmer: 'צימר', villa: 'וילה', zimmer_complex: 'מתחם' }[kind] || 'מתחם';
 }
 
 export const GUESTS_LIMIT = 60;
@@ -175,8 +175,8 @@ export const SETUP_STEPS = [
   { id: 'booking', title: 'חיבור Booking.com', line: 'ההזמנות מ-Booking נכנסות ללוח לבד', minutes: 3 },
   { id: 'airbnb', title: 'חיבור Airbnb', line: 'ההזמנות מ-Airbnb נכנסות ללוח לבד', minutes: 3 },
   { id: 'whatsapp', title: 'וואטסאפ לאורחים', line: 'הודעות מוכנות, שולחים בלחיצה', minutes: 1 },
-  { id: 'plan', title: 'השלמת המסלול', line: 'המסלול שבחרתם, מתי שנוח', minutes: 1 },
-  { id: 'payments', title: 'תשלומים וקבלות', line: 'סליקה וקבלות אוטומטיות', soon: true },
+  { id: 'plan', title: 'השלמת החבילה', line: 'החבילה שבחרתם, מתי שנוח', minutes: 1 },
+  { id: 'payments', title: 'קישור תשלום למקדמה', line: 'האורח משלם בקישור, וההזמנה מתעדכנת לבד', soon: true },
 ];
 
 /**

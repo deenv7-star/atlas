@@ -1,47 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { nightsBetween } from '@/lib/entityPayloads';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { useLead, useUpdateLead, useDeleteLead } from '@/data/entities';
+import { useLead, useUpdateLead, useDeleteLead, useProperties } from '@/data/entities';
 import { atlasToastApi } from '@/components/ui/AtlasToast';
-import { ChevronRight, Pencil, Trash2 } from 'lucide-react';
+import { ChevronRight, Pencil, Trash2, MessageSquare, Phone, Mail, ArrowLeftRight, CalendarDays } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Phone,
-  Mail,
-  Calendar,
-  Users,
-  ArrowLeftRight,
-} from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 import { heCount } from '@/lib/hebrewCount';
+import { Page, StatusPill, fmtDay, fmtMoney } from '@/components/ds';
+import { GuestAvatar } from '@/components/app/atoms';
+import { useQuickBooking } from '@/components/app/QuickBooking';
+import { isDialable, telHref, whatsappHref } from '@/lib/phone';
+import { formatRangeHe, firstName } from '@/lib/stay/format';
+import { nightsBetween } from '@/lib/entityPayloads';
 
-const statusLabels = {
-  NEW: 'חדש',
-  CONTACTED: 'נוצר קשר',
-  OFFER_SENT: 'הצעה נשלחה',
-  CONFIRMED: 'מאושר',
-  WON: 'נסגר',
-  LOST: 'לא רלוונטי',
+const STATUS = {
+  NEW: { label: 'חדש', tone: 'brand' },
+  CONTACTED: { label: 'בטיפול', tone: 'warning' },
+  OFFER_SENT: { label: 'הצעה נשלחה', tone: 'sky' },
+  CONFIRMED: { label: 'נסגר', tone: 'sky' },
+  WON: { label: 'נסגר', tone: 'success' },
+  REJECTED: { label: 'לא מתאים לנו', tone: 'neutral' },
+  LOST: { label: 'הזמין במקום אחר', tone: 'neutral' },
 };
 
-const sourceLabels = {
+const SOURCE = {
   FACEBOOK: 'פייסבוק',
   WHATSAPP: 'וואטסאפ',
   WEBSITE: 'אתר',
@@ -49,13 +41,76 @@ const sourceLabels = {
   OTHER: 'אחר',
 };
 
-export default function LeadDetail({ orgId }) {
+/** Opening line for the WhatsApp reply, written as the host to the guest. */
+function replyText(lead) {
+  const name = firstName(lead.full_name);
+  const hi = name ? `שלום ${name}` : 'שלום';
+  const dates = lead.check_in_date && lead.check_out_date ? ` לתאריכים ${formatRangeHe(lead.check_in_date, lead.check_out_date)}` : '';
+  return `${hi}, תודה על הפנייה${dates}. אשמח לספר על הזמינות והמחיר.`;
+}
+
+/** Lead → booking form values (the host still picks the unit and checks price before saving). */
+function leadToBookingPreset(lead) {
+  const budget = Number(lead.budget);
+  return {
+    guest_name: lead.full_name || '',
+    guest_phone: lead.phone || '',
+    guest_email: lead.email || '',
+    property_id: lead.property_id || '',
+    check_in_date: lead.check_in_date || '',
+    check_out_date: lead.check_out_date || '',
+    nights: lead.nights || nightsBetween(lead.check_in_date, lead.check_out_date) || 1,
+    adults: lead.adults || 2,
+    children: lead.children || 0,
+    total_price: Number.isFinite(budget) && budget > 0 ? String(budget) : '',
+    notes: lead.notes || '',
+    status: 'PENDING',
+    booking_source: 'direct',
+  };
+}
+
+function Section({ title, children, className }) {
+  return (
+    <section className={cn('v7-card p-5 md:p-6', className)}>
+      <h2 className="mb-3 text-[17px] font-bold text-navy-900">{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function Fact({ label, children }) {
+  return (
+    <div className="min-w-0">
+      <p className="text-[13px] font-medium text-ink-400">{label}</p>
+      <p className="mt-0.5 truncate text-[16px] font-semibold text-navy-900">{children}</p>
+    </div>
+  );
+}
+
+export default function LeadDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: lead, isLoading } = useLead(id);
+  const { data: properties = [] } = useProperties();
   const updateMutation = useUpdateLead();
+  const deleteLead = useDeleteLead();
+  const quickBooking = useQuickBooking();
   const [notesDraft, setNotesDraft] = useState('');
   const [notesInvalid, setNotesInvalid] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [converting, setConverting] = useState(false);
+
+  // ENG-04: one lead → one booking. If it was already converted, the button opens that booking.
+  const linked = useQuery({
+    queryKey: ['bookings', 'by-lead', id],
+    queryFn: async () => {
+      const rows = await base44.entities.Booking.filter({ lead_id: id }, '-created_at', 5);
+      return (rows || []).find((b) => !['CANCELLED', 'CANCELED'].includes(String(b.status || '').toUpperCase())) || null;
+    },
+    enabled: !!id,
+    staleTime: 30_000,
+  });
+  const linkedBooking = linked.data || null;
 
   useEffect(() => {
     if (lead?.notes != null) setNotesDraft(String(lead.notes));
@@ -73,29 +128,34 @@ export default function LeadDetail({ orgId }) {
     return () => window.removeEventListener('atlas:entity-validation-error', onValidation);
   }, [id]);
 
-  const deleteLead = useDeleteLead();
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const unitName = useMemo(
+    () => (lead?.property_id ? properties.find((p) => p.id === lead.property_id)?.name || '' : ''),
+    [lead?.property_id, properties],
+  );
 
-  const handleConvertToBooking = async (leadRow) => {
-    const booking = await base44.entities.Booking.create({
-      org_id: leadRow.org_id,
-      property_id: leadRow.property_id,
-      lead_id: leadRow.id,
-      guest_name: leadRow.full_name,
-      guest_phone: leadRow.phone,
-      guest_email: leadRow.email,
-      check_in_date: leadRow.check_in_date,
-      check_out_date: leadRow.check_out_date,
-      nights: leadRow.nights ?? nightsBetween(leadRow.check_in_date, leadRow.check_out_date),
-      adults: leadRow.adults,
-      children: leadRow.children,
-      source: leadRow.source || null,
-      notes: leadRow.notes,
-      status: 'PENDING',
+  // APP-022: open the booking form prefilled from the lead (unit, dates, price, overlap check) instead of
+  // inserting a half-empty booking. The form's own submit lock prevents a double save.
+  const openConvert = () => {
+    if (!lead || converting) return;
+    if (linkedBooking) {
+      navigate(`${createPageUrl('BookingDetail')}/${linkedBooking.id}`);
+      return;
+    }
+    setConverting(true);
+    quickBooking.open(leadToBookingPreset(lead), {
+      leadId: lead.id,
+      title: 'הזמנה מהליד',
+      onClose: () => setConverting(false),
+      onCreated: async (booking) => {
+        try {
+          await updateMutation.mutateAsync({ id: lead.id, data: { status: 'WON' } });
+        } catch {
+          atlasToastApi.error('ההזמנה נשמרה, אבל לא הצלחנו לסמן את הליד כנסגר. סמנו אותו ידנית.');
+        }
+        linked.refetch();
+        if (booking?.id) window.setTimeout(() => navigate(`${createPageUrl('BookingDetail')}/${booking.id}`), 750);
+      },
     });
-
-    await updateMutation.mutateAsync({ id: leadRow.id, data: { status: 'WON' } });
-    navigate(`${createPageUrl('BookingDetail')}/${booking.id}`);
   };
 
   const saveNotes = () => {
@@ -118,10 +178,17 @@ export default function LeadDetail({ orgId }) {
     return (
       <div className="p-10 text-center">
         <h1 className="text-[18px] font-bold text-navy-900">לא מצאנו את הליד</h1>
-        <p className="mt-1 text-[16px] text-ink-600">אולי הוא נמחק, או שהקישור ישן.</p>
+        <p className="mt-1 text-[16px] text-ink-600">ייתכן שנמחק, או שהקישור ישן. חזרו לרשימת הלידים.</p>
       </div>
     );
   }
+
+  const status = STATUS[lead.status] || STATUS.NEW;
+  const phoneOk = isDialable(lead.phone);
+  const hasDates = !!(lead.check_in_date || lead.check_out_date);
+  const nights = nightsBetween(lead.check_in_date, lead.check_out_date);
+  const guests = (Number(lead.adults) || 0) + (Number(lead.children) || 0);
+  const budget = Number(lead.budget);
 
   return (
     <motion.div
@@ -129,144 +196,151 @@ export default function LeadDetail({ orgId }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.2 }}
-      className={cn('p-6 space-y-6 max-w-2xl mx-auto', optimisticEntityClassName(lead.id))}
+      className={optimisticEntityClassName(lead.id)}
     >
-      <div className="flex items-center justify-between gap-2">
-        <button type="button" onClick={() => navigate(createPageUrl('Leads'))} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-full px-3 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
-          <ChevronRight className="h-5 w-5" />
-          לידים
-        </button>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" className="h-11" onClick={() => navigate(`${createPageUrl('Leads')}?openGuestId=${encodeURIComponent(lead.id)}`)}>
-            <Pencil />
-            עריכה
-          </Button>
-          <Button variant="ghost" size="icon" className="h-11 w-11 text-ink-600 hover:text-danger-600" aria-label="מחיקת ליד" onClick={() => setConfirmDelete(true)}>
-            <Trash2 />
-          </Button>
+      <Page className="max-w-[760px]">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <button type="button" onClick={() => navigate(createPageUrl('Leads'))} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-full px-3 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
+            <ChevronRight className="h-5 w-5" />
+            לידים
+          </button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" className="h-11" onClick={() => navigate(`${createPageUrl('Leads')}?openGuestId=${encodeURIComponent(lead.id)}`)}>
+              <Pencil />
+              עריכה
+            </Button>
+            <Button variant="ghost" size="icon" className="h-11 w-11 text-ink-600 hover:text-danger-600" aria-label="מחיקת ליד" onClick={() => setConfirmDelete(true)}>
+              <Trash2 />
+            </Button>
+          </div>
         </div>
-      </div>
-      <h1 className="text-[30px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900">{lead.full_name || 'ליד'}</h1>
-      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <DialogContent className="max-w-[420px]" dir="rtl">
-          <DialogHeader>
-            <DialogTitle className="text-[20px] font-bold text-navy-900">למחוק את הליד?</DialogTitle>
-          </DialogHeader>
-          <p className="text-[15px] text-ink-600">{lead.full_name || 'הליד'} יוסר מרשימת הלידים.</p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmDelete(false)}>ביטול</Button>
-            <Button variant="destructive" disabled={deleteLead.isPending} onClick={() => { const leadId = lead.id; setConfirmDelete(false); navigate(createPageUrl('Leads')); deleteLead.mutate(leadId, { onSuccess: () => atlasToastApi.success('הליד נמחק'), onError: () => atlasToastApi.error('לא הצלחנו למחוק את הליד. נסו שוב.') }); }}>מחיקה</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <div className="space-y-4">
-        <h3 className="font-semibold text-[#1B2656] select-none">פרטי קשר</h3>
-        <Card className="border-0 shadow-sm rounded-2xl">
-          <CardContent className="p-4 space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-brand-600/10 rounded-xl flex items-center justify-center">
-                <span className="text-lg font-bold text-brand-600 select-none">
-                  {lead.full_name?.charAt(0)}
-                </span>
-              </div>
-              <div>
-                <p className="font-medium">{lead.full_name}</p>
-                <p className="text-sm text-gray-500">{sourceLabels[lead.source]}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Phone className="h-4 w-4 text-gray-400" />
-              <span dir="ltr">{lead.phone}</span>
-            </div>
-            {lead.email && (
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-gray-400" />
-                <span>{lead.email}</span>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
 
-      {(lead.check_in_date || lead.check_out_date) && (
+        <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+          <DialogContent className="max-w-[420px]" dir="rtl">
+            <DialogHeader>
+              <DialogTitle className="text-[20px] font-bold text-navy-900">למחוק את הליד?</DialogTitle>
+            </DialogHeader>
+            <p className="text-[15px] text-ink-600">{lead.full_name || 'הליד'} יוסר מרשימת הלידים.</p>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setConfirmDelete(false)}>ביטול</Button>
+              <Button variant="destructive" disabled={deleteLead.isPending} onClick={() => { const leadId = lead.id; setConfirmDelete(false); navigate(createPageUrl('Leads')); deleteLead.mutate(leadId, { onSuccess: () => atlasToastApi.success('הליד נמחק'), onError: () => atlasToastApi.error('לא הצלחנו למחוק את הליד. נסו שוב.') }); }}>מחיקה</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         <div className="space-y-4">
-          <h3 className="font-semibold text-[#1B2656] select-none">תאריכים מבוקשים</h3>
-          <Card className="border-0 shadow-sm rounded-2xl">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gray-400" />
-                <span className="text-sm">כניסה: {lead.check_in_date && format(parseISO(lead.check_in_date), 'd/M/yyyy')}</span>
+          <section className="v5-rise v7-card p-5 md:p-6">
+            <div className="flex items-center gap-4">
+              <GuestAvatar name={lead.full_name || 'ליד'} size={64} ring />
+              <div className="min-w-0 flex-1">
+                <h1 className="truncate text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900 md:text-[30px]">{lead.full_name || 'ליד'}</h1>
+                <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-ink-600 md:text-[15px]">
+                  <StatusPill label={status.label} tone={status.tone} />
+                  {SOURCE[lead.source] ? <span>מ{SOURCE[lead.source]}</span> : null}
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gray-400" />
-                <span className="text-sm">יציאה: {lead.check_out_date && format(parseISO(lead.check_out_date), 'd/M/yyyy')}</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+            </div>
 
-      {lead.adults && (
-        <Card className="border-0 shadow-sm rounded-2xl">
-          <CardContent className="p-4 flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-gray-400" />
-            <span>{heCount(lead.adults, 'guest')}</span>
-          </CardContent>
-        </Card>
-      )}
+            <div className="mt-5 flex flex-wrap items-center gap-2">
+              {phoneOk ? (
+                <>
+                  <a
+                    href={whatsappHref(lead.phone, replyText(lead))}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="press inline-flex h-12 min-w-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-brand-600 px-6 text-[15px] font-bold text-white shadow-[0_10px_22px_-10px_rgba(62,43,241,0.7)] hover:bg-brand-500 sm:flex-none"
+                  >
+                    <MessageSquare className="h-5 w-5" aria-hidden />
+                    תשובה בוואטסאפ
+                  </a>
+                  <a
+                    href={telHref(lead.phone)}
+                    className="press inline-flex h-12 min-w-[48px] items-center justify-center gap-2 rounded-full bg-[#F1F1F8] px-4 text-[15px] font-semibold text-navy-900 hover:bg-[#E8E8F2]"
+                  >
+                    <Phone className="h-[18px] w-[18px]" aria-hidden />
+                    <span className="sr-only">שיחה ל-{lead.full_name || 'ליד'}: </span>
+                    <span dir="ltr" className="tabular">{lead.phone}</span>
+                  </a>
+                </>
+              ) : lead.phone ? (
+                <p className="text-[14px] text-ink-600">
+                  המספר <span dir="ltr">{lead.phone}</span> לא נראה תקין. ערכו את הליד כדי לחייג או לשלוח וואטסאפ.
+                </p>
+              ) : (
+                <p className="text-[14px] text-ink-600">אין טלפון בליד. הוסיפו אותו בעריכה כדי לענות בוואטסאפ.</p>
+              )}
+              {lead.email ? (
+                <a href={`mailto:${lead.email}`} aria-label={`מייל ל-${lead.full_name || 'ליד'}`} className="press inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F1F1F8] text-navy-900 hover:bg-[#E8E8F2]">
+                  <Mail className="h-[18px] w-[18px]" aria-hidden />
+                </a>
+              ) : null}
+            </div>
+          </section>
 
-      <div className="space-y-2">
-        <h3 className="font-semibold text-[#1B2656] select-none">הערות</h3>
-        <Card
-          className={cn(
-            'border-0 shadow-sm rounded-2xl',
-            notesInvalid && 'ring-2 ring-red-500/70 ring-offset-2',
-          )}
-        >
-          <CardContent className="p-4 space-y-2">
-            <Label htmlFor="lead-notes" className="text-xs text-gray-500">
-              נשמר לבד
+          <Section title="מה ביקשו">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <Fact label="תאריכים">
+                {hasDates ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4 shrink-0 text-ink-400" aria-hidden />
+                    {lead.check_in_date && lead.check_out_date ? formatRangeHe(lead.check_in_date, lead.check_out_date) : fmtDay(lead.check_in_date || lead.check_out_date)}
+                  </span>
+                ) : 'עוד לא נקבעו'}
+              </Fact>
+              <Fact label="לילות">{nights ? heCount(nights, 'night') : '-'}</Fact>
+              <Fact label="אורחים">{guests ? heCount(guests, 'guest') : '-'}</Fact>
+              {unitName ? <Fact label="יחידה">{unitName}</Fact> : null}
+              {Number.isFinite(budget) && budget > 0 ? <Fact label="תקציב">{fmtMoney(budget)}</Fact> : null}
+            </div>
+          </Section>
+
+          <Section title="הערות" className={cn(notesInvalid && 'ring-2 ring-red-500/70 ring-offset-2')}>
+            <Label htmlFor="lead-notes" className="mb-1.5 block text-[13px] text-ink-400">
+              נשמר אוטומטית
             </Label>
             <Textarea
               id="lead-notes"
               dir="rtl"
               rows={4}
+              maxLength={2000}
               value={notesDraft}
               onChange={(e) => setNotesDraft(e.target.value)}
               onBlur={saveNotes}
               placeholder="רק אתם רואים את זה"
-              className="rounded-xl text-sm resize-y min-h-[100px]"
+              className="min-h-[100px] resize-y rounded-xl text-base md:text-[15px]"
             />
-          </CardContent>
-        </Card>
-      </div>
+          </Section>
 
-      <div className="space-y-2">
-        <h3 className="font-semibold text-[#1B2656] select-none">סטטוס</h3>
-        <Select
-          value={lead.status}
-          onValueChange={(value) => updateMutation.mutate({ id: lead.id, data: { status: value } })}
-        >
-          <SelectTrigger className="rounded-xl" aria-label="מצב הליד">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(statusLabels).map(([key, label]) => (
-              <SelectItem key={key} value={key}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+          <Section title="מצב הליד">
+            <Select value={lead.status} onValueChange={(value) => updateMutation.mutate({ id: lead.id, data: { status: value } })}>
+              <SelectTrigger className="h-12 rounded-xl text-base md:text-[15px]" aria-label="מצב הליד">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(STATUS).filter(([key]) => key !== 'CONFIRMED' || lead.status === 'CONFIRMED').map(([key, s]) => (
+                  <SelectItem key={key} value={key}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Section>
 
-      <Button
-        className="w-full bg-brand-600 hover:bg-brand-500 text-white rounded-xl"
-        onClick={() => handleConvertToBooking(lead)}
-      >
-        <ArrowLeftRight className="h-4 w-4 ml-2" />
-        הפיכה להזמנה
-      </Button>
+          <Button
+            type="button"
+            className="h-12 w-full rounded-xl bg-brand-600 text-[16px] font-semibold text-white hover:bg-brand-500"
+            onClick={openConvert}
+            disabled={converting || linked.isLoading}
+            aria-busy={converting || undefined}
+          >
+            <ArrowLeftRight className="ml-2 h-4 w-4" aria-hidden />
+            {linkedBooking ? 'פתיחת ההזמנה' : 'הפיכה להזמנה'}
+          </Button>
+          {linkedBooking ? (
+            <p className="text-center text-[14px] text-ink-600">כבר יצרתם הזמנה מהליד הזה.</p>
+          ) : null}
+        </div>
+      </Page>
     </motion.div>
   );
 }

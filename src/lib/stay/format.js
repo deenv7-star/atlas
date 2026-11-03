@@ -1,6 +1,7 @@
 /** Hebrew formatting helpers that follow the ATLAS brand voice. */
 
 const DAY_LETTERS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 const MONTHS_SHORT = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
 const MONTHS_LONG = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 
@@ -40,11 +41,12 @@ export function nightsBetween(ci, co) {
 }
 
 /** "יום ו׳, 16 באוק׳" */
-export function formatDayHe(value, { weekday = true } = {}) {
+export function formatDayHe(value, { weekday = true, long = false } = {}) {
   const d = parseDay(value);
   if (!d) return '';
-  const core = `${d.getDate()} ב${MONTHS_SHORT[d.getMonth()]}`;
-  return weekday ? `יום ${DAY_LETTERS[d.getDay()]}, ${core}` : core;
+  const core = `${d.getDate()} ב${(long ? MONTHS_LONG : MONTHS_SHORT)[d.getMonth()]}`;
+  if (!weekday) return core;
+  return `יום ${(long ? DAY_NAMES : DAY_LETTERS)[d.getDay()]}, ${core}`;
 }
 
 /** "16–18 באוק׳" style range without em dash: "16 עד 18 באוק׳" */
@@ -88,10 +90,13 @@ export function pct(n) {
  * Hebrew prefix letter + name, merging the definite article: ב + הגפן -> בגפן, ל + הזית -> לזית.
  * Names without a leading ה keep it as is: ב + צימר הגפן -> בצימר הגפן.
  */
+/** Names whose leading ה is part of the name, not the definite article (COPY-050). */
+const NAMES_WITH_HE = new Set(['הדס', 'הדר', 'הילה', 'הלל', 'הגר', 'הודיה', 'הראל', 'הדרים', 'הרמוניה', 'הוואי', 'הולנד']);
+
 export function withPrefix(prefix, name) {
   const n = String(name || '').trim();
   if (!n) return '';
-  if (/^[\u0590-\u05FF]/.test(n) && n.startsWith('ה') && n.length > 2) return `${prefix}${n.slice(1)}`;
+  if (/^[\u0590-\u05FF]/.test(n) && n.startsWith('ה') && n.length > 2 && !NAMES_WITH_HE.has(n.split(/\s/)[0])) return `${prefix}${n.slice(1)}`;
   if (/^[A-Za-z0-9]/.test(n)) return `${prefix}-${n}`;
   return `${prefix}${n}`;
 }

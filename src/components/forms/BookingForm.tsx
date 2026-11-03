@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Controller } from 'react-hook-form';
-import { parseISO, differenceInDays } from 'date-fns';
 import { Check, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { StickySheetFooter } from '@/components/ui/sheet-footer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { useFormMachine } from '@/hooks/useFormMachine';
 import type { BookingFormValues } from '@/components/forms/atlasFormSchemas';
-import { bookingFormSchema } from '@/components/forms/atlasFormSchemas';
+import { makeBookingFormSchema, BOOKING_LIMITS, nightsBetweenISO } from '@/components/forms/atlasFormSchemas';
 import { FormRouteLeaveGuard } from '@/components/forms/FormRouteLeaveGuard';
 import {
   FormMachineErrorBanner,
@@ -22,6 +22,18 @@ import {
   formMachineFormClassName,
 } from '@/components/forms/formMachineUi';
 import { BookingOverlapGuard } from '@/components/stay/BookingOverlapGuard';
+
+/** Inline field error linked to its input via aria-describedby. */
+function FieldError({ id, error, validating }: { id: string; error?: string; validating?: boolean }) {
+  if (error && !validating) {
+    return (
+      <p id={id} className="mt-0.5 text-[13px] font-medium leading-snug text-red-700" role="alert">
+        {error}
+      </p>
+    );
+  }
+  return <FormMachineFieldHint validating={validating} />;
+}
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -59,10 +71,23 @@ export function BookingForm({
   onAfterSubmitSuccess,
 }: BookingFormProps) {
   const storageKey = `atlas-form-booking-${storageSuffix}`;
+  const hasUnits = properties.length > 0;
+  // APP-005: a unit is required whenever the account has units (an unassigned booking blocks nothing).
+  const schema = React.useMemo(() => makeBookingFormSchema({ requireProperty: hasUnits }), [hasUnits]);
+  // One unit: pick it for them. Old bookings with nights but no check-out: fill the check-out date.
+  const normalizedDefaults = React.useMemo<BookingFormValues>(() => {
+    const d = { ...defaultValues };
+    if (!d.property_id && properties.length === 1) d.property_id = properties[0].id;
+    if (d.check_in_date && !d.check_out_date && Number(d.nights) > 0) {
+      const t = Date.parse(`${d.check_in_date}T00:00:00Z`);
+      if (Number.isFinite(t)) d.check_out_date = new Date(t + Number(d.nights) * 86_400_000).toISOString().slice(0, 10);
+    }
+    return d;
+  }, [defaultValues, properties]);
 
   const fm = useFormMachine<BookingFormValues>({
-    schema: bookingFormSchema,
-    defaultValues,
+    schema,
+    defaultValues: normalizedDefaults,
     onSubmit,
     storageKey,
     enableRouteGuard,
@@ -79,17 +104,25 @@ export function BookingForm({
 
   const [overlapBlocked, setOverlapBlocked] = React.useState(false);
 
-  const nights = React.useMemo(() => {
-    try {
-      const { check_in_date: ci, check_out_date: co } = fm.values;
-      if (ci && co) {
-        return differenceInDays(parseISO(co), parseISO(ci));
-      }
-    } catch {
-      /* ignore */
-    }
-    return 0;
-  }, [fm.values.check_in_date, fm.values.check_out_date]);
+  // Units load after the sheet opens: with exactly one unit, select it as soon as it is known.
+  const onlyUnitId = properties.length === 1 ? properties[0].id : '';
+  React.useEffect(() => {
+    if (onlyUnitId && !fm.values.property_id) fm.setValue('property_id', onlyUnitId, { shouldDirty: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onlyUnitId]);
+
+  const nights = React.useMemo(
+    () => nightsBetweenISO(fm.values.check_in_date || '', fm.values.check_out_date || '') ?? 0,
+    [fm.values.check_in_date, fm.values.check_out_date],
+  );
+  // check-out picker starts the day after check-in
+  const minCheckOut = React.useMemo(() => {
+    const t = Date.parse(`${fm.values.check_in_date || ''}T00:00:00Z`);
+    return Number.isFinite(t) ? new Date(t + 86_400_000).toISOString().slice(0, 10) : undefined;
+  }, [fm.values.check_in_date]);
+  const errId = (k: string) => `bf-${k}-err`;
+  const a11y = (k: keyof BookingFormValues) =>
+    fm.errors[k] ? { 'aria-invalid': true as const, 'aria-describedby': errId(k) } : {};
 
   return (
     <>
@@ -98,22 +131,25 @@ export function BookingForm({
       <div className={formMachineFormClassName(fm.state)} dir="rtl">
         <div className="grid grid-cols-2 gap-3 py-2">
           <div className="col-span-2 space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">שם אורח *</Label>
+            <Label htmlFor="bf-guest-name" className="text-[14px] font-medium text-ink-600">שם אורח *</Label>
             <Input
+              id="bf-guest-name"
               {...fm.register('guest_name')}
+              {...a11y('guest_name')}
+              maxLength={BOOKING_LIMITS.guestName}
               placeholder="שם מלא"
               className="h-12 md:h-11 rounded-[10px]"
               autoComplete="name"
             />
-            <FormMachineFieldHint
-              error={fm.errors.guest_name}
-              validating={fm.isFieldValidating('guest_name')}
-            />
+            <FieldError id={errId('guest_name')} error={fm.errors.guest_name} validating={fm.isFieldValidating('guest_name')} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">אימייל</Label>
+            <Label htmlFor="bf-guest-email" className="text-[14px] font-medium text-ink-600">אימייל</Label>
             <Input
+              id="bf-guest-email"
               {...fm.register('guest_email')}
+              {...a11y('guest_email')}
+              maxLength={BOOKING_LIMITS.email}
               type="email"
               inputMode="email"
               dir="ltr"
@@ -121,15 +157,15 @@ export function BookingForm({
               className="h-12 md:h-11 rounded-[10px]"
               autoComplete="email"
             />
-            <FormMachineFieldHint
-              error={fm.errors.guest_email}
-              validating={fm.isFieldValidating('guest_email')}
-            />
+            <FieldError id={errId('guest_email')} error={fm.errors.guest_email} validating={fm.isFieldValidating('guest_email')} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">טלפון</Label>
+            <Label htmlFor="bf-guest-phone" className="text-[14px] font-medium text-ink-600">טלפון</Label>
             <Input
+              id="bf-guest-phone"
               {...fm.register('guest_phone')}
+              {...a11y('guest_phone')}
+              maxLength={BOOKING_LIMITS.phone}
               type="tel"
               inputMode="tel"
               dir="ltr"
@@ -137,14 +173,11 @@ export function BookingForm({
               className="h-12 md:h-11 rounded-[10px]"
               autoComplete="tel"
             />
-            <FormMachineFieldHint
-              error={fm.errors.guest_phone}
-              validating={fm.isFieldValidating('guest_phone')}
-            />
+            <FieldError id={errId('guest_phone')} error={fm.errors.guest_phone} validating={fm.isFieldValidating('guest_phone')} />
           </div>
           {properties.length > 0 && (
             <div className="col-span-2 space-y-1.5">
-              <Label className="text-[14px] font-medium text-ink-600">יחידה</Label>
+              <Label className="text-[14px] font-medium text-ink-600">יחידה *</Label>
               <Controller
                 control={fm.control}
                 name="property_id"
@@ -156,7 +189,7 @@ export function BookingForm({
                       field.onChange(v);
                     }}
                   >
-                    <SelectTrigger aria-label="יחידה" className="h-12 md:h-11 rounded-[10px]">
+                    <SelectTrigger aria-label="יחידה" {...a11y('property_id')} className="h-12 md:h-11 rounded-[10px]">
                       <SelectValue placeholder="בחרו יחידה" />
                     </SelectTrigger>
                     <SelectContent>
@@ -169,7 +202,7 @@ export function BookingForm({
                   </Select>
                 )}
               />
-              <FormMachineFieldHint error={fm.errors.property_id} />
+              <FieldError id={errId('property_id')} error={fm.errors.property_id} />
             </div>
           )}
           <div className="col-span-2 space-y-1.5">
@@ -211,27 +244,32 @@ export function BookingForm({
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="bf-check-in" className="text-[14px] font-medium text-ink-600">תאריך כניסה *</Label>
-            <Input id="bf-check-in" type="date" {...fm.register('check_in_date')} className="h-12 md:h-11 rounded-[10px]" />
-            <FormMachineFieldHint
-              error={fm.errors.check_in_date}
-              validating={fm.isFieldValidating('check_in_date')}
+            <Input id="bf-check-in" type="date" {...fm.register('check_in_date')} {...a11y('check_in_date')} className="h-12 md:h-11 rounded-[10px]" />
+            <FieldError id={errId('check_in_date')} error={fm.errors.check_in_date} validating={fm.isFieldValidating('check_in_date')} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="bf-check-out" className="text-[14px] font-medium text-ink-600">תאריך יציאה *</Label>
+            <Input id="bf-check-out" type="date" min={minCheckOut} {...fm.register('check_out_date')} {...a11y('check_out_date')} className="h-12 md:h-11 rounded-[10px]" />
+            <FieldError id={errId('check_out_date')} error={fm.errors.check_out_date} validating={fm.isFieldValidating('check_out_date')} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="bf-price" className="text-[14px] font-medium text-ink-600">מחיר כולל (₪)</Label>
+            <Input
+              id="bf-price"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              max={BOOKING_LIMITS.maxPrice}
+              step="any"
+              {...fm.register('total_price')}
+              {...a11y('total_price')}
+              placeholder="0"
+              className="h-12 md:h-11 rounded-[10px]"
             />
+            <FieldError id={errId('total_price')} error={fm.errors.total_price} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="bf-check-out" className="text-[14px] font-medium text-ink-600">תאריך יציאה</Label>
-            <Input id="bf-check-out" type="date" {...fm.register('check_out_date')} className="h-12 md:h-11 rounded-[10px]" />
-            <FormMachineFieldHint
-              error={fm.errors.check_out_date}
-              validating={fm.isFieldValidating('check_out_date')}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">מחיר כולל (₪)</Label>
-            <Input type="number" {...fm.register('total_price')} placeholder="0" className="h-12 md:h-11 rounded-[10px]" />
-            <FormMachineFieldHint error={fm.errors.total_price} />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">סטטוס</Label>
+            <Label className="text-[14px] font-medium text-ink-600">מצב ההזמנה</Label>
             <Controller
               control={fm.control}
               name="status"
@@ -243,7 +281,7 @@ export function BookingForm({
                     field.onChange(v);
                   }}
                 >
-                  <SelectTrigger aria-label="סטטוס" className="h-12 md:h-11 rounded-[10px]">
+                  <SelectTrigger aria-label="מצב ההזמנה" className="h-12 md:h-11 rounded-[10px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -259,9 +297,9 @@ export function BookingForm({
             <FormMachineFieldHint error={fm.errors.status} />
           </div>
           <div className="col-span-2 space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">הערות</Label>
-            <Input {...fm.register('notes')} placeholder="רק אתם רואים את זה" className="h-12 md:h-11 rounded-[10px]" />
-            <FormMachineFieldHint error={fm.errors.notes} />
+            <Label htmlFor="bf-notes" className="text-[14px] font-medium text-ink-600">הערות</Label>
+            <Input id="bf-notes" {...fm.register('notes')} {...a11y('notes')} maxLength={BOOKING_LIMITS.notes} placeholder="רק אתם רואים את זה" className="h-12 md:h-11 rounded-[10px]" />
+            <FieldError id={errId('notes')} error={fm.errors.notes} />
           </div>
           <BookingOverlapGuard
             propertyId={fm.values.property_id}
@@ -278,7 +316,7 @@ export function BookingForm({
             </div>
           )}
         </div>
-        <div className="flex gap-2 flex-col-reverse sm:flex-row sm:justify-start pt-3">
+        <StickySheetFooter>
           <Button
             variant="outline"
             type="button"
@@ -325,7 +363,7 @@ export function BookingForm({
               </>
             )}
           </Button>
-        </div>
+        </StickySheetFooter>
       </div>
     </>
   );

@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
+import { askConfirm } from '@/components/common/confirmDialog';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { useBookings, useCreateBooking, useUpdateBooking, useDeleteBooking } from '@/data/entities';
@@ -218,8 +219,13 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
     }
   };
 
-  const handleDelete = (id) => {
-    if (!confirm('למחוק את ההזמנה?')) return;
+  const handleDelete = async (id) => {
+    const b = bookings.find((x) => x.id === id);
+    const ok = await askConfirm({
+      title: b?.guest_name ? `למחוק את ההזמנה של ${b.guest_name}?` : 'למחוק את ההזמנה?',
+      description: 'ההזמנה תיעלם מהיומן ומהרשימה. ב-5 השניות הראשונות אפשר לבטל מההודעה שתופיע.',
+    });
+    if (!ok) return;
     deleteBookingWithUndo(queryClient, id);
   };
 
@@ -236,7 +242,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
       await updateMutation.mutateAsync({ id: row.id, data: { status } }).catch(() => {});
       done++;
     }
-    success(`${done === 1 ? 'עודכנה הזמנה אחת' : `עודכנו ${done} הזמנות`} ל-${STATUS_MAP[status]?.label || status}`);
+    success(`${done === 1 ? 'הזמנה אחת עכשיו במצב' : `${done} הזמנות עכשיו במצב`}: ${STATUS_MAP[status]?.label || status}`);
   };
 
   const handleBulkDeleteRows = rows => {
@@ -249,7 +255,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
       property_name: properties.find(p => p.id === b.property_id)?.name || '',
     }));
     exportToCSV(data, 'bookings', BOOKING_COLUMNS);
-    success(`${data.length === 1 ? 'יוצאה הזמנה אחת' : `יוצאו ${data.length} הזמנות`} ל-CSV`);
+    success(`ירד קובץ לאקסל עם ${data.length === 1 ? 'הזמנה אחת' : `${data.length} הזמנות`}`);
   };
 
   const dateInputValue = (d) => (d ? format(d, 'yyyy-MM-dd') : '');

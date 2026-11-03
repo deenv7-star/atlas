@@ -62,19 +62,21 @@ export default function CookieConsent({ revealAfter = null, variant = 'card' }) 
 
   if (!visible) return null;
 
+  /* A08/WEB-001 (01.11.2026): atlas stores only what the site needs (/cookies), so there is nothing to consent to.
+     An honest notice with one "got it" button, no fake accept/decline. If an analytics or ads tool is ever added,
+     bring back a real choice before it runs (as /cookies promises). */
   return (
-    <div className={`lp-cookie${variant === 'row' ? ' is-row' : ''}`} dir="rtl" role="region" aria-label="הסכמה לעוגיות">
+    <div className={`lp-cookie${variant === 'row' ? ' is-row' : ''}`} dir="rtl" role="region" aria-label="הודעה על אחסון בדפדפן">
       {variant === 'row' ? (
-        <p>עוגיות לשיפור האתר. <Link to="/cookies">מדיניות</Link></p>
+        <p>רק אחסון הכרחי, בלי מעקב. <Link to="/cookies">פרטים</Link></p>
       ) : (
         <p>
-          אנחנו משתמשים בעוגיות כדי שהאתר יעבוד טוב יותר.{' '}
+          האתר שומר בדפדפן רק את מה שצריך כדי לעבוד. בלי פרסום ובלי מעקב.{' '}
           <Link to="/cookies">מדיניות העוגיות</Link>
         </p>
       )}
       <div className="lp-cookie-actions">
-        <button type="button" className="no" onClick={() => choose('declined')}>לא תודה</button>
-        <button type="button" className="ok" onClick={() => choose('accepted')}>אישור</button>
+        <button type="button" className="ok" onClick={() => choose('acknowledged')}>הבנתי</button>
       </div>
     </div>
   );

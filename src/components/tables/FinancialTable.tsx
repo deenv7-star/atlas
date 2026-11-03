@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { askConfirm } from '@/components/common/confirmDialog';
 import type { ColumnDef } from '@tanstack/react-table';
 import { AtlasTable, type AtlasCsvColumn, actionsColumn, bookingStatusColumn, currencyColumn } from '@/components/ui/AtlasTable';
 import { formatIsoSafe } from '@/lib/formatIsoSafe';
@@ -124,8 +125,9 @@ export function FinancialTable(props: FinancialTableProps): React.ReactElement {
       emptyMessage="עוד אין תשלומים"
       csvExport={{ filename: 'financial', columns: csvColumns }}
       bulkBar={{
-        onDeleteSelected: (rows) => {
-          if (!confirm(`למחוק ${rows.length} תשלומים?`)) return;
+        onDeleteSelected: async (rows) => {
+          const ok = await askConfirm({ title: rows.length === 1 ? 'למחוק תשלום אחד?' : `למחוק ${rows.length} תשלומים?`, description: 'התשלומים יימחקו לצמיתות.' });
+          if (!ok) return;
           onBulkDelete(rows);
         },
         onExportCsv: (rows) => exportToCSV(rows, 'financial_selected', PAYMENT_COLUMNS),

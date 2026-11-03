@@ -109,7 +109,7 @@ export default function GrowthD() {
             </div>
           </dl>
           {FOUNDING.remaining != null && <p className="gd-left">{`נשארו ${FOUNDING.remaining} מתוך ${FOUNDING.cap}`}</p>}
-          <a className="gd-cta" href={GROWTH_LINKS.founding} target="_blank" rel="noopener noreferrer">
+          <a className="gd-cta" href={GROWTH_LINKS.call} target="_blank" rel="noopener noreferrer">
             <span>שמירת מקום כמייסדים</span><ArrowLeft size={18} strokeWidth={2} aria-hidden="true" /><span className="l5-sr">{NEW_TAB}</span>
           </a>
           <p className="gd-fine">

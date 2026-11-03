@@ -12,7 +12,7 @@ import React, { useRef } from 'react';
 import { ArrowDown, Play, Film, Megaphone, BarChart3 } from 'lucide-react';
 import { Mark } from '../../v5/ui';
 import { useReveal } from '../../v5/motion';
-import { GROWTH_NAME, GROWTH_STATUS, ROI, nis } from '@/config/growth';
+import { GROWTH_NAME, GROWTH_STATUS, GROWTH_LINKS, ROI, nis } from '@/config/growth';
 import './growth-s.css';
 
 const POOL = '/landing-hero/pool-p480.webp';
@@ -62,20 +62,22 @@ function MockVideo() {
 
 const SEASONS = ['סוכות', 'חנוכה', 'פסח', 'קיץ'];
 function MockAd() {
+  /* the mock ad stays hidden from assistive tech; only its button is real (WEB-003): it opens WhatsApp to
+     schedule the growth call, so "שלחו הודעה" is never a dead control */
   return (
-    <div className="gs-ad-wrap" aria-hidden="true">
-      <ul className="gs-seasons">
+    <div className="gs-ad-wrap">
+      <ul className="gs-seasons" aria-hidden="true">
         {SEASONS.map((s) => <li key={s} className={s === 'חנוכה' ? 'is-on' : ''}>{s}</li>)}
       </ul>
       <div className="gs-ad">
-        <div className="gs-ad-hd">
+        <div className="gs-ad-hd" aria-hidden="true">
           <Photo avif={POOL_AV} webp={POOL} w={480} h={960} className="gs-ad-av" />
           <p><b>צימר הגפן</b><span>ממומן</span></p>
         </div>
         <Photo avif={`${HOST}.avif`} webp={`${HOST}.webp`} w={560} h={700} className="gs-ad-ph" />
         <div className="gs-ad-ft">
-          <p className="gs-ad-h">חנוכה בגליל: 2 לילות, ארוחת בוקר במרפסת</p>
-          <span className="gs-ad-btn"><Mark ch="whatsapp" size={16} />שלחו הודעה</span>
+          <p className="gs-ad-h" aria-hidden="true">חנוכה בגליל: 2 לילות, ארוחת בוקר במרפסת</p>
+          <a className="gs-ad-btn" href={GROWTH_LINKS.call} target="_blank" rel="noopener noreferrer" aria-label="שלחו הודעה: קביעת שיחה על חבילת הצמיחה בוואטסאפ (נפתח בחלון חדש)"><Mark ch="whatsapp" size={16} />שלחו הודעה</a>
         </div>
       </div>
     </div>
@@ -110,9 +112,9 @@ function MockReport() {
 }
 
 const TILES = [
-  { k: 'video', I: Film, t: GROWTH_STATUS.soon[0], d: '4 סרטונים בחודש לאינסטגרם ולטיקטוק, מהתמונות של המתחם.', M: MockVideo },
-  { k: 'ad', I: Megaphone, t: GROWTH_STATUS.soon[1], d: 'מודעה מוכנה לכל עונה. הפניות מגיעות ישר לוואטסאפ שלכם.', M: MockAd },
-  { k: 'report', I: BarChart3, t: GROWTH_STATUS.soon[2], d: 'כל חודש רואים כמה פניות והזמנות הביאו המודעות.', M: MockReport },
+  { k: 'video', I: Film, t: GROWTH_STATUS.soon[0], d: 'סרטונים קצרים לקמפיין באינסטגרם ובטיקטוק, מהתמונות של המתחם.', M: MockVideo },
+  { k: 'ad', I: Megaphone, t: GROWTH_STATUS.soon[1], d: 'קמפיין ב-Meta וב-Google לכל עונה, ודף נחיתה או אתר למתחם. הפניות מגיעות ישר לוואטסאפ שלכם.', M: MockAd },
+  { k: 'report', I: BarChart3, t: GROWTH_STATUS.soon[2], d: 'כל חודש רואים כמה פניות והזמנות הביאו הקמפיינים.', M: MockReport },
 ];
 
 export default function GrowthS() {
@@ -125,7 +127,7 @@ export default function GrowthS() {
         <header className="gs-head">
           <p className="gs-kick"><span>{GROWTH_NAME}</span><span className="gs-soon">בקרוב, קודם למייסדים</span></p>
           <h2 id="growth-title" className="gs-h">יותר הזמנות ישירות. <span>בלי עמלה.</span></h2>
-          <p className="gs-lede">שלושה כלים שעובדים מהתמונות שכבר יש לכם.</p>
+          <p className="gs-lede">קמפיינים ודף נחיתה או אתר למתחם, מהתמונות שכבר יש לכם. מתחילים בשיחה קצרה.</p>
         </header>
 
         <ul className="gs-tiles">

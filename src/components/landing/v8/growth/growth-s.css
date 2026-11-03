@@ -82,6 +82,9 @@
 .gs-ad-h { font-size: 15px; line-height: 1.4; font-weight: 700; color: var(--gs-navy); }
 .gs-ad-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; border-radius: 12px; background: var(--gs-bg); box-shadow: inset 0 0 0 1px var(--gs-line); font-size: 15px; font-weight: 700; color: var(--gs-navy); }
 .gs-ad-btn .l5-mk-whatsapp { color: #25d366; }
+a.gs-ad-btn { min-height: 44px; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+a.gs-ad-btn:hover { box-shadow: inset 0 0 0 1px var(--gs-navy); }
+a.gs-ad-btn:focus-visible { outline: 2px solid #3e2bf1; outline-offset: 2px; }
 
 /* 3. "how much it brought" report */
 .gs-rep { width: 100%; max-width: 310px; padding: 18px; border-radius: 22px; background: #fff; color: var(--gs-navy); box-shadow: 0 30px 60px -20px rgba(5, 8, 40, 0.65); text-align: start; }

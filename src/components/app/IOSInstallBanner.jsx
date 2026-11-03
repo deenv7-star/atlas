@@ -35,7 +35,7 @@ export default function IOSInstallBanner() {
     >
       <button
         onClick={dismiss}
-        className="absolute top-3 left-3 text-gray-400 hover:text-navy-900"
+        className="absolute top-0.5 left-0.5 inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-400 hover:text-navy-900"
         aria-label="סגירה"
       >
         <X className="h-4 w-4" />

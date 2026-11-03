@@ -34,7 +34,8 @@ test('no promises atlas cannot keep, no invented numbers', () => {
   for (const re of banned) assert.ok(!re.test(answers), `claim ${re}`);
   // tax invoices: only ever said honestly (still issued in the owner's own software)
   if (/חשבונית מס/.test(answers)) assert.match(answers, /חשבונית מס רשמית עדיין מפיקים בתוכנת החשבוניות שלכם/);
-  const allowedNumbers = new Set([String(TRIAL_DAYS), String(PRICING_PLANS[0].price), ...PHONE_DISPLAY.split('-')]);
+  // 24/7 support (Deen, 01.11.2026) and the plan-2 complex limit are real numbers too
+  const allowedNumbers = new Set([String(TRIAL_DAYS), String(PRICING_PLANS[0].price), String(PRICING_PLANS[1].complexes), '24', '7', ...PHONE_DISPLAY.split('-')]);
   for (const n of text.match(/\d+/g) || []) assert.ok(allowedNumbers.has(n), `unexpected number ${n}`);
 });
 
@@ -47,6 +48,8 @@ test('true anchors stay: trial, no card, no commitment, real price, a human on W
   assert.ok(text.includes(PHONE_DISPLAY));
   assert.match(text, /בטלפון/);
   assert.match(text, /בלחיצה אחת/); // WhatsApp is one tap, never auto-send
+  assert.match(text, /24\/7/); // support hours (Deen, 01.11.2026)
+  assert.ok(!/לא נדרסת|בלי כפל הזמנות|אין הזמנות כפולות/.test(answers)); // A02: no absolute double-booking promise
 });
 
 test('house style: no em or en dashes', () => {

@@ -87,7 +87,7 @@ export default function SettingsPage({ user }) {
   }, [org]);
 
   // Saved in organizations.settings (migration 010), not just a toast.
-  const [notifSettings, setNotifSettings] = useState(() => ({
+  const [notifSettings] = useState(() => ({
     new_booking: true,
     new_lead: true,
     payment_received: true,
@@ -339,15 +339,16 @@ export default function SettingsPage({ user }) {
           {activeTab === 'notifications' && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-[18px] font-bold">הגדרות התראות</CardTitle>
-                <CardDescription>בחרו על מה תרצו לקבל התראות</CardDescription>
+                {/* COPY-053 (01.11.2026): nothing sends these yet (no reader in supabase/functions or src/lib),
+                    so the toggles are shown disabled under "בקרוב" instead of promising alerts */}
+                <CardTitle className="flex items-center gap-2 text-[18px] font-bold">התראות במייל ובטלפון<span className="rounded-full bg-[#F1F2F7] px-2.5 py-0.5 text-[13px] font-bold text-ink-600">בקרוב</span></CardTitle>
+                <CardDescription>עוד לא נשלחות התראות. כשזה יהיה מוכן, תבחרו כאן על מה לקבל התראה.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-1">
                 {[
                   { key: 'new_booking', label: 'הזמנה חדשה', desc: 'כשנכנסת הזמנה חדשה' },
                   { key: 'new_lead', label: 'ליד חדש', desc: 'כשמגיעה פנייה חדשה' },
                   { key: 'payment_received', label: 'תשלום התקבל', desc: 'כשמתקבל תשלום' },
-                  { key: 'new_review', label: 'ביקורת חדשה', desc: 'כשנכתבת ביקורת חדשה' },
                   { key: 'system_updates', label: 'חידושים', desc: 'כשמשהו חדש מגיע' },
                 ].map(item => (
                   <div key={item.key} className="flex items-center justify-between py-3 border-b border-line last:border-0">
@@ -356,8 +357,9 @@ export default function SettingsPage({ user }) {
                       <p className="text-xs text-ink-400">{item.desc}</p>
                     </div>
                     <Switch
-                      checked={notifSettings[item.key]}
-                      onCheckedChange={val => setNotifSettings(prev => ({ ...prev, [item.key]: val }))}
+                      checked={false}
+                      disabled
+                      aria-label={`${item.label} (בקרוב)`}
                       className="data-[state=checked]:bg-brand-600"
                     />
                   </div>
@@ -365,7 +367,7 @@ export default function SettingsPage({ user }) {
                 <div className="pt-3 flex justify-end">
                   <Button
                     onClick={saveNotif}
-                    disabled={savingNotif}
+                    disabled
                     className="gap-2"
                   >
                     <Save className="w-4 h-4" />

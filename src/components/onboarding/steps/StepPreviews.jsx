@@ -43,7 +43,7 @@ export function PlacePreview({ d, size = 'lg' }) {
         {lg && d.type ? <span className="absolute end-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[12px] font-bold text-navy-900 shadow-sm">{t.label}</span> : null}
       </div>
       <div className={cn('min-w-0', lg ? 'p-5' : 'flex-1')}>
-        <p className={cn('truncate font-extrabold tracking-[-0.01em] text-navy-900', lg ? 'text-[22px]' : 'text-[17px]')}>{d.businessName.trim() || 'שם המקום שלכם'}</p>
+        <p className={cn('truncate font-extrabold tracking-[-0.01em] text-navy-900', lg ? 'text-[22px]' : 'text-[17px]')}>{d.businessName.trim() || 'שם המתחם שלכם'}</p>
         <p className={cn('mt-1 flex items-center gap-1 text-ink-400', lg ? 'text-[14px]' : 'text-[13px]')}><MapPin className="h-3.5 w-3.5 shrink-0 text-brand-600" />{d.settlement.trim() || 'איפה זה?'}</p>
         {lg ? (
           <div className="mt-4 flex items-center justify-between border-t border-[#EEF0F5] pt-4">

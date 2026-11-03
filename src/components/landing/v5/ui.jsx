@@ -18,10 +18,10 @@ const ILS = (n) => `₪${fmt(n)}`;
 /* ---------- brand marks ---------- */
 export function Mark({ ch, size = 16, className = '' }) {
   if (ch === 'booking') {
-    return <span className={`l5-bk ${className}`} style={{ '--s': `${size}px` }}>B.</span>;
+    return <span className={`l5-bk ${className}`} style={{ '--s': `${size}px` }} aria-hidden="true" />; // "B." drawn by CSS (::before) so it never leaks into extracted text
   }
   if (ch === 'direct') {
-    return <span className={`l5-dm ${className}`} style={{ '--s': `${size}px` }}><i /></span>;
+    return <span className={`l5-dm ${className}`} style={{ '--s': `${size}px` }} aria-hidden="true"><i /></span>;
   }
   const d = ch === 'airbnb' ? AIRBNB : ch === 'whatsapp' ? WHATSAPP : GCAL;
   return (

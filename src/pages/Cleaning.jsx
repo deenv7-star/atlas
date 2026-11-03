@@ -216,7 +216,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader
         title="ניקיון"
-        subtitle="משימות ניקיון לכל יחידה. הצוות רואה רק את המשימות שלו."
+        subtitle="משימות ניקיון לכל יחידה, עם שם האחראי ורשימת בדיקה."
         className="!mb-0"
         actions={
           <>

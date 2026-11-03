@@ -151,7 +151,7 @@ function PropertyEditor({ property, onSaved }) {
           <Field id="gi-arrive" label="הוראות הגעה" className="col-span-2">
             <textarea id="gi-arrive" className="ab-input" rows={3} value={info.arrival_instructions} onChange={set('arrival_instructions')} placeholder="למשל: חונים ליד השער הירוק, המפתח בתיבה ליד הדלת." />
           </Field>
-          <Field id="gi-rules" label="כללי המקום (שורה לכל כלל)" className="col-span-2">
+          <Field id="gi-rules" label="כללי הבית (שורה לכל כלל)" className="col-span-2">
             <textarea id="gi-rules" className="ab-input" rows={4} value={info.house_rules} onChange={set('house_rules')} placeholder={'שקט אחרי 23:00\nאין עישון בתוך היחידה'} />
           </Field>
         </div>

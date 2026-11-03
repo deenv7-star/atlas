@@ -1,3 +1,4 @@
+import { heError } from '@/lib/heError';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
@@ -97,13 +98,13 @@ export default function Login() {
         if (msg.includes('invalid') || msg.includes('credentials')) {
           setErrors({ credentials: 'המייל או הסיסמה לא נכונים' });
         } else if (msg.includes('email not confirmed')) {
-          atlasToastApi.error('עוד צעד קטן: שלחנו לכם מייל. לחצו על הקישור שבו ותיכנסו.');
+          atlasToastApi.error('המייל עוד לא אומת. חפשו את המייל מ-atlas (גם בספאם), או בקשו קישור חדש במסך האימות.');
         } else if (err?.status === 404 || msg.includes('http 404')) {
           atlasToastApi.error(
             'משהו אצלנו לא זמין כרגע. נסו שוב בעוד כמה דקות.'
           );
         } else {
-          atlasToastApi.error(err.message || 'לא הצלחנו להכניס אתכם. נסו שוב בעוד רגע.');
+          atlasToastApi.error(heError(err, 'לא הצלחנו להכניס אתכם. בדקו את החיבור ונסו שוב.'));
         }
       }
     } finally {
@@ -146,7 +147,7 @@ export default function Login() {
       ) : null}
       <form onSubmit={handleSubmit} className={cn('space-y-5', hasSocial && SOCIAL_LAYOUT === 'above' ? 'mt-6' : 'mt-8')} noValidate>
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">אימייל</Label>
+          <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">מייל</Label>
           <Input
             id="email"
             type="email"

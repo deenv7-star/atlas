@@ -3,6 +3,7 @@
  * One question per screen in a warm guide voice, big tappable answers, and the owner's own app
  * building itself beside (desktop) or above (phones) as they answer. 4 short chapters + a calm reveal.
  */
+import { heError } from '@/lib/heError';
 import HelpHint from '@/components/help/HelpHint';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'framer-motion';
@@ -123,7 +124,7 @@ export default function OnboardingA({ user, again = false }) {
       setBusy(true);
       try { await s.leave(); } catch (e) {
         setBusy(false);
-        setError(e?.message && e.message.length < 140 ? `לא הצלחנו לשמור: ${e.message}` : 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.');
+        setError(heError(e, 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.'));
         return;
       }
       setBusy(false);

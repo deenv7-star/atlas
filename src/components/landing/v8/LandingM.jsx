@@ -52,11 +52,11 @@ const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing
 const TILES = [
   {
     tone: 'indigo', I: CalendarDays, k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
-    d: 'Airbnb, Booking.com והזמנות ישירות נכנסות לבד ללוח. בלי כפל הזמנות.',
+    d: 'Airbnb, Booking.com והזמנות ישירות על לוח אחד. תאריך תפוס מסומן לפני שמאשרים.',
     vis: (
       <div className="lm-tile-vis is-cal">
         <img src={`${UI}/c-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2000" height="719" loading="lazy" decoding="async" />
-        <span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />התאריכים נחסמו ב-Booking.com</span>
+        <span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />Booking.com מושך את הלוח ב-iCal</span>
       </div>
     ),
   },
@@ -70,8 +70,8 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: Wallet, k: 'תשלומים', t: 'הכסף נכנס. אתם רואים הכל.',
-    d: 'כל מקדמה ויתרה נרשמות, ורואים כמה נכנס החודש.',
+    tone: 'canvas', I: Wallet, k: 'תשלומים', t: 'הכסף בשליטה. רואים הכל.',
+    d: 'רושמים כל מקדמה ויתרה בלחיצה, ורואים מה פתוח ומה נכנס החודש.',
     vis: (
       <div className="lm-tile-vis is-chart">
         <img src={`${UI}/c-chart.webp`} alt="גרף הכנסות לפי חודש (נתוני דוגמה)" width="1256" height="966" loading="lazy" decoding="async" />
@@ -138,9 +138,9 @@ function Features() {
 /* ---------------- facts ---------------- */
 const FACTS = [
   { n: '3', u: 'ערוצים', t: 'Airbnb, Booking.com וישיר על לוח אחד' },
-  { n: '10', u: 'דקות', t: 'מההרשמה עד לוח מעודכן' },
+  { n: '10', u: 'דקות', t: 'מההרשמה ועד ערוצים מחוברים' },
   { n: '14', u: 'ימים', t: 'ניסיון חינם, בלי כרטיס אשראי' },
-  { n: '₪0', u: 'עמלה', t: 'על הזמנות מעמוד ההזמנה הישירה' },
+  { n: '₪0', u: 'עמלה', t: 'על פניות מדף ההזמנה הישירה שלכם, כלול בכל חבילה' },
 ];
 
 function Facts() {
@@ -178,7 +178,7 @@ function Final() {
             {['noa', 'tom', 'maya', 'yossi'].map((k, i) => <Face key={k} f={FACES[k]} size={64} className={`lm-x-face is-${i + 1}`} />)}
           </div>
           <h2 id="final-title" className="lm-x-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
-          <p className="lm-x-sub" data-reveal>14 ימי ניסיון חינם. מחברים את Booking ו-Airbnb ב-10 דקות, והלוח מתחיל להתמלא.</p>
+          <p className="lm-x-sub" data-reveal>14 יום חינם. מחברים את Booking ו-Airbnb ב-10 דקות, ותמיכה אנושית 24/7 לאורך כל הדרך.</p>
           <div data-reveal><CtaLinks /></div>
           <div className="lm-x-shot" data-sd="tilt" aria-hidden="true">
             <img src={`${UI}/c-today.webp`} alt="" width="2400" height="1500" loading="lazy" decoding="async" />

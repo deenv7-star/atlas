@@ -21,6 +21,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'vite';
 import react from '@vitejs/plugin-react';
+import { criticalCss, htmlTokens } from './critical-css.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -141,7 +142,7 @@ function outPath(route) {
 function sitemap(routes, posts) {
   const lastmod = { '/': '2026-10-18' };
   posts.forEach((p) => { lastmod[`/blog/${p.slug}`] = p.updated; });
-  const all = ['/', '/pricing', '/register', ...routes];
+  const all = ['/', '/pricing', ...routes]; // /register and /login are noindex (A18/SEO-003), so not in the sitemap
   const prio = (r) => (r === '/' ? '1.0' : r === '/blog' || r === '/pricing' ? '0.9' : r.startsWith('/blog/') ? '0.8' : r === '/register' ? '0.8' : '0.5');
   const urls = all.map((r) => [
     '  <url>',
@@ -154,8 +155,8 @@ function sitemap(routes, posts) {
 }
 
 function llms(mod) {
-  const { POSTS, SITE_PAGES, ATLAS_ONE_LINER, FAQ, PRICING_PLANS } = mod;
-  const plan = (p) => `- ${p.nameHe} (${p.name}): ‏₪${p.price} לחודש, או ‏₪${p.priceYearly} לחודש בתשלום שנתי. ${p.limit}.`;
+  const { POSTS, SITE_PAGES, ATLAS_ONE_LINER, PRICING_FAQ, PRICING_PLANS, GROWTH_OFFER, GROWTH_NAME, GROWTH_SCOPE, yearlyTotal } = mod;
+  const plan = (p) => `- ${p.nameHe} (${p.name}): ‏₪${p.price} לחודש, או ‏₪${p.priceYearly} לחודש בחיוב שנתי מראש (‏₪${yearlyTotal(p).toLocaleString('en-US')} לשנה). ${p.limit}.`;
   return [
     '# atlas',
     '',
@@ -165,18 +166,20 @@ function llms(mod) {
     '',
     '## עובדות',
     '- מה זה: מערכת ניהול (SaaS) לצימרים ומתחמי נופש בישראל, בעברית.',
-    '- מה יש בה: לוח שנה אחד לכל היחידות, הזמנות לפי ערוץ (Booking.com, Airbnb, ישיר) עם התראה על חפיפה, לידים, מעקב מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן שנשלחות בלחיצה מהוואטסאפ של המארח, משימות ניקיון, דוח חודשי לרואה החשבון (CSV / PDF).',
-    '- מה אין בה (נכון ל-18.10.2026): סליקת כרטיסי אשראי, חשבוניות מס רשמיות עם מספר הקצאה, ערוץ מנהל (Channel Manager) מלא.',
+    '- מה יש בו: לוח שנה אחד לכל היחידות, התאריכים התפוסים מ-Booking.com ו-Airbnb (ייבוא iCal) והזמנות ישירות, התראה לפני שרושמים הזמנה על לילות תפוסים, ייצוא iCal שהערוצים מושכים בקצב שלהם, דף הזמנה ישירה בלי עמלה, לידים, רישום מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן שנשלחות בלחיצה מהוואטסאפ של המארח, משימות ניקיון, דוח חודשי לרואה החשבון (CSV / PDF).',
+    '- מה אין בו: סליקת כרטיסי אשראי, הפקת קבלות או חשבוניות מס (מפיקים בתוכנה של המארח, וב-atlas רק רושמים את מספר המסמך), מנהל ערוצים (Channel Manager) מלא: הסנכרון בין הערוצים אינו בזמן אמת, ולכן atlas לא מבטיח שלא תהיה הזמנה כפולה.',
     '- ניסיון: 14 ימים בחינם, בלי כרטיס אשראי.',
     '- אחסון נתונים: Supabase, שרתי AWS באזור eu-central-1 (פרנקפורט, גרמניה).',
-    '- תמיכה: בוט עזרה בעברית עם נציג אנושי, וואטסאפ.',
+    '- תמיכה: אנושית 24/7, גם בשבת ובלילה, בוואטסאפ ובטלפון, ובוט עזרה בעברית עם מעבר לנציג.',
+    '- מע״מ: המפעיל עוסק פטור, המחירים סופיים וללא מע״מ.',
     '',
     '## מחירים',
     ...PRICING_PLANS.map(plan),
+    `- ${GROWTH_NAME}: ${GROWTH_SCOPE}. חבילה נפרדת מחבילות הניהול, שמתחילה בשיחת תיאום בוואטסאפ (לא בהרשמה עצמית). ‏₪${GROWTH_OFFER.price} לחודש, בקרוב.`,
     `- פרטים: ${ORIGIN}/pricing`,
     '',
-    '## שאלות נפוצות (מדף הבית)',
-    ...FAQ.slice(0, 5).map((f) => `- ${f.q} ${f.a}`),
+    '## שאלות נפוצות (מדף הבית ומעמוד המחירים)',
+    ...PRICING_FAQ.map((f) => `- ${f.q} ${f.a}`),
     '',
     '## בלוג',
     ...POSTS.map((p) => `- [${p.title}](${ORIGIN}/blog/${p.slug}): ${p.description}`),
@@ -278,9 +281,25 @@ function deferEntry(html) {
  * imported and adds nothing, so the cascade stays exactly as it was. `disabled` keeps the browser from fetching
  * it at all (an inert media="not all" link was still downloaded before the first paint).
  */
-function inlineCss(html) {
+/** The entry chunk's own stylesheet(s): the whole app's Tailwind. PERF-002: only its critical part is inlined
+ *  (so is any other sheet over 40 KB, i.e. landing-v8m); the full files load, cached, right after the first paint. */
+function entryCssHrefs() {
+  const m = readManifest();
+  return new Set(Object.values(m).filter((c) => c.isEntry).flatMap((c) => (c.css || []).map((f) => `/${f}`)));
+}
+
+function inlineCss(html, tokens) {
+  const entryCss = tokens ? entryCssHrefs() : new Set();
   return html.replace(/<link rel="stylesheet" crossorigin href="(\/assets\/[^"]+\.css)">/g, (tag, href) => {
-    const css = fs.readFileSync(path.join(DIST, href), 'utf8').replace(/<\/style/gi, '<\\/style');
+    const full = fs.readFileSync(path.join(DIST, href), 'utf8');
+    if (entryCss.has(href) || full.length > 40000) {
+      // PERF-002: the rules this page's HTML can use go inline; the full sheet (cached by the browser, shared with the
+      // app) is enabled by src/main.jsx before hydration. data-atlas-full keeps Vite's loader from adding it twice.
+      const css = criticalCss(full, tokens).replace(/<\/style/gi, '<\\/style');
+      const marker = `<link rel="stylesheet" crossorigin href="${href}" media="not all" disabled data-atlas-full>`;
+      return `<style data-href="${href}" data-critical>${css}</style>${marker}`;
+    }
+    const css = full.replace(/<\/style/gi, '<\\/style');
     // every inlined sheet keeps the inert marker, the entry's too: a lazy landing chunk (the growth section) lists the
     // entry CSS among its deps, and without the marker Vite re-adds it as a <link> after the landing CSS, which
     // reorders the cascade and shifts the hero (CLS 0.4 at 390, measured 20.10.2026)
@@ -290,7 +309,8 @@ function inlineCss(html) {
 }
 
 function leanBody(html, appHtml, assets) {
-  const head = inlineCss(deferEntry(html).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`));
+  const tokens = htmlTokens(`${html}${appHtml}`);
+  const head = inlineCss(deferEntry(html).replace('</head>', `    ${cssLinks(assets)}\n    ${REVEAL_NOSCRIPT}\n  </head>`), tokens);
   const start = head.indexOf('<div id="root">');
   if (start < 0) throw new Error('template has no #root');
   const after = head.slice(start);
@@ -302,7 +322,7 @@ function leanBody(html, appHtml, assets) {
 function appMeta(mod, route) {
   const m = mod.appRouteMeta(route);
   const jsonLd = route === '/pricing' ? mod.pricingLd() : null;
-  return { title: m.title, description: m.description, canonical: `${ORIGIN}${route}`, ogImage: LANDING_OG, jsonLd };
+  return { title: m.title, description: m.description, canonical: `${ORIGIN}${route}`, ogImage: LANDING_OG, jsonLd, robots: m.robots };
 }
 
 /** The plain SPA shell with its own robots tag and without the landing's canonical / hreflang / og:url. */

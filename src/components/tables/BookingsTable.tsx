@@ -1,4 +1,5 @@
 import { ChannelBadge } from '@/components/ds';
+import { askConfirm } from '@/components/common/confirmDialog';
 import React, { useCallback, useMemo, useState } from 'react';
 import type { ColumnDef, OnChangeFn, SortingState } from '@tanstack/react-table';
 import { format, parseISO } from 'date-fns';
@@ -154,8 +155,9 @@ export function BookingsTable(props: BookingsTableProps): React.ReactElement {
         emptyMessage="עוד אין הזמנות כאן"
         csvExport={{ filename: 'bookings', columns: csvColumns }}
         bulkBar={{
-          onDeleteSelected: (rows) => {
-            if (!confirm(`למחוק ${rows.length} הזמנות?`)) return;
+          onDeleteSelected: async (rows) => {
+            const ok = await askConfirm({ title: rows.length === 1 ? 'למחוק הזמנה אחת?' : `למחוק ${rows.length} הזמנות?`, description: 'ההזמנות יימחקו מהיומן ומהרשימה.' });
+            if (!ok) return;
             onBulkDelete(rows);
           },
           onChangeStatus: (rows) => setStatusMenuRows(rows),

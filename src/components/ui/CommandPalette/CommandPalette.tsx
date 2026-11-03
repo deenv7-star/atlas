@@ -433,8 +433,8 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                 {remote.bookings.map((h) => (
                   <CommandItem
                     key={`sb-${h.id}`}
-                    value={`search-booking-${h.id}-${h.title}`}
-                    keywords={[h.title, h.subtitle, 'הזמנה']}
+                    value={`search-booking-${h.id}-${h.title}-${search.trim()}`}
+                    keywords={[h.title, h.subtitle, ...(h.keywords ?? []), search.trim(), 'הזמנה']}
                     data-announce={announce(h.title, h.subtitle)}
                     onSelect={() => {
                       recordCommandPaletteVisit({ kind: 'booking', id: h.id, title: h.title, subtitle: h.subtitle });
@@ -453,8 +453,8 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                 {remote.guests.map((h) => (
                   <CommandItem
                     key={`sg-${h.id}`}
-                    value={`search-guest-${h.id}-${h.title}`}
-                    keywords={[h.title, h.subtitle, 'אורח']}
+                    value={`search-guest-${h.id}-${h.title}-${search.trim()}`}
+                    keywords={[h.title, h.subtitle, ...(h.keywords ?? []), search.trim(), 'אורח']}
                     data-announce={announce(h.title, h.subtitle)}
                     onSelect={() => {
                       recordCommandPaletteVisit({ kind: 'guest', id: h.id, title: h.title, subtitle: h.subtitle });

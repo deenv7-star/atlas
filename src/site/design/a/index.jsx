@@ -31,7 +31,7 @@ function Header() {
           <Link to="/about" className="a-hide-sm">אודות</Link>
           <Link to="/login" className="a-hide-sm">כניסה</Link>
         </nav>
-        <Link to="/register" className="s-btn s-btn-primary a-hdr-cta">14 ימי ניסיון</Link>
+        <Link to="/register" className="s-btn s-btn-primary a-hdr-cta">14 יום חינם</Link>
       </div>
     </header>
   );
@@ -129,7 +129,7 @@ export function ContactPage({ path, page }) {
       <div className="a-contact">
         <section className="a-card" aria-labelledby="c-wa">
           <h2 id="c-wa">וואטסאפ</h2>
-          <p>הדרך הכי מהירה: שאלות לפני הרשמה, עזרה בשימוש, ביטול או כל דבר אחר.</p>
+          <p>הדרך הכי מהירה, 24/7, גם בשבת ובאמצע הלילה: שאלות לפני הרשמה, עזרה בשימוש, ביטול או כל דבר אחר.</p>
           <WhatsAppButton className="s-btn s-btn-primary">פתיחת שיחה בוואטסאפ</WhatsAppButton>
           <h3 className="a-card-sub">כל הדרכים</h3>
           <ContactDetails />
@@ -186,10 +186,10 @@ export function BlogIndex() {
 function EndCta() {
   return (
     <aside className="a-cta" aria-labelledby="a-cta-t">
-      <h2 id="a-cta-t">כל הצימר על מסך אחד</h2>
+      <h2 id="a-cta-t">אתם מארחים. atlas מסדר.</h2>
       <p>לוח אחד לכל הערוצים, מקדמות ויתרות, וואטסאפ לאורחים בנוסח מוכן ודוח חודשי לרואה החשבון.</p>
       <div className="a-cta-row">
-        <Link to="/register" className="s-btn s-btn-white">14 ימי ניסיון בחינם</Link>
+        <Link to="/register" className="s-btn s-btn-white">התחילו 14 יום חינם</Link>
         <span>בלי כרטיס אשראי</span>
       </div>
     </aside>

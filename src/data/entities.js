@@ -87,7 +87,7 @@ export function useUpdateBooking() {
       const status = getErrorHttpStatus(err);
       if (status === 409) {
         openOptimisticConflictModal({
-          message: getErrorMessage(err) || 'לא הצלחנו לשמור. אולי התאריכים כבר תפוסים, או שמישהו שינה את ההזמנה בינתיים.',
+          message: getErrorMessage(err) || 'לא הצלחנו לשמור את ההזמנה. רעננו את הלוח ונסו שוב.',
         });
         return;
       }
