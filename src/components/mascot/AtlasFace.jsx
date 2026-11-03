@@ -8,7 +8,7 @@
  *                                                app (useMascotMood.js); `mood` is then its resting mood
  */
 import React, { useEffect, useId, useLayoutEffect, useMemo, useRef } from 'react';
-import { faceMarkup, FACE_ALT } from './atlasFace';
+import { faceMarkup, FACE_ALT } from './atlasFace.js';
 import { useMascotMood, emitMascot } from './useMascotMood';
 import { eyeOffset } from './mascotMood';
 import './atlasFace.css';

@@ -13,7 +13,7 @@ import { ASSISTANT_DEMO } from './api.js';
 import './assistant.css';
 
 export { SparkMark } from './mark.jsx';
-import { AtlasFace, useFaceMood } from '@/components/mascot/AtlasFace';
+import { AtlasFace, useFaceMood } from '@/components/mascot/AtlasFace.jsx';
 import { emitMascot } from '@/components/mascot/useMascotMood';
 
 /* ── keyboard + safe area ─────────────────────────────────────────────── */

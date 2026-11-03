@@ -3,7 +3,7 @@
  * radius, color and states stay identical across the app (tokens: src/styles/brand.css).
  */
 import HelpHint from '@/components/help/HelpHint';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { CountUp, GuestAvatar } from '@/components/app/atoms';

@@ -7,7 +7,7 @@ import { createPortal } from 'react-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { CheckCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { emitMascot } from '@/components/mascot/useMascotMood';
 import { URL_RE, TRAIL, shortLink } from './links';
 import './magic.css';
