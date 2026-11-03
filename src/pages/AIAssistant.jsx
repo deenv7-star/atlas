@@ -4,7 +4,8 @@
  * questions (insights.js), streaming to the ai-chat edge function (api.js) and the shared UI (ui.jsx).
  */
 import React, { useEffect } from 'react';
-import { Conversation, SparkMark } from '@/assistant/ui';
+import { Conversation } from '@/assistant/ui';
+import { AtlasFace } from '@/components/mascot/AtlasFace';
 import { useAssistantFacts } from '@/assistant/useAssistant';
 
 export default function AIAssistantPage({ user, orgId: orgIdProp }) {
@@ -22,9 +23,9 @@ export default function AIAssistantPage({ user, orgId: orgIdProp }) {
         page="/ai-assistant"
         variant="page"
         autoFocus
-        header={({ clear, hasThread, busy }) => (
+        header={({ clear, hasThread }) => (
           <header className={`as-head${hasThread ? ' has-thread' : ''}`}>
-            <span className="as-head-mark"><SparkMark size={26} live={busy} /></span>
+            <AtlasFace live size={48} className="as-head-face" />
             <div className="as-head-txt">
               <h1>שאלו את atlas</h1>
               <p>תשובות מההזמנות, הכסף והלידים שלכם.</p>
