@@ -52,11 +52,11 @@
 .x3-link { font-size: 14px; font-weight: 700; color: var(--ind); min-height: 44px; display: inline-flex; align-items: center; }
 
 .x3-deck-wrap { margin-top: 26px; }
-.x3-deck { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: -16px; padding: 4px 16px 30px; margin-bottom: -12px; }
+.x3-deck { display: flex; gap: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: -16px; padding: 4px 16px 30px; margin-bottom: -12px; }
 .x3-deck::-webkit-scrollbar { display: none; }
-@media (min-width: 1024px) { .x3-deck { margin-inline: 0; padding-inline: 0; gap: 20px; -webkit-mask-image: linear-gradient(to left, transparent 0, #000 64px); mask-image: linear-gradient(to left, transparent 0, #000 64px); } }
-.x3-card { position: relative; flex: 0 0 82%; max-width: 340px; scroll-snap-align: start; background: #fff; border-radius: 28px; overflow: hidden; box-shadow: 0 0 0 1px var(--line), 0 14px 28px -22px rgba(27,38,86,.35); }
-@media (min-width: 1024px) { .x3-card { flex-basis: 344px; } .x3-card-photo { height: 150px; } .x3-card-face { top: 122px; } }
+@media (min-width: 1024px) { .x3-deck { margin-inline: 0; padding-inline: 0; -webkit-mask-image: linear-gradient(to left, transparent 0, #000 64px); mask-image: linear-gradient(to left, transparent 0, #000 64px); } }
+.x3-card { position: relative; flex: none; width: min(320px, calc(100vw - 72px)); margin-left: 12px; scroll-snap-align: start; background: #fff; border-radius: 28px; overflow: hidden; box-shadow: 0 0 0 1px var(--line), 0 14px 28px -22px rgba(27,38,86,.35); }
+@media (min-width: 1024px) { .x3-card { width: 344px; margin-left: 20px; } .x3-card-photo { height: 150px; } .x3-card-face { top: 122px; } }
 .x3-card-photo { position: relative; display: block; width: 100%; height: 176px; background: #EEF0F5; overflow: hidden; }
 .x3-card-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
 .x3-card-photo:hover img { transform: scale(1.03); }

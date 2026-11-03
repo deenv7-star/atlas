@@ -44,7 +44,10 @@ export default function DashboardView({ user, orgId }) {
   const complete = (a) => {
     setGhost((s) => new Set(s).add(a.id));
     m.doItem(a);
-    setTimeout(() => setGhost((s) => { const n = new Set(s); n.delete(a.id); return n; }), 900);
+    setTimeout(() => {
+      setGhost((s) => { const n = new Set(s); n.delete(a.id); return n; });
+      deckRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+    }, 850);
   };
 
   // units today: one line of truth per unit, from the bookings
@@ -91,16 +94,16 @@ export default function DashboardView({ user, orgId }) {
           {curIdx >= 0 ? <span className="x3-count">{m.doneCount + 1} מתוך {m.total}</span> : null}
         </div>
         {deck.length && curIdx >= 0 ? (
-          <motion.ul ref={deckRef} className="x3-deck" layout>
-            <AnimatePresence initial={false} mode="popLayout">
+          <ul ref={deckRef} className="x3-deck">
+            <AnimatePresence initial={false}>
               {deck.map((a, i) => {
                 const isDone = m.isDone(a.id);
                 const photo = photoFor(a);
                 const face = a.kind === 'lead' ? a.lead.full_name : a.kind === 'clean' ? null : a.booking?.guest_name;
                 return (
-                  <motion.li key={a.id} layout className={cn('x3-card', i === curIdx && 'is-cur', isDone && 'is-done')}
-                    initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: isDone ? 0.0 : 1, scale: isDone ? 0.94 : 1, transition: { duration: isDone ? 0.35 : 0.4, ease: EASE, delay: isDone ? 0.5 : 0.05 * i } }}
-                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.25 } }}>
+                  <motion.li key={a.id} className={cn('x3-card', i === curIdx && 'is-cur', isDone && 'is-done')}
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE, delay: 0.04 * Math.min(i, 3) } }}
+                    exit={{ width: 0, marginLeft: 0, opacity: 0, scale: 0.92, transition: { duration: 0.45, ease: EASE } }}>
                     <button type="button" className="x3-card-photo" onClick={() => (a.booking ? setSheet(a.booking) : null)} aria-label={a.booking ? `פרטי ההזמנה, ${a.title}` : a.title}>
                       {photo ? <img src={photo} alt="" loading={i < 3 ? 'eager' : 'lazy'} decoding="async" draggable={false} /> : null}
                       {a.time ? <span className="x3-time" dir="ltr">{a.time}</span> : null}
@@ -116,7 +119,7 @@ export default function DashboardView({ user, orgId }) {
                 );
               })}
             </AnimatePresence>
-          </motion.ul>
+          </ul>
         ) : (
           <p className="x3-clear"><Check strokeWidth={2} />הכל בוצע להיום.</p>
         )}

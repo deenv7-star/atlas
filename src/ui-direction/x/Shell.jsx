@@ -9,7 +9,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { Search, Plus, Sun, CalendarRange, Inbox, Wallet, MoreHorizontal, Bell } from 'lucide-react';
+import { Search, Plus, Sun, CalendarRange, Inbox, Wallet, MoreHorizontal, Bell, LifeBuoy } from 'lucide-react';
 import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar, dayPart } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -45,6 +45,7 @@ export function Header({ user, onOpenCommandPalette, onLogout }) {
           <p className="x3-hello-d">{formatDayHe(todayISO())}{user?.organization_name ? ` · ${user.organization_name}` : ''}</p>
         </div>
         <button type="button" onClick={onOpenCommandPalette} className="x3-ib press" aria-label="חיפוש אורח, הזמנה או יחידה"><Search strokeWidth={1.75} /></button>
+        <button type="button" className="x3-ib press" aria-label="עזרה" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /></button>
         <Link to={createPageUrl('Messages')} className="x3-ib press" aria-label="הודעות"><Bell strokeWidth={1.75} /></Link>
         <UserMenu user={user} onLogout={onLogout}>
           <button type="button" aria-label="החשבון שלי" className="x3-ib press">
