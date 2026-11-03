@@ -16,7 +16,7 @@ import { MoreHorizontal, Search, Bell, Settings, Building2, Check, Plus, ArrowUp
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Wordmark, useNavGroups, useIsActive, MoreSheet, UserMenu, useShellProperties, navItem } from '@/components/app/shell/shared';
+import { Wordmark, useNavGroups, useIsActive, MoreSheet, UserMenu, useShellProperties } from '@/components/app/shell/shared';
 import { GuestAvatar, UnitPhoto, dayPart } from '@/components/app/atoms';
 import { IconButton } from '@/components/ds';
 import { useQuickBooking } from '@/components/app/QuickBooking';
