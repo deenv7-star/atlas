@@ -33,7 +33,21 @@
 				<string>com.atlasil.app</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.atlas-il.app.google</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.342928594606-suvsuvlnd3816jhe47n97evg2trec8gf</string>
+			</array>
+		</dict>
 	</array>
+	<key>GIDClientID</key>
+	<string>342928594606-suvsuvlnd3816jhe47n97evg2trec8gf.apps.googleusercontent.com</string>
+	<key>GIDServerClientID</key>
+	<string>342928594606-j1gcm31gut561cqplatlgiaf3otdpb9i.apps.googleusercontent.com</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

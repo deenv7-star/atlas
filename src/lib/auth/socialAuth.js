@@ -3,7 +3,8 @@
  * Pure rules (flags, return URL, profile fill, routing, Hebrew errors) live in oauthFlow.js.
  *
  * Google: supabase.auth.signInWithOAuth (full-page redirect) → /auth/callback.
- * iOS app: both providers through SFSafariViewController + PKCE → com.atlas-il.app://auth-callback (nativeOAuth.js).
+ * iOS app: native Sign in with Apple / Google Sign-In → signInWithIdToken (nativeSocial.js); the in-app browser
+ *         + PKCE → com.atlas-il.app://auth-callback (nativeOAuth.js) only as a fallback.
  * Apple:  with VITE_APPLE_SERVICES_ID set, Sign in with Apple JS (popup) → signInWithIdToken. This is the
  *         only web path where Apple hands over the person's name (first authorisation only), so it is kept
  *         right away in user_metadata. Without it, the same Supabase redirect as Google (no name: the
@@ -34,8 +35,7 @@ export const APPLE_MODE = (() => {
 /** Social sign-in needs a real Supabase project (not the local demo / REST backend). */
 export function socialProviders() {
   if (!isSupabaseConfigured || !supabase) return [];
-  // iOS app: same buttons, run in SFSafariViewController and returned to com.atlas-il.app://auth-callback
-  // (src/lib/auth/nativeOAuth.js).
+  // iOS app: same buttons, run natively (src/lib/auth/nativeSocial.js).
   return ['google', 'apple'].filter((p) => SOCIAL_FLAGS[p]);
 }
 
@@ -97,12 +97,17 @@ export async function startSocialSignIn(provider, { intent = 'login', returnTo =
   if (enabled && enabled[provider] === false) throw new Error('provider is not enabled');
   writePending(store(), buildPending({ provider, intent, returnTo, consent, business }));
 
-  // iOS app: the provider runs in SFSafariViewController (Apple JS popups and redirects to
-  // capacitor://localhost do not work in the WebView). Resolves with the session already set.
+  // iOS app: native sheets first (Sign in with Apple / Google Sign-In SDK → signInWithIdToken,
+  // nativeSocial.js). Only a native failure that is not a cancel falls back to SFSafariViewController
+  // (nativeOAuth.js). A cancel rejects with { silent: true }. Resolves with the session already set.
   if (isNativeApp()) {
     try {
-      const { nativeOAuthSignIn } = await import('@/lib/auth/nativeOAuth');
-      return await nativeOAuthSignIn(provider);
+      const { signInNativeFirst } = await import('@/lib/auth/nativeSocialCore');
+      return await signInNativeFirst(provider, {
+        native: async (p) => (await import('@/lib/auth/nativeSocial')).nativeSocialSignIn(p),
+        fallback: async (p) => (await import('@/lib/auth/nativeOAuth')).nativeOAuthSignIn(p),
+        log: (e) => console.warn('[social] native sign-in failed, using the in-app browser:', e?.code || '', e?.message || e),
+      });
     } catch (err) {
       clearPending(store());
       throw err;
