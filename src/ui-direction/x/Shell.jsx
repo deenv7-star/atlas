@@ -9,7 +9,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { Search, Plus, Sun, CalendarRange, CalendarDays, Inbox, Wallet, MoreHorizontal, Settings } from 'lucide-react';
+import { Search, Plus, Sun, CalendarRange, CalendarDays, Inbox, Wallet, MoreHorizontal, Settings, LifeBuoy } from 'lucide-react';
 import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar, dayPart } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -52,6 +52,7 @@ export function Sidebar({ onLogout, user }) {
         <button type="button" onClick={() => setMoreOpen(true)} className="x2-ni"><MoreHorizontal strokeWidth={1.75} /><span>עוד</span></button>
       </nav>
       <div className="x2-side-foot">
+        <button type="button" className="x2-ni" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /><span>עזרה</span></button>
         <Link to={createPageUrl('Settings')} className="x2-ni"><Settings strokeWidth={1.75} /><span>הגדרות</span></Link>
         <UserMenu user={user} onLogout={onLogout} side="left">
           <button type="button" className="x2-me press">
