@@ -63,7 +63,7 @@ export function useLiquidLens({ barRef, lensRef, tintRef, itemSelector = ':scope
     stepSpring(s.alpha, dt, 0.22, 1);
     stepSpring(s.morph, dt, 0.3, 1);
     // landing: once the lens has nearly reached its tab and narrowed to pill size, cross-fade it into the resting pill
-    if (s.released && s.alpha.target === 1 && Math.abs(s.x.v - s.x.target) < 2 && s.morph.v > 0.9) { s.alpha.target = 0; setLifted(false); }
+    if (s.released && s.alpha.target === 1 && ((Math.abs(s.x.v - s.x.target) < 2 && s.morph.v > 0.9) || t - s.releasedAt > 520)) { s.alpha.target = 0; setLifted(false); }
     paint();
     const done = s.released && s.alpha.target === 0 && s.alpha.v < 0.02;
     if (done) {
@@ -116,7 +116,7 @@ export function useLiquidLens({ barRef, lensRef, tintRef, itemSelector = ':scope
     if (!s || s.released) return;
     clearTimeout(s.timer);
     if (!s.dragging) { st.current = null; return; }
-    s.dragging = false; s.released = true;
+    s.dragging = false; s.released = true; s.releasedAt = performance.now();
     const idx = commit ? nearestIndex(s.centers, s.x.v + s.vx * 0.06) : (s.restIdx >= 0 ? s.restIdx : s.idx);
     s.x.target = s.centers[idx]; s.x.vel = s.vx; // hand the finger's velocity to the snap
     s.scale.target = 1; s.morph.target = 1; // alpha fades in the loop as it lands
