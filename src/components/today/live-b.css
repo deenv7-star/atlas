@@ -41,8 +41,8 @@
 /* ── head: greeting + hero (white type) ── */
 .lwb-head { color: #fff; padding-bottom: 8px; }
 .lwb-head h1, .lwb-head h2 { color: inherit; }
-.lwb[data-glass="0"] .lwb-head { background: linear-gradient(165deg, #26336F 0%, var(--navy) 70%); border-radius: 0 0 32px 32px; padding-bottom: 32px; }
-.lwb-top { display: flex; align-items: center; gap: 16px; padding: 16px var(--px) 0; }
+.lwb[data-glass="0"] .lwb-head { background: linear-gradient(165deg, color-mix(in srgb, var(--navy) 88%, var(--ind)) 0%, var(--navy) 70%); border-radius: 0 0 32px 32px; padding-bottom: 32px; }
+.lwb-top { display: flex; align-items: center; gap: 16px; padding: max(16px, env(safe-area-inset-top)) var(--px) 0; }
 .lwb-me { width: 48px; height: 48px; flex: none; border-radius: 24px; display: inline-flex; align-items: center; justify-content: center;
   background: rgba(255, 255, 255, .18); color: #fff; font-size: 18px; font-weight: 700; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
 .lwb-hello { font-size: 20px; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
@@ -144,6 +144,16 @@ a.lwb-card:active, button.lwb-card:active { transform: scale(.985); }
   .lwb-sheet--start { max-width: calc(58.33% + 2 * var(--px) - 10px); }
   .lwb-sheet--start .lwb-shh { max-width: none; }
   .lwb { padding-bottom: 96px; } /* last row can scroll above the floating help pill */
+}
+
+/* No backdrop-filter (older WebKit, some Android) or "reduce transparency": solid fills keep white text legible on the photo. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .lwb[data-glass="1"] .lwb-seg, .lwb[data-glass="1"] .lwb-help, .lwb-me { background: rgba(27, 38, 86, .72); }
+  .lwb[data-glass="1"] .lwb-card:not(.lwb-next) { background: #fff; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lwb[data-glass="1"] .lwb-seg, .lwb[data-glass="1"] .lwb-help, .lwb-me { background: rgba(27, 38, 86, .72); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .lwb[data-glass="1"] .lwb-card:not(.lwb-next) { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
