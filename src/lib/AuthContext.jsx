@@ -74,9 +74,13 @@ export const AuthProvider = ({ children }) => {
           [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
         }
         // Suspension is set by the platform admin (migration 011); null when unknown / not suspended.
-        const currentUser = me && status?.suspended
+        let currentUser = me && status?.suspended
           ? { ...me, account_suspended: true, account_suspended_reason: status.reason || '' }
           : me;
+        // Paid period end, when the server provides it (src/lib/access.js keeps a canceled plan open until then).
+        if (currentUser && status?.current_period_end) {
+          currentUser = { ...currentUser, current_period_end: status.current_period_end };
+        }
         setActiveOrg(currentUser?.organization_id);
         syncOrgSettingsFromDb(currentUser?.organization_id); // background; local copy is used meanwhile
         lastUidRef.current = currentUser?.id || null;

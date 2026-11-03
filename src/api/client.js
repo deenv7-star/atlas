@@ -22,6 +22,22 @@
  */
 
 import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
+import { assertWritable } from '@/lib/accessLock';
+
+// Trial over and not paid (src/lib/access.js): writes are refused here for every backend (Supabase, REST, local demo).
+const WRITE_METHOD = /^(create|update|delete|bulk|upsert|insert|remove|set)/i;
+function guardCollection(coll) {
+  return new Proxy(coll, {
+    get(target, method, recv) {
+      const v = Reflect.get(target, method, recv);
+      if (typeof v !== 'function' || typeof method !== 'string' || !WRITE_METHOD.test(method)) return v;
+      return (...args) => { assertWritable(); return v.apply(target, args); };
+    },
+  });
+}
+function guardEntities(entities) {
+  return new Proxy(entities, { get(target, name, recv) { const c = Reflect.get(target, name, recv); return c && typeof c === 'object' ? guardCollection(c) : c; } });
+}
 
 // =============================================================================
 // Local REST API client (talks to server/index.js)
@@ -545,6 +561,8 @@ const supabaseAuth = {
       trial_ends_at:        profile?.trial_ends_at || null,
       subscription_status:  profile?.subscription_status || 'trialing',
       is_platform_admin:    Boolean(profile?.is_platform_admin),
+      // Signup time: the trial fallback (signup + 14 days) when trial_ends_at is missing, same as the admin console.
+      created_at:           user.created_at || null,
     };
   },
 
@@ -813,6 +831,7 @@ const localAuth = {
 const integrations = {
   Core: {
     async InvokeLLM({ prompt, model = 'gpt-4o-mini' } = {}) {
+      assertWritable();
       const token = getStoredToken();
       const root = apiRootPrefix();
       const aiUrl = root ? `${root}/api/ai/chat` : '/api/ai/chat';
@@ -857,6 +876,7 @@ const integrations = {
     },
 
     async SendEmail({ to, subject, body } = {}) {
+      assertWritable();
       const token = getStoredToken();
       const root = apiRootPrefix();
       const emailUrl = root ? `${root}/api/email/send` : '/api/email/send';
@@ -885,6 +905,7 @@ const integrations = {
     },
 
     async UploadFile({ file } = {}) {
+      assertWritable();
       if (isSupabaseConfigured) {
         // Upload to Supabase Storage
         const ext      = file.name?.split('.').pop() || 'bin';
@@ -933,7 +954,7 @@ export function createClient(_options = {}) {
   // 1. Supabase cloud (highest priority)
   if (isSupabaseConfigured) {
     return {
-      entities:     supabaseEntitiesProxy,
+      entities:     guardEntities(supabaseEntitiesProxy),
       auth:         supabaseAuth,
       integrations,
       appLogs,
@@ -986,13 +1007,13 @@ export function createClient(_options = {}) {
       },
     });
 
-    _restClientCache = { entities: hybridEntities, auth: hybridAuth, integrations, appLogs };
+    _restClientCache = { entities: guardEntities(hybridEntities), auth: hybridAuth, integrations, appLogs };
     return _restClientCache;
   }
 
   // 3. Pure localStorage fallback
   return {
-    entities:     localEntitiesProxy,
+    entities:     guardEntities(localEntitiesProxy),
     auth:         localAuth,
     integrations,
     appLogs,

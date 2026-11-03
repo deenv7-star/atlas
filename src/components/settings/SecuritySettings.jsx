@@ -123,7 +123,7 @@ function ChangePassword({ user }) {
   );
 }
 
-function DeleteAccount({ onDeleted }) {
+export function DeleteAccount({ onDeleted }) {
   const [open, setOpen] = useState(false);
   const [word, setWord] = useState('');
   const [busy, setBusy] = useState(false);
