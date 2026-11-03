@@ -67,7 +67,7 @@ function CheckInCard({ token, booking, checkin, rules, onDone }) {
     setErr('');
     if (form.id_name.trim().length < 2) { setErr('כתבו שם מלא כמו בתעודה'); return; }
     if (form.phone.replace(/\D/g, '').length < 9) { setErr('כתבו מספר טלפון נייד'); return; }
-    if (!form.rules_accepted) { setErr('צריך לאשר את כללי המקום'); return; }
+    if (!form.rules_accepted) { setErr('צריך לאשר את כללי הבית'); return; }
     setBusy(true);
     try {
       await submitGuestCheckin(token, form);
@@ -75,7 +75,7 @@ function CheckInCard({ token, booking, checkin, rules, onDone }) {
       onDone();
     } catch (ex) {
       const m = String(ex?.message || '');
-      setErr(/rate_limited/.test(m) ? 'רגע, כבר שמרנו. נסו שוב בעוד כמה שניות' : /missing_fields|rules/.test(m) ? 'חסרים פרטים בטופס' : 'לא הצלחנו לשמור. נסו שוב');
+      setErr(/rate_limited/.test(m) ? 'שלחתם כמה פעמים ברצף. חכו כמה שניות ונסו שוב.' : /missing_fields|rules/.test(m) ? 'חסרים פרטים בטופס' : 'לא הצלחנו לשמור. נסו שוב');
     } finally {
       setBusy(false);
     }
@@ -130,7 +130,7 @@ function CheckInCard({ token, booking, checkin, rules, onDone }) {
         ) : null}
         <label className="col-span-2 flex min-h-[44px] items-start gap-3 text-[15px]">
           <input type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[#3E2BF1]" checked={form.rules_accepted} onChange={set('rules_accepted')} />
-          <span>קראתי ואישרתי את כללי המקום{rules.length ? '' : ' כפי שהמארחים ימסרו'}</span>
+          <span>קראתי ואישרתי את כללי הבית{rules.length ? '' : ' כפי שהמארחים ימסרו'}</span>
         </label>
         <label className="col-span-2 flex min-h-[44px] items-start gap-3 text-[14px]" style={{ color: 'var(--ink-600)' }}>
           <input type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[#3E2BF1]" checked={form.marketing_consent} onChange={set('marketing_consent')} />
@@ -251,7 +251,7 @@ export default function GuestStayPage() {
         ) : null}
 
         {rules.length ? (
-          <Card icon={ScrollText} title="כללי המקום">
+          <Card icon={ScrollText} title="כללי הבית">
             <ul className="space-y-2">
               {rules.map((r) => (
                 <li key={r} className="flex gap-2.5 text-[15px]">

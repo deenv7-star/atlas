@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { Link } from 'react-router-dom';
 import { Page, PageHeader, Card, Section, EmptyState, fmtMoney, fmtDay } from '@/components/ds';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Check, Crown, Zap, Rocket, CreditCard, Calendar, Receipt } from 'lucide-react';
-import { PRICING_PLANS } from '@/config/pricing';
+import { PRICING_PLANS, VAT_LINE } from '@/config/pricing';
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
+import { heError } from '@/lib/heError';
 import { isSupabaseConfigured, LOCAL_API_URL } from '@/api/supabaseClient';
 import TermsConsent from '@/components/legal/TermsConsent';
 
@@ -12,7 +13,7 @@ const PLANS = Object.fromEntries(
   PRICING_PLANS.map((p) => [
     p.key,
     {
-      name: p.name,
+      name: p.nameHe,
       price: p.price,
       icon: p.key === 'starter' ? Zap : p.key === 'pro' ? Crown : Rocket,
       propertyLimit: p.properties ?? Infinity,
@@ -22,8 +23,13 @@ const PLANS = Object.fromEntries(
   ])
 );
 
+/**
+ * COPY-054 (01.11.2026): one honest payment flow. Self-serve billing is not live in production (Stripe buttons
+ * only render without Supabase, i.e. the local API), and Subscription.jsx sends a plan request to the team.
+ * So this screen says the same: choose a package on /subscription, the team gets back within a business day.
+ * The old "upgrade" button wrote subscription_plan on the user and said "המסלול עודכן" without any charge.
+ */
 export default function BillingPage({ user }) {
-  const [loading, setLoading] = useState(false);
   const [stripeLoading, setStripeLoading] = useState(false);
   // Upay/Bit requirement: active consent before any payment step.
   const [agreed, setAgreed] = useState(false);
@@ -39,7 +45,7 @@ export default function BillingPage({ user }) {
     if (needConsent('billing-consent')) return;
     const token = localStorage.getItem('atlas_jwt_token');
     if (!token) {
-      window.alert('צריך להתחבר שוב כדי להמשיך');
+      atlasToastApi.error('צריך להתחבר שוב כדי להמשיך.');
       return;
     }
     setStripeLoading(true);
@@ -57,7 +63,7 @@ export default function BillingPage({ user }) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        window.alert(data.error || 'לא הצלחנו לפתוח את דף התשלום. נסו שוב בעוד רגע.');
+        atlasToastApi.error(heError(data.error, 'לא הצלחנו לפתוח את דף התשלום. נסו שוב בעוד רגע.'));
       }
     } finally {
       setStripeLoading(false);
@@ -80,7 +86,7 @@ export default function BillingPage({ user }) {
       });
       const data = await res.json().catch(() => ({}));
       if (data.url) window.location.href = data.url;
-      else window.alert(data.error || 'לא הצלחנו לפתוח את ניהול המנוי. נסו שוב בעוד רגע.');
+      else atlasToastApi.error(heError(data.error, 'לא הצלחנו לפתוח את ניהול המנוי. נסו שוב בעוד רגע.'));
     } finally {
       setStripeLoading(false);
     }
@@ -88,20 +94,7 @@ export default function BillingPage({ user }) {
 
   const planKey = user?.subscription_plan;
   const currentPlan = (planKey && PLANS[planKey]) ? planKey : 'starter';
-  const nextBillingDate = user?.next_billing_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-
-  const handleUpgrade = async (planId) => {
-    if (needConsent('billing-consent-up')) return;
-    setLoading(true);
-    try {
-      await base44.auth.updateMe({ subscription_plan: planId });
-      alert('המסלול עודכן. החיוב החדש יתחיל בתאריך החיוב הבא.');
-    } catch (error) {
-      alert('לא הצלחנו לעדכן את המסלול. נסו שוב.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const nextBillingDate = user?.next_billing_date || null; // never invent a date
 
   const plan = PLANS[currentPlan];
   const upgrades = Object.entries(PLANS).filter(([key]) => {
@@ -112,14 +105,14 @@ export default function BillingPage({ user }) {
 
   return (
     <Page className="max-w-[960px] space-y-6">
-      <PageHeader title="חיובים" subtitle="התוכנית שלכם, החיוב הבא והיסטוריית התשלומים." className="!mb-0" />
+      <PageHeader title="חיובים" subtitle="החבילה שלכם, החיוב הבא והיסטוריית התשלומים." className="!mb-0" />
 
       <Card className="p-5 md:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <span className="ds-icon-square">{React.createElement(plan.icon, { className: 'h-5 w-5', strokeWidth: 1.75 })}</span>
             <div className="min-w-0">
-              <p className="text-[13px] font-medium text-ink-400">התוכנית הנוכחית</p>
+              <p className="text-[13px] font-medium text-ink-400">החבילה הנוכחית</p>
               <h2 className="truncate text-[20px] font-bold text-navy-900">{plan.name}</h2>
             </div>
           </div>
@@ -132,11 +125,11 @@ export default function BillingPage({ user }) {
         <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="rounded-[12px] bg-canvas p-4">
             <dt className="flex items-center gap-2 text-[13px] text-ink-600"><Calendar className="h-4 w-4" strokeWidth={1.75} />החיוב הבא</dt>
-            <dd className="mt-1 text-[15px] font-bold text-navy-900">{fmtDay(nextBillingDate)}</dd>
+            <dd className="mt-1 text-[15px] font-bold text-navy-900">{nextBillingDate ? fmtDay(nextBillingDate) : 'ייקבע כשתופעל החבילה'}</dd>
           </div>
           <div className="rounded-[12px] bg-canvas p-4">
             <dt className="flex items-center gap-2 text-[13px] text-ink-600"><CreditCard className="h-4 w-4" strokeWidth={1.75} />אמצעי תשלום</dt>
-            <dd className="mt-1 text-[15px] font-bold text-navy-900">עדיין לא נוסף כרטיס</dd>
+            <dd className="mt-1 text-[15px] font-bold text-navy-900">מוסדר מול הצוות שלנו</dd>
           </div>
         </dl>
 
@@ -165,40 +158,19 @@ export default function BillingPage({ user }) {
         )}
       </Card>
 
-      {upgrades.length > 0 && (
-        <section>
-          <h2 className="mb-3 text-[20px] font-bold text-navy-900">החלפת מסלול</h2>
-          <TermsConsent id="billing-consent-up" className="mb-4 max-w-[560px]" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
-          <div className="grid gap-4 md:grid-cols-2">
-            {upgrades.map(([key, p]) => (
-              <Card key={key} className={cn('flex h-full flex-col p-5 md:p-6', p.popular && 'border-brand-600 ring-1 ring-brand-600')}>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <span className="ds-icon-square">{React.createElement(p.icon, { className: 'h-5 w-5', strokeWidth: 1.75 })}</span>
-                    <h3 className="text-[18px] font-bold text-navy-900">{p.name}</h3>
-                  </div>
-                  {p.popular ? <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-[13px] font-bold text-brand-700">מומלץ</span> : null}
-                </div>
-                <p className="mt-4 text-navy-900"><span className="tabular text-[32px] font-bold">{fmtMoney(p.price)}</span><span className="text-[15px] text-ink-400"> לחודש</span></p>
-                <ul className="mb-6 mt-4 flex-1 space-y-2">
-                  {p.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-2 text-[15px] text-ink-600">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" strokeWidth={2} />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button className="w-full" variant={p.popular ? 'default' : 'outline'} onClick={() => handleUpgrade(key)} disabled={loading}>
-                  {loading ? 'מעדכנים…' : `מעבר ל-${p.name}`}
-                </Button>
-              </Card>
-            ))}
-          </div>
-        </section>
-      )}
+      <Card className="p-5 md:p-6">
+        <h2 className="text-[18px] font-bold text-navy-900">{upgrades.length > 0 ? 'החלפת חבילה' : 'איך משלמים'}</h2>
+        <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
+          התשלום מוסדר מול הצוות שלנו. בוחרים חבילה במסך המנוי, ונחזור אליכם תוך יום עסקים כדי להפעיל אותה. אין חיוב אוטומטי.
+        </p>
+        <p className="mt-1 text-[14px] text-ink-400">{VAT_LINE}</p>
+        <Button asChild className="mt-4 min-h-11">
+          <Link to="/subscription">בחירת חבילה</Link>
+        </Button>
+      </Card>
 
       <Section title="היסטוריית חיובים" icon={Receipt}>
-        <EmptyState compact title="אין עדיין חיובים" description="אחרי החיוב הראשון הקבלות יופיעו כאן." />
+        <EmptyState compact title="אין עדיין חיובים" description="אחרי החיוב הראשון הוא יופיע כאן, והקבלה תישלח אליכם במייל." />
       </Section>
     </Page>
   );

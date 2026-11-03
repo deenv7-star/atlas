@@ -6,6 +6,7 @@
 import React, { Suspense, useRef } from 'react';
 import { useReveal } from '@/components/landing/v5/motion';
 import { Faq, Footer } from '@/components/landing/v5/LandingV5';
+import { PRICING_FAQ } from '@/components/landing/v5/content';
 import { V7Header } from '@/components/landing/v7/shared7';
 import { Pricing8 } from '@/components/landing/v8/Pricing8';
 import '@/components/landing/v5/landing-v5.css';
@@ -23,8 +24,8 @@ export default function PricingPlans() {
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <V7Header links={NAV} />
       <main id="main" className="pt-[72px]">
-        <Pricing8 as="h1" title="מחירים. פשוט, לפי מספר המתחמים." />
-        <Suspense fallback={null}><Faq limit={5} /></Suspense>
+        <Pricing8 as="h1" title="מחיר לפי מספר המתחמים. זה הכל." growth />
+        <Suspense fallback={null}><Faq items={PRICING_FAQ} /></Suspense>
       </main>
       <Suspense fallback={null}><Footer /></Suspense>
     </div>

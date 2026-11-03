@@ -38,9 +38,9 @@ const PORT = [['pool-p480', 480], ['pool-p720', 720], ['pool-p1080', 1080]];
 const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['pool-2560', 2560], ['pool-3840', 3840]];
 
 const NTFS = [
-  { ch: 'booking', title: 'הזמנה חדשה מ-Booking.com', sub: 'שירן ג. · הזית · 2 לילות', time: '08:12' },
+  { ch: 'booking', title: 'לילות תפוסים מ-Booking.com', sub: 'הזית · 2 לילות נכנסו ללוח', time: '08:12' },
   { ch: 'whatsapp', title: 'אישור נשלח בוואטסאפ', sub: 'משפחת לוי · עם הוראות הגעה', time: '09:00' },
-  { face: 'noa', title: 'נועה ל. שילמה מקדמה', sub: '‏₪1,250 · האלון · נרשם לבד', time: '10:24' },
+  { face: 'noa', title: 'נועה ל. · מקדמה ‏₪1,250', sub: 'האלון · נרשמה בלחיצה', time: '10:24' },
 ];
 
 /** Scroll segments (progress 0..1 through the sticky run). */
@@ -157,23 +157,24 @@ function EndHead() {
   );
 }
 
-/** The real home screen: browser window (desktop capture 2400×1500, ≥900px) and phone (C mobile 780×1594,
- *  <900px). Both are in the markup and CSS shows one (hero-photo.css, same 900px rule as useDesktop), so the
+/** The real home screen, new UI Y3 "היום" (glass over a zimmer photo; demo build of main 1d7426a, 03.11.2026):
+ *  browser window (desktop capture 1440×900 @2x, saved 2400×1500, ≥900px) and phone (390×844 @2x = 780×1688,
+ *  the status bar drawn over the photo, <900px). Both are in the markup and CSS shows one (hero-photo.css, same 900px rule as useDesktop), so the
  *  HTML is the same for every screen and the prerendered page hydrates as is; the hidden one is lazy, so it
  *  is never downloaded. */
 function Device({ deskRef, mobRef }) {
   return (
     <>
       <div className="ph-win ph-dev">
-        <div className="ph-win-bar" aria-hidden="true"><i /><i /><i /><span dir="ltr">app.atlas-il.com/today</span></div>
+        <div className="ph-win-bar" aria-hidden="true"><i /><i /><i /><span dir="ltr">atlas-il.com/today</span></div>
         <div className="ph-win-shot">
-          <img ref={deskRef} src={`${P}/ui-d-today.webp`} alt="מסך הבית של atlas, נתוני דוגמה" width="2400" height="1500" loading="lazy" decoding="async" />
+          <img ref={deskRef} src={`${P}/ui-d-today-y3.webp`} srcSet={`${P}/ui-d-today-y3-1200.webp 1200w, ${P}/ui-d-today-y3-1600.webp 1600w, ${P}/ui-d-today-y3-2080.webp 2080w, ${P}/ui-d-today-y3.webp 2400w`} sizes="min(1040px, 90vw)" alt="מסך הבית של atlas, נתוני דוגמה" width="2400" height="1500" loading="lazy" decoding="async" />
         </div>
       </div>
       <div className="ph-phone ph-dev" role="img" aria-label="מסך הבית של atlas בטלפון, נתוני דוגמה">
         <div className="ph-phone-scr">
           <span className="ph-phone-status" aria-hidden="true"><span className="num" dir="ltr">9:41</span><span className="ph-phone-island" /><i className="ph-phone-bat" /></span>
-          <img ref={mobRef} src={`${P}/ui-m-today.webp`} alt="" width="780" height="1594" loading="lazy" decoding="async" />
+          <img ref={mobRef} src={`${P}/ui-m-today-y3.webp`} srcSet={`${P}/ui-m-today-y3-540.webp 540w, ${P}/ui-m-today-y3.webp 780w`} sizes="260px" alt="" width="780" height="1688" loading="lazy" decoding="async" />
         </div>
       </div>
     </>
@@ -362,6 +363,12 @@ export default function HeroPhoto() {
     <>
     <section ref={sec} className="ph-hero is-scroll" aria-labelledby="hero-title">
       <div ref={stage} className="ph-stage">
+        {/* H1 first in the DOM (screen readers, crawlers: A16/SEO-001). Paint order is unchanged: .ph-in has
+            z-index 2, and .ph-end / .ph-clip keep their relative order (both z-index auto). */}
+        <div className="ph-in">
+          <Copy copyRef={copy} onShow={onShow} />
+          <Notifs ntfRef={ntfs} />
+        </div>
         <div className="ph-end">
           <div ref={end} className="ph-end-head" id="product"><EndHead /></div>
           <div className="ph-end-dev"><Device deskRef={shotD} mobRef={shotM} /></div>
@@ -369,10 +376,6 @@ export default function HeroPhoto() {
         <div ref={clip} className="ph-clip">
           <Photo imgRef={img} />
           <i ref={scrim} className="ph-scrim" aria-hidden="true" />
-        </div>
-        <div className="ph-in">
-          <Copy copyRef={copy} onShow={onShow} />
-          <Notifs ntfRef={ntfs} />
         </div>
       </div>
     </section>

@@ -7,6 +7,7 @@
  * properties after step 2, orgSettings.channels_today + calendar_syncs after step 3,
  * profiles + hosting settings after step 4, then finishOnboarding (trial, flag, tour).
  */
+import { heError } from '@/lib/heError';
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, Plus, Trash2, Loader2, Minus } from 'lucide-react';
@@ -97,7 +98,7 @@ export default function OnboardingSteps({ user, again = false }) {
       setBusy(true);
       try { await leave[step](); } catch (e) {
         setBusy(false);
-        setError(e?.message && e.message.length < 140 ? `לא הצלחנו לשמור: ${e.message}` : 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.');
+        setError(heError(e, 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.'));
         return;
       }
       setBusy(false);
@@ -409,7 +410,7 @@ function Ready({ d }) {
       <motion.h1 initial={still ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35, ease: EASE }}
         className="mt-7 text-[34px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[42px]">המערכת שלך מוכנה</motion.h1>
       <motion.p initial={still ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.45 }} className="mt-2 text-[17px] text-ink-600">
-        {d.businessName.trim() || 'המקום שלכם'} כבר בפנים. ההזמנה הראשונה יכולה להיכנס.
+        {d.businessName.trim() || 'המתחם שלכם'} כבר בפנים. ההזמנה הראשונה יכולה להיכנס.
       </motion.p>
       <ul className="mt-7 flex w-full flex-col gap-2">
         {items.map((t, k) => (

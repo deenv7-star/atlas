@@ -14,7 +14,7 @@ const NAME_Q = {
   zimmer_complex: 'איך קוראים למתחם?',
   guesthouse: 'איך קוראים לבית ההארחה?',
   boutique: 'איך קוראים למלון?',
-  apartments: 'איך קוראים למקום?',
+  apartments: 'איך קוראים לדירות?',
 };
 
 const NAME_PH = {
@@ -28,7 +28,7 @@ export const COPY = {
   common: {
     next: 'המשך',
     back: 'חזרה',
-    skip: 'דלגו',
+    skip: 'דילוג',
     later: 'אחר כך',
     saved: 'נשמר',
     autosave: 'נשמר אוטומטית. תמיד אפשר לשנות.',
@@ -92,7 +92,7 @@ export const COPY = {
     sub: '14 יום חינם, בלי כרטיס אשראי.',
     summary: 'מה הכנו לכם',
     edit: 'שינוי',
-    cta: 'בנו את היומן',
+    cta: 'בניית היומן',
   },
   review: {
     kind: 'סוג',
@@ -113,7 +113,7 @@ export const COPY = {
     },
     channels: {
       title: 'מאיפה מגיעות ההזמנות?',
-      sub: 'סמנו הכל. את Booking או Airbnb אפשר לחבר כבר עכשיו.',
+      sub: 'סמנו כל מה שמתאים. את Booking ו-Airbnb אפשר לחבר כבר עכשיו.',
       linkLabel: (name) => `קישור היומן מ-${name}`,
       optional: 'לא חובה',
       linkLine: 'מדביקים כאן, וההזמנות נכנסות ליומן לבד.',

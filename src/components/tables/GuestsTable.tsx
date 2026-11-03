@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { askConfirm } from '@/components/common/confirmDialog';
 import type { ColumnDef, OnChangeFn, SortingState } from '@tanstack/react-table';
 import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -146,8 +147,9 @@ export function GuestsTable(props: GuestsTableProps): React.ReactElement {
         emptyMessage="עוד אין לידים כאן"
         csvExport={{ filename: 'guests', columns: csvColumns }}
         bulkBar={{
-          onDeleteSelected: (rows) => {
-            if (!confirm(`למחוק ${rows.length} רשומות?`)) return;
+          onDeleteSelected: async (rows) => {
+            const ok = await askConfirm({ title: rows.length === 1 ? 'למחוק ליד אחד?' : `למחוק ${rows.length} לידים?`, description: 'הלידים יימחקו מהרשימה.' });
+            if (!ok) return;
             onBulkDelete(rows);
           },
           onChangeStatus: (rows) => setStatusMenuRows(rows),

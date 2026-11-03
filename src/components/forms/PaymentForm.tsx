@@ -24,8 +24,8 @@ import {
 const PAYMENT_STATUSES = [
   { value: 'PENDING', label: 'ממתין' },
   { value: 'PAID', label: 'שולם' },
-  { value: 'PARTIAL', label: 'חלקי' },
-  { value: 'FAILED', label: 'לא עבר' },
+  { value: 'PARTIAL', label: 'שולם חלקית' },
+  // COPY-045: no card processing, so "לא עבר" is not offered for manual records (legacy rows still display it)
   { value: 'REFUNDED', label: 'הוחזר' },
   { value: 'OVERDUE', label: 'באיחור' },
 ];

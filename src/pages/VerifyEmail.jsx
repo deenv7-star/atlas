@@ -147,7 +147,7 @@ export default function VerifyEmail() {
                   className="mt-3 h-12 w-full text-[15px] font-semibold"
                   onClick={() => navigate(user?.onboarding_completed ? '/dashboard' : '/onboarding', { replace: true })}
                 >
-                  {user?.onboarding_completed ? 'מעבר למסך הבית' : 'המשך כאן להגדרת הצימר'}
+                  {user?.onboarding_completed ? 'מעבר למסך הבית' : 'המשך להגדרת המתחם'}
                 </Button>
               ) : (
                 <Button asChild size="lg" className="mt-3 h-12 w-full text-[15px] font-semibold">

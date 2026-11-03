@@ -713,3 +713,30 @@ textarea:focus-visible {
 
 /* v5 release QA: footer links on the legacy public pages are tap targets (≥44px) */
 footer a[href] { display: inline-flex; align-items: center; min-height: 44px; }
+
+/* ── Form fields: never below 16px (iOS / iPadOS Safari zooms the page on focus under 16px).
+   Base: fields that inherit a small parent size. Override: fields given a small text utility,
+   at any breakpoint (md:text-sm, text-[14px] …). Checkboxes / radios / ranges are untouched. (APP-011/012) */
+@layer base {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']), textarea, select { font-size: 16px; }
+  select { min-height: 44px; } /* native selects (e.g. /service-requests) were 28px tall: 44px tap target */
+}
+:is(input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']), textarea, select):is(
+  [class*='text-xs'], [class*='text-sm'], [class*='text-[11px]'], [class*='text-[12px]'], [class*='text-[13px]'], [class*='text-[14px]'], [class*='text-[15px]']
+) { font-size: 16px !important; }
+/* a long placeholder in a narrow column ends with "…" instead of a hard cut (APP-027) */
+input::placeholder { text-overflow: ellipsis; }
+input { text-overflow: ellipsis; }
+
+/* StickySheetFooter (src/components/ui/sheet-footer.jsx), APP-023: the save button never hides below the fold
+   of a phone sheet. The sheet (DialogContent) is the scroll container; the footer sticks to its bottom edge. */
+.sheet-footer { padding-top: 12px; }
+@media (max-width: 639.98px) {
+  [data-sheet-footer] {
+    position: sticky; bottom: calc(-1.25rem - env(safe-area-inset-bottom)); z-index: 5;
+    margin: 0 -1.25rem calc(-1.25rem - env(safe-area-inset-bottom));
+    padding: 12px 1.25rem calc(12px + env(safe-area-inset-bottom));
+    background: #fff; box-shadow: 0 -1px 0 rgba(27, 38, 86, 0.08), 0 -12px 24px -16px rgba(27, 38, 86, 0.18);
+  }
+}
+.sheet-footer-note { margin-bottom: 10px; }

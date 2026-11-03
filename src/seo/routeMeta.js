@@ -7,10 +7,12 @@ const EXACT = {
     description: DEFAULT_DESCRIPTION,
   },
   '/login': {
+    robots: 'noindex,follow', // account screens are not search targets (A18/SEO-003)
     title: 'התחברות | atlas',
     description: 'כניסה לחשבון atlas: ההזמנות, התשלומים וההודעות של הצימר.',
   },
   '/register': {
+    robots: 'noindex,follow', // account screens are not search targets (A18/SEO-003)
     title: 'הרשמה | atlas',
     description: 'פתיחת חשבון atlas: ניהול מתחמי נופש ואירוח בישראל.',
   },
@@ -19,6 +21,7 @@ const EXACT = {
     description: 'אימות כתובת האימייל לחשבון atlas.',
   },
   '/reset-password': {
+    robots: 'noindex,follow', // account screens are not search targets (A18/SEO-003)
     title: 'איפוס סיסמה | atlas',
     description: 'איפוס סיסמה לחשבון atlas.',
   },
@@ -75,9 +78,9 @@ const EXACT = {
     description: 'איך הזמנות מ-Booking ו-Airbnb נכנסות ללוח אחד, ומה קורה כשיש חפיפה.',
   },
   '/pricing': {
-    title: 'תמחור ותוכניות | atlas',
+    title: 'מחירי מערכת ניהול לצימרים: מ-₪399 לחודש, 14 יום חינם | atlas',
     description:
-      'המחירים של atlas לצימרים ומתחמי נופש: 3 חבילות לפי מספר המתחמים, 14 יום ניסיון חינם, בלי כרטיס אשראי.',
+      'המחירים של atlas לצימרים ומתחמי נופש: 3 חבילות ניהול לפי מספר המתחמים, 14 יום חינם, בלי כרטיס אשראי, ותמיכה אנושית 24/7.',
   },
   '/billing': {
     title: 'חיובים | atlas',
@@ -105,7 +108,7 @@ const SEGMENT_TITLE = {
   messages: 'הודעות | atlas',
   calendar: 'לוח שנה | atlas',
   settings: 'הגדרות | atlas',
-  invoices: 'חשבוניות | atlas',
+  invoices: 'מסמכים שהוצאתם | atlas',
   payments: 'תשלומים | atlas',
   reviews: 'ביקורות | atlas',
   cleaning: 'ניקיון | atlas',
@@ -127,6 +130,7 @@ const SEGMENT_TITLE = {
   g: 'פרטי השהייה | atlas',
   book: 'הזמנה ישירה | atlas',
   'service-requests': 'בקשות שירות | atlas',
+  setup: 'הגדרה ראשונית | atlas',
 };
 
 function normalizePath(pathname) {
@@ -139,7 +143,7 @@ function normalizePath(pathname) {
 export function getRouteMeta(pathname) {
   const path = normalizePath(pathname);
   if (EXACT[path]) {
-    return { title: EXACT[path].title, description: EXACT[path].description, canonicalPath: path };
+    return { title: EXACT[path].title, description: EXACT[path].description, canonicalPath: path, robots: EXACT[path].robots };
   }
   for (const { test, title } of PREFIX) {
     if (test.test(path)) {

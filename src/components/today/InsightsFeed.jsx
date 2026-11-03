@@ -12,12 +12,33 @@ import {
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
 import InsightActionButton from './InsightActionButton';
+import { todayISO, addDays } from '@/lib/stay/format';
 
 const CHIP = {
   urgent: 'bg-brand-600 text-white',
-  worth: 'bg-[#ECEAFE] text-brand-600',
-  idea: 'bg-[#F7F8FB] text-navy-900 ring-1 ring-inset ring-[#E4E6F0]',
+  late: 'bg-white text-navy-900 ring-1 ring-inset ring-navy-900/30',
+  soon: 'bg-[#ECEAFE] text-brand-700',
+  worth: 'bg-[#F7F8FB] text-navy-900 ring-1 ring-inset ring-[#E4E6F0]',
+  idea: 'bg-[#F7F8FB] text-ink-600 ring-1 ring-inset ring-[#E4E6F0]',
 };
+
+/** Rules where waiting costs something today (a double booking, guests at a dirty unit). Only these say "דחוף". */
+const REAL_URGENT = new Set(['sync_broken', 'turnover']);
+/**
+ * What the chip says (APP-D02). The engine keeps its severity for sorting; the screen only shouts
+ * "דחוף" when it is: everything else says when it is due ("היום" / "מחר" / "השבוע") or that it is late.
+ */
+export function tierOf(item, today = todayISO()) {
+  if (item.severity === 'urgent' && REAL_URGENT.has(item.rule)) return { key: 'urgent', label: 'דחוף' };
+  if (item.rule === 'overdue_balance') return { key: 'late', label: 'באיחור' };
+  if (item.severity === 'urgent') {
+    const at = String(item.at || '').slice(0, 10);
+    if (!at || at <= today) return { key: 'soon', label: 'היום' };
+    if (at === addDays(today, 1)) return { key: 'soon', label: 'מחר' };
+    return { key: 'soon', label: 'השבוע' };
+  }
+  return { key: item.severity === 'idea' ? 'idea' : 'worth', label: item.label };
+}
 export const SHOW = { phone: 3, desktop: 4 };
 
 /** true from 1024px: two columns and one more row before "עוד". */
@@ -35,9 +56,10 @@ function useWide() {
 }
 
 export function SeverityChip({ item, className }) {
+  const t = tierOf(item);
   return (
-    <span className={cn('inline-flex h-6 shrink-0 items-center rounded-full px-2.5 text-[12px] font-bold', CHIP[item.severity], className)}>
-      {item.label}
+    <span className={cn('inline-flex h-6 shrink-0 items-center rounded-full px-2.5 text-[12px] font-bold', CHIP[t.key], className)}>
+      {t.label}
     </span>
   );
 }
@@ -67,7 +89,7 @@ function RowMenu({ item, onSnooze, onDismiss }) {
 
 function Row({ item, primary, onAction, onSnooze, onDismiss, leaving }) {
   return (
-    <li className={cn('ins-row', leaving && 'is-leaving')} data-insight={item.rule} data-severity={item.severity}>
+    <li className={cn('ins-row', leaving && 'is-leaving')} data-insight={item.rule} data-severity={item.severity} data-tier={tierOf(item).key}>
       <div className="min-h-0 overflow-hidden">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-3 md:flex-nowrap md:px-4">
           <div className="min-w-0 flex-1 basis-[220px]">
@@ -88,7 +110,12 @@ function Row({ item, primary, onAction, onSnooze, onDismiss, leaving }) {
 }
 
 export default function InsightsFeed({ insights, onAction }) {
-  const { items, ready, snooze, dismiss, restore } = insights;
+  const { items: raw, ready, snooze, dismiss, restore } = insights;
+  // what really can't wait comes first, then what is late, then by due day (stable: engine order inside a tier)
+  const items = React.useMemo(() => {
+    const rank = { urgent: 0, late: 1, soon: 2, worth: 3, idea: 4 };
+    return (raw || []).map((x, i) => ({ x, i, r: rank[tierOf(x).key] ?? 5 })).sort((a, b) => a.r - b.r || a.i - b.i).map((y) => y.x);
+  }, [raw]);
   const [open, setOpen] = useState(false);
   const [leaving, setLeaving] = useState(null);
   const wide = useWide();
@@ -106,7 +133,7 @@ export default function InsightsFeed({ insights, onAction }) {
   const onSnooze = (item) => hide(item, snooze, 'נזכיר מחר');
   const onDismiss = (item) => hide(item, dismiss, 'הוסר מהרשימה');
 
-  const urgent = items.filter((x) => x.severity === 'urgent').length;
+  const urgent = items.filter((x) => tierOf(x).key === 'urgent').length;
   const limit = wide ? SHOW.desktop : SHOW.phone;
   const shown = open ? items : items.slice(0, limit);
   const rest = items.length - shown.length;
@@ -136,7 +163,7 @@ export default function InsightsFeed({ insights, onAction }) {
         <>
           <ul className="ins-list px-2 pb-2 md:px-3 lg:grid lg:grid-cols-2 lg:gap-x-4">
             {shown.map((item, i) => (
-              <Row key={item.id} item={item} primary={i === 0 && item.severity === 'urgent'} onAction={onAction} onSnooze={onSnooze} onDismiss={onDismiss} leaving={leaving === item.id} />
+              <Row key={item.id} item={item} primary={i === 0 && tierOf(item).key === 'urgent'} onAction={onAction} onSnooze={onSnooze} onDismiss={onDismiss} leaving={leaving === item.id} />
             ))}
           </ul>
           {items.length > limit ? (

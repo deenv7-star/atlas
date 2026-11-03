@@ -14,10 +14,10 @@ export default function InvoicePreview({ invoice }) {
   };
 
   const typeLabels = {
-    INVOICE: 'חשבונית',
-    RECEIPT: 'קבלה',
-    TAX_INVOICE: 'חשבונית מס',
-    PROFORMA: 'חשבונית עסקה'
+    INVOICE: 'רישום מסמך',
+    RECEIPT: 'רישום קבלה',
+    TAX_INVOICE: 'רישום חשבונית מס',
+    PROFORMA: 'חשבון עסקה'
   };
 
   return (
@@ -37,7 +37,7 @@ export default function InvoicePreview({ invoice }) {
           </div>
           <div className="text-left">
             <h2 className="text-2xl font-bold text-[#1B2656] mb-2">
-              {typeLabels[invoice.type] || 'חשבונית'}
+              {typeLabels[invoice.type] || 'רישום מסמך'}
             </h2>
             <p className="text-sm text-ink-600">מספר: {invoice.invoice_number}</p>
             <p className="text-sm text-ink-600">תאריך: {format(new Date(invoice.issue_date), 'dd/MM/yyyy')}</p>
@@ -128,7 +128,7 @@ export default function InvoicePreview({ invoice }) {
 
         {/* Footer */}
         <div className="text-center text-xs text-ink-600 pt-6 border-t mt-8">
-          <p>הופק עם atlas</p>
+          <p>לתיעוד בלבד. זו לא חשבונית מס ולא קבלה: מסמכי מס מפיקים בתוכנה רשומה.</p>
           <p>תודה, ונשמח לארח אתכם שוב</p>
         </div>
       </div>

@@ -8,8 +8,8 @@
  */
 import React, { useState } from 'react';
 import { Check, ChevronDown, MessageCircle, MapPin, ShieldCheck, ArrowLeft } from 'lucide-react';
-import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE } from '@/config/pricing';
-import { GROWTH_OFFER, FOUNDING, GROWTH_STATUS, GROWTH_LINKS, nis } from '@/config/growth';
+import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE, VAT_LINE, SUPPORT_LINE, yearlyTotal } from '@/config/pricing';
+import { GROWTH_OFFER, FOUNDING, GROWTH_SCOPE, GROWTH_CTA, GROWTH_LINKS, nis } from '@/config/growth';
 import { fmt } from '../v5/motion';
 import { SignupButton } from '../v5/LandingV5';
 import { BillingToggle8 } from './pricing/BillingToggle8';
@@ -19,9 +19,9 @@ import './pricing/pricing-motion.css';
 import './pricing/pricing-growth.css';
 
 const TRUST = [
-  { I: MessageCircle, t: 'תמיכה בעברית, בוואטסאפ' },
+  { I: MessageCircle, t: SUPPORT_LINE },
   { I: MapPin, t: 'נבנה בישראל' },
-  { I: ShieldCheck, t: 'מידע מוצפן ומגובה' },
+  { I: ShieldCheck, t: 'מידע מוצפן, עם גיבוי יומי' }, // daily encrypted backup exists; no point-in-time restore claim
 ];
 
 function Price({ p, yearly }) {
@@ -35,7 +35,8 @@ function Price({ p, yearly }) {
       <p className="v8p-bill">
         <span className="v8p-bill-m" aria-hidden={yearly}>בחיוב חודשי</span>
         <span className="v8p-bill-y" aria-hidden={!yearly}>
-          בחיוב שנתי
+          {/* annual is charged upfront (Deen, 01.11.2026): the total, computed from pricing.js */}
+          <span className="v8p-nw">חיוב שנתי מראש: <bdi className="num" dir="ltr">₪{fmt(yearlyTotal(p))}</bdi></span>
           <span className="v8p-save">חוסכים <bdi dir="ltr">₪{fmt(save)}</bdi> בשנה</span>
         </span>
       </p>
@@ -72,17 +73,17 @@ function GrowthAddon({ H }) {
         </div>
         <p className="v8p-add-line">
           <span className="v8p-nw"><bdi className="num" dir="ltr">{nis(GROWTH_OFFER.price)}</bdi> לחודש,</span>{' '}
-          <span className="v8p-nw">כולל את כל מערכת הניהול</span><span aria-hidden="true"> · </span><span className="sr-only">, </span>
+          <span className="v8p-nw">כולל את כל מערכת הניהול</span><span> · </span>
           <span className="v8p-nw"><bdi className="num is-found" dir="ltr">{nis(FOUNDING.monthly)}</bdi> למייסדים</span>
         </p>
         <p className="v8p-add-terms">
-          <span className="v8p-nw">{`${FOUNDING.cap} ראשונים, עד ${FOUNDING.deadline}`}</span><span aria-hidden="true"> · </span><span className="sr-only">, </span>
+          <span className="v8p-nw">{`${FOUNDING.cap} ראשונים, עד ${FOUNDING.deadline}`}</span><span> · </span>
           <span className="v8p-nw">{`המחיר נעול ל-${FOUNDING.lockMonths} חודשים`}</span>
         </p>
-        <p className="v8p-add-what">{`${GROWTH_STATUS.soon.join(', ').replace(/, ([^,]*)$/, ' ו$1')}. תקציב הפרסום שלכם, משולם ישירות `}<span className="v8p-nw">ל-Meta ול-Google</span>.</p>
+        <p className="v8p-add-what">{`${GROWTH_SCOPE}. חבילה נפרדת, שמתחילים בשיחה קצרה. תקציב הפרסום שלכם, משולם ישירות `}<span className="v8p-nw">ל-Meta ול-Google</span>.</p>
       </div>
-      <a className="v8p-add-cta" href={GROWTH_LINKS.founding} target="_blank" rel="noopener noreferrer">
-        <span>שמירת מקום כמייסדים</span><ArrowLeft size={18} strokeWidth={2} aria-hidden="true" /><span className="sr-only"> (וואטסאפ, נפתח בחלון חדש)</span>
+      <a className="v8p-add-cta" href={GROWTH_LINKS.call} target="_blank" rel="noopener noreferrer">
+        <span>{GROWTH_CTA}</span><ArrowLeft size={18} strokeWidth={2} aria-hidden="true" /><span className="sr-only"> (נפתח בחלון חדש)</span>
       </a>
     </div>
   );
@@ -117,10 +118,14 @@ export function CompareTable() {
           {PRICING_PLANS.map((p) => <td key={p.key}><span className="num" dir="ltr">₪{fmt(p.priceYearly)}</span></td>)}
         </tr>
         <tr>
+          <th scope="row">חיוב שנתי מראש</th>
+          {PRICING_PLANS.map((p) => <td key={p.key}><span className="num" dir="ltr">₪{fmt(yearlyTotal(p))}</span></td>)}
+        </tr>
+        <tr>
           <th scope="row">14 יום ניסיון חינם</th>
           {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} role="img" aria-label="כלול" /></td>)}
         </tr>
-        {['כל היכולות', 'תמיכה בעברית, בוואטסאפ'].map((f) => (
+        {['כל היכולות', 'תמיכה אנושית 24/7'].map((f) => (
           <tr key={f}>
             <th scope="row">{f}</th>
             {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} role="img" aria-label="כלול" /></td>)}
@@ -139,14 +144,13 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
     setYearlyState(y);
     setSaid(announcement(y));
   };
-  const first = PRICING_PLANS[0];
   const PlanH = H === 'h1' ? 'h2' : 'h3'; // one level under the section title (no skipped level on /pricing, where it is the h1)
   return (
     <section id="pricing" className={`v8p v8pa${yearly ? ' is-yearly' : ''} ${tone}`} aria-labelledby="pricing-title">
       <div className="l5-wrap">
         <div className="v8-head is-center" data-reveal>
           <H id="pricing-title" className="v8-h2">{title}</H>
-          <p className="v8-txt">כל החבילות כוללות הכל. ההבדל רק במספר המתחמים.</p>
+          <p className="v8-txt">שלוש חבילות הניהול כוללות את אותן יכולות. ההבדל רק במספר המתחמים.</p>
         </div>
         <BillingToggle8 yearly={yearly} onChange={setYearly} />
         <p className="sr-only" aria-live="polite" aria-atomic="true">{said}</p>
@@ -170,11 +174,11 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
                   </>
                 ) : (
                   <>
-                    <p className="v8p-lead">הכל בחבילת {prev.nameHe}, ועוד:</p>
+                    <p className="v8p-lead">הכל כמו ב{prev.nameHe}, ועוד:</p>
                     <FeatList items={p.adds} />
                     <details className="v8p-more">
                       <summary>
-                        <span>כל מה שכלול בחבילת {first.nameHe}</span>
+                        <span>מה כלול בכל החבילות</span>
                         <ChevronDown size={18} strokeWidth={2} aria-hidden="true" />
                       </summary>
                       <FeatList items={INCLUDED_FEATURES} />
@@ -196,12 +200,14 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
           <div className="v8p-diff-body">
             <p className="v8p-diff-note">בכל חבילה מקבלים את כל היכולות. בוחרים לפי מספר המתחמים שלכם.</p>
             <CompareTable />
+            {growth && <p className="v8p-diff-note is-after">{'קמפיינים ואתר למתחם? '}<a href="#pricing-growth">חבילת הצמיחה</a>{' נפרדת, ומתחילים בשיחה.'}</p>}
           </div>
         </details>
 
         <div className="v8p-terms" data-reveal>
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{TRIAL_LINE}</p>
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{CANCEL_LINE}</p>
+          <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{VAT_LINE}</p>
         </div>
 
         <ul className="v8p-trust" data-reveal>

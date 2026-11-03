@@ -12,8 +12,9 @@ import { POSTS } from '@/site/content/posts';
 import { SITE_PAGES } from '@/site/pages';
 import { mdToText } from '@/site/lib/md';
 import { missingLegalKeys } from '@/config/legal';
-import { FAQ, LANDING_FAQ } from '@/components/landing/v5/content';
-import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE } from '@/config/pricing';
+import { FAQ, LANDING_FAQ, PRICING_FAQ } from '@/components/landing/v5/content';
+import { GROWTH_OFFER, GROWTH_NAME, GROWTH_SCOPE } from '@/config/growth';
+import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE, yearlyTotal } from '@/config/pricing';
 import { RootTree } from '@/RootTree';
 import LandingPage from '@/pages/Landing';
 import PricingPlansPage from '@/pages/PricingPlans';
@@ -79,7 +80,11 @@ export function pricingLd() {
         price: String(p.price),
         priceCurrency: 'ILS',
         url,
-        priceSpecification: { '@type': 'UnitPriceSpecification', price: String(p.price), priceCurrency: 'ILS', unitText: 'MONTH', billingDuration: 'P1M' },
+        priceSpecification: [
+          { '@type': 'UnitPriceSpecification', price: String(p.price), priceCurrency: 'ILS', unitText: 'MONTH', billingDuration: 'P1M' },
+          // annual: charged upfront (Deen, 01.11.2026)
+          { '@type': 'UnitPriceSpecification', name: 'חיוב שנתי מראש', price: String(yearlyTotal(p)), priceCurrency: 'ILS', unitText: 'ANN', billingDuration: 'P1Y' },
+        ],
       })),
     },
     // Product with one Offer per plan: what Google's Rich Results test reads as a "Product snippet" (it does
@@ -103,7 +108,20 @@ export function pricingLd() {
         seller: { '@id': 'https://atlas-il.com/#organization' },
       })),
     },
-    breadcrumbLd([{ name: 'atlas', path: '/' }, { name: 'תמחור ותוכניות', path: '/pricing' }]),
+    // growth: a separate package, started by a call (Deen, 01.11.2026); not yet open to everyone
+    {
+      '@type': 'Offer',
+      '@id': `${url}#growth`,
+      name: GROWTH_NAME,
+      description: `${GROWTH_SCOPE}. בתיאום שיחה.`,
+      price: String(GROWTH_OFFER.price),
+      priceCurrency: 'ILS',
+      availability: 'https://schema.org/PreOrder',
+      url: `${url}#pricing-growth`,
+      seller: { '@id': 'https://atlas-il.com/#organization' },
+    },
+    faqLd(PRICING_FAQ, url),
+    breadcrumbLd([{ name: 'atlas', path: '/' }, { name: 'מחירים וחבילות', path: '/pricing' }]),
   ]);
 }
 
@@ -114,7 +132,7 @@ export function appRouteBody(route) {
   const register = route === '/register';
   return renderToStaticMarkup(
     <main dir="rtl" lang="he" style={SR_ONLY}>
-      <h1>{register ? 'הרשמה: 14 יום ניסיון חינם' : 'התחברות לחשבון'}</h1>
+      <h1>{register ? 'הרשמה: 14 יום חינם' : 'התחברות לחשבון'}</h1>
       <p>{ATLAS_ONE_LINER}</p>
       {register && <p>{TRIAL_LINE} {CANCEL_LINE}</p>}
       <h2>מה כלול</h2>
@@ -122,10 +140,10 @@ export function appRouteBody(route) {
       <h2>מחירים</h2>
       <ul>{PRICING_PLANS.map((p) => <li key={p.key}>{`${p.nameHe} (${p.name}): ‏₪${p.price} לחודש, ${p.limit}`}</li>)}</ul>
       <nav aria-label="קישורים">
-        <a href="/">דף הבית</a> · <a href="/pricing">תמחור</a> · {register ? <a href="/login">כבר יש לי חשבון: התחברות</a> : <a href="/register">הרשמה וניסיון חינם</a>}
+        <a href="/">דף הבית</a> · <a href="/pricing">מחירים</a> · {register ? <a href="/login">כבר יש לי חשבון: התחברות</a> : <a href="/register">הרשמה וניסיון חינם</a>}
       </nav>
     </main>,
   );
 }
 
-export { deferCss, DEFER_CLASS, siteMeta, getRouteMeta, siteRoutes, notFoundMeta, POSTS, SITE_PAGES, mdToText, missingLegalKeys, ATLAS_ONE_LINER, FAQ, PRICING_PLANS };
+export { deferCss, DEFER_CLASS, siteMeta, getRouteMeta, siteRoutes, notFoundMeta, POSTS, SITE_PAGES, mdToText, missingLegalKeys, ATLAS_ONE_LINER, FAQ, LANDING_FAQ, PRICING_FAQ, PRICING_PLANS, GROWTH_OFFER, GROWTH_NAME, GROWTH_SCOPE, yearlyTotal };

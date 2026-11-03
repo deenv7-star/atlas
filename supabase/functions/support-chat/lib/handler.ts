@@ -17,11 +17,11 @@ export type Deps = {
 
 const HE = {
   auth: 'צריך להתחבר מחדש כדי לקבל עזרה.',
-  rate: 'שלחתם הרבה הודעות ברצף. נסו שוב בעוד כמה דקות, או לחצו "דבר עם נציג".',
+  rate: 'שלחתם הרבה הודעות ברצף. נסו שוב בעוד כמה דקות, או לחצו "שיחה עם נציג".',
   empty: 'כתבו שאלה ונעזור.',
   long: 'ההודעה ארוכה מדי. נסו לקצר לכמה משפטים.',
-  server: 'משהו השתבש אצלנו. נסו שוב בעוד רגע, או לחצו "דבר עם נציג".',
-  botFail: 'לא הצלחתי לענות כרגע. אפשר לנסות שוב, או ללחוץ **דבר עם נציג** ונציג מהצוות ימשיך מכאן.',
+  server: 'משהו השתבש אצלנו. נסו שוב בעוד רגע, או לחצו "שיחה עם נציג".',
+  botFail: 'לא הצלחנו לענות כרגע. אפשר לנסות שוב, או ללחוץ **שיחה עם נציג** ונציג מהצוות ימשיך מכאן.',
   handoff: 'העברנו את השיחה לנציג מצוות atlas. הוא רואה את כל מה שכתבתם, ויענה כאן באותו חלון. אפשר להמשיך לכתוב בינתיים.',
   inHuman: '',
 };
@@ -58,9 +58,9 @@ export function sanitizeAnswer(a: BotAnswer, kb: KB): BotAnswer {
  */
 export function mockAnswer(kb: KB, q: string): BotAnswer {
   const top = retrieve(kb, q, 1)[0];
-  if (!top) return { answer: 'לא מצאתי את זה במדריך של atlas. אפשר לנסח אחרת, או ללחוץ **דבר עם נציג** ונציג מהצוות ימשיך מכאן.', links: [], confidence: 'low', suggest_human: true, follow_ups: [] };
+  if (!top) return { answer: 'לא מצאנו את זה במדריך של atlas. אפשר לנסח אחרת, או ללחוץ **שיחה עם נציג** ונציג מהצוות ימשיך מכאן.', links: [], confidence: 'low', suggest_human: true, follow_ups: [] };
   const body = top.text.split('\n').filter((l) => l.trim() && !l.startsWith('#')).slice(0, 10).join('\n');
-  return { answer: `זה מה שמצאתי במדריך של atlas, בנושא "${top.heading.split(' › ').pop()}":\n\n${body}\n\nלא בדיוק מה שחיפשתם? לחצו **דבר עם נציג**.`, links: [], confidence: 'medium', suggest_human: false, follow_ups: [] };
+  return { answer: `זה מה שמצאתי במדריך של atlas, בנושא "${top.heading.split(' › ').pop()}":\n\n${body}\n\nלא בדיוק מה שחיפשתם? לחצו **שיחה עם נציג**.`, links: [], confidence: 'medium', suggest_human: false, follow_ups: [] };
 }
 
 export async function handle(req: Request, deps: Deps): Promise<Response> {

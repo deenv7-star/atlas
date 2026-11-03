@@ -56,7 +56,7 @@
   background: rgba(255, 255, 255, 0.86); -webkit-backdrop-filter: saturate(1.8) blur(20px); backdrop-filter: saturate(1.8) blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 1px 2px rgba(27, 38, 86, 0.06), 0 18px 40px -16px rgba(27, 38, 86, 0.3);
   color: var(--navy); text-align: start;
-  animation: ph-in 760ms var(--ph-ease) both; animation-delay: calc(450ms + var(--i) * 650ms);
+  animation: ph-in 600ms var(--ph-ease) both; animation-delay: calc(250ms + var(--i) * 300ms); /* PERF-001: the three cards land by ~1.45 s (was ~2.5 s), same motion */
 }
 .ph-ntf:nth-child(3) { display: none; }
 @media (min-height: 760px) { .ph-ntf:nth-child(3) { display: flex; } }
@@ -169,12 +169,13 @@
   background: linear-gradient(145deg, #f4f5f9, #c9ccd8 45%, #eef0f5);
   box-shadow: 0 0 0 1px rgba(27, 38, 86, 0.1), 0 2px 4px rgba(27, 38, 86, 0.06), 0 30px 60px -18px rgba(27, 38, 86, 0.32), 0 60px 100px -40px rgba(62, 43, 241, 0.3);
 }
-.ph-phone-scr { position: relative; width: 100%; height: 100%; border-radius: calc(var(--w) * 0.135); overflow: hidden; background: #eeeef6; border: calc(var(--w) * 0.012) solid #0b0d18; }
-.ph-phone-scr > img { position: absolute; inset: 5.57% 0 0; width: 100%; height: 94.43%; object-fit: cover; display: block; }
-.ph-phone-status { position: absolute; z-index: 3; inset: 0 0 auto; height: 5.57%; display: flex; align-items: center; justify-content: space-between; padding: 0 9% 0 10%; direction: ltr; font-size: calc(var(--w) * 0.045); font-weight: 700; color: #0b0d18; background: #eeeef6; }
+.ph-phone-scr { position: relative; width: 100%; height: 100%; border-radius: calc(var(--w) * 0.135); overflow: hidden; background: #1B2656; border: calc(var(--w) * 0.012) solid #0b0d18; }
+/* new UI: the Today photo runs under the status bar (capture 390x844 with the iPhone safe area), so the screenshot fills the screen */
+.ph-phone-scr > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.ph-phone-status { position: absolute; z-index: 3; inset: 0 0 auto; height: 5.57%; display: flex; align-items: center; justify-content: space-between; padding: 0 9% 0 10%; direction: ltr; font-size: calc(var(--w) * 0.045); font-weight: 700; color: #fff; background: transparent; }
 .ph-phone-island { position: absolute; top: 22%; left: 50%; width: 31%; height: 70%; transform: translateX(-50%); border-radius: 999px; background: #0b0d18; }
-.ph-phone-bat { width: 7.5%; height: 34%; border-radius: 3px; border: 1.5px solid #0b0d18; position: relative; }
-.ph-phone-bat::after { content: ''; position: absolute; inset: 1.5px 3px 1.5px 1.5px; border-radius: 1px; background: #0b0d18; }
+.ph-phone-bat { width: 7.5%; height: 34%; border-radius: 3px; border: 1.5px solid #fff; position: relative; }
+.ph-phone-bat::after { content: ''; position: absolute; inset: 1.5px 3px 1.5px 1.5px; border-radius: 1px; background: #fff; }
 
 /* reduced motion: photo hero, then the home screen as its own section */
 .ph-static-end { display: grid; justify-items: center; gap: 20px; padding: 72px var(--gut) 24px; text-align: center; background: linear-gradient(180deg, #fff, #f3f4ff); }

@@ -18,7 +18,7 @@ export const GUIDES = {
     help: 'https://partner.booking.com/en-us/help/rates-availability/extranet-calendar/how-synchronize-your-calendars-across-channels',
     tip: 'הכי נוח מהמחשב. כל יחידה ב-Booking מקבלת קישור משלה.',
     steps: [
-      { title: 'נכנסים לאקסטרא-נט', en: 'admin.booking.com', text: 'האתר שבו מנהלים את המקום ב-Booking. נכנסים עם השם והסיסמה הרגילים.', pic: 'b1' },
+      { title: 'נכנסים לאקסטרא-נט', en: 'admin.booking.com', text: 'האתר שבו מנהלים את המודעה ב-Booking. נכנסים עם השם והסיסמה הרגילים.', pic: 'b1' },
       { title: 'תעריפים וזמינות ← סנכרון לוחות שנה', en: 'Rates & Availability → Sync calendars', text: 'בתפריט למעלה לוחצים על "תעריפים וזמינות", ואז על "סנכרון לוחות שנה".', pic: 'b2' },
       { title: 'ליד היחידה: הוספת חיבור', en: 'Add calendar connection → Skip this step', text: 'ליד היחידה לוחצים "הוספת חיבור לוח שנה". בחלון שנפתח גוללים למטה ולוחצים "דילוג על השלב".', pic: 'b3' },
       { title: 'נותנים שם ומעתיקים את הקישור', en: 'Name it "atlas" → Copy link', text: 'כותבים atlas בשם החיבור ולוחצים "העתקת קישור". הקישור נשמר בזיכרון של המחשב או הטלפון.', pic: 'b4' },

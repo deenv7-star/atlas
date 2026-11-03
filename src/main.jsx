@@ -74,18 +74,39 @@ const hydrate = lean && rootEl.hasAttribute('data-hydrate')
 if (!hydrate) document.documentElement.classList.remove(DEFER_CLASS)
 if (!hydrate && rootEl.hasAttribute('data-hydrate')) rootEl.textContent = ''
 
-try {
-  if (hydrate) {
-    ReactDOM.hydrateRoot(rootEl, <Root lean />)
-    revealDeferredParts()
-  } else {
-    ReactDOM.createRoot(rootEl).render(<Root lean={lean} />)
-  }
-} catch (e) {
-  rootEl.innerHTML = ''
-  rootEl.style.minHeight = '100vh'
-  ReactDOM.createRoot(rootEl).render(<CrashFallback error={e?.message || e} />)
+// PERF-002: a prerendered lean page inlines only the CSS its HTML uses (scripts/critical-css.mjs) and keeps the
+// full sheets linked but inert. Turn them on now (the browser fetches them, cached across pages and the app) and
+// hydrate once they are in, so anything that appears after hydration (menus, dialogs, the cookie notice) is styled.
+// The page is already painted, so this waits on nothing the visitor sees; 1.5 s is the safety net.
+function enableFullCss() {
+  const links = [...document.querySelectorAll('link[data-atlas-full]')]
+  if (!links.length) return Promise.resolve()
+  return Promise.race([
+    Promise.all(links.map((l) => new Promise((done) => {
+      l.addEventListener('load', done, { once: true })
+      l.addEventListener('error', done, { once: true })
+      l.removeAttribute('disabled'); l.disabled = false; l.media = 'all'; l.removeAttribute('data-atlas-full')
+    }))),
+    new Promise((done) => window.setTimeout(done, 1500)),
+  ])
 }
+
+function boot() {
+  try {
+    if (hydrate) {
+      ReactDOM.hydrateRoot(rootEl, <Root lean />)
+      revealDeferredParts()
+    } else {
+      ReactDOM.createRoot(rootEl).render(<Root lean={lean} />)
+    }
+  } catch (e) {
+    rootEl.innerHTML = ''
+    rootEl.style.minHeight = '100vh'
+    ReactDOM.createRoot(rootEl).render(<CrashFallback error={e?.message || e} />)
+  }
+}
+if (document.querySelector('link[data-atlas-full]')) enableFullCss().then(boot)
+else boot()
 
 // Catch unhandled errors (async, etc.)
 let crashShown = false

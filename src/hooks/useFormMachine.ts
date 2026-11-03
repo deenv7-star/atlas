@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useBlocker, UNSAFE_DataRouterContext, type Blocker, type BlockerFunction } from 'react-router-dom';
 import type { z } from 'zod';
 import type { FormState } from '@/hooks/formMachineTypes';
+import { askConfirm } from '@/components/common/confirmDialog';
 
 export type { FormState } from '@/hooks/formMachineTypes';
 
@@ -213,15 +214,22 @@ export function useFormMachine<TFieldValues extends FieldValues>({
     [setValue],
   );
 
+  // ENG-04: a double tap (or Enter + click) must never run onSubmit twice. The button's `disabled` only lands on
+  // the next render, so guard synchronously. Stays locked 1.5s after a success (a sheet closes at 0.7s); released
+  // at once on an error, an invalid form, or a reset.
+  const inFlightRef = useRef(false);
+
   const onValid: SubmitHandler<TFieldValues> = useCallback(
     async (data) => {
       setMachineState('submitting');
       setServerError(null);
       try {
         await onSubmit(data);
+        window.setTimeout(() => { inFlightRef.current = false; }, 1500);
         setMachineState('success');
         onAfterSubmitSuccess?.();
       } catch (err) {
+        inFlightRef.current = false;
         setMachineState('error');
         setServerError(toHebrewServerMessage(err));
       }
@@ -230,10 +238,13 @@ export function useFormMachine<TFieldValues extends FieldValues>({
   );
 
   const onInvalid = useCallback(() => {
+    inFlightRef.current = false;
     setMachineState('dirty');
   }, []);
 
   const handleSubmit = useCallback(() => {
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
     setMachineState('validating');
     void rhfHandleSubmit(onValid, onInvalid)();
   }, [rhfHandleSubmit, onValid, onInvalid]);
@@ -241,6 +252,7 @@ export function useFormMachine<TFieldValues extends FieldValues>({
   const resetAll = useCallback(
     (next?: DefaultValues<TFieldValues>) => {
       clearStorage(storageKey);
+      inFlightRef.current = false;
       reset(next ?? defaultValues);
       setMachineState('idle');
       setServerError(null);
@@ -254,9 +266,9 @@ export function useFormMachine<TFieldValues extends FieldValues>({
         !nextOpen &&
         (machineRef.current === 'dirty' || machineRef.current === 'error')
       ) {
-        const ok = window.confirm('השינויים עוד לא נשמרו. לצאת בכל זאת?');
-        if (!ok) return;
-        resetAll();
+        void askConfirm({ title: 'לצאת בלי לשמור?', description: 'השינויים בטופס עוד לא נשמרו.', confirmLabel: 'יציאה בלי שמירה', cancelLabel: 'חזרה לטופס' })
+          .then((ok) => { if (!ok) return; resetAll(); setOpen(nextOpen); });
+        return;
       }
       setOpen(nextOpen);
     },

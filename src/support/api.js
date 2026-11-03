@@ -12,7 +12,7 @@ export class SupportError extends Error {
   constructor(message, { code, status, retryAfter } = {}) { super(message); this.code = code; this.status = status; this.retryAfter = retryAfter; }
 }
 const OFFLINE = 'אין חיבור לאינטרנט. ההודעה לא נשלחה.';
-const GENERIC = 'משהו השתבש. נסו שוב בעוד רגע, או לחצו "דבר עם נציג".';
+const GENERIC = 'משהו השתבש. נסו שוב בעוד רגע, או לחצו "שיחה עם נציג".';
 
 /* ── Supabase ─────────────────────────────────────────────────────────── */
 async function invoke(body) {
@@ -75,7 +75,7 @@ async function demoAnswer(text, history, ctx, device) {
   kbMod ||= await Promise.all([import('../../supabase/functions/support-chat/kb/kb.json'), import('../../supabase/functions/support-chat/lib/prompt.ts')]);
   const [kbm, prompt] = kbMod;
   const top = prompt.retrieve(kbm.default || kbm, text, 1)[0];
-  if (!top) return { answer: 'לא מצאתי תשובה לזה. אפשר לנסח אחרת, או ללחוץ **דבר עם נציג**.', links: [], confidence: 'low', suggest_human: true, follow_ups: [] };
+  if (!top) return { answer: 'לא מצאנו תשובה לזה. אפשר לנסח אחרת, או ללחוץ **שיחה עם נציג**.', links: [], confidence: 'low', suggest_human: true, follow_ups: [] };
   const body = top.text.split('\n').filter((l) => l.trim() && !l.startsWith('#')).slice(0, 8).join('\n');
   return { answer: body, links: [], confidence: 'medium', suggest_human: false, follow_ups: [], model: 'demo-kb' };
 }

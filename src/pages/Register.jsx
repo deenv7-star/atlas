@@ -5,7 +5,7 @@
  * duplicate email, Hebrew errors, verify-email / onboarding routing).
  */
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import { ArrowLeft, Shield, Loader2 } from 'lucide-react';
 import { Wordmark } from '@/components/app/shell/wordmark';
@@ -17,9 +17,13 @@ import SocialButtons from '@/components/auth/SocialButtons';
 import { socialProviders } from '@/lib/auth/socialAuth';
 import { SOCIAL_LAYOUT } from '@/config/socialAuth';
 import { TERMS_VERSION } from '@/config/consent';
+import { PRICING_PLANS } from '@/config/pricing';
 
 export default function Register() {
   const r = useRegister();
+  // A11: show the package picked on /pricing (?plan=starter|pro|business). Nothing is charged at sign-up.
+  const [params] = useSearchParams();
+  const picked = PRICING_PLANS.find((p) => p.key === params.get('plan')) || null;
   const { form, set, touched, errors, handleBlur, isLoading, emailExists } = r;
   const level = levelOf({ business: form.business.trim(), emailOk: r.emailOk, passwordOk: r.passwordOk, confirmOk: r.confirmOk, agreed: r.agreed });
 
@@ -54,7 +58,12 @@ export default function Register() {
             <div className="mb-5 lg:hidden"><LivePreviewCompact business={form.business} level={level} /></div>
 
             <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 sm:text-[36px]">פותחים לכם חשבון</h1>
-            <p className="mt-2 text-[16px] text-ink-600">14 יום חינם, ואז מחליטים. דקה אחת וזה מוכן.</p>
+            <p className="mt-2 text-[16px] text-ink-600">14 יום חינם, ואז מחליטים. החשבון מוכן בדקה.</p>
+            {picked ? (
+              <p className="mt-3 rounded-[14px] bg-brand-50 px-3.5 py-2.5 text-[15px] leading-snug text-navy-900" data-plan={picked.key}>
+                בחרתם בחבילת <b>{picked.nameHe}</b> ({picked.limit}). 14 הימים הראשונים חינם, ואת החבילה משלימים בסוף הניסיון.
+              </p>
+            ) : null}
 
             {emailExists ? (
               <div className="mt-8 space-y-4">
@@ -73,7 +82,7 @@ export default function Register() {
               ) : null}
               <form onSubmit={r.submit} noValidate className={hasSocial && SOCIAL_LAYOUT === 'above' ? 'mt-6 flex flex-col gap-4' : 'mt-7 flex flex-col gap-4'}>
                 <AuthField id="business" label="איך קוראים למתחם?" hint="לא חובה. אפשר גם אחר כך." value={form.business} onChange={set('business')} placeholder="למשל: צימרי הגליל" maxLength={50} autoComplete="organization" ok={form.business.trim().length >= 2} />
-                <AuthField id="email" label="אימייל" type="email" inputMode="email" dir="ltr" inputClassName="text-right" placeholder="name@example.com" autoComplete="email" maxLength={255}
+                <AuthField id="email" label="מייל" type="email" inputMode="email" dir="ltr" inputClassName="text-right" placeholder="name@example.com" autoComplete="email" maxLength={255}
                   value={form.email} onChange={set('email')} onBlur={handleBlur('email')} error={touched.email ? errors.email : null} ok={touched.email && r.emailOk} />
                 <AuthField id="password" label="סיסמה" password placeholder="לפחות 8 תווים, ספרה ואות" autoComplete="new-password" maxLength={128}
                   value={form.password} onChange={set('password')} onBlur={handleBlur('password')} error={touched.password ? errors.password : null}>

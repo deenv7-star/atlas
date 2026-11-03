@@ -37,9 +37,13 @@ const pop = {
   exit: { opacity: 0, scale: 0.97, transition: { duration: 0.16, ease: EASE } },
 };
 
-export function levelOf({ business, emailOk, passwordOk, confirmOk, agreed }) {
-  return (business ? 1 : 0) + (emailOk ? 1 : 0) + (passwordOk ? 1 : 0) + (confirmOk && agreed ? 1 : 0);
+/** A12 (01.11.2026): progress counts only the required fields (mail, password, confirm + terms). The complex
+ *  name is optional, so it only personalises the preview and never holds the meter back. 0..2, then 4 = ready. */
+export function levelOf({ emailOk, passwordOk, confirmOk, agreed }) {
+  const req = (emailOk ? 1 : 0) + (passwordOk ? 1 : 0) + (confirmOk && agreed ? 1 : 0);
+  return req === 3 ? 4 : req;
 }
+const stepsDone = (level) => Math.min(level, 3);
 
 function firstOfEmail(email) {
   const n = String(email || '').split('@')[0].replace(/[._\d-]+/g, ' ').trim().split(/\s+/)[0] || '';
@@ -113,7 +117,7 @@ export function LivePreviewFull({ business, email, level }) {
       <div className="relative mx-auto w-full max-w-[600px]">
         <div className="mb-5 flex items-center gap-2 text-[13px] font-semibold text-brand-700">
           <span className="relative flex h-2 w-2"><span className="absolute inset-0 animate-ping rounded-full bg-brand-600/50 motion-reduce:hidden" /><span className="relative h-2 w-2 rounded-full bg-brand-600" /></span>
-          החשבון שלכם נבנה בזמן שאתם מקלידים
+          כך המתחם שלכם ייראה ב-atlas · תצוגה מקדימה
         </div>
 
         {/* the app window */}
@@ -141,7 +145,7 @@ export function LivePreviewFull({ business, email, level }) {
                   <p className="text-[12px] text-ink-400">{who ? `בוקר טוב, ${who}` : 'בוקר טוב'} · 3 יחידות</p>
                 </div>
                 <span className={cn('inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-2.5 text-[11px] font-bold transition-colors duration-300', level >= 4 ? 'bg-brand-600 text-white' : 'bg-white text-ink-400')}>
-                  <Sparkles className="h-3 w-3" />{level >= 4 ? 'מוכן' : `${level}/4`}
+                  <Sparkles className="h-3 w-3" />{level >= 4 ? 'מוכן' : `${stepsDone(level)}/3`}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -183,7 +187,7 @@ export function LivePreviewFull({ business, email, level }) {
         </div>
 
         <ol className="mt-16 flex gap-2">
-          {['שם המתחם', 'מייל', 'סיסמה', 'אישור'].map((t, k) => (
+          {['מייל', 'סיסמה', 'אישור'].map((t, k) => (
             <li key={t} className={cn('flex h-8 items-center gap-1.5 rounded-full px-3 text-[12px] font-semibold transition-colors duration-300', k < level ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.06)]' : 'text-ink-400')}>
               <span className={cn('flex h-4 w-4 items-center justify-center rounded-full transition-colors duration-300', k < level ? 'bg-brand-600 text-white' : 'bg-[#DCE0EB]')}>{k < level ? <Check className="h-2.5 w-2.5" strokeWidth={3.5} /> : null}</span>
               {t}
@@ -208,7 +212,7 @@ export function LivePreviewCompact({ business, level }) {
           <span className="truncate text-[15px] font-extrabold text-navy-900">{name}</span>
         </div>
         <span className={cn('inline-flex h-6 shrink-0 items-center gap-1 rounded-full px-2 text-[11px] font-bold transition-colors duration-300', level >= 4 ? 'bg-brand-600 text-white' : 'bg-white text-ink-400')}>
-          <Sparkles className="h-3 w-3" />{level >= 4 ? 'מוכן' : `${level}/4`}
+          <Sparkles className="h-3 w-3" />{level >= 4 ? 'מוכן' : `${stepsDone(level)}/3`}
         </span>
       </div>
       <div className="relative mt-2 h-[94px]">
