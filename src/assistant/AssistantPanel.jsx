@@ -8,7 +8,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { Conversation, SparkMark, useKeyboardInset } from './ui.jsx';
+import { Conversation, useKeyboardInset } from './ui.jsx';
+import { MascotMood } from '@/components/mascot/Mascot';
 import { useAssistantFacts } from './useAssistant.js';
 import { SAFE_LINK } from './insights.js';
 import { setAssistantOpen, useAssistantOpen } from './launcher.jsx';
@@ -79,9 +80,9 @@ export default function AssistantPanel() {
           variant="panel"
           inputRef={inputRef}
           onNavigate={desktop ? undefined : close}
-          header={({ clear, hasThread }) => (
+          header={({ clear, hasThread, mood }) => (
             <div className="as-ph">
-              <SparkMark size={24} />
+              <MascotMood mood={mood} size={40} />
               <div className="as-ph-title">
                 <b id="as-panel-title">שאלו את atlas</b>
                 <span>{where ? `מתוך: ${where}` : 'על ההזמנות, הכסף והלידים'}</span>

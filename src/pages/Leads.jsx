@@ -295,6 +295,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         ) : sorted.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Users}
+            mascot={searchTerm || tags.length ? undefined : 'waving'}
             title={searchTerm || tags.length ? 'אין לידים שמתאימים' : 'עדיין אין לידים'}
             description={searchTerm || tags.length ? 'נסו חיפוש אחר.' : 'מישהו שאל על חופשה בטלפון או בוואטסאפ? רושמים אותו כאן, ומכאן הוא הופך להזמנה.'}
             action={!searchTerm && !tags.length ? <Button onClick={openNew}><Plus strokeWidth={2.25} />ליד חדש</Button> : null}

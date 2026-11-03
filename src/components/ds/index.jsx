@@ -2,6 +2,7 @@
  * ATLAS design-system primitives. Every page composes from these so type, spacing,
  * radius, color and states stay identical across the app (tokens: src/styles/brand.css).
  */
+import { Mascot } from '@/components/mascot/Mascot';
 import HelpHint from '@/components/help/HelpHint';
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -286,10 +287,12 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
   );
 }
 
-export function EmptyState({ icon: Icon, title, description, actionLabel, onAction, action, className, compact = false, photo }) {
+export function EmptyState({ icon: Icon, title, description, actionLabel, onAction, action, className, compact = false, photo, mascot }) {
   return (
     <div className={cn('v5-rise flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
-      {Icon || photo ? (
+      {mascot ? (
+        <Mascot pose={mascot} size={compact ? 88 : 104} className="am-empty" />
+      ) : Icon || photo ? (
         <span className="relative mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#ECEAFE]" aria-hidden>
           {Icon ? <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.75} /> : null}
         </span>

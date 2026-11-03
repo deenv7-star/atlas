@@ -149,3 +149,9 @@ html[data-tour-running] .as-layer { display: none !important; }
   .as-shimmer { color: rgba(27, 38, 86, 0.72); background: none; }
   .as-chip, .as-send, .as-new, .as-tool, .as-open, .as-composer { transition: none; }
 }
+
+/* ── atlas character (mascot v2) ──────────────────────────────────────── */
+.as-head-avatar { box-shadow: 0 6px 16px -8px rgba(27, 38, 86, 0.35); }
+.as-error { display: flex; align-items: center; gap: 10px; }
+.as-insight--mascot { text-align: center; padding-top: 24px; }
+.as-insight--mascot .as-insight-row { justify-content: center; }

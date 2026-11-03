@@ -180,7 +180,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
           {isLoading ? (
             <div className="p-4"><SkelRows rows={5} /></div>
           ) : filteredThreads.length === 0 ? (
-            <EmptyState compact icon={MessageSquare} title={searchTerm ? 'אין שיחה בשם הזה' : 'עוד לא נשלחו הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'פותחים הזמנה ולוחצים "שליחה בוואטסאפ". השיחה תופיע כאן.'} action={searchTerm ? null : <Button asChild><Link to={createPageUrl('Bookings')}>להזמנות</Link></Button>} />
+            <EmptyState compact icon={MessageSquare} mascot={searchTerm ? undefined : 'typing'} title={searchTerm ? 'אין שיחה בשם הזה' : 'עוד לא נשלחו הודעות'} description={searchTerm ? 'נסו שם אחר.' : 'פותחים הזמנה ולוחצים "שליחה בוואטסאפ". השיחה תופיע כאן.'} action={searchTerm ? null : <Button asChild><Link to={createPageUrl('Bookings')}>להזמנות</Link></Button>} />
           ) : (
             filteredThreads.map(thread => {
               const last = thread.messages[thread.messages.length - 1];
