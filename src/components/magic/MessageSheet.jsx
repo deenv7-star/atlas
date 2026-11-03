@@ -13,7 +13,7 @@ const TIMES = ['08:00', '10:00', '12:00', '16:00', '18:00'];
 export function MessageSheet({ step, open, onOpenChange, gm, onEnabled }) {
   const on = step ? gm.isOn(step) : false;
   const [time, setTime] = useState(step ? hhmm(gm.timeOf(step)) : '');
-  useEffect(() => { if (step) setTime(hhmm(gm.timeOf(step))); }, [step?.key, open]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (step) setTime(hhmm(gm.timeOf(step))); }, [step?.key, open]);
   if (!step) return null;
   const times = step.defaultTime ? [...new Set([...TIMES, time].filter(Boolean))].sort() : [];
   const guest = gm.ctx.booking?.guest_name || 'נועה לוי';

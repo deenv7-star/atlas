@@ -33,7 +33,7 @@ function Hero({ gm, onAllOn }) {
     <section className="mg-photo rounded-[32px] px-6 pb-6 pt-7 text-white md:px-10 md:pb-9 md:pt-10" aria-labelledby="mg-title">
       <img className="mg-photo-img" src="/onboarding/bg/lake-p640.webp" srcSet="/onboarding/bg/lake-p640.webp 640w, /onboarding/bg/lake-p1000.webp 1000w, /onboarding/bg/lake-1600.webp 1600w" sizes="(min-width: 960px) 900px, 100vw" alt="" loading="eager" decoding="async" />
       <p className="text-[15px] font-semibold text-white/70">ההודעות לאורחים</p>
-      <h1 id="mg-title" className="mt-1 text-[30px] font-bold leading-[1.12] tracking-[-0.01em] md:text-[40px]">{title}</h1>
+      <h1 id="mg-title" className="!text-white mt-1 text-[30px] font-bold leading-[1.12] tracking-[-0.01em] md:text-[40px]">{title}</h1>
       <p className="mt-2 max-w-[30rem] text-[16px] leading-snug text-white/75">{sub}</p>
 
       <div className="mg-line mt-8" aria-label="המסע של האורח">

@@ -3,6 +3,7 @@
  * the time it goes out and read ticks. Text comes from renderTemplate with the owner's own zimmer.
  */
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { CheckCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -11,6 +12,17 @@ import './magic.css';
 function initials(name) {
   const p = String(name || '').trim().split(/\s+/);
   return (p[0]?.[0] || 'א') + (p[1]?.[0] || '');
+}
+
+/** Long links (Waze, the guest page) read as a short underlined host, like WhatsApp's link previews. */
+const URL_RE = /(https?:\/\/[^\s]+)/g;
+function withShortLinks(text) {
+  return String(text || '').split(URL_RE).map((part, i) => {
+    if (!/^https?:\/\//.test(part)) return part;
+    let host = part;
+    try { const u = new URL(part); host = u.hostname.replace(/^www\./, '') + (u.pathname.length > 1 ? '/…' : ''); } catch { /* keep */ }
+    return <span key={i} className="mg-link" dir="ltr">{host}</span>;
+  });
 }
 
 export function WaBubble({ text, guest = 'נועה לוי', time = '10:00', sample = false, className, compact = false, delay = 0 }) {
@@ -30,7 +42,7 @@ export function WaBubble({ text, guest = 'נועה לוי', time = '10:00', samp
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 380, damping: 30, delay }}
       >
-        <p className="whitespace-pre-line">{text}</p>
+        <p className="whitespace-pre-line">{withShortLinks(text)}</p>
         <span className="mg-bubble-meta" dir="ltr">
           <span className="tabular">{time}</span>
           <CheckCheck className="h-[15px] w-[15px]" strokeWidth={1.75} aria-hidden />
@@ -48,8 +60,8 @@ export function DoneMoment({ open, title, line, onDone }) {
     const t = setTimeout(() => onDone?.(), reduce ? 900 : 1900);
     return () => clearTimeout(t);
   }, [open, onDone, reduce]);
-  if (!open) return null;
-  return (
+  if (!open || typeof document === 'undefined') return null;
+  return createPortal(
     <motion.div className="mg-done" role="status" aria-live="polite" onClick={() => onDone?.()}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
       {!reduce ? (
@@ -72,7 +84,8 @@ export function DoneMoment({ open, title, line, onDone }) {
         <p className="mt-4 text-[24px] font-bold leading-tight text-white">{title}</p>
         {line ? <p className="mx-auto mt-2 max-w-[18rem] text-[15px] leading-snug text-white/75">{line}</p> : null}
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body,
   );
 }
 
