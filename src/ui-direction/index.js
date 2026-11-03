@@ -1,2 +1,2 @@
-/** App shell + dashboard: v8 direction C, "bento command center" (floating sidebar, bento home). */
-export { Sidebar, Header, TabBar, shellClass, DashboardView } from './c';
+/** App shell + dashboard: X3 "פנים" (feat/ui-x3, concept for Deen, not shipped). */
+export { Sidebar, Header, TabBar, shellClass, DashboardView } from './x';
