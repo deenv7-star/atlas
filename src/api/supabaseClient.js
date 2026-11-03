@@ -10,6 +10,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { isBlockedSupabaseRequest, lockedResponse } from '@/lib/accessLock';
 
 const supabaseUrl  = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey  = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -71,6 +72,11 @@ export const supabase = (supabaseUrl && supabaseKey)
       },
       global: {
         fetch: (input, init = {}) => {
+          // Trial over and not paid: refuse writes in the client too (src/lib/accessLock.js). The DB is the real gate.
+          const url = typeof input === 'string' ? input : input?.url;
+          if (isBlockedSupabaseRequest(url, init.method || (typeof input === 'object' && input?.method) || 'GET')) {
+            return Promise.resolve(lockedResponse());
+          }
           const b = init.body;
           const isUpload = typeof Blob !== 'undefined' && (b instanceof Blob || b instanceof FormData || b instanceof ArrayBuffer);
           return fetchWithTimeout(input, init, isUpload ? 120000 : REQUEST_TIMEOUT_MS);

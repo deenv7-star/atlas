@@ -16,6 +16,10 @@ import { isProductionBackendConfigured } from '@/lib/backendConfig';
 import { createPageUrl } from '@/utils';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
+// Trial over and not paid (src/lib/access.js): every app route shows the paywall; writes are refused (src/lib/accessLock.js).
+import AccessGate, { Paywall, LockedFrame } from '@/components/paywall/AccessGate';
+import { AccessSync } from '@/hooks/useAccess';
+import { isNativeApp } from '@/lib/nativePlatform';
 // Code-split: the landing page should not download the app shell or the auth screens.
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
@@ -110,7 +114,7 @@ function hasOnboardingBypass(user) {
 // Redirects to /login if not authenticated; preserves return URL.
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
 
-const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = false }) => {
+const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = false, lockedRender = null }) => {
   const { isLoadingAuth, isAuthenticated, user } = useAuth();
   if (isLoadingAuth) {
     return (
@@ -129,11 +133,19 @@ const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = f
   if (user?.account_suspended && !allowSuspended) {
     return <S><AccountSuspended reason={user.account_suspended_reason} /></S>;
   }
-  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass(user)) {
-    return <Navigate to="/onboarding" replace />;
-  }
-  return children;
+  // Expired and unpaid: the paywall before anything else (also before onboarding), so no app screen mounts.
+  const inner = requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass(user)
+    ? <Navigate to="/onboarding" replace />
+    : children;
+  return <AccessGate locked={lockedRender}>{inner}</AccessGate>;
 };
+
+/** /billing while locked: the web keeps the billing page (no app shell); the iOS app gets the no-purchase screen. */
+function BillingWhileLocked() {
+  const { user } = useAuth();
+  if (isNativeApp()) return <Paywall />;
+  return <LockedFrame><Suspense fallback={<AppFallback />}><Pages.Billing user={user} /></Suspense></LockedFrame>;
+}
 
 const AuthenticatedApp = () => {
   // Do not block public routes (/, /pricing, /status, /contact, …) on auth hydration.
@@ -248,8 +260,9 @@ const AuthenticatedApp = () => {
         />
       )}
       {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
-      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false} allowSuspended><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
-      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
+      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<BillingWhileLocked />}><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
+      {/* While locked, /subscription IS the paywall (plan choice + request; no purchase UI in the iOS app). */}
+      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<Paywall />}><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
       {/* Platform admin console. Access is checked server-side (admin_whoami + every admin_* RPC). */}
       <Route path="/admin/*" element={<Suspense fallback={<PublicFallback />}><AdminRoot /></Suspense>} />
       <Route path="/platform-admin" element={<Navigate to="/admin" replace />} />
@@ -323,6 +336,7 @@ function App() {
         <QueryClientProvider client={queryClientInstance}>
           <NuqsAdapter>
             <NavigationTracker />
+            <AccessSync />
             <AuthenticatedApp />
           </NuqsAdapter>
           <Toaster />
