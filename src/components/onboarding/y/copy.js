@@ -10,7 +10,7 @@ const NAME_Q = {
   zimmer_complex: 'איך קוראים למתחם?',
   guesthouse: 'איך קוראים לבית ההארחה?',
   boutique: 'איך קוראים למלון?',
-  apartments: 'איך קוראים למקום?',
+  apartments: 'איך קוראים לדירות?',
 };
 const NAME_PH = {
   zimmer: 'למשל: צימר הזית',
@@ -46,7 +46,7 @@ export const YC = {
   },
   kind: {
     title: 'מה סוג המתחם שלכם?',
-    sub: 'כך נסדר את היומן בדיוק לפי המקום.',
+    sub: 'כך נסדר את היומן בדיוק לפי המתחם.',
     group: 'סוג המתחם',
     more: 'סוג אחר',
     moreGroup: 'סוגים נוספים',
