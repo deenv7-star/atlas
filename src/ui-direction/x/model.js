@@ -139,7 +139,7 @@ export function useTodayModel({ orgId } = {}) {
     queueAll.push({
       id: `m-${x.booking.id}-${x.template}`, kind: 'message', booking: x.booking, unit: x.unit, template: x.template, balance: x.balance,
       title: who ? `${t.label} ל${who}` : `${t.label} · ${guestLabel(x.booking)}`, sub: [x.unit, today ? `מגיעים ב-${checkInTime(x.booking, prop(x.booking.property_id))}` : null].filter(Boolean).join(' · '),
-      verb: 'שליחה בוואטסאפ', doneText: 'נשלח', score: (x.template === 'welcome' || x.template === 'arrival_eve') ? 0 : x.template === 'thanks_review' ? 6 : 4,
+      verb: 'שליחה בוואטסאפ', short: t.label, doneText: 'נשלח', score: (x.template === 'welcome' || x.template === 'arrival_eve') ? 0 : x.template === 'thanks_review' ? 6 : 4,
       time: today ? checkInTime(x.booking, prop(x.booking.property_id)) : null,
     });
   }
@@ -148,20 +148,20 @@ export function useTodayModel({ orgId } = {}) {
     queueAll.push({
       id: `c-${c.key}`, kind: 'clean', c, booking: c.departure, unit: c.unit,
       title: `ניקיון ${c.unit}`, sub: c.sameDayTurnover ? `אחרי יציאה ב-${t} · נכנסים היום` : `אחרי יציאה ב-${t}`,
-      verb: 'סימון שבוצע', doneText: 'מוכנה', score: c.sameDayTurnover ? 1 : 3, time: t,
+      verb: 'סימון שבוצע', short: 'סימון שבוצע', doneText: 'מוכנה', score: c.sameDayTurnover ? 1 : 3, time: t,
     });
   }
   for (const l of leads) {
     queueAll.push({
       id: `l-${l.id}`, kind: 'lead', lead: l, title: `פנייה חדשה מ${firstName(l.full_name) || 'אורח'}`, sub: l.notes || 'מחכה למענה',
-      verb: 'מענה בוואטסאפ', doneText: 'נענתה', score: 2, time: null,
+      verb: 'מענה בוואטסאפ', short: 'מענה בוואטסאפ', doneText: 'נענתה', score: 2, time: null,
     });
   }
   for (const x of pending) {
     const who = firstName(x.booking.guest_name);
     queueAll.push({
       id: `b-${x.booking.id}`, kind: 'balance', booking: x.booking, unit: x.unit, balance: x.balance,
-      title: who ? `${money(x.balance.balance)} יתרה מ${who}` : `${money(x.balance.balance)} יתרה · ${x.unit}`, sub: x.unit, verb: 'שליחת תזכורת', doneText: 'נשלחה', score: 5, time: null,
+      title: who ? `${money(x.balance.balance)} יתרה מ${who}` : `${money(x.balance.balance)} יתרה · ${x.unit}`, sub: x.unit, verb: 'שליחת תזכורת', short: 'תזכורת יתרה', doneText: 'נשלחה', score: 5, time: null,
     });
   }
   queueAll.sort((a, z) => a.score - z.score || String(a.time || '99').localeCompare(String(z.time || '99')));
