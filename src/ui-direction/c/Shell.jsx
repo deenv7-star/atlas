@@ -16,7 +16,7 @@ import { MoreHorizontal, Search, Bell, Settings, Building2, Check, Plus, ArrowUp
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Wordmark, useNavGroups, useIsActive, MoreSheet, UserMenu, useShellProperties, navItem } from '@/components/app/shell/shared';
+import { Wordmark, useNavGroups, useIsActive, MoreSheet, UserMenu, useShellProperties } from '@/components/app/shell/shared';
 import { GuestAvatar, UnitPhoto, dayPart } from '@/components/app/atoms';
 import { IconButton } from '@/components/ds';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -24,8 +24,11 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { trialShortText, TRIAL_DAYS } from '@/lib/trial';
 import { formatDayHe, todayISO, firstName } from '@/lib/stay/format';
 import { AskAtlasButton } from '@/assistant/launcher';
+import LiveIcon, { useReplay } from '@/components/icons/live/LiveIcon';
 
 export const shellClass = 'bg-canvas';
+/** Pages that render the live window B "היום" screen. */
+export const TODAY_PAGES = ['Today', 'Dashboard'];
 
 /* ── Sidebar ───────────────────────────────────────────────────────────────── */
 function PlanCard() {
@@ -153,13 +156,13 @@ function UnitSwitcher({ properties, selectedPropertyId, onPropertyChange }) {
   );
 }
 
-export function Header({ user, selectedPropertyId, onPropertyChange, onOpenCommandPalette, onLogout }) {
+export function Header({ user, currentPageName, selectedPropertyId, onPropertyChange, onOpenCommandPalette, onLogout }) {
   const properties = useShellProperties(user);
   const quick = useQuickBooking();
   const name = firstName(user?.full_name || '') || '';
   const greeting = `${dayPart().greeting}${name ? `, ${name}` : ''}`;
   return (
-    <header className="sticky top-0 z-20 shrink-0 bg-[color-mix(in_srgb,var(--canvas)_88%,transparent)] px-5 pb-2 pt-3 backdrop-blur-md lg:px-10 lg:pb-3 lg:pt-6">
+    <header className={cn(TODAY_PAGES.includes(currentPageName) && 'max-lg:hidden', 'sticky top-0 z-20 shrink-0 bg-[color-mix(in_srgb,var(--canvas)_88%,transparent)] px-5 pb-2 pt-3 backdrop-blur-md lg:px-10 lg:pb-3 lg:pt-6')}>
       {/* Under 360px there is no room beside the avatar and icons, so the greeting drops to its own full-width row (never truncated). */}
       <div className="mx-auto flex w-full max-w-[var(--page-max,1200px)] flex-wrap items-center gap-x-3 gap-y-2 min-[360px]:flex-nowrap">
         <UserMenu user={user} onLogout={onLogout}>
@@ -207,61 +210,57 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
 }
 
 /* ── Tab bar (phones) ──────────────────────────────────────────────────────── */
+/**
+ * Live window B: four calm tabs on a floating white pill. Our animated line icons play once when a
+ * tab becomes active or is tapped. The rest of the app stays one tap away under the avatar ("כל המסכים").
+ */
+const TABS = [
+  { page: 'Dashboard', label: 'היום', icon: 'today', also: ['Today'] },
+  { page: 'MultiCalendar', label: 'יומן', icon: 'calendar' },
+  { page: 'Leads', label: 'פניות', icon: 'inbox' },
+  { page: 'Payments', label: 'כסף', icon: 'coin' },
+];
+
+function Tab({ tab, active }) {
+  const [k, replay] = useReplay();
+  const first = React.useRef(true);
+  React.useEffect(() => { if (first.current) { first.current = false; return; } if (active) replay(); }, [active, replay]);
+  return (
+    <Link
+      to={createPageUrl(tab.page)}
+      aria-current={active ? 'page' : undefined}
+      onClick={replay}
+      className={cn(
+        'lwb-tab press mx-auto flex h-14 w-full max-w-[88px] flex-col items-center justify-center gap-0.5 rounded-[22px] text-[12px] transition-colors duration-200',
+        active ? 'bg-[#EEF0F7] font-bold text-navy-900' : 'font-medium text-[#5B6384]',
+      )}
+    >
+      <LiveIcon name={tab.icon} size={30} playKey={active ? k : 0} className={active ? '' : 'opacity-80'} />
+      {tab.label}
+    </Link>
+  );
+}
+
 export function TabBar({ user, onLogout }) {
   const isActive = useIsActive();
-  const quick = useQuickBooking();
   const [moreOpen, setMoreOpen] = useState(false);
-  const slots = ['Dashboard', 'MultiCalendar', '__new__', 'Bookings', '__more__'];
-  const primaryPages = ['Dashboard', 'MultiCalendar', 'Bookings'];
-  const moreActive = !primaryPages.some((p) => isActive(p));
-  const tab = (active) => cn(
-    'press mx-auto flex h-[52px] w-full max-w-[76px] flex-col items-center justify-center gap-0.5 rounded-[20px] text-[11px] transition-colors duration-200',
-    active ? 'bg-[#ECEAFE] font-bold text-brand-700' : 'font-medium text-ink-400',
-  );
+  React.useEffect(() => {
+    const open = () => setMoreOpen(true);
+    window.addEventListener('atlas:open-more', open);
+    return () => window.removeEventListener('atlas:open-more', open);
+  }, []);
   return (
     <>
-      <nav aria-label="ניווט תחתון" className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(10px+env(safe-area-inset-bottom))] lg:hidden">
-        <ul className="pointer-events-auto mx-auto grid h-[68px] max-w-[420px] grid-cols-5 items-center gap-0.5 rounded-[28px] bg-white/95 px-2 shadow-[0_1px_2px_rgba(27,38,86,0.06),0_18px_44px_-12px_rgba(27,38,86,0.3)] backdrop-blur-md">
-          {slots.map((slot) => {
-            if (slot === '__new__') {
-              return (
-                <li key={slot} className="flex items-center justify-center">
-                  <button
-                    type="button"
-                    onClick={() => quick.open()}
-                    aria-label="הזמנה חדשה"
-                    className="press inline-flex h-[52px] w-[52px] items-center justify-center rounded-full bg-brand-600 text-white shadow-[0_2px_4px_rgba(42,26,201,0.3),0_10px_22px_-6px_rgba(62,43,241,0.6)] active:bg-brand-700"
-                  >
-                    <Plus className="h-6 w-6" strokeWidth={2.25} />
-                  </button>
-                </li>
-              );
-            }
-            if (slot === '__more__') {
-              return (
-                <li key={slot}>
-                  <button type="button" onClick={() => setMoreOpen(true)} className={tab(moreActive)}>
-                    <MoreHorizontal className="h-6 w-6" strokeWidth={moreActive ? 2 : 1.75} />
-                    עוד
-                  </button>
-                </li>
-              );
-            }
-            const item = navItem(slot);
-            const Icon = item.icon;
-            const active = isActive(slot);
-            return (
-              <li key={slot}>
-                <Link to={createPageUrl(slot)} aria-current={active ? 'page' : undefined} className={tab(active)}>
-                  <Icon className="h-6 w-6" strokeWidth={active ? 2 : 1.75} />
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
+      <nav aria-label="ניווט תחתון" className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-4 pb-[calc(12px+env(safe-area-inset-bottom))] lg:hidden">
+        <ul className="pointer-events-auto mx-auto grid h-[72px] max-w-[420px] grid-cols-4 items-center gap-1 rounded-[32px] bg-white/90 px-2 shadow-[0_12px_32px_-14px_rgba(27,38,86,0.28)] backdrop-blur-xl">
+          {TABS.map((t) => (
+            <li key={t.page}>
+              <Tab tab={t} active={isActive(t.page) || (t.also || []).some((p) => isActive(p))} />
+            </li>
+          ))}
         </ul>
       </nav>
-      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={primaryPages} />
+      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={TABS.map((t) => t.page)} />
     </>
   );
 }

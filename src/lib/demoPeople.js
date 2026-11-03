@@ -5,7 +5,9 @@
  */
 import { isSupabaseConfigured } from '@/api/supabaseClient';
 
-export const DEMO_PEOPLE = !isSupabaseConfigured && (import.meta.env.DEV || import.meta.env.VITE_ALLOW_LOCAL_DEMO === 'true');
+// QA: a local-demo build can render like a real account (no stock faces / unit photos) with localStorage atlas_qa_real_people=1.
+const QA_REAL = (() => { try { return typeof localStorage !== 'undefined' && localStorage.getItem('atlas_qa_real_people') === '1'; } catch { return false; } })();
+export const DEMO_PEOPLE = !isSupabaseConfigured && (import.meta.env.DEV || import.meta.env.VITE_ALLOW_LOCAL_DEMO === 'true') && !QA_REAL;
 
 const FEMALE = ['נועה', 'מיכל', 'אורית', 'יעל', 'שרה', 'sarah', 'עדי', 'מורן', 'חן', 'ליה', 'גלית', 'הדס', 'anna', 'רותם', 'שני', 'נטע', 'מאיה', 'שירן', 'נוי', 'דנה', 'תמר', 'מיה', 'רונית', 'אסנת', 'שירה', 'הילה', 'ענבל', 'לימור', 'קרן', 'אביטל', 'רחל', 'אילנה', 'ליאת', 'סיגל', 'efrat', 'אפרת'];
 const MALE = ['אלון', 'דור', 'daniel', 'גיל', 'עומר', 'רוני', 'אביב', 'אסף', 'ליאור', 'רון', 'שחר', 'tom', 'נדב', 'עמית', 'אלעד', 'טל', 'יוסי', 'משה', 'דוד', 'איתי', 'עידו', 'ניר', 'אבי', 'יונתן', 'אורי', 'בן', 'מתן', 'רועי', 'אריאל', 'ערן', 'david', 'michael'];

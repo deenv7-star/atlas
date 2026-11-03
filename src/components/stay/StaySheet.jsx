@@ -22,7 +22,7 @@ export function StaySheet({ open, onOpenChange, title, description, children, fo
               <DialogPrimitive.Title className="ab-h3">{title}</DialogPrimitive.Title>
               {description ? <DialogPrimitive.Description className="ab-meta mt-0.5">{description}</DialogPrimitive.Description> : <DialogPrimitive.Description className="sr-only">{title}</DialogPrimitive.Description>}
             </div>
-            <DialogPrimitive.Close className="ab-btn ab-btn-ghost ab-btn-sm !px-2" aria-label="סגירה" style={{ color: 'var(--ink-600)' }}>
+            <DialogPrimitive.Close className="ab-btn ab-btn-ghost ab-btn-sm !px-0 !h-11 !w-11 !min-h-[44px] !min-w-[44px] inline-flex items-center justify-center shrink-0" aria-label="סגירה" style={{ color: 'var(--ink-600)' }}>
               <X size={18} strokeWidth={1.75} />
             </DialogPrimitive.Close>
           </div>
