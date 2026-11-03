@@ -1,211 +1,266 @@
 /**
- * אוטומציות = מסע האורח (014). Four steps the server really runs every 15 minutes (automation-runner):
- * it prepares each message at the right time, keeps quiet on Shabbat and Yom Tov, and puts it in
- * "לשלוח עכשיו" on the Today board, where one tap opens WhatsApp with the text ready.
- * Older free-form rules stay listed; the ones the runner cannot execute say so.
+ * ההודעות לאורחים — version B, "tell atlas, it happens" (discovery first).
+ * atlas opens with what it already does and a deck of ready suggestions in plain Hebrew
+ * ("לשלוח לאורחים הוראות הגעה יום לפני?") — one tap answers. Typing is the optional extra:
+ * a sentence becomes the same confirmation card (what you asked as your bubble, atlas's answer with
+ * the real WhatsApp message, one "מאשרים"). Same four automation_rules journey steps as before (014).
  */
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { MessageCircle, Moon, Trash2, ChevronDown } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
-import { PageHeader, SkelLine, Card, StatusPill } from '@/components/ds';
-import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { Check, ArrowUp, Mic, Moon, Trash2 } from 'lucide-react';
+import { SkelLine } from '@/components/ds';
 import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
-import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
+import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { DB_FEATURES } from '@/config/dbFeatures';
-import { JOURNEY_STEPS, stepOfRule, ruleForStep } from '@/lib/real/journey';
-import { renderTemplate } from '@/lib/stay/whatsapp';
-import { todayISO, addDays } from '@/lib/stay/format';
+import { useGuestMessages, hhmm } from '@/components/magic/useGuestMessages';
+import { MessageSheet } from '@/components/magic/MessageSheet';
+import { WaBubble, DoneMoment, AssistantFace } from '@/components/magic/WaBubble';
+import { parseIntent, EXAMPLES } from '@/components/magic/intent';
+import { isRunnableRule } from '@/lib/real/journey';
 import { cn } from '@/lib/utils';
+import '@/components/magic/magic.css';
 
-const TEMPLATES_OK = new Set(['confirmation', 'arrival_eve', 'welcome', 'thanks_review', 'balance_reminder', 'checkin_link']);
-function runnable(rule) {
-  if (!['BOOKING_CONFIRMED', 'BOOKING_CREATED', 'CHECKIN_DAY', 'CHECKOUT_DAY'].includes(rule?.trigger)) return false;
-  const acts = Array.isArray(rule?.actions) ? rule.actions : [];
-  return acts.some((a) => a?.type === 'REQUEST_REVIEW' || (a?.type === 'SEND_WHATSAPP' && TEMPLATES_OK.has(a?.config?.template)));
-}
+const TIMES = ['08:00', '10:00', '12:00', '16:00', '18:00'];
+const SR = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
 
-const SAMPLE = {
-  booking: { guest_name: 'נועה לוי', check_in_date: addDays(todayISO(), 7), check_out_date: addDays(todayISO(), 9), guest_token: 'example' },
-  property: { name: 'הצימר שלכם', guest_info: { check_in_time: '15:00', check_out_time: '11:00', wifi_name: 'atlas-guest' } },
-};
+/* ── the conversation card: your words, atlas's answer, the real message, one tap ───────────────── */
+function ConfirmSheet({ ask, onClose, gm, onDone }) {
+  const step = ask?.step || null;
+  const [time, setTime] = useState(null);
+  React.useEffect(() => { setTime(ask?.time || (step ? hhmm(gm.timeOf(step)) : null)); }, [ask]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!ask) return null;
+  const guest = gm.ctx.booking?.guest_name || 'נועה לוי';
+  const turningOff = step && ask.on === false;
 
-function StepCard({ step, rule, onSave, busy, respectShabbat }) {
-  const on = !!rule?.is_active;
-  const cond = rule && !Array.isArray(rule.conditions) ? rule.conditions || {} : {};
-  const [time, setTime] = useState(cond.send_time || step.defaultTime || '');
-  const [preview, setPreview] = useState(false);
-  const text = useMemo(() => renderTemplate(step.template, { ...SAMPLE, orgName: '' }), [step.template]);
-  return (
-    <Card as="li" className="p-5 md:p-6" data-step={step.key}>
-      <div className="flex items-start gap-3">
-        <span className={cn('inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full', on ? 'bg-[#E9E7FE] text-brand-600' : 'bg-[#F1F3FA] text-ink-400')} aria-hidden>
-          <MessageCircle className="h-5 w-5" strokeWidth={1.75} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="flex flex-wrap items-center gap-2 text-[16px] font-bold text-navy-900">
-            {step.title}
-            {on ? <StatusPill tone="mint" label="פועל" /> : <StatusPill tone="slate" label="כבוי" />}
-          </p>
-          <p className="mt-1 text-[14px] text-ink-600">{step.why}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-3 text-[14px] text-ink-600">
-            <span>{step.when}</span>
-            {step.defaultTime ? (
-              <label className="inline-flex items-center gap-2">
-                <span>בשעה</span>
-                <Input
-                  type="time" value={time} step={900} aria-label={`שעת שליחה: ${step.title}`}
-                  onChange={(e) => setTime(e.target.value)}
-                  onBlur={() => { if (on && time && time !== cond.send_time) onSave(step, { on: true, sendTime: time }); }}
-                  className="h-11 w-[110px] tabular" dir="ltr"
-                />
-              </label>
-            ) : null}
+  const confirm = async () => {
+    if (ask.kind === 'shabbat') { await gm.setShabbat(ask.on); onClose(); return; }
+    const ok = await gm.save(step, { on: !turningOff, sendTime: time, quiet: true });
+    if (!ok) return;
+    onClose();
+    onDone(turningOff ? { title: `${step.short}: הופסק`, line: 'האורחים לא יקבלו את ההודעה הזו. אפשר להחזיר בכל רגע.' }
+      : { title: 'סגור, זה קורה מעכשיו', line: `${step.sentence}, ${step.whenPlain}${step.defaultTime && time ? ` ב-${time}` : ''}.` });
+  };
+
+  let answer; let body = null; let cta = null;
+  if (ask.kind === 'step') {
+    answer = turningOff ? `בסדר. נפסיק לשלוח את ההודעה: ${step.short}.`
+      : `סגור. כל אורח יקבל את זה ${step.whenPlain}${step.defaultTime && time ? `, ב-${time}` : ''}:`;
+    body = !turningOff ? (
+      <>
+        <WaBubble className="mt-3" text={gm.textFor(step)} guest={guest} time={time || 'עכשיו'} sample={gm.ctx.sample} delay={0.25} />
+        {step.defaultTime ? (
+          <div className="mg-deck mt-3" role="radiogroup" aria-label="שעת שליחה">
+            {[...new Set([...TIMES, time].filter(Boolean))].sort().map((t) => (
+              <button key={t} type="button" role="radio" aria-checked={t === time} onClick={() => setTime(t)}
+                className={cn('mg-chip tabular', t === time ? 'mg-chip-on' : 'mg-chip-light')} dir="ltr">{t}</button>
+            ))}
           </div>
-          <button type="button" onClick={() => setPreview((v) => !v)} aria-expanded={preview} className="press mt-2 inline-flex min-h-[44px] items-center gap-1 text-[14px] font-semibold text-brand-600">
-            {preview ? 'הסתרת ההודעה' : 'איך ההודעה נראית'}
-            <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', preview && 'rotate-180')} strokeWidth={1.75} />
-          </button>
-          {preview ? <p className="mt-1 whitespace-pre-line rounded-[16px] bg-[#E7F8EE] p-3 text-[14px] leading-relaxed text-navy-900">{text}</p> : null}
-        </div>
-        <Switch
-          checked={on} disabled={busy}
-          onCheckedChange={(v) => onSave(step, { on: v, sendTime: time, respectShabbat })}
-          aria-label={on ? `כיבוי: ${step.title}` : `הפעלה: ${step.title}`}
-        />
-      </div>
-    </Card>
-  );
-}
-
-export default function AutomationsPage({ orgId }) {
-  const qc = useQueryClient();
-  const q = useQuery({
-    queryKey: ['automations', orgId],
-    queryFn: () => (orgId ? base44.entities.AutomationRule.filter({ org_id: orgId }, 'created_at', 200) : Promise.resolve([])),
-    enabled: !!orgId,
-  });
-  const rules = q.data || [];
-  const byStep = useMemo(() => {
-    const m = new Map();
-    for (const r of rules) { const s = stepOfRule(r); if (s && !m.has(s.key)) m.set(s.key, r); }
-    return m;
-  }, [rules]);
-  const others = rules.filter((r) => !stepOfRule(r));
-  const journeyRules = [...byStep.values()];
-  const respectShabbat = journeyRules.length ? journeyRules.every((r) => (r.conditions || {}).respect_shabbat !== false) : true;
-  const [busy, setBusy] = useState(false);
-
-  const save = async (step, { on, sendTime, respectShabbat: rs = respectShabbat }) => {
-    setBusy(true);
-    try {
-      const existing = byStep.get(step.key);
-      const payload = { ...ruleForStep(step, { sendTime, respectShabbat: rs }), is_active: on };
-      if (existing) await base44.entities.AutomationRule.update(existing.id, payload);
-      else await base44.entities.AutomationRule.create({ ...payload, org_id: orgId, execution_count: 0 });
-      atlasToastApi.success(on ? `${step.title}: פועל` : `${step.title}: כבוי`);
-    } catch {
-      atlasToastApi.error('לא הצלחנו לשמור. נסו שוב.');
-    } finally {
-      setBusy(false);
-      qc.invalidateQueries({ queryKey: ['automations'] });
-      qc.invalidateQueries({ queryKey: ['message_queue'] });
-    }
-  };
-
-  const setShabbat = async (v) => {
-    setBusy(true);
-    try {
-      await Promise.all(journeyRules.map((r) => base44.entities.AutomationRule.update(r.id, { conditions: { ...(r.conditions || {}), respect_shabbat: v } })));
-      atlasToastApi.success(v ? 'לא נשלח הודעות בשבת ובחג' : 'הודעות יישלחו גם בשבת ובחג');
-    } catch { atlasToastApi.error('לא הצלחנו לשמור. נסו שוב.'); }
-    finally { setBusy(false); qc.invalidateQueries({ queryKey: ['automations'] }); }
-  };
-
-  const turnAllOn = async () => {
-    for (const s of JOURNEY_STEPS) if (!byStep.get(s.key)?.is_active) await save(s, { on: true, sendTime: s.defaultTime });
-  };
-
-  const removeOther = useMutation({
-    mutationFn: (id) => base44.entities.AutomationRule.delete(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['automations'] }); atlasToastApi.success('האוטומציה נמחקה'); },
-  });
-  const toggleOther = useMutation({
-    mutationFn: ({ id, is_active }) => base44.entities.AutomationRule.update(id, { is_active }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['automations'] }),
-  });
-
-  if (q.isLoading) {
-    return (
-      <div className="mx-auto w-full max-w-[960px] px-5 pt-6 md:px-10 md:pt-10" role="status" aria-busy="true" aria-label="טוען">
-        <SkelLine className="h-8 w-40" /><div className="mt-6 space-y-3">{[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-28 rounded-[22px]" />)}</div>
+        ) : null}
+      </>
+    ) : null;
+    cta = turningOff ? 'כן, להפסיק' : 'מאשרים';
+  } else if (ask.kind === 'shabbat') {
+    answer = ask.on ? 'סגור. הודעה שנופלת על שבת או חג תחכה ותצא במוצאי שבת.' : 'בסדר. ההודעות ייצאו בזמן גם בשבת ובחג.';
+    cta = 'מאשרים';
+  } else if (ask.kind === 'balance') {
+    answer = 'את זה atlas כבר עושה בשבילכם: כל יתרה פתוחה מופיעה בלוח היום, עם תזכורת מוכנה לשליחה לאורח בלחיצה.';
+    body = <Link to="/balances" className="mg-cta mg-cta-indigo mt-4 w-full" onClick={onClose}>לראות את היתרות הפתוחות</Link>;
+  } else {
+    answer = 'את זה עוד לא אוכל לעשות לבד. אלה ההודעות שאני שולח לאורחים, בחרו אחת:';
+    body = (
+      <div className="mt-3 flex flex-wrap gap-2">
+        {gm.steps.map((s) => (
+          <button key={s.key} type="button" className="mg-chip mg-chip-light" onClick={() => onClose({ kind: 'step', step: s, on: true, said: s.said })}>{s.short}</button>
+        ))}
       </div>
     );
   }
 
-  const allOn = JOURNEY_STEPS.every((s) => byStep.get(s.key)?.is_active);
+  return (
+    <Drawer open={!!ask} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent className="mx-auto max-h-[92dvh] w-full max-w-[520px] rounded-t-[32px] border-0 bg-[#F7F8FB]" dir="rtl">
+        <div className="overflow-y-auto px-5 pb-[max(20px,env(safe-area-inset-bottom))] pt-3">
+          <DrawerTitle className="sr-only">אישור הבקשה</DrawerTitle>
+          <DrawerDescription className="sr-only">מה ביקשתם ומה atlas יעשה</DrawerDescription>
+          <div className="flex justify-end">
+            <p className="max-w-[85%] rounded-[20px_20px_20px_6px] bg-[#3E2BF1] px-4 py-2.5 text-[15px] leading-snug text-white">{ask.said}</p>
+          </div>
+          <div className="mt-4 flex items-start gap-3">
+            <AssistantFace size={36} />
+            <div className="min-w-0 flex-1">
+              <p className="pt-1 text-[16px] font-semibold leading-snug text-navy-900">{answer}</p>
+              {body}
+            </div>
+          </div>
+          {cta ? (
+            <button type="button" onClick={confirm} disabled={gm.busy || !gm.canWrite} className="mg-cta mg-cta-indigo mt-5 w-full disabled:opacity-60">{cta}</button>
+          ) : null}
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+/* ── one suggestion in the deck ─────────────────────────────────────────────────────────────────── */
+function Suggestion({ step, gm, onYes, onLater, i }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.article layout className="flex w-[300px] flex-col rounded-[28px] bg-white p-4 md:w-[340px]"
+      initial={reduce ? false : { opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.9, y: -30 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30, delay: reduce ? 0 : 0.1 + i * 0.07 }} aria-label={step.ask}>
+      <p className="flex items-center gap-2 text-[13px] font-semibold text-brand-600"><AssistantFace size={22} /> הצעה של atlas</p>
+      <p className="mt-2 min-h-[3.2em] text-[18px] font-bold leading-snug text-navy-900">{step.ask}</p>
+      <WaBubble compact className="mt-3" text={gm.textFor(step)} guest={gm.ctx.booking?.guest_name || 'נועה לוי'} time={hhmm(gm.timeOf(step)) || 'עכשיו'} sample={gm.ctx.sample} />
+      <div className="mt-4 flex items-center gap-2">
+        <button type="button" className="mg-cta mg-cta-indigo flex-1" onClick={() => onYes(step)} disabled={gm.busy || !gm.canWrite}>כן, תפעילו</button>
+        <button type="button" className="min-h-[48px] rounded-full px-4 text-[15px] font-semibold text-ink-600" onClick={() => onLater(step)}>לא עכשיו</button>
+      </div>
+    </motion.article>
+  );
+}
+
+export default function AutomationsPage({ orgId }) {
+  const base = useGuestMessages(orgId);
+  const gm = { ...base, canWrite: !!orgId };
+  const reduce = useReducedMotion();
+  const [later, setLater] = useState(() => new Set());
+  const [ask, setAsk] = useState(null);
+  const [sheet, setSheet] = useState(null);
+  const [done, setDone] = useState(null);
+  const [text, setText] = useState('');
+  const [listening, setListening] = useState(false);
+
+  if (gm.loading) {
+    return (
+      <div className="mx-auto w-full max-w-[960px] px-5 pt-6 md:px-10 md:pt-10" role="status" aria-busy="true" aria-label="טוען">
+        <SkelLine className="h-[260px] rounded-[32px]" /><SkelLine className="mt-5 h-[300px] rounded-[28px]" />
+      </div>
+    );
+  }
+
+  const active = gm.steps.filter((s) => gm.isOn(s));
+  const ideas = gm.steps.filter((s) => !gm.isOn(s) && !later.has(s.key));
+  const yes = async (s) => { if (await gm.save(s, { on: true, quiet: true })) setDone({ title: 'סגור, זה קורה מעכשיו', line: `${s.sentence}, ${s.whenPlain}.` }); };
+  const submit = (e) => {
+    e?.preventDefault();
+    const said = text.trim(); if (!said) return;
+    const it = parseIntent(said);
+    const step = it.kind === 'step' ? gm.steps.find((s) => s.key === it.stepKey) : null;
+    setAsk({ ...it, step, said }); setText('');
+  };
+  const listen = () => {
+    if (!SR) return;
+    const r = new SR(); r.lang = 'he-IL'; r.interimResults = false;
+    r.onresult = (ev) => setText(ev.results[0][0].transcript || '');
+    r.onend = () => setListening(false);
+    setListening(true); r.start();
+  };
+  const title = gm.allOn ? 'הכל מטופל. כל אורח מקבל את ההודעה הנכונה בזמן.' : active.length ? `atlas כבר שולח ${active.length === 1 ? 'הודעה אחת' : `${active.length} הודעות`} לאורחים` : 'atlas יכול לדבר עם האורחים בשבילכם';
 
   return (
-    <div className="mx-auto w-full max-w-[960px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader
-        title="ההודעות לאורחים"
-        subtitle="atlas מכין כל הודעה בזמן הנכון, ואתם שולחים בלחיצה מלוח היום."
-        className="!mb-0"
-        actions={!allOn ? <Button className="h-11" onClick={turnAllOn} disabled={busy}>הפעלת כל ההודעות</Button> : null}
-      />
+    <div className="mx-auto w-full max-w-[960px] space-y-6 px-5 pb-28 pt-5 md:px-10 md:pt-10" dir="rtl">
+      <section className="mg-photo rounded-[32px] px-6 pb-6 pt-6 text-white md:px-10 md:pb-9 md:pt-9" aria-labelledby="mg-title">
+        <img className="mg-photo-img" src="/onboarding/bg/aframe-p640.webp" srcSet="/onboarding/bg/aframe-p640.webp 640w, /onboarding/bg/aframe-p1000.webp 1000w, /onboarding/bg/aframe-1600.webp 1600w" sizes="(min-width: 960px) 900px, 100vw" alt="" loading="eager" decoding="async" />
+        <div className="flex items-center gap-2.5">
+          <AssistantFace size={40} />
+          <p className="text-[15px] font-semibold text-white/75">ההודעות לאורחים</p>
+        </div>
+        <h1 id="mg-title" className="mt-4 max-w-[34rem] text-[28px] font-bold leading-[1.15] tracking-[-0.01em] md:text-[38px]">{title}</h1>
+        {active.length ? (
+          <ul className="mt-5 flex flex-wrap gap-2" aria-label="פועל עכשיו">
+            <AnimatePresence initial={false}>
+              {active.map((s) => (
+                <motion.li key={s.key} layout initial={reduce ? false : { opacity: 0, scale: 0.6, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 26 }}>
+                  <button type="button" className="mg-chip mg-chip-dark mg-glass" onClick={() => setSheet(s)} aria-label={`${s.sentence}: פועל. פתיחה`}>
+                    <Check className="h-4 w-4" strokeWidth={2.25} aria-hidden />{s.short}
+                  </button>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </ul>
+        ) : (
+          <p className="mt-2 max-w-[30rem] text-[16px] leading-snug text-white/75">בחרו מה לשלוח. atlas יכין כל הודעה בזמן הנכון, עם השם והפרטים של האורח.</p>
+        )}
+        {!gm.allOn && ideas.length > 1 ? (
+          <button type="button" className="mg-cta mt-6 w-full sm:w-auto" disabled={gm.busy || !gm.canWrite}
+            onClick={async () => { if (await gm.turnAllOn()) setDone({ title: 'סגור, זה קורה מעכשיו', line: 'כל אורח יקבל את ההודעות בזמן. הן יחכו לכם מוכנות בלוח היום.' }); }}>
+            {active.length ? 'להפעיל את כל ההצעות' : 'להפעיל את כל ההודעות'}
+          </button>
+        ) : null}
+      </section>
 
-      {!DB_FEATURES.realCore ? (
-        <Card className="p-5"><p className="text-[14px] text-ink-600">ההודעות האוטומטיות יעבדו אחרי שתתחברו לחשבון. בהדגמה רק רואים איך זה נראה.</p></Card>
+      {ideas.length ? (
+        <section aria-labelledby="mg-ideas">
+          <h2 id="mg-ideas" className="px-1 text-[20px] font-bold text-navy-900">הצעות בשבילכם</h2>
+          <div className="mg-deck mt-3">
+            <AnimatePresence>
+              {ideas.map((s, i) => <Suggestion key={s.key} step={s} gm={gm} i={i} onYes={yes} onLater={(x) => setLater((p) => new Set(p).add(x.key))} />)}
+            </AnimatePresence>
+          </div>
+        </section>
       ) : null}
 
-      <Card className="flex items-center gap-3 p-5 md:px-6">
-        <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F1F3FA] text-navy-900" aria-hidden><Moon className="h-5 w-5" strokeWidth={1.75} /></span>
-        <div className="min-w-0 flex-1">
-          <p className="text-[15px] font-bold text-navy-900">שקט בשבת ובחג</p>
-          <p className="text-[13px] text-ink-400">הודעה שמגיע זמנה בין הדלקת נרות לצאת השבת או החג תחכה ל-20 דקות אחרי ההבדלה (לפי זמני ירושלים).</p>
+      <section className="rounded-[28px] bg-white p-4 md:p-5" aria-labelledby="mg-ask">
+        <h2 id="mg-ask" className="px-1 text-[16px] font-bold text-navy-900">רוצים משהו אחר? כתבו במילים שלכם</h2>
+        <form onSubmit={submit} className="mt-3 flex items-center gap-2 rounded-full bg-[#F7F8FB] p-1.5 ps-4">
+          <label htmlFor="mg-input" className="sr-only">מה לעשות עם ההודעות לאורחים</label>
+          <input id="mg-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="למשל: הוראות הגעה יום לפני ב-9"
+            className="min-h-[44px] min-w-0 flex-1 bg-transparent text-[16px] text-navy-900 outline-none placeholder:text-ink-400" autoComplete="off" enterKeyHint="send" />
+          {SR ? (
+            <button type="button" onClick={listen} className={cn('inline-flex h-11 w-11 items-center justify-center rounded-full text-navy-900', listening && 'mg-live')} aria-label="אמרו בקול">
+              <Mic className="h-5 w-5" strokeWidth={1.75} />
+            </button>
+          ) : null}
+          <button type="submit" disabled={!text.trim()} className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#3E2BF1] text-white disabled:opacity-40" aria-label="שליחה">
+            <ArrowUp className="h-5 w-5" strokeWidth={1.75} />
+          </button>
+        </form>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {EXAMPLES.map((ex) => (
+            <button key={ex} type="button" className="mg-chip mg-chip-light !min-h-[44px] !text-[14px] !font-medium" onClick={() => { const it = parseIntent(ex); setAsk({ ...it, step: it.kind === 'step' ? gm.steps.find((s) => s.key === it.stepKey) : null, said: ex }); }}>{ex}</button>
+          ))}
         </div>
-        <Switch checked={respectShabbat} disabled={busy || !journeyRules.length} onCheckedChange={setShabbat} aria-label="שקט בשבת ובחג" />
-      </Card>
+      </section>
 
-      <ol className="space-y-3" aria-label="שלבי ההודעות">
-        {JOURNEY_STEPS.map((s) => <StepCard key={s.key} step={s} rule={byStep.get(s.key)} onSave={save} busy={busy} respectShabbat={respectShabbat} />)}
-      </ol>
+      <section className="flex items-center gap-3.5 rounded-[22px] bg-white px-4 py-3" aria-label="שבת וחג">
+        <span className="mg-ico" aria-hidden><Moon className="h-5 w-5" strokeWidth={1.75} /></span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[16px] font-bold text-navy-900">לא שולחים בשבת ובחג</span>
+          <span className="block text-[14px] text-ink-600">הודעה שנופלת על שבת יוצאת במוצאי שבת</span>
+        </span>
+        <Switch checked={gm.respectShabbat} disabled={gm.busy || !gm.hasRules} onCheckedChange={gm.setShabbat} aria-label="לא שולחים בשבת ובחג" />
+      </section>
 
-      <Card className="p-5 md:px-6">
-        <p className="text-[15px] font-bold text-navy-900">איך זה נשלח היום</p>
-        <p className="mt-1 text-[14px] leading-relaxed text-ink-600">
-          כל 15 דקות atlas בודק את ההזמנות ומכין את ההודעות שהגיע זמנן. הן מחכות ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link> תחת "לשלוח עכשיו": לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח, ואחרי השליחה ההודעה מסומנת כנשלחה.
-          בהמשך אפשר יהיה לשלוח גם בלי לחיצה, דרך וואטסאפ עסקי.
-        </p>
-      </Card>
+      <p className="px-1 text-[14px] leading-relaxed text-ink-600">
+        כל הודעה מחכה מוכנה ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link>. לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח.
+        {!DB_FEATURES.realCore ? ' בהדגמה ההודעות לא נשלחות באמת.' : ''}
+      </p>
 
-      {others.length ? (
-        <section aria-label="אוטומציות נוספות" className="space-y-2">
-          <h2 className="pt-2 text-[15px] font-bold text-navy-900">אוטומציות נוספות שנשמרו</h2>
+      {gm.others.length ? (
+        <section aria-label="הודעות ישנות" className="space-y-2">
+          <h2 className="px-1 pt-2 text-[15px] font-bold text-navy-900">הודעות שהגדרתם בעבר</h2>
           <ul className="space-y-2">
-            {others.map((r) => {
-              const ok = runnable(r);
-              return (
-                <Card as="li" key={r.id} className="flex items-center gap-3 p-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="flex flex-wrap items-center gap-2 truncate text-[15px] font-semibold text-navy-900">
-                      {r.name || 'אוטומציה'}
-                      {ok ? <StatusPill tone="mint" label="פועלת" /> : <StatusPill tone="slate" label="עוד לא נתמכת" />}
-                    </p>
-                    {!ok ? <p className="text-[13px] text-ink-400">הפעולה הזו עוד לא עובדת, ולכן לא תצא.</p> : null}
-                  </div>
-                  <Switch checked={!!r.is_active} onCheckedChange={(v) => toggleOther.mutate({ id: r.id, is_active: v })} aria-label={`הפעלה: ${r.name || 'אוטומציה'}`} />
-                  <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={`מחיקה: ${r.name || 'אוטומציה'}`} onClick={() => removeOther.mutate(r.id)}>
-                    <Trash2 className="h-4 w-4 text-ink-400" strokeWidth={1.75} />
-                  </Button>
-                </Card>
-              );
-            })}
+            {gm.others.map((r) => (
+              <li key={r.id} className="mg-row">
+                <span className="min-w-0 flex-1 ps-2">
+                  <span className="block truncate text-[15px] font-semibold text-navy-900">{r.name || 'הודעה'}</span>
+                  <span className="block text-[13px] text-ink-600">{isRunnableRule(r) ? 'פועלת' : 'עוד לא נתמכת, ולכן לא יוצאת'}</span>
+                </span>
+                <Switch checked={!!r.is_active} onCheckedChange={(v) => gm.toggleOther(r.id, v)} aria-label={`הפעלה: ${r.name || 'הודעה'}`} />
+                <button type="button" className="inline-flex h-11 w-11 items-center justify-center rounded-[14px]" aria-label={`מחיקה: ${r.name || 'הודעה'}`} onClick={() => gm.removeOther(r.id)}>
+                  <Trash2 className="h-4 w-4 text-ink-400" strokeWidth={1.75} />
+                </button>
+              </li>
+            ))}
           </ul>
         </section>
       ) : null}
+
+      <ConfirmSheet ask={ask} gm={gm} onDone={setDone} onClose={(nextAsk) => setAsk(nextAsk && nextAsk.kind ? nextAsk : null)} />
+      <MessageSheet step={sheet} open={!!sheet} onOpenChange={(v) => !v && setSheet(null)} gm={gm} />
+      <DoneMoment open={!!done} title={done?.title} line={done?.line} onDone={() => setDone(null)} />
     </div>
   );
 }

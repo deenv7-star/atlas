@@ -5,8 +5,8 @@
  */
 import {
   Sun, CalendarRange, BedDouble, Users, MessageSquare, Star,
-  Brush, Headset, FileSignature, Zap, Wallet, FileText, TrendingDown, BarChart3,
-  FileBarChart, Tags, Link2, Route, Globe, CreditCard, Receipt, Settings, Shield,
+  Brush, Headset, FileSignature, Send, Wallet, FileText, TrendingDown, BarChart3,
+  FileBarChart, Tags, Link2, Globe, CreditCard, Receipt, Settings, Shield,
 } from 'lucide-react';
 import { DB_FEATURES } from '@/config/dbFeatures';
 import { SparkMark } from '@/assistant/mark';
@@ -37,7 +37,7 @@ export const NAV_GROUPS = [
       { page: 'ServiceRequests', label: 'בקשות שירות', icon: Headset },
       { page: 'Reviews', label: 'ביקורות', icon: Star },
       { page: 'Contracts', label: 'חוזים', icon: FileSignature },
-      { page: 'Automations', label: 'אוטומציות', icon: Zap },
+      { page: 'Automations', label: 'הודעות לאורחים', icon: Send },
     ],
   },
   {
@@ -45,7 +45,6 @@ export const NAV_GROUPS = [
     label: 'אורחים',
     items: [
       ...(DB_FEATURES.guestPages ? [{ page: 'GuestPortal', label: 'דף אורח והזמנה ישירה', icon: Globe }] : []),
-      { page: 'GuestJourney', label: 'שלבי האירוח', icon: Route },
       { page: 'AIAssistant', label: 'שאלו את atlas', icon: SparkMark },
     ],
   },
