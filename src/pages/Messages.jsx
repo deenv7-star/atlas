@@ -165,7 +165,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
       )}>
         <div className="border-b border-line px-4 pb-3 pt-1 md:pt-4">
           <div className="relative">
-            <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" strokeWidth={1.5} aria-hidden />
+            <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" strokeWidth={1.75} aria-hidden />
             <Input
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
@@ -230,7 +230,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
               aria-label="חזרה לרשימת השיחות"
               className="press -mr-2 inline-flex h-11 w-11 items-center justify-center rounded-[10px] text-ink-600 hover:bg-neutral-100 md:hidden"
             >
-              <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
+              <ChevronRight className="h-5 w-5" strokeWidth={1.75} />
             </button>
             <Avatar name={currentThread?.guest_name} className="h-10 w-10" />
             <div className="min-w-0">
@@ -284,7 +284,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                 aria-label="שליחה"
                 className="shrink-0"
               >
-                <Send className="h-[18px] w-[18px] -scale-x-100" strokeWidth={1.5} />
+                <Send className="h-[18px] w-[18px] -scale-x-100" strokeWidth={1.75} />
               </Button>
             </div>
           </div>

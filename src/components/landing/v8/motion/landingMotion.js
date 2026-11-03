@@ -2,7 +2,6 @@
  * Landing motion (2.11.2026): brings what is already on the landing to life, adds nothing.
  * CSS does the animating (landing-motion.css); this hook only decides when.
  * - [data-count] numbers count up once from 0 when they enter view (only numbers already on the page).
- * - Line icons in [data-draw] draw their strokes once when their [data-reveal] parent comes in.
  * - [data-sd] elements get .is-sd when in view: the fallback for browsers without CSS scroll-driven
  *   animations (iOS Safari < 26). With animation-timeline support, CSS drives them from scroll instead.
  * Reduced motion: nothing runs, everything is shown in its final state.
@@ -30,13 +29,6 @@ export function useLandingMotion(rootRef, { countMs = 700 } = {}) {
     if (!root || prefersReducedMotion() || !('IntersectionObserver' in window)) return undefined;
     root.classList.add('mo-on');
     const ios = [];
-
-    /* draw-on icons: give every stroke a unit length so CSS can dash it */
-    root.querySelectorAll('[data-draw] svg').forEach((svg) => {
-      svg.querySelectorAll('path, line, polyline, rect, circle, ellipse').forEach((s) => s.setAttribute('pathLength', '1'));
-      const host = svg.closest('[data-reveal]');
-      if (host && host.classList.contains('is-in')) svg.classList.add('is-drawn'); // already shown: no replay
-    });
 
     /* count-up: the number is swapped for 0 only at the moment its card starts fading in (same margin as
        useReveal), never at load, so the text React hydrates is always the real number */

@@ -14,12 +14,8 @@ import { BookingsTable } from '@/components/tables/BookingsTable';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { CalendarDays, Plus, Search, SlidersHorizontal, Download, ChevronLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import {
-  Page, PageHeader, ChannelDot, ChannelBadge, fmtMoney, fmtShort, EmptyState as DsEmptyState, StatusPill, SkelRows,
-} from '@/components/ds';
+import { Plus, Search, SlidersHorizontal, Download } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 import { exportToCSV, BOOKING_COLUMNS } from '@/lib/csvExport';
 import { BookingForm } from '@/components/forms/BookingForm';
@@ -28,8 +24,11 @@ import { bookingFormToPayload } from '@/lib/entityPayloads';
 import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
-import { Rise, GuestAvatar, AvatarStack } from '@/components/app/atoms';
 import { heCount } from '@/lib/hebrewCount';
+import HelpHint from '@/components/help/HelpHint';
+import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
+import { BookingsPanel, BookingSheet } from '@/ui-direction/y/Bookings';
+import { useTodayModel } from '@/ui-direction/y/model';
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -42,12 +41,6 @@ const STATUS_OPTIONS = [
 ];
 const STATUS_MAP = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s]));
 
-const TAB_OPTIONS = [
-  { key: 'all', label: 'הכל' },
-  { key: 'active', label: 'פעילות' },
-  { key: 'pending', label: 'ממתינות' },
-  { key: 'cancelled', label: 'בוטלו' },
-];
 
 function bookingMatchesTab(tab, b) {
   const s = b.status || '';
@@ -100,7 +93,7 @@ function bookingEntityToFormValues(b) {
   };
 }
 
-export default function BookingsPage({ selectedPropertyId }) {
+export default function BookingsPage({ selectedPropertyId, user, orgId }) {
   const { success } = useToast();
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -133,12 +126,17 @@ export default function BookingsPage({ selectedPropertyId }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
   const bookingDialogInterceptRef = useRef(null);
+  // Y3: the same navy bookings panel as Today (list + the chosen booking beside it; phone: a sheet)
+  const m = useTodayModel({ orgId });
+  const [selId, setSelId] = useState(null);
+  const [sheet, setSheet] = useState(null);
+  const [composer, setComposer] = useState(null);
 
   useEffect(() => {
     if (!showDialog) bookingDialogInterceptRef.current = null;
   }, [showDialog]);
 
-  const { data: bookings = [], isLoading, isError, error: bookingsError } = useBookings(filters, '-created_at', 200);
+  const { data: bookings = [], isLoading, isError } = useBookings(filters, '-created_at', 200);
   const { data: properties = [], isLoading: propertiesLoading } = useProperties();
   const createMutation  = useCreateBooking();
   const updateMutation  = useUpdateBooking();
@@ -278,134 +276,104 @@ export default function BookingsPage({ selectedPropertyId }) {
   };
 
   const filtersActive = statusFilterArr.length > 0 || !!dateFrom || !!dateTo || !!urlPropertyId;
-  const propName = (id) => properties.find((p) => p.id === id)?.name || '';
   const hasQuery = !!search || tab !== 'all' || filtersActive;
 
+  const listLoading = isLoading || propertiesLoading;
+  const panelTabs = [
+    { key: 'all', label: 'הכל', count: counts.total },
+    { key: 'active', label: 'פעילות', count: counts.confirmed },
+    { key: 'pending', label: 'ממתינות', count: counts.pending },
+  ];
+
   return (
-    <Page>
-      <PageHeader
-        title="הזמנות"
-        help="bookings.page"
-        tour="bookings-page"
-        subtitle="כל ההזמנות, מכל הערוצים."
-        actions={
-          <>
-            {/* desktop: "הזמנה חדשה" lives in the header; tablets keep it here */}
-            <Button onClick={openNew} className="hidden md:inline-flex lg:hidden">
-              <Plus strokeWidth={2.25} />
-              הזמנה חדשה
-            </Button>
-          </>
-        }
-      />
+    <div className="y2 y3-bk" dir="rtl">
+      <div className="y2-win y3-bk-win">
+        <header className="y2-hello y3-bk-h" data-tour="bookings-page">
+          <div className="min-w-0">
+            <h1 className="y2-h1 y3-bk-h1"><span>הזמנות</span><HelpHint id="bookings.page" /></h1>
+            <p className="y2-sub">כל ההזמנות, מכל הערוצים.</p>
+          </div>
+          <button type="button" onClick={openNew} className="y3-bk-new press"><Plus strokeWidth={2} />הזמנה חדשה</button>
+        </header>
 
-      {/* v8 C: the three filters are bento tiles. The chosen one is the screen's single solid-indigo tile. */}
-      <div role="tablist" aria-label="סינון לפי מצב" className="mb-4 grid grid-cols-3 gap-2.5 md:gap-4">
-        {[
-          { value: 'all', label: 'כל ההזמנות', short: 'הכל', count: counts.total, names: bookings.map((b) => b.guest_name) },
-          { value: 'active', label: 'פעילות', short: 'פעילות', count: counts.confirmed, names: bookings.filter((b) => bookingMatchesTab('active', b)).map((b) => b.guest_name) },
-          { value: 'pending', label: 'ממתינות לאישור', short: 'ממתינות', count: counts.pending, names: bookings.filter((b) => bookingMatchesTab('pending', b)).map((b) => b.guest_name), attention: counts.pending > 0 },
-        ].map((t, i) => {
-          const on = tab === t.value;
-          return (
-            <button
-              key={t.value}
-              type="button"
-              role="tab"
-              aria-selected={on}
-              onClick={() => void setUrlState({ tab: t.value, page: 1 })}
-              className={cn(
-                'v5-rise press v7-lift relative flex min-h-[104px] flex-col justify-between overflow-hidden rounded-[22px] p-3.5 text-right md:min-h-[128px] md:p-5',
-                on ? 'v7-hero' : 'v7-card',
-              )}
-              style={{ '--i': i }}
-            >
-              <span className={cn('flex items-center gap-1.5 text-[13px] font-medium md:text-[15px]', on ? 'text-white/85' : 'text-ink-400')}>
-                <span className="md:hidden">{t.short}</span><span className="hidden md:inline">{t.label}</span>
-                {t.attention && !on ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
-              </span>
-              <span className="flex items-end justify-between gap-2">
-                <span className={cn('v5-num text-[28px] font-extrabold leading-none tracking-[-0.03em] md:text-[36px]', on ? 'text-white' : 'text-navy-900')}>{t.count}</span>
-                {t.names.length ? <AvatarStack names={t.names.filter(Boolean)} size={30} max={3} showRest={false} ringClass={on ? 'ring-brand-600' : 'ring-white'} className="hidden md:inline-flex" /> : null}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="mb-4 flex items-center gap-2">
-        <div className="relative flex-1 md:max-w-[360px]">
-          <Search className="pointer-events-none absolute right-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
-          <Input
-            value={search}
-            onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
-            placeholder="חיפוש לפי שם אורח"
-            className="h-12 rounded-full border-0 bg-white pr-11 shadow-[0_1px_2px_rgba(27,38,86,0.05)]"
-            aria-label="חיפוש לפי שם אורח"
-          />
-        </div>
-        <Button variant={filtersActive ? 'secondary' : 'outline'} onClick={() => setFiltersOpen(true)} aria-label="סינון" className="h-12 rounded-full border-0 bg-white px-4 shadow-[0_1px_2px_rgba(27,38,86,0.05)]">
-          <SlidersHorizontal />
-          <span className="hidden sm:inline">סינון</span>
-          {filtersActive ? <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1 text-[12px] text-white">{statusFilterArr.length + (dateFrom || dateTo ? 1 : 0) + (urlPropertyId ? 1 : 0)}</span> : null}
-        </Button>
-        <Button variant="ghost" onClick={handleExport} className="hidden h-12 rounded-full px-4 text-ink-600 md:inline-flex">
-          <Download />
-          ייצוא
-        </Button>
-      </div>
-
-      <div className="v7-card overflow-hidden" data-tour="bookings-list">
         {isError ? (
-          <div className="p-4"><ErrorFallback /></div>
-        ) : sorted.length === 0 && !isLoading && !propertiesLoading ? (
-          <DsEmptyState
-            icon={CalendarDays}
-            title={hasQuery ? 'אין הזמנות שמתאימות לחיפוש' : 'עדיין אין הזמנות'}
-            description={hasQuery ? 'נסו חיפוש אחר או נקו את הסינון.' : 'מוסיפים הזמנה ראשונה בפחות מדקה: שם האורח, תאריכים ומאיפה הגיע.'}
-            action={hasQuery ? (
-              <Button variant="outline" onClick={() => void setUrlState({ search: '', tab: 'all', status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי הסינון</Button>
-            ) : (
-              <Button onClick={openNew}><Plus strokeWidth={2.25} />הזמנה חדשה</Button>
-            )}
-          />
+          <div className="y3-bk-err"><ErrorFallback /></div>
         ) : (
           <ErrorBoundary section="bookings-table" variant="inline" resetKey={`${effectivePropertyId ?? 'all'}|${tab}|${search}|${page}|${pageSize}`}>
-            {/* Phones: cards. Desktop: the full table with bulk actions. */}
-            <div aria-hidden className="hidden h-12 grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px_24px] items-center gap-4 border-b border-[#F0F0F6] bg-[#FAFAFD] px-6 text-[12px] font-semibold text-ink-400 md:grid">
-              <span>אורח</span><span>תאריכים</span><span>ערוץ</span><span className="text-left">סכום</span><span>מצב</span><span />
-            </div>
-            <ul className="divide-y divide-[#F0F0F6]">
-              {isLoading ? (
-                <li className="p-4"><SkelRows rows={5} /></li>
-              ) : paged.map((b, idx) => (
-                <Rise as="li" i={Math.min(idx, 8)} key={b.id}>
-                  <Link to={`${createPageUrl('BookingDetail')}/${b.id}`} className="press c-row flex min-h-[76px] items-center gap-3.5 px-4 py-3 md:grid md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)_112px_128px_24px] md:gap-4 md:px-6">
-                    <span className="flex min-w-0 flex-1 items-center gap-3.5">
-                      <GuestAvatar name={b.guest_name || 'אורח'} size={44} />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[15px] font-semibold text-navy-900">{b.guest_name || 'אורח'}</span>
-                        <span className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
-                          <ChannelDot source={b.booking_source || b.source} className="h-1.5 w-1.5 md:hidden" />
-                          <span className="truncate">{propName(b.property_id) || b.property_name}<span className="md:hidden"> · {fmtShort(b.check_in_date)}</span> · {heCount(b.nights || 1, 'night')}</span>
-                        </span>
-                      </span>
-                    </span>
-                    <span className="hidden truncate text-[14px] font-medium tabular text-navy-900 md:block">{fmtShort(b.check_in_date)} – {fmtShort(b.check_out_date)}</span>
-                    <span className="hidden md:block"><ChannelBadge source={b.booking_source || b.source} /></span>
-                    <span className="hidden text-left text-[15px] font-bold tabular text-navy-900 md:block">{fmtMoney(b.total_price)}</span>
-                    <span className="shrink-0"><StatusPill status={b.status} /></span>
-                    <ChevronLeft aria-hidden className="hidden h-4 w-4 text-ink-300 md:block" strokeWidth={1.75} />
-                  </Link>
-                </Rise>
-              ))}
-            </ul>
+            <BookingsPanel
+              data-tour="bookings-list"
+              className="y3-panel--page"
+              title="כל ההזמנות"
+              model={m}
+              list={paged}
+              loading={listLoading}
+              limit={Infinity}
+              tabs={panelTabs}
+              tab={tab}
+              onTab={(k) => void setUrlState({ tab: k, page: 1 })}
+              selId={selId}
+              setSelId={setSelId}
+              onOpen={setSheet}
+              onWhatsApp={(b, t) => setComposer({ booking: b, template: t })}
+              toolbar={(
+                <div className="y3-bk-tools">
+                  <label className="y3-bk-search">
+                    <Search strokeWidth={1.75} aria-hidden />
+                    <input
+                      type="search"
+                      value={search}
+                      onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
+                      placeholder="חיפוש לפי שם אורח"
+                      aria-label="חיפוש לפי שם אורח"
+                    />
+                  </label>
+                  <button type="button" onClick={() => setFiltersOpen(true)} aria-label="סינון" className={cn('y3-bk-tb press', filtersActive && 'on')}>
+                    <SlidersHorizontal strokeWidth={1.75} />
+                    <span className="y3-bk-tb-l">סינון</span>
+                    {filtersActive ? <em dir="ltr">{statusFilterArr.length + (dateFrom || dateTo ? 1 : 0) + (urlPropertyId ? 1 : 0)}</em> : null}
+                  </button>
+                  <button type="button" onClick={handleExport} className="y3-bk-tb y3-bk-exp press" aria-label="ייצוא ל-CSV">
+                    <Download strokeWidth={1.75} /><span className="y3-bk-tb-l">ייצוא</span>
+                  </button>
+                </div>
+              )}
+              empty={sorted.length === 0 && !listLoading ? (
+                <span className="y3-bk-empty">
+                  <b>{hasQuery ? 'אין הזמנות שמתאימות לחיפוש' : 'עדיין אין הזמנות'}</b>
+                  <small>{hasQuery ? 'נסו חיפוש אחר או נקו את הסינון.' : 'מוסיפים הזמנה ראשונה בפחות מדקה: שם האורח, תאריכים ומאיפה הגיע.'}</small>
+                  {hasQuery ? (
+                    <button type="button" className="y3-bk-tb press" onClick={() => void setUrlState({ search: '', tab: 'all', status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי הסינון</button>
+                  ) : (
+                    <button type="button" className="y3-bk-new press" onClick={openNew}><Plus strokeWidth={2} />הזמנה חדשה</button>
+                  )}
+                </span>
+              ) : null}
+              footer={sorted.length > pageSize ? (
+                <div className="y3-bk-pages">
+                  <span>עמוד {page} מתוך {totalPages} · {heCount(sorted.length, 'booking')}</span>
+                  <div>
+                    <button type="button" className="y3-bk-tb press" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</button>
+                    <button type="button" className="y3-bk-tb press" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</button>
+                    <select
+                      className="y3-bk-tb"
+                      value={String(pageSize)}
+                      onChange={(e) => void setUrlState({ pageSize: Number(e.target.value), page: 1 })}
+                      aria-label="הזמנות בעמוד"
+                    >
+                      <option value="10">10 בעמוד</option>
+                      <option value="25">25 בעמוד</option>
+                      <option value="50">50 בעמוד</option>
+                    </select>
+                  </div>
+                </div>
+              ) : null}
+            />
             <div className="hidden">
               <BookingsTable
                 bookings={paged}
                 properties={properties}
-                isLoading={isLoading || propertiesLoading}
-                error={isError ? (bookingsError instanceof Error ? bookingsError : new Error('לא הצלחנו לטעון את ההזמנות')) : null}
+                isLoading={listLoading}
+                error={null}
                 onEdit={openEdit}
                 onDelete={handleDelete}
                 onBulkDelete={handleBulkDeleteRows}
@@ -416,28 +384,23 @@ export default function BookingsPage({ selectedPropertyId }) {
                 highlightRowId={openBookingId}
               />
             </div>
-            {sorted.length > pageSize ? (
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-3 text-[14px] text-ink-600">
-                <span>עמוד {page} מתוך {totalPages} · {heCount(sorted.length, 'booking')}</span>
-                <div className="flex gap-2">
-                  <Button type="button" variant="outline" size="sm" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
-                  <Button type="button" variant="outline" size="sm" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
-                  <select
-                    className="h-11 rounded-[10px] border border-line bg-white px-2 text-[14px]"
-                    value={String(pageSize)}
-                    onChange={(e) => void setUrlState({ pageSize: Number(e.target.value), page: 1 })}
-                    aria-label="הזמנות בעמוד"
-                  >
-                    <option value="10">10 בעמוד</option>
-                    <option value="25">25 בעמוד</option>
-                    <option value="50">50 בעמוד</option>
-                  </select>
-                </div>
-              </div>
-            ) : null}
           </ErrorBoundary>
         )}
       </div>
+
+      <BookingSheet open={!!sheet} onOpenChange={(o) => !o && setSheet(null)} booking={sheet} model={m}
+        onWhatsApp={(b, t) => { setSheet(null); setComposer({ booking: b, template: t }); }} />
+      <WhatsAppComposer
+        open={!!composer}
+        onOpenChange={(o) => { if (!o) setComposer(null); }}
+        booking={composer?.booking}
+        property={composer ? m.prop(composer.booking.property_id) : null}
+        balance={composer ? m.balanceFor(composer.booking) : undefined}
+        initialTemplate={composer?.template}
+        orgId={orgId}
+        orgName={user?.organization_name || ''}
+        onSent={(key) => { if (composer) { m.markSent(composer.booking.id, composer.template); m.markSent(composer.booking.id, key); } }}
+      />
 
       <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
         <DialogContent className="sm:max-w-md">
@@ -530,6 +493,6 @@ export default function BookingsPage({ selectedPropertyId }) {
           />
         </DialogContent>
       </Dialog>
-    </Page>
+    </div>
   );
 }

@@ -174,7 +174,7 @@ export default function SettingsPage({ user }) {
                     : "bg-white font-medium text-ink-600 ring-1 ring-inset ring-[#E8EAF2] hover:text-navy-900 md:bg-transparent md:ring-0 md:hover:bg-white"
                 )}
               >
-                <Icon className={cn("h-[18px] w-[18px] flex-shrink-0", activeTab === tab.id ? "text-white" : "text-ink-400")} strokeWidth={1.6} />
+                <Icon className={cn("h-[18px] w-[18px] flex-shrink-0", activeTab === tab.id ? "text-white" : "text-ink-400")} strokeWidth={1.75} />
                 {tab.label}
               </button>
             );

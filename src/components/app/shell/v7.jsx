@@ -43,7 +43,7 @@ function PropertySwitcher({ properties, selectedPropertyId, onPropertyChange }) 
           className="press inline-flex h-11 max-w-[200px] items-center gap-2 rounded-full bg-white px-4 text-[14px] font-medium text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.06)] ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FC]"
           aria-label="בחירת יחידה"
         >
-          <Building2 className="h-[18px] w-[18px] shrink-0 text-ink-400" strokeWidth={1.5} />
+          <Building2 className="h-[18px] w-[18px] shrink-0 text-ink-400" strokeWidth={1.75} />
           <span className="truncate">{current?.name || 'כל היחידות'}</span>
           <ChevronsUpDown className="h-4 w-4 shrink-0 text-ink-400" />
         </button>
@@ -86,7 +86,7 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
           onClick={onOpenCommandPalette}
           className="press hidden h-11 w-[280px] items-center gap-2.5 rounded-full bg-white px-4 text-[14px] text-ink-400 shadow-[0_1px_2px_rgba(27,38,86,0.05)] ring-1 ring-inset ring-[#E8EAF2] hover:text-navy-900 lg:inline-flex xl:w-[320px]"
         >
-          <Search className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
+          <Search className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
           חיפוש אורח, הזמנה או יחידה
         </button>
         <div className="hidden lg:block">

@@ -12,7 +12,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { ChevronLeft, LogOut, Settings, CreditCard, Compass, LifeBuoy } from 'lucide-react';
+import { ChevronLeft, LogOut, Settings, CreditCard, Compass, LifeBuoy, LayoutGrid } from 'lucide-react';
 import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
 import { startTour } from '@/lib/tour/tourState';
 
@@ -72,6 +72,9 @@ export function UserMenu({ user, onLogout, children, align = 'end', side }) {
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
           <Link to={createPageUrl('Subscription')}><CreditCard className="h-[18px] w-[18px] text-ink-600" />מנוי</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => window.dispatchEvent(new CustomEvent('atlas:open-more'))} className="min-h-11 gap-2.5 text-[15px] lg:hidden">
+          <LayoutGrid className="h-[18px] w-[18px] text-ink-600" />כל המסכים
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => startTour(0)} className="min-h-11 gap-2.5 text-[15px]">
           <Compass className="h-[18px] w-[18px] text-ink-600" />סיור מודרך
@@ -137,7 +140,7 @@ export function MoreSheet({ open, onOpenChange, user, onLogout, exclude = [], to
                         i > 0 && 'border-t border-line',
                       )}
                     >
-                      <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.5} />
+                      <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand-600' : 'text-ink-600')} strokeWidth={1.75} />
                       <span className={cn('flex-1 text-[16px]', active ? 'font-bold text-brand-700' : 'font-medium text-navy-900')}>{item.label}</span>
                       <ChevronLeft className="h-4 w-4 text-ink-400" />
                     </Link>

@@ -14,11 +14,6 @@
   .ph-hero .ph-ctas { animation: mo-rise 520ms var(--mo-ease) 340ms both; }
   .ph-hero .ph-note { animation: mo-rise 520ms var(--mo-ease) 400ms both; }
 
-  /* ---- line icons draw themselves once when their card comes in ---- */
-  .lm.mo-on [data-draw] svg :is(path, line, polyline, rect, circle, ellipse) { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 600ms var(--mo-ease) 220ms; }
-  .lm.mo-on .is-in [data-draw] svg :is(path, line, polyline, rect, circle, ellipse),
-  .lm.mo-on [data-draw] svg.is-drawn :is(path, line, polyline, rect, circle, ellipse) { stroke-dashoffset: 0; }
-
   /* ---- counting numbers keep their width steady while they count ---- */
   [data-count] { font-variant-numeric: tabular-nums; }
 
