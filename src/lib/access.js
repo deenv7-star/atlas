@@ -6,7 +6,10 @@
  * when the server ever sends it, current_period_end (platform_subscriptions, see
  * qa/trial-paywall/server-side-proposal.md). Same order as admin_list_customers() (migration 011/012):
  *   active / paid                       → paid, open
- *   canceled / past_due with time left  → grace, open until the paid period (or trial) ends
+ *   canceled with time left             → grace, open until the paid period (or trial) ends
+ *   past_due                            → grace: open until 3 days after the paid period ends; with no
+ *                                         period end known client-side it stays open (never lock a
+ *                                         failed card we cannot date)
  *   trial end in the future             → trial, open
  *   trial end unknown (no date at all)  → trial, open (a brand-new account before start_my_trial)
  *   anything else                       → locked: the paywall, data kept
@@ -15,7 +18,9 @@
 import { defaultTrialEnd, trialDaysLeft } from './trial.js';
 
 const PAID = new Set(['active', 'paid']);
-const ENDED = new Set(['canceled', 'cancelled', 'past_due', 'expired', 'churned']);
+const ENDED = new Set(['canceled', 'cancelled', 'expired', 'churned']);
+export const PAST_DUE_GRACE_DAYS = 3;
+const DAY_MS = 86400000;
 
 function toDate(v) {
   if (!v) return null;
@@ -53,6 +58,12 @@ export function computeAccess(user, opts = {}) {
   if (opts.force === 'trial') return { ...out('trial'), daysLeft: daysLeft || 7 };
 
   if (PAID.has(status)) return out('paid');
+  if (status === 'past_due') {
+    // A failed renewal: open while the card is retried. Lock only 3 days after a known paid-period end.
+    if (!periodEnd) return out('grace');
+    if (periodEnd.getTime() + PAST_DUE_GRACE_DAYS * DAY_MS > now.getTime()) return out('grace');
+    return out('expired', 'subscription_ended');
+  }
   if (ENDED.has(status)) {
     const until = [periodEnd, trialEndsAt].filter(Boolean).sort((a, b) => b - a)[0];
     if (until && until > now) return out('grace');

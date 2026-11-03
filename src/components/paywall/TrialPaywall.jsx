@@ -82,7 +82,7 @@ function TopBar() {
 function SavedLine() {
   return (
     <p className="mt-5 inline-flex items-center gap-2 rounded-[16px] bg-white px-4 py-2 text-[14px] font-medium leading-snug text-[#1B2656] shadow-[0_1px_2px_rgba(27,38,86,0.06)] [text-wrap:balance]">
-      <ShieldCheck className="h-4 w-4 shrink-0 text-[#3E2BF1]" strokeWidth={2} aria-hidden />
+      <ShieldCheck className="h-4 w-4 shrink-0 text-[#3E2BF1]" strokeWidth={1.75} aria-hidden />
       שום דבר לא נמחק: הזמנות, יומן, אורחים ותשלומים
     </p>
   );
@@ -92,12 +92,10 @@ function SavedLine() {
 function NativeLocked() {
   return (
     <section className="flex w-full flex-1 flex-col items-center justify-center text-center">
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#3E2BF1] shadow-[0_1px_2px_rgba(27,38,86,0.06)]" aria-hidden>
-        <LockKeyhole className="h-6 w-6" strokeWidth={1.75} />
-      </span>
+      <LockKeyhole className="h-9 w-9 text-[#3E2BF1]" strokeWidth={1.75} aria-hidden />
       <h1 className="mt-5 text-[28px] font-bold leading-tight tracking-[-0.01em] text-[#1B2656]">המנוי לא פעיל</h1>
       <p className="mt-3 max-w-[340px] text-[16px] leading-relaxed text-[#4A5170]">
-        המידע שלכם שמור. לחידוש היכנסו <span className="whitespace-nowrap">ל־<bdi dir="ltr">atlas-il.com</bdi></span> מהמחשב.
+        המידע שלכם שמור. לחידוש המנוי דברו איתנו.
       </p>
       <SavedLine />
       <div className="mt-8 flex w-full max-w-[340px] flex-col gap-3">
@@ -179,9 +177,7 @@ function Requested({ plan, yearly }) {
   useEffect(() => { ref.current?.focus(); }, []);
   return (
     <div className="mt-8 w-full max-w-[520px] rounded-[22px] bg-white p-6 text-center shadow-[0_1px_2px_rgba(27,38,86,0.05),0_12px_32px_-16px_rgba(27,38,86,0.18)] ring-1 ring-[#E6E8F0]" role="status">
-      <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#EEF0FF] text-[#3E2BF1]" aria-hidden>
-        <Check className="h-6 w-6" strokeWidth={2.2} />
-      </span>
+      <Check className="mx-auto h-8 w-8 text-[#3E2BF1]" strokeWidth={1.75} aria-hidden />
       <h2 ref={ref} tabIndex={-1} className="mt-4 text-[22px] font-bold text-[#1B2656] focus:outline-none">הבקשה התקבלה</h2>
       <p className="mt-2 text-[16px] leading-relaxed text-[#4A5170]">
         {`חבילת ${plan.nameHe}, ${yearly ? 'בחיוב שנתי' : 'בחיוב חודשי'}. נחזור אליכם תוך יום עסקים כדי להפעיל אותה, והכל יחזור בדיוק כמו שהיה.`}

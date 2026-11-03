@@ -58,9 +58,17 @@ test('canceled during the trial: open until the trial ends', () => {
   assert.equal(a.locked, false);
 });
 
-test('past_due without a paid period: locked', () => {
-  assert.equal(computeAccess({ subscription_status: 'past_due', trial_ends_at: days(-20) }, { now: NOW }).locked, true);
+test('past_due without a known period end: open (grace)', () => {
+  const a = computeAccess({ subscription_status: 'past_due', trial_ends_at: days(-20) }, { now: NOW });
+  assert.equal(a.locked, false);
+  assert.equal(a.state, 'grace');
 });
+
+test('past_due: open 3 days after period end, locked after', () => {
+  const u = (d) => ({ subscription_status: 'past_due', trial_ends_at: days(-40), current_period_end: days(d) });
+  assert.equal(computeAccess(u(-2), { now: NOW }).locked, false);
+  assert.equal(computeAccess(u(-4), { now: NOW }).locked, true);
+})
 
 test('admin: never locked, state still reported', () => {
   const a = computeAccess({ subscription_status: 'trialing', trial_ends_at: days(-100) }, { now: NOW, isAdmin: true });
