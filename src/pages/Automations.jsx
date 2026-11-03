@@ -235,7 +235,7 @@ export default function AutomationsPage({ orgId }) {
       </section>
 
       <p className="px-1 text-[14px] leading-relaxed text-ink-600">
-        כל הודעה מחכה מוכנה ב<Link to="/today" className="font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link>. לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח.
+        כל הודעה מחכה מוכנה ב<Link to="/today" className="-my-3 inline-block py-3 font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link>. לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח.
         {!DB_FEATURES.realCore ? ' בהדגמה ההודעות לא נשלחות באמת.' : ''}
       </p>
 
