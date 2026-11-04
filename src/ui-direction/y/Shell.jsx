@@ -11,6 +11,9 @@ import { cn } from '@/lib/utils';
 import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { openAssistant, useAssistantOpen } from '@/assistant/launcher';
 import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, MoreHorizontal, LayoutGrid, Bell, LifeBuoy, Settings } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { useHelpUnread } from '@/support/openHelp';
 import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -19,8 +22,34 @@ import TodayBackdrop, { TODAY_PAGES } from './TodayBackdrop';
 import './y2.css';
 import './y-bg.css';
 import './y-atlas-tab.css';
+import './y-nav.css';
 
 export const shellClass = 'y2-shell';
+
+/**
+ * fix/today-tiles (04.11.2026, Deen: top bar and tab bar feel overloaded). Two phone navs to pick from:
+ *   A "מינימלי": logo · + · avatar. Search, notifications and all screens live in the avatar menu.
+ *   B "עשיר מעט": logo · search pill · + · avatar. Notifications and all screens in the avatar menu.
+ * Desktop (≥1024) is unchanged. Default per branch (fix/today-tiles = A, fix/today-tiles-b = B);
+ * localStorage 'atlas-nav-v' = 'A' | 'B' overrides it for side-by-side review.
+ */
+const NAV_DEFAULT = 'A';
+export function navVariant() {
+  try { const v = localStorage.getItem('atlas-nav-v'); if (v === 'A' || v === 'B') return v; } catch { /* private mode */ }
+  return NAV_DEFAULT;
+}
+
+/** Something new for the owner: a help reply or a new guest enquiry. Drives the dot on the avatar. */
+function useNavUnread() {
+  const help = useHelpUnread();
+  const q = useQuery({
+    queryKey: ['nav-unread-leads'],
+    queryFn: async () => { try { return await base44.entities.Lead.filter({}, '-created_at', 50); } catch { return []; } },
+    staleTime: 60_000,
+  });
+  const leads = (q.data || []).filter((l) => String(l.status || 'NEW').toUpperCase() === 'NEW').length;
+  return { help, leads, any: help > 0 || leads > 0 };
+}
 
 const NAV = [
   { page: 'Dashboard', label: 'היום', icon: Sun },
@@ -69,6 +98,15 @@ export function Sidebar({ user, onLogout }) {
 
 export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }) {
   const quick = useQuickBooking();
+  const nv = navVariant();
+  const unread = useNavUnread();
+  // phone: what left the bar now sits at the top of the avatar menu
+  const menuTop = [
+    ...(unread.leads ? [{ key: 'leads', label: unread.leads === 1 ? 'פנייה חדשה' : `${unread.leads} פניות חדשות`, icon: Inbox, to: createPageUrl('Leads'), badge: true, className: 'lg:hidden' }] : []),
+    ...(nv === 'A' ? [{ key: 'search', label: 'חיפוש', icon: Search, onSelect: () => window.setTimeout(() => onOpenCommandPalette?.(), 0), className: 'lg:hidden' }] : []),
+    { key: 'messages', label: 'הודעות', icon: Bell, to: createPageUrl('Messages'), className: 'lg:hidden' },
+    { key: 'more', label: 'כל המסכים', icon: LayoutGrid, onSelect: () => window.dispatchEvent(new CustomEvent('atlas:open-more')), className: 'lg:hidden' },
+  ];
   // data-page drives the background: Today = hills photo + frosted cards (TodayBackdrop), every other page = calm canvas
   useEffect(() => {
     const shell = document.querySelector('.y2-shell');
@@ -79,11 +117,11 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
   return (
     <>
     <TodayBackdrop on={TODAY_PAGES.has(currentPageName || '')} />
-    <header className="y2-head">
+    <header className="y2-head" data-nav={nv}>
       <div className="y2-bar">
         <Link to={createPageUrl('Dashboard')} aria-label="atlas, מסך היום" className="y2-bar-logo"><Wordmark size={19} /></Link>
         <button type="button" onClick={onOpenCommandPalette} className="y2-search press" aria-label="חיפוש אורח, הזמנה או יחידה">
-          <Search strokeWidth={1.75} /><span>חיפוש אורח, הזמנה או יחידה</span>
+          <Search strokeWidth={1.75} /><span>חיפוש אורח, הזמנה או יחידה</span><span className="y2-search-m" aria-hidden>חיפוש</span>
         </button>
         <AskFaceDesk />
         <button type="button" className="y2-gb press y2-hide-m" aria-label="עזרה" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /></button>
@@ -92,9 +130,10 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         <Link to={createPageUrl('Messages')} className="y2-gb press" aria-label="הודעות"><Bell strokeWidth={1.75} /><i className="y2-gb-dot" aria-hidden /></Link>
         {/* quick-add: was a floating "+" beside the tab bar (it overlapped content); now one fixed home in the header */}
         <button type="button" className="y2-gb y2-gb--ind press" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
-        <UserMenu user={user} onLogout={onLogout}>
-          <button type="button" aria-label="החשבון שלי" className="y2-bar-me press">
+        <UserMenu user={user} onLogout={onLogout} top={menuTop} hideMore>
+          <button type="button" aria-label={unread.any ? 'החשבון שלי, יש חדש' : 'החשבון שלי'} className="y2-bar-me press">
             <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} />
+            {unread.any ? <i className="y2-me-dot" aria-hidden /> : null}
           </button>
         </UserMenu>
       </div>
@@ -123,7 +162,7 @@ function AtlasTab({ hot }) {
     <li className="y2-tab-atlas" data-hot={hot ? '' : undefined}>
       <button type="button" className="y2-ta press" aria-label="דברו עם atlas" aria-expanded={isOpen} aria-haspopup="dialog"
         onClick={(e) => openAssistant('voice', e.currentTarget)}>
-        <span className="y2-ta-disc"><AtlasFace live size={60} decorative /></span>
+        <span className="y2-ta-disc"><AtlasFace live size={navVariant() === 'A' ? 46 : 52} decorative /></span>
       </button>
     </li>
   );
@@ -171,7 +210,7 @@ export function TabBar({ user, onLogout }) {
   return (
     <>
       <div className="y2-tab-scrim" aria-hidden="true" />
-      <nav aria-label="ניווט" className="y2-tab" data-lens={lifted ? 'on' : undefined}>
+      <nav aria-label="ניווט" className="y2-tab" data-nav={navVariant()} data-lens={lifted ? 'on' : undefined}>
         <div className="y2-tab-cap">
           <ul ref={barRef}>
             {left.map((t, i) => tab(t, i))}
