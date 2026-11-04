@@ -180,7 +180,7 @@ export default function ImportA({ user }) {
         </header>
         <main className="ima-thread" aria-live="polite">
           {thread}
-          <div ref={endRef} style={{ height: 1 }} />
+          <div ref={endRef} style={{ height: 1, scrollMarginBottom: 'var(--ima-foot, 220px)' }} />
         </main>
         {composer ? <footer ref={footRef} className="ima-composer" data-testid="import-composer"><div className="ima-composer-in">{composer}</div></footer> : null}
       </div>
