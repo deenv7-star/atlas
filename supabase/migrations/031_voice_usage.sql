@@ -29,7 +29,9 @@ alter table public.voice_sessions enable row level security;
 drop policy if exists voice_sessions_select_own on public.voice_sessions;
 create policy voice_sessions_select_own on public.voice_sessions for select using (user_id = auth.uid());
 -- no insert/update/delete policies: rows change only through the functions below
-revoke insert, update, delete on public.voice_sessions from anon, authenticated;
+-- Supabase default privileges grant everything on new public objects to anon/authenticated: take it back explicitly.
+revoke all on public.voice_sessions from anon;
+revoke insert, update, delete, truncate, references, trigger on public.voice_sessions from authenticated;
 grant select on public.voice_sessions to authenticated;
 
 -- seconds counted against today: every reserved slice
@@ -87,9 +89,9 @@ $$;
 revoke all on function public.voice_session_void(uuid) from public, anon, authenticated;
 grant execute on function public.voice_session_void(uuid) to service_role;
 
-revoke all on function public.voice_seconds_today() from public;
-revoke all on function public.voice_session_start(integer, integer, text) from public;
-revoke all on function public.voice_session_end(uuid) from public;
+revoke all on function public.voice_seconds_today() from public, anon;
+revoke all on function public.voice_session_start(integer, integer, text) from public, anon;
+revoke all on function public.voice_session_end(uuid) from public, anon;
 grant execute on function public.voice_seconds_today() to authenticated;
 grant execute on function public.voice_session_start(integer, integer, text) to authenticated;
 grant execute on function public.voice_session_end(uuid) to authenticated;

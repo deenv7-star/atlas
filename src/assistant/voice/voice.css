@@ -58,7 +58,7 @@
 .vc-round:active { transform: scale(0.95); }
 .vc-round:disabled { opacity: 0.5; cursor: default; }
 .vc-round.is-on { background: var(--n); color: #fff; }
-.vc-round--small { width: 56px; height: 56px; margin-top: 6px; }
+.vc-round--small { width: 56px; height: 56px; margin: 6px 0; } /* 56 + 6 + 6 = 68: labels share one baseline with the 68px buttons */
 .vc-round--end { background: var(--n); color: #fff; box-shadow: 0 10px 24px -14px rgba(27, 38, 86, 0.7); }
 .vc-fine { margin: 6px 16px 10px; text-align: center; font-size: 13px; color: var(--soft); }
 .vc button:focus-visible { outline: 2px solid var(--b); outline-offset: 3px; }
