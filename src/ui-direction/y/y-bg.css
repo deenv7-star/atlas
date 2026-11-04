@@ -11,6 +11,7 @@
 /* top toolbar + rail: white, hairline, light blur only for content scrolling under */
 .y2-shell .y2-bar, .y2-shell .y2-rail { background: rgba(255,255,255,.86); backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4); box-shadow: var(--hair), var(--lift); }
 .y2-shell .y2-search, .y2-shell .y2-gb:not(.y2-gb--ind):not(.y2-gb--face):not(.y2-gb--d) { background: #F2F4F9; }
+.y2-shell .y2-search { color: rgba(27,38,86,.74); } /* 4.5:1+ on #F2F4F9 (axe) */
 .y2-shell .y2-gb:not(.y2-gb--ind):not(.y2-gb--face):not(.y2-gb--d):hover { background: #E9ECF4; }
 .y2-shell .y2-gb--face:hover { background: #F2F4F9; }
 .y2-shell .y2-ri:hover { background: #F2F4F9; }
@@ -23,8 +24,9 @@
 .y2-shell .y2-tile, .y2-shell .y2-card, .y2-shell .y2-nc:not(.is-hot) { background: #fff; box-shadow: var(--hair), var(--lift); }
 .y2-shell .y2-tile:hover { box-shadow: 0 0 0 1px rgba(27,38,86,.1), 0 2px 4px rgba(27,38,86,.04), 0 20px 36px -24px rgba(27,38,86,.32); }
 .y2-shell .y2-hello-chip { background: #fff; box-shadow: var(--hair); }
-.y2-shell .y2-sub { color: rgba(27,38,86,.64); }
 /* navy surfaces: solid, not tinted glass (nothing behind them to show through any more) */
+/* weekday letters on the now-solid navy side panel: .55 white was under 4.5:1 */
+.y2-shell .y2-cal-g b { color: rgba(255,255,255,.74); }
 body .y2-shell .y2-side, body .y2-shell .y3-panel { background: #1B2656; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 30px 60px -40px rgba(27,38,86,.7); }
 
 /* every other page: the canvas window is no longer needed — content sits straight on the canvas */
