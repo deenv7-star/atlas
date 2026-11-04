@@ -87,3 +87,17 @@ export function useScreen({ facts, page }) {
   const line = v.state === 'thinking' && v.toolLine ? v.toolLine : STATE_LINE[v.state] || '';
   return { mode, notice, v, t, step, ask, toText, toVoice, line, lastUser: lastUserV, lastAtlas: voiceAnswered || v.state === 'speaking' ? lastAtlasV : null, starters: optionsOf(facts), shot };
 }
+
+/** Keep a scroller pinned to its newest line while content grows (cards, streaming), unless the owner scrolled up. */
+export function usePinnedBottom(ref, deps = []) {
+  const pinned = useRef(true);
+  useEffect(() => {
+    const el = ref.current; if (!el) return undefined;
+    const onScroll = () => { pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80; };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => { if (pinned.current) el.scrollTop = el.scrollHeight; }) : null;
+    if (el.firstElementChild) ro?.observe(el.firstElementChild);
+    return () => { el.removeEventListener('scroll', onScroll); ro?.disconnect(); };
+  }, [ref, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
+  return pinned;
+}
