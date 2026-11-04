@@ -1,12 +1,12 @@
 /* ייבוא מתחם · Version A (conversation). Thread on canvas, atlas bubbles white (start side), owner bubbles indigo (end side),
    the composer is a white sheet pinned to the bottom with the big taps. */
 .ima { display: flex; flex-direction: column; min-height: 100dvh; }
-.ima-head { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; gap: 10px;
+.ima-head { position: fixed; top: 0; inset-inline: 0; z-index: 10; display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; gap: 10px;
   padding: max(10px, env(safe-area-inset-top)) 14px 12px; background: rgba(247,248,251,.92); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); }
 .ima-logo { justify-self: center; display: inline-flex; align-items: center; height: 48px; }
 .ima-bar { grid-column: 1 / -1; height: 4px; border-radius: 99px; background: rgba(27,38,86,.08); overflow: hidden; }
 .ima-bar i { display: block; height: 100%; background: var(--ind); transform-origin: right; transition: transform .5s var(--ease); border-radius: 99px; }
-.ima-thread { flex: 1; width: 100%; max-width: 640px; margin: 0 auto; padding: 14px 14px 24px; display: flex; flex-direction: column; gap: 10px; }
+.ima-thread { flex: 1; width: 100%; max-width: 640px; margin: 0 auto; padding: calc(max(10px, env(safe-area-inset-top)) + 92px) 14px var(--ima-foot, 220px); display: flex; flex-direction: column; gap: 10px; }
 .ima-msg { max-width: 86%; padding: 14px 18px; border-radius: 24px; font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; }
 .ima-msg p { margin: 0; }
 .ima-msg p + p { margin-top: 6px; }
@@ -18,9 +18,9 @@
 .ima-big { font-size: 19px; font-weight: 700; line-height: 1.35; }
 .ima-mute { color: var(--mute); font-size: 15.5px; }
 .ima-linkchip { display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 999px; background: rgba(255,255,255,.2); font-size: 15px; }
-.ima-composer { position: sticky; bottom: 0; z-index: 10; padding: 0 0 env(safe-area-inset-bottom); background: linear-gradient(180deg, rgba(247,248,251,0), var(--canvas) 18px); }
+.ima-composer { position: fixed; bottom: 0; inset-inline: 0; z-index: 10; padding: 0 0 env(safe-area-inset-bottom); background: linear-gradient(180deg, rgba(247,248,251,0), var(--canvas) 18px); }
 .ima-composer-in { width: 100%; max-width: 640px; margin: 0 auto; padding: 18px 16px 14px; display: flex; flex-direction: column; gap: 10px; background: #fff;
-  border-radius: 30px 30px 0 0; box-shadow: 0 -18px 40px -30px rgba(27,38,86,.55), inset 0 1px 0 rgba(27,38,86,.05); max-height: 70dvh; overflow-y: auto; }
+  border-radius: 30px 30px 0 0; box-shadow: 0 -18px 40px -30px rgba(27,38,86,.55), inset 0 1px 0 rgba(27,38,86,.05); max-height: 72dvh; overflow-y: auto; overscroll-behavior: contain; }
 .ima-composer .im-choice, .ima-composer .im-chip, .ima-composer .im-link, .ima-composer .im-input, .ima-composer .im-area, .ima-composer .im-step, .ima-composer .im-srcs span { background: var(--canvas); }
 .ima-composer .im-step button { background: #fff; }
 .ima-composer .im-link .im-src, .ima-composer .im-paste { background: #fff; }
@@ -31,3 +31,4 @@
 .ima-voice { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 0 0; font-size: 14.5px; color: var(--mute); }
 .ima-voice svg { width: 16px; height: 16px; color: var(--ind); }
 @media (min-width: 768px) { .ima-composer-in { border-radius: 30px; margin-bottom: 18px; } .ima-msg { max-width: 75%; } }
+.ima-msg[data-anchor] { scroll-margin-top: calc(max(10px, env(safe-area-inset-top)) + 100px); }

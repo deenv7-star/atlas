@@ -119,7 +119,7 @@ export function LinkInput({ value, onChange, id, autoFocus, inputRef, label = '�
         <input ref={inputRef} id={id} type="url" inputMode="url" autoComplete="off" autoCapitalize="off" spellCheck={false} dir="ltr"
           placeholder="הדביקו כאן קישור" value={value} autoFocus={autoFocus}
           onChange={(e) => { const v = e.target.value; const found = /\s/.test(v.trim()) ? extractLinks(v) : []; onChange(found[0] || v); }}
-          aria-describedby={`${id}-hint`} />
+          aria-describedby={`${id}-hint`} onBlur={(e) => { e.target.scrollLeft = 0; }} />
         {!value ? (
           <button type="button" className="im-paste im-press" onClick={paste}><ClipboardPaste aria-hidden />הדבקה</button>
         ) : (

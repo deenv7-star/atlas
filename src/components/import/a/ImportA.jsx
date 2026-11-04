@@ -33,10 +33,10 @@ function answerText(id, d, skipped) {
   }
 }
 
-function Bubble({ who = 'atlas', children, wide = false, i = 0 }) {
+function Bubble({ who = 'atlas', children, wide = false, i = 0, anchor = false }) {
   const reduce = useReducedMotion();
   return (
-    <motion.div className={`ima-msg is-${who}${wide ? ' is-wide' : ''}`}
+    <motion.div className={`ima-msg is-${who}${wide ? ' is-wide' : ''}`} data-anchor={anchor || undefined}
       initial={reduce ? false : { opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.28, ease: EASE, delay: reduce ? 0 : Math.min(i, 3) * 0.12 }}>
       {children}
@@ -52,10 +52,33 @@ export default function ImportA({ user }) {
   const save = useSave(user, s, s.phase === 'save' || s.phase === 'done');
   const [ready, setReady] = useState({ value: null, button: false });
   const endRef = useRef(null);
+  const rootRef = useRef(null);
+  const footRef = useRef(null);
+  // the composer is fixed to the bottom; the thread keeps room for it whatever its height
+  useLayoutEffect(() => {
+    const el = footRef.current; const root = rootRef.current;
+    if (!root) return undefined;
+    if (!el) { root.style.setProperty('--ima-foot', '24px'); return undefined; }
+    let last = 0;
+    const ro = new ResizeObserver(() => {
+      const hgt = el.offsetHeight;
+      root.style.setProperty('--ima-foot', `${hgt + 16}px`);
+      // the composer changed size (new question, keyboard text): keep the newest message just above it
+      if (hgt !== last && root.dataset.phase !== 'found') endRef.current?.scrollIntoView({ block: 'end' });
+      last = hgt;
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  });
   const reduce = useReducedMotion();
 
   useEffect(() => { if (save.done && s.phase === 'save') { const t = setTimeout(() => set({ phase: 'done' }), reduce ? 0 : 450); return () => clearTimeout(t); } return undefined; }, [save.done, s.phase, set, reduce]);
-  useLayoutEffect(() => { endRef.current?.scrollIntoView({ block: 'end', behavior: reduce ? 'auto' : 'smooth' }); }, [s.phase, s.qi, s.error, save.at, reduce]);
+  useLayoutEffect(() => {
+    const behavior = reduce ? 'auto' : 'smooth';
+    // the preview card is long: show it from its first line; everything else follows the newest message
+    const a = s.phase === 'found' ? rootRef.current?.querySelector('[data-anchor]') : null;
+    if (a) a.scrollIntoView({ block: 'start', behavior }); else endRef.current?.scrollIntoView({ block: 'end', behavior });
+  }, [s.phase, s.qi, s.error, save.at, reduce]);
 
   const okLinks = s.links.filter(linkOk);
   const asked = s.phase === 'ask' || s.phase === 'save' || s.phase === 'done' ? s.queue.slice(0, s.phase === 'ask' ? s.qi : s.queue.length) : [];
@@ -72,11 +95,11 @@ export default function ImportA({ user }) {
     if (s.mode === 'manual') thread.push(<Bubble key="man" who="me">אין לי קישור</Bubble>);
   }
   if (s.phase === 'error' || s.phase === 'fallback') {
-    thread.push(<Bubble key="err"><p>{s.error || 'אין בעיה.'}</p><p>צלמו מסך מהמודעה או הדביקו את התיאור, ונקרא משם.</p></Bubble>);
+    thread.push(<Bubble key="err">{s.error ? <p>{s.error}</p> : <><p>אין בעיה.</p><p>צלמו מסך מהמודעה או הדביקו את התיאור, ונקרא משם.</p></>}</Bubble>);
   }
   if (s.phase === 'reading') thread.push(<Bubble key="read" wide><ReadingList kinds={s.kinds} mode={s.mode} /></Bubble>);
   if (s.draft && s.mode !== 'manual' && ['found', 'ask', 'save', 'done'].includes(s.phase)) {
-    thread.push(<Bubble key="found-t"><p className="ima-big">מצאנו את המתחם שלכם.</p><p>{foundSentence(s.draft) ? `${foundSentence(s.draft)}. ` : ''}בדקו שהכל נכון. נגיעה בשורה מתקנת אותה.</p></Bubble>);
+    thread.push(<Bubble key="found-t" anchor><p className="ima-big">מצאנו את המתחם שלכם.</p><p>{foundSentence(s.draft) ? `${foundSentence(s.draft)}. ` : ''}בדקו שהכל נכון. נגיעה בשורה מתקנת אותה.</p></Bubble>);
     thread.push(<Bubble key="found-c" wide><PreviewCard draft={s.draft} onFix={s.phase === 'found' ? f.fix : undefined} /></Bubble>);
   }
   if (['ask', 'save', 'done'].includes(s.phase) && total && !s.fixing && s.mode !== 'manual') {
@@ -148,7 +171,7 @@ export default function ImportA({ user }) {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="im ima" dir="rtl" data-version="import-a" data-phase={s.phase}>
+       <div ref={rootRef} className="im ima" dir="rtl" data-version="import-a" data-phase={s.phase}>
         <header className="ima-head">
           <button type="button" className="im-icon im-press" onClick={() => nav(-1)} aria-label="יציאה"><ArrowRight aria-hidden /></button>
           <span className="ima-logo"><Wordmark size={20} /></span>
@@ -159,7 +182,7 @@ export default function ImportA({ user }) {
           {thread}
           <div ref={endRef} style={{ height: 1 }} />
         </main>
-        {composer ? <footer className="ima-composer" data-testid="import-composer"><div className="ima-composer-in">{composer}</div></footer> : null}
+        {composer ? <footer ref={footRef} className="ima-composer" data-testid="import-composer"><div className="ima-composer-in">{composer}</div></footer> : null}
       </div>
     </MotionConfig>
   );
