@@ -9,7 +9,7 @@ import { ArrowRight, Check, MessageCircle, Mic, Globe } from 'lucide-react';
 import { Wordmark } from '@/components/app/shell/shared';
 import { HELP_WA } from '@/components/onboarding/v2/ui';
 import { firstName } from '@/components/onboarding/y/model';
-import { linkOk, QUESTIONS, stillMissing } from '@/lib/import/model';
+import { linkOk, stillMissing } from '@/lib/import/model';
 import { useImportFlow, useSave, LinksEditor, ReadingList, PreviewCard, QuestionInput, FallbackInputs, SaveList, foundSentence } from '../shared';
 import './b.css';
 

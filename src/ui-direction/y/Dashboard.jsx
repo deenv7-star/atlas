@@ -9,7 +9,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, MoreHorizontal, Plus, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, MoreHorizontal, Sparkles } from 'lucide-react';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { unitPhoto } from '@/lib/stay/unitPhoto';
 import { formatDayHe, firstName, parseDay } from '@/lib/stay/format';
@@ -25,6 +25,7 @@ import { BookingsPanel, BookingSheet, isPhone } from './Bookings';
 import './y3.css';
 import './y-fix.css';
 import StaleIndicator from '@/components/app/StaleIndicator';
+import ImportEntryCard from '@/components/import/EntryCard';
 import { MoneyLoadBanner } from '@/components/app/MoneyLoadBanner';
 import { canShowValues } from '@/lib/stay/loadState';
 
@@ -132,13 +133,8 @@ export default function DashboardView({ user, orgId }) {
 
           {m.paymentsState === 'error' ? <MoneyLoadBanner onRetry={m.retryLoad} /> : null}
 
-          {noUnits ? (
-            <section className="y-first-unit" aria-labelledby="y-first-unit-h">
-              <h2 id="y-first-unit-h">הוסיפו את היחידה הראשונה</h2>
-              <p>כדי שההזמנות, היומן והתשלומים יתחילו להופיע כאן.</p>
-              <Link to="/setup" className="y-first-unit-go press"><Plus strokeWidth={2} aria-hidden />הוספת יחידה</Link>
-            </section>
-          ) : null}
+          {/* 0 units: one way in, the import card (ייבוא מתחם → /import); manual setup stays inside /import */}
+          {noUnits ? <ImportEntryCard where="today" className="y-first-unit-import" /> : null}
 
           {noUnits ? null : (
           <section className="y2-tiles" aria-label="היום במספרים">

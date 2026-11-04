@@ -125,11 +125,12 @@
 .im-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* entry cards (Today empty state, Settings) */
-.im-entry { display: flex; align-items: center; gap: 16px; padding: 18px; border-radius: 26px; background: #fff; box-shadow: 0 20px 40px -30px rgba(27,38,86,.5), inset 0 0 0 1px rgba(27,38,86,.06); color: var(--navy); text-decoration: none; font-family: Heebo, system-ui, sans-serif; }
-.im-entry-ic { width: 56px; height: 56px; border-radius: 18px; background: var(--ind); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 12px 24px -12px rgba(62,43,241,.8); }
+.im-entry { display: flex; align-items: center; gap: 16px; padding: 18px; border-radius: 26px; background: #fff; box-shadow: 0 20px 40px -30px rgba(27,38,86,.5), inset 0 0 0 1px rgba(27,38,86,.06); color: #1B2656; text-decoration: none; box-sizing: border-box; font-family: Heebo, system-ui, sans-serif; }
+.im-entry:focus-visible { outline: 3px solid #3E2BF1; outline-offset: 2px; }
+.im-entry-ic { width: 56px; height: 56px; border-radius: 18px; background: #3E2BF1; color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 12px 24px -12px rgba(62,43,241,.8); }
 .im-entry-ic svg { width: 26px; height: 26px; }
 .im-entry-tx { flex: 1; min-width: 0; }
 .im-entry-tx b { display: block; font-size: 18px; font-weight: 700; line-height: 1.25; }
 .im-entry-tx span { display: block; margin-top: 3px; font-size: 15px; line-height: 1.4; color: rgba(27,38,86,.64); }
-.im-entry-go { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 18px; border-radius: 999px; background: var(--ind, #3E2BF1); color: #fff; font-size: 16px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+.im-entry-go { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 18px; border-radius: 999px; background: #3E2BF1; color: #fff; font-size: 16px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
 @media (max-width: 420px) { .im-entry { flex-wrap: wrap; } .im-entry-go { width: 100%; } }
