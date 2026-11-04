@@ -1,7 +1,7 @@
 /**
  * Today's background photo (04.11.2026, Deen's pick): soft green hills under a bright sky behind frosted-white
  * cards on Today only; every other screen is the calm canvas (y-bg.css). The photo mounts the first time Today
- * is shown (never on other screens), preloads there, and crossfades in/out on the shell's data-page; reduced
+ * is shown (never on other screens), preloads there at low priority (the hero photo is Today's LCP), and crossfades in/out on the shell's data-page; reduced
  * motion = instant. <picture>: AVIF → WebP → JPEG, phone and desktop crops. Photo: Spencer DeMera, Unsplash
  * License (public/app-bg/CREDITS.md).
  */
@@ -18,7 +18,7 @@ function preloadOnce() {
   [['m', `(max-width: 767px)`], ['d', DESK]].forEach(([k, media]) => {
     const l = document.createElement('link');
     l.id = `atlas-today-bg-preload-${k}`; l.rel = 'preload'; l.as = 'image'; l.type = 'image/avif';
-    l.href = `${SRC}-${k}.avif`; l.media = media; l.setAttribute('fetchpriority', 'high');
+    l.href = `${SRC}-${k}.avif`; l.media = media; l.setAttribute('fetchpriority', 'low'); // decorative: never compete with Today's hero photo (the LCP)
     document.head.appendChild(l);
   });
 }
@@ -38,7 +38,7 @@ export default function TodayBackdrop({ on }) {
         <source type="image/webp" media={DESK} srcSet={`${SRC}-d.webp`} />
         <source type="image/webp" srcSet={`${SRC}-m.webp`} />
         <source media={DESK} srcSet={`${SRC}-d.jpg`} />
-        <img src={`${SRC}-m.jpg`} alt="" decoding="async" fetchPriority="high" draggable={false}
+        <img src={`${SRC}-m.jpg`} alt="" decoding="async" fetchPriority="low" draggable={false}
           ref={(img) => { if (img && img.complete && img.naturalWidth) setReady(true); }} onLoad={() => setReady(true)} />
       </picture>
     </div>,
