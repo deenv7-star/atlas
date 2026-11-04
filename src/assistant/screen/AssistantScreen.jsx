@@ -10,7 +10,7 @@
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion, MotionConfig } from 'framer-motion';
 import { X, Mic, MicOff, Square, RotateCcw, Keyboard } from 'lucide-react';
 import { Answer, Composer } from '../ui.jsx';
 import { useScreen, usePinnedBottom } from './useScreen.js';
@@ -136,7 +136,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
   if (s.mode === 'text') { big = s.notice ? 'אפשר לכתוב לי' : t.busy ? 'רגע, חושבת…' : (s.owner ? `היי ${s.owner}, אני כאן` : 'אני כאן'); small = s.notice ? '' : 'כתבו מה צריך, ואני אבדוק'; }
   else if (v.state === 'error') { big = 'השיחה נעצרה'; small = ''; }
   else if (v.state === 'hearing') { big = 'שומעת אתכם…'; small = ''; }
-  else if (v.state === 'thinking' || v.state === 'connecting') { big = s.line ? `${s.line}…` : 'רגע…'; small = lastUser ? `„${lastUser.text}”` : ''; }
+  else if (v.state === 'thinking' || v.state === 'connecting') { big = s.line ? `${s.line}…` : 'רגע…'; small = lastUser ? `"${lastUser.text}"` : ''; }
   else if (v.state === 'speaking' && lastAtlas) { big = lastAtlas.text.split(/(?<=[.?!])\s/)[0]; small = ''; }
   else if (!v.turns.length) { big = s.owner ? `היי ${s.owner}, במה לעזור?` : 'במה לעזור?'; small = 'מי מגיע היום, מה פנוי בסוף השבוע, או "תכיני הזמנה"'; }
   else { big = s.line; small = ''; }
@@ -144,9 +144,10 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
 
   const charState = s.mode === 'text' ? (t.busy ? 'thinking' : s.notice ? 'error' : 'idle') : v.state;
   const charMood = s.notice && s.mode === 'text' ? 'concerned' : s.feel.mood;
-  const sheetTop = Math.round(talked ? Math.max(250, vh * 0.32) : Math.max(300, vh * 0.46));
+  const sheetTop = Math.round(talked ? Math.max(270, vh * 0.36) : Math.max(320, vh * 0.48));
 
   return createPortal(
+    <MotionConfig reducedMotion="user">
     <div ref={rootRef} tabIndex={-1} className={`b3 b3--${s.mode}${talked ? ' is-talk' : ''}${closing ? ' is-closing' : ''}`} role="dialog" aria-modal="true" aria-label="דברו עם atlas" dir="rtl">
       <div className="b3-sky" aria-hidden="true">
         <picture>
@@ -164,7 +165,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
         <p className="b3-meta" aria-live="off">{v.demo ? 'הדגמה' : s.mode === 'voice' && mins != null ? `${mins} דק׳` : ''}</p>
       </header>
 
-      <motion.div className="b3-say" role="status" aria-live="polite" initial={false} animate={{ height: sheetTop - 92 }} transition={SOFT}>
+      <motion.div className="b3-say" role="status" aria-live="polite" initial={false} animate={{ height: sheetTop - 104 }} transition={SOFT}>
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.p key={big} className={`b3-big${talked ? ' is-small' : ''}`} dir="auto" initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }} transition={SOFT}>{big}</motion.p>
         </AnimatePresence>
@@ -259,7 +260,8 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
           </div>
         )}
       </motion.div>
-    </div>,
+    </div>
+    </MotionConfig>,
     document.body,
   );
 }
