@@ -5,6 +5,7 @@ import { clearPersistedQueries } from '@/lib/queryPersist';
 import { queryClientInstance } from '@/lib/query-client';
 import { setActiveOrg, syncOrgSettingsFromDb } from '@/lib/onboarding/orgSettings';
 import { fetchAccountStatus } from '@/lib/accountStatus';
+import { decideAuthFailure } from '@/lib/auth/authFailure';
 
 const AuthContext = createContext();
 
@@ -38,6 +39,9 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated]   = useState(false);
   const [isLoadingAuth, setIsLoadingAuth]       = useState(true);
   const [authError, setAuthError]               = useState(null);
+  // Audit 04.11: the session is stored but the network failed before we could load the owner.
+  // The app shows an offline screen with retry instead of the login screen.
+  const [authOffline, setAuthOffline]           = useState(false);
 
   // Kept for API-compatibility with existing consumers
   const [isLoadingPublicSettings] = useState(false);
@@ -51,6 +55,7 @@ export const AuthProvider = ({ children }) => {
     dropCachedMe();
     setUser(null);
     setIsAuthenticated(false);
+    setAuthOffline(false);
     setAuthError({ type: 'auth_required', message: 'Authentication required' });
   }, []);
 
@@ -88,12 +93,28 @@ export const AuthProvider = ({ children }) => {
         writeCachedMe(currentUser);
         setUser(currentUser);
         setIsAuthenticated(true);
+        setAuthOffline(false);
         setAuthError(null);
         if (currentUser?.onboarding_completed) {
           try { localStorage.removeItem('onboarding_just_completed'); } catch {}
         }
         return currentUser;
-      } catch {
+      } catch (err) {
+        // Only a refused session signs the owner out. A network failure with a stored session keeps it.
+        const outcome = isSupabaseConfigured
+          ? decideAuthFailure(err, {
+            hasStoredSession: Boolean(storedSessionUser()),
+            online: typeof navigator === 'undefined' ? true : navigator.onLine,
+          })
+          : 'signed_out';
+        if (outcome === 'offline') {
+          if (userRef.current) return userRef.current; // the cached copy stays on screen
+          setUser(null);
+          setIsAuthenticated(false);
+          setAuthOffline(true);
+          setAuthError({ type: 'offline', message: 'offline' });
+          return null;
+        }
         lastUidRef.current = null;
         userRef.current = null;
         clearSessionState();
@@ -139,6 +160,12 @@ export const AuthProvider = ({ children }) => {
         // while listeners run, so awaiting getUser()/queries here deadlocks updateUser() (password
         // reset spinner that never ends). Defer the work to the next tick instead.
         unsubscribe = base44.auth.onAuthStateChange((event, session) => {
+          // INITIAL_SESSION without a session but with one still in storage = the refresh failed on the
+          // network (supabase-js removes the stored session itself when the server refuses it).
+          if (event === 'INITIAL_SESSION' && !session && storedSessionUser()) {
+            setTimeout(() => { void hydrateUser(); }, 0);
+            return;
+          }
           if (event === 'SIGNED_OUT' || (event === 'INITIAL_SESSION' && !session)) {
             lastUidRef.current = null;
             clearSessionState();
@@ -190,6 +217,14 @@ export const AuthProvider = ({ children }) => {
     return () => window.removeEventListener('storage', onStorage);
   }, [hydrateUser, clearSessionState]);
 
+  // Offline screen: retry as soon as the connection comes back.
+  useEffect(() => {
+    if (!authOffline) return undefined;
+    const onOnline = () => { void hydrateUser(); };
+    window.addEventListener('online', onOnline);
+    return () => window.removeEventListener('online', onOnline);
+  }, [authOffline, hydrateUser]);
+
   // ── actions ────────────────────────────────────────────────────────────────
 
   const logout = async (shouldRedirect = true) => {
@@ -236,6 +271,8 @@ export const AuthProvider = ({ children }) => {
       isLoadingAuth,
       isLoadingPublicSettings,
       authError,
+      authOffline,
+      retryAuth: hydrateUser,
       appPublicSettings,
       logout,
       navigateToLogin,

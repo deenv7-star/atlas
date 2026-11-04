@@ -20,6 +20,9 @@ import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/r
 import AccessGate, { Paywall, LockedFrame } from '@/components/paywall/AccessGate';
 import { AccessSync } from '@/hooks/useAccess';
 import { isNativeApp } from '@/lib/nativePlatform';
+// Stored session, network down on the first load: offline screen with retry (audit 04.11), never /login.
+// Static import: when the network is down a lazy chunk may not load either.
+import OfflineAuthScreen from '@/components/common/OfflineAuthScreen';
 // Code-split: the landing page should not download the app shell or the auth screens.
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
@@ -115,13 +118,16 @@ function hasOnboardingBypass(user) {
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
 
 const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = false, lockedRender = null }) => {
-  const { isLoadingAuth, isAuthenticated, user } = useAuth();
+  const { isLoadingAuth, isAuthenticated, user, authOffline, retryAuth } = useAuth();
   if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="h-8 w-8 rounded-full border-[3px] border-[#E6E8F0] border-t-[#3E2BF1] motion-safe:animate-spin" aria-label="טוען" role="status"></div>
       </div>
     );
+  }
+  if (!isAuthenticated && authOffline) {
+    return <OfflineAuthScreen onRetry={retryAuth} />;
   }
   if (!isAuthenticated) {
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
@@ -150,7 +156,7 @@ function BillingWhileLocked() {
 const AuthenticatedApp = () => {
   // Do not block public routes (/, /pricing, /status, /contact, …) on auth hydration.
   // Slow or hanging /auth/me would otherwise show a full-screen spinner for everyone.
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, authOffline } = useAuth();
 
   return (
     <Routes>
@@ -164,7 +170,7 @@ const AuthenticatedApp = () => {
       <Route
         path="/login"
         element={
-          isAuthenticated
+          isAuthenticated || authOffline
             ? <Navigate to="/dashboard" replace />
             : <S><Login /></S>
         }
