@@ -1,7 +1,7 @@
 /**
  * Today's background photo (04.11.2026, Deen's pick): soft green hills under a bright sky behind frosted-white
  * cards on Today only; every other screen is the calm canvas (y-bg.css). The photo mounts the first time Today
- * is shown (never on other screens), preloads there at low priority (the hero photo is Today's LCP), and crossfades in/out on the shell's data-page; reduced
+ * is shown (never on other screens), once the main thread is idle, at low priority (the hero photo is Today's LCP), and crossfades in/out on the shell's data-page; reduced
  * motion = instant. <picture>: AVIF → WebP → JPEG, phone and desktop crops. Photo: Spencer DeMera, Unsplash
  * License (public/app-bg/CREDITS.md).
  */
@@ -24,11 +24,24 @@ function preloadOnce() {
 }
 
 export default function TodayBackdrop({ on }) {
-  const [mounted, setMounted] = useState(on);
+  const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
   const [host, setHost] = useState(null);
   useEffect(() => { setHost(document.querySelector('.y2-shell')); }, []);
-  useEffect(() => { if (on) { preloadOnce(); setMounted(true); } }, [on]);
+  useEffect(() => {
+    if (!on || mounted) return undefined;
+    // after first paint, when the main thread is idle: the photo is decoration and must stay out of Today's LCP window
+    const go = () => { preloadOnce(); setMounted(true); };
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(go, { timeout: 1200 });
+      return () => window.cancelIdleCallback(id);
+    }
+    // Safari (iOS app WebView) has no requestIdleCallback: wait for the page's load event, then a beat
+    let t;
+    const later = () => { t = window.setTimeout(go, 250); };
+    if (document.readyState === 'complete') later(); else window.addEventListener('load', later, { once: true });
+    return () => { window.removeEventListener('load', later); window.clearTimeout(t); };
+  }, [on, mounted]);
   if (!mounted || !host) return null;
   return createPortal(
     <div className={cn('y2-bgphoto', on && ready && 'is-on')} aria-hidden="true">
