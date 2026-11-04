@@ -79,5 +79,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>atlas משתמש במיקרופון רק כשאתם לוחצים על כפתור הדיבור, כדי שתוכלו לשאול בקול על העסק שלכם.</string>
 </dict>
 </plist>
