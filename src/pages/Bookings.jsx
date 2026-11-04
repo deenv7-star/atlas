@@ -9,7 +9,7 @@ import { useProperties } from '@/data/entities';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { BookingsTable } from '@/components/tables/BookingsTable';
-import { AtlasSheet, SheetFooter, SheetSubmit, SheetTextButton, SheetField, SheetSelect, DateRangeField } from '@/components/ui/sheet';
+import { AtlasSheet, SheetFooter, SheetSubmit, SheetTextButton, SheetField, SheetSelect, DateRangeField } from '@/components/ui/sheet/index';
 import { displayUnits } from '@/lib/unitName';
 import { Plus, Search, SlidersHorizontal, Download } from 'lucide-react';
 
@@ -417,6 +417,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
             idPrefix="bk-f-dates"
             label="תאריך כניסה"
             labels={{ start: 'מתאריך', end: 'עד' }}
+            placeholder="בחרו טווח תאריכים"
             start={dateInputValue(dateFrom)}
             end={dateInputValue(dateTo)}
             onChange={({ start, end }) => void setUrlState({
@@ -456,7 +457,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
           if (!open) setOpenBookingId(null);
         }}
         title={editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}
-        subtitle={editingBooking ? null : 'שם ותאריכים. את השאר אפשר להשלים אחר כך.'}
+        subtitle={editingBooking ? null : 'את השאר אפשר להשלים אחר כך.'}
       >
           <BookingForm
             key={editingBooking?.id ?? 'new'}

@@ -85,7 +85,7 @@ export function QuickBookingProvider({ children }) {
           ? 'מילאנו את מה שהיה בפנייה. בדקו תאריכים ושמרו.'
           : unitLine
             ? `${unitLine} · את השאר אפשר להשלים אחר כך.`
-            : 'שם ותאריכים. את השאר אפשר להשלים אחר כך.'}
+            : 'את השאר אפשר להשלים אחר כך.'}
       >
         <BookingForm
           key={`quick-${state.nonce}`}

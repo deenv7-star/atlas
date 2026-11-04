@@ -85,7 +85,7 @@ export function GuestForm({
   const errId = (k: string) => fid(`${k}-err`);
   const summary = [
     fm.values.email && 'אימייל',
-    Number(fm.values.adults || 0) ? `${fm.values.adults} מבוגרים` : '',
+    Number(fm.values.adults || 2) !== 2 ? `${fm.values.adults} מבוגרים` : '',
     Number(fm.values.children || 0) ? `${fm.values.children} ילדים` : '',
     fm.values.budget && 'תקציב',
   ].filter(Boolean).join(' · ');

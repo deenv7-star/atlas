@@ -99,7 +99,7 @@ function DateText({ iso, placeholder }) {
  * value: { start, end } ISO. onChange({ start, end }).
  * labels: { start: 'כניסה', end: 'יציאה' }.
  */
-export function DateRangeField({ start = '', end = '', onChange, labels = { start: 'כניסה', end: 'יציאה' }, error = '', errorId, label = 'מתי', defaultOpen = false, idPrefix = 'dr' }) {
+export function DateRangeField({ start = '', end = '', onChange, labels = { start: 'כניסה', end: 'יציאה' }, error = '', errorId, label = 'מתי', defaultOpen = false, idPrefix = 'dr', placeholder = '' }) {
   const v = useSheetVariant();
   const [open, setOpen] = React.useState(defaultOpen);
   const [phase, setPhase] = React.useState(start && !end ? 'end' : 'start');
@@ -161,7 +161,7 @@ export function DateRangeField({ start = '', end = '', onChange, labels = { star
     >
       <CalendarDays aria-hidden className="h-5 w-5 shrink-0 text-[#1B2656]/45" />
       <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-0.5 text-[16px] font-medium text-[#1B2656]">
-        <DateText iso={start} placeholder={`${labels.start} ויציאה`} />
+        <DateText iso={start} placeholder={placeholder || `${labels.start} ו${labels.end}`} />
         {start ? <ChevronLeft aria-hidden className="h-4 w-4 shrink-0 text-[#1B2656]/35" /> : null}
         {start ? <DateText iso={end} placeholder={labels.end} /> : null}
       </span>

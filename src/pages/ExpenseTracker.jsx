@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useExpenses } from '@/hooks/useExpenses';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { Button } from '@/components/ui/button';
-import { AtlasSheet, SheetGroup, SheetField, SheetInput, SheetSelect, SheetFooter, SheetSubmit, SheetError, DateField, useSheetVariant } from '@/components/ui/sheet';
+import { AtlasSheet, SheetGroup, SheetField, SheetInput, SheetSelect, SheetFooter, SheetSubmit, SheetError, DateField, useSheetVariant } from '@/components/ui/sheet/index';
 import { Receipt, Plus, TrendingDown, Calendar, DollarSign, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { todayIsrael } from '@/lib/localDate';

@@ -7,7 +7,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Lock, Plus } from 'lucide-react';
-import { AtlasSheet, SheetFooter, SheetSubmit, SheetTextButton, SheetField, SheetSelect, SheetInput, DateRangeField } from '@/components/ui/sheet';
+import { AtlasSheet, SheetFooter, SheetSubmit, SheetTextButton, SheetField, SheetSelect, SheetInput, DateRangeField } from '@/components/ui/sheet/index';
 import { displayUnits } from '@/lib/unitName';
 import { useCreateBooking } from '@/data/entities';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
@@ -270,6 +270,7 @@ export function BlockDialog({ actions, units }) {
               idPrefix="blk-dates"
               label="תאריכים"
               labels={{ start: 'מתאריך', end: 'עד' }}
+            placeholder="בחרו תאריכים"
               start={v.start || ''}
               end={v.end || ''}
               onChange={({ start, end }) => setBlock({ ...v, start, end })}

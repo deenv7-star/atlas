@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AtlasSheet, SheetGroup, SheetField, SheetInput, SheetSelect, SheetSegmented, SheetFooter, SheetSubmit, DateField } from '@/components/ui/sheet';
+import { AtlasSheet, SheetGroup, SheetField, SheetInput, SheetSelect, SheetSegmented, SheetFooter, SheetSubmit, DateField } from '@/components/ui/sheet/index';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useNavigate } from 'react-router-dom';
 import { deleteBookingWithUndo } from '@/components/ui/AtlasToast';
@@ -474,7 +474,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
       </Page>
 
       {/* Add payment sheet */}
-      <AtlasSheet open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen} title="תשלום חדש" subtitle={booking?.guest_name ? `להזמנה של ${booking.guest_name}` : null}>
+      <AtlasSheet open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen} title="רישום תשלום" subtitle={booking?.guest_name ? `להזמנה של ${booking.guest_name}` : null}>
         <SheetGroup>
           <SheetField label="סכום" htmlFor="bd-pay-amount">
             <div className="relative">
