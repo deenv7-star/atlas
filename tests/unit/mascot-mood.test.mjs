@@ -55,6 +55,7 @@ test('eye offset stays inside the face', () => {
   assert.ok(o.x <= 6 && o.x > 5);
   const d = eyeOffset(r, { x: 20, y: 2000 });
   assert.ok(d.y <= 5 && d.y > 4);
+  assert.deepEqual(eyeOffset(r, { x: NaN, y: 5 }), { x: 0, y: 0 }); // a bad pointer never throws the eyes out
   assert.deepEqual(eyeOffset(r, null), { x: 0, y: 0 });
 });
 

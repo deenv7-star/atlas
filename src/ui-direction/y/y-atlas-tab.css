@@ -1,0 +1,12 @@
+/* v3 A (04.11.2026): atlas herself stands on the tab bar — no disc, no ring. Her own soft shadow lands on the glass;
+   she squashes on press and is hidden while she is "out" on the assistant screen (she flew there). */
+.y2-ta { width: 66px; height: 66px; margin-top: -30px; background: transparent; box-shadow: none; border-radius: 22px; }
+.y2-ta::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: 2px; height: 8px; border-radius: 50%; background: radial-gradient(closest-side, rgba(27,38,86,.32), rgba(27,38,86,0)); transition: opacity 220ms ease, transform 220ms ease; }
+.y2-ta-disc { width: 60px; height: 60px; background: transparent; box-shadow: none; transform-origin: 50% 100%;
+  filter: drop-shadow(0 10px 14px rgba(62,43,241,.38)) drop-shadow(0 2px 3px rgba(27,38,86,.25)); transition: transform 380ms cubic-bezier(.34,1.56,.64,1), opacity 160ms ease; }
+.y2-ta[aria-expanded='true'] .y2-ta-disc { background: transparent; }
+.y2-ta:active .y2-ta-disc { transform: scale(1.08, .9); transition-duration: 120ms; }
+html[data-assistant-open] .y2-ta-disc { opacity: 0; transform: translateY(-18px) scale(.6); }
+html[data-assistant-open] .y2-ta::after { opacity: 0; transform: scale(.4); }
+@media (max-width: 359px) { .y2-ta { width: 60px; height: 60px; } .y2-ta-disc { width: 54px; height: 54px; } }
+@media (prefers-reduced-motion: reduce) { .y2-ta-disc, .y2-ta::after { transition: none; } }

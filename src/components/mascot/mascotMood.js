@@ -104,5 +104,7 @@ export function eyeOffset(rect, point) {
   const dy = point.y - cy;
   const d = Math.hypot(dx, dy) || 1;
   const k = Math.min(1, d / 160); // close targets: a smaller turn
+  if (!Number.isFinite(dx) || !Number.isFinite(dy)) return { x: 0, y: 0 };
+  // original v3 range (face units): bounded, the eyes stay inside the face
   return { x: Math.round((dx / d) * 6 * k * 10) / 10, y: Math.round((dy / d) * 5 * k * 10) / 10 };
 }

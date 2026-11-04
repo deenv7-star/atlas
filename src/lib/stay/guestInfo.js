@@ -1,6 +1,7 @@
 /** Per-property guest information (stored in properties.guest_info jsonb, migration 008). */
 import { isSupabaseConfigured } from '@/api/supabaseClient';
 import { readOrgSettings } from '@/lib/onboarding/orgSettings';
+import { publicOrigin } from '@/lib/native';
 
 export const GUEST_INFO_DEFAULTS = {
   check_in_time: '15:00',
@@ -66,7 +67,7 @@ export function makeSlug(name) {
 
 export function appOrigin() {
   if (typeof window === 'undefined') return '';
-  return window.location.origin;
+  return publicOrigin();
 }
 
 /** '' when the booking has no private token yet on Supabase (the public RPC only accepts tokens). */

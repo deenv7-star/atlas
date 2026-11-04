@@ -93,6 +93,8 @@ export default function SocialButtons({ intent = 'login', returnTo = null, getCo
       if (!res?.redirected) navigate(OAUTH_CALLBACK_PATH, { replace: true });
     } catch (err) {
       setBusy(null);
+      // iOS app: the owner closed the Apple / Google sheet. Stay on the screen, say nothing.
+      if (err?.silent) return;
       setError(oauthErrorMessage(err, provider));
     }
   };

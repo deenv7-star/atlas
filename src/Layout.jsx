@@ -79,10 +79,11 @@ function LayoutContent({ children, currentPageName }) {
     try { localStorage.removeItem('atlas-dark-mode'); } catch { /* ignore */ }
   }, []);
 
-  const handleLogout = async () => {
-    queryClient.clear();
-    await logout(false);
-    window.location.href = '/login';
+  // Sidebar, header account menu, mobile "עוד" sheet. logout() never throws or hangs and ends with a
+  // full reload on /login (the react-query cache is cleared inside it too).
+  const handleLogout = () => {
+    try { queryClient.clear(); } catch { /* ignore */ }
+    void logout(true);
   };
 
   if (isPublicPage) {

@@ -9,9 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { useCrossDeviceVerify } from '@/lib/auth/useCrossDeviceVerify';
+import { publicOrigin } from '@/lib/native';
 
 const EMAIL_KEY = 'atlas_pending_verify_email';
-const redirectUrl = () => `${window.location.origin}/verify-email?confirmed=1`;
+const redirectUrl = () => `${publicOrigin()}/verify-email?confirmed=1`;
 
 /**
  * Three honest states:
