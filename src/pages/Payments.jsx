@@ -24,8 +24,8 @@ import { cn } from '@/lib/utils';
 import { useProperties } from '@/data/entities';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
 import StaleIndicator from '@/components/app/StaleIndicator';
-import { loadStateOf, canShowValues } from '@/lib/stay/loadState';
-import { useStayData } from '@/hooks/useStayData';
+import { canShowValues } from '@/lib/stay/loadState';
+import { useStayData, STAY_KEYS } from '@/hooks/useStayData';
 import { openBalances } from '@/lib/stay/bookings';
 import { Page, PageHeader, StatTile, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
 
@@ -102,8 +102,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   });
   const { isLoading, isError, error: paymentsError } = paymentsQ;
   const payments = useMemo(() => paymentsQ.data || [], [paymentsQ.data]);
-  // Audit 04.11 #2/#5: no totals until the payments are really loaded; a failed refresh keeps the list.
-  const moneyKnown = canShowValues(loadStateOf(paymentsQ));
+  // Audit 04.11 #2/#5: a failed refresh keeps the list (totals wait for the shared stay data, see owedKnown).
   const loadFailed = isError && paymentsQ.data === undefined;
 
   const [confirmPaymentDelete, setConfirmPaymentDelete] = useState(false);
@@ -122,7 +121,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       return base44.entities.Payment.create({ ...payload, org_id: orgId, amount: parseFloat(payload.amount) || 0 });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
+      queryClient.invalidateQueries({ queryKey: ['payments'] }); queryClient.invalidateQueries({ queryKey: STAY_KEYS.payments });
     },
   });
 
@@ -134,20 +133,20 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       return base44.entities.Payment.update(id, next);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
+      queryClient.invalidateQueries({ queryKey: ['payments'] }); queryClient.invalidateQueries({ queryKey: STAY_KEYS.payments });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Payment.delete(id),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['payments'] }); toast({ title: 'התשלום נמחק' }); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['payments'] }); queryClient.invalidateQueries({ queryKey: STAY_KEYS.payments }); toast({ title: 'התשלום נמחק' }); },
     onError: () => toast({ title: 'לא הצלחנו למחוק את התשלום. נסו שוב.', variant: 'destructive' }),
   });
 
-  // M2 (audit 04.11): "התקבל" is cash in this month: PAID payments dated this month, labelled with the month.
-  // fix/today-tiles-c: "ממתין לגבייה" and "באיחור" are the unpaid balances of non-cancelled bookings, from the
-  // same openBalances() the Today tile "ממתינים לתשלום" reads. (It used to sum Payment rows with status PENDING,
-  // so a booking with no payment row at all counted as nothing owed: ₪0 here, ₪6,250 on Today.)
+  // fix/today-tiles-c: the three totals read the same shared stay data as Today (useStayData), not this page's list.
+  // "התקבל" = PAID payments dated this month. "ממתין לגבייה" / "באיחור" = openBalances(): the unpaid balance of
+  // every non-cancelled booking, the same function behind Today's "ממתינים לתשלום". Before, this tile summed
+  // Payment rows with status PENDING, so a booking with no payment row counted as nothing owed (₪0 here, ₪6,250 on Today).
   const monthName = HE_MONTHS[new Date().getMonth()];
   const stay = useStayData({ withCleaning: false });
   const owedKnown = canShowValues(stay.paymentsState) && canShowValues(stay.bookingsState);
@@ -158,12 +157,12 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
     const amt = (p) => parseFloat(p.amount) || 0;
     const paidMonth = (p) => String(p.paid_date || p.created_date || p.created_at || '').slice(0, 7) === ym;
     return {
-      paid:    payments.filter((p) => p.status === 'PAID' && paidMonth(p)).reduce((s, p) => s + amt(p), 0),
+      paid:    stay.payments.filter((p) => p.status === 'PAID' && paidMonth(p)).reduce((s, p) => s + amt(p), 0),
       pending: owed.total,
       pendingCount: owed.count,
       overdue: owed.overdue,
     };
-  }, [payments, owed]);
+  }, [stay.payments, owed]);
 
   // M1 (audit 04.11): who paid. Booking → guest name and unit, from the bookings already loaded for the form.
   const bookingById = useMemo(() => new Map(bookingOptions.map((b) => [b.id, b])), [bookingOptions]);
@@ -254,10 +253,10 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         }
       />
 
-      {listEmpty || loadFailed ? null : (
+      {(listEmpty && !stats.pendingCount && !stats.paid) || loadFailed ? null : (
       <ErrorBoundary section="financial-summary" variant="inline" resetKey={orgId ?? 'no-org'}>
         <div className="stat-row mb-5" data-tour="payments-stats">
-          <StatTile hero label={`התקבל ב${monthName}`} hint="תשלומים ששולמו החודש" help="payments.received" value={moneyKnown ? fmtMoney(stats.paid) : '—'} loading={!moneyKnown && isLoading} icon={CheckCircle2} tone="success" />
+          <StatTile hero label={`התקבל ב${monthName}`} hint="תשלומים ששולמו החודש" help="payments.received" value={owedKnown ? fmtMoney(stats.paid) : '—'} loading={!owedKnown && stay.isLoading} icon={CheckCircle2} tone="success" />
           <StatTile label="ממתין לגבייה" hint={owedKnown && stats.pendingCount ? (stats.pendingCount === 1 ? 'הזמנה אחת עם יתרה' : `${stats.pendingCount} הזמנות עם יתרה`) : undefined} help="payments.pending" value={owedKnown ? fmtMoney(stats.pending) : '—'} loading={!owedKnown && stay.isLoading} icon={Clock} tone="amber" />
           <StatTile label="באיחור" help="payments.overdue" value={owedKnown ? stats.overdue : '—'} loading={!owedKnown && stay.isLoading} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
         </div>

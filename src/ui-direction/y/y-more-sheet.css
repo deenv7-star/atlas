@@ -8,7 +8,6 @@
 @media (min-width: 640px) {
   .ycm { inset: auto; left: 50%; top: 50%; bottom: auto; width: 520px; max-height: 80dvh; border-radius: 28px; padding-bottom: 20px;
     transform: translate(-50%, -50%); animation: ycm-pop .24s cubic-bezier(.23,1,.32,1); }
-  .ycm-grab { display: none; }
 }
 @keyframes ycm-up { from { transform: translateY(100%); } }
 @keyframes ycm-pop { from { opacity: 0; transform: translate(-50%, -48%) scale(.97); } }
@@ -16,6 +15,7 @@
 @media (prefers-reduced-motion: reduce) { .ycm, .ycm-scrim { animation: none; } }
 
 .ycm-grab { display: block; width: 40px; height: 5px; border-radius: 99px; background: rgba(27,38,86,.16); margin: 0 auto 6px; }
+@media (min-width: 640px) { .ycm-grab { display: none; } } /* a centred panel is not dragged */
 .ycm-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; }
 .ycm-title { font-size: 22px; font-weight: 800; letter-spacing: -.01em; margin: 0; }
 .ycm-x { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 99px; background: #fff; color: #1B2656;
