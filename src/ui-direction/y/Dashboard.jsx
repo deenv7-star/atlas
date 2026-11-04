@@ -26,6 +26,7 @@ import './y3.css';
 import './y-fix.css';
 import StaleIndicator from '@/components/app/StaleIndicator';
 import { MoneyLoadBanner } from '@/components/app/MoneyLoadBanner';
+import { canShowValues } from '@/lib/stay/loadState';
 
 const EASE = [0.23, 1, 0.32, 1];
 const rise = (i = 0) => ({ initial: { opacity: 0, y: 16, scale: 0.985 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { duration: 0.7, ease: EASE, delay: 0.05 + i * 0.07 } });
@@ -82,6 +83,8 @@ export default function DashboardView({ user, orgId }) {
   const name = firstName(user?.full_name || '');
   // Audit 04.11 #7: a new account with no units gets one prompt to add the first unit, not "הכל בוצע" twice.
   const noUnits = m.data.propertiesState === 'ready' && !(m.data.properties || []).length;
+  // fix-1104 QA: until the bookings are read, no "0 מגיעים" and no "הכל בוצע להיום" (a slow first load said the day was empty).
+  const boardKnown = canShowValues(m.data.bookingsState);
 
   const arrivals = m.board.arrivals; const departures = m.board.departures;
   const months = m.money.months || [];
@@ -115,9 +118,9 @@ export default function DashboardView({ user, orgId }) {
           <div className="y2-hello">
             <div>
               <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
-              <p className="y2-sub">{formatDayHe(m.day)} · {arrivals.length} מגיעים, {departures.length} יוצאים<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
+              <p className="y2-sub">{formatDayHe(m.day)}{boardKnown ? ` · ${arrivals.length} מגיעים, ${departures.length} יוצאים` : ''}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
             </div>
-            {noUnits ? null : (
+            {noUnits || !boardKnown ? null : (
               <Link to="/messages" className="y2-hello-chip press"><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'הכל בוצע להיום'}</Link>
             )}
           </div>
@@ -221,7 +224,7 @@ export default function DashboardView({ user, orgId }) {
                   );
                 })}
               </AnimatePresence>
-              {!q3.length && !noUnits ? <li className="y2-nc y2-nc--clear"><Check strokeWidth={2} />הכל בוצע להיום</li> : null}
+              {!q3.length && !noUnits && boardKnown ? <li className="y2-nc y2-nc--clear"><Check strokeWidth={2} />הכל בוצע להיום</li> : null}
             </ul>
           </section>
           )}
