@@ -64,7 +64,7 @@ export function RecordPaymentSheet({ open, onOpenChange, booking, balance, orgId
       footer={(
         <>
           <Btn variant="primary" size="lg" icon={Check} onClick={save} disabled={n <= 0 || createPayment.isPending} className="w-full !h-[54px] !rounded-[16px] !text-[17px]">
-            {createPayment.isPending ? 'שומרים…' : 'שמירה'}
+            {createPayment.isPending ? 'שומרים…' : 'שמירת תשלום'}
           </Btn>
         </>
       )}
