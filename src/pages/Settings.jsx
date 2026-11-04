@@ -1,5 +1,5 @@
 import { Page, PageHeader } from '@/components/ds';
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,18 @@ export default function SettingsPage({ user }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { logout } = useAuth();
+
+  // Phone: the tab strip scrolls sideways. Keep the selected chip fully in view (opening /settings?tab=security
+  // used to show the dark "אבטחה" chip cut in half at the edge). Only the strip moves, never the page.
+  const stripRef = useRef(null);
+  useEffect(() => {
+    const strip = stripRef.current;
+    const btn = strip?.querySelector(`#settings-tab-${activeTab}`);
+    if (!strip || !btn || strip.scrollWidth <= strip.clientWidth + 1) return;
+    const sr = strip.getBoundingClientRect(), br = btn.getBoundingClientRect(), pad = 20;
+    const dx = br.left < sr.left + pad ? br.left - sr.left - pad : br.right > sr.right - pad ? br.right - sr.right + pad : 0;
+    if (dx) strip.scrollBy({ left: dx, behavior: 'auto' });
+  }, [activeTab]);
 
   const { data: org } = useQuery({
     queryKey: ['organization'],
@@ -167,6 +179,7 @@ export default function SettingsPage({ user }) {
         {/* Tab list */}
         {/* audit 04.11 m6: a real tablist (roles, selected state, arrow keys) */}
         <div
+          ref={stripRef}
           role="tablist"
           aria-label="אזורי ההגדרות"
           aria-orientation="horizontal"
