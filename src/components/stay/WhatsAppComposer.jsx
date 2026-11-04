@@ -106,7 +106,7 @@ export function WhatsAppComposer({ open, onOpenChange, booking: bookingProp, pro
         <Phone size={16} strokeWidth={1.75} aria-hidden />
         {phoneOk
           ? <span dir="ltr" className="ab-num">{booking.guest_phone}</span>
-          : <span style={{ color: 'var(--status-warning)' }}>אין מספר טלפון בהזמנה. וואטסאפ ייפתח ותבחרו איש קשר.</span>}
+          : <span className="text-[#1B2656]/80">אין מספר טלפון בהזמנה. וואטסאפ ייפתח ותבחרו איש קשר.</span>}
       </div>
     </StaySheet>
   );
