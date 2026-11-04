@@ -8,7 +8,7 @@
  */
 import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, MoreHorizontal, Plus, Sparkles } from 'lucide-react';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { unitPhoto } from '@/lib/stay/unitPhoto';
@@ -91,6 +91,9 @@ export default function DashboardView({ user, orgId }) {
   const mx = Math.max(1, ...months.map((x) => (x.value || 0) + (x.expected || 0)));
   const wave = months.map((x) => ((x.value || 0) + (x.expected || 0)) / mx);
   const bestI = wave.indexOf(Math.max(...wave));
+  // no revenue at all: an empty state instead of "₪0K" three times; small totals stay in shekels, not "₪0K/₪1K"
+  const hasRevenue = months.some((x) => (x.value || 0) + (x.expected || 0) > 0);
+  const tick = (v) => (v === 0 ? '₪0' : mx >= 10000 ? `₪${moneyNum(v / 1000)}K` : mx >= 1000 ? `₪${(Math.round(v / 100) / 10).toLocaleString('he-IL')}K` : `₪${moneyNum(v)}`);
 
   // the day as hour ticks 8..20: arrivals hot, departures on
   const hours = useMemo(() => Array.from({ length: 13 }, (_, i) => {
@@ -111,7 +114,9 @@ export default function DashboardView({ user, orgId }) {
   const today = [...departures.map((x) => ({ ...x, dir: 'out' })), ...arrivals.map((x) => ({ ...x, dir: 'in' }))];
   const upcoming = list.filter((b) => b.check_in_date > m.day).slice(0, 3);
 
+  // reducedMotion="user": with reduced motion the entrance keeps only the fade, no scale(.985) shrinking 44px targets to 43
   return (
+    <MotionConfig reducedMotion="user">
     <div className="y2" dir="rtl">
       <motion.div className="y2-win" {...rise(0)}>
         <div className="y2-main">
@@ -165,8 +170,20 @@ export default function DashboardView({ user, orgId }) {
           <div className="y2-mid">
             <motion.section className="y2-card y2-chart" aria-label="הכנסות" {...rise(5)}>
               <div className="y2-card-h"><h2>הכנסות</h2><span className="y2-seg">6 חודשים</span></div>
+              {/* release 04.11: payments not read (loading / 500 / offline / timeout) = "—", never "עוד אין הכנסות" or ₪0K */}
+              {!m.moneyKnown ? (
+                <div className="y2-chart-empty y2-chart-unknown" role="status">
+                  <b aria-label="אין נתונים כרגע">—</b>
+                  {m.paymentsState === 'error' ? <span>לא הצלחנו לקרוא את ההכנסות כרגע</span> : null}
+                </div>
+              ) : !hasRevenue ? (
+                <div className="y2-chart-empty">
+                  <b>עוד אין הכנסות להצגה</b>
+                  <span>הגרף יתמלא מההזמנה הראשונה</span>
+                </div>
+              ) : (
               <div className="y2-chart-b">
-                <div className="y2-chart-y" aria-hidden>{[1, 0.66, 0.33, 0].map((t) => <span key={t}>₪{moneyNum(mx * t / 1000)}K</span>)}</div>
+                <div className="y2-chart-y" aria-hidden>{[1, 0.66, 0.33, 0].map((t) => <span key={t}>{tick(mx * t)}</span>)}</div>
                 <div className="y2-chart-p">
                   <Wave values={[...wave].reverse()} w={520} h={190} />
                   {bestI >= 0 ? (
@@ -176,6 +193,7 @@ export default function DashboardView({ user, orgId }) {
                   ) : null}
                 </div>
               </div>
+              )}
               <div className="y2-chart-x" aria-hidden>{months.map((x, i) => <span key={i}>{x.label || ''}</span>)}</div>
             </motion.section>
 
@@ -277,5 +295,6 @@ export default function DashboardView({ user, orgId }) {
         onSent={(key) => { if (composer) { m.markSent(composer.booking.id, composer.template); m.markSent(composer.booking.id, key); } }}
       />
     </div>
+    </MotionConfig>
   );
 }
