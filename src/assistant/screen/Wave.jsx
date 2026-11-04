@@ -27,10 +27,10 @@ export function Wave({ state, levels, height = 96, label = '' }) {
       g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
       const gap = Math.max(4, W / N * 0.42); const bw = Math.max(3, W / N - gap);
       for (let i = 0; i < N; i += 1) {
-        const x = i / (N - 1); const mid = 1 - Math.abs(x - 0.5) * 1.5; // taller in the middle
+        const x = i / (N - 1); const mid = Math.cos((x - 0.5) * Math.PI) ** 1.5; // taller in the middle, quiet at the edges
         let target;
         if (s === 'thinking' || s === 'connecting') target = 0.1 + 0.28 * Math.max(0, Math.cos((x - ((t * 0.6) % 1.4) + 0.2) * 9)) * mid;
-        else if (s === 'hearing' || s === 'speaking') target = 0.1 + mid * lv * (0.55 + 0.45 * Math.abs(Math.sin(i * 1.7 + t * 9)));
+        else if (s === 'hearing' || s === 'speaking') target = 0.1 + mid * lv * (0.35 + 0.65 * Math.abs(Math.sin(i * 0.9 + t * 6) * Math.cos(i * 0.37 - t * 3.1)));
         else target = 0.08 + 0.05 * mid * (1 + Math.sin(t * 1.4 + i * 0.35));
         vals[i] += (target - vals[i]) * 0.25;
         const h = Math.max(bw, vals[i] * H);

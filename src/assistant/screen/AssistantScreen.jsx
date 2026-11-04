@@ -56,7 +56,12 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
     return () => { document.documentElement.classList.remove('as-lock'); document.removeEventListener('keydown', onKey); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const lastV = v.turns[v.turns.length - 1];
-  useEffect(() => { const el = scrollRef.current; if (el) el.scrollTo({ top: el.scrollHeight }); },
+  useEffect(() => { // to the newest line, again once cards have laid out
+    const el = scrollRef.current; if (!el) return undefined;
+    el.scrollTo({ top: el.scrollHeight });
+    const id = setTimeout(() => el.scrollTo({ top: el.scrollHeight }), 320);
+    return () => clearTimeout(id);
+  },
     [t.messages.length, t.messages[t.messages.length - 1]?.content, v.turns.length, lastV?.text, v.proposals.length, s.mode, s.step?.line]);
 
   const close = () => { v.end(); onClose(); };

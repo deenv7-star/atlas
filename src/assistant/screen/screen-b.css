@@ -23,9 +23,9 @@
 /* the stage: the only navy thing, the voice as light */
 .bx-stage { position: relative; margin: 4px 12px 0; padding: 16px 18px 12px; border-radius: 30px; background: var(--n); color: #fff; overflow: hidden;
   box-shadow: 0 24px 50px -30px rgba(27, 38, 86, 0.8); }
-.bx-stage::before { content: ''; position: absolute; inset: 20% 10% -30%; border-radius: 50%; background: rgba(62, 43, 241, 0.55); filter: blur(46px);
-  opacity: 0.7; transition: opacity 400ms ease, transform 400ms var(--ease); pointer-events: none; }
-.bx-stage[data-state='speaking']::before, .bx-stage[data-state='hearing']::before { opacity: 1; transform: scale(1.08); }
+.bx-stage::before { content: ''; position: absolute; inset: 20% 10% -30%; border-radius: 50%; background: rgba(62, 43, 241, 0.5); filter: blur(52px);
+  opacity: 0.32; transition: opacity 400ms ease, transform 400ms var(--ease); pointer-events: none; }
+.bx-stage[data-state='speaking']::before, .bx-stage[data-state='hearing']::before { opacity: 0.6; transform: scale(1.06); }
 .bx-stage > * { position: relative; }
 .bx-state { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 17px; font-weight: 700; }
 .bx-dot { width: 8px; height: 8px; border-radius: 99px; background: #fff; opacity: 0.55; }
