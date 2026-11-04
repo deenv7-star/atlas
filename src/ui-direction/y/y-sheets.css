@@ -1,6 +1,6 @@
 /* fix/today-tiles: light, native-feeling sheets for the Today tiles. Palette: #3E2BF1 #1B2656 #F7F8FB #fff only. */
 .yt-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(27,38,86,.28); animation: yt-fade .22s ease both; }
-.yt-sheet { --ind: #3E2BF1; --navy: #1B2656; --mute: rgba(27,38,86,.64); --line: rgba(27,38,86,.08); --ease: cubic-bezier(.32,.72,0,1);
+.yt-sheet { --ind: #3E2BF1; --navy: #1B2656; --mute: rgba(27,38,86,.72); --line: rgba(27,38,86,.08); --ease: cubic-bezier(.32,.72,0,1);
   position: fixed; inset-inline: 0; bottom: 0; z-index: 61; display: flex; flex-direction: column; max-height: 86dvh;
   border-radius: 28px 28px 0 0; background: #fff; color: var(--navy); font-family: Heebo, system-ui, sans-serif;
   box-shadow: 0 -1px 0 rgba(27,38,86,.06), 0 -24px 48px -24px rgba(27,38,86,.35);
