@@ -15,7 +15,7 @@ const NAV = [
   { label: 'היום', Icon: Home },
   { label: 'לוח שנה', Icon: CalendarDays },
   { label: 'הזמנות', Icon: Inbox },
-  { label: 'לידים', Icon: Users },
+  { label: 'פניות', Icon: Users },
   { label: 'כספים', Icon: Wallet },
   { label: 'הודעות', Icon: MessageCircle },
   { label: 'הגדרות', Icon: Settings },

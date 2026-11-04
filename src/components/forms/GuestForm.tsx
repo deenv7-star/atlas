@@ -23,7 +23,7 @@ import {
 } from '@/components/forms/formMachineUi';
 
 const STATUS_OPTIONS = [
-  { value: 'NEW', label: 'חדש' },
+  { value: 'NEW', label: 'חדשה' },
   { value: 'CONTACTED', label: 'נוצר קשר' },
   { value: 'OFFER_SENT', label: 'הצעה נשלחה' },
   { value: 'CONFIRMED', label: 'מאושר' },

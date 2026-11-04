@@ -26,7 +26,7 @@ export function bookingSaveErrorHe(err) {
   if (code === '23P01' || /bookings_no_overlap|exclusion constraint/i.test(msg)) {
     return 'התאריכים האלה כבר תפוסים ביחידה הזו. בחרו תאריכים אחרים או יחידה אחרת.';
   }
-  if (code === '23505' && /lead/i.test(msg)) return 'כבר יש הזמנה מהליד הזה. פתחו אותה מרשימת ההזמנות.';
+  if (code === '23505' && /lead/i.test(msg)) return 'כבר יש הזמנה מהפנייה הזו. פתחו אותה מרשימת ההזמנות.';
   if (code === '23514' || /check constraint/i.test(msg)) return 'יש פרט לא תקין בהזמנה. בדקו תאריכים ומחיר ונסו שוב.';
   return 'לא הצלחנו לשמור את ההזמנה. בדקו את החיבור ונסו שוב.';
 }
@@ -83,7 +83,7 @@ export function QuickBookingProvider({ children }) {
             <DialogTitle className="text-[22px] font-bold text-navy-900">{opts.title || 'הזמנה חדשה'}</DialogTitle>
             <DialogDescription className="text-[15px] text-ink-600">
               {opts.leadId
-                ? 'מילאנו את מה שהיה בליד. בחרו יחידה, בדקו תאריכים ומחיר ושמרו.'
+                ? 'מילאנו את מה שהיה בפנייה. בחרו יחידה, בדקו תאריכים ומחיר ושמרו.'
                 : `${presetPropertyName ? `${presetPropertyName} · ` : ''}שם, תאריכים וערוץ. אפשר להשלים את השאר אחר כך.`}
             </DialogDescription>
           </DialogHeader>

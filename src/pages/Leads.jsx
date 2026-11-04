@@ -17,6 +17,8 @@ import { Users, Plus, Search } from 'lucide-react';
 import { exportToCSV, LEAD_COLUMNS } from '@/lib/csvExport';
 import { GuestsTable } from '@/components/tables/GuestsTable';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { ErrorFallback } from '@/components/common/ErrorFallback';
+import StaleIndicator from '@/components/app/StaleIndicator';
 import { GuestForm } from '@/components/forms/GuestForm';
 import { emptyGuestFormValues } from '@/components/forms/atlasFormSchemas';
 import { leadFormToPayload } from '@/lib/entityPayloads';
@@ -25,15 +27,15 @@ import { sortGuestLeads } from '@/hooks/url-state/leadTableSort';
 import { heCount } from '@/lib/hebrewCount';
 
 const STATUS_OPTIONS = [
-  { value: 'NEW',        label: 'חדש',          color: 'bg-blue-100 text-blue-700 border-blue-200' },
+  { value: 'NEW',        label: 'חדשה',          color: 'bg-blue-100 text-blue-700 border-blue-200' },
   { value: 'CONTACTED',  label: 'בטיפול',     color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
   { value: 'OFFER_SENT', label: 'הצעה נשלחה',   color: 'bg-brand-100 text-brand-700 border-brand-200' },
-  { value: 'CONFIRMED',  label: 'נסגר',         color: 'bg-green-100 text-green-700 border-green-200' },
-  { value: 'REJECTED',   label: 'לא מתאים לנו',          color: 'bg-red-100 text-red-700 border-red-200' },
+  { value: 'CONFIRMED',  label: 'נסגרה',         color: 'bg-green-100 text-green-700 border-green-200' },
+  { value: 'REJECTED',   label: 'לא מתאימה לנו',          color: 'bg-red-100 text-red-700 border-red-200' },
   { value: 'LOST',       label: 'הזמין במקום אחר',   color: 'bg-gray-100 text-gray-500 border-gray-200' },
 ];
 // WON is what 'הפיכה להזמנה' writes on the lead page; show it like CONFIRMED (נסגר).
-const STATUS_MAP = { ...Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s])), WON: { value: 'WON', label: 'נסגר', color: 'bg-green-100 text-green-700 border-green-200' } };
+const STATUS_MAP = { ...Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s])), WON: { value: 'WON', label: 'נסגרה', color: 'bg-green-100 text-green-700 border-green-200' } };
 
 const STATUS_VALUE_SET = new Set(STATUS_OPTIONS.map((s) => s.value));
 
@@ -96,7 +98,11 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
     if (!showDialog) guestDialogInterceptRef.current = null;
   }, [showDialog]);
 
-  const { data: leads = [], isLoading, isError, error: leadsError } = useLeads(filters, '-created_at', 200);
+  const leadsQ = useLeads(filters, '-created_at', 200);
+  const { isLoading, isError, error: leadsError } = leadsQ;
+  const leads = useMemo(() => leadsQ.data || [], [leadsQ.data]);
+  // Audit 04.11 #5: keep the list when a refresh fails; the error card only when there is nothing to show.
+  const loadFailed = isError && leadsQ.data === undefined;
   const { data: properties = [] }       = useProperties();
   const createMutation = useCreateLead();
   const updateMutation = useUpdateLead();
@@ -171,19 +177,19 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
     const data = leadFormToPayload(formData);
     if (editingLead) {
       await updateMutation.mutateAsync({ id: editingLead.id, data });
-      success('הליד עודכן');
+      success('הפנייה עודכנה');
     } else {
       await createMutation.mutateAsync(data);
-      success('הליד נשמר');
+      success('הפנייה נשמרה');
     }
   };
 
   const handleDelete = async (id) => {
-    const ok = await askConfirm({ title: 'למחוק את הליד?', description: 'הליד יימחק מהרשימה.' });
+    const ok = await askConfirm({ title: 'למחוק את הפנייה?', description: 'הפנייה תימחק מהרשימה.' });
     if (!ok) return;
     deleteMutation.mutate(id, {
-      onSuccess: () => success('הליד נמחק'),
-      onError: () => toastError('לא הצלחנו למחוק את הליד. נסו שוב.'),
+      onSuccess: () => success('הפנייה נמחקה'),
+      onError: () => toastError('לא הצלחנו למחוק את הפנייה. נסו שוב.'),
     });
   };
 
@@ -193,7 +199,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       await updateMutation.mutateAsync({ id: row.id, data: { status } }).catch(() => {});
       done++;
     }
-    success(`${done === 1 ? 'ליד אחד עכשיו במצב' : `${done} לידים עכשיו במצב`}: ${STATUS_MAP[status]?.label || status}`);
+    success(`${done === 1 ? 'פנייה אחת עכשיו במצב' : `${done} פניות עכשיו במצב`}: ${STATUS_MAP[status]?.label || status}`);
   };
 
   const handleBulkDeleteRows = (rows) => {
@@ -205,7 +211,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       ...l, property_name: properties.find(p => p.id === l.property_id)?.name || '',
     }));
     exportToCSV(data, 'leads', LEAD_COLUMNS);
-    success(`ירד קובץ לאקסל עם ${data.length === 1 ? 'ליד אחד' : `${data.length} לידים`}`);
+    success(`ירד קובץ לאקסל עם ${data.length === 1 ? 'פנייה אחת' : `${data.length} פניות`}`);
   };
 
   const setStatusTagFilter = (value) => {
@@ -217,32 +223,38 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
     void setUrlState({ tags: isOnly ? [] : [value], page: 1 });
   };
 
+  // M6 (audit 04.11): an empty list gets one sentence + one button, no header CTA, no filters.
+  const listEmpty = !isLoading && !loadFailed && leads.length === 0 && !searchTerm && !tags.length;
+
   const activeStatusChip = tags.length === 1 && STATUS_VALUE_SET.has(tags[0]) ? tags[0] : 'all';
 
   return (
     <Page>
       <PageHeader
-        title="לידים"
+        title="פניות"
         help="leads.page"
         tour="leads-page"
-        subtitle={`${counts.new} חדשים · ${counts.contacted} בטיפול · ${counts.won} נסגרו להזמנה`}
+        subtitle={listEmpty || loadFailed ? undefined : `${counts.new} חדשות · ${counts.contacted} בטיפול · ${counts.won} נסגרו להזמנה`}
         actions={
           <>
-            <Button onClick={openNew}>
-              <Plus strokeWidth={2.25} />
-              ליד חדש
-            </Button>
+            <StaleIndicator queries={[leadsQ]} onRetry={() => leadsQ.refetch()} />
+            {listEmpty ? null : (
+              <Button onClick={openNew}>
+                <Plus strokeWidth={2.25} />
+                פנייה חדשה
+              </Button>
+            )}
           </>
         }
       />
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className={cn('mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between', (listEmpty || loadFailed) && 'hidden')}>
         <SegmentedControl
           ariaLabel="סינון לפי מצב"
           value={activeStatusChip}
           onChange={(v) => setStatusTagFilter(v)}
           options={[
             { value: 'all', label: 'הכל', count: counts.total },
-            { value: 'NEW', label: 'חדשים', count: counts.new },
+            { value: 'NEW', label: 'חדשות', count: counts.new },
             { value: 'CONTACTED', label: 'בטיפול' },
             { value: 'OFFER_SENT', label: 'הצעה נשלחה' },
           ]}
@@ -254,7 +266,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
             onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
             placeholder="חיפוש לפי שם, טלפון או אימייל"
             className="rounded-full pr-10"
-            aria-label="חיפוש לידים"
+            aria-label="חיפוש פניות"
           />
         </div>
       </div>
@@ -265,7 +277,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
             {paged.map((l, idx) => (
               <Rise as="li" i={Math.min(idx, 8)} key={l.id}>
                 <Link to={`${createPageUrl('LeadDetail')}/${l.id}`} className="press v7-row flex min-h-[76px] items-center gap-4 px-5 py-3 md:px-6">
-                  <GuestAvatar name={l.full_name || 'ליד'} size={44} />
+                  <GuestAvatar name={l.full_name || 'פנייה'} size={44} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[15px] font-semibold text-navy-900">{l.full_name || 'ללא שם'}</span>
                     <span className="block truncate text-[13px] text-ink-400">
@@ -290,15 +302,15 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       </div>
 
       <div data-tour="leads-list" className={cn("v7-card overflow-hidden", sorted.length || isLoading ? "hidden" : "")}>
-        {isError ? (
-          <div className="p-4 text-center text-sm text-red-600">לא הצלחנו לטעון את הלידים. בדקו את החיבור לאינטרנט ורעננו את הדף.</div>
+        {loadFailed ? (
+          <div className="p-4"><ErrorFallback title="לא הצלחנו לטעון את הפניות" onRetry={() => leadsQ.refetch()} /></div>
         ) : sorted.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Users}
             face={searchTerm || tags.length ? undefined : 'neutral'}
-            title={searchTerm || tags.length ? 'אין לידים שמתאימים' : 'עדיין אין לידים'}
-            description={searchTerm || tags.length ? 'נסו חיפוש אחר.' : 'מישהו שאל על חופשה בטלפון או בוואטסאפ? רושמים אותו כאן, ומכאן הוא הופך להזמנה.'}
-            action={!searchTerm && !tags.length ? <Button onClick={openNew}><Plus strokeWidth={2.25} />ליד חדש</Button> : null}
+            title={searchTerm || tags.length ? 'אין פניות שמתאימות' : 'עדיין אין פניות'}
+            description={searchTerm || tags.length ? 'נסו חיפוש אחר.' : 'מישהו שאל על חופשה בטלפון או בוואטסאפ? רושמים את הפנייה כאן, ומכאן היא הופכת להזמנה.'}
+            action={!searchTerm && !tags.length ? <Button onClick={openNew}><Plus strokeWidth={2.25} />פנייה חדשה</Button> : null}
           />
         ) : (
           <ErrorBoundary section="guests-table" variant="inline" resetKey={`${selectedPropertyId ?? 'all'}|${searchTerm}|${tags.join(',')}|${page}`}>
@@ -306,7 +318,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
               leads={paged}
               properties={properties}
               isLoading={isLoading}
-              error={isError ? (leadsError instanceof Error ? leadsError : new Error('לא הצלחנו לטעון את הלידים')) : null}
+              error={isError ? (leadsError instanceof Error ? leadsError : new Error('לא הצלחנו לטעון את הפניות')) : null}
               onEdit={openEdit}
               onDelete={handleDelete}
               onBulkDelete={handleBulkDeleteRows}
@@ -318,7 +330,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
             />
             {sorted.length > pageSize ? (
               <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 px-3 py-2 text-sm text-gray-600">
-                <span>עמוד {page} מתוך {totalPages} · {sorted.length} לידים</span>
+                <span>עמוד {page} מתוך {totalPages} · {heCount(sorted.length, 'lead')}</span>
                 <div className="flex gap-2">
                   <Button type="button" variant="outline" size="sm" className="h-9" disabled={page <= 1} onClick={() => void setUrlState({ page: page - 1 })}>הקודם</Button>
                   <Button type="button" variant="outline" size="sm" className="h-9" disabled={page >= totalPages} onClick={() => void setUrlState({ page: page + 1 })}>הבא</Button>
@@ -352,7 +364,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-bold text-navy-900">{editingLead ? 'עריכת ליד' : 'ליד חדש'}</DialogTitle>
+            <DialogTitle className="text-[22px] font-bold text-navy-900">{editingLead ? 'עריכת פנייה' : 'פנייה חדשה'}</DialogTitle>
           </DialogHeader>
           <GuestForm
             key={editingLead?.id ?? 'new'}
@@ -368,7 +380,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
             onAfterSubmitSuccess={() => {
               window.setTimeout(closeGuestDialog, 2000);
             }}
-            submitLabel={editingLead ? 'שמירה' : 'שמירת ליד'}
+            submitLabel={editingLead ? 'שמירה' : 'שמירת פנייה'}
           />
         </DialogContent>
       </Dialog>

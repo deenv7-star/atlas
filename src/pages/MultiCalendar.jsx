@@ -75,7 +75,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
     }
   }, [navigate, qc]);
 
-  const empty = !data.isLoading && data.allUnits.length === 0;
+  const empty = !data.isLoading && !data.loadFailed && data.allUnits.length === 0;
 
   return (
     <div className="mx-auto w-full max-w-[1680px] px-5 pb-16 pt-6 md:px-8 md:pt-9 xl:px-10" dir="rtl">
@@ -109,8 +109,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
             <UnitFilter units={data.allUnits} value={propertyId} onChange={(id) => void setUrlState({ propertyId: id })} />
           </MonthToolbar>
 
-          {data.isError ? (
-            <div className="v7-card p-4"><ErrorFallback /></div>
+          {data.loadFailed ? (
+            <div className="v7-card p-4"><ErrorFallback onRetry={() => data.refetch()} /></div>
           ) : data.isLoading ? (
             <div className="v7-card space-y-3 p-5" aria-busy="true" aria-label="טוען את הלוח">
               {Array.from({ length: 6 }, (_, i) => <SkelLine key={i} className="h-16 w-full" />)}

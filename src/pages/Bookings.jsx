@@ -136,7 +136,12 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
     if (!showDialog) bookingDialogInterceptRef.current = null;
   }, [showDialog]);
 
-  const { data: bookings = [], isLoading, isError } = useBookings(filters, '-created_at', 200);
+  const bookingsQ = useBookings(filters, '-created_at', 200);
+  const { isLoading, isError } = bookingsQ;
+  const bookings = useMemo(() => bookingsQ.data || [], [bookingsQ.data]);
+  // Audit 04.11 #5: a failed refresh keeps the list on screen (the shell strip offers a retry);
+  // the error card shows only when there is nothing to show.
+  const loadFailed = isError && bookingsQ.data === undefined;
   const { data: properties = [], isLoading: propertiesLoading } = useProperties();
   const createMutation  = useCreateBooking();
   const updateMutation  = useUpdateBooking();
@@ -296,8 +301,8 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
           <button type="button" onClick={openNew} className="y3-bk-new press"><Plus strokeWidth={2} />הזמנה חדשה</button>
         </header>
 
-        {isError ? (
-          <div className="y3-bk-err"><ErrorFallback /></div>
+        {loadFailed ? (
+          <div className="y3-bk-err"><ErrorFallback onRetry={() => bookingsQ.refetch()} /></div>
         ) : (
           <ErrorBoundary section="bookings-table" variant="inline" resetKey={`${effectivePropertyId ?? 'all'}|${tab}|${search}|${page}|${pageSize}`}>
             <BookingsPanel

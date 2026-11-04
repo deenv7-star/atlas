@@ -347,7 +347,7 @@ export default function SettingsPage({ user }) {
               <CardContent className="space-y-1">
                 {[
                   { key: 'new_booking', label: 'הזמנה חדשה', desc: 'כשנכנסת הזמנה חדשה' },
-                  { key: 'new_lead', label: 'ליד חדש', desc: 'כשמגיעה פנייה חדשה' },
+                  { key: 'new_lead', label: 'פנייה חדשה', desc: 'כשאורח מבקש לבדוק תאריכים' },
                   { key: 'payment_received', label: 'תשלום התקבל', desc: 'כשמתקבל תשלום' },
                   { key: 'system_updates', label: 'חידושים', desc: 'כשמשהו חדש מגיע' },
                 ].map(item => (

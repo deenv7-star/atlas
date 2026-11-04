@@ -12,8 +12,8 @@ export const SAFE_LINK = Object.freeze({
   '/calendar': 'לוח שנה',
   '/bookings': 'הזמנות',
   '/booking': 'הזמנה',
-  '/leads': 'לידים',
-  '/lead': 'ליד',
+  '/leads': 'פניות',
+  '/lead': 'פנייה',
   '/payments': 'כספים',
   '/balances': 'יתרות',
   '/monthly-report': 'דוח חודשי',
@@ -135,7 +135,7 @@ export function insightOf(f) {
       title: n === 1 ? `הפנייה של ${f.openLeads[0].name} מחכה לתשובה` : `${n} פניות מחכות לתשובה`,
       body: n === 1 ? (f.openLeads[0].since ? `נכנסה ב-${f.openLeads[0].since.split('-').reverse().slice(0, 2).join('.')}.` : 'היא עדיין פתוחה.') : `הוותיקה ביותר: ${f.openLeads[0].name}.`,
       ask: 'אילו פניות מחכות לתשובה?',
-      action: { label: 'פתיחת הלידים', href: '/leads' },
+      action: { label: 'פתיחת הפניות', href: '/leads' },
     };
   }
   return null;

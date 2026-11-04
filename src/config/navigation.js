@@ -23,7 +23,7 @@ export const NAV_GROUPS = [
       { page: 'Dashboard', label: 'היום', icon: Sun },
       { page: 'MultiCalendar', label: 'לוח שנה', icon: CalendarRange },
       { page: 'Bookings', label: 'הזמנות', icon: BedDouble },
-      { page: 'Leads', label: 'לידים', icon: Users },
+      { page: 'Leads', label: 'פניות', icon: Users },
       { page: 'Payments', label: 'כספים', icon: Wallet },
       { page: 'Messages', label: 'הודעות', icon: MessageSquare },
       { page: 'Settings', label: 'הגדרות', icon: Settings },
@@ -96,7 +96,7 @@ Object.assign(PAGE_TITLES, {
   Today: 'היום',
   Balances: 'כספים', Invoices: 'כספים', ExpenseTracker: 'כספים', MonthlyReport: 'כספים', Payments: 'כספים',
   BookingDetail: 'פרטי הזמנה',
-  LeadDetail: 'פרטי ליד',
+  LeadDetail: 'פרטי פנייה',
   Onboarding: 'הקמת החשבון',
 });
 

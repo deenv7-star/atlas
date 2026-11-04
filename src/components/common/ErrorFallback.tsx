@@ -8,6 +8,8 @@ export type ErrorFallbackProps = {
   className?: string;
   /** Tighter padding for embedding in cards/lists */
   compact?: boolean;
+  /** Audit 04.11 #5: a retry button, the same "נסו שוב" as the slow-load strip. */
+  onRetry?: () => void;
 };
 
 export function ErrorFallback({
@@ -15,6 +17,7 @@ export function ErrorFallback({
   description = 'בדקו את החיבור לאינטרנט ונסו שוב.',
   className,
   compact = false,
+  onRetry,
 }: ErrorFallbackProps) {
   return (
     <div
@@ -31,6 +34,15 @@ export function ErrorFallback({
         <p className={cn('text-red-700', compact ? 'text-[11px] leading-snug' : 'text-xs leading-relaxed')}>
           {description}
         </p>
+        {onRetry ? (
+          <button
+            type="button"
+            onClick={onRetry}
+            className="mt-2 inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-red-200 bg-white px-5 text-[15px] font-medium text-red-900 transition-transform active:scale-[.98]"
+          >
+            נסו שוב
+          </button>
+        ) : null}
       </div>
     </div>
   );
