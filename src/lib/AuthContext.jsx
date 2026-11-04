@@ -34,6 +34,8 @@ function dropCachedMe() {
   try { localStorage.removeItem(ME_CACHE_KEY); } catch { /* ignore */ }
 }
 
+const HYDRATE_TIMEOUT_MS = 10000;
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser]                         = useState(null);
   const [isAuthenticated, setIsAuthenticated]   = useState(false);
@@ -67,16 +69,33 @@ export const AuthProvider = ({ children }) => {
 
   const hydrateUser = useCallback(() => {
     if (inflightRef.current) return inflightRef.current;
+    // fix-1104 QA: with an expired access token and no network, supabase-js keeps retrying the refresh
+    // (~30 s) and getSession() never settles, so the owner stared at the skeleton. With nothing cached on
+    // screen, give the first load 10 s, then show the offline screen (the session stays stored; a later
+    // TOKEN_REFRESHED, the 'online' event or "נסו שוב" hydrates again).
+    const timed = (p) => {
+      if (userRef.current || !isSupabaseConfigured) return p;
+      let t;
+      const limit = new Promise((_, reject) => {
+        t = setTimeout(() => {
+          const e = new Error('auth hydrate timed out');
+          e.name = 'TimeoutError';
+          e.isTransient = true;
+          reject(e);
+        }, HYDRATE_TIMEOUT_MS);
+      });
+      return Promise.race([p, limit]).finally(() => clearTimeout(t));
+    };
     const run = (async () => {
       try {
         let me, status;
         try {
-          [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
+          [me, status] = await timed(Promise.all([base44.auth.me(), fetchAccountStatus()]));
         } catch (err) {
-          if (!err?.isTransient) throw err;
+          if (!err?.isTransient || err.name === 'TimeoutError') throw err;
           // Slow / failed profile read: keep the copy already on screen, or try once more.
           if (userRef.current) return userRef.current;
-          [me, status] = await Promise.all([base44.auth.me(), fetchAccountStatus()]);
+          [me, status] = await timed(Promise.all([base44.auth.me(), fetchAccountStatus()]));
         }
         // Suspension is set by the platform admin (migration 011); null when unknown / not suspended.
         let currentUser = me && status?.suspended
