@@ -12,9 +12,9 @@
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ScanFace, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
-import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
+import BrandWordmark from '@/components/common/BrandWordmark.jsx';
+import FaceIdGlyph from './FaceIdGlyph.jsx';
 import { lockAppliesTo, lockOnResume, lockErrorKind, lockErrorMessage } from '@/lib/nativeApp/appLockCore';
 import { lockPrefs, verifyOwner, onAppLifecycle } from '@/lib/nativeApp/appLock';
 import { biometricAvailability } from '@/lib/auth/biometric';
@@ -108,42 +108,40 @@ export default function AppLockHost({ initialLocked = false }) {
 
   // Move focus into the lock screen when it asks for an action.
   const primaryRef = useRef(null);
-  useEffect(() => { if (phase === 'failed') primaryRef.current?.focus({ preventScroll: true }); }, [phase]);
+  useEffect(() => { if (phase === 'failed') primaryRef.current?.focus({ preventScroll: true, focusVisible: false }); }, [phase]);
 
   if (mode === 'off') return null;
 
   const leaving = phase === 'leaving';
   const asking = phase === 'asking';
   const failed = phase === 'failed';
-  const msg = failed ? lockErrorMessage(kind, label) : '';
+  // The glyph button already says "נסו שוב"; don't repeat it in the line under it.
+  const msg = failed ? lockErrorMessage(kind, label).replace(/\s*נסו שוב\.?$/, '') : '';
   const canRetry = kind !== 'unavailable';
+  const glyph = leaving ? 'success' : asking ? 'scanning' : failed ? 'failed' : 'idle';
+  const locked = mode === 'locked';
 
+  // Direction A, "native Apple": a thick system material over the app, the atlas wordmark small at the top,
+  // the Face ID symbol in thin lines, one text link. Nothing else.
   const cover = (
     <div
       dir="rtl"
       data-testid={mode === 'privacy' ? 'app-privacy-cover' : 'app-lock'}
-      role={mode === 'locked' ? 'dialog' : undefined}
-      aria-modal={mode === 'locked' ? 'true' : undefined}
-      aria-labelledby={mode === 'locked' ? 'atlas-lock-title' : undefined}
+      role={locked ? 'dialog' : undefined}
+      aria-modal={locked ? 'true' : undefined}
+      aria-labelledby={locked ? 'atlas-lock-title' : undefined}
       aria-hidden={mode === 'privacy' ? 'true' : undefined}
-      className={`atlas-lock fixed inset-0 z-[2147483000] flex flex-col items-center text-white${mode === 'privacy' ? ' is-privacy' : ''}${leaving ? ' is-leaving' : ''}`}
+      className={`atlas-lock fixed inset-0 z-[2147483000] flex flex-col items-center${mode === 'privacy' ? ' is-privacy' : ''}${leaving ? ' is-leaving' : ''}`}
       style={{ transitionDuration: `${FADE_MS}ms` }}
     >
-      <div className="atlas-lock__glass" aria-hidden />
-      {mode === 'locked' ? (
+      <div className="atlas-lock__material" aria-hidden />
+      <div className="relative flex w-full justify-center pt-[max(18px,env(safe-area-inset-top))]">
+        <div className="atlas-lock__mark mt-3" aria-hidden><BrandWordmark size={13} /></div>
+      </div>
+      {locked ? (
         <>
-          <div className="relative flex w-full max-w-[360px] flex-1 flex-col items-center justify-center px-6 text-center">
-            <div className="atlas-lock__halo">
-              <AtlasFace live mood={failed && kind !== 'cancel' ? 'concerned' : leaving ? 'happy' : 'neutral'} size={96} decorative />
-            </div>
-            <h1 id="atlas-lock-title" className="mt-7 text-[26px] text-white font-extrabold leading-tight tracking-[-0.01em]">
-              ברוכים השבים
-            </h1>
-            <p className="mt-2 min-h-[48px] text-[16px] leading-relaxed text-white/75" aria-live="polite">
-              {msg || (asking ? <>מזהים אתכם עם <span dir="ltr">{label}</span>…</> : <>פותחים את atlas עם <span dir="ltr">{label}</span></>)}
-            </p>
-          </div>
-          <div className="relative flex w-full max-w-[360px] flex-col gap-2 px-6 pb-[max(28px,env(safe-area-inset-bottom))]">
+          <h1 id="atlas-lock-title" className="sr-only">פתיחת atlas</h1>
+          <div className="relative flex w-full max-w-[360px] flex-1 flex-col items-center justify-center px-8 pb-16 text-center">
             {canRetry ? (
               <button
                 ref={primaryRef}
@@ -151,25 +149,35 @@ export default function AppLockHost({ initialLocked = false }) {
                 onClick={ask}
                 disabled={asking || leaving}
                 aria-busy={asking || undefined}
+                aria-label={failed ? `נסו שוב עם ${label}` : `פתיחה עם ${label}`}
                 data-testid="lock-retry"
-                className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-white text-[16px] font-bold text-[#1B2656] transition-transform duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1B2656] disabled:opacity-70"
+                className="atlas-lock__face group flex min-w-[140px] flex-col items-center gap-4 rounded-[24px] px-6 py-5 outline-none"
               >
-                {asking ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden /> : <ScanFace className="h-5 w-5" aria-hidden />}
-                <span>{failed ? 'נסו שוב' : <>פתיחה עם <span dir="ltr">{label}</span></>}</span>
+                <FaceIdGlyph size={64} state={glyph} className={failed ? 'text-[#1B2656]/80' : 'text-[#1B2656]'} />
+                <span className={`text-[16px] leading-none ${failed ? 'font-semibold text-[#3E2BF1]' : 'font-medium text-[#1B2656]/55'}`} dir={failed ? 'rtl' : 'ltr'}>
+                  {failed ? 'נסו שוב' : label}
+                </span>
               </button>
-            ) : null}
+            ) : (
+              <FaceIdGlyph size={64} state="idle" className="text-[#1B2656]/35" />
+            )}
+            <p className="mt-1 min-h-[44px] max-w-[270px] text-[14px] leading-relaxed text-[#1B2656]/60" aria-live="polite">
+              {msg || (asking ? <span className="sr-only">מזהים אתכם עם {label}</span> : null)}
+            </p>
+          </div>
+          <div className="relative flex w-full justify-center pb-[max(20px,env(safe-area-inset-bottom))]">
             <button
               type="button"
               onClick={() => logout(true, '/login')}
               disabled={leaving}
               data-testid="lock-signout"
-              className="flex h-[52px] w-full items-center justify-center rounded-[14px] text-[16px] font-medium text-white/85 transition-colors duration-150 hover:text-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/50 disabled:opacity-50"
+              className="atlas-lock__link h-11 rounded-full px-5 text-[15px] font-medium text-[#3E2BF1] disabled:opacity-50"
             >
-              התנתקות
+              התחברות מחדש
             </button>
           </div>
         </>
-      ) : null}
+      ) : <div className="flex-1" />}
     </div>
   );
 

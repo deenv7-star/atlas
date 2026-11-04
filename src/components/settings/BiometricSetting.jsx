@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/api/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
+import FaceIdGlyph from '@/components/nativeApp/FaceIdGlyph.jsx';
 import { Switch } from '@/components/ui/switch';
 import { biometricAvailability } from '@/lib/auth/biometric';
 import { lockErrorKind } from '@/lib/nativeApp/appLockCore';
@@ -49,12 +49,14 @@ export default function BiometricSetting() {
     }
   };
 
+  // Direction A: an iOS inset-grouped row. The symbol sits bare (no tile), hairline edge, no shadow.
   return (
-    <Card className="mb-4" data-testid="faceid-setting">
-      <CardContent className="flex items-center justify-between gap-4 py-4">
-        <div className="min-w-0">
-          <p id="faceid-setting-label" className="text-[15px] font-semibold text-navy-900">פתיחה עם <span dir="ltr">{label}</span></p>
-          <p className="mt-0.5 text-[13px] leading-snug text-ink-600">בכל פתיחה, ואחרי 5 דקות ברקע</p>
+    <div className="mb-4 rounded-[16px] bg-white ring-1 ring-[#1B2656]/[0.07]" data-testid="faceid-setting">
+      <div className="flex min-h-[64px] items-center gap-3.5 px-4 py-3">
+        <FaceIdGlyph size={26} weight={1.75} className="shrink-0 text-[#1B2656]" />
+        <div className="min-w-0 flex-1">
+          <p id="faceid-setting-label" className="text-[16px] font-medium leading-tight text-[#1B2656]">פתיחה עם <span dir="ltr">{label}</span></p>
+          <p className="mt-1 text-[13px] leading-snug text-[#1B2656]/55">בכל פתיחה, ואחרי 5 דקות ברקע</p>
           {error ? <p role="alert" className="mt-1 text-[13px] text-danger-600">{error}</p> : null}
         </div>
         <Switch
@@ -64,7 +66,7 @@ export default function BiometricSetting() {
           aria-labelledby="faceid-setting-label"
           className="data-[state=checked]:before:bg-brand-600"
         />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
