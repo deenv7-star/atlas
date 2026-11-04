@@ -145,7 +145,7 @@ export default function GrowthS() {
 
         <div className="gs-foot">
           <p className="gs-ex">הדמיה להמחשה, נתוני דוגמה.</p>
-          <p className="gs-ready">{`כבר היום ב-atlas: ${GROWTH_STATUS.ready.join(' ו')}.`}</p>
+          <p className="gs-ready">{`כבר היום עם atlas: ${GROWTH_STATUS.ready.join(' ו')}.`}</p>
           <a className="gs-link" href="#pricing-growth">המחיר של צמיחה<ArrowDown size={16} strokeWidth={2.2} aria-hidden="true" /></a>
         </div>
       </div>

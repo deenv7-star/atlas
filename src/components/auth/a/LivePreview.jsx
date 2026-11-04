@@ -117,7 +117,7 @@ export function LivePreviewFull({ business, email, level }) {
       <div className="relative mx-auto w-full max-w-[600px]">
         <div className="mb-5 flex items-center gap-2 text-[13px] font-semibold text-brand-700">
           <span className="relative flex h-2 w-2"><span className="absolute inset-0 animate-ping rounded-full bg-brand-600/50 motion-reduce:hidden" /><span className="relative h-2 w-2 rounded-full bg-brand-600" /></span>
-          כך המתחם שלכם ייראה ב-atlas · תצוגה מקדימה
+          כך ייראה המתחם שלכם · תצוגה מקדימה
         </div>
 
         {/* the app window */}

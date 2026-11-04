@@ -14,7 +14,8 @@ const STATUS = {
 export const statusFor = (name) => STATUS[name] || 'בודקים';
 
 /** OpenAI Chat Completions call with tools. Returns the assistant message + usage. */
-export function openaiChat({ apiKey, model, effort = 'low', fetchImpl = fetch, user }) {
+// effort 'none': gpt-6-luna rejects function tools with any other reasoning_effort on /v1/chat/completions (verified 04.11.2026)
+export function openaiChat({ apiKey, model, effort = 'none', fetchImpl = fetch, user }) {
   return async (messages, signal) => {
     const res = await fetchImpl('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal,

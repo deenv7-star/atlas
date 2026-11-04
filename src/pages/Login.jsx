@@ -98,7 +98,7 @@ export default function Login() {
         if (msg.includes('invalid') || msg.includes('credentials')) {
           setErrors({ credentials: 'המייל או הסיסמה לא נכונים' });
         } else if (msg.includes('email not confirmed')) {
-          atlasToastApi.error('המייל עוד לא אומת. חפשו את המייל מ-atlas (גם בספאם), או בקשו קישור חדש במסך האימות.');
+          atlasToastApi.error('המייל עוד לא אומת. חפשו מייל מאיתנו (atlas), גם בספאם,, או בקשו קישור חדש במסך האימות.');
         } else if (err?.status === 404 || msg.includes('http 404')) {
           atlasToastApi.error(
             'משהו אצלנו לא זמין כרגע. נסו שוב בעוד כמה דקות.'

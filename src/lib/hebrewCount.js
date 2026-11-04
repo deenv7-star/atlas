@@ -7,7 +7,7 @@ const NOUNS = {
   property: { one: 'נכס אחד', many: 'נכסים' },
   complex: { one: 'מתחם אחד', many: 'מתחמים' },
   booking: { one: 'הזמנה אחת', many: 'הזמנות' },
-  lead: { one: 'ליד אחד', many: 'לידים' },
+  lead: { one: 'פנייה אחת', many: 'פניות' },
   guest: { one: 'אורח אחד', many: 'אורחים' },
   night: { one: 'לילה אחד', many: 'לילות' },
   day: { one: 'יום אחד', many: 'ימים', two: 'יומיים' },

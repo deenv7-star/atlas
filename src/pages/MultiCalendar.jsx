@@ -75,13 +75,13 @@ export default function MultiCalendar({ selectedPropertyId }) {
     }
   }, [navigate, qc]);
 
-  const empty = !data.isLoading && data.allUnits.length === 0;
+  const empty = !data.isLoading && !data.loadFailed && data.allUnits.length === 0;
 
   return (
     <div className="mx-auto w-full max-w-[1680px] px-5 pb-16 pt-6 md:px-8 md:pt-9 xl:px-10" dir="rtl">
       <header className="v5-rise mb-5 flex flex-row items-end justify-between gap-3 md:mb-6">
         <div>
-          <h1 className="flex items-center gap-1 text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">לוח שנה<HelpHint id="calendar.page" /></h1>
+          <h1 className="flex items-center gap-1 text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">יומן<HelpHint id="calendar.page" /></h1>
           <p className="mt-2 hidden text-[15px] text-navy-900/70 md:block">נוגעים ביום כדי להוסיף הזמנה או לחסום תאריכים.</p>
         </div>
         <div className="flex items-center gap-1">
@@ -109,8 +109,8 @@ export default function MultiCalendar({ selectedPropertyId }) {
             <UnitFilter units={data.allUnits} value={propertyId} onChange={(id) => void setUrlState({ propertyId: id })} />
           </MonthToolbar>
 
-          {data.isError ? (
-            <div className="v7-card p-4"><ErrorFallback /></div>
+          {data.loadFailed ? (
+            <div className="v7-card p-4"><ErrorFallback onRetry={() => data.refetch()} /></div>
           ) : data.isLoading ? (
             <div className="v7-card space-y-3 p-5" aria-busy="true" aria-label="טוען את הלוח">
               {Array.from({ length: 6 }, (_, i) => <SkelLine key={i} className="h-16 w-full" />)}

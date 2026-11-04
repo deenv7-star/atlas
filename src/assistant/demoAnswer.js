@@ -62,7 +62,7 @@ function month_(f) {
 }
 
 function leads_(f) {
-  if (!f.openLeads.length) return 'אין פניות פתוחות. כל הלידים קיבלו תשובה.\n\n[פתיחת הלידים](/leads)';
+  if (!f.openLeads.length) return 'אין פניות פתוחות. כל הפניות קיבלו תשובה.\n\n[פתיחת הפניות](/leads)';
   const rows = f.openLeads.slice(0, 6).map((l) => `- **${l.name}**${l.since ? `, מ-${short(l.since)}` : ''}${l.dates ? `, מבקשים את ${short(l.dates)}` : ''}`);
   return `${f.openLeads.length === 1 ? 'פנייה אחת מחכה' : `${f.openLeads.length} פניות מחכות`} לתשובה. הוותיקה ראשונה:\n\n${rows.join('\n')}\n\nכדאי לענות קודם לפנייה הוותיקה.\n\n[פתיחת הלידים](/leads)`;
 }
@@ -86,3 +86,34 @@ export function demoAnswer(question, facts) {
 
 export const DEMO_STREAM_PATH = '/api/assistant/stream';
 export { dayLabel };
+
+/* ── demo proposals: the same cards the live brain sends (propose_* tools), from the local snapshot ── */
+const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const plus = (iso, n) => { const d = new Date(`${iso}T00:00:00`); d.setDate(d.getDate() + n); return isoOf(d); };
+const nextDow = (iso, dow) => { const d = new Date(`${iso}T00:00:00`); d.setDate(d.getDate() + ((dow - d.getDay() + 7) % 7 || 7)); return isoOf(d); };
+export function demoProposal(question, f) {
+  const q = String(question || '');
+  if (/נציג|בן\s*אדם|לבטל.*מנוי|ביטול.*מנוי/.test(q)) {
+    return { kind: 'support_handoff', summary: 'העברה לנציג מצוות atlas', display: { text: q.slice(0, 200) },
+      say: 'הכנו פנייה לנציג מצוות atlas. הצוות זמין 24/7, והשיחה תעבור אליו רק אחרי שתלחצו אישור.' };
+  }
+  if (f && /(הודעה|תזכורת|וואטסאפ).*(ל|אל)/.test(q)) {
+    const p = f.overdue[0] || f.arrivals[0] || f.arrivalsTomorrow[0];
+    if (!p) return null;
+    const text = f.overdue[0] ? `שלום ${p.name}, תזכורת קטנה על יתרת התשלום להזמנה. אפשר להעביר בביט או בהעברה. תודה, ומחכים לכם.` : `שלום ${p.name}, מחכים לכם היום. הצ׳ק-אין מ-15:00, ונשמח לעזור בכל דבר.`;
+    return { kind: 'guest_message', summary: `הודעת וואטסאפ ל${p.name}`, display: { guest: p.name, text, booking_link: `/booking/${p.id}` }, client: { wa_link: null, booking_id: p.id },
+      say: `הכנו הודעה ל${p.name}. אחרי אישור היא תיפתח בוואטסאפ שלכם, ואתם לוחצים שליחה.` };
+  }
+  if (f && /(תכינו|תוסיפו|צרו|לרשום|לקבוע).*הזמנה|הזמנה חדשה/.test(q)) {
+    const u = f.freeNights.find((x) => x.weekend.length) || f.freeNights.find((x) => x.free);
+    if (!u) return null;
+    const ci = u.weekend[0] || nextDow(f.today, 4);
+    const co = plus(ci, 2);
+    const guest = (q.match(/ל([\u0590-\u05FF]{2,})(?=\s|$)/)?.[1] || 'אורח חדש').replace(/^ה/, '');
+    return { kind: 'create_booking', summary: `הזמנה ל${guest}, ${u.unit}, ${dayLabel(ci)} עד ${dayLabel(co)} (2 לילות)`,
+      display: { guest, unit: u.unit, check_in: ci, check_out: co, nights: 2, total_price: null, adults: 2, children: 0 },
+      payload: { guest_name: guest, unit_name: u.unit, check_in_date: ci, check_out_date: co, nights: 2, adults: 2, children: 0, total_price: null, status: 'PENDING', notes: '', source: 'direct' },
+      say: `הכנו הזמנה ל${guest} ב${u.unit.replace(/^ה/, '')}, ${dayLabel(ci)} עד ${dayLabel(co)}. היא תישמר רק אחרי שתלחצו אישור. מחיר אפשר להוסיף אחר כך במסך ההזמנה.` };
+  }
+  return null;
+}

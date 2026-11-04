@@ -23,6 +23,7 @@
 
 import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
 import { assertWritable } from '@/lib/accessLock';
+import { isNetworkError } from '@/lib/auth/authFailure';
 
 // Trial over and not paid (src/lib/access.js): writes are refused here for every backend (Supabase, REST, local demo).
 const WRITE_METHOD = /^(create|update|delete|bulk|upsert|insert|remove|set)/i;
@@ -481,14 +482,29 @@ const supabaseAuth = {
     // RLS still guards every query, so the server-verified getUser() is only a fallback.
     let user = null;
     let error = null;
+    let sessionError = null;
     try {
-      const { data: { session } = {} } = await supabase.auth.getSession();
+      const { data: { session } = {}, error: sErr } = await supabase.auth.getSession();
       user = session?.user || null;
-    } catch { /* fall through */ }
+      sessionError = sErr || null;
+    } catch (e) { sessionError = e; }
+    // Audit 04.11: the stored session could not be refreshed because the network failed. That is not
+    // "signed out": supabase-js keeps the session in storage, and so do we (AuthContext shows offline).
+    if (!user && sessionError && isNetworkError(sessionError)) {
+      const e = new Error('session refresh failed (network)');
+      e.isTransient = true;
+      throw e;
+    }
     if (!user) {
-      const r = await supabase.auth.getUser();
+      let r;
+      try { r = await supabase.auth.getUser(); } catch (e) { r = { data: {}, error: e }; }
       user = r.data?.user || null;
       error = r.error;
+      if (error && isNetworkError(error)) {
+        const e = new Error('getUser failed (network)');
+        e.isTransient = true;
+        throw e;
+      }
     }
     if (error || !user) {
       const err = new Error('Not authenticated');

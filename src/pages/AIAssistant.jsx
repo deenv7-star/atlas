@@ -5,7 +5,7 @@
  */
 import React, { useEffect } from 'react';
 import { Conversation } from '@/assistant/ui';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { useAssistantFacts } from '@/assistant/useAssistant';
 
 export default function AIAssistantPage({ user, orgId: orgIdProp }) {
@@ -28,7 +28,7 @@ export default function AIAssistantPage({ user, orgId: orgIdProp }) {
             <AtlasFace live size={48} className="as-head-face" />
             <div className="as-head-txt">
               <h1>שאלו את atlas</h1>
-              <p>תשובות מההזמנות, הכסף והלידים שלכם.</p>
+              <p>תשובות מההזמנות, הכסף והפניות שלכם.</p>
             </div>
             {hasThread ? <button type="button" className="as-new" onClick={clear}>שיחה חדשה</button> : null}
           </header>

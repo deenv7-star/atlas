@@ -3,7 +3,7 @@
  * radius, color and states stay identical across the app (tokens: src/styles/brand.css).
  */
 import HelpHint from '@/components/help/HelpHint';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { CountUp, GuestAvatar } from '@/components/app/atoms';
@@ -37,9 +37,11 @@ export function fmtShort(v) {
   const d = toDate(v);
   return d ? `${d.getDate()} ב${HEB_MONTH_SHORT[d.getMonth()]}` : '';
 }
+// M2 (audit 04.11): money is always a full number with thousands separators ("₪109,200"), never "₪109.2K".
+// `compact` is accepted for older callers and ignored.
+// eslint-disable-next-line no-unused-vars
 export function fmtMoney(n, { compact = false } = {}) {
   const num = Number(n) || 0;
-  if (compact && Math.abs(num) >= 10000) return `\u200F₪${(num / 1000).toLocaleString('he-IL', { maximumFractionDigits: 1 })}K`;
   return `\u200F₪${num.toLocaleString('he-IL', { maximumFractionDigits: 0 })}`;
 }
 export function fmtMonthYear(d) {
@@ -233,7 +235,7 @@ export function StatTile({ label, value, hint, tone = 'brand', className, loadin
       className={cn('v5-rise flex min-w-0 flex-col gap-1 px-5 py-5 md:px-6', hero ? 'v7-hero' : 'v7-card', to && 'press v7-lift', className)}
     >
       <span className="flex items-center justify-between gap-2">
-        <span className={cn('flex min-w-0 items-center gap-2 truncate text-[14px] font-medium', hero ? 'text-white/80' : 'text-ink-400')}>
+        <span className={cn('flex min-w-0 items-center gap-2 break-words text-[14px] font-medium leading-snug', hero ? 'text-white/80' : 'text-ink-400')}>
           {label}
           {attention ? <span aria-label="דורש תשומת לב" className="h-1.5 w-1.5 rounded-full bg-attention" /> : null}
         </span>

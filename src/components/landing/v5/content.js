@@ -61,7 +61,7 @@ export const TRUST = [
 const FROM_PRICE = PRICING_PLANS[0].price;
 export const FAQ = [
   // 05-channels (two-way calendar link, import every 15 min), BookingOverlapGuard (same unit, same nights: warns and asks for an explicit 'save anyway')
-  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד, ו-atlas מתריע לפני שרושמים הזמנה על לילות תפוסים. הערוצים מתעדכנים זה מזה מדי פעם ולא ברגע, ולכן כדאי להציץ בלוח לפני שמאשרים הזמנה.' },
+  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד. atlas מתריע לפני שרושמים הזמנה על לילות תפוסים. הערוצים מתעדכנים זה מזה מדי פעם ולא ברגע, ולכן כדאי להציץ בלוח לפני שמאשרים הזמנה.' },
   // 01-getting-started (one question per screen, about five minutes), 15-support (a person on WhatsApp)
   { q: 'קשה להתחיל? מישהו יעזור לי?', a: `לא קשה: atlas שואל שאלה אחת בכל פעם, בעברית פשוטה, ותוך כמה דקות הלוח שלכם מוכן. נתקעתם? בן אדם אמיתי עונה לכם בוואטסאפ ב-${PHONE_DISPLAY}, ${SUPPORT_247}, ועוזר להעביר את מה שיש לכם היום.` },
   // 06-whatsapp-messages (guest journey prepared on schedule, one tap from the owner's own WhatsApp, Shabbat quiet), 13 #2
@@ -71,7 +71,7 @@ export const FAQ = [
   // 01-getting-started #install (works in the browser, add to home screen), 13 #13 (no store app)
   { q: 'זה עובד גם בטלפון?', a: 'כן. atlas עובד בטלפון כמו במחשב, בלי להוריד אפליקציה מהחנות. מוסיפים אותו למסך הבית ופותחים בלחיצה, מכל מקום.' },
   // 07-money (payments recorded, balances, monthly report; documents are for records only, no tax allocation number), 13 #5 #11
-  { q: 'אפשר להוציא קבלות וחשבוניות?', a: 'atlas לא מפיק קבלות או חשבוניות: מפיקים אותן בתוכנה שלכם, כמו היום. ב-atlas רושמים כל תשלום ואת מספר המסמך, ורואים מי שילם ומה פתוח. בסוף החודש מורידים דוח מסודר לרואה החשבון.' },
+  { q: 'אפשר להוציא קבלות וחשבוניות?', a: 'atlas לא מפיק קבלות או חשבוניות: מפיקים אותן בתוכנה שלכם, כמו היום. אצלנו רושמים כל תשלום ואת מספר המסמך, ורואים מי שילם ומה פתוח. בסוף החודש מורידים דוח מסודר לרואה החשבון.' },
   // security.md (isolation per business, encrypted connection), privacy.md (no selling, no ads), terms #your-data + csvExport.js
   { q: 'המידע שלי ושל האורחים שמור?', a: 'כן. כל עסק רואה רק את המידע שלו, החיבור מוצפן, יש גיבוי יומי מוצפן, ואנחנו לא מוכרים מידע. הנתונים שייכים לכם, ואפשר להוריד אותם לאקסל בכל רגע.' },
   // pricing.js PRICING_PLANS[0] (one complex, whole system included); yearly and multi-complex plans shown in #pricing

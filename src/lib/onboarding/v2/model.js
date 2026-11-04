@@ -56,7 +56,7 @@ export const CHECKOUT_TIMES = ['10:00', '11:00', '12:00'];
 
 /** Where bookings come from. Booking / Airbnb decide which calendar steps the setup leads with. */
 export const CHANNELS = [
-  { value: 'phone', label: 'טלפון ווואטסאפ' },
+  { value: 'phone', label: 'טלפון או וואטסאפ' },
   { value: 'booking', label: 'Booking.com' },
   { value: 'airbnb', label: 'Airbnb' },
   { value: 'portals', label: 'אתרי צימרים' },

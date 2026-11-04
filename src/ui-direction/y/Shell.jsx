@@ -1,21 +1,23 @@
 /**
- * Y2 · "זכוכית" (after the visionOS fitness board Deen sent). The app floats over a real photo of a
- * zimmer: a frosted vertical rail (desktop), a floating glass toolbar on top, and a glass capsule at the
- * bottom on the phone. Active item: a white pill, indigo icon. lucide 1.75, nothing filled under icons.
+ * Y2 · "זכוכית" (after the visionOS fitness board Deen sent). Background (04.11.2026): Today floats over a bright
+ * green-hills photo (TodayBackdrop), every other screen over the calm canvas; a frosted vertical rail (desktop),
+ * a floating toolbar on top, and a glass capsule at the bottom on the phone. Active item: a white pill, indigo icon. lucide 1.75, nothing filled under icons.
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { setAssistantOpen, useAssistantOpen } from '@/assistant/launcher';
 import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, MoreHorizontal, Bell, LifeBuoy, Settings } from 'lucide-react';
 import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { useLiquidLens } from './useLiquidLens';
+import TodayBackdrop, { TODAY_PAGES } from './TodayBackdrop';
 import './y2.css';
+import './y-bg.css';
 
 export const shellClass = 'y2-shell';
 
@@ -66,7 +68,7 @@ export function Sidebar({ user, onLogout }) {
 
 export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }) {
   const quick = useQuickBooking();
-  // the shell paints Today and Bookings straight on the photo; every other page sits in a calm canvas window
+  // data-page drives the background: Today = hills photo + frosted cards (TodayBackdrop), every other page = calm canvas
   useEffect(() => {
     const shell = document.querySelector('.y2-shell');
     if (!shell) return undefined;
@@ -74,6 +76,8 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
     return () => { delete shell.dataset.page; };
   }, [currentPageName]);
   return (
+    <>
+    <TodayBackdrop on={TODAY_PAGES.has(currentPageName || '')} />
     <header className="y2-head">
       <div className="y2-bar">
         <Link to={createPageUrl('Dashboard')} aria-label="atlas, מסך היום" className="y2-bar-logo"><Wordmark size={19} /></Link>
@@ -91,6 +95,7 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         </UserMenu>
       </div>
     </header>
+    </>
   );
 }
 

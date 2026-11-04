@@ -97,6 +97,8 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader title="ביקורות" subtitle="מה האורחים כתבו, ולמי עוד כדאי לשלוח בקשה." className="!mb-0" />
 
+      {/* M6 (audit 04.11): no zero stats or filters before the first review */}
+      {!isLoading && reviews.length === 0 ? null : (<>
       <div className="stat-row">
         <StatTile label="דירוג ממוצע" value={stats.avg} icon={Star} tone="amber" />
         <StatTile label="התקבלו" value={stats.reviewed} icon={CheckCircle2} tone="success" />
@@ -121,6 +123,7 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
           options={[{ value: 'all', label: 'הכל' }, ...STATUS_OPTIONS.map((o) => ({ value: o.value, label: o.label }))]}
         />
       </div>
+      </>)}
 
       {/* Reviews list */}
       <div className="space-y-3">

@@ -28,8 +28,12 @@ function useIlHolidays() {
 }
 
 export function useCalendarData({ propertyId = null } = {}) {
-  const { data: rawBookings = [], isLoading: bLoading, isError: bError, refetch } = useBookings({}, '-check_in_date', 2000);
-  const { data: rawProperties = [], isLoading: pLoading, isError: pError } = useProperties();
+  const bookingsQ = useBookings({}, '-check_in_date', 2000);
+  const propertiesQ = useProperties();
+  const { isLoading: bLoading, isError: bError, refetch } = bookingsQ;
+  const { isLoading: pLoading, isError: pError } = propertiesQ;
+  const rawBookings = useMemo(() => bookingsQ.data || [], [bookingsQ.data]);
+  const rawProperties = useMemo(() => propertiesQ.data || [], [propertiesQ.data]);
   const hol = useIlHolidays();
 
   const allUnits = useMemo(() => rawProperties
@@ -49,6 +53,9 @@ export function useCalendarData({ propertyId = null } = {}) {
     allUnits, units, stays, occ, gaps, gapSet, holidays,
     isLoading: bLoading || pLoading,
     isError: bError || pError,
-    refetch,
+    // Audit 04.11 #5: a failed refresh with the grid already loaded keeps the grid (retry in the shell strip).
+    loadFailed: (bError && bookingsQ.data === undefined) || (pError && propertiesQ.data === undefined),
+    queries: [bookingsQ, propertiesQ],
+    refetch: () => Promise.all([refetch(), propertiesQ.refetch()]),
   };
 }

@@ -18,7 +18,7 @@ import { todayIL } from "../_shared/brain/dates.js";
 const minuteOk = makeMinuteLimiter(LIMITS.perMinute);
 const toolMinuteOk = makeMinuteLimiter(40); // voice: a few tool calls per spoken question
 const MODEL = Deno.env.get("BRAIN_MODEL") || "gpt-6-luna";
-const EFFORT = Deno.env.get("BRAIN_REASONING") || "low";
+const EFFORT = Deno.env.get("BRAIN_REASONING") || "none"; // luna + tools on chat/completions needs "none"
 
 Deno.serve(async (req) => {
   const origin = req.headers.get("Origin");

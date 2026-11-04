@@ -160,12 +160,33 @@ export default function SettingsPage({ user }) {
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Tab list */}
-        <div className="v7-strip -mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1 md:mx-0 md:w-56 md:flex-col md:px-0 flex-shrink-0">
+        {/* audit 04.11 m6: a real tablist (roles, selected state, arrow keys) */}
+        <div
+          role="tablist"
+          aria-label="אזורי ההגדרות"
+          aria-orientation="horizontal"
+          onKeyDown={(e) => {
+            const keys = { ArrowLeft: 1, ArrowDown: 1, ArrowRight: -1, ArrowUp: -1 };
+            if (!(e.key in keys)) return;
+            e.preventDefault();
+            const i = tabs.findIndex((t) => t.id === activeTab);
+            const next = tabs[(i + keys[e.key] + tabs.length) % tabs.length];
+            setActiveTab(next.id);
+            requestAnimationFrame(() => document.getElementById(`settings-tab-${next.id}`)?.focus());
+          }}
+          className="v7-strip -mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1 scroll-px-5 md:mx-0 md:w-56 md:flex-col md:px-0 flex-shrink-0"
+        >
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
+                id={`settings-tab-${tab.id}`}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                aria-controls="settings-panel"
+                tabIndex={activeTab === tab.id ? 0 : -1}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "press flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full px-4 text-[15px] text-right min-h-[44px]",
@@ -182,7 +203,7 @@ export default function SettingsPage({ user }) {
         </div>
 
         {/* Tab content */}
-        <div className="flex-1 min-w-0">
+        <div id="settings-panel" role="tabpanel" aria-labelledby={`settings-tab-${activeTab}`} className="flex-1 min-w-0">
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <Card>
@@ -347,7 +368,7 @@ export default function SettingsPage({ user }) {
               <CardContent className="space-y-1">
                 {[
                   { key: 'new_booking', label: 'הזמנה חדשה', desc: 'כשנכנסת הזמנה חדשה' },
-                  { key: 'new_lead', label: 'ליד חדש', desc: 'כשמגיעה פנייה חדשה' },
+                  { key: 'new_lead', label: 'פנייה חדשה', desc: 'כשאורח מבקש לבדוק תאריכים' },
                   { key: 'payment_received', label: 'תשלום התקבל', desc: 'כשמתקבל תשלום' },
                   { key: 'system_updates', label: 'חידושים', desc: 'כשמשהו חדש מגיע' },
                 ].map(item => (
