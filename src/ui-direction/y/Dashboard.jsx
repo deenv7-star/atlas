@@ -8,7 +8,7 @@
  */
 import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, MoreHorizontal, Sparkles } from 'lucide-react';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { unitPhoto } from '@/lib/stay/unitPhoto';
@@ -106,7 +106,9 @@ export default function DashboardView({ user, orgId }) {
   const today = [...departures.map((x) => ({ ...x, dir: 'out' })), ...arrivals.map((x) => ({ ...x, dir: 'in' }))];
   const upcoming = list.filter((b) => b.check_in_date > m.day).slice(0, 3);
 
+  // reducedMotion="user": with reduced motion the entrance keeps only the fade, no scale(.985) shrinking 44px targets to 43
   return (
+    <MotionConfig reducedMotion="user">
     <div className="y2" dir="rtl">
       <motion.div className="y2-win" {...rise(0)}>
         <div className="y2-main">
@@ -267,5 +269,6 @@ export default function DashboardView({ user, orgId }) {
         onSent={(key) => { if (composer) { m.markSent(composer.booking.id, composer.template); m.markSent(composer.booking.id, key); } }}
       />
     </div>
+    </MotionConfig>
   );
 }
