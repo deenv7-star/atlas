@@ -55,7 +55,7 @@ export default function NativeNotifySetting() {
           disabled={busy || denied}
           onCheckedChange={toggle}
           aria-labelledby="notify-setting-label"
-          className="data-[state=checked]:bg-brand-600"
+          className="data-[state=checked]:before:bg-brand-600"
         />
       </CardContent>
     </Card>

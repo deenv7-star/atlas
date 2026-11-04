@@ -62,7 +62,7 @@ export default function BiometricSetting() {
           disabled={busy}
           onCheckedChange={toggle}
           aria-labelledby="faceid-setting-label"
-          className="data-[state=checked]:bg-brand-600"
+          className="data-[state=checked]:before:bg-brand-600"
         />
       </CardContent>
     </Card>
