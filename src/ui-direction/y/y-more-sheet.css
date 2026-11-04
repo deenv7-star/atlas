@@ -1,12 +1,12 @@
 /* "עוד" / "כל המסכים" sheet (MoreSheet.jsx). Portalled outside .y2-shell, so colours are literal. indigo #3E2BF1 · navy #1B2656 · canvas #F7F8FB */
 .ycm-scrim { position: fixed; inset: 0; z-index: 80; background: rgba(27,38,86,.32); animation: ycm-fade .2s ease-out; }
-.ycm { position: fixed; z-index: 81; inset-inline: 0; bottom: 0; max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain;
+.ycm { position: fixed; z-index: 81; inset-inline: 0; bottom: 0; max-height: 88vh; max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain;
   background: #F7F8FB; color: #1B2656; font-family: Heebo, system-ui, sans-serif; border-radius: 28px 28px 0 0;
   padding: 8px 16px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -12px 40px -18px rgba(27,38,86,.35);
   animation: ycm-up .34s cubic-bezier(.23,1,.32,1); }
 .ycm:focus { outline: none; }
 @media (min-width: 640px) {
-  .ycm { inset: auto; left: 50%; top: 50%; bottom: auto; width: 520px; max-height: 80dvh; border-radius: 28px; padding-bottom: 20px;
+  .ycm { inset: auto; left: 50%; top: 50%; bottom: auto; width: 520px; max-height: 80vh; max-height: 80dvh; border-radius: 28px; padding-bottom: 20px;
     transform: translate(-50%, -50%); animation: ycm-pop .24s cubic-bezier(.23,1,.32,1); }
 }
 @keyframes ycm-up { from { transform: translateY(100%); } }
