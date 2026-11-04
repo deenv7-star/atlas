@@ -105,31 +105,37 @@ export function ArrivalsSheet({ open, onOpenChange, model, onOpenBooking }) {
 
 export function IncomeSheet({ open, onOpenChange, model }) {
   const known = model.moneyKnown;
-  const rec = model.money.received || 0; const exp = model.money.expected || 0;
   const now = new Date();
   const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   const inMonth = (model.data.bookings || []).filter(isActiveBooking).filter((b) => String(b.check_in_date).slice(0, 7) === ym)
-    .sort((a, z) => (Number(z.total_price) || 0) - (Number(a.total_price) || 0)).slice(0, 5);
+    .map((b) => ({ b, bal: model.balanceFor(b) }))
+    .sort((a, z) => (Number(z.b.total_price) || 0) - (Number(a.b.total_price) || 0));
+  const paid = inMonth.reduce((s, x) => s + (Number(x.bal.paid) || 0), 0);
+  const open_ = inMonth.reduce((s, x) => s + (Number(x.bal.balance) || 0), 0);
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} title={`הכסף של ${model.money.month}`} sub="לפי הזמנות שנכנסות החודש"
+    <Sheet open={open} onOpenChange={onOpenChange} title={`הכסף של ${model.money.month}`} sub="לפי הזמנות שמתחילות החודש"
       action={<Go to={createPageUrl('Payments')} onClick={() => onOpenChange(false)}>למסך כסף</Go>}>
       {!known ? <Empty title="לא הצלחנו לקרוא את התשלומים כרגע" line="נסו שוב בעוד רגע" /> : (
         <>
           <div className="yt-stats">
-            <Stat label="נכנס" value={money(rec)} strong />
-            <Stat label="עוד צפוי" value={money(Math.max(0, exp - rec))} />
-            <Stat label={`סה״כ ${model.money.month}`} value={money(exp)} />
+            <Stat label={`הכנסות ${model.money.month}`} value={money(model.money.received)} strong />
+            <Stat label="מתוכן שולם" value={money(paid)} />
+            <Stat label="יתרה פתוחה" value={money(open_)} />
           </div>
           {inMonth.length ? (
             <>
               <p className="yt-h">הזמנות החודש</p>
               <ul className="yt-list yt-list--plain">
-                {inMonth.map((b) => (
-                  <li key={b.id} className="yt-line"><span dir="auto">{guestLabel(b)}</span><small><bdi>{model.prop(b.property_id)?.name || ''}</bdi></small><b dir="ltr">{money(b.total_price)}</b></li>
+                {inMonth.slice(0, 6).map(({ b, bal }) => (
+                  <li key={b.id} className="yt-line">
+                    <span dir="auto">{guestLabel(b)}</span>
+                    <small>{bal.balance > 0 ? `יתרה ${money(bal.balance)}` : 'שולם'}</small>
+                    <b dir="ltr">{money(b.total_price)}</b>
+                  </li>
                 ))}
               </ul>
             </>
-          ) : <Empty title={`עוד אין הזמנות ב${model.money.month}`} line="כל הזמנה שתיכנס תופיע כאן עם הסכום שלה" />}
+          ) : <Empty title={`עוד אין הזמנות ב${model.money.month}`} line="כל הזמנה תופיע כאן עם הסכום שלה" />}
         </>
       )}
     </Sheet>
@@ -212,6 +218,7 @@ export function RevenueSheet({ open, onOpenChange, model }) {
 }
 
 const KIND = { message: 'הודעה', clean: 'ניקיון', lead: 'פנייה', balance: 'תשלום' };
+const VERB = { message: 'שליחה', clean: 'סימון', lead: 'מענה', balance: 'תזכורת' };
 
 export function DaySheet({ open, onOpenChange, model, onDo }) {
   const q = model.queue;
@@ -226,7 +233,7 @@ export function DaySheet({ open, onOpenChange, model, onDo }) {
             <li key={a.id} className="yt-row">
               <div className="yt-row-b yt-row-b--static">
                 <span className="yt-row-t"><em>{KIND[a.kind]}</em><b>{a.title}</b>{a.sub ? <small>{a.sub}</small> : null}</span>
-                <button type="button" className="yt-do press" onClick={() => onDo(a)}>{a.short}</button>
+                <button type="button" className="yt-do press" onClick={() => onDo(a)} aria-label={`${a.verb}: ${a.title}`}>{VERB[a.kind]}</button>
               </div>
             </li>
           ))}
@@ -242,7 +249,7 @@ export function NoBookingsCard({ onAdd }) {
     <section className="yt-nobook" aria-labelledby="yt-nobook-h">
       <div>
         <h2 id="yt-nobook-h">עוד אין כאן הזמנות</h2>
-        <p>הוסיפו הזמנה או חברו את Booking ו-Airbnb, והמספרים יתמלאו.</p>
+        <p>הוסיפו הזמנה או חברו ערוצים, והמספרים יתמלאו.</p>
       </div>
       <div className="yt-nobook-a">
         <button type="button" className="yt-go press" onClick={onAdd}><Plus strokeWidth={2} aria-hidden />הוספת הזמנה</button>

@@ -32,6 +32,9 @@
   .y2-tab[data-nav="A"] .y2-ta-disc { width: 46px; height: 46px; filter: drop-shadow(0 4px 6px rgba(27,38,86,.18)); }
   .y2-tab[data-nav="B"] .y2-ta { width: 60px; height: 60px; margin-top: -18px; }
   .y2-tab[data-nav="B"] .y2-ta-disc { width: 52px; height: 52px; filter: drop-shadow(0 6px 10px rgba(62,43,241,.22)) drop-shadow(0 1px 2px rgba(27,38,86,.18)); }
-  /* the fade band under the dock read as a second, wider pill over the Today photo: keep it only as a thin bottom fade */
-  .y2-tab[data-nav] ~ .y2-tab-scrim, .y2-tab-scrim { height: calc(56px + env(safe-area-inset-bottom)); }
+  /* "ghost pill": cards scrolling under the dock showed through its glass as a second, wider pill.
+     A near-opaque capsule and a fuller fade under it hide whatever passes beneath. */
+  .y2-shell .y2-tab[data-nav] ul { background: rgba(255,255,255,.96); }
+  .y2-shell .y2-tab-scrim { height: calc(104px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(247,248,251,.97), rgba(247,248,251,.9) 50%, rgba(247,248,251,0)); }
 }
