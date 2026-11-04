@@ -32,7 +32,7 @@ export function Orb({ state, levels, size = 220, label = '' }) {
       glow.addColorStop(1, 'rgba(62, 43, 241, 0)');
       g.fillStyle = glow; g.beginPath(); g.arc(cx, cy, r * 1.75, 0, Math.PI * 2); g.fill();
       // the body: a circle that ripples with the voice
-      const amp = (s === 'hearing' || s === 'speaking') ? 0.02 + lv * 0.07 : 0.008;
+      const amp = (s === 'hearing' || s === 'speaking') ? 0.012 + lv * 0.03 : 0.006; // a ripple, not a blob
       g.beginPath();
       for (let i = 0; i <= 120; i += 1) {
         const a = (i / 120) * Math.PI * 2;

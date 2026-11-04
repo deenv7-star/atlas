@@ -30,7 +30,17 @@ export function useScreen({ facts, page }) {
   const seeded = useRef(0);
   const lastStep = useRef('');
 
-  useEffect(() => { if (mode === 'voice') v.start(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // live: start at once (the tap unlocked audio). Demo: wait for the local data (max 2.5 s) so the stand-in answers from it.
+  const [waited, setWaited] = useState(!ASSISTANT_DEMO);
+  useEffect(() => { if (waited) return undefined; const id = setTimeout(() => setWaited(true), 2500); return () => clearTimeout(id); }, [waited]);
+  const ready = waited || facts != null;
+  const started = useRef(false);
+  useEffect(() => {
+    if (!ready || started.current) return;
+    started.current = true;
+    if (mode === 'voice') v.start();
+    else if (shot === 'text' && !t.messages.length) t.send('מי מגיע היום?'); // review shot "text": a short written exchange
+  }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // voice cannot run here → write instead, and say why once
   useEffect(() => {
@@ -39,8 +49,6 @@ export function useScreen({ facts, page }) {
     setMode('text');
   }, [v.state, v.error]);
 
-  // review shot "text": a short written exchange from the demo data
-  useEffect(() => { if (shot === 'text' && !t.messages.length) t.send('מי מגיע היום?'); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toText = useCallback(() => {
     const fresh = v.turns.slice(seeded.current);
