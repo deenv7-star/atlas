@@ -63,10 +63,9 @@ export function RecordPaymentSheet({ open, onOpenChange, booking, balance, orgId
       description={`${booking.guest_name || ''} · יתרה ${formatMoney(balance?.balance || 0)} מתוך ${formatMoney(balance?.total || 0)}`}
       footer={(
         <>
-          <Btn variant="primary" size="lg" icon={Check} onClick={save} disabled={n <= 0 || createPayment.isPending} className="w-full sm:w-auto">
-            {createPayment.isPending ? 'שומרים…' : 'שמירה'}
+          <Btn variant="primary" size="lg" icon={Check} onClick={save} disabled={n <= 0 || createPayment.isPending} className="w-full !h-[54px] !rounded-[16px] !text-[17px]">
+            {createPayment.isPending ? 'שומרים…' : 'שמירת תשלום'}
           </Btn>
-          <Btn variant="secondary" size="lg" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">ביטול</Btn>
         </>
       )}
     >
