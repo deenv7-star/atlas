@@ -77,7 +77,7 @@ export function ProposalCard({ p, onResolve, page = '', onNavigate, compact = fa
       <Details p={p} />
       {err ? <p className="pc-err" role="alert">{err}</p> : null}
       <div className="pc-actions">
-        <button type="button" className="pc-btn pc-btn--primary" onClick={confirm} disabled={busy}>{busy ? 'רגע…' : copy.confirm}</button>
+        <button type="button" className="pc-btn pc-btn--primary" onClick={confirm} disabled={busy}>{busy ? 'רגע…' : 'אישור'}</button>
         <button type="button" className="pc-btn" onClick={() => onResolve?.('dismissed')} disabled={busy}>ביטול</button>
       </div>
     </section>

@@ -1,16 +1,16 @@
 /** What atlas is doing while a tool runs, said plainly (same lines as the text brain, loop.js). */
 const LINES = {
-  get_day_overview: 'בודקים את היום', find_bookings: 'מחפשים בהזמנות', get_booking: 'פותחים את ההזמנה',
-  check_availability: 'בודקים מה פנוי', get_leads: 'בודקים פניות', get_money: 'בודקים בכספים',
-  get_business_settings: 'בודקים את ההגדרות', search_help: 'בודקים במדריך', propose_booking: 'מכינים הזמנה',
-  propose_guest_message: 'מכינים הודעה', propose_support_handoff: 'מכינים פנייה לנציג',
+  get_day_overview: 'רגע, בודקת את היום', find_bookings: 'מחפשת בהזמנות', get_booking: 'פותחת את ההזמנה',
+  check_availability: 'בודקת מה פנוי', get_leads: 'בודקת פניות', get_money: 'בודקת בכספים',
+  get_business_settings: 'בודקת בהגדרות', search_help: 'בודקת במדריך', propose_booking: 'מכינה הזמנה',
+  propose_guest_message: 'מכינה הודעה', propose_support_handoff: 'מכינה פנייה לנציג',
 };
-export const statusLine = (name) => LINES[name] || 'בודקים';
+export const statusLine = (name) => LINES[name] || 'רגע, בודקת';
 
 /** The caption under the face for each state. */
 export const STATE_LINE = {
-  idle: 'מוכנים', connecting: 'מתחברים', listening: 'מקשיבים', hearing: 'שומעים אתכם',
-  thinking: 'חושבים', speaking: 'atlas עונה', ended: 'השיחה הסתיימה', error: 'משהו השתבש',
+  idle: 'כאן בשבילכם', connecting: 'רגע, מתחברת', listening: 'מקשיבה', hearing: 'שומעת אתכם',
+  thinking: 'רגע, חושבת', speaking: 'atlas מדברת', ended: 'השיחה הסתיימה', error: 'משהו השתבש',
 };
 /** Face mood per state (AtlasFace moods). */
 export const STATE_MOOD = {

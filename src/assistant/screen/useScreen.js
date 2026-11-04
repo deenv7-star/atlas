@@ -14,6 +14,9 @@ import { primeVoiceAudio } from '../voice/prime.js';
 import { VOICE_ENABLED } from '../voice/config.js';
 import { STATE_LINE } from '../voice/status.js';
 import { ASSISTANT_DEMO } from '../api.js';
+import { useAuth } from '@/lib/AuthContext';
+import { firstName } from '../humanLines.js';
+import { cardFor } from './LiveCards.jsx';
 
 /** Voice errors that mean "write instead" rather than "try again". */
 const TO_TEXT = new Set(['mic_denied', 'mic_missing', 'not_configured', 'voice_not_ready', 'daily_limit']);
@@ -25,7 +28,9 @@ export function useScreen({ facts, page }) {
   const shot = typeof window !== 'undefined' && ASSISTANT_DEMO ? new URLSearchParams(window.location.search).get('voiceShot') : null;
   const [mode, setMode] = useState(() => (VOICE_ENABLED && shot !== 'text' ? assistantMode() : 'text'));
   const [notice, setNotice] = useState(null);
-  const v = useVoiceSession({ facts, page });
+  const { user } = useAuth();
+  const owner = firstName(user?.full_name);
+  const v = useVoiceSession({ facts, page, owner });
   const t = useAssistant({ facts, page });
   const seeded = useRef(0);
   const lastStep = useRef('');
@@ -85,7 +90,44 @@ export function useScreen({ facts, page }) {
   }, [mode, v, t]);
 
   const line = v.state === 'thinking' && v.toolLine ? v.toolLine : STATE_LINE[v.state] || '';
-  return { mode, notice, v, t, step, ask, toText, toVoice, line, lastUser: lastUserV, lastAtlas: voiceAnswered || v.state === 'speaking' ? lastAtlasV : null, starters: optionsOf(facts), shot };
+
+  /* ── how she feels: a sticky mood + one-shot pulses for the character ── */
+  const [feel, setFeel] = useState({ mood: 'neutral', pulse: { kind: '', n: 0 } });
+  const moodTimer = useRef(0);
+  const react = useCallback((kind, mood = null, ms = 1800) => {
+    setFeel((f) => ({ mood: mood || f.mood, pulse: { kind, n: f.pulse.n + 1 } }));
+    if (mood) { clearTimeout(moodTimer.current); moodTimer.current = setTimeout(() => setFeel((f) => ({ ...f, mood: 'neutral' })), ms); }
+  }, []);
+  useEffect(() => () => clearTimeout(moodTimer.current), []);
+  const prevState = useRef(v.state);
+  useEffect(() => { // a small reaction to every change of state
+    const was = prevState.current; prevState.current = v.state;
+    if (v.state === was) return;
+    if (v.state === 'speaking') react('word');
+    else if (v.state === 'thinking') react('nod');
+    else if (v.state === 'error') react('shake', 'concerned', 2600);
+    else if (v.state === 'listening' && was === 'connecting') react('hop');
+  }, [v.state, react]);
+  const nProps = v.proposals.length;
+  useEffect(() => { if (nProps) react('hop'); }, [nProps, react]);
+  const resolveVoice = useCallback((i, st, r) => {
+    v.resolveProposal(i, st, r);
+    if (st === 'confirmed') react('happy', 'happy', 2200);
+    else if (st === 'dismissed') react('nod');
+    else if (st === 'failed') react('shake', 'concerned', 2200);
+  }, [v, react]);
+  const resolveText = useCallback((id, i, st, r) => {
+    t.resolveProposal?.(id, i, st, r);
+    if (st === 'confirmed') react('happy', 'happy', 2200); else if (st === 'dismissed') react('nod');
+  }, [t, react]);
+
+  /* which live data card belongs to each atlas turn (from the question before it) */
+  const cardOf = useCallback((turns, idx) => {
+    for (let j = idx - 1; j >= 0; j -= 1) if (turns[j].role === 'user') return cardFor(turns[j].text || turns[j].content, '', facts);
+    return null;
+  }, [facts]);
+
+  return { feel, react, resolveVoice, resolveText, cardOf, owner, mode, notice, v, t, step, ask, toText, toVoice, line, lastUser: lastUserV, lastAtlas: voiceAnswered || v.state === 'speaking' ? lastAtlasV : null, starters: optionsOf(facts), shot };
 }
 
 /** Keep a scroller pinned to its newest line while content grows (cards, streaming), unless the owner scrolled up. */

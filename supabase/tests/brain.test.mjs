@@ -187,7 +187,7 @@ test('prompt v2: always answers, steers small talk back, one next step, options 
     assert.ok(!/מחוץ לנושא.*לא עונים/.test(p));
   }
   const v = brainPrompt({ mode: 'voice', today: TODAY });
-  assert.match(v, /לא רובוטי/); assert.match(v, /לא שמענו טוב/); assert.match(v, /רגע, בודקים/);
+  assert.match(v, /לא רובוטי/); assert.match(v, /לא שמעתי טוב/); assert.match(v, /רגע, בודקת/); assert.match(v, /גוף ראשון נקבה/);
   assert.ok(v.length < 9000, `voice prompt too long: ${v.length}`);
 });
 

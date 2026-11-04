@@ -17,6 +17,7 @@ import { startVoiceSession, endVoiceSession, runVoiceTool, VoiceError, VOICE_ERR
 import { VoiceAudio, RealtimeLink } from './realtime.js';
 import { RENEW_BEFORE_S } from './config.js';
 import { demoAnswer, demoProposal } from '../demoAnswer.js';
+import { humanDay } from '../humanLines.js';
 import { PLATFORM } from '../api.js';
 import { statusLine } from './status.js';
 
@@ -29,7 +30,7 @@ async function micBlocked() {
 }
 const plain = (md) => String(md || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '').replace(/[*_#>|`]/g, '').replace(/^-{3,}.*$/gm, '').replace(/\n{2,}/g, '\n').split('\n').filter((l) => l.trim() && !/^\s*-+\s*$/.test(l)).slice(0, 2).join(' ').trim();
 
-export function useVoiceSession({ facts, page = '' }) {
+export function useVoiceSession({ facts, page = '', owner = '' }) {
   const [state, setState] = useState('idle');
   const [toolLine, setToolLine] = useState('');
   const [turns, setTurns] = useState([]);
@@ -87,7 +88,7 @@ export function useVoiceSession({ facts, page = '' }) {
           setState((st) => (st === 'connecting' ? 'listening' : st));
         },
         state: (st) => { if (!alive.current) return; setState(st); if (st === 'hearing' || st === 'speaking') setNote(''); },
-        unanswered: () => alive.current && setNote('לא שמענו טוב. אפשר לחזור על השאלה?'),
+        unanswered: () => alive.current && setNote('לא שמעתי טוב. אפשר לחזור על השאלה?'),
         user: addUser,
         atlas: upsertAtlas,
         tool: onTool,
@@ -123,29 +124,29 @@ export function useVoiceSession({ facts, page = '' }) {
   /* ── demo: scripted, from the local snapshot only ── */
   const runDemo = useCallback(() => {
     const q1 = 'מי מגיע היום?';
-    const a1 = plain(demoAnswer(q1, facts, { native: PLATFORM === 'ios' })) || 'היום אין כניסות.';
-    const q2 = 'תכינו הזמנה חדשה לנועה לסוף השבוע';
+    const a1 = humanDay(facts, owner) || plain(demoAnswer(q1, facts, { native: PLATFORM === 'ios' })) || 'היום אין כניסות.';
+    const q2 = 'תכיני הזמנה חדשה לנועה לסוף השבוע';
     const p2 = demoProposal(q2, facts);
     const step = (ms, fn) => later(() => alive.current && fn(), (demoT.current += ms));
     demoT.current = 0;
-    step(700, () => setState('listening'));
-    step(1400, () => setState('hearing'));
-    step(1500, () => { addUser(q1); setState('thinking'); setToolLine(statusLine('get_day_overview')); });
+    step(650, () => setState('listening'));
+    step(1100, () => setState('hearing'));
+    step(1300, () => { addUser(q1); setState('thinking'); setToolLine(statusLine('get_day_overview')); });
     step(1100, () => { setToolLine(''); setState('speaking'); upsertAtlas(a1, false); });
-    step(2600, () => { upsertAtlas(a1, true); setState('listening'); });
+    step(2300, () => { upsertAtlas(a1, true); setState('listening'); });
     if (p2) {
-      step(1600, () => setState('hearing'));
-      step(1500, () => { addUser(q2); setState('thinking'); setToolLine(statusLine('propose_booking')); });
+      step(900, () => setState('hearing'));
+      step(1300, () => { addUser(q2); setState('thinking'); setToolLine(statusLine('propose_booking')); });
       step(1100, () => { setToolLine(''); setProposals([{ ...p2, state: 'proposed' }]); setState('speaking'); upsertAtlas(p2.say, false); });
-      step(2400, () => { upsertAtlas(p2.say, true); setState('listening'); });
+      step(2100, () => { upsertAtlas(p2.say, true); setState('listening'); });
     }
-  }, [facts, addUser, upsertAtlas]);
+  }, [facts, owner, addUser, upsertAtlas]);
 
   /** Review only (demo builds): ?voiceShot=listening|hearing|thinking|speaking|confirm|whatsapp|denied|error|text freezes one moment. */
   const shot = useCallback((name) => {
     const q1 = 'מי מגיע היום?';
-    const a1 = plain(demoAnswer(q1, facts)) || 'היום אין כניסות.';
-    const q2 = 'תכינו הזמנה חדשה לנועה לסוף השבוע';
+    const a1 = humanDay(facts, owner) || plain(demoAnswer(q1, facts)) || 'היום אין כניסות.';
+    const q2 = 'תכיני הזמנה חדשה לנועה לסוף השבוע';
     const p2 = demoProposal(q2, facts);
     if (name === 'denied') { setError({ code: 'mic_denied', message: VOICE_ERRORS.mic_denied }); setState('error'); return; }
     if (name === 'error') { setError({ code: 'network', message: VOICE_ERRORS.network }); setState('error'); return; }
@@ -163,7 +164,7 @@ export function useVoiceSession({ facts, page = '' }) {
     if (p) setProposals([{ ...p, state: 'proposed' }]);
     upsertAtlas(p?.say || '', true);
     setState('listening');
-  }, [facts, addUser, upsertAtlas]);
+  }, [facts, owner, addUser, upsertAtlas]);
 
   /** start({ resume }) — call inside the tap. `resume`: what was already said in writing, so voice continues it. */
   const start = useCallback(async ({ resume = '' } = {}) => {
