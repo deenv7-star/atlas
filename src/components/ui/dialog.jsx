@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useKeyboardInset } from "@/hooks/useKeyboardInset"
 
 const Dialog = DialogPrimitive.Root
 
@@ -44,6 +45,7 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => {
   const sheetMode = useSheetMode()
+  const { inset, viewport } = useKeyboardInset(sheetMode)
   const [uiState, setUiState] = React.useState('open')
   const innerRef = React.useRef(null)
 
@@ -70,10 +72,10 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
         <motion.div
           ref={mergedRef}
           className={cn(
-            "fixed z-50 grid w-full gap-4 bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-sheet max-h-[92dvh] overflow-y-auto inset-x-0 bottom-0 rounded-t-[28px] data-[state=open]:slide-in-from-bottom-full sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-lg sm:rounded-[24px] sm:border sm:border-line sm:p-6 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[0.98] max-sm:!w-full max-sm:!max-w-none max-sm:!left-0 max-sm:!right-0 max-sm:!top-auto max-sm:!rounded-b-none max-sm:!rounded-t-[28px]",
+            "fixed z-50 grid w-full gap-5 bg-white px-5 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-[#1B2656] shadow-sheet max-h-[92dvh] overflow-y-auto overflow-x-hidden overscroll-contain inset-x-0 bottom-0 rounded-t-[28px] data-[state=open]:slide-in-from-bottom-full sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-lg sm:rounded-[24px] sm:border sm:border-line sm:p-6 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[0.98] max-sm:!w-full max-sm:!max-w-none max-sm:!left-0 max-sm:!right-0 max-sm:!top-auto max-sm:!rounded-b-none max-sm:!rounded-t-[28px]",
             className
           )}
-          style={sheetMode ? { x: 0, y: 0 } : { x: '-50%', y: '-50%' }}
+          style={sheetMode ? { x: 0, y: 0, bottom: inset, maxHeight: inset && viewport ? `${Math.max(320, viewport - 12)}px` : undefined } : { x: '-50%', y: '-50%' }}
           initial={sheetMode ? { opacity: 1, y: '100%', x: 0 } : { opacity: 0, scale: 0.97, x: '-50%', y: '-50%' }}
           animate={
             sheetMode
@@ -84,11 +86,11 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
           }
           transition={uiState === 'open' ? (sheetMode ? sheetSpring : springOpen) : tweenExit}
         >
-          <div aria-hidden className="mx-auto -mt-2 mb-1 h-1.5 w-10 rounded-full bg-neutral-300 sm:hidden" />
+          <div aria-hidden className="mx-auto -mt-1.5 -mb-2 h-[5px] w-9 rounded-full bg-[#1B2656]/15 sm:hidden" />
           {children}
           <DialogPrimitive.Close
-            className="absolute left-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-600 hover:bg-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 disabled:pointer-events-none">
-            <X className="h-5 w-5" />
+            className="press absolute left-3 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#F7F8FB] text-[#1B2656]/70 hover:text-[#1B2656] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 disabled:pointer-events-none sm:top-4">
+            <X className="h-[18px] w-[18px]" strokeWidth={2} />
             <span className="sr-only">סגירה</span>
           </DialogPrimitive.Close>
         </motion.div>
@@ -103,7 +105,7 @@ const DialogHeader = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col space-y-1.5 text-start pe-12", className)}
+    className={cn("flex flex-col gap-1 pt-1 text-start pe-12", className)}
     {...props} />
 )
 DialogHeader.displayName = "DialogHeader"
@@ -121,7 +123,7 @@ DialogFooter.displayName = "DialogFooter"
 const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+    className={cn("text-[21px] font-bold leading-tight tracking-[-0.01em] text-[#1B2656]", className)}
     {...props} />
 ))
 DialogTitle.displayName = DialogPrimitive.Title.displayName
@@ -129,7 +131,7 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName
 const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-[15px] leading-snug text-[#1B2656]/70", className)}
     {...props} />
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName

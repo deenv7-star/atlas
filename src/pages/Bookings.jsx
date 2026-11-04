@@ -6,14 +6,11 @@ import { useBookings, useCreateBooking, useUpdateBooking, useDeleteBooking } fro
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast, deleteBookingWithUndo } from '@/components/ui/AtlasToast';
 import { useProperties } from '@/data/entities';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { BookingsTable } from '@/components/tables/BookingsTable';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-} from '@/components/ui/dialog';
+import { AtlasSheet, SheetFooter, SheetSubmit, SheetTextButton, SheetField, SheetSelect, DateRangeField } from '@/components/ui/sheet/index';
+import { displayUnits } from '@/lib/unitName';
 import { Plus, Search, SlidersHorizontal, Download } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -265,21 +262,6 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
 
   const dateInputValue = (d) => (d ? format(d, 'yyyy-MM-dd') : '');
 
-  const onDateFromInput = (e) => {
-    const v = e.target.value;
-    void setUrlState({
-      dateFrom: v ? startOfDay(parse(v, 'yyyy-MM-dd', new Date())) : null,
-      page: 1,
-    });
-  };
-  const onDateToInput = (e) => {
-    const v = e.target.value;
-    void setUrlState({
-      dateTo: v ? endOfDay(parse(v, 'yyyy-MM-dd', new Date())) : null,
-      page: 1,
-    });
-  };
-
   const filtersActive = statusFilterArr.length > 0 || !!dateFrom || !!dateTo || !!urlPropertyId;
   const hasQuery = !!search || tab !== 'all' || filtersActive;
 
@@ -407,64 +389,62 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
         onSent={(key) => { if (composer) { m.markSent(composer.booking.id, composer.template); m.markSent(composer.booking.id, key); } }}
       />
 
-      <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-bold text-navy-900">סינון הזמנות</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-5">
-            <div>
-              <p className="mb-2 text-[14px] font-medium text-ink-600">מצב ההזמנה</p>
-              <div className="flex flex-wrap gap-2">
-                {STATUS_OPTIONS.map((s) => {
-                  const on = statusFilterArr.includes(s.value);
-                  return (
-                    <button
-                      key={s.value}
-                      type="button"
-                      aria-pressed={on}
-                      onClick={() => {
-                        const next = on ? statusFilterArr.filter((x) => x !== s.value) : [...statusFilterArr, s.value];
-                        void setUrlState({ status: next, page: 1 });
-                      }}
-                      className={cn('press h-10 rounded-full border px-4 text-[14px] font-medium', on ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-line bg-white text-navy-900')}
-                    >
-                      {s.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div>
-              <p className="mb-2 text-[14px] font-medium text-ink-600">תאריך כניסה</p>
-              <div className="grid grid-cols-2 gap-2">
-                <Input type="date" value={dateInputValue(dateFrom)} onChange={onDateFromInput} aria-label="מתאריך" dir="ltr" />
-                <Input type="date" value={dateInputValue(dateTo)} onChange={onDateToInput} aria-label="עד תאריך" dir="ltr" />
-              </div>
-            </div>
-            {properties.length > 0 ? (
-              <div>
-                <p className="mb-2 text-[14px] font-medium text-ink-600">יחידה</p>
-                <select
-                  className="h-11 w-full rounded-[10px] border border-line bg-white px-3 text-[15px]"
-                  value={urlPropertyId ?? ''}
-                  onChange={(e) => void setUrlState({ propertyId: e.target.value || null, page: 1 })}
-                  aria-label="יחידה"
+      <AtlasSheet open={filtersOpen} onOpenChange={setFiltersOpen} title="סינון הזמנות">
+        <div className="mb-6">
+          <p id="bk-f-status" className="mb-2 text-[15px] font-semibold text-[#1B2656]">מצב ההזמנה</p>
+          <div className="flex flex-wrap gap-2" role="group" aria-labelledby="bk-f-status">
+            {STATUS_OPTIONS.map((s) => {
+              const on = statusFilterArr.includes(s.value);
+              return (
+                <button
+                  key={s.value}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => {
+                    const next = on ? statusFilterArr.filter((x) => x !== s.value) : [...statusFilterArr, s.value];
+                    void setUrlState({ status: next, page: 1 });
+                  }}
+                  className={cn('press h-11 rounded-full border px-4 text-[15px] font-medium', on ? 'border-[#3E2BF1] bg-[#3E2BF1]/[0.06] text-[#3E2BF1]' : 'border-[#E3E6EF] bg-white text-[#1B2656]/80')}
                 >
-                  <option value="">כל היחידות</option>
-                  {properties.map((p) => <option key={p.id} value={p.id}>{p.name || p.id}</option>)}
-                </select>
-              </div>
-            ) : null}
-            <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row">
-              <Button variant="outline" onClick={() => void setUrlState({ status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי</Button>
-              <Button onClick={() => setFiltersOpen(false)}>{sorted.length === 1 ? "הצגת הזמנה אחת" : `הצגת ${sorted.length} הזמנות`}</Button>
-            </div>
+                  {s.label}
+                </button>
+              );
+            })}
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+        <div className="mb-6">
+          <DateRangeField
+            idPrefix="bk-f-dates"
+            label="תאריך כניסה"
+            labels={{ start: 'מתאריך', end: 'עד' }}
+            start={dateInputValue(dateFrom)}
+            end={dateInputValue(dateTo)}
+            onChange={({ start, end }) => void setUrlState({
+              dateFrom: start ? startOfDay(parse(start, 'yyyy-MM-dd', new Date())) : null,
+              dateTo: end ? endOfDay(parse(end, 'yyyy-MM-dd', new Date())) : null,
+              page: 1,
+            })}
+          />
+        </div>
+        {properties.length > 1 ? (
+          <SheetField label="יחידה" htmlFor="bk-f-unit" className="mb-6">
+            <SheetSelect
+              id="bk-f-unit"
+              value={urlPropertyId ?? ''}
+              options={[{ value: '', label: 'כל היחידות' }, ...displayUnits(properties).map((p) => ({ value: p.id, label: p.name }))]}
+              onChange={(e) => void setUrlState({ propertyId: e.target.value || null, page: 1 })}
+            />
+          </SheetField>
+        ) : null}
+        <SheetFooter>
+          <SheetSubmit onClick={() => setFiltersOpen(false)}>{sorted.length === 1 ? 'הצגת הזמנה אחת' : `הצגת ${sorted.length} הזמנות`}</SheetSubmit>
+          {filtersActive ? (
+            <SheetTextButton onClick={() => void setUrlState({ status: [], dateFrom: null, dateTo: null, propertyId: null, page: 1 })}>ניקוי הסינון</SheetTextButton>
+          ) : null}
+        </SheetFooter>
+      </AtlasSheet>
 
-      <Dialog
+      <AtlasSheet
         open={showDialog}
         onOpenChange={(open) => {
           const h = bookingDialogInterceptRef.current;
@@ -475,11 +455,9 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
           setShowDialog(open);
           if (!open) setOpenBookingId(null);
         }}
+        title={editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}
+        subtitle={editingBooking ? null : 'את השאר אפשר להשלים אחר כך.'}
       >
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-bold text-navy-900">{editingBooking ? 'עריכת הזמנה' : 'הזמנה חדשה'}</DialogTitle>
-          </DialogHeader>
           <BookingForm
             key={editingBooking?.id ?? 'new'}
             storageSuffix={editingBooking?.id ?? 'new'}
@@ -496,8 +474,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
             }}
             submitLabel={editingBooking ? 'שמירת שינויים' : 'שמירת הזמנה'}
           />
-        </DialogContent>
-      </Dialog>
+      </AtlasSheet>
     </div>
   );
 }

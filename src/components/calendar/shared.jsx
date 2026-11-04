@@ -7,8 +7,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Lock, Plus } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { AtlasSheet, SheetFooter, SheetSubmit, SheetTextButton, SheetField, SheetSelect, SheetInput, DateRangeField } from '@/components/ui/sheet/index';
+import { displayUnits } from '@/lib/unitName';
 import { useCreateBooking } from '@/data/entities';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -175,58 +175,56 @@ export function useDayActions() {
 export function DaySheet({ actions, units, stays, holidays }) {
   const { day, setDay, newBooking, newBlock } = actions;
   const d = day?.day;
+  const named = useMemo(() => displayUnits(units), [units]);
   const list = useMemo(() => {
     if (!d) return [];
-    const subset = day.unitId ? units.filter((u) => u.id === day.unitId) : units;
+    const subset = day.unitId ? named.filter((u) => u.id === day.unitId) : named;
     return subset.map((u) => ({ unit: u, ...dayAtUnit(stays, u.id, d) }));
-  }, [d, day, units, stays]);
+  }, [d, day, named, stays]);
   const hol = d ? holidays.get(d) : null;
   const singleUnit = list.length === 1 ? list[0].unit : null;
   const anyFree = list.some((r) => r.freeNight);
   return (
-    <Dialog open={Boolean(d)} onOpenChange={(o) => { if (!o) setDay(null); }}>
-      <DialogContent className="sm:max-w-md">
-        {d ? (
-          <>
-            <DialogHeader className="text-right">
-              <DialogTitle className="text-[22px] font-bold text-navy-900">{longDay(d)}</DialogTitle>
-              <DialogDescription className="text-[15px] text-navy-900/70">
-                {hol?.length ? hol.map((h) => h.title).join(' · ') : (d === todayIso() ? 'היום' : 'מה קורה ביום הזה')}
-              </DialogDescription>
-            </DialogHeader>
-            <ul className="-mx-1 space-y-1">
-              {list.map((r) => (
-                <li key={r.unit.id} className="rounded-[16px] bg-[#F7F8FB] px-3 py-2.5">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="truncate text-[15px] font-semibold text-navy-900">{r.unit.name}</span>
-                    <span className={cn('shrink-0 text-[13px] font-semibold', r.freeNight ? 'text-brand-600' : 'text-navy-900/70')}>{r.freeNight ? 'הלילה פנוי' : 'הלילה תפוס'}</span>
-                  </div>
-                  {[...r.leaving.map((s) => ['יוצאים', s]), ...r.arriving.map((s) => ['מגיעים', s]), ...r.staying.map((s) => ['שוהים', s])].map(([k, s]) => (
-                    <Link key={`${k}-${s.id}`} to={`${createPageUrl('BookingDetail')}/${s.id}`} className="mt-1 flex min-h-[44px] items-center gap-2 rounded-[12px] px-1 text-[14px] text-navy-900 hover:bg-white">
-                      <span className="w-[52px] shrink-0 text-navy-900/70">{s.isBlock ? 'חסום' : k}</span>
-                      <span className="min-w-0 flex-1 truncate font-medium">{s.isBlock ? `עד ${shortDay(s.end)}` : stayLabel(s)}</span>
-                      {!s.isBlock ? <SourceBadge channel={s.channel} /> : null}
-                    </Link>
-                  ))}
-                </li>
-              ))}
-            </ul>
-            {anyFree ? (
-              <div className="grid grid-cols-2 gap-2">
-                <Button onClick={() => newBooking(singleUnit || list.find((r) => r.freeNight)?.unit, d)} className="h-12">
-                  <Plus aria-hidden />הזמנה חדשה
-                </Button>
-                <Button variant="outline" onClick={() => newBlock(singleUnit?.id || list.find((r) => r.freeNight)?.unit.id, d)} className="h-12">
-                  <Lock aria-hidden />חסימת תאריכים
-                </Button>
-              </div>
-            ) : (
-              <p className="text-[14px] text-navy-900/70">כל היחידות תפוסות בלילה הזה.</p>
-            )}
-          </>
-        ) : null}
-      </DialogContent>
-    </Dialog>
+    <AtlasSheet
+      open={Boolean(d)}
+      onOpenChange={(o) => { if (!o) setDay(null); }}
+      title={d ? longDay(d) : ''}
+      subtitle={d ? (hol?.length ? hol.map((h) => h.title).join(' · ') : (d === todayIso() ? 'היום' : 'מה קורה ביום הזה')) : null}
+    >
+      {d ? (
+        <>
+          <ul className="mb-5 space-y-2">
+            {list.map((r) => (
+              <li key={r.unit.id} className="rounded-[18px] bg-[#F7F8FB] px-4 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="truncate text-[16px] font-semibold text-[#1B2656]">{r.unit.name}</span>
+                  <span className={cn('shrink-0 text-[14px] font-semibold', r.freeNight ? 'text-[#3E2BF1]' : 'text-[#1B2656]/60')}>{r.freeNight ? 'הלילה פנוי' : 'הלילה תפוס'}</span>
+                </div>
+                {[...r.leaving.map((s) => ['יוצאים', s]), ...r.arriving.map((s) => ['מגיעים', s]), ...r.staying.map((s) => ['שוהים', s])].map(([k, s]) => (
+                  <Link key={`${k}-${s.id}`} to={`${createPageUrl('BookingDetail')}/${s.id}`} className="mt-1 flex min-h-[44px] items-center gap-2 rounded-[12px] px-1 text-[15px] text-[#1B2656] hover:bg-white">
+                    <span className="w-[56px] shrink-0 text-[#1B2656]/60">{s.isBlock ? 'חסום' : k}</span>
+                    <span className="min-w-0 flex-1 truncate font-medium">{s.isBlock ? `עד ${shortDay(s.end)}` : stayLabel(s)}</span>
+                    {!s.isBlock ? <SourceBadge channel={s.channel} /> : null}
+                  </Link>
+                ))}
+              </li>
+            ))}
+          </ul>
+          {anyFree ? (
+            <SheetFooter>
+              <SheetSubmit onClick={() => newBooking(singleUnit || list.find((r) => r.freeNight)?.unit, d)}>
+                <span className="inline-flex items-center gap-1.5"><Plus aria-hidden className="h-5 w-5" />הזמנה חדשה</span>
+              </SheetSubmit>
+              <SheetTextButton onClick={() => newBlock(singleUnit?.id || list.find((r) => r.freeNight)?.unit.id, d)}>
+                <Lock aria-hidden className="h-4 w-4" />חסימת תאריכים
+              </SheetTextButton>
+            </SheetFooter>
+          ) : (
+            <p className="text-[15px] text-[#1B2656]/65">כל היחידות תפוסות בלילה הזה.</p>
+          )}
+        </>
+      ) : null}
+    </AtlasSheet>
   );
 }
 
@@ -252,41 +250,41 @@ export function BlockDialog({ actions, units }) {
       atlasToastApi.error(e?.message ? `לא הצלחנו לחסום: ${e.message}` : 'לא הצלחנו לחסום. נסו שוב.');
     } finally { setBusy(false); }
   };
-  const field = 'mt-1.5 h-12 w-full rounded-[14px] border-0 bg-[#F7F8FB] px-3 text-[16px] text-navy-900 ring-1 ring-inset ring-navy-900/10 focus:ring-2 focus:ring-brand-600';
+  const named = displayUnits(units);
   return (
-    <Dialog open={Boolean(block)} onOpenChange={(o) => { if (!o) setBlock(null); }}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="text-right">
-          <DialogTitle className="text-[22px] font-bold text-navy-900">חסימת תאריכים</DialogTitle>
-          <DialogDescription className="text-[15px] text-navy-900/70">אם Booking ו-Airbnb מחוברים, הם ייסגרו גם שם.</DialogDescription>
-        </DialogHeader>
-        {block ? (
-          <div className="grid gap-3">
-            {units.length > 1 ? (
-              <label className="block text-[14px] font-semibold text-navy-900">יחידה
-                <select className={field} value={v.unitId || ''} onChange={(e) => setBlock({ ...v, unitId: e.target.value })}>
-                  <option value="" disabled>בחרו יחידה</option>
-                  {units.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                </select>
-              </label>
+    <AtlasSheet
+      open={Boolean(block)}
+      onOpenChange={(o) => { if (!o) setBlock(null); }}
+      title="חסימת תאריכים"
+      subtitle="אם Booking ו-Airbnb מחוברים, הם ייסגרו גם שם."
+    >
+      {block ? (
+        <>
+          <div className="mb-5 flex flex-col gap-5">
+            {named.length > 1 ? (
+              <SheetField label="יחידה" htmlFor="blk-unit">
+                <SheetSelect id="blk-unit" value={v.unitId || ''} placeholder="בחרו יחידה" options={named.map((u) => ({ value: u.id, label: u.name }))} onChange={(e) => setBlock({ ...v, unitId: e.target.value })} />
+              </SheetField>
             ) : null}
-            <div className="grid grid-cols-2 gap-3">
-              <label className="block text-[14px] font-semibold text-navy-900">מתאריך
-                <input type="date" className={field} value={v.start} onChange={(e) => { const s = e.target.value; setBlock({ ...v, start: s, end: v.end <= s ? addDaysIso(s, 1) : v.end }); }} />
-              </label>
-              <label className="block text-[14px] font-semibold text-navy-900">עד (לא כולל)
-                <input type="date" className={field} value={v.end} min={v.start ? addDaysIso(v.start, 1) : undefined} onChange={(e) => setBlock({ ...v, end: e.target.value })} />
-              </label>
-            </div>
-            <label className="block text-[14px] font-semibold text-navy-900">הערה <span className="font-normal text-navy-900/70">(לא חובה)</span>
-              <input type="text" className={field} value={v.note || ''} placeholder="למשל: שיפוץ, משפחה" onChange={(e) => setBlock({ ...v, note: e.target.value })} />
-            </label>
-            <Button onClick={save} disabled={!valid || busy} className="h-12">
-              {valid ? `חסימת ${heCount(nights, 'night')}` : 'בחרו יחידה ותאריכים'}
-            </Button>
+            <DateRangeField
+              idPrefix="blk-dates"
+              label="תאריכים"
+              labels={{ start: 'מתאריך', end: 'עד' }}
+              start={v.start || ''}
+              end={v.end || ''}
+              onChange={({ start, end }) => setBlock({ ...v, start, end })}
+            />
+            <SheetField label="הערה" optional htmlFor="blk-note" hint="למשל: שיפוץ, משפחה">
+              <SheetInput id="blk-note" value={v.note || ''} onChange={(e) => setBlock({ ...v, note: e.target.value })} />
+            </SheetField>
           </div>
-        ) : null}
-      </DialogContent>
-    </Dialog>
+          <SheetFooter>
+            <SheetSubmit onClick={save} disabled={!valid} state={busy ? 'submitting' : 'idle'}>
+              {valid ? `חסימת ${heCount(nights, 'night')}` : 'בחרו יחידה ותאריכים'}
+            </SheetSubmit>
+          </SheetFooter>
+        </>
+      ) : null}
+    </AtlasSheet>
   );
 }

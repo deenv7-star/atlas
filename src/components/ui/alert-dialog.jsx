@@ -3,6 +3,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
+import { useKeyboardInset } from "@/hooks/useKeyboardInset"
 import { buttonVariants } from "@/components/ui/button"
 
 const springOpen = { type: 'spring', stiffness: 400, damping: 28 }
@@ -40,6 +41,7 @@ AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
 
 const AlertDialogContent = React.forwardRef(({ className, children, ...props }, ref) => {
   const sheetMode = useSheetMode()
+  const { inset } = useKeyboardInset(sheetMode)
   const [uiState, setUiState] = React.useState('open')
   const innerRef = React.useRef(null)
 
@@ -66,10 +68,10 @@ const AlertDialogContent = React.forwardRef(({ className, children, ...props }, 
         <motion.div
           ref={mergedRef}
           className={cn(
-            "fixed z-50 grid w-full gap-4 bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-sheet max-h-[92dvh] overflow-y-auto inset-x-0 bottom-0 rounded-t-[20px] data-[state=open]:slide-in-from-bottom-full sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-lg sm:rounded-[20px] sm:border sm:border-line sm:p-6 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[0.98] max-sm:!w-full max-sm:!max-w-none max-sm:!left-0 max-sm:!right-0 max-sm:!top-auto max-sm:!rounded-b-none max-sm:!rounded-t-[20px]",
+            "fixed z-50 grid w-full gap-6 bg-white px-5 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-[#1B2656] shadow-sheet max-h-[92dvh] overflow-y-auto overflow-x-hidden inset-x-0 bottom-0 rounded-t-[28px] data-[state=open]:slide-in-from-bottom-full sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-[420px] sm:rounded-[24px] sm:border sm:border-line sm:p-6 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:zoom-in-[0.98] max-sm:!w-full max-sm:!max-w-none max-sm:!left-0 max-sm:!right-0 max-sm:!top-auto max-sm:!rounded-b-none max-sm:!rounded-t-[28px]",
             className
           )}
-          style={sheetMode ? { x: 0, y: 0 } : { x: '-50%', y: '-50%' }}
+          style={sheetMode ? { x: 0, y: 0, bottom: inset } : { x: '-50%', y: '-50%' }}
           initial={sheetMode ? { opacity: 1, y: '100%', x: 0 } : { opacity: 0, scale: 0.97, x: '-50%', y: '-50%' }}
           animate={
             sheetMode
@@ -80,7 +82,7 @@ const AlertDialogContent = React.forwardRef(({ className, children, ...props }, 
           }
           transition={uiState === 'open' ? (sheetMode ? sheetSpring : springOpen) : tweenExit}
         >
-          <div aria-hidden className="mx-auto -mt-2 mb-1 h-1.5 w-10 rounded-full bg-neutral-300 sm:hidden" />
+          <div aria-hidden className="mx-auto -mt-1.5 -mb-3 h-[5px] w-9 rounded-full bg-[#1B2656]/15 sm:hidden" />
           {children}
         </motion.div>
       </AlertDialogPrimitive.Content>
@@ -94,7 +96,7 @@ const AlertDialogHeader = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col space-y-2 text-start", className)}
+    className={cn("flex flex-col gap-1.5 pt-1 text-start", className)}
     {...props} />
 )
 AlertDialogHeader.displayName = "AlertDialogHeader"
@@ -104,34 +106,34 @@ const AlertDialogFooter = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end gap-2", className)}
+    className={cn("flex flex-col-reverse gap-1 sm:flex-row sm:justify-start sm:gap-2 [&>*]:w-full sm:[&>*]:w-auto", className)}
     {...props} />
 )
 AlertDialogFooter.displayName = "AlertDialogFooter"
 
 const AlertDialogTitle = React.forwardRef(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Title ref={ref} className={cn("text-lg font-semibold", className)} {...props} />
+  <AlertDialogPrimitive.Title ref={ref} className={cn("text-[20px] font-bold leading-tight text-[#1B2656]", className)} {...props} />
 ))
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
 
 const AlertDialogDescription = React.forwardRef(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-[15px] leading-snug text-[#1B2656]/70", className)}
     {...props} />
 ))
 AlertDialogDescription.displayName =
   AlertDialogPrimitive.Description.displayName
 
 const AlertDialogAction = React.forwardRef(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action ref={ref} className={cn(buttonVariants(), className)} {...props} />
+  <AlertDialogPrimitive.Action ref={ref} className={cn(buttonVariants(), "h-[52px] min-h-[52px] rounded-[16px] px-6 text-[17px] font-semibold", className)} {...props} />
 ))
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
 const AlertDialogCancel = React.forwardRef(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
-    className={cn(buttonVariants({ variant: "outline" }), "mt-2 sm:mt-0", className)}
+    className={cn(buttonVariants({ variant: "ghost" }), "h-12 min-h-[48px] rounded-[14px] text-[16px] font-medium text-[#1B2656]/70 hover:bg-[#F7F8FB] hover:text-[#1B2656]", className)}
     {...props} />
 ))
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName

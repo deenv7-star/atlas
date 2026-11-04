@@ -1,39 +1,18 @@
 import * as React from 'react';
 import { Controller } from 'react-hook-form';
-import { Check, CheckCircle2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { StickySheetFooter } from '@/components/ui/sheet-footer';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  SheetGroup, SheetField, SheetInput, SheetSelect, SheetSegmented, SheetMore,
+  SheetFooter, SheetSubmit, SheetBanner,
+} from '@/components/ui/sheet/fields';
+import { DateRangeField } from '@/components/ui/sheet/DateRangeField';
+import { displayUnits } from '@/lib/unitName';
+import { heNights } from '@/lib/heDate';
 import { useFormMachine } from '@/hooks/useFormMachine';
 import type { BookingFormValues } from '@/components/forms/atlasFormSchemas';
 import { makeBookingFormSchema, BOOKING_LIMITS, nightsBetweenISO } from '@/components/forms/atlasFormSchemas';
 import { FormRouteLeaveGuard } from '@/components/forms/FormRouteLeaveGuard';
-import {
-  FormMachineErrorBanner,
-  FormMachineFieldHint,
-  formMachineFormClassName,
-} from '@/components/forms/formMachineUi';
+import { formMachineFormClassName } from '@/components/forms/formMachineUi';
 import { BookingOverlapGuard } from '@/components/stay/BookingOverlapGuard';
-
-/** Inline field error linked to its input via aria-describedby. */
-function FieldError({ id, error, validating }: { id: string; error?: string; validating?: boolean }) {
-  if (error && !validating) {
-    return (
-      <p id={id} className="mt-0.5 text-[13px] font-medium leading-snug text-red-700" role="alert">
-        {error}
-      </p>
-    );
-  }
-  return <FormMachineFieldHint validating={validating} />;
-}
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'ממתינה' },
@@ -43,6 +22,16 @@ const STATUS_OPTIONS = [
   { value: 'CHECKED_OUT', label: 'הסתיימה' },
   { value: 'CANCELLED', label: 'בוטלה' },
   { value: 'WAITLIST', label: 'המתנה' },
+];
+/** New booking: the two states an owner actually picks. */
+const NEW_STATUS_OPTIONS = [
+  { value: 'CONFIRMED', label: 'מאושרת' },
+  { value: 'PENDING', label: 'ממתינה' },
+];
+const SOURCE_OPTIONS = [
+  { value: 'direct', label: 'ישיר' },
+  { value: 'booking', label: 'Booking' },
+  { value: 'airbnb', label: 'Airbnb' },
 ];
 
 export type BookingFormProps = {
@@ -63,7 +52,7 @@ export function BookingForm({
   defaultValues,
   properties,
   onSubmit,
-  onCancel,
+  onCancel: _onCancel, // closing is the sheet's X (one primary button rule)
   submitLabel,
   enableRouteGuard = true,
   setDialogOpen,
@@ -116,258 +105,209 @@ export function BookingForm({
     () => nightsBetweenISO(fm.values.check_in_date || '', fm.values.check_out_date || '') ?? 0,
     [fm.values.check_in_date, fm.values.check_out_date],
   );
-  // check-out picker starts the day after check-in
-  const minCheckOut = React.useMemo(() => {
-    const t = Date.parse(`${fm.values.check_in_date || ''}T00:00:00Z`);
-    return Number.isFinite(t) ? new Date(t + 86_400_000).toISOString().slice(0, 10) : undefined;
-  }, [fm.values.check_in_date]);
+  const units = React.useMemo(() => displayUnits(properties), [properties]);
+  const isEdit = storageSuffix !== 'new' && !storageSuffix.startsWith('quick') && !storageSuffix.startsWith('lead-');
   const errId = (k: string) => `bf-${k}-err`;
+  const err = (k: keyof BookingFormValues) => fm.errors[k as string];
   const a11y = (k: keyof BookingFormValues) =>
-    fm.errors[k] ? { 'aria-invalid': true as const, 'aria-describedby': errId(k) } : {};
+    err(k) ? { 'aria-invalid': true as const, 'aria-describedby': errId(k as string) } : {};
+
+  // Progressive: name, dates, source up front. The rest waits under "פרטים נוספים".
+  const MORE: Array<keyof BookingFormValues> = ['guest_phone', 'guest_email', 'total_price', 'status', 'notes'];
+  const filledMore = [
+    defaultValues.guest_phone && 'טלפון',
+    defaultValues.guest_email && 'אימייל',
+    defaultValues.total_price && 'מחיר',
+    defaultValues.notes && 'הערות',
+  ].filter(Boolean) as string[];
+  const [moreOpen, setMoreOpen] = React.useState(isEdit && filledMore.length > 0);
+  const moreHasError = MORE.some((k) => Boolean(err(k)));
+  React.useEffect(() => { if (moreHasError) setMoreOpen(true); }, [moreHasError]);
+  const liveSummary = [
+    fm.values.guest_phone && 'טלפון',
+    fm.values.guest_email && 'אימייל',
+    fm.values.total_price && `₪${Number(fm.values.total_price).toLocaleString('he-IL')}`,
+    fm.values.notes && 'הערה',
+  ].filter(Boolean).join(' · ');
+
+  const setDates = ({ start, end }: { start: string; end: string }) => {
+    fm.handleChange('check_in_date', start as never);
+    fm.handleChange('check_out_date', end as never);
+    if (fm.form.formState.submitCount > 0) void fm.form.trigger(['check_in_date', 'check_out_date']);
+  };
+  const datesError = err('check_in_date') || err('check_out_date');
+  const statusOptions = isEdit || !NEW_STATUS_OPTIONS.some((o) => o.value === fm.values.status) ? null : NEW_STATUS_OPTIONS;
 
   return (
     <>
       <FormRouteLeaveGuard blocker={fm.blocker} />
-      {fm.serverError ? <FormMachineErrorBanner message={fm.serverError} /> : null}
-      <div className={formMachineFormClassName(fm.state)} dir="rtl">
-        <div className="grid grid-cols-2 gap-3 py-2">
-          <div className="col-span-2 space-y-1.5">
-            <Label htmlFor="bf-guest-name" className="text-[14px] font-medium text-ink-600">שם אורח *</Label>
-            <Input
+      <div className={formMachineFormClassName(fm.state) + ' flex flex-1 flex-col'} dir="rtl">
+        <SheetBanner>{fm.serverError}</SheetBanner>
+        <SheetGroup title="האורח">
+          <SheetField label="שם האורח" htmlFor="bf-guest-name" error={err('guest_name')} errorId={errId('guest_name')}>
+            <SheetInput
               id="bf-guest-name"
               {...fm.register('guest_name')}
               {...a11y('guest_name')}
+              invalid={Boolean(err('guest_name'))}
               maxLength={BOOKING_LIMITS.guestName}
-              placeholder="שם מלא"
-              className="h-12 md:h-11 rounded-[10px]"
-              autoComplete="name"
+              autoComplete="off"
+              enterKeyHint="next"
             />
-            <FieldError id={errId('guest_name')} error={fm.errors.guest_name} validating={fm.isFieldValidating('guest_name')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="bf-guest-email" className="text-[14px] font-medium text-ink-600">אימייל</Label>
-            <Input
-              id="bf-guest-email"
-              {...fm.register('guest_email')}
-              {...a11y('guest_email')}
-              maxLength={BOOKING_LIMITS.email}
-              type="email"
-              inputMode="email"
-              dir="ltr"
-              placeholder="email@example.com"
-              className="h-12 md:h-11 rounded-[10px]"
-              autoComplete="email"
-            />
-            <FieldError id={errId('guest_email')} error={fm.errors.guest_email} validating={fm.isFieldValidating('guest_email')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="bf-guest-phone" className="text-[14px] font-medium text-ink-600">טלפון</Label>
-            <Input
-              id="bf-guest-phone"
-              {...fm.register('guest_phone')}
-              {...a11y('guest_phone')}
-              maxLength={BOOKING_LIMITS.phone}
-              type="tel"
-              inputMode="tel"
-              dir="ltr"
-              placeholder="050-0000000"
-              className="h-12 md:h-11 rounded-[10px]"
-              autoComplete="tel"
-            />
-            <FieldError id={errId('guest_phone')} error={fm.errors.guest_phone} validating={fm.isFieldValidating('guest_phone')} />
-          </div>
-          {properties.length > 0 && (
-            <div className="col-span-2 space-y-1.5">
-              <Label className="text-[14px] font-medium text-ink-600">יחידה *</Label>
+          </SheetField>
+          {units.length > 1 ? (
+            <SheetField label="יחידה" htmlFor="bf-unit" error={err('property_id')} errorId={errId('property_id')}>
               <Controller
                 control={fm.control}
                 name="property_id"
                 render={({ field }) => (
-                  <Select
+                  <SheetSelect
+                    id="bf-unit"
                     value={field.value}
-                    onValueChange={(v) => {
-                      fm.handleChange('property_id', v);
-                      field.onChange(v);
+                    placeholder="בחרו יחידה"
+                    options={units.map((u) => ({ value: u.id, label: u.name }))}
+                    invalid={Boolean(err('property_id'))}
+                    {...a11y('property_id')}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      fm.handleChange('property_id', e.target.value as never);
+                      field.onChange(e.target.value);
                     }}
-                  >
-                    <SelectTrigger aria-label="יחידה" {...a11y('property_id')} className="h-12 md:h-11 rounded-[10px]">
-                      <SelectValue placeholder="בחרו יחידה" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {properties.map((prop) => (
-                        <SelectItem key={prop.id} value={prop.id}>
-                          {prop.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  />
                 )}
               />
-              <FieldError id={errId('property_id')} error={fm.errors.property_id} />
-            </div>
-          )}
-          {!hasUnits && (
-            <div className="col-span-2 rounded-[12px] bg-[#F7F8FB] px-4 py-3" role="status">
-              <p className="text-[15px] font-semibold text-navy-900">כדי לשמור הזמנה צריך יחידה</p>
-              <p className="mt-0.5 text-[14px] text-ink-600">
+            </SheetField>
+          ) : null}
+          {!hasUnits ? (
+            <div className="rounded-[14px] bg-[#F7F8FB] px-4 py-3" role="status">
+              <p className="text-[15px] font-semibold text-[#1B2656]">כדי לשמור הזמנה צריך יחידה</p>
+              <p className="mt-0.5 text-[14px] text-[#1B2656]/70">
                 עוד אין יחידות בחשבון.{' '}
-                <a href="/setup" className="inline-flex min-h-[44px] items-center font-semibold text-brand-700 underline underline-offset-2">הוספת יחידה</a>
+                <a href="/setup" className="inline-flex min-h-[44px] items-center font-semibold text-[#3E2BF1] underline underline-offset-2">הוספת יחידה</a>
               </p>
-              <FieldError id={errId('property_id')} error={fm.errors.property_id} />
             </div>
-          )}
-          <div className="col-span-2 space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">ערוץ</Label>
+          ) : null}
+        </SheetGroup>
+
+        <SheetGroup title="מתי ומאיפה">
+          <DateRangeField
+            idPrefix="bf-dates"
+            label="תאריכים"
+            start={fm.values.check_in_date || ''}
+            end={fm.values.check_out_date || ''}
+            onChange={setDates}
+            error={datesError}
+            errorId={errId('check_in_date')}
+          />
+          <SheetField label="ערוץ" labelId="bf-source-label">
             <Controller
               control={fm.control}
               name="booking_source"
               render={({ field }) => (
-                <div role="radiogroup" aria-label="ערוץ" className="grid grid-cols-3 gap-1 rounded-[12px] bg-neutral-100 p-1">
-                  {[
-                    { v: 'direct', l: 'ישיר', c: '#3E2BF1' },
-                    { v: 'booking', l: 'Booking.com', c: '#1B2656' },
-                    { v: 'airbnb', l: 'Airbnb', c: '#EF5B5B' },
-                  ].map((o) => {
-                    const on = (field.value || 'direct') === o.v;
-                    return (
-                      <button
-                        key={o.v}
-                        type="button"
-                        role="radio"
-                        aria-checked={on}
-                        onClick={() => {
-                          fm.handleChange('booking_source', o.v);
-                          field.onChange(o.v);
-                        }}
-                        className={
-                          'press inline-flex h-11 items-center justify-center gap-1.5 rounded-[9px] text-[14px] font-medium ' +
-                          (on ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.1)]' : 'text-ink-600')
-                        }
-                      >
-                        <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: o.c }} />
-                        {o.l}
-                      </button>
-                    );
-                  })}
-                </div>
+                <SheetSegmented
+                  labelledBy="bf-source-label"
+                  value={field.value || 'direct'}
+                  options={SOURCE_OPTIONS}
+                  onChange={(val: string) => { fm.handleChange('booking_source', val as never); field.onChange(val); }}
+                />
               )}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="bf-check-in" className="text-[14px] font-medium text-ink-600">תאריך כניסה *</Label>
-            <Input id="bf-check-in" type="date" {...fm.register('check_in_date')} {...a11y('check_in_date')} className="h-12 md:h-11 rounded-[10px]" />
-            <FieldError id={errId('check_in_date')} error={fm.errors.check_in_date} validating={fm.isFieldValidating('check_in_date')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="bf-check-out" className="text-[14px] font-medium text-ink-600">תאריך יציאה *</Label>
-            <Input id="bf-check-out" type="date" min={minCheckOut} {...fm.register('check_out_date')} {...a11y('check_out_date')} className="h-12 md:h-11 rounded-[10px]" />
-            <FieldError id={errId('check_out_date')} error={fm.errors.check_out_date} validating={fm.isFieldValidating('check_out_date')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="bf-price" className="text-[14px] font-medium text-ink-600">מחיר כולל (₪)</Label>
-            <Input
-              id="bf-price"
-              type="number"
-              inputMode="decimal"
-              min={0}
-              max={BOOKING_LIMITS.maxPrice}
-              step="any"
-              {...fm.register('total_price')}
-              {...a11y('total_price')}
-              placeholder="0"
-              className="h-12 md:h-11 rounded-[10px]"
-            />
-            <FieldError id={errId('total_price')} error={fm.errors.total_price} />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-[14px] font-medium text-ink-600">מצב ההזמנה</Label>
-            <Controller
-              control={fm.control}
-              name="status"
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={(v) => {
-                    fm.handleChange('status', v);
-                    field.onChange(v);
-                  }}
-                >
-                  <SelectTrigger aria-label="מצב ההזמנה" className="h-12 md:h-11 rounded-[10px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUS_OPTIONS.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            <FormMachineFieldHint error={fm.errors.status} />
-          </div>
-          <div className="col-span-2 space-y-1.5">
-            <Label htmlFor="bf-notes" className="text-[14px] font-medium text-ink-600">הערות</Label>
-            <Input id="bf-notes" {...fm.register('notes')} {...a11y('notes')} maxLength={BOOKING_LIMITS.notes} placeholder="רק אתם רואים את זה" className="h-12 md:h-11 rounded-[10px]" />
-            <FieldError id={errId('notes')} error={fm.errors.notes} />
-          </div>
-          <BookingOverlapGuard
-            propertyId={fm.values.property_id}
-            checkIn={fm.values.check_in_date}
-            checkOut={fm.values.check_out_date}
-            excludeId={storageSuffix !== 'new' ? storageSuffix : undefined}
-            onBlockingChange={setOverlapBlocked}
-          />
-          {nights > 0 && (
-            <div className="col-span-2">
-              <div className="flex items-center gap-2 text-[14px] font-medium text-brand-700 bg-brand-50 px-3 py-2.5 rounded-[10px]">
-                <CheckCircle2 className="w-3.5 h-3.5" /> {nights} לילות
-              </div>
+          </SheetField>
+        </SheetGroup>
+
+        <div className="mb-5 empty:hidden"><BookingOverlapGuard
+          propertyId={fm.values.property_id}
+          checkIn={fm.values.check_in_date}
+          checkOut={fm.values.check_out_date}
+          excludeId={isEdit ? storageSuffix : undefined}
+          onBlockingChange={setOverlapBlocked}
+        /></div>
+
+        <SheetMore open={moreOpen} onOpenChange={setMoreOpen} summary={liveSummary || (filledMore.length ? filledMore.join(', ') : '')}>
+          <SheetGroup className="!mb-0">
+            <div className="grid grid-cols-1 gap-5 min-[420px]:grid-cols-2 min-[420px]:gap-3">
+              <SheetField label="טלפון" htmlFor="bf-guest-phone" error={err('guest_phone')} errorId={errId('guest_phone')}>
+                <SheetInput
+                  id="bf-guest-phone"
+                  {...fm.register('guest_phone')}
+                  {...a11y('guest_phone')}
+                  invalid={Boolean(err('guest_phone'))}
+                  maxLength={BOOKING_LIMITS.phone}
+                  type="tel"
+                  inputMode="tel"
+                  dir="ltr"
+                  className="text-right"
+                  autoComplete="off"
+                />
+              </SheetField>
+              <SheetField label="אימייל" htmlFor="bf-guest-email" error={err('guest_email')} errorId={errId('guest_email')}>
+                <SheetInput
+                  id="bf-guest-email"
+                  {...fm.register('guest_email')}
+                  {...a11y('guest_email')}
+                  invalid={Boolean(err('guest_email'))}
+                  maxLength={BOOKING_LIMITS.email}
+                  type="email"
+                  inputMode="email"
+                  dir="ltr"
+                  className="text-right"
+                  autoComplete="off"
+                  autoCapitalize="off"
+                />
+              </SheetField>
             </div>
-          )}
-        </div>
-        <StickySheetFooter>
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => {
-              fm.reset();
-              onCancel();
-            }}
-            className="min-h-[44px] h-11 rounded-xl w-full sm:w-auto"
-          >
-            ביטול
-          </Button>
-          <Button
-            type="button"
+            <SheetField label="מחיר כולל" htmlFor="bf-price" error={err('total_price')} errorId={errId('total_price')} hint={nights > 0 ? `על ${heNights(nights)}` : null}>
+              <div className="relative">
+                <SheetInput
+                  id="bf-price"
+                  type="text"
+                  inputMode="decimal"
+                  {...fm.register('total_price')}
+                  {...a11y('total_price')}
+                  invalid={Boolean(err('total_price'))}
+                  className="pe-10"
+                  dir="ltr"
+                  style={{ textAlign: 'right' }}
+                />
+                <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/70">₪</span>
+              </div>
+            </SheetField>
+            <SheetField label="מצב ההזמנה" htmlFor="bf-status" labelId="bf-status-label">
+              <Controller
+                control={fm.control}
+                name="status"
+                render={({ field }) => (statusOptions ? (
+                  <SheetSegmented
+                    labelledBy="bf-status-label"
+                    value={field.value}
+                    options={statusOptions}
+                    onChange={(val: string) => { fm.handleChange('status', val as never); field.onChange(val); }}
+                  />
+                ) : (
+                  <SheetSelect
+                    id="bf-status"
+                    value={field.value}
+                    options={STATUS_OPTIONS}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => { fm.handleChange('status', e.target.value as never); field.onChange(e.target.value); }}
+                  />
+                ))}
+              />
+            </SheetField>
+            <SheetField label="הערות" htmlFor="bf-notes" optional hint="רק אתם רואים את זה" error={err('notes')} errorId={errId('notes')}>
+              <SheetInput id="bf-notes" {...fm.register('notes')} {...a11y('notes')} maxLength={BOOKING_LIMITS.notes} />
+            </SheetField>
+          </SheetGroup>
+        </SheetMore>
+
+        <SheetFooter>
+          <SheetSubmit
             onClick={fm.handleSubmit}
-            disabled={fm.state === 'submitting' || overlapBlocked}
-            className={[
-              'relative min-h-[44px] h-11 gap-1.5 rounded-xl w-full sm:w-auto font-semibold',
-              fm.state === 'success'
-                ? 'bg-emerald-600 hover:bg-emerald-600 text-white'
-                : 'bg-brand-600 hover:bg-brand-500 text-white',
-            ].join(' ')}
+            state={fm.state === 'submitting' ? 'submitting' : fm.state === 'success' ? 'success' : 'idle'}
+            disabled={overlapBlocked}
+            meta={nights > 0 ? heNights(nights) : null}
           >
-            {fm.state === 'submitting' ? (
-              <>
-                <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                שומרים…
-              </>
-            ) : fm.state === 'success' ? (
-              <>
-                <Check className="w-4 h-4" />
-                נשמר
-              </>
-            ) : (
-              <>
-                <Check className="w-4 h-4" />
-                {submitLabel}
-              </>
-            )}
-          </Button>
-        </StickySheetFooter>
+            {submitLabel}
+          </SheetSubmit>
+        </SheetFooter>
       </div>
     </>
   );
