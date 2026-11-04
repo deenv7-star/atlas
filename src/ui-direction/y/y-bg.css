@@ -1,0 +1,70 @@
+/* App background (04.11.2026, Deen's pick: E on Today + A everywhere else). Loaded after y2/y3.
+   Every screen: canvas #F7F8FB with one soft indigo/navy glow at the very top behind the header; solid white cards with
+   a hairline, not glass; navy panels stay the one strong colour moment (refs: Linear, Apple Wallet).
+   Today only: a bright green-hills photo (TodayBackdrop.jsx) crossfades in behind frosted-white cards (ref: Deen's
+   landscape + one frosted card). Green is a palette exception Deen chose for Today. */
+.y2-shell { background: #F7F8FB; --hair: 0 0 0 1px rgba(27,38,86,.07); --lift: 0 1px 2px rgba(27,38,86,.04), 0 12px 28px -22px rgba(27,38,86,.28); }
+.y2-shell::before { position: fixed; inset: 0 0 auto 0; height: 340px; z-index: 0;
+  background: radial-gradient(70% 100% at 50% 0%, rgba(62,43,241,.10), rgba(62,43,241,0) 70%), radial-gradient(120% 70% at 85% 0%, rgba(27,38,86,.07), rgba(27,38,86,0) 70%); }
+@media (min-width: 1024px) { .y2-shell::before { height: 420px; background: radial-gradient(40% 100% at 55% 0%, rgba(62,43,241,.09), rgba(62,43,241,0) 70%), radial-gradient(60% 70% at 85% 0%, rgba(27,38,86,.06), rgba(27,38,86,0) 70%); } }
+
+/* top toolbar + rail: white, hairline, light blur only for content scrolling under */
+.y2-shell .y2-bar, .y2-shell .y2-rail { background: rgba(255,255,255,.86); backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4); box-shadow: var(--hair), var(--lift); }
+.y2-shell .y2-search, .y2-shell .y2-gb:not(.y2-gb--ind):not(.y2-gb--face):not(.y2-gb--d) { background: #F2F4F9; }
+.y2-shell .y2-gb:not(.y2-gb--ind):not(.y2-gb--face):not(.y2-gb--d):hover { background: #E9ECF4; }
+.y2-shell .y2-gb--face:hover { background: #F2F4F9; }
+.y2-shell .y2-ri:hover { background: #F2F4F9; }
+.y2-shell .y2-ri-on { background: #F2F4F9; box-shadow: none; }
+.y2-shell .y2-rail-me { box-shadow: 0 0 0 3px #F2F4F9; }
+
+/* Today: no frosted window; the page itself is the canvas */
+.y2-shell .y2-win { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; padding: 4px 2px; }
+@media (min-width: 1024px) { .y2-shell .y2-win { padding: 8px 0; } }
+.y2-shell .y2-tile, .y2-shell .y2-card, .y2-shell .y2-nc:not(.is-hot) { background: #fff; box-shadow: var(--hair), var(--lift); }
+.y2-shell .y2-tile:hover { box-shadow: 0 0 0 1px rgba(27,38,86,.1), 0 2px 4px rgba(27,38,86,.04), 0 20px 36px -24px rgba(27,38,86,.32); }
+.y2-shell .y2-hello-chip { background: #fff; box-shadow: var(--hair); }
+.y2-shell .y2-sub { color: rgba(27,38,86,.64); }
+/* navy surfaces: solid, not tinted glass (nothing behind them to show through any more) */
+body .y2-shell .y2-side, body .y2-shell .y3-panel { background: #1B2656; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 30px 60px -40px rgba(27,38,86,.7); }
+
+/* every other page: the canvas window is no longer needed — content sits straight on the canvas */
+.y2-shell[data-page]:not([data-page="Dashboard"]):not([data-page="Today"]):not([data-page="Bookings"]) #atlas-main-scroll {
+  margin: 0; border-radius: 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; }
+@media (min-width: 1024px) {
+  .y2-shell[data-page]:not([data-page="Dashboard"]):not([data-page="Today"]):not([data-page="Bookings"]) #atlas-main-scroll { margin: 0; border-radius: 0; }
+}
+
+/* glass tab bar: stays glass, but denser + a hairline so it reads over white cards and the canvas alike */
+.y2-shell .y2-tab ul { background: rgba(255,255,255,.8); backdrop-filter: blur(24px) saturate(1.8); -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  box-shadow: 0 0 0 1px rgba(27,38,86,.08), 0 1px 0 rgba(255,255,255,.9) inset, 0 18px 36px -18px rgba(27,38,86,.38); }
+.y2-shell .y2-ti { color: rgba(27,38,86,.7); }
+.y2-shell .y2-ti-on { background: #EEF0F7; box-shadow: none; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .y2-shell .y2-tab ul, .y2-shell .y2-bar, .y2-shell .y2-rail { background: #fff; }
+}
+
+/* ── Today: the photo layer (portalled into the shell by TodayBackdrop) ── */
+.y2-shell > .y2-bgphoto { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; background: #D6E6F3; transition: opacity .45s var(--ease); }
+.y2-shell > .y2-bgphoto.is-on { opacity: 1; }
+.y2-bgphoto picture, .y2-bgphoto img { display: block; width: 100%; height: 100%; }
+.y2-bgphoto img { object-fit: cover; object-position: 50% 100%; -webkit-user-select: none; user-select: none; }
+@media (min-width: 768px) { .y2-bgphoto img { object-position: 50% 60%; } }
+@media (prefers-reduced-motion: reduce) { .y2-shell > .y2-bgphoto { transition: none; } }
+
+/* Today: frosted-white panes so the hills read around them; text stays navy on white (contrast as on canvas) */
+.y2-shell[data-page="Dashboard"] .y2-tile, .y2-shell[data-page="Today"] .y2-tile,
+.y2-shell[data-page="Dashboard"] .y2-card, .y2-shell[data-page="Today"] .y2-card,
+.y2-shell[data-page="Dashboard"] .y2-nc:not(.is-hot), .y2-shell[data-page="Today"] .y2-nc:not(.is-hot) {
+  background: rgba(255,255,255,.9); backdrop-filter: blur(24px) saturate(1.3); -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 16px 34px -24px rgba(27,38,86,.45); }
+.y2-shell[data-page="Dashboard"] .y2-hello-chip, .y2-shell[data-page="Today"] .y2-hello-chip {
+  background: rgba(255,255,255,.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: inset 0 0 0 1px #fff; }
+/* the greeting sits on the light sky: navy, with a soft white halo so it never depends on the clouds behind it */
+.y2-shell[data-page="Dashboard"] .y2-h1, .y2-shell[data-page="Today"] .y2-h1 { color: var(--navy); text-shadow: 0 0 18px rgba(255,255,255,.85), 0 1px 2px rgba(255,255,255,.6); }
+.y2-shell[data-page="Dashboard"] .y2-sub, .y2-shell[data-page="Today"] .y2-sub { color: #1B2656; text-shadow: 0 0 14px rgba(255,255,255,.9), 0 1px 2px rgba(255,255,255,.7); }
+.y2-shell[data-page="Dashboard"] .y2-sec-h h2, .y2-shell[data-page="Today"] .y2-sec-h h2,
+.y2-shell[data-page="Dashboard"] .y2-sec-h .y2-link, .y2-shell[data-page="Today"] .y2-sec-h .y2-link { text-shadow: 0 0 14px rgba(255,255,255,.9); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .y2-shell[data-page="Dashboard"] .y2-tile, .y2-shell[data-page="Today"] .y2-tile, .y2-shell[data-page="Dashboard"] .y2-card, .y2-shell[data-page="Today"] .y2-card,
+  .y2-shell[data-page="Dashboard"] .y2-nc:not(.is-hot), .y2-shell[data-page="Today"] .y2-nc:not(.is-hot) { background: #fff; }
+}
