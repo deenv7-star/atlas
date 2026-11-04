@@ -68,6 +68,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
   const [closing, setClosing] = useState(false);
   const [gaze, setGaze] = useState(null);
   const [hero] = useState(() => (typeof window === 'undefined' ? 320 : Math.round(Math.min(340, Math.max(250, window.innerHeight * 0.4)))));
+  const [big] = useState(() => (typeof window !== 'undefined' && window.innerHeight < 720 ? 136 : 184)); // short phones: a smaller hero so the caption never sits on her
 
   useEffect(() => {
     rootRef.current?.focus({ preventScroll: true });
@@ -128,9 +129,9 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
 
       <motion.section className="a3-stage" data-state={charState} aria-label="atlas" initial={false}
         animate={{ height: talked ? 128 : hero }} transition={SOFT}>
-        <motion.div className="a3-char" initial={false} animate={{ scale: talked ? 0.5 : 1, y: 0 }} transition={SOFT}>
+        <motion.div className="a3-char" initial={false} animate={{ scale: talked ? 92 / big : 1, y: 0 }} transition={SOFT}>
           <i className="a3-aura" aria-hidden="true" />
-          <Character size={184} state={charState} levels={v.levels} mood={charMood} pulse={s.feel.pulse} gaze={gaze} from={from} label={`atlas, ${caption}`} />
+          <Character size={big} state={charState} levels={v.levels} mood={charMood} pulse={s.feel.pulse} gaze={gaze} from={from} label={`atlas, ${caption}`} />
         </motion.div>
         <div className="a3-caption" role="status">
           <AnimatePresence mode="popLayout" initial={false}>
