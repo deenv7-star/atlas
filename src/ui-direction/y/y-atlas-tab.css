@@ -1,0 +1,12 @@
+/* v3 B (04.11.2026): atlas sits in a raised disc of the same frosted glass as the bar, with an indigo hairline.
+   On press the disc sinks a little; while she is out on the assistant screen the disc stays, empty and lit. */
+.y2-ta { width: 66px; height: 66px; margin-top: -26px; border-radius: 999px; background: rgba(255,255,255,.82);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8); backdrop-filter: blur(24px) saturate(1.8);
+  box-shadow: 0 0 0 1.5px rgba(62,43,241,.35), 0 1px 0 rgba(255,255,255,.95) inset, 0 16px 30px -14px rgba(62,43,241,.6); transition: transform 380ms cubic-bezier(.34,1.56,.64,1), box-shadow 300ms ease; }
+.y2-ta-disc { width: 56px; height: 56px; background: transparent; box-shadow: none; transition: transform 380ms cubic-bezier(.34,1.56,.64,1), opacity 160ms ease; }
+.y2-ta[aria-expanded='true'] .y2-ta-disc { background: transparent; }
+.y2-ta:active { transform: scale(.94); transition-duration: 120ms; }
+html[data-assistant-open] .y2-ta { box-shadow: 0 0 0 2px #3E2BF1, 0 0 22px 2px rgba(62,43,241,.45); }
+html[data-assistant-open] .y2-ta-disc { opacity: 0; transform: translateY(-20px) scale(.6); }
+@media (max-width: 359px) { .y2-ta { width: 60px; height: 60px; } .y2-ta-disc { width: 50px; height: 50px; } }
+@media (prefers-reduced-motion: reduce) { .y2-ta, .y2-ta-disc { transition: none; } }

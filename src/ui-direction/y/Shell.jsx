@@ -18,6 +18,7 @@ import { useLiquidLens } from './useLiquidLens';
 import TodayBackdrop, { TODAY_PAGES } from './TodayBackdrop';
 import './y2.css';
 import './y-bg.css';
+import './y-atlas-tab.css';
 
 export const shellClass = 'y2-shell';
 
@@ -122,7 +123,7 @@ function AtlasTab({ hot }) {
     <li className="y2-tab-atlas" data-hot={hot ? '' : undefined}>
       <button type="button" className="y2-ta press" aria-label="דברו עם atlas" aria-expanded={isOpen} aria-haspopup="dialog"
         onClick={(e) => openAssistant('voice', e.currentTarget)}>
-        <span className="y2-ta-disc"><AtlasFace live size={40} decorative /></span>
+        <span className="y2-ta-disc"><AtlasFace live size={48} decorative /></span>
       </button>
     </li>
   );
