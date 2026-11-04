@@ -3,13 +3,19 @@
  * Calm by design: answers read like a note on the page (no bubbles, no robot), the question is a small
  * navy line, one real insight waits before anyone types, and every link leads back into the app.
  */
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { safeHref, splitActions, insightOf, suggestionsOf } from './insights.js';
 import { useAssistant } from './useAssistant.js';
 import { ASSISTANT_DEMO } from './api.js';
+import { ProposalCard } from './ProposalCard.jsx';
+import { Mic } from 'lucide-react';
+import { VOICE_ENABLED } from './voice/config.js';
+import { primeVoiceAudio } from './voice/prime.js';
+
+const VoiceScreen = lazy(() => import('./voice/VoiceScreen.jsx'));
 import './assistant.css';
 
 export { SparkMark } from './mark.jsx';
@@ -42,7 +48,7 @@ export function useKeyboardInset(ref) {
 const coarse = () => typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches;
 
 /* ── composer ─────────────────────────────────────────────────────────── */
-export function Composer({ onSend, onStop, busy, autoFocus = false, inputRef: outerRef, placeholder = 'מה תרצו לדעת?' }) {
+export function Composer({ onSend, onStop, busy, autoFocus = false, inputRef: outerRef, placeholder = 'מה תרצו לדעת?', onVoice = null }) {
   const [text, setText] = useState('');
   const innerRef = useRef(null);
   const ref = outerRef || innerRef;
@@ -80,6 +86,11 @@ export function Composer({ onSend, onStop, busy, autoFocus = false, inputRef: ou
         onChange={(e) => { setText(e.target.value); emitMascot('user-typing', { el: e.target }); }}
         onKeyDown={onKeyDown}
       />
+      {onVoice && empty && !busy ? (
+        <button type="button" className="as-mic" onClick={onVoice} aria-label="דיבור עם atlas">
+          <Mic size={20} strokeWidth={1.75} aria-hidden="true" />
+        </button>
+      ) : null}
       <button
         type="submit"
         className={`as-send${busy ? ' is-stop' : ''}`}
@@ -127,11 +138,11 @@ function Markdown({ text, onNavigate }) {
   );
 }
 
-export function Thinking() {
+export function Thinking({ line = '' }) {
   return (
     <p className="as-thinking" role="status">
       <AtlasFace live mood="thinking" size={30} decorative />
-      <span className="as-shimmer">בודקים בנתונים שלכם</span>
+      <span className="as-shimmer">{line || 'בודקים בנתונים שלכם'}</span>
     </p>
   );
 }
@@ -162,12 +173,21 @@ function RetryButton({ onClick, label = 'תשובה אחרת' }) {
   );
 }
 
-export function Answer({ msg, onRetry, onNavigate, last }) {
-  if (msg.status === 'pending') return <Thinking />;
+function Proposals({ msg, onResolve, onNavigate, page }) {
+  if (!msg.proposals?.length) return null;
+  return msg.proposals.map((p, i) => (
+    <ProposalCard key={`${msg.id}-${i}`} p={p} page={page} onNavigate={onNavigate} onResolve={(state, result) => onResolve?.(msg.id, i, state, result)} />
+  ));
+}
+
+export function Answer({ msg, onRetry, onNavigate, last, onResolve, page }) {
+  if (msg.status === 'pending' && !msg.proposals?.length) return <Thinking line={msg.working} />;
   const { body, actions } = msg.status === 'streaming' ? { body: msg.content, actions: [] } : splitActions(msg.content);
   return (
     <article className={`as-answer${msg.status === 'streaming' ? ' is-streaming' : ''}`} aria-busy={msg.status === 'streaming'}>
+      {msg.status === 'pending' ? <Thinking line={msg.working} /> : null}
       {body ? <Markdown text={body} onNavigate={onNavigate} /> : null}
+      <Proposals msg={msg} onResolve={onResolve} onNavigate={onNavigate} page={page} />
       {msg.status === 'error' ? <p className="as-error" role="alert"><AtlasFace mood="concerned" size={30} decorative /><span>{msg.error}</span></p> : null}
       {msg.status === 'stopped' ? <p className="as-note">{body ? 'התשובה נעצרה באמצע.' : 'התשובה נעצרה.'}</p> : null}
       {actions.length ? (
@@ -230,7 +250,8 @@ function EmptyNoData({ onNavigate }) {
  * Owns the thread, the scroll, the composer and the live region.
  */
 export function Conversation({ facts, loading, page = '', variant = 'page', onNavigate, inputRef, autoFocus, header = null }) {
-  const { messages, busy, send, stop, retry, clear } = useAssistant({ facts, page });
+  const { messages, busy, send, stop, retry, clear, resolveProposal } = useAssistant({ facts, page });
+  const [voiceOpen, setVoiceOpen] = useState(false);
   const mood = useFaceMood(messages);
   const scrollRef = useRef(null);
   const rootRef = useRef(null);
@@ -279,17 +300,22 @@ export function Conversation({ facts, loading, page = '', variant = 'page', onNa
             ) : <EmptyNoData onNavigate={onNavigate} />
           ) : messages.map((m) => (m.role === 'user'
             ? <p key={m.id} className="as-question" dir="auto">{m.content}</p>
-            : <Answer key={m.id} msg={m} onRetry={retry} onNavigate={onNavigate} last={m.id === lastAnswerId} />))}
+            : <Answer key={m.id} msg={m} onRetry={retry} onNavigate={onNavigate} last={m.id === lastAnswerId} onResolve={resolveProposal} page={page} />))}
           {!empty && !busy && lastStatus === 'done' && suggestions.length ? (
             <Suggestions items={suggestions.slice(0, 2)} onPick={ask} label="עוד שאלה" />
           ) : null}
         </div>
       </div>
       <div className="as-dock">
-        <Composer onSend={ask} onStop={stop} busy={busy} inputRef={inputRef} autoFocus={autoFocus} />
+        <Composer onSend={ask} onStop={stop} busy={busy} inputRef={inputRef} autoFocus={autoFocus} onVoice={VOICE_ENABLED ? () => { primeVoiceAudio(); setVoiceOpen(true); } : null} />
         <p className="as-fine">{ASSISTANT_DEMO ? 'הדגמה: התשובות מחושבות מהנתונים בדפדפן הזה.' : 'התשובות מבוססות על הנתונים שלכם. כדאי לבדוק לפני שפועלים.'}</p>
       </div>
       <p className="as-sr" aria-live="polite">{announce}</p>
+      {voiceOpen ? (
+        <Suspense fallback={null}>
+          <VoiceScreen facts={facts} page={page} onClose={() => setVoiceOpen(false)} onNavigate={onNavigate} />
+        </Suspense>
+      ) : null}
     </div>
   );
 }
