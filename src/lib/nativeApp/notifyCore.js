@@ -191,11 +191,15 @@ export function hasUpcomingArrival(bookings, now = new Date()) {
 }
 
 // ── push token save ────────────────────────────────────────────────────────────────────────────────
-/** Supabase / PostgREST says device_tokens is not there (migration 029 not applied): expected, stay quiet. */
+/**
+ * Supabase / PostgREST says device_tokens or its RPC is not there (migration 029 not applied yet): expected,
+ * stay quiet and retry on the next open.
+ */
 export function isMissingTableError(err) {
   const code = String(err?.code || '');
   const msg = `${err?.message || ''} ${err?.details || ''} ${err?.hint || ''}`;
-  return code === '42P01' || code === 'PGRST205' || /relation .*device_tokens.* does not exist|could not find the table/i.test(msg);
+  if (['42P01', '42883', 'PGRST202', 'PGRST205'].includes(code)) return true;
+  return /relation .*device_tokens.* does not exist|could not find the (table|function)|register_device_token/i.test(msg);
 }
 
 /** Only in-app paths from a notification payload (never an outside URL). */

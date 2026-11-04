@@ -14,6 +14,7 @@ import {
 } from '@/lib/nativeApp/notifyCore';
 
 const TOKEN_KEY = 'atlas.push.token.v1'; // { token, userId, saved }
+const APP_VERSION = 'ios-web-1';
 
 function store() {
   try { return window.localStorage; } catch { return null; }
@@ -72,21 +73,19 @@ function writeToken(v) {
 }
 
 /**
- * Upsert the APNs token for the signed-in owner. 'saved' | 'no-table' | 'no-backend' | 'error'. Never throws.
+ * Register the APNs token for the signed-in owner (org comes from the profile, server side). 'saved' | 'no-table' | 'no-backend' | 'error'. Never throws.
  */
-export async function saveDeviceToken({ token, userId, orgId }) {
+export async function saveDeviceToken({ token, userId }) {
   if (!token || !userId) return 'error';
   writeToken({ token, userId, saved: false });
   if (!supabase) return 'no-backend';
   try {
-    const { error } = await supabase.from('device_tokens').upsert({
-      token,
-      user_id: userId,
-      org_id: orgId || null,
-      platform: 'ios',
-      environment: 'production', // TestFlight and App Store builds use production APNs
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'token' });
+    // RPC (migration 029): moves the phone to this owner even when another account registered it before.
+    const { error } = await supabase.rpc('register_device_token', {
+      p_token: token,
+      p_environment: 'production', // TestFlight and App Store builds use production APNs
+      p_app_version: APP_VERSION,
+    });
     if (error) return isMissingTableError(error) ? 'no-table' : 'error';
     writeToken({ token, userId, saved: true });
     return 'saved';
@@ -97,17 +96,17 @@ export async function saveDeviceToken({ token, userId, orgId }) {
 
 let registered = false;
 /** Ask APNs for a token (permission must already be granted) and keep it for this owner. */
-export async function registerPush({ userId, orgId }) {
+export async function registerPush({ userId }) {
   if (!isNativeApp() || !userId) return;
   try {
     const { PN } = await push();
     if (!registered) {
       registered = true;
-      await PN.addListener('registration', (t) => { void saveDeviceToken({ token: t?.value, userId, orgId }); });
+      await PN.addListener('registration', (t) => { void saveDeviceToken({ token: t?.value, userId }); });
       await PN.addListener('registrationError', () => { /* simulator / no aps-environment: nothing to do */ });
     }
     const prev = readToken();
-    if (prev?.token && prev.userId === userId && !prev.saved) void saveDeviceToken({ token: prev.token, userId, orgId });
+    if (prev?.token && prev.userId === userId && !prev.saved) void saveDeviceToken({ token: prev.token, userId });
     await PN.register();
   } catch { /* plugin missing in an old build */ }
 }
@@ -118,7 +117,7 @@ export async function forgetDevice() {
   const t = readToken();
   writeToken(null);
   try {
-    if (t?.token && t.saved && supabase) await supabase.from('device_tokens').delete().eq('token', t.token);
+    if (t?.token && t.saved && supabase) await supabase.rpc('unregister_device_token', { p_token: t.token });
   } catch { /* table missing / offline */ }
   await cancelAllReminders();
   try { const { PN } = await push(); await PN.unregister?.(); } catch { /* ignore */ }

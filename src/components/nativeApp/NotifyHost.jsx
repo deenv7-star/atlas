@@ -84,8 +84,8 @@ export default function NotifyHost() {
     void syncCheckinReminders({ bookings: bookingsQ.data, properties: propsQ.data || [] });
   }, [enabled, perm, bookingsQ.data, propsQ.data, tick]);
   useEffect(() => {
-    if (enabled && perm === 'granted') void registerPush({ userId, orgId });
-  }, [enabled, perm, userId, orgId]);
+    if (enabled && perm === 'granted') void registerPush({ userId });
+  }, [enabled, perm, userId]);
 
   // The pre-prompt.
   const hasUpcoming = hasUpcomingArrival(bookingsQ.data || []);
