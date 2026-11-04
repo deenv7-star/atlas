@@ -135,12 +135,20 @@ export function usePinnedBottom(ref, deps = []) {
   const pinned = useRef(true);
   useEffect(() => {
     const el = ref.current; if (!el) return undefined;
-    const onScroll = () => { pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80; };
+    // only the owner's own scroll unpins (wheel, touch, keys); content growing or a smooth scroll in flight never does
+    let touchedAt = 0;
+    const touched = () => { touchedAt = performance.now(); };
+    const onScroll = () => {
+      const atEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+      if (atEnd) pinned.current = true; else if (performance.now() - touchedAt < 1200) pinned.current = false;
+    };
     el.addEventListener('scroll', onScroll, { passive: true });
+    ['wheel', 'touchmove', 'pointerdown', 'keydown'].forEach((k) => el.addEventListener(k, touched, { passive: true }));
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => { if (pinned.current) el.scrollTop = el.scrollHeight; }) : null;
     ro?.observe(el); // the scroller itself shrinks too (keyboard, safe area)
     if (el.firstElementChild) ro?.observe(el.firstElementChild);
-    return () => { el.removeEventListener('scroll', onScroll); ro?.disconnect(); };
+    if (el.firstElementChild?.firstElementChild) ro?.observe(el.firstElementChild.firstElementChild); // the column itself (cards that grow in place)
+    return () => { el.removeEventListener('scroll', onScroll); ['wheel', 'touchmove', 'pointerdown', 'keydown'].forEach((k) => el.removeEventListener(k, touched)); ro?.disconnect(); };
   }, [ref, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
   return pinned;
 }

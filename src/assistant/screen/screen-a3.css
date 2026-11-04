@@ -37,25 +37,29 @@
 .a3-switch button[aria-pressed='true'] { color: #fff; cursor: default; }
 .a3-sw-on { position: absolute; inset: 0; border-radius: 999px; background: var(--n); box-shadow: 0 6px 14px -8px rgba(27, 38, 86, 0.8); }
 
-/* stage: atlas floating in the sky */
-.a3-stage { position: relative; flex-shrink: 0; display: grid; justify-items: center; align-content: start; overflow: visible; z-index: 2; }
-.a3-char { position: relative; margin-top: 4px; transform-origin: 50% 0%; }
+/* body: atlas fills whatever sky the conversation leaves free (AssistantScreen useSkyFit); y + scale only */
+.a3-body { position: relative; flex: 1; min-height: 0; }
+.a3-stage { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.a3-char { position: absolute; top: 0; left: 50%; transform-origin: 50% 0%; will-change: transform; }
 .a3-aura { position: absolute; inset: -22%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.35) 55%, rgba(255, 255, 255, 0) 100%);
   opacity: 0.55; transform: scale(0.9); transition: opacity 600ms var(--ease), transform 600ms var(--ease); pointer-events: none; }
 .a3-stage[data-state='hearing'] .a3-aura { opacity: 0.95; transform: scale(1.05); animation: a3-aura 1.6s ease-in-out infinite; }
 .a3-stage[data-state='speaking'] .a3-aura { opacity: 1; transform: scale(1.12); animation: a3-aura 1.1s ease-in-out infinite; }
 .a3-stage[data-state='thinking'] .a3-aura { opacity: 0.75; animation: a3-aura 2.4s ease-in-out infinite; }
 @keyframes a3-aura { 50% { transform: scale(1.18); opacity: 0.7; } }
-.a3-caption { position: absolute; left: 16px; right: 16px; bottom: 6px; display: grid; justify-items: center; gap: 6px; text-align: center; }
+.a3-caption { position: absolute; top: 0; left: 16px; right: 16px; display: grid; justify-items: center; gap: 8px; text-align: center; will-change: transform; }
 .a3-state { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.01em; color: var(--n); text-shadow: 0 1px 14px rgba(255, 255, 255, 0.9); transition: font-size 300ms var(--ease); }
-.a3.is-talk .a3-state { font-size: 16px; font-weight: 700; padding: 2px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.66); text-shadow: none; }
+.a3.is-talk .a3-state { font-size: 16px; font-weight: 700; padding: 3px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.7); text-shadow: none;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.a3.is-talk .a3-stage[data-focus] .a3-state { font-size: 18px; padding: 5px 16px; }
 .a3-hint { margin: 0; max-width: 310px; font-size: 16px; line-height: 1.5; font-weight: 500; color: var(--n); padding: 6px 12px; border-radius: 16px; background: rgba(255, 255, 255, 0.55);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 
 /* the conversation */
-.a3-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; position: relative; z-index: 1;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18px); mask-image: linear-gradient(to bottom, transparent 0, #000 18px); }
-.a3-col { max-width: 560px; margin: 0 auto; padding: 14px 16px 20px; display: grid; gap: 12px; }
+.a3-scroll { position: absolute; top: 140px; left: 0; right: 0; bottom: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; z-index: 2;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 40px); mask-image: linear-gradient(to bottom, transparent 0, #000 40px); }
+.a3-fill { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+.a3-col { width: 100%; max-width: 560px; margin: 0 auto; padding: 14px 16px 20px; display: grid; gap: 12px; box-sizing: border-box; }
 .a3-turns { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .a3-you { justify-self: end; max-width: 82%; margin: 0; padding: 10px 16px; border-radius: 20px 20px 20px 6px; background: var(--b); color: #fff; font-size: 16px; line-height: 1.45; font-weight: 600;
   overflow-wrap: anywhere; box-shadow: 0 12px 24px -16px rgba(62, 43, 241, 0.9); transform-origin: 0% 100%; }
@@ -63,6 +67,15 @@
 .a3-said { display: grid; gap: 10px; transform-origin: 50% 0%; }
 .a3-bubble { font-size: 17px; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere; padding: 16px 18px; }
 .a3-bubble::before { content: ''; position: absolute; top: -7px; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 4px 0 0 0; background: rgba(255, 255, 255, 0.92); transform: rotate(45deg); }
+.a3-bubble-text { display: block; }
+/* her answer on its way: a quiet glass card under her while she thinks (three soft lines, one slow sheen) */
+.a3-wait { display: grid; gap: 9px; padding: 20px 18px; overflow: hidden; }
+.a3-wait i { display: block; height: 10px; border-radius: 999px; background: rgba(27, 38, 86, 0.08); position: relative; overflow: hidden; }
+.a3-wait i:nth-child(1) { width: 88%; } .a3-wait i:nth-child(2) { width: 72%; } .a3-wait i:nth-child(3) { width: 46%; }
+.a3-wait i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(62, 43, 241, 0), rgba(62, 43, 241, 0.16), rgba(62, 43, 241, 0));
+  transform: translateX(100%); animation: a3-sheen 1.5s var(--ease) infinite; }
+.a3-wait i:nth-child(2)::after { animation-delay: 120ms; } .a3-wait i:nth-child(3)::after { animation-delay: 240ms; }
+@keyframes a3-sheen { to { transform: translateX(-100%); } }
 .a3-bubble--t { padding: 12px 16px 4px; }
 .a3-bubble--t::before { display: none; }
 .a3-act { transform-origin: 50% 0%; }
@@ -101,6 +114,8 @@
 
 @media (min-width: 1024px) { .a3-top { padding: 18px 28px; } .a3-bubble { font-size: 18px; } }
 @media (prefers-reduced-motion: reduce) {
-  .a3, .a3.is-closing, .a3-top, .a3-sky img, .a3-aura { animation: none !important; }
+  .a3, .a3.is-closing, .a3-top, .a3-sky img, .a3-aura, .a3-wait i::after { animation: none !important; }
   .a3-chip, .a3-ctl, .a3-main, .a3-icon, .a3-switch button, .a3-aura, .a3-veil, .a3-state { transition: none; }
 }
+/* chips inside written answers: 46px, so a spring settling a hair under 1.0 never takes a tap target under 44 */
+.a3 .as-chip { min-height: 46px; }

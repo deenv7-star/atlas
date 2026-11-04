@@ -20,6 +20,7 @@ import { demoAnswer, demoProposal } from '../demoAnswer.js';
 import { humanDay } from '../humanLines.js';
 import { PLATFORM } from '../api.js';
 import { statusLine } from './status.js';
+import { PERSONA } from '../../../supabase/functions/_shared/brain/persona.js';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 /** The last turns, for a renewed / reconnected slice (or a switch from writing to voice). */
@@ -88,7 +89,7 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
           setState((st) => (st === 'connecting' ? 'listening' : st));
         },
         state: (st) => { if (!alive.current) return; setState(st); if (st === 'hearing' || st === 'speaking') setNote(''); },
-        unanswered: () => alive.current && setNote('לא שמעתי טוב. אפשר לחזור על השאלה?'),
+        unanswered: () => alive.current && setNote(PERSONA.notHeard),
         user: addUser,
         atlas: upsertAtlas,
         tool: onTool,
@@ -125,7 +126,7 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
   const runDemo = useCallback(() => {
     const q1 = 'מי מגיע היום?';
     const a1 = humanDay(facts, owner) || plain(demoAnswer(q1, facts, { native: PLATFORM === 'ios' })) || 'היום אין כניסות.';
-    const q2 = 'תכיני הזמנה חדשה לנועה לסוף השבוע';
+    const q2 = PERSONA.askBooking;
     const p2 = demoProposal(q2, facts);
     const step = (ms, fn) => later(() => alive.current && fn(), (demoT.current += ms));
     demoT.current = 0;
@@ -146,7 +147,7 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
   const shot = useCallback((name) => {
     const q1 = 'מי מגיע היום?';
     const a1 = humanDay(facts, owner) || plain(demoAnswer(q1, facts)) || 'היום אין כניסות.';
-    const q2 = 'תכיני הזמנה חדשה לנועה לסוף השבוע';
+    const q2 = PERSONA.askBooking;
     const p2 = demoProposal(q2, facts);
     if (name === 'denied') { setError({ code: 'mic_denied', message: VOICE_ERRORS.mic_denied }); setState('error'); return; }
     if (name === 'error') { setError({ code: 'network', message: VOICE_ERRORS.network }); setState('error'); return; }

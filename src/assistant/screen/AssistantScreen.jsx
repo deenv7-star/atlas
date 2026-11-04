@@ -3,11 +3,15 @@
  * alive (Character.jsx). She flies up out of the tab bar when you tap her. While you talk she leans in; while she
  * thinks she glances around; when she answers she bounces with her voice and the answer rises out of her as a
  * frosted speech card with a tail, followed by the live card (today's arrivals, balances, a booking sliding into
- * the calendar). Once there is a conversation she rises to the top and shrinks, still reacting.
+ * the calendar).
+ * She always fills the free sky (useSkyFit): the conversation sits at the bottom, just above the dock, and atlas
+ * takes the space above it, centred, and only shrinks when the conversation needs the room. While she hears you,
+ * thinks or speaks she comes closer (bigger), and while she thinks her answer card is already rising under her
+ * (a quiet placeholder that turns into the real answer). Transforms only (y + scale), springs, still under reduced motion.
  * Opens in voice; "כתיבה" is one tap away; falls back to writing on its own when the mic is not available.
  * RTL, Heebo, 44px+ targets, 16px inputs, transform/opacity motion, still under reduced motion.
  */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useReducedMotion, MotionConfig } from 'framer-motion';
 import { X, Mic, MicOff, Square, RotateCcw, Keyboard } from 'lucide-react';
@@ -15,10 +19,45 @@ import { Answer, Composer } from '../ui.jsx';
 import { useScreen, usePinnedBottom } from './useScreen.js';
 import { Character } from './Character.jsx';
 import { DataCard, LiveProposal, SPRING, SOFT } from './LiveCards.jsx';
+import { PERSONA } from '../../../supabase/functions/_shared/brain/persona.js'; // she/we: one switch (ATLAS_PERSON)
 import './screen-a3.css';
 
 const minutes = (s) => (s == null ? null : Math.max(0, Math.floor(s / 60)));
 const SKY = '/app-bg/today-hills';
+const COMPACT = 140;       // the strip atlas keeps above a long conversation
+const FOCUS = new Set(['hearing', 'thinking', 'speaking']); // she comes closer
+
+/**
+ * Where atlas sits and how big she is, from the sky the conversation leaves free:
+ * region = COMPACT + (scroller height − conversation height). Her group (face + caption) is centred in it, a little
+ * above the middle. Measured with ResizeObserver, so new cards, chips, the keyboard and rotation all re-fit her.
+ */
+function useSkyFit({ bodyRef, colRef, capRef, size, focus, talked }) {
+  const est = () => (typeof window === 'undefined' ? 560 : Math.max(COMPACT, window.innerHeight - 200));
+  const [m, setM] = useState(() => ({ region: est(), cap: 44 }));
+  useLayoutEffect(() => {
+    const body = bodyRef.current; const col = colRef.current; const cap = capRef.current;
+    if (!body || !col || typeof ResizeObserver === 'undefined') return undefined;
+    const measure = () => {
+      const free = body.clientHeight - COMPACT - col.offsetHeight;
+      const next = { region: Math.round(COMPACT + Math.max(0, free)), cap: Math.round(cap?.offsetHeight || 44) };
+      setM((o) => (Math.abs(o.region - next.region) < 2 && o.cap === next.cap ? o : next));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    [body, col, cap].forEach((e) => e && ro.observe(e));
+    return () => ro.disconnect();
+  }, [bodyRef, colRef, capRef]);
+  const PAD_T = 4; const PAD_B = 14; const GAP = 10;
+  const max = focus ? 1 : 0.87;           // idle/listening 0.87 × size; hearing/thinking/speaking full size
+  const min = 84 / size;                   // never smaller than the compact face
+  const room = m.region - PAD_T - PAD_B - GAP - m.cap;
+  const scale = Math.max(min, Math.min(max, room / size));
+  const group = size * scale + GAP + m.cap;
+  // alone: optical centre, a touch high. In a conversation: closer to it, so her answer reads as coming from her
+  const top = PAD_T + Math.max(0, m.region - PAD_T - PAD_B - group) * (talked ? 0.64 : 0.44);
+  return { scale, y: Math.round(top), capY: Math.round(top + size * scale + GAP), region: m.region };
+}
 
 function tabRect() {
   if (typeof document === 'undefined') return null;
@@ -67,8 +106,11 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
   const [from] = useState(tabRect);
   const [closing, setClosing] = useState(false);
   const [gaze, setGaze] = useState(null);
-  const [hero] = useState(() => (typeof window === 'undefined' ? 320 : Math.round(Math.min(340, Math.max(250, window.innerHeight * 0.4)))));
-  const [big] = useState(() => (typeof window !== 'undefined' && window.innerHeight < 720 ? 136 : 184)); // short phones: a smaller hero so the caption never sits on her
+  const bodyRef = useRef(null);
+  const colRef = useRef(null);
+  const capRef = useRef(null);
+  // rendered at her largest (focus) size and scaled down, so she is never upscaled (crisp on 3x screens)
+  const [big] = useState(() => (typeof window === 'undefined' ? 212 : window.innerHeight < 720 ? 156 : window.innerHeight >= 860 && window.innerWidth >= 1024 ? 236 : 212));
 
   useEffect(() => {
     rootRef.current?.focus({ preventScroll: true });
@@ -103,9 +145,22 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
   const mins = minutes(v.left);
   const live = ['listening', 'hearing', 'thinking', 'speaking', 'connecting'].includes(v.state);
   const talked = s.mode === 'text' ? t.messages.length > 0 || !!s.notice : v.turns.length > 0 || v.state === 'error';
-  const caption = s.mode === 'text' ? (s.notice ? 'אפשר לכתוב לי' : t.busy ? 'רגע, חושבת' : 'כתבו לי') : v.state === 'error' ? 'השיחה נעצרה' : s.line;
+  const caption = s.mode === 'text' ? (s.notice ? PERSONA.writeHere : t.busy ? PERSONA.states.thinking : PERSONA.writeToMe) : v.state === 'error' ? 'השיחה נעצרה' : s.line;
   const charState = s.mode === 'text' ? (t.busy ? 'thinking' : s.notice ? 'error' : 'idle') : v.state;
   const charMood = s.notice && s.mode === 'text' ? 'concerned' : s.feel.mood;
+  const fit = useSkyFit({ bodyRef, colRef, capRef, size: big, focus: FOCUS.has(charState), talked });
+  // her answer is already on its way: a quiet card rises under her while she thinks, and becomes the answer
+  const atlasN = v.turns.filter((x) => x.role === 'atlas').length;
+  const pending = s.mode === 'voice' && v.state === 'thinking' && lastV?.role === 'user';
+  const lastAtlasId = [...v.turns].reverse().find((x) => x.role === 'atlas')?.id;
+  // while the conversation still fits under her, older lines glide up as a new one arrives (no jump);
+  // once it scrolls, plain scrolling takes over. After a glide the scroller re-pins to the newest line.
+  const glide = s.mode === 'voice' && !reduce && fit.region > COMPACT + 8;
+  const repin = () => { const el = scrollRef.current; if (el && pinned.current) el.scrollTop = el.scrollHeight; };
+  const wasPending = useRef(false);
+  const grew = useRef(null); // the answer that grew out of the placeholder: no second entrance, its words fade in
+  if (wasPending.current && !pending && lastV?.role === 'atlas' && grew.current !== lastV.id) grew.current = lastV.id;
+  useEffect(() => { wasPending.current = pending; }, [pending]);
 
   return createPortal(
     <MotionConfig reducedMotion="user">
@@ -127,23 +182,24 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
         <p className="a3-meta" aria-live="off">{v.demo ? 'הדגמה' : s.mode === 'voice' && mins != null ? `${mins} דק׳` : ''}</p>
       </header>
 
-      <motion.section className="a3-stage" data-state={charState} aria-label="atlas" initial={false}
-        animate={{ height: talked ? 128 : hero }} transition={SOFT}>
-        <motion.div className="a3-char" initial={false} animate={{ scale: talked ? 92 / big : 1, y: 0 }} transition={SOFT}>
+      <div className="a3-body" ref={bodyRef}>
+      <section className="a3-stage" data-state={charState} data-focus={FOCUS.has(charState) || undefined} aria-label="atlas">
+        <motion.div className="a3-char" style={{ width: big, height: big, marginLeft: -big / 2 }} initial={false} animate={{ y: fit.y, scale: fit.scale }} transition={SOFT}>
           <i className="a3-aura" aria-hidden="true" />
           <Character size={big} state={charState} levels={v.levels} mood={charMood} pulse={s.feel.pulse} gaze={gaze} from={from} label={`atlas, ${caption}`} />
         </motion.div>
-        <div className="a3-caption" role="status">
+        <motion.div ref={capRef} className="a3-caption" role="status" initial={false} animate={{ y: fit.capY }} transition={SOFT}>
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.p key={caption} className="a3-state" initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }} transition={SOFT}>{caption}</motion.p>
           </AnimatePresence>
-          {!talked && s.mode === 'voice' ? <p className="a3-hint">{s.owner ? `היי ${s.owner}, ` : ''}אפשר לשאול מי מגיע היום, מה פנוי בסוף השבוע, או לבקש שאכין הזמנה.</p> : null}
+          {!talked && s.mode === 'voice' ? <p className="a3-hint">{s.owner ? `היי ${s.owner}, ` : ''}אפשר לשאול מי מגיע היום, מה פנוי בסוף השבוע, {PERSONA.hintPrepare}.</p> : null}
           {v.note ? <p className="a3-hint">{v.note}</p> : null}
-        </div>
-      </motion.section>
+        </motion.div>
+      </section>
 
-      <main className="a3-scroll" ref={scrollRef}>
-        <div className="a3-col">
+      <motion.main className="a3-scroll" ref={scrollRef} layoutScroll>
+        <div className="a3-fill">
+        <motion.div className="a3-col" ref={colRef} layout={glide ? 'position' : false} transition={SOFT} onLayoutAnimationComplete={repin}>
           {s.mode === 'voice' ? (
             v.state === 'error' ? (
               <motion.section className="lc a3-error" {...rise}>
@@ -159,11 +215,18 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
                   {v.turns.map((x, i) => (x.role === 'user'
                     ? <motion.li key={x.id} data-new className="a3-you" dir="auto" initial={{ opacity: 0, x: -24, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={SPRING}>{x.text}</motion.li>
                     : (
-                      <motion.li key={x.id} data-new className="a3-said" {...rise}>
-                        <div className="lc a3-bubble" dir="auto">{x.text}</div>
+                      <motion.li key={x.id} data-new className="a3-said" {...(x.id === lastAtlasId && grew.current === x.id ? { initial: false } : rise)}>
+                        <motion.div layoutId={x.id === lastAtlasId ? `a3-said-${atlasN - 1}` : undefined} transition={SOFT} className="lc a3-bubble" dir="auto">
+                          <motion.span className="a3-bubble-text" initial={grew.current === x.id ? { opacity: 0, y: 6 } : false} animate={{ opacity: 1, y: 0 }} transition={{ ...SOFT, delay: 0.06 }}>{x.text}</motion.span>
+                        </motion.div>
                         {x.final ? <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING, delay: 0.18 }}><DataCard kind={s.cardOf(v.turns, i)} f={facts} onNavigate={go} /></motion.div> : null}
                       </motion.li>
                     )))}
+                  {pending ? (
+                    <motion.li key="a3-pending" className="a3-said" initial={{ opacity: 0, y: -28, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ ...SPRING, delay: 0.12 }}>
+                      <motion.div layoutId={`a3-said-${atlasN}`} transition={SOFT} className="lc a3-bubble a3-wait" aria-hidden="true"><i /><i /><i /></motion.div>
+                    </motion.li>
+                  ) : null}
                 </ol>
                 {cards.map(({ p, i }) => (
                   <motion.div key={`p${i}`} data-new className="a3-act" initial={{ opacity: 0, y: -30, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ ...SPRING, delay: 0.1 }}>
@@ -203,8 +266,10 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
               {s.step ? <NextStep step={s.step} onAsk={s.ask} /> : null}
             </div>
           )}
+        </motion.div>
         </div>
-      </main>
+      </motion.main>
+      </div>
 
       {s.mode === 'voice' ? (
         <motion.footer className="a3-dock" initial={reduce ? false : { y: 90, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ ...SPRING, delay: 0.12 }}>
@@ -221,7 +286,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
         </motion.footer>
       ) : (
         <div className="a3-dock a3-dock--t as-root">
-          <Composer onSend={s.ask} onStop={t.stop} busy={t.busy} inputRef={inputRef} autoFocus={!s.notice} placeholder="כתבו לי שאלה" onVoice={s.notice?.code === 'not_configured' || s.notice?.code === 'voice_not_ready' ? null : s.toVoice} />
+          <Composer onSend={s.ask} onStop={t.stop} busy={t.busy} inputRef={inputRef} autoFocus={!s.notice} placeholder={PERSONA.placeholder} onVoice={s.notice?.code === 'not_configured' || s.notice?.code === 'voice_not_ready' ? null : s.toVoice} />
         </div>
       )}
     </div>

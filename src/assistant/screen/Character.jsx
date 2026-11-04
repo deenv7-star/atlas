@@ -19,7 +19,17 @@ import '@/components/mascot/atlasFace.css';
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function spring(k, c) { return { x: 0, v: 0, t: 0, k, c }; }
-function step(s, dt) { const a = s.k * (s.t - s.x) - s.c * s.v; s.v += a * dt; s.x += s.v * dt; return s.x; }
+// Semi-implicit Euler in fixed sub-steps of ≤ 1/240 s: stiff springs (the eyes) stay stable even when a frame
+// takes 33 ms (one slow frame used to make the eye spring overshoot and grow: "her eyes run off to the sides").
+function step(s, dt) {
+  const n = Math.max(1, Math.ceil(dt * 240)); const h = dt / n;
+  for (let i = 0; i < n; i += 1) { const a = s.k * (s.t - s.x) - s.c * s.v; s.v += a * h; s.x += s.v * h; }
+  if (!Number.isFinite(s.x) || !Number.isFinite(s.v)) { s.x = s.t; s.v = 0; } // never leave a broken value on screen
+  return s.x;
+}
+/* Eye travel limits, in face units (viewBox 120; the eyes sit 28 units from each side, 33 from the top):
+   the pupils move at most 4.5 sideways and 3.5 up/down, so they always stay well inside the face. */
+const GAZE_X = 4.5; const GAZE_Y = 3.5; const EYE_MIN = 0.8; const EYE_MAX = 1.22;
 
 export function useReducedMotion() {
   const [r, setR] = React.useState(() => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
@@ -82,7 +92,7 @@ export function Character({ state = 'idle', levels, mood = 'neutral', pulse, gaz
     const s = S.current;
     if (pulse.kind === 'happy') { s.sy.v -= 3.2; s.sx.v += 2.4; setTimeout(() => { s.y.v -= 520; s.sy.v += 5; s.sx.v -= 3.4; }, 110); }
     else if (pulse.kind === 'hop') { s.y.v -= 300; s.sy.v += 2.6; s.sx.v -= 1.8; }
-    else if (pulse.kind === 'nod') { s.rot.v += 0; s.y.v += 160; s.gy.v += 160; setTimeout(() => { s.y.v += 120; s.gy.v += 120; }, 260); }
+    else if (pulse.kind === 'nod') { s.y.v += 160; s.gy.v += 40; setTimeout(() => { s.y.v += 120; s.gy.v += 30; }, 260); }
     else if (pulse.kind === 'word') { s.sy.v += 0.9; s.sx.v -= 0.6; s.y.v -= 50; }
     else if (pulse.kind === 'shake') { s.rot.v += 70; setTimeout(() => { s.rot.v -= 120; }, 140); setTimeout(() => { s.rot.v += 70; }, 290); }
   }, [pulse]);
@@ -115,14 +125,16 @@ export function Character({ state = 'idle', levels, mood = 'neutral', pulse, gaz
       let tgx = s.sx0; let tgy = s.sy0;
       // saccades: quick eye jumps between small random points
       if (t > s.sacAt) {
-        if (st === 'thinking' || st === 'connecting') { const side = Math.random() < 0.5 ? -1 : 1; s.sx0 = side * rnd(5, 8); s.sy0 = -rnd(5, 8); s.sacAt = t + rnd(0.55, 1.1); }
-        else if (st === 'hearing' || st === 'listening') { s.sx0 = rnd(-1.5, 1.5); s.sy0 = rnd(1, 3); s.sacAt = t + rnd(1.2, 2.6); }
-        else { s.sx0 = rnd(-4, 4); s.sy0 = rnd(-2.5, 2.5); s.sacAt = t + rnd(1.4, 3.6); }
+        s.sac = (s.sac || 0) + 1;
+        if (s.sac % 2 === 0) { s.sx0 = 0; s.sy0 = 0; s.sacAt = t + rnd(1.2, 2.4); } // every other glance comes home to the centre
+        else if (st === 'thinking' || st === 'connecting') { const side = Math.random() < 0.5 ? -1 : 1; s.sx0 = side * rnd(2.5, 3.5); s.sy0 = -rnd(2, 3); s.sacAt = t + rnd(0.7, 1.2); }
+        else if (st === 'hearing' || st === 'listening') { s.sx0 = rnd(-1, 1); s.sy0 = rnd(0.5, 1.5); s.sacAt = t + rnd(1.4, 2.6); }
+        else { s.sx0 = rnd(-2, 2); s.sy0 = rnd(-1.2, 1.2); s.sacAt = t + rnd(1.6, 3.6); }
       }
       if (st === 'listening') { tlean = 1.025; teye = 1.05; ty -= 2; }
       if (st === 'hearing') {
-        tlean = 1.05 + mic * 0.05; teye = 1.12 + mic * 0.18; ty -= 4; trot = Math.sin(t * 1.7) * 2.2; tglow = 0.85 + mic * 0.15;
-        if (mic - s.lastMic > 0.12 && t > s.nodAt) { s.y.v += 70; s.gy.v += 60; s.nodAt = t + 0.45; } // a listener's little nod
+        tlean = 1.05 + mic * 0.05; teye = 1.08 + mic * 0.12; ty -= 4; trot = Math.sin(t * 1.7) * 2.2; tglow = 0.85 + mic * 0.15;
+        if (mic - s.lastMic > 0.12 && t > s.nodAt) { s.y.v += 70; s.gy.v += 20; s.nodAt = t + 0.45; } // a listener's little nod
       }
       if (st === 'thinking' || st === 'connecting') { trot = 5 * Math.sin(t * 0.9); teye = 0.84; ty -= 1 + Math.sin(t * 2.2) * 1.5; tglow = 0.6 + 0.25 * (0.5 + 0.5 * Math.sin(t * 3)); }
       if (st === 'speaking') {
@@ -136,7 +148,7 @@ export function Character({ state = 'idle', levels, mood = 'neutral', pulse, gaz
       // look at a point: a new card (gaze prop) wins over a recent touch, which wins over wandering
       const r = el.getBoundingClientRect(); const cx = r.left + r.width / 2; const cy = r.top + r.height / 2;
       const aim = gz || (touch.current.until > now ? touch.current : null);
-      if (aim) { const dx = aim.x - cx; const dy = aim.y - cy; const d = Math.hypot(dx, dy) || 1; const m = Math.min(1, d / 220); tgx = (dx / d) * 8 * m; tgy = (dy / d) * 7 * m; teye = Math.max(teye, 1.04); }
+      if (aim && Number.isFinite(aim.x) && Number.isFinite(aim.y)) { const dx = aim.x - cx; const dy = aim.y - cy; const d = Math.hypot(dx, dy) || 1; const m = Math.min(1, d / 260); tgx = (dx / d) * 3.8 * m; tgy = (dy / d) * 3 * m; teye = Math.max(teye, 1.04); }
       // blink: irregular, sometimes double; never while happy (smiling eyes)
       if (s.blink < 0 && t > s.blinkAt && live.current.mood !== 'happy') { s.blink = t; s.double = Math.random() < 0.22; }
       let lid = 1;
@@ -145,13 +157,14 @@ export function Character({ state = 'idle', levels, mood = 'neutral', pulse, gaz
         if (e >= 1) { if (s.double) { s.double = false; s.blink = t + 0.08; } else { s.blink = -1; s.blinkAt = t + (st === 'thinking' ? rnd(1.2, 2.6) : rnd(2.2, 5.8)); } }
         else if (e >= 0) lid = 1 - Math.sin(e * Math.PI) * 0.92;
       }
-      s.y.t = ty * (sz / 168); s.sx.t = tsx; s.sy.t = tsy; s.rot.t = trot; s.lean.t = tlean; s.eye.t = teye; s.glow.t = tglow; s.gx.t = tgx; s.gy.t = tgy;
+      s.y.t = ty * (sz / 168); s.sx.t = tsx; s.sy.t = tsy; s.rot.t = trot; s.lean.t = tlean; s.eye.t = teye; s.glow.t = tglow; s.gx.t = clamp(tgx, -GAZE_X, GAZE_X); s.gy.t = clamp(tgy, -GAZE_Y, GAZE_Y);
       const y = step(s.y, dt); const sx = step(s.sx, dt); const sy = step(s.sy, dt); const rot = step(s.rot, dt); const lean = step(s.lean, dt);
       const gx = step(s.gx, dt); const gy = step(s.gy, dt); const eye = step(s.eye, dt); const glow = step(s.glow, dt);
       const fx = step(s.fx, dt); const fy = step(s.fy, dt); const fs = step(s.fs, dt);
       el.style.transform = `translate3d(${fx.toFixed(2)}px, ${(y + fy).toFixed(2)}px, 0) rotate(${rot.toFixed(2)}deg) scale(${(sx * lean * fs).toFixed(4)}, ${(sy * lean * fs).toFixed(4)})`;
-      if (gazeEl) gazeEl.style.transform = `translate(${gx.toFixed(2)}px, ${gy.toFixed(2)}px)`;
-      if (eyesEl) eyesEl.style.transform = `scale(${(0.5 + eye * 0.5).toFixed(3)}, ${(eye * lid).toFixed(3)})`;
+      const ex = clamp(gx, -GAZE_X, GAZE_X); const ey = clamp(gy, -GAZE_Y, GAZE_Y); const es = clamp(eye, EYE_MIN, EYE_MAX); // hard limits, whatever the springs do
+      if (gazeEl) gazeEl.style.transform = `translate(${ex.toFixed(2)}px, ${ey.toFixed(2)}px)`;
+      if (eyesEl) eyesEl.style.transform = `scale(${(0.5 + es * 0.5).toFixed(3)}, ${(es * lid).toFixed(3)})`;
       if (glowEl) glowEl.style.opacity = clamp(glow, 0, 1).toFixed(3);
       if (shadowRef.current) { const lift = clamp(-y / (sz * 0.25), -0.3, 1); shadowRef.current.style.transform = `translateX(${fx.toFixed(1)}px) scale(${(1 - lift * 0.35) * fs}, 1)`; shadowRef.current.style.opacity = String(clamp((0.9 - lift * 0.5) * fs, 0, 1)); }
       raf = requestAnimationFrame(frame);

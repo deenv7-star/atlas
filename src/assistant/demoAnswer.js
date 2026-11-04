@@ -6,6 +6,7 @@
  */
 import { money, dayLabel, withPrefix } from './facts.js';
 import { isSmallTalk } from './nextStep.js';
+import { PERSONA } from '../../supabase/functions/_shared/brain/persona.js'; // she/we: one switch (ATLAS_PERSON)
 
 const pct = (n) => `${Math.round((Number(n) || 0) * 100)}%`;
 const short = (iso) => (iso ? iso.split('-').reverse().slice(0, 2).join('.') : '');
@@ -102,14 +103,14 @@ export function demoProposal(question, f) {
   const q = String(question || '');
   if (/נציג|בן\s*אדם|לבטל.*מנוי|ביטול.*מנוי/.test(q)) {
     return { kind: 'support_handoff', summary: 'העברה לנציג מצוות atlas', display: { text: q.slice(0, 200) },
-      say: 'הכנתי פנייה לנציג מצוות atlas. הצוות זמין 24/7, והשיחה תעבור אליו רק אחרי שתלחצו אישור.' };
+      say: `${PERSONA.prepared} פנייה לנציג מצוות atlas. הצוות זמין 24/7, והשיחה תעבור אליו רק אחרי שתלחצו אישור.` };
   }
   if (f && /(הודעה|תזכורת|וואטסאפ).*(ל|אל)/.test(q)) {
     const p = f.overdue[0] || f.arrivals[0] || f.arrivalsTomorrow[0];
     if (!p) return null;
     const text = f.overdue[0] ? `שלום ${p.name}, תזכורת קטנה על יתרת התשלום להזמנה. אפשר להעביר בביט או בהעברה. תודה, ומחכים לכם.` : `שלום ${p.name}, מחכים לכם היום. הצ׳ק-אין מ-15:00, ונשמח לעזור בכל דבר.`;
     return { kind: 'guest_message', summary: `הודעת וואטסאפ ל${p.name}`, display: { guest: p.name, text, booking_link: `/booking/${p.id}` }, client: { wa_link: null, booking_id: p.id },
-      say: `הכנתי הודעה ל${p.name}. אחרי אישור היא תיפתח בוואטסאפ שלכם, ואתם לוחצים שליחה.` };
+      say: `${PERSONA.prepared} הודעה ל${p.name}. אחרי אישור היא תיפתח בוואטסאפ שלכם, ואתם לוחצים שליחה.` };
   }
   if (f && /(תכינו|תכיני|תוסיפו|תוסיפי|צרו|לרשום|לקבוע).*הזמנה|הזמנה חדשה/.test(q)) {
     const u = f.freeNights.find((x) => x.weekend.length) || f.freeNights.find((x) => x.free);
@@ -120,7 +121,7 @@ export function demoProposal(question, f) {
     return { kind: 'create_booking', summary: `הזמנה ל${guest}, ${u.unit}, ${dayLabel(ci)} עד ${dayLabel(co)} (2 לילות)`,
       display: { guest, unit: u.unit, check_in: ci, check_out: co, nights: 2, total_price: null, adults: 2, children: 0 },
       payload: { guest_name: guest, unit_name: u.unit, check_in_date: ci, check_out_date: co, nights: 2, adults: 2, children: 0, total_price: null, status: 'PENDING', notes: '', source: 'direct' },
-      say: `יש, הכנתי הזמנה ל${guest} ב${u.unit.replace(/^ה/, '')}, ${dayLabel(ci)} עד ${dayLabel(co)}. היא נכנסת ליומן רק אחרי שתלחצו אישור.` };
+      say: `${PERSONA.yesPrepared} הזמנה ל${guest} ב${u.unit.replace(/^ה/, '')}, ${dayLabel(ci)} עד ${dayLabel(co)}. היא נכנסת ליומן רק אחרי שתלחצו אישור.` };
   }
   return null;
 }

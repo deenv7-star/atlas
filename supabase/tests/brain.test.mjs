@@ -7,6 +7,7 @@ import { runBrain, NO_ANSWER } from '../functions/_shared/brain/loop.js';
 import { brainPrompt, NATIVE_RULE } from '../functions/_shared/brain/prompt.js';
 import { searchHelp, kbDigest, ROUTE_SET } from '../functions/_shared/brain/knowledge.js';
 import { secretRequest, clientPayload, VOICE } from '../functions/voice-session/core.js';
+import { ATLAS_PERSON, PERSONA } from '../functions/_shared/brain/persona.js';
 
 const TODAY = '2026-11-04';
 const T = () => ({
@@ -187,7 +188,9 @@ test('prompt v2: always answers, steers small talk back, one next step, options 
     assert.ok(!/מחוץ לנושא.*לא עונים/.test(p));
   }
   const v = brainPrompt({ mode: 'voice', today: TODAY });
-  assert.match(v, /לא רובוטי/); assert.match(v, /לא שמעתי טוב/); assert.match(v, /רגע, בודקת/); assert.match(v, /גוף ראשון נקבה/);
+  assert.match(v, /לא רובוטי/);
+  if (ATLAS_PERSON === 'female') { assert.match(v, /לא שמעתי טוב/); assert.match(v, /רגע, בודקת/); assert.match(v, /גוף ראשון נקבה/); }
+  else { assert.match(v, /לא שמענו טוב/); assert.match(v, /רגע, בודקים/); assert.ok(!/גוף ראשון נקבה|בודקת|הכנתי/.test(v)); }
   assert.ok(v.length < 9000, `voice prompt too long: ${v.length}`);
 });
 
@@ -242,4 +245,13 @@ test('voice session: semantic VAD (the only mode Eleven accepts) that answers sh
   assert.ok(['medium', 'high'].includes(td.eagerness));
   assert.ok(b.session.max_duration_seconds >= 60 && b.session.max_duration_seconds <= VOICE.sliceSeconds);
   assert.match(secretRequest({ today: TODAY, seconds: 180, sessionId: 's', resume: 'הבעלים: היי' }).session.instructions, /לא לברך שוב/);
+});
+
+test('persona switch: both voices are complete and the prompt follows ATLAS_PERSON (one switch)', async () => {
+  const P = await import('../functions/_shared/brain/persona.js');
+  assert.ok(['female', 'plural'].includes(P.ATLAS_PERSON));
+  for (const k of ['promptWho', 'promptSelf', 'promptCheck', 'promptVoiceSelf', 'promptNotHeard', 'checking', 'writeHere', 'writeToMe', 'placeholder', 'hintPrepare', 'notHeard', 'prepared', 'yesPrepared', 'askBooking']) assert.ok(PERSONA[k], k);
+  for (const t of TOOL_NAMES.filter((n) => !WRITE_TOOLS.has?.(n))) assert.ok(typeof PERSONA.tools[t] === 'string' || !['get_day_overview', 'find_bookings'].includes(t), t);
+  const v = brainPrompt({ mode: 'voice', today: TODAY });
+  assert.ok(v.includes(PERSONA.promptVoiceSelf) && v.includes(PERSONA.promptCheck));
 });
