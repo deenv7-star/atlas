@@ -5,6 +5,7 @@ export type CommandPaletteNavigateState = {
     newGuest?: true;
     newMaintenance?: true;
     newPayment?: true;
+    newExpense?: true;
   };
 };
 

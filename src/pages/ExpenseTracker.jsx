@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FinanceTabs from '@/components/app/FinanceTabs';
 import { PageHeader, StatTile, fmtMoney, ComingSoon } from '@/components/ds';
 import { useStayData } from '@/hooks/useStayData';
@@ -51,6 +52,13 @@ export default function ExpenseTracker({ orgId }) {
 function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
   const stay = useStayData({ withCleaning: false });
   const [dialogOpen, setDialogOpen] = useState(false);
+  // "הוצאה חדשה" from the עוד sheet lands here with the add form already open
+  const location = useLocation(); const navigate = useNavigate();
+  useEffect(() => {
+    if (!location.state?.commandPalette?.newExpense) return;
+    setDialogOpen(true);
+    navigate({ pathname: location.pathname, search: location.search }, { replace: true, state: null });
+  }, [location.state]);
   const [form, setForm] = useState({
     property: '',
     category: '',
