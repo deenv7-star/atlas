@@ -126,11 +126,11 @@ test('help search and digest come from the code-built KB (prices, limits)', () =
   assert.ok(ROUTE_SET.has('/bookings'));
 });
 
-test('prompt: plural, no invented features, actions need confirmation, voice speaks numbers', () => {
+test('prompt: owner in plural, atlas in first person, no invented features, actions need confirmation, voice speaks numbers', () => {
   const t = brainPrompt({ mode: 'text', today: TODAY });
   const v = brainPrompt({ mode: 'voice', today: TODAY });
   for (const p of [t, v]) { assert.match(p, /אסור להמציא/); assert.match(p, /אישור/); assert.match(p, /24\/7/); assert.match(p, /2026-11-04/); }
-  assert.match(v, /במילים/); assert.match(v, /בוקינג/); assert.match(v, /אנחנו יכולים/);
+  assert.match(v, /במילים/); assert.match(v, /בוקינג/); assert.match(v, /אני יכולה/); // first person, female (Deen, 04.11: "להרגיש אנושית")
   assert.ok(v.length < 9000, `voice prompt too long: ${v.length}`); // paid per token on every turn
 });
 
