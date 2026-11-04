@@ -9,7 +9,7 @@ const FORCE_ANSWER = 'אין עוד קריאות לכלים. ענו עכשיו �
 const STATUS = {
   get_day_overview: 'בודקים את היום', find_bookings: 'מחפשים בהזמנות', get_booking: 'פותחים את ההזמנה',
   check_availability: 'בודקים מה פנוי', get_leads: 'בודקים פניות', get_money: 'בודקים בכספים',
-  get_business_settings: 'בודקים את ההגדרות', search_help: 'בודקים במדריך', propose_booking: 'מכינים הזמנה',
+  get_business_settings: 'בודקים את ההגדרות', search_help: 'בודקים במדריך', search_web: 'מחפשים מידע עדכני', propose_booking: 'מכינים הזמנה',
   propose_guest_message: 'מכינים הודעה', propose_support_handoff: 'מכינים פנייה לנציג',
 };
 export const statusFor = (name) => STATUS[name] || 'בודקים';
@@ -21,7 +21,7 @@ export const statusFor = (name) => STATUS[name] || 'בודקים';
 export function openaiChat({ apiKey, model, effort = 'none', fetchImpl = fetch, user }) {
   return async (messages, signal, opts = {}) => {
     const body = JSON.stringify({ model, messages, tools: chatTools(), tool_choice: opts.noTools ? 'none' : 'auto', parallel_tool_calls: true,
-      reasoning_effort: effort, max_completion_tokens: 1600, prompt_cache_key: 'atlas-brain-v6', safety_identifier: user });
+      reasoning_effort: effort, max_completion_tokens: 1600, prompt_cache_key: 'atlas-brain-v7', safety_identifier: user });
     for (let attempt = 0; ; attempt += 1) {
       let res;
       try {

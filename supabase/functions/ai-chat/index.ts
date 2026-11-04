@@ -1,4 +1,4 @@
-// ai-chat v6 (answers every question, guides to a next step, iOS-safe): "שאלו את atlas" with a brain (knowledge base + tools over the owner's own data).
+// ai-chat v7 (general knowledge + search_web for live/local info; v6: answers every question, guides to a next step, iOS-safe): "שאלו את atlas" with a brain (knowledge base + tools over the owner's own data).
 //   - The OpenAI key is the edge-function secret OPENAI_API_KEY; it never reaches the browser.
 //   - Signed-in users only (user JWT). Browsers only from the origin allow-list (core.js).
 //   - The rules live on the server (_shared/brain/prompt.js); a client `system` field is ignored.
@@ -19,6 +19,7 @@ const minuteOk = makeMinuteLimiter(LIMITS.perMinute);
 const toolMinuteOk = makeMinuteLimiter(40); // voice: a few tool calls per spoken question
 const MODEL = Deno.env.get("BRAIN_MODEL") || "gpt-6-luna";
 const EFFORT = Deno.env.get("BRAIN_REASONING") || "none"; // luna + tools on chat/completions needs "none"
+const SEARCH_EFFORT = Deno.env.get("BRAIN_SEARCH_REASONING") || "none"; // Responses + web_search: "none" ~3-6 s, "low" ~7 s (04.11.2026)
 
 Deno.serve(async (req) => {
   const origin = req.headers.get("Origin");
@@ -42,7 +43,9 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { /* empty body */ }
   // Apple 3.1.1: the iOS app (Capacitor) says so; there the brain never quotes plan prices or points to buying outside.
   const native = body.platform === "ios" || origin === "capacitor://localhost";
-  const ctx = { db: sb, userId: u.user.id, today: todayIL(), native };
+  // world: the search_web tool (restaurants, weather, driving times…) uses the same OpenAI key + model, never business data
+  const ctx = { db: sb, userId: u.user.id, today: todayIL(), native,
+    world: { apiKey: Deno.env.get("OPENAI_API_KEY"), model: MODEL, effort: SEARCH_EFFORT, signal: req.signal } };
 
   // ── voice tool call (no LLM here: the realtime model already decided) ──
   if (body.op === "tool") {

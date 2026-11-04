@@ -22,7 +22,7 @@ const LEX = {
     tools: {
       get_day_overview: 'רגע, בודקת את היום', find_bookings: 'מחפשת בהזמנות', get_booking: 'פותחת את ההזמנה',
       check_availability: 'בודקת מה פנוי', get_leads: 'בודקת פניות', get_money: 'בודקת בכספים',
-      get_business_settings: 'בודקת בהגדרות', search_help: 'בודקת במדריך', propose_booking: 'מכינה הזמנה',
+      get_business_settings: 'בודקת בהגדרות', search_help: 'בודקת במדריך', search_web: 'מחפשת מידע עדכני', propose_booking: 'מכינה הזמנה',
       propose_guest_message: 'מכינה הודעה', propose_support_handoff: 'מכינה פנייה לנציג',
     },
     checking: 'רגע, בודקת',
@@ -42,7 +42,7 @@ const LEX = {
     tools: {
       get_day_overview: 'רגע, בודקים את היום', find_bookings: 'מחפשים בהזמנות', get_booking: 'פותחים את ההזמנה',
       check_availability: 'בודקים מה פנוי', get_leads: 'בודקים פניות', get_money: 'בודקים בכספים',
-      get_business_settings: 'בודקים בהגדרות', search_help: 'בודקים במדריך', propose_booking: 'מכינים הזמנה',
+      get_business_settings: 'בודקים בהגדרות', search_help: 'בודקים במדריך', search_web: 'מחפשים מידע עדכני', propose_booking: 'מכינים הזמנה',
       propose_guest_message: 'מכינים הודעה', propose_support_handoff: 'מכינים פנייה לנציג',
     },
     checking: 'רגע, בודקים',

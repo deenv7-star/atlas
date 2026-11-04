@@ -10,6 +10,7 @@
 // Plain JS on purpose (Deno + node --test). `db` is a supabase-js client created with the user's JWT.
 import { todayIL, isDay, addDays, nights, monthRange, clampRange, heDay } from './dates.js';
 import { searchHelp } from './knowledge.js';
+import { askWorld, businessArea, searchAllowed } from './world.js';
 
 const ACTIVE_BOOKING = (s) => !['CANCELLED', 'CANCELED', 'WAITLIST', 'cancelled', 'canceled', 'waitlist'].includes(String(s || ''));
 const PAID = new Set(['PAID', 'paid', 'COMPLETED', 'completed', 'SUCCEEDED', 'succeeded']);
@@ -81,6 +82,17 @@ export const TOOL_DEFS = [
     name: 'search_help',
     description: 'חיפוש במדריך של atlas: איך עושים משהו באפליקציה, איפה מסך, מה המחיר, מה עוד לא עובד. השתמשו בזה לפני כל תשובה על יכולת של atlas.',
     parameters: { type: 'object', additionalProperties: false, required: ['query'], properties: { query: { type: 'string' } } },
+  },
+  {
+    name: 'search_web',
+    description: 'מידע עדכני מהעולם, מחוץ לנתוני העסק: מסעדות, אטרקציות ומה לעשות באזור, מזג אוויר, זמני נסיעה, אירועים, שעות פתיחה, חדשות, וכל עובדה שצריך לוודא. כשלא צוין מקום, מחפש סביב מיקום המתחם. מחזיר תשובה קצרה בעברית.',
+    parameters: {
+      type: 'object', additionalProperties: false, required: ['query'],
+      properties: {
+        query: { type: 'string', description: 'השאלה במילים מלאות, בעברית, כולל היום אם רלוונטי ("מזג אוויר מחר", "מסעדות כשרות פתוחות בשבת")' },
+        near: { type: 'string', description: 'מקום מסוים אם נשאל עליו ("הכנרת", "צפת"). ריק = אזור המתחם' },
+      },
+    },
   },
   {
     name: 'propose_booking',
@@ -271,6 +283,16 @@ const EXEC = {
   async search_help(_db, a, ctx) {
     const hits = searchHelp(a.query, 4, 3200, { native: !!ctx?.native });
     return hits.length ? { results: hits } : { results: [], note: 'לא נמצא במדריך. ענו ממה שבתקציר אם יש שם תשובה. אם אין, אמרו בכנות שאין לכם תשובה בטוחה, אל תמציאו, והציעו להעביר לנציג.' };
+  },
+
+  /* the world (not business data): web search through the brain's OpenAI key, see world.js */
+  async search_web(db, a, ctx) {
+    const w = ctx?.world;
+    if (!w?.apiKey) return { error: 'not_available', say: 'אמרו שחיפוש מידע עדכני לא זמין כרגע, וענו מהידע הכללי שלכם אם אפשר, עם הסתייגות.' };
+    if (!searchAllowed(ctx.userId)) return { error: 'rate_limited', say: 'אמרו שיש הרבה חיפושים ברגע האחרון, ושאפשר לנסות שוב עוד דקה.' };
+    const area = ctx.area ?? (ctx.area = await businessArea(db, ctx.userId));
+    return askWorld({ apiKey: w.apiKey, model: w.model, effort: w.effort, fetchImpl: w.fetchImpl, signal: w.signal, timeoutMs: w.timeoutMs,
+      query: a.query, near: a.near, area, today: ctx.today, user: ctx.userId });
   },
 
   /* proposals: validated, never executed here */
