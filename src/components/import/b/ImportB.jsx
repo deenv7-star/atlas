@@ -76,7 +76,7 @@ export default function ImportB({ user }) {
     );
   } else if (s.phase === 'error' || s.phase === 'fallback') {
     head = s.error
-      ? { title: 'לא הצלחנו לקרוא את הקישור', sub: 'קורה עם Booking ו-Airbnb לפעמים. צלמו מסך מהמודעה או הדביקו את התיאור.' }
+      ? { title: 'לא הצלחנו לקרוא את הקישור', sub: 'לפעמים Booking ו-Airbnb חוסמים קריאה. צלמו מסך מהמודעה או הדביקו את התיאור.' }
       : { title: 'בלי קישור? גם טוב', sub: 'צלמו מסך מהמודעה או הדביקו את התיאור, ונקרא משם.' };
     body = <FallbackInputs s={s} set={set} />;
     foot = (
