@@ -9,9 +9,7 @@ import { readCommandPaletteFlag } from '@/lib/commandPaletteNavigationState';
 import { useLeads, useCreateLead, useUpdateLead, useDeleteLead, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-} from '@/components/ui/dialog';
+import { AtlasSheet } from '@/components/ui/sheet/AtlasSheet';
 import { useToast } from '@/components/ui/AtlasToast';
 import { Users, Plus, Search } from 'lucide-react';
 import { exportToCSV, LEAD_COLUMNS } from '@/lib/csvExport';
@@ -350,7 +348,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
         )}
       </div>
 
-      <Dialog
+      <AtlasSheet
         open={showDialog}
         onOpenChange={(open) => {
           const h = guestDialogInterceptRef.current;
@@ -361,11 +359,9 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
           setShowDialog(open);
           if (!open) setOpenGuestId(null);
         }}
+        title={editingLead ? 'עריכת פנייה' : 'פנייה חדשה'}
+        subtitle={editingLead ? null : 'שם וטלפון מספיקים כדי להתחיל.'}
       >
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-bold text-navy-900">{editingLead ? 'עריכת פנייה' : 'פנייה חדשה'}</DialogTitle>
-          </DialogHeader>
           <GuestForm
             key={editingLead?.id ?? 'new'}
             storageSuffix={editingLead?.id ?? 'new'}
@@ -382,8 +378,7 @@ export default function LeadsPage({ user: _user, selectedPropertyId }) {
             }}
             submitLabel={editingLead ? 'שמירה' : 'שמירת פנייה'}
           />
-        </DialogContent>
-      </Dialog>
+      </AtlasSheet>
     </Page>
   );
 }

@@ -14,6 +14,10 @@ import { createSSEParser, chunkText } from './sse.js';
 import { factsForModel, factsToText } from './facts.js';
 import { demoAnswer, demoProposal, DEMO_STREAM_PATH } from './demoAnswer.js';
 import { createDeadline } from './deadline.js';
+import { isNativeApp } from '@/lib/nativePlatform';
+
+/** Apple 3.1.1: the server hides plan prices / outside purchase when the question comes from the iOS app. */
+export const PLATFORM = (() => { try { return isNativeApp() ? 'ios' : 'web'; } catch { return 'web'; } })();
 
 export const ASSISTANT_DEMO = !isSupabaseConfigured;
 const FN_URL = `${String(import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '')}/functions/v1/ai-chat`;
@@ -68,7 +72,7 @@ export async function streamAnswer({ messages, facts, page = '', signal, onDelta
     await sleep(650, signal); // the live brain calls tools here; keep the rhythm honest-looking
     const proposal = demoProposal(q, facts);
     if (proposal) onAction(proposal);
-    await reveal(proposal ? proposal.say : demoAnswer(q, facts), onDelta, signal);
+    await reveal(proposal ? proposal.say : demoAnswer(q, facts, { native: PLATFORM === 'ios' }), onDelta, signal);
     return { model: 'demo' };
   }
 
@@ -91,7 +95,7 @@ export async function streamAnswer({ messages, facts, page = '', signal, onDelta
       signal: dl.signal,
       headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream', Authorization: `Bearer ${jwt}`, apikey: ANON },
       body: JSON.stringify({
-        v: 4, stream: true, page,
+        v: 4, stream: true, page, platform: PLATFORM,
         messages: clean,
         context: factsForModel(facts, page),
         prompt: legacyPrompt(clean, facts), system: LEGACY_SYSTEM, // v3 compatibility
@@ -172,21 +176,27 @@ export async function runVoiceTool(name, args, signal) {
 
 /** Ask voice-session for a short-lived ElevenLabs secret (one slice). Throws AssistantError with a voice code. */
 export async function startVoiceSession({ page = '', resume = '' } = {}, signal) {
-  const { status, body } = await callFn('voice-session', { op: 'start', page, resume }, signal);
+  const { status, body } = await callFn('voice-session', { op: 'start', page, resume, platform: PLATFORM }, signal);
   if (status === 401) throw new AssistantError('unauthorized');
   if (body?.client_secret) return body;
   throw new VoiceError(body?.error || (status === 429 ? 'daily_limit' : 'upstream'));
 }
-export function endVoiceSession(sessionId) {
+/** End a slice (the server charges the seconds actually used). `close`: the socket's close code/reason, logged server-side. */
+export function endVoiceSession(sessionId, close = null) {
   if (!sessionId || ASSISTANT_DEMO) return;
-  callFn('voice-session', { op: 'end', session_id: sessionId }).catch(() => {});
+  callFn('voice-session', close ? { op: 'end', session_id: sessionId, close } : { op: 'end', session_id: sessionId }).catch(() => {});
+}
+/** Telemetry only: a socket/server error inside a voice slice (no DB write; shows up in the voice-session logs). */
+export function reportVoiceEvent(kind, detail = {}) {
+  if (ASSISTANT_DEMO) return;
+  callFn('voice-session', { op: 'event', kind, ...detail }).catch(() => {});
 }
 
 export const VOICE_ERRORS = {
   not_configured: 'השיחה הקולית עוד לא הופעלה בחשבון. אפשר לשאול בכתב.',
   voice_not_ready: 'השיחה הקולית עוד לא הופעלה בחשבון. אפשר לשאול בכתב.',
   daily_limit: 'נגמרו 30 דקות הדיבור של היום. מחר בבוקר אפשר שוב, ובינתיים אפשר לשאול בכתב.',
-  mic_denied: 'אין הרשאה למיקרופון. אפשר לאשר בהגדרות, או לשאול בכתב.',
+  mic_denied: 'כדי לדבר עם atlas צריך לאשר גישה למיקרופון. בינתיים אפשר לכתוב, והתשובות זהות.',
   mic_missing: 'לא מצאנו מיקרופון במכשיר הזה. אפשר לשאול בכתב.',
   network: 'החיבור נקטע. בדקו את האינטרנט ונסו שוב.',
   unauthorized: 'צריך להתחבר מחדש כדי לדבר עם atlas.',

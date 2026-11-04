@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { validateEmail } from '@/lib/validation';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
+import { publicOrigin } from '@/lib/native';
 
 export default function ResetPassword() {
   const [email, setEmail] = useState('');
@@ -33,7 +34,7 @@ export default function ResetPassword() {
     setError('');
     try {
       const { error: err } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/update-password`,
+        redirectTo: `${publicOrigin()}/update-password`,
       });
       if (err) throw err;
       setSent(true);

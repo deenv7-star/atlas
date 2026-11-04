@@ -101,9 +101,15 @@ export function useAssistant({ facts, page }) {
 
   const clear = useCallback(() => { controller?.abort(); set(() => []); }, []);
 
+  /** Carry a voice conversation into writing: its final turns become the start of this thread (context for ai-chat). */
+  const seed = useCallback((turns = []) => {
+    const add = turns.filter((t) => t.final && t.text).slice(-8).map((t) => ({ id: uid(), role: t.role === 'user' ? 'user' : 'assistant', content: String(t.text).slice(0, 2000), status: 'done', voice: true }));
+    if (add.length) set((list) => [...list, ...add]);
+  }, []);
+
   /** A proposal card changed state: 'confirmed' | 'dismissed' | 'failed' (+ result for links / messages). */
   const resolveProposal = useCallback((msgId, index, state, result = null) => {
     set((list) => list.map((m) => (m.id === msgId ? { ...m, proposals: (m.proposals || []).map((p, i) => (i === index ? { ...p, state, result } : p)) } : m)));
   }, []);
-  return { messages, busy, send, stop, retry, clear, resolveProposal };
+  return { messages, busy, send, stop, retry, clear, resolveProposal, seed };
 }

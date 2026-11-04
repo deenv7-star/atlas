@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useUpdateBooking, useProperties } from '@/data/entities';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -12,13 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { AtlasSheet, SheetGroup, SheetField, SheetInput, SheetSelect, SheetSegmented, SheetFooter, SheetSubmit, DateField } from '@/components/ui/sheet';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useNavigate } from 'react-router-dom';
 import { deleteBookingWithUndo } from '@/components/ui/AtlasToast';
@@ -287,18 +280,11 @@ export default function BookingDetails({ booking, onClose, orgId }) {
             </Button>
           </div>
         </div>
-        <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-          <DialogContent className="max-w-[420px]" dir="rtl">
-            <DialogHeader>
-              <DialogTitle className="text-[20px] font-bold text-navy-900">למחוק את ההזמנה?</DialogTitle>
-            </DialogHeader>
-            <p className="text-[15px] text-ink-600">ההזמנה של {booking.guest_name || 'האורח'} תימחק. אפשר לשחזר אותה מיד אחרי המחיקה.</p>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setConfirmDelete(false)}>ביטול</Button>
-              <Button variant="destructive" onClick={() => { setConfirmDelete(false); deleteBookingWithUndo(queryClient, booking.id); navigate(createPageUrl('Bookings')); }}>מחיקה</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <AtlasSheet open={confirmDelete} onOpenChange={setConfirmDelete} size="sm" title="למחוק את ההזמנה?" subtitle={`ההזמנה של ${booking.guest_name || 'האורח'} תימחק. אפשר לשחזר אותה מיד אחרי המחיקה.`}>
+          <SheetFooter>
+            <SheetSubmit className="!bg-red-600 hover:!bg-red-700 !shadow-none" onClick={() => { setConfirmDelete(false); deleteBookingWithUndo(queryClient, booking.id); navigate(createPageUrl('Bookings')); }}>מחיקת ההזמנה</SheetSubmit>
+          </SheetFooter>
+        </AtlasSheet>
 
         {/* v8 C bento: guest tile + ONE solid-indigo balance tile, then payments beside the unit photo + progress */}
         <div className="grid grid-cols-[minmax(0,1fr)] gap-3 md:gap-4 lg:grid-cols-12">
@@ -487,98 +473,60 @@ export default function BookingDetails({ booking, onClose, orgId }) {
         </div>
       </Page>
 
-      {/* Add Payment Dialog */}
-      <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle className="text-[22px] font-bold text-navy-900">תשלום חדש</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div>
-              <Label>סוג תשלום</Label>
-              <Select 
-                value={newPayment.type} 
-                onValueChange={(value) => setNewPayment({ ...newPayment, type: value })}
-              >
-                <SelectTrigger className="mt-1 rounded-xl">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="DEPOSIT">מקדמה</SelectItem>
-                  <SelectItem value="BALANCE">יתרה</SelectItem>
-                  <SelectItem value="FULL">תשלום מלא</SelectItem>
-                  <SelectItem value="OTHER">אחר</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>סכום (₪)</Label>
-              <Input 
-                type="number"
-                value={newPayment.amount}
-                onChange={(e) => setNewPayment({ ...newPayment, amount: parseFloat(e.target.value) || 0 })}
-                className="mt-1 rounded-xl"
-                min={0}
+      {/* Add payment sheet */}
+      <AtlasSheet open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen} title="תשלום חדש" subtitle={booking?.guest_name ? `להזמנה של ${booking.guest_name}` : null}>
+        <SheetGroup>
+          <SheetField label="סכום" htmlFor="bd-pay-amount">
+            <div className="relative">
+              <SheetInput
+                id="bd-pay-amount"
+                type="text"
+                inputMode="decimal"
+                dir="ltr"
+                className="pe-10 text-[18px] font-semibold"
+                style={{ textAlign: 'right' }}
+                value={newPayment.amount ? String(newPayment.amount) : ''}
+                onChange={(e) => setNewPayment({ ...newPayment, amount: parseFloat(e.target.value.replace(',', '.')) || 0 })}
               />
+              <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/45">₪</span>
             </div>
-            <div>
-              <Label>אמצעי תשלום</Label>
-              <Select 
-                value={newPayment.method} 
-                onValueChange={(value) => setNewPayment({ ...newPayment, method: value })}
-              >
-                <SelectTrigger className="mt-1 rounded-xl">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="CASH">מזומן</SelectItem>
-                  <SelectItem value="TRANSFER">העברה בנקאית</SelectItem>
-                  <SelectItem value="CARD">כרטיס אשראי</SelectItem>
-                  <SelectItem value="OTHER">אחר</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>תאריך יעד</Label>
-              <Input 
-                type="date"
-                value={newPayment.due_date}
-                onChange={(e) => setNewPayment({ ...newPayment, due_date: e.target.value })}
-                className="mt-1 rounded-xl"
-              />
-            </div>
-            <div>
-              <Label>סטטוס</Label>
-              <Select 
-                value={newPayment.status} 
-                onValueChange={(value) => setNewPayment({ ...newPayment, status: value })}
-              >
-                <SelectTrigger className="mt-1 rounded-xl">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="DUE">לתשלום</SelectItem>
-                  <SelectItem value="PAID">שולם</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPaymentDialogOpen(false)} className="rounded-xl">
-              ביטול
-            </Button>
-            <Button 
-              onClick={() => createPaymentMutation.mutate(newPayment)}
-              disabled={newPayment.amount <= 0 || createPaymentMutation.isPending}
-              className="bg-brand-600 hover:bg-brand-500 text-white rounded-xl"
-            >
-              {createPaymentMutation.isPending ? 'שומרים…' : 'הוספת תשלום'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetField>
+          <SheetField label="סוג" labelId="bd-pay-type">
+            <SheetSegmented
+              labelledBy="bd-pay-type"
+              value={newPayment.type}
+              options={[{ value: 'DEPOSIT', label: 'מקדמה' }, { value: 'BALANCE', label: 'יתרה' }, { value: 'FULL', label: 'מלא' }]}
+              onChange={(value) => setNewPayment({ ...newPayment, type: value })}
+            />
+          </SheetField>
+          <SheetField label="מצב" labelId="bd-pay-status">
+            <SheetSegmented
+              labelledBy="bd-pay-status"
+              value={newPayment.status}
+              options={[{ value: 'PAID', label: 'שולם' }, { value: 'DUE', label: 'לתשלום' }]}
+              onChange={(value) => setNewPayment({ ...newPayment, status: value })}
+            />
+          </SheetField>
+          <SheetField label="אמצעי תשלום" htmlFor="bd-pay-method">
+            <SheetSelect
+              id="bd-pay-method"
+              value={newPayment.method}
+              options={[{ value: 'CASH', label: 'מזומן' }, { value: 'TRANSFER', label: 'העברה בנקאית' }, { value: 'CARD', label: 'כרטיס אשראי' }, { value: 'OTHER', label: 'אחר' }]}
+              onChange={(e) => setNewPayment({ ...newPayment, method: e.target.value })}
+            />
+          </SheetField>
+          <DateField idPrefix="bd-pay-due" label="תאריך יעד" optional value={newPayment.due_date || ''} onChange={(iso) => setNewPayment({ ...newPayment, due_date: iso })} />
+        </SheetGroup>
+        <SheetFooter>
+          <SheetSubmit
+            onClick={() => createPaymentMutation.mutate(newPayment)}
+            disabled={newPayment.amount <= 0}
+            state={createPaymentMutation.isPending ? 'submitting' : 'idle'}
+          >
+            שמירת תשלום
+          </SheetSubmit>
+        </SheetFooter>
+      </AtlasSheet>
     </>
   );
 }
