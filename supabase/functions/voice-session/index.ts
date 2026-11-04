@@ -12,6 +12,18 @@ import { corsHeaders, isAllowedOrigin, makeMinuteLimiter } from "../ai-chat/core
 import { todayIL } from "../_shared/brain/dates.js";
 import { VOICE, secretRequest, clientPayload } from "./core.js";
 
+/** ELEVENLABS_API_KEY, tolerating a stray character in the secret's name (it was saved once as "ELEVENLABS_API_KEY,"). */
+function elevenKey(): string | undefined {
+  const exact = Deno.env.get("ELEVENLABS_API_KEY")?.trim();
+  if (exact) return exact;
+  try {
+    for (const [k, v] of Object.entries(Deno.env.toObject())) {
+      if (k.replace(/[^A-Z0-9_]/gi, "").toUpperCase() === "ELEVENLABS_API_KEY" && v.trim()) return v.trim();
+    }
+  } catch { /* no env access */ }
+  return undefined;
+}
+
 const minuteOk = makeMinuteLimiter(6); // starts + renewals per minute
 // supabase-js builders are thenables without .catch: wrap them
 const quiet = (p: PromiseLike<unknown>) => Promise.resolve(p).then(() => null, () => null);
@@ -46,7 +58,7 @@ Deno.serve(async (req) => {
   if (body.op !== "start") return json({ error: "bad_op" }, 400);
   if (!minuteOk(u.user.id)) return json({ error: "rate_limited" }, 429);
 
-  const key = Deno.env.get("ELEVENLABS_API_KEY");
+  const key = elevenKey();
   if (!key) return json({ error: "not_configured" }, 200);
 
   // reserve a slice (migration 031). No migration → refuse, never unlimited.
