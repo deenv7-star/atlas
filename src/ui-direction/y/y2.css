@@ -1,8 +1,8 @@
-/* Y2 · "זכוכית" — frosted panels over a real zimmer photo (visionOS board). White tiles with tiny viz,
+/* Y2 · "זכוכית" — panels on the atlas canvas (the zimmer photo behind the shell was removed 04.11.2026; see y-bg.css). White tiles with tiny viz,
    ONE indigo card per row, navy glass side column. Palette: #3E2BF1, #1B2656, #F7F8FB, white; amber = due dot. */
 .y2-shell, .y3s { --ind: #3E2BF1; --navy: #1B2656; --mute: rgba(27,38,86,.6); --soft: rgba(27,38,86,.42); --line: rgba(27,38,86,.08); --ease: cubic-bezier(.23,1,.32,1); --amber: #F5A524;
   --glass: rgba(255,255,255,.3); --gb: inset 0 0 0 1px rgba(255,255,255,.55), inset 0 1px 0 rgba(255,255,255,.7); }
-.y2-shell { color: var(--navy); background: #8a7a6a url('/demo/shell-bg-m.webp') center 40% / cover no-repeat; }
+.y2-shell { color: var(--navy); background: #F7F8FB; }
 .y2-shell::before { content: ''; position: fixed; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(27,38,86,.18), rgba(27,38,86,.05) 40%, rgba(27,38,86,.22)); z-index: 0; }
 .y2-shell > * { position: relative; z-index: 1; }
 .y2-shell .sp-launcher { display: none; }
@@ -259,6 +259,8 @@
   .y2-side, .y3-panel { background: rgba(27,38,86,.96); }
 }
 
-/* shell photo: a light, softened copy (it sits behind frosted glass): 43 KB on phones, 96 KB on desktop (was 269 KB) */
-.y2-shell { background-image: url('/demo/shell-bg-m.webp'); }
-@media (min-width: 768px) { .y2-shell { background-image: url('/demo/shell-bg.webp'); } }
+/* empty revenue chart (no bookings yet): one calm line instead of a grid of ₪0K */
+.y2-chart-empty { margin-top: 14px; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center;
+  border-radius: 20px; background: repeating-linear-gradient(180deg, transparent 0 calc(33.33% - 1px), rgba(27,38,86,.06) calc(33.33% - 1px) 33.33%); }
+.y2-chart-empty b { font-size: 15px; font-weight: 700; color: var(--navy); }
+.y2-chart-empty span { font-size: 13px; color: var(--mute); }
