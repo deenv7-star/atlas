@@ -494,6 +494,31 @@ export function missingFields(r) {
   return ASK_ORDER.filter((k) => empty(k) || c[k] === 'low' || c[k] === 'none');
 }
 
+/* ── preview thumbnails (the app's CSP only allows our own image hosts, so the preview gets data: URLs) ── */
+
+export function thumbUrl(u) {
+  if (/cf\.bstatic\.com\/xdata\/images\/hotel\//.test(u)) return u.replace(/\/images\/hotel\/[a-z0-9_]+\//i, '/images/hotel/square240/');
+  if (/a0\.muscache\.com\/im\/pictures\//.test(u)) return `${u.split('?')[0]}?im_w=240`;
+  return u;
+}
+function toBase64(bytes) {
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+export async function previewThumbs(photos, deps, n = 9) {
+  const pick = photos.slice(0, n);
+  const out = await Promise.all(pick.map(async (u) => {
+    try {
+      const r = await safeFetch(thumbUrl(u), { fetchImpl: deps.fetch, resolve: deps.resolve, accept: 'image/webp,image/jpeg,image/png', maxBytes: 260_000, timeoutMs: 6000, deadline: deps.deadline });
+      const type = String(r.type || '').split(';')[0].trim().toLowerCase();
+      if (r.status >= 300 || !/^image\/(jpeg|jpg|png|webp)$/.test(type) || typeof r.body === 'string' || r.body.byteLength >= 260_000) return null;
+      return `data:${type};base64,${toBase64(r.body)}`;
+    } catch { return null; }
+  }));
+  return out;
+}
+
 /** The whole import, server side. deps: { fetch, resolve, key, model, now } */
 export async function runImport({ urls = [], text = '', images = [] }, deps) {
   const list = [...new Set((Array.isArray(urls) ? urls : [urls]).map((u) => String(u || '').trim()).filter(Boolean))].slice(0, LIMITS.urls);
@@ -508,6 +533,7 @@ export async function runImport({ urls = [], text = '', images = [] }, deps) {
   const content = buildUserContent(sources, { pasted: text, images: imgs });
   const { result, error, usage } = await llmExtract(content, { key: deps.key, model: deps.model, fetchImpl: deps.llmFetch || deps.fetch });
   const out = finalize(result, sources);
+  out.thumbs = deps.thumbs === false ? [] : await previewThumbs(out.photos, { ...deps, deadline: Date.now() + 8000 });
   return { result: out, missing: missingFields(out), model_error: error || null, usage: usage || null, used_paste: !!String(text).trim(), used_images: imgs.length };
 }
 
