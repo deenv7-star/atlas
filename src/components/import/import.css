@@ -1,6 +1,6 @@
 /* ייבוא מתחם (import v1): shared look for both versions. Palette only: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white.
    Big taps (≥56px for choices), 17px+ body, one primary button per screen, calm motion (ease-out, ≤300ms, reduced-motion safe). */
-.im { --ind: #3E2BF1; --navy: #1B2656; --canvas: #F7F8FB; --mute: rgba(27,38,86,.64); --soft: rgba(27,38,86,.08); --line: rgba(27,38,86,.1);
+.im { --ind: #3E2BF1; --navy: #1B2656; --canvas: #F7F8FB; --mute: rgba(27,38,86,.72); --soft: rgba(27,38,86,.08); --line: rgba(27,38,86,.1);
   --ease: cubic-bezier(.23,1,.32,1); font-family: Heebo, system-ui, sans-serif; color: var(--navy); background: var(--canvas); min-height: 100dvh; }
 .im *, .im *::before, .im *::after { box-sizing: border-box; }
 .im button { font: inherit; color: inherit; }
@@ -131,6 +131,6 @@
 .im-entry-ic svg { width: 26px; height: 26px; }
 .im-entry-tx { flex: 1; min-width: 0; }
 .im-entry-tx b { display: block; font-size: 18px; font-weight: 700; line-height: 1.25; }
-.im-entry-tx span { display: block; margin-top: 3px; font-size: 15px; line-height: 1.4; color: rgba(27,38,86,.64); }
+.im-entry-tx span { display: block; margin-top: 3px; font-size: 15px; line-height: 1.4; color: rgba(27,38,86,.72); }
 .im-entry-go { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 18px; border-radius: 999px; background: #3E2BF1; color: #fff; font-size: 16px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
 @media (max-width: 420px) { .im-entry { flex-wrap: wrap; } .im-entry-go { width: 100%; } }

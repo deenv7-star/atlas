@@ -202,10 +202,12 @@ export function PreviewCard({ draft, onFix, eyebrow = 'מצאנו', limit = 6 })
         <ul className="im-rows">
           {shown.map((r) => (
             <li key={r.id}>
-              <button type="button" className="im-row" onClick={() => onFix?.(r.id)} aria-label={`${r.title}: ${r.value}. ${QUESTIONS[r.id] || r.id === 'unit_count' ? 'לתיקון' : ''}`}>
+              <button type="button" className="im-row" onClick={() => onFix?.(r.id)}>
                 <span className="im-tick" aria-hidden><Check /></span>
                 <span className="im-txt"><small>{r.title}</small><span>{r.value}</span></span>
                 {r.check ? <span className="im-check">בדקו</span> : (QUESTIONS[r.id] ? <span className="im-fix" aria-hidden>תיקון</span> : null)}
+                {/* accessible name = the visible text (+ "לתיקון" for screen readers), so voice control matches what is on screen */}
+                {QUESTIONS[r.id] || r.id === 'unit_count' ? <span className="sr-only">, לתיקון</span> : null}
               </button>
             </li>
           ))}
