@@ -1,8 +1,10 @@
 // voice-session: issues a short-lived ElevenLabs Realtime client secret to a signed-in owner.
 //   POST {op:'start', page?, resume?} → {client_secret, expires_at, session_id, seconds, remaining_today, ws_url, model}
-//   POST {op:'end', session_id}       → {ok}
+//   POST {op:'end', session_id, close?} → {ok}  (close = WebSocket close code/reason from the app, logged as event "close")
+//   POST {op:'event', kind, session_id?, code?, message?} → {ok}  (app-side socket/server errors, logs only, no DB write)
 // The ElevenLabs key is the edge-function secret ELEVENLABS_API_KEY and never reaches the browser.
-// Budget: 30 min/day per user, reserved in 180 s slices by migration 031 (voice_session_start).
+// Budget: 30 min/day per user. Each start holds a slice of up to 180 s (migration 031 voice_session_start); with
+// migration 032 the day is charged by the seconds actually used (end/close), not the full slice.
 // Without 031 the function refuses ("voice_not_ready") instead of giving unlimited minutes.
 // Tools: the realtime model calls the SAME tools as the text brain; the app forwards each call to
 // ai-chat {op:'tool'}, which runs it with the user's JWT (RLS). Nothing here touches business data.
@@ -10,7 +12,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 import { corsHeaders, isAllowedOrigin, makeMinuteLimiter } from "../ai-chat/core.js";
 import { todayIL } from "../_shared/brain/dates.js";
-import { VOICE, secretRequest, clientPayload } from "./core.js";
+import { VOICE, secretRequest, clientPayload, closeLog, eventLog } from "./core.js";
 
 /** ELEVENLABS_API_KEY, tolerating a stray character in the secret's name (it was saved once as "ELEVENLABS_API_KEY,"). */
 function elevenKey(): string | undefined {
@@ -25,6 +27,7 @@ function elevenKey(): string | undefined {
 }
 
 const minuteOk = makeMinuteLimiter(6); // starts + renewals per minute
+const eventOk = makeMinuteLimiter(20); // app telemetry (close codes, socket errors) per minute
 // supabase-js builders are thenables without .catch: wrap them
 const quiet = (p: PromiseLike<unknown>) => Promise.resolve(p).then(() => null, () => null);
 // service role only to VOID a slice when ElevenLabs issued no secret (the app itself can never refund)
@@ -52,7 +55,14 @@ Deno.serve(async (req) => {
 
   if (body.op === "end") {
     const id = String(body.session_id || "");
-    if (id) await quiet(sb.rpc("voice_session_end", { p_session: id }));
+    let used: unknown = null;
+    if (id) used = await Promise.resolve(sb.rpc("voice_session_end", { p_session: id })).then((r) => r.data ?? null, () => null);
+    if (body.close && eventOk(u.user.id)) console.log(JSON.stringify({ ...closeLog({ user: u.user.id, session: id, close: body.close }), used_seconds: used }));
+    return json({ ok: true });
+  }
+  if (body.op === "event") {
+    const line = eventLog({ user: u.user.id, body });
+    if (line && eventOk(u.user.id)) console.log(JSON.stringify(line));
     return json({ ok: true });
   }
   if (body.op !== "start") return json({ error: "bad_op" }, 400);
@@ -72,7 +82,8 @@ Deno.serve(async (req) => {
   if (!r?.session_id || !(r.granted_seconds > 0)) return json({ error: "daily_limit", used_today: r?.used_today ?? null }, 429);
 
   const owner = String((u.user.user_metadata as Record<string, unknown>)?.full_name || "").trim().split(/\s+/)[0] || "";
-  const reqBody = secretRequest({ today: todayIL(), seconds: r.granted_seconds, sessionId: r.session_id, owner,
+  const native = body.platform === "ios" || origin === "capacitor://localhost"; // Apple 3.1.1
+  const reqBody = secretRequest({ today: todayIL(), seconds: r.granted_seconds, sessionId: r.session_id, owner, native,
     page: typeof body.page === "string" ? body.page : "", resume: typeof body.resume === "string" ? body.resume : "" });
   let res: Response;
   try {

@@ -10,12 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FinancialTable } from '@/components/tables/FinancialTable';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-} from '@/components/ui/dialog';
+import { AtlasSheet } from '@/components/ui/sheet/AtlasSheet';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  Wallet, Plus, Search, Clock, AlertCircle, CheckCircle2, Trash2,
+  Wallet, Plus, Search, Clock, AlertCircle, CheckCircle2,
 } from 'lucide-react';
 import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
 import { PaymentForm } from '@/components/forms/PaymentForm';
@@ -330,7 +328,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       </div>
 
       {/* Dialog */}
-      <Dialog
+      <AtlasSheet
         open={showDialog}
         onOpenChange={(open) => {
           const h = paymentDialogInterceptRef.current;
@@ -340,11 +338,9 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
           }
           setShowDialog(open);
         }}
+        title={editingPayment ? 'עריכת תשלום' : 'תשלום חדש'}
+        subtitle={null}
       >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-bold text-navy-900">{editingPayment ? 'עריכת תשלום' : 'תשלום חדש'}</DialogTitle>
-          </DialogHeader>
           <PaymentForm
             key={editingPayment?.id ?? 'new'}
             storageSuffix={editingPayment?.id ?? 'new'}
@@ -359,26 +355,18 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
             onAfterSubmitSuccess={() => {
               window.setTimeout(closePaymentDialog, 2000);
             }}
-            submitLabel="שמירה"
+            submitLabel={editingPayment ? 'שמירת שינויים' : 'שמירת תשלום'}
+            secondaryAction={editingPayment ? {
+              label: confirmPaymentDelete ? 'לחצו שוב כדי למחוק' : 'מחיקת תשלום',
+              danger: true,
+              disabled: deleteMutation.isPending,
+              onClick: () => {
+                if (!confirmPaymentDelete) { setConfirmPaymentDelete(true); return; }
+                deleteMutation.mutate(editingPayment.id, { onSuccess: () => { setConfirmPaymentDelete(false); closePaymentDialog(); } });
+              },
+            } : null}
           />
-          {editingPayment ? (
-            <div className="-mt-1 flex justify-start border-t border-line pt-3">
-              <Button
-                variant="ghost"
-                className="h-11 text-danger-600 hover:bg-danger-50 hover:text-danger-700"
-                disabled={deleteMutation.isPending}
-                onClick={() => {
-                  if (!confirmPaymentDelete) { setConfirmPaymentDelete(true); return; }
-                  deleteMutation.mutate(editingPayment.id, { onSuccess: () => { setConfirmPaymentDelete(false); closePaymentDialog(); } });
-                }}
-              >
-                <Trash2 />
-                {confirmPaymentDelete ? 'לחצו שוב כדי למחוק' : 'מחיקת תשלום'}
-              </Button>
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+      </AtlasSheet>
     </Page>
   );
 }

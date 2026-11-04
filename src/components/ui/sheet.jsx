@@ -49,8 +49,8 @@ const SheetContent = React.forwardRef(({ side = "right", className, children, ..
     <SheetOverlay />
     <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)} {...props}>
       <SheetPrimitive.Close
-        className="absolute left-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-600 transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 disabled:pointer-events-none">
-        <X className="h-4 w-4" />
+        className="press absolute left-3 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#F7F8FB] text-[#1B2656]/70 transition-colors hover:text-[#1B2656] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 disabled:pointer-events-none">
+        <X className="h-[18px] w-[18px]" strokeWidth={2} />
         <span className="sr-only">סגירה</span>
       </SheetPrimitive.Close>
       {children}
@@ -82,7 +82,7 @@ SheetFooter.displayName = "SheetFooter"
 const SheetTitle = React.forwardRef(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold text-foreground", className)}
+    className={cn("text-[21px] font-bold leading-tight tracking-[-0.01em] text-[#1B2656]", className)}
     {...props} />
 ))
 SheetTitle.displayName = SheetPrimitive.Title.displayName
@@ -90,7 +90,7 @@ SheetTitle.displayName = SheetPrimitive.Title.displayName
 const SheetDescription = React.forwardRef(({ className, ...props }, ref) => (
   <SheetPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-[15px] leading-snug text-[#1B2656]/65", className)}
     {...props} />
 ))
 SheetDescription.displayName = SheetPrimitive.Description.displayName

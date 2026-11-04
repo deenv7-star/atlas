@@ -39,6 +39,8 @@ function guardCollection(coll) {
 function guardEntities(entities) {
   return new Proxy(entities, { get(target, name, recv) { const c = Reflect.get(target, name, recv); return c && typeof c === 'object' ? guardCollection(c) : c; } });
 }
+import { publicOrigin, isNativeApp } from '@/lib/native';
+import { safeSignOut } from '@/lib/auth/signOutCore';
 
 // =============================================================================
 // Local REST API client (talks to server/index.js)
@@ -590,7 +592,7 @@ const supabaseAuth = {
         // terms_* = record of the active consent checkbox on /register (Upay/Bit requirement).
         data: { full_name, organization_name, ...(terms_accepted_at ? { terms_accepted_at, terms_version } : {}) },
         // The confirmation link lands on the verify page, which shows "confirmed → continue" or "expired".
-        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/verify-email?confirmed=1` : undefined,
+        emailRedirectTo: typeof window !== 'undefined' ? `${publicOrigin()}/verify-email?confirmed=1` : undefined,
       },
     });
     if (error) {
@@ -612,8 +614,18 @@ const supabaseAuth = {
   },
 
   async logout() {
-    await supabase.auth.signOut();
-    return { success: true };
+    // Never blocks: every step is time-limited (signOut → local signOut fallback), and the stored session is
+    // removed at the end whatever the network did. iOS app: also forgets the Face ID sign-in.
+    const { server } = await safeSignOut(supabase, {
+      beforeSignOut: isNativeApp()
+        ? () => Promise.all([
+          import('@/lib/auth/biometric').then((m) => m.clearBiometric()),
+          // This phone stops getting the account's pushes and check-in reminders (needs the session, so first).
+          import('@/lib/nativeApp/notify').then((m) => m.forgetDevice()),
+        ])
+        : undefined,
+    });
+    return { success: true, server };
   },
 
   async updateMe(profileData) {
@@ -643,6 +655,8 @@ const supabaseAuth = {
     }
     // The auth user no longer exists: drop the local session without calling the server.
     // Drop the stored session directly: signOut() would call /logout for a user that no longer exists (403).
+    if (isNativeApp()) await import('@/lib/auth/biometric').then((m) => m.clearBiometric({ keepOffered: false })).catch(() => {});
+    if (isNativeApp()) await import('@/lib/nativeApp/notify').then((m) => m.cancelAllReminders()).catch(() => {});
     try {
       Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
     } catch { /* ignore */ }

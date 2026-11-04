@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { MessageCircle, Phone } from 'lucide-react';
 import { StaySheet } from './StaySheet';
+import { isPlaceholderUnitName } from '@/lib/unitName';
 import HelpHint from '@/components/help/HelpHint';
 import { Btn } from './StayUI';
 import { TEMPLATES, renderTemplate, normalizePhone, templateByKey } from '@/lib/stay/whatsapp';
@@ -55,19 +56,20 @@ export function WhatsAppComposer({ open, onOpenChange, booking: bookingProp, pro
   };
 
   if (!booking) return null;
+  const rawUnit = property?.name || booking.property_name || '';
+  const unitLabel = rawUnit && !isPlaceholderUnitName(rawUnit) ? rawUnit : '';
 
   return (
     <StaySheet
       open={open}
       onOpenChange={onOpenChange}
       title={<span className="inline-flex items-center gap-0.5">{`הודעה ל${booking.guest_name || 'אורח'}`}<HelpHint id="messages.whatsapp" /></span>}
-      description={`${property?.name || booking.property_name || ''}${booking.check_in_date ? ` · ${formatRangeHe(booking.check_in_date, booking.check_out_date)}` : ''}`}
+      description={[unitLabel, booking.check_in_date ? formatRangeHe(booking.check_in_date, booking.check_out_date) : ''].filter(Boolean).join(' · ')}
       footer={(
         <>
-          <Btn variant="primary" size="lg" icon={MessageCircle} onClick={handleSend} disabled={!text.trim()} className="w-full sm:w-auto">
+          <Btn variant="primary" size="lg" icon={MessageCircle} onClick={handleSend} disabled={!text.trim()} className="w-full !h-[54px] !rounded-[16px] !text-[17px]">
             שליחה בוואטסאפ
           </Btn>
-          <Btn variant="secondary" size="lg" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">ביטול</Btn>
         </>
       )}
     >

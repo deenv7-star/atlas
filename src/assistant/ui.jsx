@@ -3,7 +3,7 @@
  * Calm by design: answers read like a note on the page (no bubbles, no robot), the question is a small
  * navy line, one real insight waits before anyone types, and every link leads back into the app.
  */
-import React, { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -13,9 +13,7 @@ import { ASSISTANT_DEMO } from './api.js';
 import { ProposalCard } from './ProposalCard.jsx';
 import { Mic } from 'lucide-react';
 import { VOICE_ENABLED } from './voice/config.js';
-import { primeVoiceAudio } from './voice/prime.js';
-
-const VoiceScreen = lazy(() => import('./voice/VoiceScreen.jsx'));
+import { openAssistant } from './launcher.jsx';
 import './assistant.css';
 
 export { SparkMark } from './mark.jsx';
@@ -251,7 +249,6 @@ function EmptyNoData({ onNavigate }) {
  */
 export function Conversation({ facts, loading, page = '', variant = 'page', onNavigate, inputRef, autoFocus, header = null }) {
   const { messages, busy, send, stop, retry, clear, resolveProposal } = useAssistant({ facts, page });
-  const [voiceOpen, setVoiceOpen] = useState(false);
   const mood = useFaceMood(messages);
   const scrollRef = useRef(null);
   const rootRef = useRef(null);
@@ -307,15 +304,10 @@ export function Conversation({ facts, loading, page = '', variant = 'page', onNa
         </div>
       </div>
       <div className="as-dock">
-        <Composer onSend={ask} onStop={stop} busy={busy} inputRef={inputRef} autoFocus={autoFocus} onVoice={VOICE_ENABLED ? () => { primeVoiceAudio(); setVoiceOpen(true); } : null} />
+        <Composer onSend={ask} onStop={stop} busy={busy} inputRef={inputRef} autoFocus={autoFocus} onVoice={VOICE_ENABLED ? (e) => openAssistant('voice', e?.currentTarget) : null} />
         <p className="as-fine">{ASSISTANT_DEMO ? 'הדגמה: התשובות מחושבות מהנתונים בדפדפן הזה.' : 'התשובות מבוססות על הנתונים שלכם. כדאי לבדוק לפני שפועלים.'}</p>
       </div>
       <p className="as-sr" aria-live="polite">{announce}</p>
-      {voiceOpen ? (
-        <Suspense fallback={null}>
-          <VoiceScreen facts={facts} page={page} onClose={() => setVoiceOpen(false)} onNavigate={onNavigate} />
-        </Suspense>
-      ) : null}
     </div>
   );
 }
