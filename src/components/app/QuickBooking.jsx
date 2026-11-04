@@ -40,7 +40,7 @@ export function QuickBookingProvider({ children }) {
   const interceptRef = useRef(null);
   const { data: properties = [] } = useProperties();
   const createMutation = useCreateBooking();
-  const { success, error: toastError } = useToast();
+  const { success } = useToast();
   const optsRef = useRef(null);
 
   const open = useCallback((preset = null, opts = null) => {
@@ -100,9 +100,8 @@ export function QuickBookingProvider({ children }) {
               try {
                 created = await createMutation.mutateAsync(payload);
               } catch (err) {
-                const he = bookingSaveErrorHe(err);
-                toastError(he);
-                throw new Error(he);
+                // Audit 04.11 #4: the form shows this in its banner; no second copy as a toast.
+                throw new Error(bookingSaveErrorHe(err));
               }
               success('ההזמנה נשמרה');
               if (opts.onCreated) await opts.onCreated(created);

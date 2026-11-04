@@ -10,8 +10,8 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
-import { todayISO, addDays, nightsBetween, firstName } from '@/lib/stay/format';
-import { isActiveBooking, checkOutOf, balanceOf, channelOf } from '@/lib/stay/bookings';
+import { todayISO, addDays, firstName } from '@/lib/stay/format';
+import { isActiveBooking, balanceOf, channelOf } from '@/lib/stay/bookings';
 import { monthlyRevenue } from '@/components/today/RevenueChart';
 import { checkInTime, checkOutTime } from '@/components/today/TodayBoard';
 import { heCount } from '@/lib/hebrewCount';
@@ -19,6 +19,7 @@ import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useWhatsAppSend } from '@/hooks/useWhatsAppSend';
 import { renderTemplate, templateByKey, waLink } from '@/lib/stay/whatsapp';
 import { canShowValues } from '@/lib/stay/loadState';
+import { monthOccupancy } from '@/lib/stay/occupancy';
 
 export const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 
@@ -73,21 +74,10 @@ export function useTodayModel({ orgId } = {}) {
   const money_ = useMemo(() => {
     const now = new Date();
     const months = monthlyRevenue(data.bookings, 6, now, data.paymentsByBooking);
-    const y = now.getFullYear(); const m = now.getMonth();
-    const first = `${y}-${String(m + 1).padStart(2, '0')}-01`;
-    const nextM = `${m === 11 ? y + 1 : y}-${String(m === 11 ? 1 : m + 2).padStart(2, '0')}-01`;
-    const days = new Date(y, m + 1, 0).getDate();
-    const units = Math.max(1, (data.properties || []).length);
-    let nights = 0;
-    for (const b of data.bookings || []) {
-      if (!isActiveBooking(b)) continue;
-      const s = b.check_in_date > first ? b.check_in_date : first;
-      const e = checkOutOf(b) < nextM ? checkOutOf(b) : nextM;
-      if (e > s) nights += nightsBetween(s, e);
-    }
+    const m = now.getMonth();
     const cur = months[months.length - 1] || { value: 0, expected: 0 };
     // Audit 04.11 #7: no units = no occupancy (it used to read "7% · 0 יחידות").
-    const occupancy = (data.properties || []).length ? Math.min(100, Math.round((nights / (units * days)) * 100)) : null;
+    const occupancy = monthOccupancy({ bookings: data.bookings || [], unitCount: (data.properties || []).length, now });
     if (!moneyKnown) return { months: [], received: null, expected: null, occupancy, month: MONTHS[m] };
     return {
       months, received: cur.value || 0, expected: (cur.value || 0) + (cur.expected || 0),
