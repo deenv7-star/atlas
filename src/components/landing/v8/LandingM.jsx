@@ -85,7 +85,7 @@ const TILES = [
     d: 'כניסות, יציאות וניקיונות ברשימה אחת. מסמנים ״בוצע״ בלחיצה.',
     vis: (
       <div className="lm-tile-vis is-today">
-        <img src={`${UI}/y3-today.webp`} alt="ההזמנות של היום ב-atlas: מי מגיע ומי יוצא היום, בכל יחידה (נתוני דוגמה)" width="676" height="1038" loading="lazy" decoding="async" />
+        <img src={`${UI}/y3-today.webp`} alt="מסך היום של atlas: מי מגיע ומי יוצא היום, בכל יחידה (נתוני דוגמה)" width="676" height="1038" loading="lazy" decoding="async" />
       </div>
     ),
   },
@@ -119,7 +119,7 @@ function Features() {
           </div>
           <div className="lm-feat-pay" data-reveal>
             <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
-            <img className="lm-feat-paid" data-sd="lift" src={`${UI}/y3-paid.webp`} alt="כרטיס ההזמנה ב-atlas: ‏₪2,440 סה״כ, ‏₪1,200 שולם ו-‏₪1,240 יתרה (נתוני דוגמה)" width="740" height="642" loading="lazy" decoding="async" />
+            <img className="lm-feat-paid" data-sd="lift" src={`${UI}/y3-paid.webp`} alt="כרטיס הזמנה באפליקציה של atlas: ‏₪2,440 סה״כ, ‏₪1,200 שולם ו-‏₪1,240 יתרה (נתוני דוגמה)" width="740" height="642" loading="lazy" decoding="async" />
           </div>
           <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
         </div>

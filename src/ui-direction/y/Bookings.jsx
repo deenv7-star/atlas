@@ -79,7 +79,7 @@ function Detail({ booking, model, onWhatsApp, Title = 'p' }) {
       <div className="y3d-tiles">
         <div className="y3d-t"><span>סה״כ ההזמנה</span><Num value={bal.total} pre="₪" /></div>
         <div className="y3d-t"><span>שולם</span><Num value={bal.paid} pre="₪" delay={80} /><StripeBar value={bal.total ? bal.paid / bal.total : 0} tone="white" delay={300} /></div>
-        <div className={cn('y3d-t', bal.balance > 0 && 'is-due')}><span>יתרה{bal.balance > 0 ? <i className="y2-amber" aria-hidden /> : <Check strokeWidth={2} />}</span><Num value={bal.balance} pre="₪" delay={160} /></div>
+        <div className={cn('y3d-t', bal.balance > 0 && 'is-due')}><span>יתרה{bal.unknown ? null : bal.balance > 0 ? <i className="y2-amber" aria-hidden /> : <Check strokeWidth={2} />}</span><Num value={bal.balance} pre="₪" delay={160} /></div>
       </div>
       <div className="y3d-act">
         <button type="button" className={cn('y3d-go press', isDone && 'is-go')} onClick={act}>
@@ -109,11 +109,11 @@ export const BookingsPanel = forwardRef(function BookingsPanel({
   const shown = useMemo(() => {
     if (controlled) return list;
     if (tab === 'today') return list.filter(todayOf);
-    if (tab === 'due') return list.filter((b) => m.balanceFor(b).balance > 0);
+    if (tab === 'due') return m.moneyKnown === false ? [] : list.filter((b) => m.balanceFor(b).balance > 0);
     return list;
   }, [tab, list, m, controlled]);
   const sel = shown.find((b) => b.id === selId) || shown.find((b) => b.check_in_date === m.day) || shown[0] || null;
-  const tabs = controlled ? tabsIn.map((t) => [t.key, t.label, t.count]) : [['all', 'הכל', list.length], ['today', 'היום', list.filter(todayOf).length], ['due', 'יתרות', list.filter((b) => m.balanceFor(b).balance > 0).length]];
+  const tabs = controlled ? tabsIn.map((t) => [t.key, t.label, t.count]) : [['all', 'הכל', list.length], ['today', 'היום', list.filter(todayOf).length], ['due', 'יתרות', m.moneyKnown === false ? '—' : list.filter((b) => m.balanceFor(b).balance > 0).length]];
 
   return (
     <motion.section ref={ref} className={cn('y3-panel', className)} aria-label={title} {...rest} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay }}>
@@ -146,13 +146,13 @@ export const BookingsPanel = forwardRef(function BookingsPanel({
                     <span className="y3-row-img"><img src={photo} alt="" loading="lazy" decoding="async" /><Face name={b.guest_name || ''} size={26} ring /></span>
                   ) : <span className="y3-row-img y3-row-img--face"><Face name={b.guest_name || ''} size={46} /></span>}
                   <span className="y3-row-n"><b dir="auto">{guestLabel(b)}</b><small>{p?.name ? <><bdi>{p.name}</bdi> · </> : null}{whenOf(b, m.day)}</small></span>
-                  <span className={cn('y3-pay', bal.balance > 0 ? 'due' : 'ok')}>{bal.total === 0 ? 'בלי מחיר' : bal.balance > 0 ? (bal.paid > 0 ? 'מקדמה' : 'לא שולם') : 'שולם'}</span>
+                  {bal.unknown ? null : <span className={cn('y3-pay', bal.balance > 0 ? 'due' : 'ok')}>{bal.total === 0 ? 'בלי מחיר' : bal.balance > 0 ? (bal.paid > 0 ? 'מקדמה' : 'לא שולם') : 'שולם'}</span>}
                   <span className="y3-row-a" dir="ltr"><small>₪</small>{Math.round(Number(b.total_price) || 0).toLocaleString('he-IL')}</span>
                 </button>
               </motion.li>
             );
           })}
-          {!loading && !shown.length ? (empty ? <li className="y3-empty">{empty}</li> : <li className="y3-empty">{tab === 'due' ? 'אין יתרות פתוחות' : tab === 'today' ? 'אין כניסות או יציאות היום' : 'עדיין אין הזמנות. הזמנות חדשות יופיעו כאן.'}</li>) : null}
+          {!loading && !shown.length ? (empty ? <li className="y3-empty">{empty}</li> : <li className="y3-empty">{tab === 'due' ? (m.moneyKnown === false ? 'היתרות יופיעו כשהתשלומים ייטענו' : 'אין יתרות פתוחות') : tab === 'today' ? 'אין כניסות או יציאות היום' : 'עדיין אין הזמנות. הזמנות חדשות יופיעו כאן.'}</li>) : null}
           {shown.length > limit ? <li><Link to={createPageUrl('Bookings')} className="y3-more press">עוד {shown.length - limit} הזמנות<ChevronLeft strokeWidth={1.75} /></Link></li> : null}
         </ul>
         {footer}

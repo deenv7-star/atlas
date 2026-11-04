@@ -167,7 +167,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
               const wk = dt.getDay() === 5 || dt.getDay() === 6;
               return (
                 <div key={d} data-col={d} title={hol ? hol.map((h) => h.title).join(' · ') : undefined} className={cn('flex flex-col items-center pb-2 pt-2.5', wk && 'bg-[#F7F8FB]', focusDay === d && focusDay !== today && 'bg-navy-900/[0.06]')}>
-                  <span className={cn('text-[11px]', i === todayIdx ? 'font-semibold text-brand-600' : 'text-navy-900/70')}>{HE_DAYS_SHORT[dt.getDay()]}</span>
+                  <span className={cn('text-[12px]', i === todayIdx ? 'font-semibold text-brand-600' : 'text-navy-900/70')}>{HE_DAYS_SHORT[dt.getDay()]}</span>
                   <span className={cn('mt-1 inline-flex h-7 min-w-7 items-center justify-center rounded-full px-1 text-[13px] font-semibold tabular', i === todayIdx ? 'bg-brand-600 text-white' : 'text-navy-900')}>{dt.getDate()}</span>
                   <span aria-hidden className={cn('mt-1 h-1 w-1 rounded-full', hol ? 'bg-brand-600/60' : 'bg-transparent')} />
                 </div>

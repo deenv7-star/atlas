@@ -115,7 +115,7 @@ function mapLeadRows(rows: LeadRow[] | null, q = ''): SearchHit[] {
   return (rows ?? []).slice(0, LIMIT).map((r) => ({
     id: r.id,
     title: r.full_name || 'אורח',
-    subtitle: [r.phone, r.email].filter(Boolean).map((v) => ltr(String(v))).join(' · ') || 'ליד',
+    subtitle: [r.phone, r.email].filter(Boolean).map((v) => ltr(String(v))).join(' · ') || 'פנייה',
     keywords: [r.email || '', ...phoneKeywords(r.phone), phoneMatches(r.phone, q) ? q : ''].filter(Boolean),
   }));
 }

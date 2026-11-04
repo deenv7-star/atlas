@@ -82,6 +82,10 @@ export function PaymentForm({
     onAfterSubmitSuccess,
   });
 
+  // Audit 04.11 M4: every label points at its control (VoiceOver reads the name), 44px controls and buttons.
+  const uid = React.useId();
+  const fid = (name: string) => `${uid}-${name}`;
+
   React.useEffect(() => {
     const fn = (open: boolean) => {
       fm.interceptDialogClose(open, setDialogOpen);
@@ -97,7 +101,7 @@ export function PaymentForm({
       <div className={formMachineFormClassName(fm.state)} dir="rtl">
         <div className="grid grid-cols-2 gap-3 py-2">
           <div className="col-span-2 space-y-1.5">
-            <Label className="text-xs text-gray-500">הזמנה (לא חובה)</Label>
+            <Label htmlFor={fid('booking_id')} className="text-[13px] font-semibold text-navy-800">הזמנה <span className="font-normal text-gray-600">(לא חובה)</span></Label>
             {bookings ? (
               <Controller
                 control={fm.control}
@@ -111,7 +115,7 @@ export function PaymentForm({
                       field.onChange(val);
                     }}
                   >
-                    <SelectTrigger aria-label="הזמנה" className="h-11 text-sm rounded-xl">
+                    <SelectTrigger id={fid('booking_id')} className="h-11 text-base rounded-xl">
                       <SelectValue placeholder="בחירת הזמנה" />
                     </SelectTrigger>
                     <SelectContent>
@@ -129,22 +133,22 @@ export function PaymentForm({
                 )}
               />
             ) : (
-              <Input {...fm.register('booking_id')} placeholder="מזהה הזמנה" className="h-11 text-sm rounded-xl" dir="ltr" />
+              <Input id={fid('booking_id')} {...fm.register('booking_id')} placeholder="מזהה הזמנה" className="h-11 text-base rounded-xl" dir="ltr" />
             )}
             <FormMachineFieldHint error={fm.errors.booking_id} />
           </div>
           <div className="col-span-2 space-y-1.5">
-            <Label className="text-xs text-gray-500">תיאור</Label>
-            <Input {...fm.register('description')} placeholder="למשל: מקדמה לסופ״ש" className="h-11 text-sm rounded-xl" />
+            <Label htmlFor={fid('description')} className="text-[13px] font-semibold text-navy-800">תיאור</Label>
+            <Input id={fid('description')} {...fm.register('description')} placeholder="למשל: מקדמה לסופ״ש" className="h-11 text-base rounded-xl" />
             <FormMachineFieldHint error={fm.errors.description} validating={fm.isFieldValidating('description')} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-gray-500">סכום (₪) *</Label>
-            <Input type="text" inputMode="decimal" {...fm.register('amount')} placeholder="0" className="h-11 text-sm rounded-xl" />
+            <Label htmlFor={fid('amount')} className="text-[13px] font-semibold text-navy-800">סכום (₪) *</Label>
+            <Input id={fid('amount')} type="text" inputMode="decimal" {...fm.register('amount')} placeholder="0" className="h-11 text-base rounded-xl" />
             <FormMachineFieldHint error={fm.errors.amount} validating={fm.isFieldValidating('amount')} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-gray-500">אמצעי תשלום</Label>
+            <Label htmlFor={fid('method')} className="text-[13px] font-semibold text-navy-800">אמצעי תשלום</Label>
             <Controller
               control={fm.control}
               name="method"
@@ -156,7 +160,7 @@ export function PaymentForm({
                     field.onChange(v);
                   }}
                 >
-                  <SelectTrigger className="h-11 text-sm rounded-xl">
+                  <SelectTrigger id={fid('method')} className="h-11 text-base rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -172,7 +176,7 @@ export function PaymentForm({
             <FormMachineFieldHint error={fm.errors.method} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-gray-500">סטטוס</Label>
+            <Label htmlFor={fid('status')} className="text-[13px] font-semibold text-navy-800">סטטוס</Label>
             <Controller
               control={fm.control}
               name="status"
@@ -184,7 +188,7 @@ export function PaymentForm({
                     field.onChange(v);
                   }}
                 >
-                  <SelectTrigger className="h-11 text-sm rounded-xl">
+                  <SelectTrigger id={fid('status')} className="h-11 text-base rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -200,61 +204,52 @@ export function PaymentForm({
             <FormMachineFieldHint error={fm.errors.status} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-gray-500">תאריך תשלום</Label>
-            <Input type="date" {...fm.register('paid_date')} className="h-11 text-sm rounded-xl" />
+            <Label htmlFor={fid('paid_date')} className="text-[13px] font-semibold text-navy-800">תאריך תשלום</Label>
+            <Input id={fid('paid_date')} type="date" {...fm.register('paid_date')} className="h-11 text-base rounded-xl" />
             <FormMachineFieldHint error={fm.errors.paid_date} validating={fm.isFieldValidating('paid_date')} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-gray-500">תאריך יעד</Label>
-            <Input type="date" {...fm.register('due_date')} className="h-11 text-sm rounded-xl" />
+            <Label htmlFor={fid('due_date')} className="text-[13px] font-semibold text-navy-800">תאריך יעד</Label>
+            <Input id={fid('due_date')} type="date" {...fm.register('due_date')} className="h-11 text-base rounded-xl" />
             <FormMachineFieldHint error={fm.errors.due_date} validating={fm.isFieldValidating('due_date')} />
           </div>
         </div>
-        <div className="flex gap-2 pt-2">
-          <Button
-            variant="outline"
-            type="button"
-            size="sm"
-            onClick={() => {
-              fm.reset();
-              onCancel();
-            }}
-            className="h-9 rounded-xl"
-          >
-            ביטול
-          </Button>
+        <div className="flex gap-2 flex-col sm:flex-row pt-2">
           <Button
             type="button"
-            size="sm"
             onClick={fm.handleSubmit}
             disabled={fm.state === 'submitting'}
             className={[
-              'relative h-9 gap-1.5 rounded-xl font-semibold',
+              'h-11 gap-1.5 rounded-xl w-full sm:w-auto sm:min-w-[140px] font-semibold text-[15px]',
               fm.state === 'success'
                 ? 'bg-emerald-600 hover:bg-emerald-600 text-white'
                 : 'bg-brand-600 hover:bg-brand-500 text-white',
             ].join(' ')}
           >
-            {(fm.state === 'dirty' || fm.state === 'error') && (
-              <span
-                className="absolute top-1.5 left-2 h-2 w-2 rounded-full bg-amber-400 shadow-sm"
-                aria-hidden
-                title="שינויים לא נשמרו"
-              />
-            )}
             {fm.state === 'submitting' ? (
               <>
-                <span className="inline-block h-4 w-4 border-2 border-[#1B2656] border-t-transparent rounded-full animate-spin" />
+                <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin motion-reduce:animate-none" aria-hidden />
                 שומרים…
               </>
             ) : fm.state === 'success' ? (
               <>נשמר</>
             ) : (
               <>
-                <Check className="w-4 h-4" />
+                <Check className="w-4 h-4" aria-hidden />
                 {submitLabel}
               </>
             )}
+          </Button>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => {
+              fm.reset();
+              onCancel();
+            }}
+            className="h-11 rounded-xl w-full sm:w-auto text-[15px]"
+          >
+            ביטול
           </Button>
         </div>
       </div>

@@ -17,6 +17,7 @@ import { useShellProperties, useIsActive, UserMenu, MoreSheet, navItem } from '@
 import { GuestAvatar, dayPart } from '@/components/app/atoms';
 import { IconButton } from '@/components/ds';
 import { useSubscription } from '@/hooks/useSubscription';
+import { isNativeApp } from '@/lib/nativePlatform';
 import { trialShortText } from '@/lib/trial';
 import { getPlanByKey } from '@/config/pricing';
 import { formatDayHe, todayISO, firstName } from '@/lib/stay/format';
@@ -179,7 +180,7 @@ export function TabBar({ user, onLogout }) {
 /** Small indigo card at the bottom of the sidebar: trial days left, or the plan. */
 export function PlanCard({ compact = false }) {
   const { daysLeft, isTrialing, isExpired, isLoading, plan } = useSubscription();
-  if (isLoading) return null;
+  if (isLoading || isNativeApp()) return null; // iOS app: no plan / price card (audit 04.11 C1)
   const title = isExpired || isTrialing ? trialShortText(daysLeft, isExpired) : `atlas ${getPlanByKey(plan).nameHe}`;
   const sub = isTrialing || isExpired ? 'בוחרים מסלול וממשיכים בלי הפסקה.' : 'ערוצים, תשלומים והודעות במקום אחד.';
   if (compact) {

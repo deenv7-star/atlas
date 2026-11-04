@@ -4,12 +4,16 @@ import { ChevronLeft } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { trialBannerText } from '@/lib/trial';
+import { isNativeApp } from '@/lib/nativePlatform';
 
-/** One calm line about the trial. Indigo tint, never red or amber blocks (direction-v5). */
+/** One calm line about the trial. Indigo tint, never red or amber blocks (direction-v5).
+ *  iOS app (Apple 3.1.1): no link or button toward plans, and no banner while the trial is running;
+ *  the paywall itself handles the expired state there. */
 export default function TrialBanner() {
   const { daysLeft, isTrialing, isExpired, isLoading } = useSubscription();
 
   if (isLoading || (!isTrialing && !isExpired)) return null;
+  if (isNativeApp()) return null;
   const urgent = isExpired || daysLeft <= 3;
   const text = trialBannerText(daysLeft, isExpired);
   return (

@@ -1,28 +1,27 @@
 /**
- * iOS app only (lazy-loaded from Settings → אבטחה): turn Face ID sign-in on / off.
+ * iOS app only (lazy-loaded from Settings → אבטחה): "פתיחה עם Face ID" on / off.
+ * On = the app lock (src/lib/nativeApp/appLock.js) plus the login-screen Face ID sign-in, one switch.
  * Renders nothing on the web or on a device without Face ID / Touch ID.
  */
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/api/supabaseClient';
-import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/lib/AuthContext';
+import FaceIdGlyph from '@/components/nativeApp/FaceIdGlyph.jsx';
 import { Switch } from '@/components/ui/switch';
-import {
-  biometricAvailability, biometricPrefs, biometricSaved, enableBiometric, clearBiometric, markBiometricOffered,
-} from '@/lib/auth/biometric';
+import { biometricAvailability } from '@/lib/auth/biometric';
+import { lockErrorKind } from '@/lib/nativeApp/appLockCore';
+import { lockPrefs, enableLock, disableLock, markLockOffered } from '@/lib/nativeApp/appLock';
 
 export default function BiometricSetting() {
+  const { user } = useAuth();
   const [avail, setAvail] = useState(null);
-  const [on, setOn] = useState(false);
+  const [on, setOn] = useState(() => lockPrefs().enabled);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     let alive = true;
-    Promise.all([biometricAvailability(), biometricSaved()]).then(([a, saved]) => {
-      if (!alive) return;
-      setAvail(a);
-      setOn(Boolean(biometricPrefs().enabled && saved));
-    });
+    biometricAvailability().then((a) => { if (alive) setAvail(a); });
     return () => { alive = false; };
   }, []);
 
@@ -35,36 +34,39 @@ export default function BiometricSetting() {
     setError('');
     try {
       if (next) {
-        const { data: { session } = {} } = await supabase.auth.getSession();
-        await enableBiometric(session);
+        let session = null;
+        try { session = supabase ? (await supabase.auth.getSession())?.data?.session : null; } catch { /* demo */ }
+        await enableLock({ userId: user?.id, session });
       } else {
-        await clearBiometric();
-        markBiometricOffered();
+        await disableLock();
+        markLockOffered();
       }
       setOn(next);
-    } catch {
-      setError(`לא הצלחנו להפעיל את ${label}. בדקו שמוגדר קוד גישה במכשיר.`);
+    } catch (err) {
+      if (lockErrorKind(err) !== 'cancel') setError(`לא הצלחנו להפעיל את ${label}. בדקו שמוגדר קוד גישה באייפון.`);
     } finally {
       setBusy(false);
     }
   };
 
+  // Direction A: an iOS inset-grouped row. The symbol sits bare (no tile), hairline edge, no shadow.
   return (
-    <Card className="mb-4">
-      <CardContent className="flex items-center justify-between gap-4 py-4">
-        <div>
-          <p className="text-sm font-medium text-navy-900">כניסה עם <span dir="ltr">{label}</span></p>
-          <p className="text-xs text-ink-400">במקום מייל וסיסמה בכניסה לאפליקציה</p>
-          {error ? <p role="alert" className="mt-1 text-xs text-danger-600">{error}</p> : null}
+    <div className="mb-4 rounded-[16px] bg-white ring-1 ring-[#1B2656]/[0.07]" data-testid="faceid-setting">
+      <div className="flex min-h-[64px] items-center gap-3.5 px-4 py-3">
+        <FaceIdGlyph size={26} weight={1.75} className="shrink-0 text-[#1B2656]" />
+        <div className="min-w-0 flex-1">
+          <p id="faceid-setting-label" className="text-[16px] font-medium leading-tight text-[#1B2656]">פתיחה עם <span dir="ltr">{label}</span></p>
+          <p className="mt-1 text-[13px] leading-snug text-[#1B2656]/70">בכל פתיחה, ואחרי 5 דקות ברקע</p>
+          {error ? <p role="alert" className="mt-1 text-[13px] text-danger-600">{error}</p> : null}
         </div>
         <Switch
           checked={on}
           disabled={busy}
           onCheckedChange={toggle}
-          aria-label={`כניסה עם ${label}`}
-          className="data-[state=checked]:bg-brand-600"
+          aria-labelledby="faceid-setting-label"
+          className="data-[state=checked]:before:bg-brand-600"
         />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

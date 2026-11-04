@@ -72,8 +72,9 @@ export function BookingForm({
 }: BookingFormProps) {
   const storageKey = `atlas-form-booking-${storageSuffix}`;
   const hasUnits = properties.length > 0;
-  // APP-005: a unit is required whenever the account has units (an unassigned booking blocks nothing).
-  const schema = React.useMemo(() => makeBookingFormSchema({ requireProperty: hasUnits }), [hasUnits]);
+  // Audit 04.11 #7: a booking always needs a unit (property_id null used to save for a new account).
+  // No units yet: the form says so and links to adding the first one.
+  const schema = React.useMemo(() => makeBookingFormSchema({ requireProperty: true }), []);
   // One unit: pick it for them. Old bookings with nights but no check-out: fill the check-out date.
   const normalizedDefaults = React.useMemo<BookingFormValues>(() => {
     const d = { ...defaultValues };
@@ -205,6 +206,16 @@ export function BookingForm({
               <FieldError id={errId('property_id')} error={fm.errors.property_id} />
             </div>
           )}
+          {!hasUnits && (
+            <div className="col-span-2 rounded-[12px] bg-[#F7F8FB] px-4 py-3" role="status">
+              <p className="text-[15px] font-semibold text-navy-900">כדי לשמור הזמנה צריך יחידה</p>
+              <p className="mt-0.5 text-[14px] text-ink-600">
+                עוד אין יחידות בחשבון.{' '}
+                <a href="/setup" className="inline-flex min-h-[44px] items-center font-semibold text-brand-700 underline underline-offset-2">הוספת יחידה</a>
+              </p>
+              <FieldError id={errId('property_id')} error={fm.errors.property_id} />
+            </div>
+          )}
           <div className="col-span-2 space-y-1.5">
             <Label className="text-[14px] font-medium text-ink-600">ערוץ</Label>
             <Controller
@@ -229,7 +240,7 @@ export function BookingForm({
                           field.onChange(o.v);
                         }}
                         className={
-                          'press inline-flex h-10 items-center justify-center gap-1.5 rounded-[9px] text-[14px] font-medium ' +
+                          'press inline-flex h-11 items-center justify-center gap-1.5 rounded-[9px] text-[14px] font-medium ' +
                           (on ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgba(27,38,86,0.1)]' : 'text-ink-600')
                         }
                       >
@@ -339,13 +350,6 @@ export function BookingForm({
                 : 'bg-brand-600 hover:bg-brand-500 text-white',
             ].join(' ')}
           >
-            {(fm.state === 'dirty' || fm.state === 'error') && (
-              <span
-                className="absolute top-1.5 left-2 h-2 w-2 rounded-full bg-amber-400 shadow-sm"
-                aria-hidden
-                title="שינויים לא נשמרו"
-              />
-            )}
             {fm.state === 'submitting' ? (
               <>
                 <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

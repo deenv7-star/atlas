@@ -1,5 +1,5 @@
 import { Page, PageHeader } from '@/components/ds';
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,7 @@ import { isNativeApp } from '@/lib/native';
 
 // iOS app only: Face ID sign-in on / off. Never loaded on the web.
 const BiometricSetting = lazy(() => import('@/components/settings/BiometricSetting'));
+const NativeNotifySetting = lazy(() => import('@/components/settings/NativeNotifySetting.jsx'));
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -45,6 +46,18 @@ export default function SettingsPage({ user }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { logout } = useAuth();
+
+  // Phone: the tab strip scrolls sideways. Keep the selected chip fully in view (opening /settings?tab=security
+  // used to show the dark "אבטחה" chip cut in half at the edge). Only the strip moves, never the page.
+  const stripRef = useRef(null);
+  useEffect(() => {
+    const strip = stripRef.current;
+    const btn = strip?.querySelector(`#settings-tab-${activeTab}`);
+    if (!strip || !btn || strip.scrollWidth <= strip.clientWidth + 1) return;
+    const sr = strip.getBoundingClientRect(), br = btn.getBoundingClientRect(), pad = 20;
+    const dx = br.left < sr.left + pad ? br.left - sr.left - pad : br.right > sr.right - pad ? br.right - sr.right + pad : 0;
+    if (dx) strip.scrollBy({ left: dx, behavior: 'auto' });
+  }, [activeTab]);
 
   const { data: org } = useQuery({
     queryKey: ['organization'],
@@ -164,12 +177,34 @@ export default function SettingsPage({ user }) {
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Tab list */}
-        <div className="v7-strip -mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1 md:mx-0 md:w-56 md:flex-col md:px-0 flex-shrink-0">
+        {/* audit 04.11 m6: a real tablist (roles, selected state, arrow keys) */}
+        <div
+          ref={stripRef}
+          role="tablist"
+          aria-label="אזורי ההגדרות"
+          aria-orientation="horizontal"
+          onKeyDown={(e) => {
+            const keys = { ArrowLeft: 1, ArrowDown: 1, ArrowRight: -1, ArrowUp: -1 };
+            if (!(e.key in keys)) return;
+            e.preventDefault();
+            const i = tabs.findIndex((t) => t.id === activeTab);
+            const next = tabs[(i + keys[e.key] + tabs.length) % tabs.length];
+            setActiveTab(next.id);
+            requestAnimationFrame(() => document.getElementById(`settings-tab-${next.id}`)?.focus());
+          }}
+          className="v7-strip -mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1 scroll-px-5 md:mx-0 md:w-56 md:flex-col md:px-0 flex-shrink-0"
+        >
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
+                id={`settings-tab-${tab.id}`}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                aria-controls="settings-panel"
+                tabIndex={activeTab === tab.id ? 0 : -1}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "press flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full px-4 text-[15px] text-right min-h-[44px]",
@@ -186,7 +221,7 @@ export default function SettingsPage({ user }) {
         </div>
 
         {/* Tab content */}
-        <div className="flex-1 min-w-0">
+        <div id="settings-panel" role="tabpanel" aria-labelledby={`settings-tab-${activeTab}`} className="flex-1 min-w-0">
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <Card>
@@ -340,6 +375,9 @@ export default function SettingsPage({ user }) {
           )}
 
           {/* Notifications Tab */}
+          {activeTab === 'notifications' && isNativeApp() && (
+            <Suspense fallback={null}><NativeNotifySetting /></Suspense>
+          )}
           {activeTab === 'notifications' && (
             <Card>
               <CardHeader>
@@ -351,7 +389,7 @@ export default function SettingsPage({ user }) {
               <CardContent className="space-y-1">
                 {[
                   { key: 'new_booking', label: 'הזמנה חדשה', desc: 'כשנכנסת הזמנה חדשה' },
-                  { key: 'new_lead', label: 'ליד חדש', desc: 'כשמגיעה פנייה חדשה' },
+                  { key: 'new_lead', label: 'פנייה חדשה', desc: 'כשאורח מבקש לבדוק תאריכים' },
                   { key: 'payment_received', label: 'תשלום התקבל', desc: 'כשמתקבל תשלום' },
                   { key: 'system_updates', label: 'חידושים', desc: 'כשמשהו חדש מגיע' },
                 ].map(item => (

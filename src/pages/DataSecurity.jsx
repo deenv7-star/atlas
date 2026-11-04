@@ -46,7 +46,7 @@ export default function DataSecurity() {
           </p>
           <div className="space-y-3">
             {[
-              'כל התעבורה בין הדפדפן שלכם ל-atlas מוצפנת (HTTPS).',
+              'כל התעבורה בין הדפדפן שלכם לשרתים שלנו מוצפנת (HTTPS).',
               'מסד הנתונים מתארח ב-Supabase, שמצפינה את הנתונים באחסון.',
             ].map((item) => (
               <div key={item} className="flex items-start gap-2">
@@ -103,7 +103,7 @@ export default function DataSecurity() {
             <h2 className="text-2xl font-bold text-[#1B2656]">תקנים ורגולציה</h2>
           </div>
           <p className="text-gray-600 leading-relaxed mb-3">
-            אנחנו פועלים לפי חוק הגנת הפרטיות, התשמ"א-1981. ל-atlas עצמה אין כרגע הסמכה כמו SOC 2 או ISO 27001.
+            אנחנו פועלים לפי חוק הגנת הפרטיות, התשמ"א-1981. לנו עצמנו אין כרגע הסמכה כמו SOC 2 או ISO 27001.
             לספקי התשתית שלנו יש הסמכות משלהם, ואפשר לקרוא עליהן באתרים שלהם.
           </p>
           <p className="text-gray-600 leading-relaxed">

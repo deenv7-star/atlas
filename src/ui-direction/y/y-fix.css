@@ -1,0 +1,18 @@
+/* fix/audit-1104 — kept in its own file so it does not collide with the app background work in y2.css. */
+
+/* #6: the quiet "not updated" mark sits on the date line under the greeting */
+.y-stale-inline { margin-inline-start: 6px; vertical-align: middle; margin-block: -10px; }
+
+/* #7: new account without units — one prompt, one action */
+.y-first-unit { padding: 22px 20px; border-radius: 26px; background: #fff; box-shadow: inset 0 0 0 1px rgba(27,38,86,.08), 0 8px 24px -14px rgba(27,38,86,.25); color: #1B2656; }
+.y-first-unit h2 { font-size: 20px; font-weight: 700; line-height: 1.25; }
+.y-first-unit p { margin-top: 6px; font-size: 15px; color: rgba(27,38,86,.72); }
+.y-first-unit-go { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: 14px;
+  background: #3E2BF1; color: #fff; font-size: 16px; font-weight: 600; }
+.y-first-unit-go svg { width: 18px; height: 18px; }
+
+/* M7: a calmer desktop Today — three tiles (occupancy lives in the calendar and כסף), no repeated side stats */
+@media (min-width: 1024px) {
+  .y2-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .y2-tile--ring { display: none; }
+}

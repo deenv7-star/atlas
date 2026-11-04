@@ -7,6 +7,7 @@ import { STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { NAV_GROUPS, PLATFORM_ITEM, NAV_PARENT } from '@/config/navigation';
+import { isNativeApp } from '@/lib/nativePlatform';
 import { isPlatformAdminViewer } from '@/lib/platformAdmin';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -33,11 +34,18 @@ export function useShellProperties(user) {
   return properties;
 }
 
+/** iOS app (Apple 3.1.1 / audit 04.11 C1): no plan, price or billing destinations. */
+const PURCHASE_PAGES = new Set(['Subscription', 'Billing']);
+const withoutPurchase = (groups) => groups
+  .map((g) => ({ ...g, items: g.items.filter((i) => !PURCHASE_PAGES.has(i.page)) }))
+  .filter((g) => g.items.length);
+
 export function useNavGroups(user) {
   const showPlatform = isPlatformAdminViewer(user);
-  if (!showPlatform) return NAV_GROUPS;
-  const last = NAV_GROUPS[NAV_GROUPS.length - 1];
-  return [...NAV_GROUPS.slice(0, -1), { ...last, items: [...last.items, PLATFORM_ITEM] }];
+  const base = isNativeApp() ? withoutPurchase(NAV_GROUPS) : NAV_GROUPS;
+  if (!showPlatform) return base;
+  const last = base[base.length - 1];
+  return [...base.slice(0, -1), { ...last, items: [...last.items, PLATFORM_ITEM] }];
 }
 
 export function useIsActive() {
@@ -70,9 +78,11 @@ export function UserMenu({ user, onLogout, children, align = 'end', side }) {
         <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
           <Link to={createPageUrl('Settings')}><Settings className="h-[18px] w-[18px] text-ink-600" />הגדרות</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
-          <Link to={createPageUrl('Subscription')}><CreditCard className="h-[18px] w-[18px] text-ink-600" />מנוי</Link>
-        </DropdownMenuItem>
+        {isNativeApp() ? null : (
+          <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
+            <Link to={createPageUrl('Subscription')}><CreditCard className="h-[18px] w-[18px] text-ink-600" />מנוי</Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onSelect={() => window.dispatchEvent(new CustomEvent('atlas:open-more'))} className="min-h-11 gap-2.5 text-[15px] lg:hidden">
           <LayoutGrid className="h-[18px] w-[18px] text-ink-600" />כל המסכים
         </DropdownMenuItem>

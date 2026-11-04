@@ -20,8 +20,14 @@ import {
 import { exportToCSV, PAYMENT_COLUMNS } from '@/lib/csvExport';
 import { PaymentForm } from '@/components/forms/PaymentForm';
 import { emptyPaymentFormValues } from '@/components/forms/atlasFormSchemas';
+import { cn } from '@/lib/utils';
+import { useProperties } from '@/data/entities';
+import { ErrorFallback } from '@/components/common/ErrorFallback';
+import StaleIndicator from '@/components/app/StaleIndicator';
+import { loadStateOf, canShowValues } from '@/lib/stay/loadState';
 import { Page, PageHeader, StatTile, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
 
+const HE_MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 const METHOD_LABEL = { cash: 'מזומן', transfer: 'העברה', bank_transfer: 'העברה', card: 'כרטיס', credit_card: 'כרטיס אשראי', bit: 'ביט', paybox: 'פייבוקס' };
 
 const PAYMENT_STATUSES = [
@@ -86,15 +92,21 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
     );
   }, [location.state, location.pathname, location.search, location.hash, navigate]);
 
-  const { data: payments = [], isLoading, isError, error: paymentsError } = useQuery({
+  const paymentsQ = useQuery({
     queryKey: ['payments', orgId],
     queryFn: () =>
       orgId ? base44.entities.Payment.filter({ org_id: orgId }, '-created_date') : Promise.resolve([]),
     staleTime: 2 * 60 * 1000,
   });
+  const { isLoading, isError, error: paymentsError } = paymentsQ;
+  const payments = useMemo(() => paymentsQ.data || [], [paymentsQ.data]);
+  // Audit 04.11 #2/#5: no totals until the payments are really loaded; a failed refresh keeps the list.
+  const moneyKnown = canShowValues(loadStateOf(paymentsQ));
+  const loadFailed = isError && paymentsQ.data === undefined;
 
   const [confirmPaymentDelete, setConfirmPaymentDelete] = useState(false);
   useEffect(() => { if (!showDialog) setConfirmPaymentDelete(false); }, [showDialog]);
+  const { data: properties = [] } = useProperties();
   const { data: bookingOptions = [] } = useQuery({
     queryKey: ['bookings', orgId],
     queryFn: () => base44.entities.Booking.filter({ org_id: orgId }, '-created_at', 300),
@@ -130,23 +142,47 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
     onError: () => toast({ title: 'לא הצלחנו למחוק את התשלום. נסו שוב.', variant: 'destructive' }),
   });
 
-  const stats = useMemo(() => ({
-    total:   payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0),
-    paid:    payments.filter(p => p.status === 'PAID').reduce((s, p) => s + (parseFloat(p.amount) || 0), 0),
-    pending: payments.filter(p => p.status === 'PENDING').reduce((s, p) => s + (parseFloat(p.amount) || 0), 0),
-    overdue: payments.filter(p => p.status === 'OVERDUE').length,
-  }), [payments]);
+  // M2 (audit 04.11): "התקבל" is this month's money (same period as Today), labelled with the month.
+  // "ממתין לגבייה" and "באיחור" are what is open right now, whatever month it belongs to.
+  const monthName = HE_MONTHS[new Date().getMonth()];
+  const stats = useMemo(() => {
+    const now = new Date();
+    const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const amt = (p) => parseFloat(p.amount) || 0;
+    const paidMonth = (p) => String(p.paid_date || p.created_date || p.created_at || '').slice(0, 7) === ym;
+    return {
+      paid:    payments.filter((p) => p.status === 'PAID' && paidMonth(p)).reduce((s, p) => s + amt(p), 0),
+      pending: payments.filter((p) => p.status === 'PENDING').reduce((s, p) => s + amt(p), 0),
+      overdue: payments.filter((p) => p.status === 'OVERDUE').length,
+    };
+  }, [payments]);
+
+  // M1 (audit 04.11): who paid. Booking → guest name and unit, from the bookings already loaded for the form.
+  const bookingById = useMemo(() => new Map(bookingOptions.map((b) => [b.id, b])), [bookingOptions]);
+  const unitById = useMemo(() => new Map(properties.map((p) => [p.id, p.name])), [properties]);
+  const whoOf = (p) => {
+    const b = p.booking_id ? bookingById.get(p.booking_id) : null;
+    const guest = b?.guest_name || '';
+    const unit = b ? (unitById.get(b.property_id) || b.property_name || '') : '';
+    return { guest, unit };
+  };
 
   const filtered = useMemo(() => payments
     .filter(p => {
-      const matchSearch = !searchTerm ||
-        (p.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.booking_id || '').includes(searchTerm);
+      const q = searchTerm.trim().toLowerCase();
+      const { guest, unit } = whoOf(p);
+      const matchSearch = !q ||
+        guest.toLowerCase().includes(q) ||
+        unit.toLowerCase().includes(q) ||
+        (p.description || '').toLowerCase().includes(q);
       const matchStatus = statusFilter === 'all' || p.status === statusFilter;
       return matchSearch && matchStatus;
     })
     .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)),
-  [payments, searchTerm, statusFilter]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [payments, searchTerm, statusFilter, bookingById, unitById]);
+  // M6: an empty list gets one sentence + one button; no zero totals, no filters, no second CTA.
+  const listEmpty = !!orgId && !isLoading && !loadFailed && payments.length === 0;
 
   const closePaymentDialog = () => {
     setShowDialog(false);
@@ -199,23 +235,28 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         subtitle="מקדמות, יתרות ותשלומים שהתקבלו."
         actions={
           <>
-            <Button onClick={openNew} disabled={!orgId}>
-              <Plus strokeWidth={2.25} />
-              תשלום חדש
-            </Button>
+            <StaleIndicator queries={[paymentsQ]} onRetry={() => paymentsQ.refetch()} />
+            {listEmpty ? null : (
+              <Button onClick={openNew} disabled={!orgId}>
+                <Plus strokeWidth={2.25} />
+                תשלום חדש
+              </Button>
+            )}
           </>
         }
       />
 
+      {listEmpty || loadFailed ? null : (
       <ErrorBoundary section="financial-summary" variant="inline" resetKey={orgId ?? 'no-org'}>
         <div className="stat-row mb-5" data-tour="payments-stats">
-          <StatTile hero label="התקבל" help="payments.received" value={fmtMoney(stats.paid, { compact: true })} icon={CheckCircle2} tone="success" />
-          <StatTile label="ממתין לגבייה" help="payments.pending" value={fmtMoney(stats.pending, { compact: true })} icon={Clock} tone="amber" />
-          <StatTile label="באיחור" help="payments.overdue" value={stats.overdue} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
+          <StatTile hero label={`התקבל ב${monthName}`} help="payments.received" value={moneyKnown ? fmtMoney(stats.paid) : '—'} loading={!moneyKnown && isLoading} icon={CheckCircle2} tone="success" />
+          <StatTile label="ממתין לגבייה" help="payments.pending" value={moneyKnown ? fmtMoney(stats.pending) : '—'} loading={!moneyKnown && isLoading} icon={Clock} tone="amber" />
+          <StatTile label="באיחור" help="payments.overdue" value={moneyKnown ? stats.overdue : '—'} loading={!moneyKnown && isLoading} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
         </div>
       </ErrorBoundary>
+      )}
 
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className={cn('mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between', (listEmpty || loadFailed) && 'hidden')}>
         <SegmentedControl
           ariaLabel="סינון לפי מצב"
           value={statusFilter}
@@ -224,7 +265,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         />
         <div className="relative lg:w-[320px]">
           <Search className="pointer-events-none absolute right-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-400" />
-          <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="חיפוש תשלום" className="rounded-full pr-10" aria-label="חיפוש תשלום" />
+          <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="חיפוש לפי אורח או יחידה" className="rounded-full pr-10" aria-label="חיפוש תשלום לפי אורח או יחידה" />
         </div>
       </div>
 
@@ -232,6 +273,8 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       <div className="v7-card overflow-hidden">
         {!orgId ? (
           <div className="p-6 text-center text-sm text-ink-600">התשלומים יופיעו כאן אחרי שתסיימו את ההגדרה הקצרה.</div>
+        ) : loadFailed ? (
+          <div className="p-4"><ErrorFallback title="לא הצלחנו לטעון את התשלומים" onRetry={() => paymentsQ.refetch()} /></div>
         ) : filtered.length === 0 && !isLoading ? (
           <DsEmptyState
             icon={Wallet}
@@ -245,15 +288,17 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
           <ul className="divide-y divide-[#EEF0F5]">
             {isLoading ? <li className="p-4"><SkelRows rows={5} /></li> : filtered.map((p) => {
               const st = PAYMENT_STATUSES.find((x) => x.value === p.status);
+              const { guest, unit } = whoOf(p);
+              const title = guest || p.description || 'תשלום ללא הזמנה';
+              const when = p.status === 'PAID' ? `שולם ${fmtShort(p.paid_date || p.created_date)}` : `עד ${fmtShort(p.due_date || p.created_date)}`;
+              const meta = [unit, guest && p.description ? p.description : (METHOD_LABEL[String(p.method || '').toLowerCase()] || ''), when].filter(Boolean).join(' · ');
               return (
                 <li key={p.id}>
                   <button type="button" onClick={() => openEdit(p)} className="press v7-row flex min-h-[76px] w-full items-center gap-4 px-5 py-3 text-start md:px-6">
                     <PayIcon status={p.status} />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[15px] font-semibold text-navy-900">{p.description || 'תשלום'}</span>
-                      <span className="block truncate text-[13px] text-ink-400">
-                        {METHOD_LABEL[String(p.method || '').toLowerCase()] || 'תשלום'} · {p.status === 'PAID' ? `שולם ${fmtShort(p.paid_date || p.created_date)}` : `עד ${fmtShort(p.due_date || p.created_date)}`}
-                      </span>
+                      <span className="block truncate text-[15px] font-semibold text-navy-900" dir="auto">{title}</span>
+                      <span className="block truncate text-[13px] text-ink-400">{meta}</span>
                     </span>
                     <StatusPill status={p.status} label={st?.label} className="hidden sm:inline-flex" />
                     <span className="flex flex-col items-end gap-1 sm:w-[104px]">

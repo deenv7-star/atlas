@@ -206,7 +206,7 @@ export function factsToText(f) {
     `${f.prevMonth.label}: הכנסות ${money(f.prevMonth.revenue)}, תפוסה ${pc(f.prevMonth.occupancy)}, ${f.prevMonth.nights} לילות.`,
     `כניסות היום: ${names(f.arrivals)}. יציאות היום: ${names(f.departures)}. כניסות מחר: ${names(f.arrivalsTomorrow)}.`,
     `יתרות באיחור: ${f.overdue.map((r) => `${r.name} ${money(r.amount)} (מאז ${r.due})`).join(', ') || 'אין'}. סה"כ ${money(f.overdueTotal)}.`,
-    `לידים פתוחים: ${f.openLeads.map((l) => `${l.name} (${l.since || 'ללא תאריך'})`).join(', ') || 'אין'}.`,
+    `פניות פתוחות: ${f.openLeads.map((l) => `${l.name} (${l.since || 'ללא תאריך'})`).join(', ') || 'אין'}.`,
     `לילות פנויים ב-14 הימים הקרובים: ${f.freeNights.map((u) => `${u.unit} ${u.free}`).join(', ') || 'אין נתון'}.`,
   ].join('\n');
 }

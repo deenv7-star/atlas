@@ -123,7 +123,7 @@ export function useMonthSwipe(onNext, onPrev) {
 export function SourceBadge({ channel, className, onDark = false }) {
   if (!channel || channel === 'direct') return null;
   return (
-    <span className={cn('inline-flex h-[18px] shrink-0 items-center rounded-full px-1.5 text-[11px] font-semibold leading-none',
+    <span className={cn('inline-flex h-[18px] shrink-0 items-center rounded-full px-1.5 text-[12px] font-semibold leading-none',
       onDark ? 'bg-white/20 text-white' : channel === 'booking' ? 'bg-navy-900 text-white' : channel === 'airbnb' ? 'bg-white text-navy-900 ring-1 ring-inset ring-navy-900/25' : 'bg-navy-900/10 text-navy-900', className)}
     >
       {CHANNEL_LABEL[channel]}

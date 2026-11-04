@@ -113,6 +113,12 @@ html[data-assistant-page] .sp-launcher { display: none; } /* phones: the compose
 .as-send:disabled { background: rgba(27, 38, 86, 0.1); color: rgba(27, 38, 86, 0.5); cursor: default; }
 .as-send.is-stop { background: var(--as-navy); }
 .as-send-icon { display: inline-flex; }
+/* voice entry: a quiet round button beside send, only while the composer is empty */
+.as-mic { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; border: 0;
+  background: rgba(62, 43, 241, 0.08); color: var(--as-brand); cursor: pointer; transition: background-color 160ms ease, transform 120ms var(--as-ease); }
+.as-mic:hover { background: rgba(62, 43, 241, 0.13); }
+.as-mic:active { transform: scale(0.94); }
+.as-mic:focus-visible { outline: 2px solid var(--as-brand); outline-offset: 2px; }
 .as-send svg { display: block; }
 .as-fine { margin: 8px 4px 0; font-size: 13px; line-height: 1.4; color: var(--as-soft); text-align: center; }
 
