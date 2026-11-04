@@ -144,7 +144,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
 
   const charState = s.mode === 'text' ? (t.busy ? 'thinking' : s.notice ? 'error' : 'idle') : v.state;
   const charMood = s.notice && s.mode === 'text' ? 'concerned' : s.feel.mood;
-  const sheetTop = Math.round(talked ? Math.max(270, vh * 0.36) : Math.max(320, vh * 0.48));
+  const sheetTop = Math.round(talked ? (vh < 700 ? 232 : Math.max(270, vh * 0.36)) : Math.max(320, vh * 0.48));
 
   return createPortal(
     <MotionConfig reducedMotion="user">

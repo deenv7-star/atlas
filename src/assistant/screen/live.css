@@ -24,7 +24,7 @@
 .lc-amt { flex-shrink: 0; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .lc-meter { width: 64px; height: 6px; border-radius: 99px; background: #EEF0F7; overflow: hidden; flex-shrink: 0; }
 .lc-meter i { display: block; height: 100%; background: var(--b); border-radius: inherit; transform-origin: right center; }
-.lc-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 4px; padding: 0 2px; color: var(--b); font-size: 15px; font-weight: 700; text-decoration: none; }
+.lc-link { display: inline-flex; align-items: center; gap: 6px; min-height: 46px; margin-top: 4px; padding: 0 2px; color: var(--b); font-size: 15px; font-weight: 700; text-decoration: none; }
 .lc-link--strong { padding: 0 16px; border-radius: 999px; background: rgba(62, 43, 241, 0.09); }
 .lc-link:focus-visible, .lc-btn:focus-visible { outline: 2px solid var(--b); outline-offset: 2px; }
 
@@ -32,7 +32,7 @@
 .lc-strip { margin: 4px 0 10px; padding: 10px 8px 12px; border-radius: 18px; background: #F7F8FB; }
 .lc-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
 .lc-day { display: grid; gap: 1px; padding: 2px 0; }
-.lc-day small { font-size: 12px; font-weight: 600; color: rgba(27, 38, 86, 0.6); }
+.lc-day small { font-size: 12px; font-weight: 600; color: rgba(27, 38, 86, 0.76); }
 .lc-day b { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .lc-day.is-in b { color: var(--b); }
 .lc-track { position: relative; height: 32px; margin-top: 8px; }
