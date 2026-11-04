@@ -3,6 +3,10 @@
  * Rules (atlas-hebrew-copy-master): the owner's words, plural "אתם", headline ≤ 6 words, helper ≤ 12 words,
  * verb + object buttons, no slashes, no calques, "atlas" lowercase, never glued to a Hebrew letter.
  */
+import { isNativeApp } from '@/lib/nativePlatform';
+
+// App Store 3.1.1: no trial / pricing lines inside the iOS app (ecosystem v1 #4).
+const NATIVE = isNativeApp();
 const NAME_Q = {
   zimmer: 'איך קוראים לצימר?',
   villa: 'איך קוראים לווילה?',
@@ -42,7 +46,7 @@ export const YC = {
     title: '2 דקות, והכל מוכן.',
     sub: 'עונים על 6 שאלות קצרות, ורואים את atlas שלכם נבנה תוך כדי.',
     cta: 'מתחילים',
-    points: ['יומן אחד לכל ההזמנות', 'הודעות מוכנות לאורחים', '14 יום חינם, בלי כרטיס אשראי'],
+    points: NATIVE ? ['יומן אחד לכל ההזמנות', 'הודעות מוכנות לאורחים', 'תשובות מהירות מ-atlas'] : ['יומן אחד לכל ההזמנות', 'הודעות מוכנות לאורחים', '14 יום חינם, בלי כרטיס אשראי'],
   },
   kind: {
     title: 'מה סוג המתחם שלכם?',
@@ -107,8 +111,8 @@ export const YC = {
   },
   done: {
     title: (first) => (first ? `הכל מוכן, ${first}.` : 'הכל מוכן.'),
-    sub: '14 יום חינם, בלי כרטיס אשראי. נשאר לחבר את ההזמנות, ונראה לכם בדיוק איפה ללחוץ.',
-    subLinked: '14 יום חינם, בלי כרטיס אשראי. היומן כבר מחובר, ההזמנות בדרך.',
+    sub: NATIVE ? 'נשאר לחבר את ההזמנות, ונראה לכם בדיוק איפה ללחוץ.' : '14 יום חינם, בלי כרטיס אשראי. נשאר לחבר את ההזמנות, ונראה לכם בדיוק איפה ללחוץ.',
+    subLinked: NATIVE ? 'היומן כבר מחובר, ההזמנות בדרך.' : '14 יום חינם, בלי כרטיס אשראי. היומן כבר מחובר, ההזמנות בדרך.',
     cta: 'פתחו את atlas',
     setup: 'המשיכו בהגדרה',
   },

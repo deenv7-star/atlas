@@ -58,7 +58,7 @@ export default function BiometricLoginButton({ onSignedIn, className }) {
         onClick={go}
         disabled={busy}
         aria-busy={busy || undefined}
-        className="flex h-[52px] w-full items-center justify-center gap-3 rounded-[14px] bg-[#3E2BF1] px-4 text-[16px] font-bold text-white transition-transform active:scale-[0.98] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.35)] focus-visible:ring-offset-2 disabled:opacity-70"
+        className="flex h-[52px] w-full items-center justify-center gap-3 rounded-[16px] bg-[#3E2BF1] px-4 text-[16px] font-bold text-white transition-transform active:scale-[0.98] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.35)] focus-visible:ring-offset-2 disabled:opacity-70"
       >
         {busy ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden /> : <ScanFace className="h-5 w-5" aria-hidden />}
         <span>{busy ? 'מתחברים…' : <>כניסה עם <span dir="ltr">{state.label}</span></>}</span>

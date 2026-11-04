@@ -124,17 +124,17 @@ function Checklist({ facts, variant, steps, prog, flash, onOpen }) {
   const nextTitle = prog.next?.title;
   const plan = facts.planChoice?.kind === 'plan' ? getPlanByKey(facts.planChoice.key) : null;
   return (
-    <Shell variant={variant} kicker="הגדרת המערכת"
-      title={prog.complete ? 'הכל מוגדר.' : variant === 'b' ? 'נמשיך מכאן. כל שלב לוקח כמה דקות.' : 'בואו נגדיר את המערכת, צעד אחר צעד'}
+    <Shell variant={variant} kicker="הגדרה ראשונה"
+      title={prog.complete ? 'הכל מוגדר.' : variant === 'b' ? 'נמשיך מכאן. כל שלב לוקח כמה דקות.' : (prog.total - prog.handled <= 1 ? 'עוד צעד אחד, והכל מוכן' : `עוד ${prog.total - prog.handled} צעדים, והכל מוכן`)}
       intro={prog.complete ? ['אפשר לחזור לכל שלב מתי שרוצים, גם מההגדרות.'] : variant === 'b' ? ['נראה לכם בדיוק איפה ללחוץ. אפשר לדלג על כל שלב ולחזור אחר כך.'] : ['כל שלב מוסבר במילים פשוטות. אפשר לדלג ולחזור מתי שרוצים.']}
       footer={(
         <>
           {prog.complete ? (
-            <Primary className="w-full" onClick={() => window.location.assign('/today')}>למערכת<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>
+            <Primary className="w-full" onClick={() => window.location.assign('/today')}>למסך היום<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>
           ) : (
             <Primary className="w-full" onClick={() => onOpen(prog.next.id)}>{`המשך: ${nextTitle}`}<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>
           )}
-          {!prog.complete ? <Ghost className="w-full" onClick={() => window.location.assign('/today')}>למערכת, אמשיך אחר כך</Ghost> : null}
+          {!prog.complete ? <Ghost className="w-full" onClick={() => window.location.assign('/today')}>להמשיך אחר כך</Ghost> : null}
         </>
       )}>
       <div className="ob2-card flex items-center gap-4 p-4">
@@ -143,7 +143,7 @@ function Checklist({ facts, variant, steps, prog, flash, onOpen }) {
         </Ring>
         <div className="min-w-0">
           <p className="text-[17px] font-extrabold text-navy-900">{prog.complete ? 'ההגדרה הושלמה' : `${prog.handled} מתוך ${prog.total} שלבים`}</p>
-          <p className="text-[15px] text-ink-600">{plan ? `חבילת ${plan.nameHe} · ${TRIAL_DAYS} יום חינם` : `${TRIAL_DAYS} יום ניסיון חינם · בלי כרטיס אשראי`}</p>
+          {isNativeApp() ? null : <p className="text-[15px] text-ink-600">{plan ? `חבילת ${plan.nameHe} · ${TRIAL_DAYS} יום חינם` : `${TRIAL_DAYS} יום ניסיון חינם · בלי כרטיס אשראי`}</p>}
         </div>
       </div>
       {flash ? (
@@ -234,7 +234,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
     <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title={`מחברים את ${G.name}`} intro={intro}
       footer={(
         <>
-          {err ? <p className="rounded-[14px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}
+          {err ? <p className="rounded-[16px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}
           {pasteOpen ? (
             <Primary className="w-full" onClick={save} disabled={!canSave || busy} aria-busy={busy}>
               {busy ? <><Loader2 className="h-5 w-5 ob2-spin" aria-hidden />שומרים…</> : <>שמירת החיבור<Check className="h-5 w-5" strokeWidth={3} aria-hidden /></>}
@@ -248,7 +248,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
           </div>
         </>
       )}>
-      <a href={G.open.href} target="_blank" rel="noopener noreferrer" className="ob-press flex min-h-[60px] items-center justify-between gap-3 rounded-[18px] bg-navy-900 px-5 text-[17px] font-bold text-white">
+      <a href={G.open.href} target="_blank" rel="noopener noreferrer" className="ob-press flex min-h-[60px] items-center justify-between gap-3 rounded-[16px] bg-navy-900 px-5 text-[17px] font-bold text-white">
         {G.open.label}<ExternalLink className="h-5 w-5" aria-hidden />
       </a>
       <p className="mt-2 text-[14px] text-ink-400">נפתח בחלון חדש. חוזרים לכאן כדי להדביק.</p>
@@ -256,7 +256,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
       <ol className="mt-6 flex flex-col gap-6" aria-label={`איך מוצאים את הקישור ב-${G.name}`}>
         {G.steps.slice(0, seen).map((s, i) => (
           <motion.li key={s.pic} initial={variant === 'b' && i > 0 ? { opacity: 0, y: 10 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE }}
-            className={cn('flex flex-col gap-3', variant === 'b' && 'rounded-[22px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.05)]')}>
+            className={cn('flex flex-col gap-3', variant === 'b' && 'rounded-[24px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.05)]')}>
             <div className="flex items-start gap-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[17px] font-extrabold text-white" aria-hidden>{i + 1}</span>
               <div className="min-w-0">
@@ -271,7 +271,7 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
       </ol>
 
       {pasteOpen ? (
-        <section className="mt-7 flex flex-col gap-4 rounded-[22px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.05),0_8px_22px_-14px_rgba(27,38,86,0.2)]" aria-labelledby="paste-h">
+        <section className="mt-7 flex flex-col gap-4 rounded-[24px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.05),0_8px_22px_-14px_rgba(27,38,86,0.2)]" aria-labelledby="paste-h">
           <div className="flex items-start gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[17px] font-extrabold text-white" aria-hidden>{G.steps.length + 1}</span>
             <div>
@@ -318,7 +318,7 @@ function WhatsAppStep({ facts, user, variant, step, onBack, onDone, prog }) {
         : ['atlas מכין את ההודעות לאורחים בזמן הנכון. אתם שולחים בלחיצה אחת, מהוואטסאפ שלכם.', 'שליחה אוטומטית בלי לגעת תגיע בקרוב.']}
       footer={(
         <>
-          {err ? <p className="rounded-[14px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}
+          {err ? <p className="rounded-[16px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}
           <Primary className="w-full" onClick={save} disabled={!ok || busy} aria-busy={busy}>{busy ? <><Loader2 className="h-5 w-5 ob2-spin" aria-hidden />שומרים…</> : <>שמירה<Check className="h-5 w-5" strokeWidth={3} aria-hidden /></>}</Primary>
           <Ghost className="w-full" onClick={onBack}>אחר כך</Ghost>
         </>
@@ -333,7 +333,7 @@ function WhatsAppStep({ facts, user, variant, step, onBack, onDone, prog }) {
           <label htmlFor="wa-host" className="text-[16px] font-semibold text-navy-900">איך לחתום על ההודעות? <span className="font-normal text-ink-400">(לא חובה)</span></label>
           <input id="wa-host" className="ob-input" autoComplete="name" placeholder="למשל: יעל" maxLength={60} value={host} onChange={(e) => setHost(e.target.value)} />
         </div>
-        <div className="rounded-[22px] bg-[#EEF0F6] p-4" aria-label="כך ההודעה תיראה">
+        <div className="rounded-[24px] bg-[#EEF0F6] p-4" aria-label="כך ההודעה תיראה">
           <p className="mb-2 text-[13px] font-bold text-ink-600">כך האורח יקבל את ההודעה</p>
           <p className="ms-auto max-w-[92%] whitespace-pre-line rounded-[16px] rounded-se-[4px] bg-white px-4 py-3 text-[16px] leading-relaxed text-navy-900 shadow-[0_1px_1px_rgba(27,38,86,0.08)]">{sample}</p>
         </div>
@@ -374,7 +374,7 @@ function UnitsStep({ facts, variant, step, onBack, onDone, prog }) {
       intro={variant === 'b' ? ['זה מה שבנינו מהתשובות שלכם. אפשר לשנות כל דבר או להוסיף יחידה.'] : ['לכל יחידה: שם, כמה אורחים ומחיר. אפשר לשנות הכל גם אחר כך.']}
       footer={(
         <>
-          {err ? <p className="rounded-[14px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}
+          {err ? <p className="rounded-[16px] bg-[#FDEEEE] px-4 py-3 text-[15px] font-medium text-[#B4303A]" role="alert">{err}</p> : null}
           <Primary className="w-full" onClick={save} disabled={busy || !rows.length || rows.some((u) => !u.name.trim())}>{busy ? <><Loader2 className="h-5 w-5 ob2-spin" aria-hidden />שומרים…</> : <>{rows.some((u) => u.dirty) ? 'שמירה' : 'נראה טוב'}<Check className="h-5 w-5" strokeWidth={3} aria-hidden /></>}</Primary>
           <Ghost className="w-full" onClick={onBack}>אחר כך</Ghost>
         </>
@@ -402,7 +402,7 @@ function UnitsStep({ facts, variant, step, onBack, onDone, prog }) {
                   <div className="flex flex-col gap-2">
                     <p className="text-[16px] font-semibold text-navy-900">כמה אורחים?</p>
                     {!u.guestsVary ? (
-                      <div className="flex flex-col divide-y divide-[#E9ECF4] rounded-[18px] bg-[#F7F8FB]">
+                      <div className="flex flex-col divide-y divide-[#E9ECF4] rounded-[16px] bg-[#F7F8FB]">
                         <CountRow label="לפחות" value={lo} min={1} max={hi} onChange={(v) => set(u.key, { guestsMin: v })} />
                         <CountRow label="עד" value={hi} min={lo} onChange={(v) => set(u.key, { guestsMax: v })} />
                       </div>
@@ -453,7 +453,7 @@ function PlanStep({ facts, variant, step, onBack, onDone, onSkip, prog }) {
       footer={(
         <>
           <Primary className="w-full" onClick={async () => { await onDone(''); window.location.assign('/subscription'); }}>למסך החבילות<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>
-          <Ghost className="w-full" onClick={onSkip}>אמשיך עם הניסיון בינתיים</Ghost>
+          <Ghost className="w-full" onClick={onSkip}>להמשיך עם הניסיון בינתיים</Ghost>
         </>
       )}>
       <ul className="flex flex-col gap-2">
@@ -474,7 +474,7 @@ function PaymentsStep({ variant, step, onBack }) {
           <p className="mt-1 text-[17px] font-bold text-navy-900">מעקב מקדמות ויתרות</p>
           <p className="text-[15px] text-ink-600">רושמים כמה שולם בכל הזמנה, רואים מה פתוח, ושולחים תזכורת בוואטסאפ.</p>
         </div>
-        {['קישור תשלום למקדמה', 'חיבור לתוכנת החשבוניות שלכם'].map((t) => (
+        {['קישור תשלום למקדמה', 'חיבור לתוכנת הנהלת החשבונות שלכם'].map((t) => (
           <div key={t} className="flex min-h-[64px] items-center justify-between gap-3 rounded-[20px] bg-white/60 px-4">
             <span className="text-[17px] font-bold text-navy-900">{t}</span>
             <span className="rounded-full bg-[#F1F2F7] px-2.5 py-1 text-[13px] font-bold text-ink-600">בקרוב</span>

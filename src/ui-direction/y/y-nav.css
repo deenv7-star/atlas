@@ -24,4 +24,4 @@
 }
 /* desktop rail: "עוד" is a button among links */
 .y2-rail button.y2-ri { background: transparent; border: 0; font: inherit; cursor: pointer; }
-.y2-bell-menu-empty { padding: 10px 10px 12px; font-size: 14.5px; color: rgba(27,38,86,.65); }
+.y2-bell-menu-empty { padding: 10px 10px 12px; font-size: 15px; color: rgba(27,38,86,.65); }

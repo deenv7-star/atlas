@@ -90,7 +90,7 @@
 .im-row .im-tick svg { width: 15px; height: 15px; }
 .im-row .im-txt { flex: 1; min-width: 0; }
 .im-row .im-txt small { display: block; font-size: 14px; color: var(--mute); }
-.im-row .im-txt span { display: block; font-size: 16.5px; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+.im-row .im-txt span { display: block; font-size: 17px; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
 .im-row .im-fix { font-size: 14px; font-weight: 700; color: var(--ind); flex-shrink: 0; }
 .im-row .im-check { display: inline-flex; height: 26px; padding: 0 10px; align-items: center; border-radius: 999px; background: rgba(62,43,241,.1); color: var(--ind); font-size: 13px; font-weight: 800; flex-shrink: 0; }
 .im-more { display: flex; justify-content: center; padding: 4px 0 12px; }

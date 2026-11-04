@@ -197,7 +197,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
 
   const timelineItems = [
     { 
-      label: 'ליד', 
+      label: 'פנייה', 
       done: !!booking.lead_id, 
       icon: Users 
     },
@@ -380,7 +380,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               </button>
               <button type="button" onClick={() => navigate(`/invoices?booking=${booking.id}`)} className="press inline-flex h-11 items-center justify-center gap-1.5 rounded-full bg-white/15 px-4 text-[14px] font-semibold text-white hover:bg-white/25">
                 <Receipt className="h-4 w-4" />
-                חשבונית
+                מסמך תשלום
               </button>
             </div>
           </section>
@@ -422,7 +422,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
                 <p className="mt-3 text-[15px] text-ink-600">עדיין לא נרשם תשלום להזמנה הזו.</p>
               )}
               {booking.notes ? (
-                <div className="mt-4 rounded-[18px] bg-[#F4F4FA] p-4">
+                <div className="mt-4 rounded-[16px] bg-[#F4F4FA] p-4">
                   <p className="text-[13px] font-semibold text-ink-400">הערות</p>
                   <p className="mt-1 whitespace-pre-wrap text-[15px] text-ink-600">{booking.notes}</p>
                 </div>

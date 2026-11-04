@@ -140,7 +140,7 @@ export function Thinking({ line = '' }) {
   return (
     <p className="as-thinking" role="status">
       <AtlasFace live mood="thinking" size={30} decorative />
-      <span className="as-shimmer">{line || 'בודקים בנתונים שלכם'}</span>
+      <span className="as-shimmer">{line || 'בודקת בנתונים שלכם'}</span>
     </p>
   );
 }
@@ -305,7 +305,7 @@ export function Conversation({ facts, loading, page = '', variant = 'page', onNa
       </div>
       <div className="as-dock">
         <Composer onSend={ask} onStop={stop} busy={busy} inputRef={inputRef} autoFocus={autoFocus} onVoice={VOICE_ENABLED ? (e) => openAssistant('voice', e?.currentTarget) : null} />
-        <p className="as-fine">{ASSISTANT_DEMO ? 'הדגמה: התשובות מחושבות מהנתונים בדפדפן הזה.' : 'התשובות מבוססות על הנתונים שלכם. כדאי לבדוק לפני שפועלים.'}</p>
+        <p className="as-fine">{ASSISTANT_DEMO ? 'דוגמה. התשובות מבוססות על נתוני הדוגמה.' : 'התשובות מבוססות על הנתונים שלכם. כדאי לבדוק לפני שפועלים.'}</p>
       </div>
       <p className="as-sr" aria-live="polite">{announce}</p>
     </div>

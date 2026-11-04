@@ -8,14 +8,14 @@ export const FACE_MOODS = ['neutral', 'attentive', 'look', 'happy', 'thinking', 
 
 export const FACE_ALT = {
   neutral: 'atlas, העוזר האישי שלכם',
-  attentive: 'atlas מקשיב',
-  look: 'atlas מסתכל על ההודעה החדשה',
-  happy: 'atlas מחייך',
-  thinking: 'atlas חושב',
-  typing: 'atlas כותב תשובה',
-  sleepy: 'atlas נח, אין כאן עדיין כלום',
-  surprised: 'atlas מופתע',
-  concerned: 'atlas מתנצל',
+  attentive: 'atlas מקשיבה',
+  look: 'atlas מסתכלת על ההודעה החדשה',
+  happy: 'atlas מחייכת',
+  thinking: 'atlas חושבת',
+  typing: 'atlas כותבת תשובה',
+  sleepy: 'atlas נחה, אין כאן עדיין כלום',
+  surprised: 'atlas מופתעת',
+  concerned: 'atlas מתנצלת',
   blink: 'atlas',
 };
 

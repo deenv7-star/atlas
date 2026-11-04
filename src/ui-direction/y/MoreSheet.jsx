@@ -16,7 +16,7 @@ import { useQuickBooking } from '@/components/app/QuickBooking';
 import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
 import './y-more-sheet.css';
 
-/** Extra words people type for a screen, so "ניקיון" or "קבלה" finds the right tile. */
+/** Extra words people type for a screen, so "ניקיון" or a tax-document word finds the right tile. */
 const ALIASES = {
   Payments: 'תשלומים יתרות כסף מקדמה',
   ExpenseTracker: 'הוצאות',
@@ -62,9 +62,6 @@ export function MoreSheetHost({ user }) {
   return <MoreSheet open={open} onOpenChange={setMore} user={user} exclude={desktop ? ON_RAIL : ON_PHONE_BAR} />;
 }
 
-/** Order the owner reaches for most; what is not listed keeps the nav map's order after it. */
-const FIRST = ['Bookings', 'Payments', 'Messages', 'Cleaning', 'Reviews', 'Settings'];
-
 export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
   const navigate = useNavigate();
   const quick = useQuickBooking();
@@ -73,12 +70,16 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
   const [q, setQ] = useState('');
   const groups = useNavGroups(user);
 
-  const screens = useMemo(() => {
-    const all = [];
-    groups.forEach((g) => g.items.forEach((i) => { if (!exclude.includes(i.page) && !all.some((a) => a.page === i.page)) all.push(i); }));
-    const rank = (p) => { const k = FIRST.indexOf(p); return k < 0 ? 99 : k; };
-    return all.map((s, n) => ({ ...s, n })).sort((a, b) => rank(a.page) - rank(b.page) || a.n - b.n);
+  // ecosystem v1 #6: grouped list rows by the nav map's own groups (תפעול / אורחים / דוחות / חשבון), not an app drawer.
+  const sections = useMemo(() => {
+    const seen = new Set();
+    return groups.map((g) => ({
+      id: g.id,
+      label: g.label || 'עיקרי',
+      items: g.items.filter((i) => { if (exclude.includes(i.page) || seen.has(i.page)) return false; seen.add(i.page); return true; }),
+    })).filter((g) => g.items.length);
   }, [groups, exclude]);
+  const screens = useMemo(() => sections.flatMap((g) => g.items), [sections]);
 
   const term = q.trim().toLowerCase();
   const shown = term ? screens.filter((s) => `${s.label} ${ALIASES[s.page] || ''}`.toLowerCase().includes(term)) : screens;
@@ -125,21 +126,29 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
               <span>חיפוש „{q.trim()}" באורחים ובהזמנות</span>
               <ChevronLeft strokeWidth={1.75} aria-hidden />
             </button>
-          ) : <p className="ycm-sec">מסכים</p>}
+          ) : null}
 
-          <ul className="ycm-grid">
-            {shown.map(({ page, label, icon: Icon }) => {
-              const on = isActive(page);
-              return (
-                <li key={page}>
-                  <button type="button" className={cn('ycm-tile press', on && 'on')} aria-current={on ? 'page' : undefined} onClick={() => go(page)}>
-                    <span className="ycm-ic"><Icon strokeWidth={1.75} aria-hidden /></span>
-                    <span className="ycm-lb">{label}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {(term ? [{ id: 'found', label: null, items: shown }] : sections).map((g) => (
+            <section key={g.id} className="ycm-group" aria-label={g.label || 'תוצאות'}>
+              {g.label ? <p className="ycm-sec">{g.label}</p> : null}
+              {g.items.length ? (
+                <ul className="ycm-list">
+                  {g.items.map(({ page, label, icon: Icon }) => {
+                    const on = isActive(page);
+                    return (
+                      <li key={page}>
+                        <button type="button" className={cn('ycm-row press', on && 'on')} aria-current={on ? 'page' : undefined} onClick={() => go(page)}>
+                          <Icon strokeWidth={1.75} aria-hidden className="ycm-row-ic" />
+                          <span className="ycm-lb">{label}</span>
+                          <ChevronLeft strokeWidth={1.75} aria-hidden className="ycm-row-chev" />
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
+            </section>
+          ))}
           {term && !shown.length ? <p className="ycm-none">אין מסך בשם הזה. אפשר לחפש אותו באורחים ובהזמנות.</p> : null}
 
           {HELP_ENABLED && !term ? (

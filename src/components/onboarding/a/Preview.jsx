@@ -25,7 +25,7 @@ function firstOf(name) { return String(name || '').trim().split(/\s+/)[0] || '';
 
 function Ring({ on, children, className }) {
   return (
-    <div className={cn('relative rounded-[22px] transition-shadow duration-300', on && 'shadow-[0_0_0_3px_rgba(62,43,241,0.35),0_0_0_9px_rgba(62,43,241,0.08)]', className)}>
+    <div className={cn('relative rounded-[24px] transition-shadow duration-300', on && 'shadow-[0_0_0_3px_rgba(62,43,241,0.35),0_0_0_9px_rgba(62,43,241,0.08)]', className)}>
       {children}
     </div>
   );
@@ -47,7 +47,7 @@ function Calendar({ d, focus, compact = false, tall = false }) {
       <div className="grid gap-1.5" style={{ gridTemplateColumns: `minmax(64px,1.3fr) repeat(${days.length}, minmax(0,1fr))` }}>
         <span />
         {days.map((day) => (
-          <span key={day} className="text-center text-[11px] font-semibold text-ink-400">{formatDayHe(day).split(',')[0].replace('יום ', '')}</span>
+          <span key={day} className="text-center text-[12px] font-semibold text-ink-400">{formatDayHe(day).split(',')[0].replace('יום ', '')}</span>
         ))}
         {units.length === 0 ? (
           <p className="col-span-full rounded-[12px] bg-[#F6F7FB] px-3 py-4 text-center text-[13px] text-ink-400">כאן יופיעו היחידות שלכם</p>
@@ -77,25 +77,25 @@ function Hosting({ d, focus }) {
     <Ring on={focus === 'hosting' || focus === 'channels' || focus === 'wa'} className="v7-card p-4">
       <p className="mb-3 text-[14px] font-bold text-navy-900">היום</p>
       <div className="flex flex-col gap-2.5">
-        <div className={cn('flex items-center gap-3 rounded-[14px] p-2 transition-colors duration-300', focus === 'hosting' && 'bg-[#F1EFFE]')}>
+        <div className={cn('flex items-center gap-3 rounded-[16px] p-2 transition-colors duration-300', focus === 'hosting' && 'bg-[#F1EFFE]')}>
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--st-mint-bg)] text-[var(--st-mint-fg)]"><LogIn className="h-4 w-4" aria-hidden /></span>
           <p className="text-[13px] text-navy-900">כניסות מ-<b className="tabular-nums">{d.checkIn}</b></p>
         </div>
-        <div className={cn('flex items-center gap-3 rounded-[14px] p-2 transition-colors duration-300', focus === 'hosting' && 'bg-[#F1EFFE]')}>
+        <div className={cn('flex items-center gap-3 rounded-[16px] p-2 transition-colors duration-300', focus === 'hosting' && 'bg-[#F1EFFE]')}>
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--st-sky-bg)] text-[var(--st-sky-fg)]"><LogOut className="h-4 w-4" aria-hidden /></span>
           <p className="text-[13px] text-navy-900">יציאות עד <b className="tabular-nums">{d.checkOut}</b></p>
         </div>
-        <div className={cn('flex items-center gap-3 rounded-[14px] p-2 transition-colors duration-300', focus === 'wa' && 'bg-[#F1EFFE]')}>
+        <div className={cn('flex items-center gap-3 rounded-[16px] p-2 transition-colors duration-300', focus === 'wa' && 'bg-[#F1EFFE]')}>
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#E7F8EE] text-[#128C4B]"><MessageCircle className="h-4 w-4" aria-hidden /></span>
           <p className="text-[13px] text-navy-900">אישור הזמנה בוואטסאפ מוכן</p>
         </div>
         <div className="flex flex-wrap gap-1.5 pt-1">
           {on.length ? on.map((k) => (
-            <span key={k} className="ob-pop inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold text-white" style={{ background: PROVIDERS[k].color }}>
+            <span key={k} className="ob-pop inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold text-white" style={{ background: PROVIDERS[k].color }}>
               <Check className="h-3 w-3" strokeWidth={3} aria-hidden />{PROVIDERS[k].label}
             </span>
           )) : null}
-          <span className="rounded-full bg-[#F1EFFE] px-2.5 py-1 text-[11px] font-semibold text-brand-600">ישיר{today.includes('phone') ? ' · טלפון' : ''}</span>
+          <span className="rounded-full bg-[#F1EFFE] px-2.5 py-1 text-[12px] font-semibold text-brand-600">ישיר{today.includes('phone') ? ' · טלפון' : ''}</span>
         </div>
       </div>
     </Ring>
@@ -116,7 +116,7 @@ export function PreviewFull({ d, focus, className }) {
           <span className="h-10 w-10 shrink-0 overflow-hidden rounded-[12px] bg-[#E4E1FD]"><img src={coverOf(d)} alt="" className="h-full w-full object-cover" /></span>
           <span className="min-w-0">
             <span className="block truncate text-[13px] font-bold text-navy-900">{d.businessName || 'העסק שלי'}</span>
-            <span className="block text-[11px] text-ink-400">{n ? `${n} ${n === 1 ? 'יחידה' : 'יחידות'}` : (d.type ? t.label : 'עוד לא הוגדר')}</span>
+            <span className="block text-[12px] text-ink-400">{n ? `${n} ${n === 1 ? 'יחידה' : 'יחידות'}` : (d.type ? t.label : 'עוד לא הוגדר')}</span>
           </span>
         </Ring>
         <nav className="flex flex-col gap-1">

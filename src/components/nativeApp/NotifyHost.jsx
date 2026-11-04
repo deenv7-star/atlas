@@ -136,7 +136,7 @@ export default function NotifyHost() {
             onClick={accept}
             disabled={busy}
             data-testid="notify-yes"
-            className="flex h-[52px] w-full items-center justify-center rounded-[14px] bg-[#3E2BF1] text-[16px] font-bold text-white transition-transform duration-150 ease-out active:scale-[0.97] disabled:opacity-60"
+            className="flex h-[52px] w-full items-center justify-center rounded-[16px] bg-[#3E2BF1] text-[16px] font-bold text-white transition-transform duration-150 ease-out active:scale-[0.97] disabled:opacity-60"
           >
             הפעלת תזכורות
           </button>
@@ -144,7 +144,7 @@ export default function NotifyHost() {
             type="button"
             onClick={later}
             disabled={busy}
-            className="flex h-[52px] w-full items-center justify-center rounded-[14px] text-[16px] font-medium text-[#1B2656]"
+            className="flex h-[52px] w-full items-center justify-center rounded-[16px] text-[16px] font-medium text-[#1B2656]"
           >
             לא עכשיו
           </button>

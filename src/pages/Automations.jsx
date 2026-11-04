@@ -165,7 +165,7 @@ export default function AutomationsPage({ orgId }) {
         <img className="mg-photo-img" src="/onboarding/bg/aframe-p640.webp" srcSet="/onboarding/bg/aframe-p640.webp 640w, /onboarding/bg/aframe-p1000.webp 1000w, /onboarding/bg/aframe-1600.webp 1600w" sizes="(min-width: 960px) 900px, 100vw" alt="" loading="eager" decoding="async" />
         <div className="flex items-center gap-2.5">
           <AssistantFace size={40} />
-          <p className="text-[15px] font-semibold text-white/75">ההודעות לאורחים</p>
+          <p className="text-[15px] font-semibold text-white/75">הודעות אוטומטיות</p>
         </div>
         <h1 id="mg-title" className="!text-white mt-4 max-w-[34rem] text-[28px] font-bold leading-[1.15] tracking-[-0.01em] md:text-[38px]">{title}</h1>
         {active.length ? (
@@ -225,7 +225,7 @@ export default function AutomationsPage({ orgId }) {
         </div>
       </section>
 
-      <section className="flex items-center gap-3.5 rounded-[22px] bg-white px-4 py-3" aria-label="שבת וחג">
+      <section className="flex items-center gap-3.5 rounded-[24px] bg-white px-4 py-3" aria-label="שבת וחג">
         <span className="mg-ico" aria-hidden><Moon className="h-5 w-5" strokeWidth={1.75} /></span>
         <span className="min-w-0 flex-1">
           <span className="block text-[16px] font-bold text-navy-900">לא שולחים בשבת ובחג</span>
@@ -236,7 +236,7 @@ export default function AutomationsPage({ orgId }) {
 
       <p className="px-1 text-[14px] leading-relaxed text-ink-600">
         כל הודעה מחכה מוכנה ב<Link to="/today" className="-my-3 inline-block py-3 font-semibold text-brand-600 underline-offset-2 hover:underline">לוח היום</Link>. לחיצה פותחת וואטסאפ עם הטקסט והטלפון של האורח.
-        {!DB_FEATURES.realCore ? ' בהדגמה ההודעות לא נשלחות באמת.' : ''}
+        {!DB_FEATURES.realCore ? ' בחשבון הדוגמה ההודעות לא נשלחות באמת.' : ''}
       </p>
 
       {gm.others.length ? (
@@ -250,7 +250,7 @@ export default function AutomationsPage({ orgId }) {
                   <span className="block text-[13px] text-ink-600">{isRunnableRule(r) ? 'פועלת' : 'עוד לא נתמכת, ולכן לא יוצאת'}</span>
                 </span>
                 <Switch checked={!!r.is_active} onCheckedChange={(v) => gm.toggleOther(r.id, v)} aria-label={`הפעלה: ${r.name || 'הודעה'}`} />
-                <button type="button" className="inline-flex h-11 w-11 items-center justify-center rounded-[14px]" aria-label={`מחיקה: ${r.name || 'הודעה'}`} onClick={() => gm.removeOther(r.id)}>
+                <button type="button" className="inline-flex h-11 w-11 items-center justify-center rounded-[16px]" aria-label={`מחיקה: ${r.name || 'הודעה'}`} onClick={() => gm.removeOther(r.id)}>
                   <Trash2 className="h-4 w-4 text-ink-400" strokeWidth={1.75} />
                 </button>
               </li>

@@ -116,7 +116,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
       />
 
       <div className="stat-row">
-        <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} tone="danger" />
+        <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} />
         <StatTile label="החודש" value={fmtMoney(thisMonthTotal)} hint={`${thisMonth.length} הוצאות החודש`} icon={Calendar} />
         <StatTile label="רווח נקי משוער" value={fmtMoney(netProfitEstimate)} hint="תשלומים שהתקבלו פחות הוצאות" icon={Wallet} tone="success" />
       </div>

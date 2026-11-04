@@ -116,7 +116,7 @@ export default function SocialButtons({ intent = 'login', returnTo = null, getCo
             disabled={Boolean(busy)}
             aria-busy={isBusy || undefined}
             className={cn(
-              'relative flex h-[52px] w-full items-center justify-center gap-3 rounded-[14px] px-4 text-[16px] font-medium',
+              'relative flex h-[52px] w-full items-center justify-center gap-3 rounded-[16px] px-4 text-[16px] font-medium',
               'transition-[background-color,border-color,transform,opacity] duration-150 [transition-timing-function:cubic-bezier(.2,.8,.2,1)] active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100',
               'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.35)] focus-visible:ring-offset-2',
               'disabled:cursor-not-allowed',

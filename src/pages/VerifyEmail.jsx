@@ -184,7 +184,7 @@ export default function VerifyEmail() {
                 dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-12 rounded-[14px] border-line bg-white text-base"
+                className="h-12 rounded-[16px] border-line bg-white text-base"
               />
             </div>
           )}
@@ -216,7 +216,7 @@ export default function VerifyEmail() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="h-12 rounded-[14px] border-line bg-white text-base"
+                className="h-12 rounded-[16px] border-line bg-white text-base"
               />
             </div>
           )}

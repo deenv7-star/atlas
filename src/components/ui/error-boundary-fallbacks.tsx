@@ -17,7 +17,7 @@ function DevTechnicalBlock({ error, componentStack }: { error: Error | null; com
   if (!isDev || !error) return null;
   return (
     <details className="mt-2 w-full text-start">
-      <summary className="cursor-pointer text-[11px] font-semibold text-red-800/90 select-none">
+      <summary className="cursor-pointer text-[12px] font-semibold text-red-800/90 select-none">
         פרטים טכניים (פיתוח)
       </summary>
       <pre className="mt-2 max-h-28 overflow-auto rounded-md bg-red-950/5 p-2 text-[10px] leading-snug text-red-900/80 whitespace-pre-wrap break-words">
@@ -38,7 +38,7 @@ export function ErrorFallbackInline({ error, reset, section, componentStack }: F
     >
       <AlertCircle className="mx-auto mb-1.5 h-4 w-4 text-red-500" aria-hidden />
       <p className="text-xs font-semibold text-red-900">החלק הזה לא נטען</p>
-      <p className="mt-0.5 text-[11px] text-red-700">שאר המסך עובד. נסו לטעון אותו שוב.</p>
+      <p className="mt-0.5 text-[12px] text-red-700">שאר המסך עובד. נסו לטעון אותו שוב.</p>
       <Button
         type="button"
         variant="outline"

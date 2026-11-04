@@ -179,7 +179,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
       <header className="a3-top">
         <button type="button" className="a3-icon" onClick={close} aria-label="סגירה"><X size={22} strokeWidth={1.8} /></button>
         <ModeSwitch mode={s.mode} onVoice={s.toVoice} onText={s.toText} />
-        <p className="a3-meta" aria-live="off">{v.demo ? 'הדגמה' : s.mode === 'voice' && mins != null ? `${mins} דק׳` : ''}</p>
+        <p className="a3-meta" aria-live="off">{v.demo ? 'דוגמה' : s.mode === 'voice' && mins != null ? `${mins} דק׳` : ''}</p>
       </header>
 
       <div className="a3-body" ref={bodyRef}>
@@ -282,7 +282,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
               : <button type="button" className="a3-main" onClick={s.toVoice} aria-label="שיחה קולית חדשה"><Mic size={22} strokeWidth={1.9} aria-hidden="true" /><span>לדבר</span></button>}
             <button type="button" className="a3-ctl" onClick={s.toText} aria-label="מעבר לכתיבה"><Keyboard size={22} strokeWidth={1.8} aria-hidden="true" /></button>
           </div>
-          <p className="a3-fine">{v.demo ? 'הדגמה: השיחה מתוסרטת מהנתונים בדפדפן הזה.' : 'פעולות קורות רק אחרי אישור שלכם. השמע לא נשמר.'}</p>
+          <p className="a3-fine">{v.demo ? 'דוגמה. השיחה מבוססת על נתוני הדוגמה.' : 'פעולות קורות רק אחרי אישור שלכם. השמע לא נשמר.'}</p>
         </motion.footer>
       ) : (
         <div className="a3-dock a3-dock--t as-root">

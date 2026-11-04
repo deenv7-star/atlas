@@ -31,7 +31,7 @@ export function MockCancel() {
   );
 }
 
-const FILES = [['הזמנות', 'CSV'], ['לידים', 'CSV'], ['דוח חודשי', 'PDF']];
+const FILES = [['הזמנות', 'CSV'], ['פניות', 'CSV'], ['דוח חודשי', 'PDF']];
 export function MockExport() {
   return (
     <div className="tm tm-export" aria-hidden="true">

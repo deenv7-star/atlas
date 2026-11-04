@@ -166,7 +166,7 @@ export function DateRangeField({ start = '', end = '', onChange, labels = { star
       <div
         id={panelId}
         hidden={!open}
-        className="-mx-2 mt-2 rounded-[18px] bg-white px-0 py-2 sm:mx-0 sm:p-2"
+        className="-mx-2 mt-2 rounded-[16px] bg-white px-0 py-2 sm:mx-0 sm:p-2"
       >
         {open ? <MonthCalendar start={start} end={end} onPick={pick} hint={hint} idPrefix={idPrefix} /> : null}
       </div>
@@ -194,7 +194,7 @@ export function DateField({ value = '', onChange, label = 'תאריך', error = 
         aria-labelledby={label ? `${idPrefix}-label ${idPrefix}-value` : undefined}
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          'press flex h-12 w-full min-w-0 items-center gap-3 rounded-[14px] px-4 text-start text-[16px] transition-[border-color,box-shadow,background-color]',
+          'press flex h-12 w-full min-w-0 items-center gap-3 rounded-[16px] px-4 text-start text-[16px] transition-[border-color,box-shadow,background-color]',
           open ? 'bg-white shadow-[0_0_0_2px_#3E2BF1]' : 'bg-[#F7F8FB]',
           error && 'border-red-300',
         )}
@@ -204,7 +204,7 @@ export function DateField({ value = '', onChange, label = 'תאריך', error = 
           {value ? heDate(value) : placeholder}
         </span>
       </button>
-      <div id={panelId} hidden={!open} className="-mx-2 mt-2 rounded-[18px] bg-white px-0 py-2 shadow-[0_0_0_1px_rgba(27,38,86,0.06)] sm:mx-0 sm:p-2">
+      <div id={panelId} hidden={!open} className="-mx-2 mt-2 rounded-[16px] bg-white px-0 py-2 shadow-[0_0_0_1px_rgba(27,38,86,0.06)] sm:mx-0 sm:p-2">
         {open ? (
           <MonthCalendar
             start={value}

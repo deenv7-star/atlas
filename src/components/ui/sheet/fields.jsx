@@ -46,7 +46,7 @@ export function SheetField({ label, htmlFor, labelId, error, errorId, hint = nul
 
 export function inputClass(invalid) {
   return cn(
-    'block h-12 w-full min-w-0 rounded-[14px] px-4 text-[16px] text-[#1B2656] outline-none transition-[background-color,box-shadow,border-color] duration-150',
+    'block h-12 w-full min-w-0 rounded-[16px] px-4 text-[16px] text-[#1B2656] outline-none transition-[background-color,box-shadow,border-color] duration-150',
     'placeholder:text-[#1B2656]/35 disabled:opacity-50',
     'border border-transparent bg-[#F7F8FB] focus:bg-white focus:shadow-[0_0_0_2px_#3E2BF1]',
     invalid && 'border-red-300 bg-red-50/40',
@@ -237,7 +237,7 @@ export function SheetTextButton({ children, className, tone = 'neutral', ...rest
 export function SheetBanner({ children }) {
   if (!children) return null;
   return (
-    <div role="alert" className="mb-4 flex items-start gap-2 rounded-[14px] bg-red-50 px-4 py-3 text-[15px] leading-snug text-red-800">
+    <div role="alert" className="mb-4 flex items-start gap-2 rounded-[16px] bg-red-50 px-4 py-3 text-[15px] leading-snug text-red-800">
       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
       <span>{children}</span>
     </div>

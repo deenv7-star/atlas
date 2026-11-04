@@ -178,7 +178,7 @@ export function BookingForm({
             </SheetField>
           ) : null}
           {!hasUnits ? (
-            <div className="rounded-[14px] bg-[#F7F8FB] px-4 py-3" role="status">
+            <div className="rounded-[16px] bg-[#F7F8FB] px-4 py-3" role="status">
               <p className="text-[15px] font-semibold text-[#1B2656]">כדי לשמור הזמנה צריך יחידה</p>
               <p className="mt-0.5 text-[14px] text-[#1B2656]/70">
                 עוד אין יחידות בחשבון.{' '}

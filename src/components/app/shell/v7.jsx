@@ -121,7 +121,7 @@ export function TabBar({ user, onLogout }) {
   const primaryPages = ['Dashboard', 'MultiCalendar', 'Bookings'];
   const moreActive = !primaryPages.some((p) => isActive(p));
   const tab = (active) => cn(
-    'press flex h-14 w-full flex-col items-center justify-center gap-0.5 rounded-full text-[11px]',
+    'press flex h-14 w-full flex-col items-center justify-center gap-0.5 rounded-full text-[12px]',
     active ? 'font-bold text-brand-600' : 'font-medium text-ink-400',
   );
   return (

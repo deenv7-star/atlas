@@ -6,7 +6,7 @@
  * Y3: below them Y1's bookings panel in navy glass (list + the chosen booking beside it); on the phone a row
  * opens the same detail as a navy glass sheet.
  */
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, MoreHorizontal, Sparkles } from 'lucide-react';
@@ -82,9 +82,24 @@ export default function DashboardView({ user, orgId }) {
     panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   const [composer, setComposer] = useState(null);
+  const remindQueue = useRef([]);
+  const sentRef = useRef(false);
   // fix/today-tiles: which tile's sheet is open (arrivals | income | occupancy | pending | revenue | day)
   const [tileSheet, setTileSheet] = useState(null);
   const closeTile = (o) => { if (!o) setTileSheet(null); };
+  // ecosystem v1 #14: the bell opens this same "מה מחכה לכם היום" sheet (one inbox); from another screen it lands here with ?sheet=day
+  useEffect(() => {
+    const open = () => setTileSheet('day');
+    window.addEventListener('atlas:open-day', open);
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get('sheet') === 'day') {
+      open();
+      sp.delete('sheet');
+      const qs = sp.toString();
+      window.history.replaceState(window.history.state, '', window.location.pathname + (qs ? `?${qs}` : '') + window.location.hash);
+    }
+    return () => window.removeEventListener('atlas:open-day', open);
+  }, []);
   const fromTile = (b) => { setTileSheet(null); window.setTimeout(() => openBooking(b), 180); };
   const quick = useQuickBooking();
   const [going, setGoing] = useState(null);
@@ -136,7 +151,7 @@ export default function DashboardView({ user, orgId }) {
               <p className="y2-sub">{formatDayHe(m.day)}{boardKnown ? ` · ${arrivals.length} מגיעים, ${departures.length} יוצאים` : ''}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
             </div>
             {noUnits || !boardKnown ? null : (
-              <button type="button" className="y2-hello-chip press" aria-haspopup="dialog" onClick={() => setTileSheet('day')}><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'הכל בוצע להיום'}</button>
+              <button type="button" className="y2-hello-chip press" aria-haspopup="dialog" onClick={() => setTileSheet('day')}><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'אין משימות להיום'}</button>
             )}
           </div>
 
@@ -147,7 +162,7 @@ export default function DashboardView({ user, orgId }) {
 
           {noBookings ? <NoBookingsCard onAdd={() => quick.open()} /> : null}
 
-          {noUnits ? null : (
+          {noUnits || noBookings ? null : (
           <section className="y2-tiles" aria-label="היום במספרים">
             <motion.div className="y2-tile" {...rise(1)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="מגיעים היום: פירוט" onClick={() => setTileSheet('arrivals')} />
@@ -178,6 +193,7 @@ export default function DashboardView({ user, orgId }) {
           </section>
           )}
 
+          {noBookings ? null : (
           <div className="y2-mid">
             <motion.section className="y2-card y2-chart" aria-label="הכנסות" {...rise(5)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="הכנסות: פירוט לפי חודש" onClick={() => setTileSheet('revenue')} />
@@ -227,6 +243,7 @@ export default function DashboardView({ user, orgId }) {
               </motion.button>
             ) : null}
           </div>
+          )}
 
           {!q3.length ? null : (
           <section className="y2-next" aria-label="הדבר הבא">
@@ -296,21 +313,29 @@ export default function DashboardView({ user, orgId }) {
       <IncomeSheet open={tileSheet === 'income'} onOpenChange={closeTile} model={m} />
       <OccupancySheet open={tileSheet === 'occupancy'} onOpenChange={closeTile} model={m} />
       <PendingSheet open={tileSheet === 'pending'} onOpenChange={closeTile} model={m} onOpenBooking={fromTile}
-        onRemind={(b) => { setTileSheet(null); setComposer({ booking: b, template: 'balance_reminder' }); }} />
+        onRemind={(b) => { setTileSheet(null); setComposer({ booking: b, template: 'balance_reminder' }); }}
+        onRemindAll={(list) => { setTileSheet(null); remindQueue.current = list.slice(1); setComposer({ booking: list[0], template: 'balance_reminder' }); }} />
       <RevenueSheet open={tileSheet === 'revenue'} onOpenChange={closeTile} model={m} />
       <DaySheet open={tileSheet === 'day'} onOpenChange={closeTile} model={m} onDo={(a) => { go(a); }} />
       <BookingSheet open={!!sheet} onOpenChange={(o) => !o && setSheet(null)} booking={sheet} model={m}
         onWhatsApp={(b, t) => { setSheet(null); setComposer({ booking: b, template: t }); }} />
       <WhatsAppComposer
         open={!!composer}
-        onOpenChange={(o) => { if (!o) setComposer(null); }}
+        onOpenChange={(o) => {
+          if (o) return;
+          // "תזכורת לכולם": each reminder opens ready in WhatsApp and the owner presses send; then the next one
+          const next = sentRef.current ? remindQueue.current.shift() : undefined;
+          if (!sentRef.current) remindQueue.current = []; // closed without sending = stop the round
+          sentRef.current = false;
+          if (next) { setComposer(null); window.setTimeout(() => setComposer({ booking: next, template: 'balance_reminder' }), 220); } else setComposer(null);
+        }}
         booking={composer?.booking}
         property={composer ? m.prop(composer.booking.property_id) : null}
         balance={composer && m.moneyKnown ? m.balanceFor(composer.booking) : undefined}
         initialTemplate={composer?.template}
         orgId={orgId}
         orgName={user?.organization_name || ''}
-        onSent={(key) => { if (composer) { m.markSent(composer.booking.id, composer.template); m.markSent(composer.booking.id, key); } }}
+        onSent={(key) => { sentRef.current = true; if (composer) { m.markSent(composer.booking.id, composer.template); m.markSent(composer.booking.id, key); } }}
       />
     </div>
     </MotionConfig>

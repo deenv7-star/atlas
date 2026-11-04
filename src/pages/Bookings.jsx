@@ -22,7 +22,6 @@ import { format, parse, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { sortBookings } from '@/hooks/url-state/bookingTableSort';
 import { heCount } from '@/lib/hebrewCount';
-import HelpHint from '@/components/help/HelpHint';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { BookingsPanel, BookingSheet } from '@/ui-direction/y/Bookings';
 import { useTodayModel } from '@/ui-direction/y/model';
@@ -277,7 +276,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
       <div className="y2-win y3-bk-win">
         <header className="y2-hello y3-bk-h" data-tour="bookings-page">
           <div className="min-w-0">
-            <h1 className="y2-h1 y3-bk-h1"><span>הזמנות</span><HelpHint id="bookings.page" /></h1>
+            <h1 className="y2-h1 y3-bk-h1"><span>הזמנות</span></h1>
             <p className="y2-sub">כל ההזמנות, מכל הערוצים.</p>
           </div>
           <button type="button" onClick={openNew} className="y3-bk-new press"><Plus strokeWidth={2} />הזמנה חדשה</button>

@@ -8,10 +8,10 @@
 .imb-prog span { flex: 1; height: 6px; border-radius: 99px; background: rgba(27,38,86,.09); overflow: hidden; }
 .imb-prog i { display: block; height: 100%; border-radius: 99px; background: var(--ind); transform-origin: right; transition: transform .5s var(--ease); }
 .imb-main { width: 100%; max-width: 560px; margin: 0 auto; padding: calc(max(10px, env(safe-area-inset-top)) + 78px) 20px var(--imb-foot, 200px); }
-.imb-eyebrow { margin: 0; font-size: 15.5px; font-weight: 700; color: var(--ind); }
+.imb-eyebrow { margin: 0; font-size: 15px; font-weight: 700; color: var(--ind); }
 .imb-h1 { margin: 6px 0 0; font-size: 32px; font-weight: 300; line-height: 1.15; letter-spacing: -.025em; text-wrap: balance; }
 .imb-h1.is-big { font-size: 40px; font-weight: 400; }
-.imb-sub { margin: 10px 0 0; font-size: 17.5px; line-height: 1.5; color: var(--mute); text-wrap: pretty; }
+.imb-sub { margin: 10px 0 0; font-size: 17px; line-height: 1.5; color: var(--mute); text-wrap: pretty; }
 .imb-body { margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
 .imb-note { margin: 4px 2px 0; font-size: 15px; line-height: 1.45; color: var(--mute); }
 .imb-srcs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 4px; }

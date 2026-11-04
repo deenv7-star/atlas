@@ -3,12 +3,11 @@
  * radius, color and states stay identical across the app (tokens: src/styles/brand.css).
  */
 import HelpHint from '@/components/help/HelpHint';
-import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { CountUp, GuestAvatar } from '@/components/app/atoms';
+import { GuestAvatar } from '@/components/app/atoms';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Inbox } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { format, parseISO, isValid } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -176,9 +175,8 @@ export function PageHeader({ title, subtitle, actions, children, className, help
   return (
     <header data-tour={tour} className={cn('v5-rise mb-7 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between', className)}>
       <div className="min-w-0">
-        <h1 className="flex items-center gap-1 text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">
+        <h1 className="flex items-center gap-1 text-[26px] font-extrabold leading-[1.2] tracking-[-0.02em] text-navy-900">
           <span className="min-w-0">{title}</span>
-          {help ? <HelpHint id={help} /> : null}
         </h1>
         {subtitle ? <p className="mt-2 text-[15px] text-ink-400">{subtitle}</p> : null}
         {children}
@@ -218,16 +216,35 @@ export function Section({ title, subtitle, action, children, className, bodyClas
 
 /** A quiet number. No icon squares (simplicity rules); amber/danger tone only tints the value. */
 /** "₪12,300" / "84%" / 7 count up from zero; anything else renders as is. */
+const ILS = new Intl.NumberFormat('he-IL', { maximumFractionDigits: 0 });
+
+/**
+ * ecosystem v1 #16: one way to show shekels. ₪ at 0.7em in the same colour, weight 500, 1px gap, tabular nums.
+ * <Money value={6486} /> → ₪6,486
+ */
+export function Money({ value, className }) {
+  const n = Number(value);
+  if (value == null || Number.isNaN(n)) return <span className={className}>—</span>;
+  return (
+    <span className={cn('tabular-nums', className)} dir="ltr">
+      <span style={{ fontSize: '0.7em', fontWeight: 500, marginInlineEnd: 1 }}>₪</span>{ILS.format(Math.round(n))}
+    </span>
+  );
+}
+
+/** KPI values are shown as they are (count-up lives only on the Today hero tiles, #16). "₪1,234" renders via <Money>. */
 function AnimatedValue({ value }) {
-  if (typeof value === 'number') return <CountUp value={value} format={(n) => n.toLocaleString('he-IL')} />;
-  const m = typeof value === 'string' ? value.match(/^([^\d-]*)(\d[\d,]*)([^\d]*)$/) : null;
-  if (!m) return value ?? null;
-  const n = Number(m[2].replace(/,/g, ''));
-  return <CountUp value={n} format={(x) => `${m[1]}${x.toLocaleString('en-US')}${m[3]}`} />;
+  if (typeof value === 'number') return value.toLocaleString('he-IL');
+  const m = typeof value === 'string' ? value.replace(/[\u200e\u200f]/g, '').match(/^\s*₪\s*(-?[\d,]+)\s*$/) : null;
+  if (m) return <Money value={Number(m[1].replace(/,/g, ''))} />;
+  return value ?? null;
 }
 
 export function StatTile({ label, value, hint, tone = 'brand', className, loading, icon: Icon, attention, to, hero = false, delta, help }) {
-  const valueCls = hero ? 'text-white' : tone === 'danger' ? 'text-[var(--st-red-fg)]' : 'text-navy-900';
+  // ecosystem v1 #15: red only when there is something to act on; a zero reads as a calm "—", never a red 0 / ₪0
+  const isZero = value === 0 || (typeof value === 'string' && /^[₪\s]*0[₪\s]*$/.test(value.replace(/\u200f|\u200e/g, '')));
+  const valueCls = hero ? 'text-white' : isZero && tone === 'danger' ? 'text-navy-900/40' : tone === 'danger' ? 'text-[#B4303A]' : 'text-navy-900';
+  if (isZero && tone === 'danger' && !hero) value = '—';
   const Comp = to ? Link : 'div';
   return (
     <Comp
@@ -289,18 +306,20 @@ export function SegmentedControl({ options, value, onChange, className, ariaLabe
   );
 }
 
-export function EmptyState({ icon: Icon, title, description, actionLabel, onAction, action, className, compact = false, photo, face }) {
+/**
+ * ecosystem v1 #10: ONE empty state. 56px indigo-8 circle + lucide 24/1.75, title 17/700 navy, body 15 #4A5578
+ * (≤ 2 lines), one primary action. Formula: what will appear here + one action. `face` / `photo` are accepted for
+ * old call sites and render the same circle (no second style).
+ */
+export function EmptyState({ icon: Icon, title, description, actionLabel, onAction, action, className, compact = false }) {
+  const I = Icon || Inbox;
   return (
     <div className={cn('v5-rise flex flex-col items-center text-center', compact ? 'px-4 py-8' : 'px-6 py-14', className)}>
-      {face ? (
-        <AtlasFace live mood={face} size={compact ? 72 : 84} className="af-empty" />
-      ) : Icon || photo ? (
-        <span className="relative mb-5 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#ECEAFE]" aria-hidden>
-          {Icon ? <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.75} /> : null}
-        </span>
-      ) : null}
-      <p className="text-[17px] font-semibold text-navy-900">{title}</p>
-      {description ? <p className="mt-1.5 max-w-sm text-[15px] text-ink-400">{description}</p> : null}
+      <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(62,43,241,0.08)]" aria-hidden>
+        <I className="h-6 w-6 text-[#3E2BF1]" strokeWidth={1.75} />
+      </span>
+      <p className="text-[17px] font-bold text-[#1B2656]">{title}</p>
+      {description ? <p className="mt-1.5 max-w-sm text-[15px] leading-relaxed text-[#4A5578]">{description}</p> : null}
       {action ? <div className="mt-6">{action}</div> : actionLabel && onAction ? (
         <Button onClick={onAction} className="mt-6">{actionLabel}</Button>
       ) : null}
@@ -308,20 +327,18 @@ export function EmptyState({ icon: Icon, title, description, actionLabel, onActi
   );
 }
 
-/** Calm placeholder for a feature that is not switched on for this account yet. */
+/** Calm placeholder for a feature that is not switched on for this account yet (same layout as the empty state). */
 export function ComingSoon({ icon: Icon, title, description, className }) {
+  const I = Icon || Inbox;
   return (
     <Card className={cn('v5-rise', className)}>
       <div className="flex flex-col items-center px-6 py-16 text-center">
-        {Icon ? (
-          <span className="relative mb-5 inline-flex h-14 w-14 items-center justify-center rounded-[16px] border border-line bg-white shadow-card" aria-hidden>
-            <span className="absolute inset-[5px] rounded-[11px] bg-[#F4F3FF]" />
-            <Icon className="relative h-6 w-6 text-brand-600" strokeWidth={1.75} />
-          </span>
-        ) : null}
-        <span className="mb-3 inline-flex h-7 items-center rounded-full border border-line bg-white px-3 text-[13px] font-medium text-ink-600">בקרוב</span>
-        <p className="text-[17px] font-semibold text-navy-900">{title}</p>
-        {description ? <p className="mt-1.5 max-w-sm text-[15px] text-ink-400">{description}</p> : null}
+        <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(62,43,241,0.08)]" aria-hidden>
+          <I className="h-6 w-6 text-[#3E2BF1]" strokeWidth={1.75} />
+        </span>
+        <span className="mb-3 inline-flex h-7 items-center rounded-full bg-[#F7F8FB] px-3 text-[12px] font-semibold text-[#4A5578]">בקרוב</span>
+        <p className="text-[17px] font-bold text-[#1B2656]">{title}</p>
+        {description ? <p className="mt-1.5 max-w-sm text-[15px] leading-relaxed text-[#4A5578]">{description}</p> : null}
       </div>
     </Card>
   );

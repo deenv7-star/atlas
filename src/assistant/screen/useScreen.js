@@ -45,7 +45,7 @@ export function useScreen({ facts, page }) {
     started.current = true;
     if (mode === 'voice') v.start();
     else if (shot === 'text' && !t.messages.length) t.send('מי מגיע היום?'); // review shot "text": a short written exchange
-  }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ready]); // deps intentionally partial
 
   // voice cannot run here → write instead, and say why once
   useEffect(() => {
@@ -149,6 +149,6 @@ export function usePinnedBottom(ref, deps = []) {
     if (el.firstElementChild) ro?.observe(el.firstElementChild);
     if (el.firstElementChild?.firstElementChild) ro?.observe(el.firstElementChild.firstElementChild); // the column itself (cards that grow in place)
     return () => { el.removeEventListener('scroll', onScroll); ['wheel', 'touchmove', 'pointerdown', 'keydown'].forEach((k) => el.removeEventListener(k, touched)); ro?.disconnect(); };
-  }, [ref, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ref, ...deps]); // deps intentionally partial
   return pinned;
 }

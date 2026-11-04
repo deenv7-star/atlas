@@ -23,15 +23,24 @@ const AssistantPanel = React.lazy(() => import('@/assistant/AssistantPanel'));
 
 const publicPages = ['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Status', 'HowItWorks', 'PricingPlans'];
 
+/**
+ * ecosystem v1 #22: the in-app loader mirrors the real list screens (title + action, chip row, 3 rows of 64px)
+ * instead of "2 tiles + big card", so nothing jumps when content arrives. It fades in only after 300ms, so a fast
+ * load shows no flash; shimmer is off under reduced motion (atlas-skeleton).
+ */
 function PageLoader() {
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-4 pt-6 md:px-8" role="status" aria-busy="true" aria-label="טוען את המסך">
-      <SkelLine className="h-8 w-48" />
-      <SkelLine className="mt-3 h-4 w-72 max-w-full" />
-      <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => <SkelLine key={i} className="h-[112px] rounded-[18px]" />)}
+    <div className="atlas-loader-late mx-auto w-full max-w-[var(--page-max,1200px)] px-5 pt-6 md:px-10" role="status" aria-busy="true" aria-label="טוען את המסך">
+      <div className="flex items-center justify-between gap-3">
+        <SkelLine className="h-8 w-40" />
+        <SkelLine className="h-11 w-32 rounded-full" />
       </div>
-      <SkelLine className="mt-4 h-64 rounded-[18px]" />
+      <div className="mt-5 flex gap-2">
+        {[64, 80, 72].map((w) => <SkelLine key={w} className="h-9 rounded-full" style={{ width: w }} />)}
+      </div>
+      <div className="mt-5 space-y-2">
+        {[0, 1, 2].map((i) => <SkelLine key={i} className="h-16 rounded-[16px]" />)}
+      </div>
     </div>
   );
 }

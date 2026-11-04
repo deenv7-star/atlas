@@ -195,7 +195,7 @@ export function DaySheet({ actions, units, stays, holidays }) {
         <>
           <ul className="mb-5 space-y-2">
             {list.map((r) => (
-              <li key={r.unit.id} className="rounded-[18px] bg-[#F7F8FB] px-4 py-3">
+              <li key={r.unit.id} className="rounded-[16px] bg-[#F7F8FB] px-4 py-3">
                 <div className="flex items-center justify-between gap-3">
                   <span className="truncate text-[16px] font-semibold text-[#1B2656]">{r.unit.name}</span>
                   <span className={cn('shrink-0 text-[14px] font-semibold', r.freeNight ? 'text-[#3E2BF1]' : 'text-[#1B2656]/60')}>{r.freeNight ? 'הלילה פנוי' : 'הלילה תפוס'}</span>

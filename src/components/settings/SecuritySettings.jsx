@@ -64,7 +64,7 @@ function ChangePassword({ user }) {
     setErrors(errs);
     if (Object.keys(errs).length) return;
     if (!isSupabaseConfigured || !supabase) {
-      atlasToastApi.error('אפשר לשנות סיסמה רק בחשבון אמיתי, לא בהדגמה');
+      atlasToastApi.error('אפשר לשנות סיסמה רק בחשבון אמיתי, לא בחשבון הדוגמה');
       return;
     }
     setBusy(true);
@@ -148,7 +148,7 @@ export function DeleteAccount({ onDeleted }) {
 
   return (
     <>
-      <div className="rounded-[14px] border border-[#F3D4D4] p-4">
+      <div className="rounded-[16px] border border-[#F3D4D4] p-4">
         <p className="text-[15px] font-bold text-navy-900">מחיקת החשבון</p>
         <p className="mt-1 text-[14px] leading-relaxed text-ink-600">
           החשבון שלכם יימחק. אם אין עוד אנשים בחשבון העסק, יימחקו גם היחידות, ההזמנות, הפניות, התשלומים וכל שאר הנתונים. אי אפשר לשחזר.

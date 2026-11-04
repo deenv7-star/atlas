@@ -258,7 +258,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         <div className="stat-row mb-5" data-tour="payments-stats">
           <StatTile hero label={`התקבל ב${monthName}`} help="payments.received" value={owedKnown ? fmtMoney(stats.paid) : '—'} loading={!owedKnown && stay.isLoading} icon={CheckCircle2} tone="success" />
           <StatTile label="ממתין לגבייה" hint={owedKnown && stats.pendingCount ? (stats.pendingCount === 1 ? 'הזמנה אחת עם יתרה' : `${stats.pendingCount} הזמנות עם יתרה`) : undefined} help="payments.pending" value={owedKnown ? fmtMoney(stats.pending) : '—'} loading={!owedKnown && stay.isLoading} icon={Clock} tone="amber" />
-          <StatTile label="באיחור" help="payments.overdue" value={owedKnown ? stats.overdue : '—'} loading={!owedKnown && stay.isLoading} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
+          <StatTile label="באיחור" help="payments.overdue" value={owedKnown ? stats.overdue : '—'} hint={owedKnown && stats.overdue ? (stats.overdue === 1 ? 'הזמנה אחת באיחור' : `${stats.overdue} הזמנות באיחור`) : undefined} loading={!owedKnown && stay.isLoading} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
         </div>
       </ErrorBoundary>
       )}

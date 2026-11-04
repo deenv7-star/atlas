@@ -66,7 +66,7 @@ export default function SubscriptionPage({ user }) {
 
   return (
     <Page className="space-y-6">
-      <PageHeader title="מנוי" subtitle={isTrial ? `${TRIAL_LINE} בוחרים חבילה, ונחזור אליכם תוך יום עסקים כדי להפעיל אותה.` : 'אפשר להחליף חבילה או לבטל בכל רגע. נחזור אליכם תוך יום עסקים.'} className="!mb-0" />
+      <PageHeader title="מנוי וחיובים" subtitle={isTrial ? `${TRIAL_LINE} בוחרים חבילה, ונחזור אליכם תוך יום עסקים כדי להפעיל אותה.` : 'אפשר להחליף חבילה או לבטל בכל רגע. נחזור אליכם תוך יום עסקים.'} className="!mb-0" />
 
       <TermsConsent id="sub-consent" className="max-w-[560px]" checked={agreed} onChange={(v) => { setAgreed(v); if (v) setConsentError(false); }} error={consentError} />
 
@@ -122,6 +122,7 @@ export default function SubscriptionPage({ user }) {
         </ul>
         <p className="text-[14px] text-ink-400">
           שאלות? <a href="/contact" className="inline-flex min-h-11 items-center font-medium text-brand-600 hover:underline">כתבו לנו</a>
+          {' · '}<a href="/billing" className="inline-flex min-h-11 items-center font-medium text-brand-600 hover:underline">החיובים שלכם</a>
         </p>
       </div>
     </Page>

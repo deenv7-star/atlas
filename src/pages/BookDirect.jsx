@@ -54,9 +54,11 @@ export default function BookDirectPage() {
     return (
       <Shell>
         <main className="max-w-md mx-auto px-6 pt-24 text-center">
-          <span className="ab-icon-tile mx-auto"><CalendarSearch size={20} strokeWidth={1.75} /></span>
-          <h1 className="ab-h3 mt-4">הדף לא זמין כרגע</h1>
-          <p className="ab-meta mt-2">ייתכן שהמארחים סגרו את ההזמנות הישירות. נסו ליצור איתם קשר.</p>
+          {/* ecosystem v1 #9: guests are the hosts' customers; what happened + what to do + one way on */}
+          <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(62,43,241,0.08)] text-[#3E2BF1]" aria-hidden><CalendarSearch size={24} strokeWidth={1.75} /></span>
+          <h1 className="mt-5 text-[22px] font-bold leading-tight text-[#1B2656]">הדף הזה לא פעיל כרגע</h1>
+          <p className="mt-2 text-[15px] leading-relaxed text-[#4A5578]">כדאי לפנות ישירות למארחים, בטלפון או בוואטסאפ, כדי להזמין או לבדוק פרטים.</p>
+          <a href="/" className="mt-6 inline-flex min-h-[44px] items-center justify-center px-2 text-[15px] font-semibold text-[#3E2BF1]">מה זה <bdi className="ms-1">atlas</bdi>?</a>
         </main>
       </Shell>
     );

@@ -9,12 +9,12 @@ import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary';
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { Route, Routes, Navigate, useParams, Link } from 'react-router-dom';
+import { Route, Routes, Navigate, useParams, Link, useLocation } from 'react-router-dom';
 import { readLockPrefs, lockAtColdStart } from '@/lib/nativeApp/appLockCore';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import BackendNotConfigured from '@/components/common/BackendNotConfigured';
 import { isProductionBackendConfigured } from '@/lib/backendConfig';
-import { createPageUrl } from '@/utils';
+import { createPageUrl, canonicalPathFor } from '@/utils';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
 // Trial over and not paid (src/lib/access.js): every app route shows the paywall; writes are refused (src/lib/accessLock.js).
@@ -120,11 +120,11 @@ function AppFallback() {
         <div className="h-[30px] w-[58%] max-w-[320px] rounded-[10px]" style={bar} />
         <div className="mt-3 h-3.5 w-[82%] max-w-[440px] rounded-md" style={{ background: '#EEF0F5' }} />
         <div className="mt-[22px] grid grid-cols-2 gap-2.5 lg:grid-cols-3">
-          <div className="h-28 rounded-[22px] bg-white" />
-          <div className="h-28 rounded-[22px] bg-white" />
-          <div className="hidden h-28 rounded-[22px] bg-white lg:block" />
+          <div className="h-28 rounded-[24px] bg-white" />
+          <div className="h-28 rounded-[24px] bg-white" />
+          <div className="hidden h-28 rounded-[24px] bg-white lg:block" />
         </div>
-        <div className="mt-3 h-[220px] rounded-[22px] bg-white" />
+        <div className="mt-3 h-[220px] rounded-[24px] bg-white" />
       </div>
       <div className="absolute inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] h-16 rounded-[28px] bg-white/90 shadow-[0_8px_24px_-12px_rgba(27,38,86,.25)] lg:hidden" />
     </div>
@@ -182,17 +182,30 @@ function BillingWhileLocked() {
   return <LockedFrame><Suspense fallback={<AppFallback />}><Pages.Billing user={user} /></Suspense></LockedFrame>;
 }
 
-/** Minimal 404 for the iOS app: what happened + one way back. */
+/** Signed-in / iOS 404: what happened + one way back, never the marketing 404 with pricing links (ecosystem v1 #24). */
 function AppNotFound() {
   return (
-    <main dir="rtl" className="flex min-h-[100dvh] items-center justify-center px-6" style={{ background: '#F7F8FB' }}>
+    <main dir="rtl" className="flex min-h-[60dvh] items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm text-center">
+        <span className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(62,43,241,0.08)] text-[#3E2BF1]" aria-hidden>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z" /></svg>
+        </span>
         <h1 className="text-[22px] font-bold text-[#1B2656]">המסך הזה לא נמצא</h1>
-        <p className="mt-2 text-[16px] text-[#1B2656]/75">ייתכן שהקישור ישן.</p>
-        <Link to="/dashboard" className="mt-6 inline-flex min-h-[48px] items-center justify-center rounded-xl bg-[#3E2BF1] px-6 text-[16px] font-semibold text-white">חזרה להיום</Link>
+        <p className="mt-2 text-[15px] text-[#4A5578]">ייתכן שהקישור ישן. כל השאר במקום.</p>
+        <Link to="/dashboard" className="press mt-6 inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#3E2BF1] px-6 text-[15px] font-bold text-white">חזרה להיום</Link>
       </div>
     </main>
   );
+}
+
+/** Catch-all: legacy PascalCase paths redirect (case-insensitive); signed-in users get the app 404 inside the shell. */
+function NotFoundRoute({ isAuthenticated }) {
+  const loc = useLocation();
+  const to = canonicalPathFor(loc.pathname, loc.search, loc.hash);
+  if (to) return <Navigate to={to} replace />;
+  if (isNativeApp() && !isAuthenticated) return <div style={{ background: '#F7F8FB', minHeight: '100dvh' }}><AppNotFound /></div>;
+  if (isAuthenticated || isNativeApp()) return <LayoutWrapper currentPageName="NotFound"><AppNotFound /></LayoutWrapper>;
+  return <S><SiteNotFound /></S>;
 }
 
 const AuthenticatedApp = () => {
@@ -370,7 +383,7 @@ const AuthenticatedApp = () => {
         ))}
 
       {/* Audit 04.11 #8: the iOS app never shows the marketing header (prices, blog) on a wrong link. */}
-      <Route path="*" element={isNativeApp() ? <AppNotFound /> : <S><SiteNotFound /></S>} />
+      <Route path="*" element={<NotFoundRoute isAuthenticated={isAuthenticated} />} />
     </Routes>
   );
 };

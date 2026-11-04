@@ -2,7 +2,6 @@
  * לוח שנה (calendar v2): a real month calendar instead of the thin two-week strip.
  * The page owns the month, unit filter, sync and the day / block dialogs; the body component draws the month.
  */
-import HelpHint from '@/components/help/HelpHint';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -81,11 +80,10 @@ export default function MultiCalendar({ selectedPropertyId }) {
     <div className="mx-auto w-full max-w-[1680px] px-5 pb-16 pt-6 md:px-8 md:pt-9 xl:px-10" dir="rtl">
       <header className="v5-rise mb-5 flex flex-row items-end justify-between gap-3 md:mb-6">
         <div>
-          <h1 className="flex items-center gap-1 text-[32px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 md:text-[34px]">יומן<HelpHint id="calendar.page" /></h1>
+          <h1 className="flex items-center gap-1 text-[26px] font-extrabold leading-[1.2] tracking-[-0.02em] text-navy-900">יומן</h1>
           <p className="mt-2 hidden text-[15px] text-navy-900/70 md:block">נוגעים ביום כדי להוסיף הזמנה או לחסום תאריכים.</p>
         </div>
         <div className="flex items-center gap-1">
-          <HelpHint id="calendar.sync" />
           <Button variant="outline" onClick={handleSync} disabled={syncing} aria-label="עדכון מהערוצים" className="w-11 px-0 sm:w-auto sm:px-5">
             <RefreshCw className={cn(syncing && 'animate-spin')} aria-hidden />
             <span className="hidden sm:inline">עדכון מהערוצים</span>

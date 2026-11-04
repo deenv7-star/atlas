@@ -2,17 +2,14 @@
 // Emits events so the edge function can stream: {status}, {action}, {delta}, {done}, {error}.
 // Pure: the OpenAI call comes in as `llm`, the database as `ctx.db`, so node tests run it offline.
 import { chatTools, runTool, forModel, WRITE_TOOLS } from './tools.js';
+import { PERSONA } from './persona.js';
 
 export const BRAIN = { maxRounds: 5, maxToolCallsPerRound: 4, resultChars: 6000 };
 const FORCE_ANSWER = 'אין עוד קריאות לכלים. ענו עכשיו במילים ממה שיש. אם חסר משהו, אמרו מה כן ידוע והציעו צעד הבא אחד.';
 
-const STATUS = {
-  get_day_overview: 'בודקים את היום', find_bookings: 'מחפשים בהזמנות', get_booking: 'פותחים את ההזמנה',
-  check_availability: 'בודקים מה פנוי', get_leads: 'בודקים פניות', get_money: 'בודקים בכספים',
-  get_business_settings: 'בודקים את ההגדרות', search_help: 'בודקים במדריך', propose_booking: 'מכינים הזמנה',
-  propose_guest_message: 'מכינים הודעה', propose_support_handoff: 'מכינים פנייה לנציג',
-};
-export const statusFor = (name) => STATUS[name] || 'בודקים';
+// Status lines under her face follow the one persona switch (persona.js), so text matches the voice (female first person).
+const STATUS = PERSONA.tools;
+export const statusFor = (name) => STATUS[name] || PERSONA.checking;
 
 /** OpenAI Chat Completions call with tools. Returns the assistant message + usage. */
 // effort 'none': gpt-6-luna rejects function tools with any other reasoning_effort on /v1/chat/completions (verified 04.11.2026)

@@ -10,11 +10,10 @@ import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { openAssistant, useAssistantOpen } from '@/assistant/launcher';
-import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, LayoutGrid, Bell, LifeBuoy, Settings, MessageSquare } from 'lucide-react';
+import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, LayoutGrid, Bell, LifeBuoy, Settings } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { useHelpUnread, openHelp, HELP_ENABLED } from '@/support/openHelp';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { useHelpUnread } from '@/support/openHelp';
 import { MoreSheetHost, openMore, useMoreOpen } from './MoreSheet';
 import { Wordmark, useIsActive, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
@@ -140,35 +139,25 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
   );
 }
 
-/** The bell shows a dot only when something is really new (a guest enquiry or a help reply) and lists it. */
+/**
+ * ecosystem v1 #14: one inbox. The bell opens the same "מה מחכה לכם היום" sheet as the chip on Today (no second
+ * dropdown). Dot only when something is really new (a guest enquiry or a help reply).
+ */
 function BellMenu({ unread }) {
-  const label = unread.any ? 'התראות, יש חדש' : 'התראות';
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const label = unread.any ? 'מה מחכה לכם היום, יש חדש' : 'מה מחכה לכם היום';
+  const onToday = pathname === '/' || pathname.startsWith('/today') || pathname.startsWith(createPageUrl('Dashboard'));
+  const open = () => {
+    if (onToday) window.dispatchEvent(new CustomEvent('atlas:open-day'));
+    else navigate(`${createPageUrl('Dashboard')}?sheet=day`);
+  };
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button type="button" className="y2-gb y2-bell press" aria-label={label}><Bell strokeWidth={1.75} />{unread.any ? <i className="y2-gb-dot" aria-hidden /> : null}</button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64" dir="rtl">
-        {unread.leads ? (
-          <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
-            <Link to={createPageUrl('Leads')}><Inbox className="h-[18px] w-[18px] text-ink-600" /><span className="flex-1">{unread.leads === 1 ? 'פנייה חדשה מאורח' : `${unread.leads} פניות חדשות מאורחים`}</span><span className="h-2 w-2 rounded-full bg-brand-600" aria-hidden /></Link>
-          </DropdownMenuItem>
-        ) : null}
-        {HELP_ENABLED && unread.help ? (
-          <DropdownMenuItem onSelect={() => window.setTimeout(openHelp, 0)} className="min-h-11 gap-2.5 text-[15px]">
-            <LifeBuoy className="h-[18px] w-[18px] text-ink-600" /><span className="flex-1">תשובה חדשה מהתמיכה</span><span className="h-2 w-2 rounded-full bg-brand-600" aria-hidden />
-          </DropdownMenuItem>
-        ) : null}
-        {unread.any ? null : <p className="y2-bell-menu-empty">אין חדש כרגע. פניות חדשות יופיעו כאן.</p>}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
-          <Link to={createPageUrl('Messages')}><MessageSquareIcon /><span className="flex-1">כל ההודעות</span></Link>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <button type="button" className="y2-gb y2-bell press" aria-label={label} aria-haspopup="dialog" onClick={open}>
+      <Bell strokeWidth={1.75} />{unread.any ? <i className="y2-gb-dot" aria-hidden /> : null}
+    </button>
   );
 }
-const MessageSquareIcon = () => <MessageSquare className="h-[18px] w-[18px] text-ink-600" />;
 
 /** Desktop only (phones have it in the centre of the tab bar): the living atlas face opens a voice conversation. */
 function AskFaceDesk() {

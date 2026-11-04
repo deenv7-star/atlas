@@ -99,16 +99,16 @@ const EXACT = {
 const PREFIX = [
   { test: /^\/admin(\/|$)/, title: 'ניהול atlas' },
   { test: /^\/booking\/.+/, title: 'פרטי הזמנה | atlas' },
-  { test: /^\/lead\/.+/, title: 'פרטי ליד | atlas' },
+  { test: /^\/lead\/.+/, title: 'פרטי פנייה | atlas' },
 ];
 
 const SEGMENT_TITLE = {
   bookings: 'הזמנות | atlas',
-  leads: 'לידים | atlas',
+  leads: 'פניות | atlas',
   messages: 'הודעות | atlas',
-  calendar: 'לוח שנה | atlas',
+  calendar: 'יומן | atlas',
   settings: 'הגדרות | atlas',
-  invoices: 'מסמכים שהוצאתם | atlas',
+  invoices: 'מסמכי תשלום | atlas',
   payments: 'תשלומים | atlas',
   reviews: 'ביקורות | atlas',
   cleaning: 'ניקיון | atlas',

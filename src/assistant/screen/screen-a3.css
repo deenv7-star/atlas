@@ -119,3 +119,9 @@
 }
 /* chips inside written answers: 46px, so a spring settling a hair under 1.0 never takes a tap target under 44 */
 .a3 .as-chip { min-height: 46px; }
+
+/* ecosystem v1 #19: on desktop the conversation is a 720px column, input docked to the same width */
+@media (min-width: 1024px) {
+  .a3-col { max-width: 720px; }
+  .a3-dock--t { max-width: 752px; }
+}

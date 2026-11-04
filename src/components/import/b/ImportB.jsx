@@ -50,7 +50,7 @@ export default function ImportB({ user }) {
 
   let head = null; let body = null; let foot = null;
   if (s.phase === 'start') {
-    head = { eyebrow: first ? `שלום ${first}` : 'ייבוא המתחם', title: 'הדביקו קישור למתחם שלכם', sub: 'מ-Booking, מ-Airbnb או מהאתר. atlas ימלא את השאר, בלי להקליד.' };
+    head = { eyebrow: first ? `שלום ${first}` : 'ייבוא המתחם', title: 'הדביקו קישור למתחם שלכם', sub: 'מ-Booking, מ-Airbnb או מהאתר. והשאר יתמלא לבד, בלי להקליד.' };
     body = (
       <>
         <div className="imb-srcs" aria-hidden>
@@ -116,7 +116,7 @@ export default function ImportB({ user }) {
       <>
         {knows.length ? (
           <div className="imb-panel">
-            <p className="imb-panel-t">מעכשיו atlas יודע לענות לאורחים על</p>
+            <p className="imb-panel-t">מעכשיו אפשר לשאול את atlas על</p>
             <ul className="imb-knows">{knows.map((k) => <li key={k}><span aria-hidden><Check /></span>{k}</li>)}</ul>
           </div>
         ) : null}

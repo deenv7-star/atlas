@@ -66,7 +66,7 @@ function WorkspaceCard({ user }) {
   if (!name && !properties.length) return null;
   return (
     <div className="mx-3 mb-4 flex items-center gap-3 rounded-[20px] bg-[#F4F4FA] p-2.5">
-      <UnitPhoto property={properties[0]} className="h-11 w-11" rounded="rounded-[14px]" />
+      <UnitPhoto property={properties[0]} className="h-11 w-11" rounded="rounded-[16px]" />
       <div className="min-w-0">
         <p className="truncate text-[14px] font-bold text-navy-900">{name || 'המתחם שלי'}</p>
         <p className="truncate text-[12px] text-ink-400">{heCount(properties.length, 'unit')}</p>
@@ -242,7 +242,7 @@ function Tab({ tab, active }) {
       aria-current={active ? 'page' : undefined}
       onClick={replay}
       className={cn(
-        'lwb-tab press mx-auto flex h-14 w-full max-w-[88px] flex-col items-center justify-center gap-0.5 rounded-[22px] text-[12px] transition-colors duration-200',
+        'lwb-tab press mx-auto flex h-14 w-full max-w-[88px] flex-col items-center justify-center gap-0.5 rounded-[24px] text-[12px] transition-colors duration-200',
         active ? 'bg-[#EEF0F7] font-bold text-navy-900' : 'font-medium text-[#5B6384]',
       )}
     >

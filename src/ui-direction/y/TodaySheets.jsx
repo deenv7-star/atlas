@@ -7,7 +7,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import * as D from '@radix-ui/react-dialog';
-import { X, ChevronLeft, MessageCircle, Plus } from 'lucide-react';
+import { X, ChevronLeft, MessageCircle, Plus, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
 import { formatDayHe } from '@/lib/stay/format';
@@ -16,6 +16,7 @@ import { isActiveBooking } from '@/lib/stay/bookings';
 import { heCount } from '@/lib/hebrewCount';
 import { checkInTime, checkOutTime } from '@/components/today/TodayBoard';
 import { money, guestLabel } from './model';
+import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
 import Face from './Face';
 import './y-sheets.css';
 
@@ -162,23 +163,27 @@ export function OccupancySheet({ open, onOpenChange, model }) {
   );
 }
 
-export function PendingSheet({ open, onOpenChange, model, onOpenBooking, onRemind }) {
+export function PendingSheet({ open, onOpenChange, model, onOpenBooking, onRemind, onRemindAll }) {
   const known = model.moneyKnown;
   const list = model.owed || [];
   return (
     <Sheet open={open} onOpenChange={onOpenChange} title="ממתינים לתשלום"
       sub={known && list.length ? `${money(model.pendingTotal)} פתוחים · ${list.length === 1 ? 'הזמנה אחת' : `${list.length} הזמנות`}` : null}
-      action={<Go to={createPageUrl('Payments')} onClick={() => onOpenChange(false)}>למסך כסף</Go>}>
+      action={known && list.length > 1 && onRemindAll ? (
+        <button type="button" className="yt-go press" onClick={() => onRemindAll(list.map((x) => x.booking))}>
+          <MessageCircle strokeWidth={1.75} aria-hidden />{`תזכורת לכולם (${list.length})`}
+        </button>
+      ) : <Go to={createPageUrl('Payments')} onClick={() => onOpenChange(false)}>למסך כסף</Go>}>
       {!known ? <Empty title="לא הצלחנו לקרוא את התשלומים כרגע" line="נסו שוב בעוד רגע" />
         : !list.length ? <Empty title="אין יתרות פתוחות" line="כל יתרה שאורח עוד לא שילם תופיע כאן" /> : (
           <ul className="yt-list">
             {list.map(({ booking: b, balance }) => (
               <BookingRow key={b.id} b={b} model={model} onOpen={onOpenBooking}
-                kick={balance.overdue ? 'באיחור' : b.check_in_date === model.day ? 'מגיעים היום' : `מגיעים ${formatDayHe(b.check_in_date, { weekday: false })}`}
+                kick={balance.overdue ? <span className="yt-danger">באיחור</span> : b.check_in_date === model.day ? 'מגיעים היום' : `מגיעים ${formatDayHe(b.check_in_date, { weekday: false })}`}
                 time={money(balance.balance)}
                 trailing={(
-                  <button type="button" className="yt-wa press" onClick={() => onRemind(b)}>
-                    <MessageCircle strokeWidth={1.75} aria-hidden />תזכורת תשלום בוואטסאפ
+                  <button type="button" className="yt-wa-i press" onClick={() => onRemind(b)} aria-label={`תזכורת בוואטסאפ ל${(b.guest_name || 'אורח').trim()}`}>
+                    <MessageCircle strokeWidth={1.75} aria-hidden />
                   </button>
                 )} />
             ))}
@@ -203,7 +208,7 @@ export function RevenueSheet({ open, onOpenChange, model }) {
               return (
                 <li key={x.key} className="yt-occ">
                   <div className="yt-occ-h"><b>{x.long || x.label}</b><span dir="ltr">{money(tot)}</span></div>
-                  <div className="yt-occ-bar yt-occ-bar--rev" role="img" aria-label={`נכנס ${money(x.value)}, צפוי ${money(x.expected)}`}>
+                  <div className="yt-occ-bar yt-occ-bar--rev" role="img" aria-label={`הכנסות שהתקבלו ${money(x.value)}, הכנסות צפויות ${money(x.expected)}`}>
                     <i style={{ width: `${(x.value / max) * 100}%` }} />
                     {x.expected ? <i className="is-exp" style={{ width: `${(x.expected / max) * 100}%` }} /> : null}
                   </div>
@@ -212,7 +217,7 @@ export function RevenueSheet({ open, onOpenChange, model }) {
             })}
           </ul>
         )}
-      {model.moneyKnown && any ? <p className="yt-key"><span><i />נכנס</span><span><i className="is-exp" />צפוי</span></p> : null}
+      {model.moneyKnown && any ? <p className="yt-key"><span><i />הכנסות שהתקבלו</span><span><i className="is-exp" />הכנסות צפויות</span></p> : null}
     </Sheet>
   );
 }
@@ -222,11 +227,22 @@ const VERB = { message: 'שליחה', clean: 'סימון', lead: 'מענה', bal
 
 export function DaySheet({ open, onOpenChange, model, onDo }) {
   const q = model.queue;
+  const helpUnread = useHelpUnread();
   const t = model.boardT;
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} title={q.length ? 'מה מחכה לכם היום' : 'הכל בוצע להיום'}
+    <Sheet open={open} onOpenChange={onOpenChange} title={q.length ? 'מה מחכה לכם היום' : 'אין משימות להיום'}
       sub={q.length ? (q.length === 1 ? 'דבר אחד' : `${q.length} דברים`) : `מחר: ${t.arrivals.length === 1 ? 'הגעה אחת' : `${t.arrivals.length} הגעות`}, ${t.departures.length === 1 ? 'יציאה אחת' : `${t.departures.length} יציאות`}`}
       action={<Go to="/messages" onClick={() => onOpenChange(false)}>כל המשימות</Go>}>
+      {HELP_ENABLED && helpUnread ? (
+        <ul className="yt-list" style={{ marginBottom: 8 }}>
+          <li className="yt-row">
+            <button type="button" className="yt-row-b press" onClick={() => { onOpenChange(false); window.setTimeout(openHelp, 0); }}>
+              <span className="yt-row-t"><em>עזרה</em><b>תשובה חדשה מהתמיכה</b></span>
+              <ChevronLeft className="yt-row-chev" strokeWidth={1.75} aria-hidden />
+            </button>
+          </li>
+        </ul>
+      ) : null}
       {!q.length ? <Empty title="אין משימות פתוחות" line="הודעות לאורחים, ניקיונות ויתרות יופיעו כאן כשיגיע הזמן" /> : (
         <ul className="yt-list">
           {q.slice(0, 6).map((a) => (
@@ -243,13 +259,28 @@ export function DaySheet({ open, onOpenChange, model, onDo }) {
   );
 }
 
-/** Empty account (units, no bookings): one honest card instead of a board of zeros that looks broken. */
+/**
+ * Empty account (units, no bookings), ecosystem v1 #2: no board of zeros. One setup card with 3 steps; the unit
+ * step is already done (units exist), the next two are the actions.
+ */
 export function NoBookingsCard({ onAdd }) {
+  const steps = [
+    { t: 'הוסיפו יחידה', done: true },
+    { t: 'חברו את Booking או Airbnb' },
+    { t: 'הוסיפו הזמנה ראשונה' },
+  ];
   return (
     <section className="yt-nobook" aria-labelledby="yt-nobook-h">
       <div>
-        <h2 id="yt-nobook-h">עוד אין כאן הזמנות</h2>
-        <p>הוסיפו הזמנה או חברו ערוצים, והמספרים יתמלאו.</p>
+        <h2 id="yt-nobook-h">נתחיל מההזמנה הראשונה</h2>
+        <ol className="yt-nobook-steps">
+          {steps.map((s, i) => (
+            <li key={s.t} className={cn(s.done && 'is-done')}>
+              <i aria-hidden>{s.done ? <Check strokeWidth={2.5} /> : i + 1}</i>
+              <span>{s.t}{s.done ? <span className="sr-only"> (בוצע)</span> : null}</span>
+            </li>
+          ))}
+        </ol>
       </div>
       <div className="yt-nobook-a">
         <button type="button" className="yt-go press" onClick={onAdd}><Plus strokeWidth={2} aria-hidden />הוספת הזמנה</button>

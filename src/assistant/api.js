@@ -68,7 +68,7 @@ export async function streamAnswer({ messages, facts, page = '', signal, onDelta
   if (ASSISTANT_DEMO) {
     void DEMO_STREAM_PATH; // the demo stands in for this endpoint
     const q = messages[messages.length - 1]?.content;
-    onStatus('בודקים בנתונים שלכם');
+    onStatus('בודקת בנתונים שלכם');
     await sleep(650, signal); // the live brain calls tools here; keep the rhythm honest-looking
     const proposal = demoProposal(q, facts);
     if (proposal) onAction(proposal);

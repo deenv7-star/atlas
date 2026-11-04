@@ -95,7 +95,7 @@ export default function BuildMoment({ user, answers: a, onSetup, onApp, tone = '
                 const state = i < at ? 'done' : i === at && !done ? (error ? 'error' : 'run') : 'wait';
                 return (
                   <motion.li key={s.id} initial={still ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE, delay: still ? 0 : i * 0.06 }}
-                    className={cn('flex min-h-[58px] items-center gap-3.5 rounded-[18px] px-4 py-2 md:min-h-[64px] md:py-3', state === 'wait' ? 'bg-transparent' : 'bg-[#F7F8FB]')}>
+                    className={cn('flex min-h-[58px] items-center gap-3.5 rounded-[16px] px-4 py-2 md:min-h-[64px] md:py-3', state === 'wait' ? 'bg-transparent' : 'bg-[#F7F8FB]')}>
                     <StepIcon state={state} />
                     <span className="min-w-0 flex-1">
                       <span className={cn('block text-[17px] font-bold leading-snug', state === 'wait' ? 'text-ink-400' : 'text-navy-900')}>{s.title}</span>
@@ -191,13 +191,13 @@ function Assembly({ a, k, n, name, at, still, total = 4, msgAt = 2 }) {
         <div className="flex flex-col gap-1.5">
           {Array.from({ length: rows }, (_, r) => (
             <div key={r} className="flex items-center gap-2">
-              <span className="w-[46px] truncate text-[11px] font-semibold text-ink-600">{n === 1 ? k.unit : `${k.unit} ${r + 1}`}</span>
+              <span className="w-[46px] truncate text-[12px] font-semibold text-ink-600">{n === 1 ? k.unit : `${k.unit} ${r + 1}`}</span>
               <span className="grid flex-1 grid-cols-7 gap-1">
                 {Array.from({ length: 7 }, (_, c) => <span key={c} className={cn('h-3.5 rounded-[5px] lg:h-4', c === 0 ? 'bg-[#E4E1FD]' : 'bg-[#F1F2F7]')} />)}
               </span>
             </div>
           ))}
-          {n > rows ? <p className="text-[11px] text-ink-400">ועוד {n - rows}</p> : null}
+          {n > rows ? <p className="text-[12px] text-ink-400">ועוד {n - rows}</p> : null}
         </div>
       </motion.div>
 
@@ -205,7 +205,7 @@ function Assembly({ a, k, n, name, at, still, total = 4, msgAt = 2 }) {
       <motion.div {...card(msgAt)} style={still && !show(msgAt) ? { opacity: 0 } : undefined}
         className="absolute bottom-0 end-[2%] w-[56%] rounded-[20px] bg-white p-3 shadow-[0_2px_4px_rgba(27,38,86,0.06),0_24px_48px_-20px_rgba(27,38,86,0.35)] lg:w-[62%] lg:p-3.5">
         <p className="mb-1.5 text-[12px] font-bold text-ink-600">הודעה לאורח</p>
-        <p className="rounded-[14px] rounded-se-[4px] bg-[#E4E1FD] px-3 py-2 text-[13px] leading-snug text-navy-900">
+        <p className="rounded-[16px] rounded-se-[4px] bg-[#E4E1FD] px-3 py-2 text-[13px] leading-snug text-navy-900">
           {/* COPY-032: withPrefix (ב + הזית = בזית); the placeholder name is never glued ("בהמתחם שלכם") */}
           {a.name?.trim() ? `שלום, מחכים לכם ${withPrefix('ב', a.name.trim())}.` : 'שלום, מחכים לכם.'} {a.timesVary ? 'נשלח שעת כניסה מדויקת לפני ההגעה.' : `הכניסה מ-${a.checkIn}.`}
         </p>

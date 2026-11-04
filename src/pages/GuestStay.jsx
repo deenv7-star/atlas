@@ -124,7 +124,7 @@ function CheckInCard({ token, booking, checkin, rules, onDone }) {
           <input id="ci-guests" className="ab-input ab-num" type="number" inputMode="numeric" min={1} max={40} value={form.guests} onChange={set('guests')} />
         </div>
         {rules.length ? (
-          <ul className="col-span-2 space-y-1.5 rounded-[14px] p-3" style={{ background: 'var(--canvas, #F7F8FB)' }}>
+          <ul className="col-span-2 space-y-1.5 rounded-[16px] p-3" style={{ background: 'var(--canvas, #F7F8FB)' }}>
             {rules.map((r) => <li key={r} className="text-[14px]" style={{ color: 'var(--ink-600)' }}>• {r}</li>)}
           </ul>
         ) : null}
@@ -183,9 +183,10 @@ export default function GuestStayPage() {
     return (
       <Shell>
         <main className="max-w-md mx-auto px-6 pt-24 text-center">
-          <span className="ab-icon-tile mx-auto"><KeyRound size={20} strokeWidth={1.75} /></span>
-          <h1 className="ab-h3 mt-4">הקישור לא נמצא</h1>
-          <p className="ab-meta mt-2">אולי ההזמנה עודכנה. בקשו מהמארחים קישור חדש.</p>
+          <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(62,43,241,0.08)] text-[#3E2BF1]" aria-hidden><KeyRound size={24} strokeWidth={1.75} /></span>
+          <h1 className="mt-5 text-[22px] font-bold leading-tight text-[#1B2656]">הקישור הזה לא פעיל כרגע</h1>
+          <p className="mt-2 text-[15px] leading-relaxed text-[#4A5578]">ייתכן שההזמנה עודכנה. כדאי לבקש מהמארחים קישור חדש, בטלפון או בוואטסאפ.</p>
+          <a href="/" className="mt-6 inline-flex min-h-[44px] items-center justify-center px-2 text-[15px] font-semibold text-[#3E2BF1]">מה זה <bdi className="ms-1">atlas</bdi>?</a>
         </main>
       </Shell>
     );

@@ -44,7 +44,7 @@ function Segments({ step }) {
           </span>
         ))}
       </div>
-      <div className="flex justify-between text-[11px] font-semibold max-[359px]:hidden sm:text-[12px]" aria-hidden>
+      <div className="flex justify-between text-[12px] font-semibold max-[359px]:hidden sm:text-[12px]" aria-hidden>
         {STEPS.map((s, k) => <span key={s.id} className={cn('flex-1 text-center transition-colors', k === step ? 'text-brand-700' : k < step ? 'text-navy-900' : 'text-ink-400')}>{s.label}</span>)}
       </div>
     </div>
@@ -159,7 +159,7 @@ export default function OnboardingSteps({ user, again = false }) {
                   const on = d.type === t.value;
                   return (
                     <button key={t.value} type="button" role="radio" aria-checked={on} onClick={() => pickType(t.value)}
-                      className="ob-choice ob-press ob-pop relative flex-col !rounded-[18px]" style={{ animationDelay: `${k * 30}ms` }}>
+                      className="ob-choice ob-press ob-pop relative flex-col !rounded-[16px]" style={{ animationDelay: `${k * 30}ms` }}>
                       <span className="relative block aspect-[2/1] w-full overflow-hidden bg-[#E9ECF4] sm:aspect-[16/10]">
                         <img src={t.photo} alt="" className="h-full w-full object-cover" draggable={false} />
                         <span className={cn('absolute end-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-white shadow transition-[opacity,transform] duration-200', on ? 'scale-100 opacity-100' : 'scale-75 opacity-0')} aria-hidden><Check className="h-3.5 w-3.5" strokeWidth={3} /></span>
@@ -206,7 +206,7 @@ export default function OnboardingSteps({ user, again = false }) {
               <SectionLabel>שם, אורחים ומחיר ללילה</SectionLabel>
               <ul className="flex flex-col gap-2.5">
                 {d.units.map((u, k) => (
-                  <li key={u.key} className="ob-pop grid grid-cols-[1fr_auto] items-end gap-2 rounded-[18px] bg-white p-3 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_8px_22px_-14px_rgba(27,38,86,0.2)] sm:grid-cols-[1.4fr_0.8fr_0.9fr_auto]" style={{ animationDelay: `${k * 30}ms` }}>
+                  <li key={u.key} className="ob-pop grid grid-cols-[1fr_auto] items-end gap-2 rounded-[16px] bg-white p-3 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_8px_22px_-14px_rgba(27,38,86,0.2)] sm:grid-cols-[1.4fr_0.8fr_0.9fr_auto]" style={{ animationDelay: `${k * 30}ms` }}>
                     <label className="col-span-2 flex flex-col gap-1 sm:col-span-1">
                       <span className="text-[12px] font-semibold text-ink-400">שם</span>
                       <input className="ob-input !min-h-[48px] !text-[16px]" value={u.name} maxLength={40} onChange={(e) => setUnit(u.key, { name: e.target.value })} />
@@ -220,7 +220,7 @@ export default function OnboardingSteps({ user, again = false }) {
                       <input className="ob-input !min-h-[48px] !text-[16px] tabular-nums" inputMode="numeric" dir="ltr" value={String(u.price ?? '')} onChange={(e) => setUnit(u.key, { price: Number(e.target.value.replace(/[^\d]/g, '')) || 0 })} />
                     </label>
                     {!u.existing && d.units.length > 1 ? (
-                      <button type="button" onClick={() => update((cur) => ({ units: cur.units.filter((x) => x.key !== u.key) }))} className="ob-press flex h-12 w-12 items-center justify-center rounded-[14px] text-ink-400 hover:bg-[#FDEEEE] hover:text-danger-600" aria-label={`הסרת ${u.name || 'יחידה'}`}>
+                      <button type="button" onClick={() => update((cur) => ({ units: cur.units.filter((x) => x.key !== u.key) }))} className="ob-press flex h-12 w-12 items-center justify-center rounded-[16px] text-ink-400 hover:bg-[#FDEEEE] hover:text-danger-600" aria-label={`הסרת ${u.name || 'יחידה'}`}>
                         <Trash2 className="h-[18px] w-[18px]" aria-hidden />
                       </button>
                     ) : <span className="hidden w-12 sm:block" />}
@@ -245,7 +245,7 @@ export default function OnboardingSteps({ user, again = false }) {
                       const prov = s.value === 'booking' ? 'BOOKING_COM' : s.value === 'airbnb' ? 'AIRBNB' : null;
                       return prov ? { channelsToday: next, channels: { ...cur.channels, [prov]: { ...cur.channels[prov], on: !on } } } : { channelsToday: next };
                     })}
-                    className="ob-choice ob-press ob-pop flex-row items-center gap-3 !rounded-[18px] p-3 text-start" style={{ animationDelay: `${k * 30}ms` }}>
+                    className="ob-choice ob-press ob-pop flex-row items-center gap-3 !rounded-[16px] p-3 text-start" style={{ animationDelay: `${k * 30}ms` }}>
                     <span className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] text-[15px] font-extrabold transition-colors', on ? 'max-sm:bg-brand-600 max-sm:text-white' : '', s.tone)} aria-hidden>
                       {on ? <Check className="h-5 w-5 sm:hidden" strokeWidth={3} /> : null}
                       <span className={cn(on && 'max-sm:hidden')}>{s.Icon ? <s.Icon className="h-5 w-5" strokeWidth={1.9} /> : s.mark}</span>
@@ -337,7 +337,7 @@ export default function OnboardingSteps({ user, again = false }) {
           </div>
 
           <footer className="fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-[var(--canvas)] via-[var(--canvas)] to-transparent px-5 pb-[max(18px,env(safe-area-inset-bottom))] pt-6 md:px-10 lg:absolute">
-            {error ? <p className="mb-3 rounded-[14px] bg-[var(--st-red-bg)] px-4 py-3 text-[15px] font-medium text-[var(--st-red-fg)]" role="alert">{error}</p> : null}
+            {error ? <p className="mb-3 rounded-[16px] bg-[var(--st-red-bg)] px-4 py-3 text-[15px] font-medium text-[var(--st-red-fg)]" role="alert">{error}</p> : null}
             {done ? (
               <Primary className="w-full" onClick={enter} disabled={busy}>
                 {busy ? <Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden /> : null}כניסה למערכת<ArrowLeft className="h-5 w-5" aria-hidden />

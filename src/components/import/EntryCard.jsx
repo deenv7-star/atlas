@@ -7,7 +7,7 @@ import { Sparkles } from 'lucide-react';
 import './import.css';
 
 export const IMPORT_COPY = {
-  today: { title: 'עוד לא חיברתם מתחם', line: 'הדביקו קישור מ-Booking, מ-Airbnb או מהאתר. atlas ימלא את השאר.', cta: 'ייבוא המתחם' },
+  today: { title: 'עוד לא חיברתם מתחם', line: 'הדביקו קישור מ-Booking, מ-Airbnb או מהאתר. והשאר יתמלא לבד.', cta: 'ייבוא המתחם' },
   settings: { title: 'ייבוא פרטי המתחם מקישור', line: 'תמונות, יחידות, שעות וכללים מהמודעה שלכם, בלי להקליד.', cta: 'ייבוא מקישור' },
 };
 

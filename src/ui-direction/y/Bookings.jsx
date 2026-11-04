@@ -113,7 +113,8 @@ export const BookingsPanel = forwardRef(function BookingsPanel({
     return list;
   }, [tab, list, m, controlled]);
   const sel = shown.find((b) => b.id === selId) || shown.find((b) => b.check_in_date === m.day) || shown[0] || null;
-  const tabs = controlled ? tabsIn.map((t) => [t.key, t.label, t.count]) : [['all', 'הכל', list.length], ['today', 'היום', list.filter(todayOf).length], ['due', 'יתרות', m.moneyKnown === false ? '—' : list.filter((b) => m.balanceFor(b).balance > 0).length]];
+  // ecosystem v1 #5: on /bookings a filter chip whose count is 0 hides (the active one and "הכל" always stay)
+  const tabs = controlled ? tabsIn.map((t) => [t.key, t.label, t.count]).filter(([k, , n]) => n !== 0 || k === tab || k === 'all') : [['all', 'הכל', list.length], ['today', 'היום', list.filter(todayOf).length], ['due', 'יתרות', m.moneyKnown === false ? '—' : list.filter((b) => m.balanceFor(b).balance > 0).length]];
 
   return (
     <motion.section ref={ref} className={cn('y3-panel', className)} aria-label={title} {...rest} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay }}>

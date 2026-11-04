@@ -5,8 +5,8 @@
  */
 import {
   Sun, CalendarRange, BedDouble, Users, MessageSquare, Star,
-  Brush, Headset, FileSignature, Send, Wallet, FileText, TrendingDown, BarChart3,
-  FileBarChart, Tags, Link2, Globe, CreditCard, Receipt, Settings, Shield,
+  Brush, Headset, FileSignature, Send, Wallet, BarChart3,
+  Tags, Link2, Globe, CreditCard, Settings, Shield,
 } from 'lucide-react';
 import { DB_FEATURES } from '@/config/dbFeatures';
 import { SparkMark } from '@/assistant/mark';
@@ -37,7 +37,7 @@ export const NAV_GROUPS = [
       { page: 'ServiceRequests', label: 'בקשות שירות', icon: Headset },
       { page: 'Reviews', label: 'ביקורות', icon: Star },
       { page: 'Contracts', label: 'חוזים', icon: FileSignature },
-      { page: 'Automations', label: 'הודעות לאורחים', icon: Send },
+      { page: 'Automations', label: 'הודעות אוטומטיות', icon: Send },
     ],
   },
   {
@@ -54,7 +54,7 @@ export const NAV_GROUPS = [
     items: [
       { page: 'RevenueIntelligence', label: 'הכנסות', icon: BarChart3 },
       { page: 'DynamicPricing', label: 'תמחור חגים', icon: Tags },
-      { page: 'OwnerReports', label: 'דוחות בעלים', icon: FileBarChart },
+      // ecosystem v1 #7: owner reports are not built yet; the route stays, nothing links to it until it ships.
     ],
   },
   {
@@ -62,8 +62,8 @@ export const NAV_GROUPS = [
     label: 'חשבון',
     items: [
       { page: 'Integrations', label: 'ערוצים וחיבורים', icon: Link2 },
-      { page: 'Subscription', label: 'מנוי', icon: CreditCard },
-      { page: 'Billing', label: 'חיובים', icon: Receipt },
+      // ecosystem v1 #6: one row for the plan and its charges (Billing is reached from inside Subscription)
+      { page: 'Subscription', label: 'מנוי וחיובים', icon: CreditCard },
     ],
   },
 ];
@@ -72,9 +72,9 @@ export const NAV_GROUPS = [
 export const FINANCE_TABS = [
   { page: 'Payments', label: 'תשלומים' },
   { page: 'Balances', label: 'יתרות' },
-  { page: 'Invoices', label: 'מסמכים שהוצאתם' },
   ...(DB_FEATURES.expenses ? [{ page: 'ExpenseTracker', label: 'הוצאות' }] : []),
-  { page: 'MonthlyReport', label: 'דוח חודשי' },
+  { page: 'Invoices', label: 'מסמכים' },
+  { page: 'MonthlyReport', label: 'דוח' },
 ];
 
 /** Pages that light up a primary nav item without being in the sidebar themselves. */

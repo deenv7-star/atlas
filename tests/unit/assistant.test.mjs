@@ -127,7 +127,7 @@ test('demo answers come from the snapshot (tables included) and never invent', (
   assert.ok(m.includes('(/balances)'));
   const month = demoAnswer('איך החודש לעומת החודש שעבר?', f);
   assert.ok(month.includes(money(5200)) && month.includes(money(2600)));
-  assert.match(demoAnswer('מה מזג האוויר?', f), /לא נוכל לבדוק בהדגמה/);
+  assert.match(demoAnswer('מה מזג האוויר?', f), /לא נוכל לבדוק בדוגמה/);
   assert.match(demoAnswer('מי חייב?', buildFacts({ today: TODAY })), /עוד אין הזמנות/);
 });
 

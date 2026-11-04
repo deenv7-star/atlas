@@ -139,7 +139,7 @@ export default function Login() {
   const social = (divider) => <SocialButtons intent="login" divider={divider} returnTo={searchParams.get('return')} />;
 
   const field = (bad) => cn(
-    'h-12 rounded-[14px] border bg-white text-base md:text-base text-navy-900 shadow-[0_1px_2px_rgba(16,24,64,0.04)] placeholder:text-ink-300 focus-visible:border-brand-500 focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.14)] focus-visible:ring-offset-0',
+    'h-12 rounded-[16px] border bg-white text-base md:text-base text-navy-900 shadow-[0_1px_2px_rgba(16,24,64,0.04)] placeholder:text-ink-300 focus-visible:border-brand-500 focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.14)] focus-visible:ring-offset-0',
     bad ? 'border-danger-500' : 'border-line',
   );
 
@@ -169,7 +169,7 @@ export default function Login() {
             value={form.email}
             onChange={set('email')}
             onBlur={handleBlur('email')}
-            className={field((touched.email && errors.email) || errors.credentials)}
+            className={cn(field((touched.email && errors.email) || errors.credentials), 'text-right')}
             dir="ltr"
             autoComplete="email"
             autoFocus={!prefilledEmail && !(hasSocial && SOCIAL_LAYOUT === 'above')}

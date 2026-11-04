@@ -10,7 +10,7 @@ import { addDays, parseDay, formatRangeHe } from '@/lib/stay/format';
 import Face from './Face';
 import './y-ui.css';
 
-export function useCount(to, { dur = 1200, delay = 0 } = {}) {
+export function useCount(to, { dur = 600, delay = 0 } = {}) {
   const reduce = useReducedMotion();
   const target = Number(to) || 0;
   const [v, setV] = useState(reduce ? target : 0);
