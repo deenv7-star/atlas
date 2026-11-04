@@ -1,16 +1,24 @@
-// ai-chat v4: server-side LLM call for "שאלו את atlas".
+// ai-chat v5: "שאלו את atlas" with a brain (knowledge base + tools over the owner's own data).
 //   - The OpenAI key is the edge-function secret OPENAI_API_KEY; it never reaches the browser.
 //   - Signed-in users only (user JWT). Browsers only from the origin allow-list (core.js).
-//   - Hebrew system prompt lives here (core.js); a client `system` field is ignored.
-//   - Streams SSE frames {"d":"…"} … {"done":true}; stopping in the app aborts the upstream call.
-//   - Limits: per-isolate 12/min, plus a per-user daily cap in Postgres when migration 024 is applied
-//     (ai_usage_bump). Without 024 the function still works with the minute limit only.
-//   - Backward compatible: the v3 body {prompt, model} still gets JSON {text} unless it asks for stream.
-// NOT DEPLOYED by this PR. Deploy: supabase functions deploy ai-chat (needs Deen's approval).
+//   - The rules live on the server (_shared/brain/prompt.js); a client `system` field is ignored.
+//   - Every data tool runs with the CALLER'S JWT, so RLS limits it to their own business.
+//   - Write actions are never executed here: they come back as {action} proposals the app confirms.
+//   - SSE frames: {"status":"…"} {"action":{…}} {"d":"…"} … {"done":true}.
+//   - POST {op:'tool', name, args}: the voice agent's tool calls (same tools, same rules) → JSON.
+//   - Backward compatible: v3/v4 bodies ({prompt} or {messages} without tools) still work.
+// NOT DEPLOYED by this branch. Deploy: supabase functions deploy ai-chat (needs Deen's approval).
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
-import { buildRequest, corsHeaders, isAllowedOrigin, makeMinuteLimiter, createUpstreamParser, frame, LIMITS } from "./core.js";
+import { buildRequest, corsHeaders, isAllowedOrigin, makeMinuteLimiter, sanitizeMessages, frame, LIMITS } from "./core.js";
+import { brainPrompt } from "../_shared/brain/prompt.js";
+import { runBrain, openaiChat } from "../_shared/brain/loop.js";
+import { runTool, forModel, TOOL_NAMES } from "../_shared/brain/tools.js";
+import { todayIL } from "../_shared/brain/dates.js";
 
 const minuteOk = makeMinuteLimiter(LIMITS.perMinute);
+const toolMinuteOk = makeMinuteLimiter(40); // voice: a few tool calls per spoken question
+const MODEL = Deno.env.get("BRAIN_MODEL") || "gpt-6-luna";
+const EFFORT = Deno.env.get("BRAIN_REASONING") || "low";
 
 Deno.serve(async (req) => {
   const origin = req.headers.get("Origin");
@@ -30,15 +38,21 @@ Deno.serve(async (req) => {
   const { data: u, error: authErr } = await sb.auth.getUser(jwt);
   if (authErr || !u?.user) return json({ error: "unauthorized" }, 401);
 
-  if (!minuteOk(u.user.id)) return json({ error: "rate_limited" }, 429);
-
   let body: Record<string, unknown> = {};
   try { body = await req.json(); } catch { /* empty body */ }
-  const plan = buildRequest(body);
-  if ("error" in plan) return json({ error: plan.error }, 400);
+  const ctx = { db: sb, userId: u.user.id, today: todayIL() };
 
+  // ── voice tool call (no LLM here: the realtime model already decided) ──
+  if (body.op === "tool") {
+    if (!toolMinuteOk(u.user.id)) return json({ error: "rate_limited" }, 429);
+    const name = String(body.name || "");
+    if (!TOOL_NAMES.includes(name)) return json({ error: "unknown_tool" }, 400);
+    const { result, proposal } = await runTool(name, body.args ?? {}, ctx);
+    return json({ result: forModel(result), proposal });
+  }
+
+  if (!minuteOk(u.user.id)) return json({ error: "rate_limited" }, 429);
   const key = Deno.env.get("OPENAI_API_KEY");
-  // 200 + code: "not enabled yet" is a state, not a failure (no red console error in the app).
   if (!key) return json({ error: "not_configured", text: null }, 200);
 
   // Daily cap (migration 024). Missing function → skip quietly; any other DB error → do not block the user.
@@ -48,52 +62,47 @@ Deno.serve(async (req) => {
     console.warn("ai_usage_bump", usageErr.code, usageErr.message?.slice(0, 120));
   }
 
-  const upstream = new AbortController();
-  req.signal?.addEventListener("abort", () => upstream.abort(), { once: true });
-  let res: Response;
-  try {
-    res = await fetch("https://api.openai.com/v1/chat/completions", {
+  const turns = sanitizeMessages(body.messages);
+  if (!turns.length) {
+    // v3 legacy body {prompt}: answer without tools, as before
+    const plan = buildRequest(body);
+    if ("error" in plan) return json({ error: plan.error }, 400);
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      signal: upstream.signal,
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-      body: JSON.stringify({ model: plan.model, messages: plan.messages, max_tokens: LIMITS.maxTokens, temperature: 0.3, stream: plan.stream, user: u.user.id }),
-    });
-  } catch (e) {
-    if (upstream.signal.aborted) return new Response(null, { status: 499, headers: CORS });
-    console.error("openai_fetch", String(e).slice(0, 200));
-    return json({ error: "upstream_error" }, 502);
-  }
-  if (!res.ok) {
-    console.error("openai_error", res.status, (await res.text()).slice(0, 300));
-    return json({ error: res.status === 429 ? "rate_limited" : "upstream_error", status: res.status }, res.status === 429 ? 429 : 502);
-  }
-
-  if (!plan.stream) {
+      body: JSON.stringify({ model: plan.model, messages: plan.messages, max_tokens: LIMITS.maxTokens, temperature: 0.3, user: u.user.id }),
+    }).catch(() => null);
+    if (!res?.ok) return json({ error: "upstream_error" }, 502);
     const data = await res.json();
     return json({ text: data?.choices?.[0]?.message?.content ?? "", model: plan.model });
   }
 
+  const owner = String((u.user.user_metadata as Record<string, unknown>)?.full_name || "").trim().split(/\s+/)[0] || "";
+  const system = brainPrompt({ mode: "text", today: ctx.today, page: typeof body.page === "string" ? body.page : "", owner });
+  const llm = openaiChat({ apiKey: key, model: MODEL, effort: EFFORT, user: u.user.id });
+  const upstream = new AbortController();
+  req.signal?.addEventListener("abort", () => upstream.abort(), { once: true });
+
   const enc = new TextEncoder();
-  const dec = new TextDecoder();
-  const parse = createUpstreamParser();
-  const reader = res.body!.getReader();
   const stream = new ReadableStream({
-    async pull(ctrl) {
+    async start(ctrl) {
+      const emit = (ev: Record<string, unknown>) => {
+        try { ctrl.enqueue(enc.encode(frame("delta" in ev ? { d: ev.delta } : ev))); } catch { /* closed */ }
+      };
       try {
-        const { value, done } = await reader.read();
-        if (done) { ctrl.enqueue(enc.encode(frame({ done: true, model: plan.model }))); ctrl.close(); return; }
-        for (const ev of parse(dec.decode(value, { stream: true }))) {
-          if ("d" in ev) ctrl.enqueue(enc.encode(frame({ d: ev.d })));
-        }
+        const t0 = Date.now();
+        const r = await runBrain({ system, turns, llm, ctx, emit, signal: upstream.signal });
+        console.log(JSON.stringify({ fn: "ai-chat", event: "answer", rounds: r.rounds, tools: r.tools, tin: r.usage.in, tcached: r.usage.cached, tout: r.usage.out, ms: Date.now() - t0 }));
+        emit({ done: true, model: r.model || MODEL });
       } catch (e) {
         if (!upstream.signal.aborted) {
-          console.error("stream_error", String(e).slice(0, 200));
-          try { ctrl.enqueue(enc.encode(frame({ error: "upstream_error" }))); } catch { /* closed */ }
+          console.error("brain_error", String(e).slice(0, 200));
+          emit({ error: (e as { status?: number }).status === 429 ? "rate_limited" : "upstream_error" });
         }
-        try { ctrl.close(); } catch { /* closed */ }
       }
+      try { ctrl.close(); } catch { /* closed */ }
     },
-    cancel() { upstream.abort(); try { reader.cancel(); } catch { /* */ } }, // the user pressed stop
+    cancel() { upstream.abort(); }, // the user pressed stop
   });
   return new Response(stream, {
     headers: { ...CORS, "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no" },
