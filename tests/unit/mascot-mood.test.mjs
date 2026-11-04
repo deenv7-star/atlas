@@ -52,9 +52,10 @@ test('activity wakes a sleepy face; one timer for the next change', () => {
 test('eye offset stays inside the face', () => {
   const r = { left: 0, top: 0, width: 40, height: 40 };
   const o = eyeOffset(r, { x: 2000, y: 20 });
-  assert.ok(o.x <= 6 && o.x > 5);
+  assert.ok(o.x <= 4 && o.x > 3.5);
   const d = eyeOffset(r, { x: 20, y: 2000 });
-  assert.ok(d.y <= 5 && d.y > 4);
+  assert.ok(d.y <= 3.5 && d.y > 3);
+  assert.deepEqual(eyeOffset(r, { x: NaN, y: 5 }), { x: 0, y: 0 }); // a bad pointer never throws the eyes out
   assert.deepEqual(eyeOffset(r, null), { x: 0, y: 0 });
 });
 

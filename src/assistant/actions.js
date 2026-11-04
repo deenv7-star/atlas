@@ -7,6 +7,7 @@
  */
 import { base44 } from '@/api/base44Client';
 import { supportApi } from '@/support/api';
+import { queryClientInstance } from '@/lib/query-client';
 
 export const ACTION_COPY = {
   create_booking: { title: 'הזמנה חדשה', confirm: 'שמירת ההזמנה', done: 'ההזמנה נשמרה', open: 'פתיחת ההזמנה' },
@@ -28,6 +29,7 @@ export async function performAction(p, { user, page } = {}) {
     delete d.unit_name;
     const orgId = user?.organization_id ?? user?.org_id;
     const row = await base44.entities.Booking.create(orgId ? { org_id: orgId, ...d } : d);
+    queryClientInstance.invalidateQueries(); // the new booking shows at once in היום, יומן and הזמנות
     return { ok: true, href: row?.id ? `/booking/${row.id}` : '/bookings' };
   }
   if (p.kind === 'guest_message') {
