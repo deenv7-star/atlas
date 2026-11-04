@@ -13,6 +13,7 @@ import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 import { createSSEParser, chunkText } from './sse.js';
 import { factsForModel, factsToText } from './facts.js';
 import { demoAnswer, DEMO_STREAM_PATH } from './demoAnswer.js';
+import { createDeadline } from './deadline.js';
 
 export const ASSISTANT_DEMO = !isSupabaseConfigured;
 const FN_URL = `${String(import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '')}/functions/v1/ai-chat`;
@@ -26,6 +27,7 @@ export const ERRORS = {
   unauthorized: 'צריך להתחבר מחדש כדי לשאול.',
   network: 'אין חיבור לאינטרנט כרגע. בדקו את החיבור ונסו שוב.',
   upstream: 'לא הצלחנו לקבל תשובה הפעם. נסו שוב בעוד רגע.',
+  timeout: 'התשובה מתעכבת יותר מדי. בדקו את החיבור ונסו שוב.',
 };
 export class AssistantError extends Error {
   constructor(code) { super(ERRORS[code] || ERRORS.upstream); this.code = ERRORS[code] ? code : 'upstream'; }
@@ -71,11 +73,18 @@ export async function streamAnswer({ messages, facts, page = '', signal, onDelta
   if (!jwt) throw new AssistantError('unauthorized');
   const clean = messages.filter((m) => m.content).slice(-12).map((m) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: String(m.content).slice(0, 2000) }));
 
+  // Audit 04.11 #3: 30 s for a first response, then a stall timer between streamed pieces.
+  const dl = createDeadline(signal);
+  const timeoutOr = (e) => {
+    if (dl.timedOut()) return new AssistantError('timeout');
+    return e;
+  };
+  try {
   let res;
   try {
     res = await fetch(FN_URL, {
       method: 'POST',
-      signal,
+      signal: dl.signal,
       headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream', Authorization: `Bearer ${jwt}`, apikey: ANON },
       body: JSON.stringify({
         v: 4, stream: true, page,
@@ -85,9 +94,11 @@ export async function streamAnswer({ messages, facts, page = '', signal, onDelta
       }),
     });
   } catch (e) {
+    if (dl.timedOut()) throw new AssistantError('timeout');
     if (e?.name === 'AbortError') throw e;
     throw new AssistantError(typeof navigator !== 'undefined' && navigator.onLine === false ? 'network' : 'upstream');
   }
+  dl.bump();
 
   const type = res.headers.get('content-type') || '';
   if (type.includes('text/event-stream') && res.body) {
@@ -99,19 +110,27 @@ export async function streamAnswer({ messages, facts, page = '', signal, onDelta
       for (;;) {
         const { value, done } = await reader.read();
         if (done) break;
+        dl.bump();
         parser.push(dec.decode(value, { stream: true }));
         if (err) break;
       }
+    } catch (e) {
+      throw timeoutOr(e);
     } finally { try { reader.releaseLock(); } catch { /* */ } }
     if (err) throw new AssistantError(err);
     return { model: meta?.model || 'live' };
   }
 
-  const body = await res.json().catch(() => ({}));
+  let body;
+  try { body = await res.json(); } catch (e) { if (dl.timedOut()) throw new AssistantError('timeout'); body = {}; }
+  dl.clear();
   if (res.status === 401) throw new AssistantError('unauthorized');
   if (res.status === 429) throw new AssistantError(body.error === 'daily_limit' ? 'daily_limit' : 'rate_limited');
   if (body.error) throw new AssistantError(body.error === 'upstream_error' ? 'upstream' : body.error);
   if (!res.ok || typeof body.text !== 'string' || !body.text.trim()) throw new AssistantError('upstream');
   await reveal(body.text, onDelta, signal, 12);
   return { model: body.model || 'v3' };
+  } finally {
+    dl.clear();
+  }
 }

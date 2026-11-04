@@ -17,7 +17,7 @@
   background: var(--glass); backdrop-filter: blur(30px) saturate(1.5); -webkit-backdrop-filter: blur(30px) saturate(1.5); box-shadow: var(--gb), 0 30px 60px -30px rgba(27,38,86,.45); }
 .y2-rail-logo { color: var(--navy); height: 44px; margin: -6px 0; padding: 0 4px; display: inline-flex; align-items: center; }
 .y2-rail ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.y2-ri { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 70px; height: 64px; border-radius: 22px; font-size: 11.5px; font-weight: 500; color: rgba(27,38,86,.72); }
+.y2-ri { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 70px; height: 64px; border-radius: 22px; font-size: 12px; font-weight: 600; color: #3A4470; }
 .y2-ri:hover { color: var(--navy); background: rgba(255,255,255,.25); }
 .y2-ri svg, .y2-ri span { position: relative; }
 .y2-ri svg { width: 22px; height: 22px; }
@@ -55,8 +55,9 @@
 /* ── phone tab ── */
 .y2-tab { position: fixed; inset-inline: 0; bottom: 0; z-index: 30; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 0 12px calc(12px + env(safe-area-inset-bottom)); pointer-events: none; }
 .y2-tab > * { pointer-events: auto; }
-.y2-tab ul { list-style: none; margin: 0; display: flex; gap: 2px; padding: 6px; border-radius: 999px; background: rgba(255,255,255,.42); backdrop-filter: blur(30px) saturate(1.6); -webkit-backdrop-filter: blur(30px) saturate(1.6); box-shadow: var(--gb), 0 20px 40px -20px rgba(27,38,86,.55); }
-.y2-ti { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 56px; height: 52px; border-radius: 999px; font-size: 11px; font-weight: 500; color: rgba(27,38,86,.75); }
+/* audit 04.11 M8: denser frost (.9) so list text and prices behind the capsule can't bleed through the labels */
+.y2-tab ul { list-style: none; margin: 0; display: flex; gap: 2px; padding: 6px; border-radius: 999px; background: rgba(255,255,255,.9); backdrop-filter: blur(30px) saturate(1.6); -webkit-backdrop-filter: blur(30px) saturate(1.6); box-shadow: var(--gb), 0 20px 40px -20px rgba(27,38,86,.55); }
+.y2-ti { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 56px; height: 52px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1.15; color: #3A4470; }
 .y2-ti svg, .y2-ti span { position: relative; }
 .y2-ti svg { width: 21px; height: 21px; }
 .y2-ti.on { color: var(--ind); font-weight: 700; }
@@ -72,7 +73,7 @@
 .y2-tab[data-lens] .y2-tab-cap { transform: scale(1.03); }
 .y2-ti-on { transition: opacity .22s var(--ease); }
 .y2-tab[data-lens] .y2-ti-on { opacity: 0 !important; } /* framer writes inline opacity on layout items */
-.y2-tab[data-lens] .y2-ti.on { color: rgba(27,38,86,.75); }
+.y2-tab[data-lens] .y2-ti.on { color: #3A4470; }
 .y2-tab[data-lens] li[data-hot] .y2-ti { color: var(--ind); }
 .y2-tab[data-lens] .press:active { transform: none; }
 .y2-lens { position: absolute; left: 0; top: 0; width: 76px; height: 60px; border-radius: 999px; overflow: hidden; pointer-events: none; opacity: 0;
@@ -162,7 +163,7 @@
 .y2-photo-s { position: absolute; bottom: 14px; inset-inline: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .y2-photo-s > span { display: flex; flex-direction: column; padding: 10px 14px; border-radius: 18px; background: rgba(255,255,255,.2); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); line-height: 1.2; }
 .y2-photo-s b { font-size: 22px; font-weight: 300; letter-spacing: -.02em; }
-.y2-photo-s small { font-size: 11.5px; opacity: .85; }
+.y2-photo-s small { font-size: 12px; opacity: .85; }
 
 /* next */
 .y2-sec-h { display: flex; align-items: center; justify-content: space-between; padding: 2px 6px 10px; }
@@ -205,7 +206,7 @@
 .y2-stats > div { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .y2-stats > div + div { border-inline-start: 1px solid rgba(255,255,255,.14); }
 .y2-stats b { font-size: 26px; font-weight: 300; letter-spacing: -.02em; line-height: 1.1; }
-.y2-stats span { font-size: 11.5px; color: rgba(255,255,255,.65); }
+.y2-stats span { font-size: 12px; color: rgba(255,255,255,.65); }
 .y2-cal { padding: 16px; border-radius: 22px; background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
 .y2-cal-h { display: flex; align-items: center; justify-content: space-between; }
 .y2-cal-h p { font-size: 15px; font-weight: 700; }
@@ -213,12 +214,12 @@
 .y2-cal-nav { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 99px; color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
 .y2-cal-nav svg { width: 15px; height: 15px; }
 .y2-cal-g { margin-top: 12px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px 2px; text-align: center; }
-.y2-cal-g b { font-size: 11px; font-weight: 500; color: rgba(255,255,255,.55); padding-bottom: 4px; }
+.y2-cal-g b { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.55); padding-bottom: 4px; }
 .y2-cd { justify-self: center; display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 99px; font-size: 13px; color: rgba(255,255,255,.85); animation: y-fade .5s ease both; }
 .y2-cd.occ { background: rgba(255,255,255,.16); color: #fff; }
 .y2-cd.arr { background: var(--ind); color: #fff; font-weight: 700; box-shadow: 0 6px 14px -6px rgba(62,43,241,.9); }
 .y2-cd.today { box-shadow: 0 0 0 2px #fff; font-weight: 700; }
-.y2-cal-k { margin-top: 12px; display: flex; gap: 14px; font-size: 11.5px; color: rgba(255,255,255,.65); }
+.y2-cal-k { margin-top: 12px; display: flex; gap: 14px; font-size: 12px; color: rgba(255,255,255,.65); }
 .y2-cal-k span { display: inline-flex; align-items: center; gap: 6px; }
 .y2-cal-k i { width: 9px; height: 9px; border-radius: 99px; }
 .y2-cal-k i.arr { background: var(--ind); } .y2-cal-k i.occ { background: rgba(255,255,255,.3); } .y2-cal-k i.today { box-shadow: 0 0 0 1.5px #fff; }
@@ -231,7 +232,7 @@
 .y2-arr-img img { width: 64px; height: 56px; object-fit: cover; border-radius: 16px; }
 .y2-arr-img > :last-child:not(img) { position: absolute; bottom: -4px; inset-inline-end: -6px; }
 .y2-arr-t { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
-.y2-src { align-self: flex-start; font-style: normal; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.92); color: var(--navy); margin-bottom: 3px; }
+.y2-src { align-self: flex-start; font-style: normal; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.92); color: var(--navy); margin-bottom: 3px; }
 .y2-src--booking, .y2-src--airbnb { background: var(--ind); color: #fff; }
 .y2-arr-t b { font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .y2-arr-t small { font-size: 12px; color: rgba(255,255,255,.65); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

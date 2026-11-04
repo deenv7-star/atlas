@@ -47,7 +47,7 @@ export const OWNER_ROLES = [
 
 /** Where bookings come from today (characterization; also decides which links / connections to offer). */
 export const CHANNELS_TODAY = [
-  { value: 'phone', label: 'טלפון ווואטסאפ' },
+  { value: 'phone', label: 'טלפון או וואטסאפ' },
   { value: 'booking', label: 'Booking.com' },
   { value: 'airbnb', label: 'Airbnb' },
   { value: 'website', label: 'אתר משלי' },

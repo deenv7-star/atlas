@@ -60,7 +60,7 @@ function Footer({ native }) {
         {!native ? <Link to="/billing" className={`inline-flex min-h-11 items-center rounded-[8px] px-2 hover:text-[#1B2656] ${FOCUS}`}>חיובים</Link> : null}
         <a href="/terms" {...NEW_TAB} className={`inline-flex min-h-11 items-center rounded-[8px] px-2 hover:text-[#1B2656] ${FOCUS}`}>תקנון<span className="sr-only"> (נפתח בכרטיסייה חדשה)</span></a>
         <a href="/privacy" {...NEW_TAB} className={`inline-flex min-h-11 items-center rounded-[8px] px-2 hover:text-[#1B2656] ${FOCUS}`}>פרטיות<span className="sr-only"> (נפתח בכרטיסייה חדשה)</span></a>
-        {!native ? <a href="/contact" {...NEW_TAB} className={`inline-flex min-h-11 items-center rounded-[8px] px-2 hover:text-[#1B2656] ${FOCUS}`}>צור קשר<span className="sr-only"> (נפתח בכרטיסייה חדשה)</span></a> : null}
+        {!native ? <a href="/contact" {...NEW_TAB} className={`inline-flex min-h-11 items-center rounded-[8px] px-2 hover:text-[#1B2656] ${FOCUS}`}>דברו איתנו<span className="sr-only"> (נפתח בכרטיסייה חדשה)</span></a> : null}
       </nav>
       <AccountActions />
     </footer>
@@ -98,13 +98,11 @@ function NativeLocked() {
         המידע שלכם שמור. לחידוש המנוי דברו איתנו.
       </p>
       <SavedLine />
-      <div className="mt-8 flex w-full max-w-[340px] flex-col gap-3">
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={`${BTN} bg-[#1B2656] text-white hover:bg-[#141d45]`}>
-          <MessageCircle className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-          שאלות? דברו איתנו
-          <span className="sr-only"> (נפתח בוואטסאפ)</span>
-        </a>
-      </div>
+      {/* iOS (Apple 3.1.1): the same words, but plain text with no link out of the app. */}
+      <p className="mt-8 flex w-full max-w-[340px] items-center justify-center gap-2 text-[16px] font-semibold text-[#1B2656]">
+        <MessageCircle className="h-5 w-5 shrink-0" strokeWidth={1.75} aria-hidden />
+        <span>שאלות? דברו איתנו: <bdi dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</bdi></span>
+      </p>
     </section>
   );
 }

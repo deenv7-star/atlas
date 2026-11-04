@@ -8,7 +8,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { setAssistantOpen, useAssistantOpen } from '@/assistant/launcher';
 import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, MoreHorizontal, Bell, LifeBuoy, Settings } from 'lucide-react';
 import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';

@@ -208,6 +208,7 @@ export default function InvoicesPage({ orgId }) {
           <div className="relative">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-400" />
             <Input
+              aria-label="חיפוש מסמך"
               placeholder="חיפוש לפי שם או מספר..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -329,7 +330,7 @@ export default function InvoicesPage({ orgId }) {
                             variant="ghost"
                             aria-label="מחיקה"
                             onClick={() => {
-                              askConfirm({ title: 'למחוק את הרישום?', description: 'רק הרישום ב-atlas יימחק. המסמך בתוכנת החשבונות שלכם נשאר.' })
+                              askConfirm({ title: 'למחוק את הרישום?', description: 'רק הרישום כאן יימחק. המסמך בתוכנת החשבונות שלכם נשאר.' })
                                 .then((ok) => { if (ok) deleteMutation.mutate(invoice.id); });
                             }}
                           >

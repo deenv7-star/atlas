@@ -5,7 +5,6 @@ import TrialBanner from '@/components/TrialBanner';
 import IOSInstallBanner from '@/components/app/IOSInstallBanner';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { cn } from '@/lib/utils';
-import { CommandPalette } from '@/components/ui/CommandPalette';
 import { QuickBookingProvider } from '@/components/app/QuickBooking';
 import { SkelLine } from '@/components/ds';
 import ConnectionNotice from '@/components/app/shell/ConnectionNotice';
@@ -16,6 +15,9 @@ import { useAssistantOpen } from '@/assistant/launcher';
 
 // Help bot + human handoff (supabase/functions/support-chat). Lazy: not part of the first paint.
 const SupportWidget = React.lazy(() => import('@/support/SupportWidget'));
+// Search palette (⌘K): not needed for the first paint (audit 04.11 #9). Mounted on first open or once the
+// browser is idle, so its own ⌘K listener is up a moment after the screen appears.
+const CommandPalette = React.lazy(() => import('@/components/ui/CommandPalette').then((m) => ({ default: m.CommandPalette })));
 // "שאלו את atlas" side panel / sheet (version B). Lazy and mounted only after the first open.
 const AssistantPanel = React.lazy(() => import('@/assistant/AssistantPanel'));
 
@@ -38,6 +40,15 @@ function LayoutContent({ children, currentPageName }) {
   const { user, logout } = useAuth();
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [paletteReady, setPaletteReady] = useState(false);
+  useEffect(() => {
+    if (paletteReady) return undefined;
+    if (commandPaletteOpen) { setPaletteReady(true); return undefined; }
+    const ric = window.requestIdleCallback || ((cb) => window.setTimeout(cb, 1500));
+    const cancel = window.cancelIdleCallback || window.clearTimeout;
+    const id = ric(() => setPaletteReady(true), { timeout: 3000 });
+    return () => cancel(id);
+  }, [commandPaletteOpen, paletteReady]);
   const queryClient = useQueryClient();
   const orgId = user?.organization_id ?? user?.org_id ?? null;
 
@@ -101,7 +112,11 @@ function LayoutContent({ children, currentPageName }) {
               onOpenCommandPalette={() => setCommandPaletteOpen(true)}
               onLogout={handleLogout}
             />
-            <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} orgId={orgId} />
+            {paletteReady ? (
+              <Suspense fallback={null}>
+                <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} orgId={orgId} />
+              </Suspense>
+            ) : null}
             <main id="atlas-main-scroll" className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(104px+env(safe-area-inset-bottom))] lg:pb-0">
               <ConnectionNotice />
               <ErrorBoundary section="layout-outlet" variant="page">

@@ -109,7 +109,7 @@ function PropertyEditor({ property, onSaved }) {
           <span className="ab-icon-tile"><Globe size={20} strokeWidth={1.75} /></span>
           <div className="flex-1 min-w-0">
             <h2 className="ab-h3">דף הזמנה ישירה</h2>
-            <p className="ab-meta mt-0.5">אורחים רואים תאריכים פנויים ושולחים בקשה. כל בקשה נכנסת ללידים, בלי עמלה.</p>
+            <p className="ab-meta mt-0.5">אורחים רואים תאריכים פנויים ושולחים בקשה. כל בקשה נכנסת לפניות, בלי עמלה.</p>
           </div>
           <Switch
             className="data-[state=checked]:bg-[#3E2BF1] shrink-0"

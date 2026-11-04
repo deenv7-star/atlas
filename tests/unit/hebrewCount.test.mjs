@@ -7,7 +7,7 @@ test('one → singular word with "אחד/אחת", no digit', () => {
   assert.equal(heCount(1, 'booking'), 'הזמנה אחת');
   assert.equal(heCount(1, 'night'), 'לילה אחד');
   assert.equal(heCount(1, 'guest'), 'אורח אחד');
-  assert.equal(heCount(1, 'lead'), 'ליד אחד');
+  assert.equal(heCount(1, 'lead'), 'פנייה אחת');
   assert.equal(heCount(1, 'property'), 'נכס אחד');
   assert.equal(heCount(1, 'complex'), 'מתחם אחד');
   assert.equal(heCount(1, 'message'), 'הודעה אחת');

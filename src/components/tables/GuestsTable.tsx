@@ -7,7 +7,7 @@ import { AtlasTable, type AtlasCsvColumn, actionsColumn, bookingStatusColumn, gu
 import { exportToCSV, LEAD_COLUMNS } from '@/lib/csvExport';
 
 const STATUS_OPTIONS = [
-  { value: 'NEW', label: 'חדש', color: 'bg-blue-100 text-blue-700 border border-blue-200' },
+  { value: 'NEW', label: 'חדשה', color: 'bg-blue-100 text-blue-700 border border-blue-200' },
   { value: 'CONTACTED', label: 'נוצר קשר', color: 'bg-yellow-100 text-yellow-700 border border-yellow-200' },
   { value: 'OFFER_SENT', label: 'הצעה נשלחה', color: 'bg-brand-100 text-brand-700 border border-brand-200' },
   { value: 'CONFIRMED', label: 'מאושר', color: 'bg-green-100 text-green-700 border border-green-200' },
@@ -144,11 +144,11 @@ export function GuestsTable(props: GuestsTableProps): React.ReactElement {
         enableMultiSort={!(sorting !== undefined && onSortingChange !== undefined)}
         stickyHeader
         virtualScroll={leads.length >= 400}
-        emptyMessage="עוד אין לידים כאן"
+        emptyMessage="עוד אין פניות כאן"
         csvExport={{ filename: 'guests', columns: csvColumns }}
         bulkBar={{
           onDeleteSelected: async (rows) => {
-            const ok = await askConfirm({ title: rows.length === 1 ? 'למחוק ליד אחד?' : `למחוק ${rows.length} לידים?`, description: 'הלידים יימחקו מהרשימה.' });
+            const ok = await askConfirm({ title: rows.length === 1 ? 'למחוק פנייה אחת?' : `למחוק ${rows.length} פניות?`, description: 'הפניות יימחקו מהרשימה.' });
             if (!ok) return;
             onBulkDelete(rows);
           },

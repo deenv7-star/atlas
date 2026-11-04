@@ -299,7 +299,7 @@ export function TeamCard({ data, onReset }) {
 export function PaymentsCard({ data }) {
   return (
     <section className="x-card" aria-labelledby="h-pay">
-      <div className="x-card-head"><h3 id="h-pay">תשלומים ל-atlas</h3><span className="x-muted x-small adm-num">{data.charges.length}</span></div>
+      <div className="x-card-head"><h3 id="h-pay">תשלומים שקיבלנו</h3><span className="x-muted x-small adm-num">{data.charges.length}</span></div>
       {data.charges.length ? (
         <ul className="x-list">
           {data.charges.slice(0, 10).map((x) => (

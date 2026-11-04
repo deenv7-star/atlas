@@ -14,9 +14,9 @@ import './growth-d.css';
 
 const G = '/demo/growth';
 const CHAPTERS = [
-  { h: 'דף הזמנה משלכם.', p: 'התמונות, הפרטים והמחיר של המתחם בכתובת אחת לשלוח לכל אורח.', src: `${G}/g-book.webp`, alt: 'דף ההזמנה הישירה של צימר הזית ב-atlas (נתוני דוגמה)' },
+  { h: 'דף הזמנה משלכם.', p: 'התמונות, הפרטים והמחיר של המתחם בכתובת אחת לשלוח לכל אורח.', src: `${G}/g-book.webp`, alt: 'דף ההזמנה הישירה של צימר הזית, נבנה עם atlas (נתוני דוגמה)' },
   { h: 'התאריכים הפנויים, מהיומן.', p: 'האורח בוחר תאריכים ורואה מחיר. מה שכבר תפוס ביומן מסומן כתפוס.', src: `${G}/g-book-dates.webp`, alt: 'בחירת תאריכים בדף ההזמנה: 26 עד 28 באוקטובר, 2 לילות, ₪2,200 (נתוני דוגמה)' },
-  { h: 'הפנייה נוחתת אצלכם.', p: 'ישר ללידים ב-atlas, ומשם לוואטסאפ בלחיצה. בלי עמלת ערוץ.', src: `${G}/g-leads.webp`, alt: 'מסך הלידים ב-atlas: פנייה חדשה של מיכל אברהם מהדף הישיר (נתוני דוגמה)' },
+  { h: 'הפנייה נוחתת אצלכם.', p: 'ישר לרשימת הלידים שלכם, ומשם לוואטסאפ בלחיצה. בלי עמלת ערוץ.', src: `${G}/g-leads.webp`, alt: 'מסך הלידים של atlas: פנייה חדשה של מיכל אברהם מהדף הישיר (נתוני דוגמה)' },
 ];
 const NEW_TAB = ' (וואטסאפ, נפתח בחלון חדש)';
 
@@ -58,13 +58,13 @@ export default function GrowthD() {
         <header className="gd-head">
           <p className="gd-kick">{GROWTH_NAME}</p>
           <h2 id="growth-title" className="gd-h">מהתמונות של המתחם <span className="gd-ind">להזמנה ישירה.</span></h2>
-          <p className="gd-lede">ככה זה נראה ב-atlas, היום. בלי עמלת ערוץ על מה שמגיע ישר אליכם.</p>
+          <p className="gd-lede">ככה זה נראה עם atlas, היום. בלי עמלת ערוץ על מה שמגיע ישר אליכם.</p>
         </header>
 
         <div className="gd-story">
           <div className="gd-stick">
             <Phone active={active} />
-            <p className="gd-ex">דוגמה, מסכים אמיתיים מ-atlas</p>
+            <p className="gd-ex">דוגמה, מסכים אמיתיים של atlas</p>
             {/* phones: the active chapter's words sit under the phone, inside the sticky area, so they are never
                 covered by it or by the sticky CTA. Visual copy only; the list below carries the text for screen readers. */}
             <div className="gd-cap" aria-hidden="true">

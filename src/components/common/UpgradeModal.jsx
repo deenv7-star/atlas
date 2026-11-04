@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { AlertCircle, Zap, Crown, Rocket, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { isNativeApp } from '@/lib/nativePlatform';
+import { LEGAL } from '@/config/legal';
 
 const PLAN_LIMITS = {
   starter: { properties: 2, icon: Zap },
@@ -20,11 +22,12 @@ const PLAN_NAMES = {
 
 export default function UpgradeModal({ open, onClose, currentPlan = 'starter', currentCount, entity = 'property' }) {
   const navigate = useNavigate();
+  const native = isNativeApp();
   const limit = PLAN_LIMITS[currentPlan]?.properties || 2;
   const CurrentIcon = PLAN_LIMITS[currentPlan]?.icon || Zap;
 
   const entityNames = {
-    property: { singular: 'נכס', plural: 'נכסים' }
+    property: { singular: 'יחידה', plural: 'יחידות' }
   };
 
   const entityName = entityNames[entity] || entityNames.property;
@@ -46,14 +49,14 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
             <AlertCircle className="h-7 w-7 text-white" />
           </div>
           <DialogTitle className="text-center text-2xl">
-            הגעת למגבלת התוכנית
+            הגעתם למספר היחידות בחבילה
           </DialogTitle>
           <DialogDescription className="text-center">
             <div className="space-y-4 mt-4">
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <CurrentIcon className="h-5 w-5 text-gray-600" />
-                  <span className="font-semibold text-[#1B2656]">תוכנית {PLAN_NAMES[currentPlan]}</span>
+                  <span className="font-semibold text-[#1B2656]">חבילת {PLAN_NAMES[currentPlan]}</span>
                 </div>
                 <p className="text-sm text-gray-600">
                   החבילה הנוכחית שלכם כוללת עד <span className="font-bold">{limit}</span> {entityName.plural}
@@ -63,9 +66,13 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
                 </p>
               </div>
 
+              {native ? (
+                // iOS app (Apple 3.1.1 / audit 04.11 C1): no plans and no way to buy from here.
+                <p className="text-sm text-gray-700">לשאלות על החבילה: <bdi dir="ltr">{LEGAL.SUPPORT_EMAIL}</bdi></p>
+              ) : (
               <div>
                 <p className="text-sm text-gray-700 mb-3">
-                  כדי להוסיף {entityName.plural} נוספים, שדרג לאחת מהתוכניות הבאות:
+                  כדי להוסיף עוד {entityName.plural}, אפשר לעבור לחבילה גדולה יותר:
                 </p>
                 <div className="space-y-2">
                   {availableUpgrades.map(upgrade => {
@@ -89,7 +96,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
                             onClose();
                           }}
                         >
-                          שדרג
+                          מעבר לחבילה
                           <ArrowLeft className="mr-1 h-3 w-3" />
                         </Button>
                       </div>
@@ -97,6 +104,7 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
                   })}
                 </div>
               </div>
+              )}
             </div>
           </DialogDescription>
         </DialogHeader>
@@ -109,16 +117,18 @@ export default function UpgradeModal({ open, onClose, currentPlan = 'starter', c
           >
             ביטול
           </Button>
-          <Button
-            className="flex-1 bg-[#3E2BF1] text-white hover:opacity-90"
-            onClick={() => {
-              navigate(createPageUrl('Billing'));
-              onClose();
-            }}
-          >
-            צפה בתוכניות
-            <ArrowLeft className="mr-2 h-4 w-4" />
-          </Button>
+          {native ? null : (
+            <Button
+              className="flex-1 bg-[#3E2BF1] text-white hover:opacity-90"
+              onClick={() => {
+                navigate(createPageUrl('Billing'));
+                onClose();
+              }}
+            >
+              לחבילות
+              <ArrowLeft className="mr-2 h-4 w-4" />
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>

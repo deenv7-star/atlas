@@ -8,16 +8,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { waLink, logSubjectFor, normalizePhone } from '@/lib/stay/whatsapp';
 import { STAY_KEYS } from '@/hooks/useStayData';
+import { openExternal } from '@/lib/openExternal';
 
 export function useWhatsAppSend({ orgId } = {}) {
   const qc = useQueryClient();
 
   return useCallback(async ({ booking, property, templateKey, text }) => {
     const url = waLink(booking?.guest_phone, text);
-    const win = window.open(url, '_blank', 'noopener,noreferrer');
-    if (!win && typeof window !== 'undefined' && window.navigator?.userAgent?.includes('Capacitor')) {
-      window.location.href = url;
-    }
+    openExternal(url); // iOS app: handed to the system by Capacitor; web: new tab (audit 04.11 M10)
     const entry = {
       booking_id: booking?.id || null,
       direction: 'outbound',

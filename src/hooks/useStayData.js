@@ -8,6 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { STALE_LIVE_MS, STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 import { groupPaymentsByBooking } from '@/lib/stay/bookings';
 import { DB_FEATURES, isMissingSchemaError } from '@/config/dbFeatures';
+import { loadStateOf } from '@/lib/stay/loadState';
 
 export const STAY_KEYS = {
   bookings: ['stay', 'bookings'],
@@ -87,6 +88,15 @@ export function useStayData({ withExpenses = false, withCleaning = true } = {}) 
     propertyById,
     paymentsByBooking,
     sentByBooking,
+    /**
+     * Audit 04.11 #2: `payments` above is [] while the query is loading, hanging or failed, which reads as
+     * "nothing paid / everything owed". Money screens must check this first ('ready' | 'stale' | 'loading' | 'error').
+     */
+    paymentsState: loadStateOf(paymentsQ),
+    bookingsState: loadStateOf(bookingsQ),
+    propertiesState: loadStateOf(propertiesQ),
+    /** The three main queries, for the quiet "not updated" mark (StaleIndicator). */
+    queries: [bookingsQ, propertiesQ, paymentsQ],
     isLoading: bookingsQ.isLoading || propertiesQ.isLoading || paymentsQ.isLoading,
     isError: bookingsQ.isError || propertiesQ.isError || paymentsQ.isError,
     error: bookingsQ.error || propertiesQ.error || paymentsQ.error,
