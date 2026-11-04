@@ -97,6 +97,35 @@ workflows:
           agvtool new-version -all "$NEW_BUILD"
           agvtool new-marketing-version "$MARKETING_VERSION"
 
+      - name: Live App Store profile with Push
+        # The profile stored in Codemagic's code signing identities predates the Push capability (no aps-environment),
+        # so a build with AppRelease.entitlements cannot archive with it. Download the ACTIVE "atlas App Store" profile
+        # (regenerated with Push on 04.11.2026) from App Store Connect and use it instead, on this build machine only.
+        # Nothing in Codemagic or Apple is deleted.
+        script: |
+          set -e
+          PDIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          TMP=$(mktemp -d)
+          app-store-connect profiles list --type IOS_APP_STORE --state ACTIVE --name "atlas App Store" --save --profiles-dir "$TMP"
+          has_push() { security cms -D -i "$1" 2>/dev/null | plutil -extract Entitlements.aps-environment raw -o - - >/dev/null 2>&1; }
+          app_id() { security cms -D -i "$1" 2>/dev/null | plutil -extract Entitlements.application-identifier raw -o - - 2>/dev/null; }
+          FOUND=""
+          for f in "$TMP"/*.mobileprovision; do
+            [ -f "$f" ] || continue
+            echo "live profile: $(basename "$f") app-id=$(app_id "$f")"
+            if has_push "$f" && app_id "$f" | grep -q "\.$BUNDLE_ID$"; then FOUND="$f"; fi
+          done
+          if [ -z "$FOUND" ]; then
+            echo "No ACTIVE App Store profile for $BUNDLE_ID with aps-environment in App Store Connect."
+            exit 1
+          fi
+          for f in "$PDIR"/*.mobileprovision; do
+            [ -f "$f" ] || continue
+            if app_id "$f" | grep -q "\.$BUNDLE_ID$" && ! has_push "$f"; then echo "set aside (no Push): $(basename "$f")"; mv "$f" "$TMP/stale-$(basename "$f")"; fi
+          done
+          cp "$FOUND" "$PDIR/"
+          echo "Using live profile with Push: $(basename "$FOUND")"
+
       - name: Set up code signing profiles
         script: |
           xcode-project use-profiles \
