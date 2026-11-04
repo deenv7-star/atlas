@@ -117,7 +117,7 @@ export default function DashboardView({ user, orgId }) {
   const heroUnit = hero ? m.prop(hero.property_id) : null;
   const heroBal = hero ? m.balanceFor(hero) : null;
   const q3 = m.queue.slice(0, 3);
-  const dueCount = m.pending.length;
+  const dueCount = m.owed.length;
 
   const go = (a) => { setGoing(a.id); m.doItem(a); setTimeout(() => setGoing(null), 900); };
   const today = [...departures.map((x) => ({ ...x, dir: 'out' })), ...arrivals.map((x) => ({ ...x, dir: 'in' }))];
@@ -160,8 +160,8 @@ export default function DashboardView({ user, orgId }) {
               <p className="y2-tn"><Num value={arrivals.length} /><span>אורחים · {departures.length} יוצאים</span></p>
             </motion.div>
             <motion.div className="y2-tile" {...rise(2)}>
-              <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label={`נכנס ב${m.money.month}: פירוט`} onClick={() => setTileSheet('income')} />
-              <p className="y2-tk">נכנס ב{m.money.month}</p>
+              <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label={`הכנסות ${m.money.month} מהזמנות החודש: פירוט`} onClick={() => setTileSheet('income')} />
+              <p className="y2-tk">הכנסות {m.money.month}</p>
               <div className="y2-tile-viz"><Wave values={[...wave].reverse()} h={50} /></div>
               <p className="y2-tn"><Num value={m.money.received} pre="₪" delay={80} /></p>
             </motion.div>

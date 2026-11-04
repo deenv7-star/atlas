@@ -11,7 +11,7 @@ import { base44 } from '@/api/base44Client';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
 import { todayISO, addDays, firstName } from '@/lib/stay/format';
-import { isActiveBooking, balanceOf, channelOf } from '@/lib/stay/bookings';
+import { isActiveBooking, balanceOf, channelOf, openBalances } from '@/lib/stay/bookings';
 import { monthlyRevenue } from '@/components/today/RevenueChart';
 import { checkInTime, checkOutTime } from '@/components/today/TodayBoard';
 import { heCount } from '@/lib/hebrewCount';
@@ -86,7 +86,11 @@ export function useTodayModel({ orgId } = {}) {
     };
   }, [data.bookings, data.properties, data.paymentsByBooking, moneyKnown]);
 
+  // Reminders in today's queue: balances that matter now (overdue, arriving within 3 days, in house).
   const pending = moneyKnown ? board.balances : [];
+  // The "ממתינים לתשלום" tile + sheet: everything guests still owe, same definition as the Money page.
+  const owedAll = useMemo(() => openBalances(data.bookings, data.paymentsByBooking, day), [data.bookings, data.paymentsByBooking, day]);
+  const owed = moneyKnown ? owedAll.items : [];
   const next = messages[0]
     ? { kind: 'message', ...messages[0] }
     : openCleanings[0] ? { kind: 'cleaning', c: openCleanings[0] }
@@ -189,7 +193,7 @@ export function useTodayModel({ orgId } = {}) {
   return {
     day, tomorrow, data, board, boardT, prop, paysOf, sentOf, messages, openCleanings, leads, pending,
     queue, queueAll, doItem, doneCount, doneItems, isDone: (id) => doneMap.has(id), total: queue.length + doneMap.size,
-    pendingTotal: moneyKnown ? board.openBalanceTotal : null, money: money_, next, rowsFor, markCleaned,
+    pendingTotal: moneyKnown ? owedAll.total : null, owed, money: money_, next, rowsFor, markCleaned,
     moneyKnown, paymentsState: data.paymentsState, retryLoad: data.refetch,
     markSent: (bid, key) => setSentNow((s) => new Set(s).add(`${bid}:${key}`)),
     balanceFor: (b) => {
