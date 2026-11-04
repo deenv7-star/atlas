@@ -20,6 +20,7 @@ import { useWhatsAppSend } from '@/hooks/useWhatsAppSend';
 import { renderTemplate, templateByKey, waLink } from '@/lib/stay/whatsapp';
 import { canShowValues } from '@/lib/stay/loadState';
 import { monthOccupancy } from '@/lib/stay/occupancy';
+import { openExternal } from '@/lib/openExternal';
 
 export const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 
@@ -175,7 +176,7 @@ export function useTodayModel({ orgId } = {}) {
         await markCleaned(q.c, { silent: true });
       } else if (q.kind === 'lead') {
         const first = firstName(q.lead.full_name) || '';
-        window.open(waLink(q.lead.phone, `שלום${first ? ` ${first}` : ''}, תודה שפניתם. `), '_blank', 'noopener,noreferrer');
+        openExternal(waLink(q.lead.phone, `שלום${first ? ` ${first}` : ''}, תודה שפניתם. `));
         try { await base44.entities.Lead.update(q.lead.id, { status: 'CONTACTED' }); } catch { /* the reply itself already went out */ }
       }
     } catch { /* the message opened in WhatsApp even if saving the log failed */ }

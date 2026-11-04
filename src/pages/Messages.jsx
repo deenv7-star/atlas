@@ -17,6 +17,7 @@ import { format, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { STALE_LIVE_MS } from '@/lib/queryStaleTimes';
+import { openExternal } from '@/lib/openExternal';
 
 const CHANNEL_LABELS = {
   whatsapp: 'WhatsApp',
@@ -112,7 +113,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
     const phone = currentThread.messages.map((m) => m.recipient).filter(Boolean).pop() || '';
     const isWa = String(currentThread.channel || 'whatsapp').toLowerCase().includes('whatsapp');
     if (isWa) {
-      window.open(waLink(phone, replyText.trim()), '_blank', 'noopener,noreferrer');
+      openExternal(waLink(phone, replyText.trim()));
     }
     sendMutation.mutate({
       guest_name: currentThread.guest_name,
