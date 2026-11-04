@@ -9,6 +9,14 @@
  */
 import { takePrimedAudio } from './prime.js';
 
+/** Mic peak (0..1, after the worklet's ×1.6) above which the owner is talking over atlas. */
+export const BARGE_IN_LEVEL = 0.32;
+/** Server error codes that end the conversation. Everything else (e.g. a response.create that raced an
+ *  active response) is logged and ignored: one hiccup must never close the call. */
+export const FATAL_ERRORS = new Set(['session_expired', 'invalid_api_key', 'authentication_error', 'unauthorized', 'session_not_found', 'invalid_client_secret']);
+/** After the owner stops talking, how long to wait for atlas to start answering before nudging it once. */
+export const ANSWER_WATCHDOG_MS = 3500;
+
 const b64 = (buf) => { let s = ''; const u = new Uint8Array(buf); for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
 const unb64 = (str) => { const bin = atob(str); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i += 1) u[i] = bin.charCodeAt(i); return u.buffer; };
 /** Eleven Realtime transcripts carry expressive tags ("[Warm] …"): never show them. */
@@ -33,7 +41,15 @@ export class VoiceAudio {
     await this.ctx.audioWorklet.addModule('/voice-capture-worklet.js');
     const src = this.ctx.createMediaStreamSource(this.stream);
     this.node = new AudioWorkletNode(this.ctx, 'atlas-capture');
-    this.node.port.onmessage = (e) => { this.level = this.level * 0.6 + (e.data.level || 0) * 0.4; this.onChunk?.(e.data.pcm); };
+    this.node.port.onmessage = (e) => {
+      const lv = e.data.level || 0;
+      this.level = this.level * 0.6 + lv * 0.4;
+      // Echo gate: while atlas speaks, the phone speaker leaks into the mic (WKWebView does not echo-cancel
+      // Web Audio playback). Unless the owner is clearly talking over it, send silence so atlas does not
+      // "hear itself", cut its own answer and then answer nothing. A real barge-in is loud and still goes through.
+      const gate = this.speaking && lv < BARGE_IN_LEVEL;
+      this.onChunk?.(gate ? new Int16Array(e.data.pcm.byteLength / 2).buffer : e.data.pcm);
+    };
     src.connect(this.node);
     this.out = this.ctx.createGain(); this.out.connect(this.ctx.destination);
     this.analyser = this.ctx.createAnalyser(); this.analyser.fftSize = 256; this.out.connect(this.analyser);
@@ -80,6 +96,10 @@ export class VoiceAudio {
 export class RealtimeLink {
   constructor({ secret, url, model, audio, on }) {
     this.on = on; this.audio = audio; this.closedByUs = false; this.atlasText = ''; this.pendingTools = 0;
+    this.active = false;      // a response is in progress on the server
+    this.toolOutputs = 0;     // outputs sent since the last response; answer them once the response is done
+    this.watch = 0;           // watchdog timer: a turn that got no answer
+    this.nudged = false;
     this.ws = new WebSocket(`${url}?model=${encodeURIComponent(model)}`, ['realtime', `openai-insecure-api-key.${secret}`]);
     this.ws.onopen = () => on.open?.();
     this.ws.onmessage = (m) => { let ev; try { ev = JSON.parse(m.data); } catch { return; } this.handle(ev); };
@@ -98,32 +118,64 @@ export class RealtimeLink {
   }
   sayText(text) { // typed fallback inside a voice session
     this.send({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text }] } });
-    this.send({ type: 'response.create' });
+    this.respond();
+  }
+  /** Ask for an answer only when none is running (a second response.create errors on the server). */
+  respond() {
+    if (this.active) { this.toolOutputs = Math.max(this.toolOutputs, 1); return; }
+    this.active = true; this.send({ type: 'response.create' });
+  }
+  /** The owner finished a turn: if atlas has not started answering soon, nudge once, then let the UI say so. */
+  arm() {
+    clearTimeout(this.watch); this.nudged = false;
+    this.watch = setTimeout(() => {
+      if (this.active || this.pendingTools) return;
+      this.nudged = true; this.respond();
+      this.watch = setTimeout(() => { if (!this.active && !this.pendingTools) this.on.state?.('listening'); this.on.unanswered?.(); }, ANSWER_WATCHDOG_MS);
+    }, ANSWER_WATCHDOG_MS);
   }
   async handle(ev) {
     const { on } = this;
     switch (ev.type) {
-      case 'input_audio_buffer.speech_started': this.audio.flush(); on.state?.('hearing'); break;
-      case 'input_audio_buffer.speech_stopped': on.state?.('thinking'); break;
+      case 'input_audio_buffer.speech_started': clearTimeout(this.watch); this.audio.flush(); on.state?.('hearing'); break;
+      case 'input_audio_buffer.speech_stopped': on.state?.('thinking'); this.arm(); break;
       case 'conversation.item.input_audio_transcription.completed': if (ev.transcript) on.user?.(cleanCaption(ev.transcript).trim()); break;
-      case 'response.output_audio.delta': case 'response.audio.delta': on.state?.('speaking'); this.audio.play(unb64(ev.delta)); break;
+      case 'response.created': this.active = true; clearTimeout(this.watch); break;
+      case 'response.output_audio.delta': case 'response.audio.delta': clearTimeout(this.watch); on.state?.('speaking'); this.audio.play(unb64(ev.delta)); break;
       case 'response.output_audio_transcript.delta': case 'response.audio_transcript.delta':
         this.atlasText += ev.delta || ''; on.atlas?.(cleanCaption(this.atlasText), false); break;
       case 'response.output_audio_transcript.done': case 'response.audio_transcript.done':
         on.atlas?.(cleanCaption(ev.transcript || this.atlasText).trim(), true); this.atlasText = ''; break;
       case 'response.function_call_arguments.done': {
-        this.pendingTools += 1; on.state?.('thinking');
+        this.pendingTools += 1; clearTimeout(this.watch); on.state?.('thinking');
         let output;
-        try { output = await on.tool?.(ev.name, ev.arguments, ev.call_id); } catch { output = { error: 'lookup_failed' }; }
+        try { output = await on.tool?.(ev.name, ev.arguments, ev.call_id); } catch { output = { error: 'lookup_failed', say: 'אמרו שלא הצלחתם לבדוק כרגע והציעו צעד אחר.' }; }
         this.send({ type: 'conversation.item.create', item: { type: 'function_call_output', call_id: ev.call_id, output: JSON.stringify(output ?? {}) } });
-        this.pendingTools -= 1;
-        if (!this.pendingTools) this.send({ type: 'response.create' });
+        this.pendingTools -= 1; this.toolOutputs += 1;
+        // answer the tool results once: now if the model's response already ended, else on response.done
+        if (!this.pendingTools && !this.active) { this.toolOutputs = 0; this.respond(); }
         break;
       }
-      case 'response.done': if (!this.pendingTools) setTimeout(() => { if (!this.audio.speaking) on.state?.('listening'); }, 120); break;
-      case 'error': on.error?.(ev.error?.code === 'session_expired' ? 'expired' : 'upstream', ev.error); break;
+      case 'response.done': {
+        this.active = false;
+        const st = ev.response?.status;
+        if (this.toolOutputs && !this.pendingTools) { this.toolOutputs = 0; this.respond(); break; }
+        if (this.pendingTools) break;
+        // a response that ended with no words (failed / cut / empty): ask once more instead of leaving silence
+        const said = (ev.response?.output || []).some((o) => o.type === 'function_call' || (o.content || []).some((c) => c.transcript || c.text));
+        if ((st === 'failed' || st === 'incomplete' || !said) && st !== 'cancelled' && !this.nudged) { this.nudged = true; this.respond(); break; }
+        setTimeout(() => { if (!this.audio.speaking && !this.active) on.state?.('listening'); }, 120);
+        break;
+      }
+      case 'error': {
+        const code = ev.error?.code || ev.error?.type || '';
+        if (FATAL_ERRORS.has(code)) { on.error?.(code === 'session_expired' ? 'expired' : 'upstream', ev.error); break; }
+        if (/active_response|already has an active response/i.test(`${code} ${ev.error?.message || ''}`)) this.active = true;
+        console.warn('[atlas voice] ignored', code || ev.error?.message); // eslint-disable-line no-console
+        break;
+      }
       default: break;
     }
   }
-  close() { this.closedByUs = true; try { this.ws.close(1000); } catch { /* */ } }
+  close() { clearTimeout(this.watch); this.closedByUs = true; try { this.ws.close(1000); } catch { /* */ } }
 }

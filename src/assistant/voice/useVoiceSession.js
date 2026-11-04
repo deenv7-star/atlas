@@ -17,9 +17,16 @@ import { startVoiceSession, endVoiceSession, runVoiceTool, VoiceError, VOICE_ERR
 import { VoiceAudio, RealtimeLink } from './realtime.js';
 import { RENEW_BEFORE_S } from './config.js';
 import { demoAnswer, demoProposal } from '../demoAnswer.js';
+import { PLATFORM } from '../api.js';
 import { statusLine } from './status.js';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
+/** The last turns, for a renewed / reconnected slice (or a switch from writing to voice). */
+export const summaryOf = (turns) => turns.filter((t) => t.final && t.text).slice(-6).map((t) => `${t.role === 'user' ? 'הבעלים' : 'atlas'}: ${t.text}`).join('\n');
+/** Is the microphone already blocked? (no prompt is shown when it is; go straight to writing) */
+async function micBlocked() {
+  try { const r = await navigator.permissions?.query({ name: 'microphone' }); return r?.state === 'denied'; } catch { return false; }
+}
 const plain = (md) => String(md || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '').replace(/[*_#>|`]/g, '').replace(/^-{3,}.*$/gm, '').replace(/\n{2,}/g, '\n').split('\n').filter((l) => l.trim() && !/^\s*-+\s*$/.test(l)).slice(0, 2).join(' ').trim();
 
 export function useVoiceSession({ facts, page = '' }) {
@@ -30,6 +37,8 @@ export function useVoiceSession({ facts, page = '' }) {
   const [muted, setMuted] = useState(false);
   const [error, setError] = useState(null);
   const [left, setLeft] = useState(null); // seconds left today (live) or null
+  const [note, setNote] = useState('');   // a soft line under the state ("לא שמענו טוב…"), never an error
+  const reconnected = useRef(false);
   const audio = useRef(null);
   const link = useRef(null);
   const slice = useRef(null); // { id, endsAt, remaining }
@@ -37,6 +46,8 @@ export function useVoiceSession({ facts, page = '' }) {
   const alive = useRef(true);
   const turnsRef = useRef([]);
   turnsRef.current = turns;
+  const stateRef = useRef('idle');
+  stateRef.current = state;
   const demoT = useRef(0);
 
   const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.current.push(t); return t; };
@@ -75,24 +86,36 @@ export function useVoiceSession({ facts, page = '' }) {
           prev?.close();
           setState((st) => (st === 'connecting' ? 'listening' : st));
         },
-        state: (st) => alive.current && setState(st),
+        state: (st) => { if (!alive.current) return; setState(st); if (st === 'hearing' || st === 'speaking') setNote(''); },
+        unanswered: () => alive.current && setNote('לא שמענו טוב. אפשר לחזור על השאלה?'),
         user: addUser,
         atlas: upsertAtlas,
         tool: onTool,
         error: (code) => { if (link.current === next || !link.current) fail(code === 'expired' ? 'upstream' : code); },
-        closed: ({ byUs }) => { if (!byUs && link.current === next && alive.current) setState((st) => (st === 'error' ? st : 'ended')); },
+        closed: ({ byUs }) => {
+          if (byUs || link.current !== next || !alive.current) return;
+          // the socket dropped (network, slice ended early): reconnect once, quietly, with what was said
+          if (!reconnected.current) {
+            reconnected.current = true; setState('connecting');
+            openSlice({ resume: summaryOf(turnsRef.current) }).catch(() => setState((st) => (st === 'error' ? st : 'ended')));
+            return;
+          }
+          setState((st) => (st === 'error' ? st : 'ended'));
+        },
       },
     });
     slice.current = { id: s.session_id, endsAt: Date.now() + s.seconds * 1000, remaining: s.remaining_today };
     setLeft(s.remaining_today + s.seconds);
     // renew before the slice ends, while there is budget left
     if (s.remaining_today >= 15) {
-      later(async () => {
+      const renew = async (waited = 0) => {
         if (!alive.current) return;
+        // never cut atlas mid-answer: wait (up to 15 s) for a quiet moment before moving to the next slice
+        if (waited < 15 && (stateRef.current === 'speaking' || stateRef.current === 'thinking' || stateRef.current === 'hearing')) { later(() => renew(waited + 1), 1000); return; }
         const prevId = slice.current?.id;
-        const summary = turnsRef.current.filter((t) => t.final).slice(-6).map((t) => `${t.role === 'user' ? 'הבעלים' : 'atlas'}: ${t.text}`).join('\n');
-        try { await openSlice({ resume: summary }); endVoiceSession(prevId); } catch (e) { if (e?.code === 'daily_limit') setLeft(0); }
-      }, Math.max(5, s.seconds - RENEW_BEFORE_S) * 1000);
+        try { await openSlice({ resume: summaryOf(turnsRef.current) }); endVoiceSession(prevId); } catch (e) { if (e?.code === 'daily_limit') setLeft(0); }
+      };
+      later(() => renew(0), Math.max(5, s.seconds - RENEW_BEFORE_S) * 1000);
     }
     return next;
   }, [page, addUser, upsertAtlas, onTool, fail]);
@@ -100,7 +123,7 @@ export function useVoiceSession({ facts, page = '' }) {
   /* ── demo: scripted, from the local snapshot only ── */
   const runDemo = useCallback(() => {
     const q1 = 'מי מגיע היום?';
-    const a1 = plain(demoAnswer(q1, facts)) || 'היום אין כניסות.';
+    const a1 = plain(demoAnswer(q1, facts, { native: PLATFORM === 'ios' })) || 'היום אין כניסות.';
     const q2 = 'תכינו הזמנה חדשה לנועה לסוף השבוע';
     const p2 = demoProposal(q2, facts);
     const step = (ms, fn) => later(() => alive.current && fn(), (demoT.current += ms));
@@ -118,13 +141,15 @@ export function useVoiceSession({ facts, page = '' }) {
     }
   }, [facts, addUser, upsertAtlas]);
 
-  /** Review only (demo builds): ?voiceShot=listening|hearing|thinking|speaking|confirm|whatsapp|error freezes one moment. */
+  /** Review only (demo builds): ?voiceShot=listening|hearing|thinking|speaking|confirm|whatsapp|denied|error|text freezes one moment. */
   const shot = useCallback((name) => {
     const q1 = 'מי מגיע היום?';
     const a1 = plain(demoAnswer(q1, facts)) || 'היום אין כניסות.';
     const q2 = 'תכינו הזמנה חדשה לנועה לסוף השבוע';
     const p2 = demoProposal(q2, facts);
-    if (name === 'error') { setError({ code: 'mic_denied', message: VOICE_ERRORS.mic_denied }); setState('error'); return; }
+    if (name === 'denied') { setError({ code: 'mic_denied', message: VOICE_ERRORS.mic_denied }); setState('error'); return; }
+    if (name === 'error') { setError({ code: 'network', message: VOICE_ERRORS.network }); setState('error'); return; }
+    if (name === 'text') { setState('ended'); return; }
     if (name === 'listening') { setState('listening'); return; }
     if (name === 'hearing') { setTurns([]); setState('hearing'); return; }
     addUser(q1);
@@ -140,17 +165,19 @@ export function useVoiceSession({ facts, page = '' }) {
     setState('listening');
   }, [facts, addUser, upsertAtlas]);
 
-  const start = useCallback(async () => {
-    setError(null); setState('connecting');
+  /** start({ resume }) — call inside the tap. `resume`: what was already said in writing, so voice continues it. */
+  const start = useCallback(async ({ resume = '' } = {}) => {
+    setError(null); setNote(''); setState('connecting'); reconnected.current = false; alive.current = true;
     if (ASSISTANT_DEMO) {
       const frozen = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('voiceShot') : null;
       if (frozen) shot(frozen); else runDemo();
       return;
     }
     try {
+      if (await micBlocked()) { const e = new Error('mic'); e.code = 'mic_denied'; throw e; }
       audio.current = new VoiceAudio();
       await audio.current.start();
-      await openSlice();
+      await openSlice({ resume });
     } catch (e) {
       audio.current?.stop();
       fail(e instanceof VoiceError ? e.code : e?.code || 'upstream');
@@ -166,7 +193,22 @@ export function useVoiceSession({ facts, page = '' }) {
   }, []);
 
   const toggleMute = useCallback(() => setMuted((m) => { audio.current?.setMuted(!m); return !m; }), []);
-  const sendText = useCallback((text) => { const t = String(text || '').trim(); if (!t || !link.current) return false; addUser(t); link.current.sayText(t); return true; }, [addUser]);
+  const sendText = useCallback((text) => {
+    const t = String(text || '').trim();
+    if (!t) return false;
+    if (ASSISTANT_DEMO) { // the in-browser stand-in answers a tapped next step the same way
+      addUser(t); setState('thinking');
+      const p = demoProposal(t, facts);
+      later(() => {
+        if (!alive.current) return;
+        if (p) setProposals((list) => [...list, { ...p, state: 'proposed' }].slice(-3));
+        upsertAtlas(p ? p.say : plain(demoAnswer(t, facts, { native: PLATFORM === 'ios' })), true); setState('listening');
+      }, 900);
+      return true;
+    }
+    if (!link.current) return false;
+    addUser(t); link.current.sayText(t); return true;
+  }, [addUser, upsertAtlas, facts]);
   const resolveProposal = useCallback((i, st, result = null) => setProposals((list) => list.map((p, j) => (j === i ? { ...p, state: st, result } : p))), []);
 
   /** Visual levels; demo animates calmly so the screen can be reviewed without a mic. */
@@ -193,5 +235,5 @@ export function useVoiceSession({ facts, page = '' }) {
 
   useEffect(() => () => { alive.current = false; timers.current.forEach(clearTimeout); link.current?.close(); audio.current?.stop(); endVoiceSession(slice.current?.id); }, []);
 
-  return { state, toolLine, turns, proposals, muted, error, left, start, end, toggleMute, sendText, resolveProposal, levels, demo: ASSISTANT_DEMO };
+  return { state, toolLine, note, turns, proposals, muted, error, left, start, end, toggleMute, sendText, resolveProposal, levels, demo: ASSISTANT_DEMO };
 }
