@@ -112,7 +112,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   const { data: properties = [] } = useProperties();
   const { data: bookingOptions = [] } = useQuery({
     queryKey: ['bookings', orgId],
-    queryFn: () => base44.entities.Booking.filter({ org_id: orgId }, '-created_at', 300),
+    queryFn: () => base44.entities.Booking.filter({}, '-created_at', 300), // same scope as the payments list (RLS)
     enabled: !!orgId,
     staleTime: 2 * 60 * 1000,
   });
