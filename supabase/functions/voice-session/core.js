@@ -4,7 +4,7 @@ import { realtimeTools } from '../_shared/brain/tools.js';
 
 export const VOICE = {
   model: 'eleven_realtime_v1_max',
-  voice: 's0T0DT6EAPeX57MQpn3I', // "Danit - Natural Israeli Hebrew" (library voice, female, native Hebrew); in the workspace of the ELEVENLABS_API_KEY secret (picked 04.11.2026)
+  voice: 'enR7mijIG1cHGbbpygXW', // "אירה" (Ira, account voice, female, Hebrew; Deen's pick 04.11.2026 23:27). Before: s0T0DT6EAPeX57MQpn3I "Danit"
   dailySeconds: 30 * 60,          // 30 minutes a day per user
   sliceSeconds: 180,              // one secret = one slice (the cap); charged by seconds actually used (032_voice_usage_actual.sql)
   secretTtl: 60,                  // the secret must be used within a minute

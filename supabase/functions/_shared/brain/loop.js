@@ -18,7 +18,7 @@ export const statusFor = (name) => STATUS[name] || PERSONA.checking;
 export function openaiChat({ apiKey, model, effort = 'none', fetchImpl = fetch, user }) {
   return async (messages, signal, opts = {}) => {
     const body = JSON.stringify({ model, messages, tools: chatTools(), tool_choice: opts.noTools ? 'none' : 'auto', parallel_tool_calls: true,
-      reasoning_effort: effort, max_completion_tokens: 1600, prompt_cache_key: 'atlas-brain-v6', safety_identifier: user });
+      reasoning_effort: effort, max_completion_tokens: 1600, prompt_cache_key: 'atlas-brain-v7', safety_identifier: user });
     for (let attempt = 0; ; attempt += 1) {
       let res;
       try {
