@@ -1,10 +1,10 @@
 /**
- * Nav C (fix/today-tiles-c, 04.11.2026): "עוד" in the phone tab bar opens this sheet. Built for owners who are not
+ * "כל המסכים" (fix/today-tiles-c, 04.11.2026): "עוד" in the phone tab bar and in the desktop rail opens this sheet. Built for owners who are not
  * technical: one search field on top, three quick actions, then every screen as a big labelled tile. Nothing is
  * hidden in a menu any more. Bottom sheet on the phone (grabber, 44px close), centred card from 640px.
  * Uses Radix Dialog directly (not the shared sheet component) so it owns its own look.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as D from '@radix-ui/react-dialog';
 import { X, Search, Plus, Receipt, UserPlus, LifeBuoy, ChevronLeft } from 'lucide-react';
@@ -14,7 +14,7 @@ import { DB_FEATURES } from '@/config/dbFeatures';
 import { useNavGroups, useIsActive } from '@/components/app/shell/shared';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
-import './y-nav-c.css';
+import './y-more-sheet.css';
 
 /** Extra words people type for a screen, so "ניקיון" or "קבלה" finds the right tile. */
 const ALIASES = {
@@ -31,10 +31,41 @@ const ALIASES = {
   RevenueIntelligence: 'הכנסות דוח',
 };
 
+/** Open state lives outside React so the rail, the tab bar and the sheet share it without prop drilling. */
+let moreOpen = false;
+const subs = new Set();
+const setMore = (v) => { if (moreOpen === v) return; moreOpen = v; subs.forEach((f) => f()); };
+export const openMore = () => setMore(true);
+export function useMoreOpen() {
+  return useSyncExternalStore((cb) => { subs.add(cb); return () => subs.delete(cb); }, () => moreOpen, () => false);
+}
+
+/** What each layout already shows, so the sheet lists only the rest. Phone: the tab bar. Desktop: the rail. */
+const ON_PHONE_BAR = ['Dashboard', 'MultiCalendar', 'Leads'];
+const ON_RAIL = ['Dashboard', 'MultiCalendar', 'Bookings', 'Leads', 'Payments', 'Settings'];
+const DESKTOP_Q = '(min-width: 1024px)';
+function useDesktop() {
+  return useSyncExternalStore(
+    (cb) => { const mq = window.matchMedia(DESKTOP_Q); mq.addEventListener('change', cb); return () => mq.removeEventListener('change', cb); },
+    () => window.matchMedia(DESKTOP_Q).matches, () => false,
+  );
+}
+
+/** Mounted once (from the tab bar). Also opens on the 'atlas:open-more' event other menus fire. */
+export function MoreSheetHost({ user }) {
+  const open = useMoreOpen();
+  const desktop = useDesktop();
+  useEffect(() => {
+    window.addEventListener('atlas:open-more', openMore);
+    return () => window.removeEventListener('atlas:open-more', openMore);
+  }, []);
+  return <MoreSheet open={open} onOpenChange={setMore} user={user} exclude={desktop ? ON_RAIL : ON_PHONE_BAR} />;
+}
+
 /** Order the owner reaches for most; what is not listed keeps the nav map's order after it. */
 const FIRST = ['Bookings', 'Payments', 'Messages', 'Cleaning', 'Reviews', 'Settings'];
 
-export function MoreSheetC({ open, onOpenChange, user, exclude = [] }) {
+export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
   const navigate = useNavigate();
   const quick = useQuickBooking();
   const isActive = useIsActive();

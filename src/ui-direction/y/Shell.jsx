@@ -3,7 +3,7 @@
  * green-hills photo (TodayBackdrop), every other screen over the calm canvas; a frosted vertical rail (desktop),
  * a floating toolbar on top, and a glass capsule at the bottom on the phone. Active item: a white pill, indigo icon. lucide 1.75, nothing filled under icons.
  */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
@@ -15,8 +15,8 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useHelpUnread, openHelp, HELP_ENABLED } from '@/support/openHelp';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { MoreSheetC } from './MoreSheetC';
-import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';
+import { MoreSheetHost, openMore, useMoreOpen } from './MoreSheet';
+import { Wordmark, useIsActive, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { useLiquidLens } from './useLiquidLens';
@@ -29,21 +29,13 @@ import './y-nav.css';
 export const shellClass = 'y2-shell';
 
 /**
- * fix/today-tiles (04.11.2026, Deen: top bar and tab bar feel overloaded). Two phone navs to pick from:
- *   A "מינימלי": logo · + · avatar. Search, notifications and all screens live in the avatar menu.
- *   B "עשיר מעט": logo · search pill · + · avatar. Notifications and all screens in the avatar menu.
- *   C "עוד גלוי" (fix/today-tiles-c): logo · bell (real unread dot) · avatar. Tab bar היום · יומן · atlas · פניות · עוד;
- *     "עוד" opens a sheet with search, quick actions and every screen as a big tile. No "+" on the phone.
- * Desktop (≥1024) is unchanged. Default per branch (fix/today-tiles = A, fix/today-tiles-b = B);
- * localStorage 'atlas-nav-v' = 'A' | 'B' overrides it for side-by-side review.
+ * Navigation (fix/today-tiles-c, picked by Deen 04.11.2026):
+ *   phone (<1024): top bar logo · bell (real unread dot) · avatar. Tab bar היום · יומן · atlas · פניות · עוד;
+ *     "עוד" opens the "כל המסכים" sheet (search, quick actions, every screen as a big tile). No "+" on the phone.
+ *   desktop (≥1024): the rail gets the same "עוד" (sheet as a centred panel); the header keeps search, bell and "+".
  */
-const NAV_DEFAULT = 'C';
-export function navVariant() {
-  try { const v = localStorage.getItem('atlas-nav-v'); if (v === 'A' || v === 'B' || v === 'C') return v; } catch { /* private mode */ }
-  return NAV_DEFAULT;
-}
 
-/** Something new for the owner: a help reply or a new guest enquiry. Drives the dot on the avatar. */
+/** Something new for the owner: a help reply or a new guest enquiry. Drives the dot on the bell. */
 function useNavUnread() {
   const help = useHelpUnread();
   const q = useQuery({
@@ -72,6 +64,7 @@ function useActive() {
 
 export function Sidebar({ user, onLogout }) {
   const active = useActive();
+  const moreOpen = useMoreOpen();
   return (
     <aside className="y2-rail" aria-label="ניווט">
       <Link to={createPageUrl('Dashboard')} className="y2-rail-logo" aria-label="atlas, מסך היום"><Wordmark size={17} /></Link>
@@ -87,6 +80,13 @@ export function Sidebar({ user, onLogout }) {
             </li>
           );
         })}
+        <li>
+          <button type="button" className={cn('y2-ri press', moreOpen && 'on')} aria-haspopup="dialog" aria-expanded={moreOpen}
+            aria-label="עוד: כל המסכים, חיפוש ופעולות מהירות" onClick={openMore}>
+            {moreOpen ? <motion.i layoutId="y2-rail-on" className="y2-ri-on" transition={SPRING} /> : null}
+            <LayoutGrid strokeWidth={1.75} /><span>עוד</span>
+          </button>
+        </li>
       </ul>
       <div className="y2-rail-end">
         <Link to={createPageUrl('Settings')} className="y2-ri press" aria-label="הגדרות"><Settings strokeWidth={1.75} /><span>הגדרות</span></Link>
@@ -102,15 +102,7 @@ export function Sidebar({ user, onLogout }) {
 
 export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }) {
   const quick = useQuickBooking();
-  const nv = navVariant();
   const unread = useNavUnread();
-  // phone: what left the bar now sits at the top of the avatar menu
-  const menuTop = nv === 'C' ? [] : [
-    ...(unread.leads ? [{ key: 'leads', label: unread.leads === 1 ? 'פנייה חדשה' : `${unread.leads} פניות חדשות`, icon: Inbox, to: createPageUrl('Leads'), badge: true, className: 'lg:hidden' }] : []),
-    ...(nv === 'A' ? [{ key: 'search', label: 'חיפוש', icon: Search, onSelect: () => window.setTimeout(() => onOpenCommandPalette?.(), 0), className: 'lg:hidden' }] : []),
-    { key: 'messages', label: 'הודעות', icon: Bell, to: createPageUrl('Messages'), className: 'lg:hidden' },
-    { key: 'more', label: 'כל המסכים', icon: LayoutGrid, onSelect: () => window.dispatchEvent(new CustomEvent('atlas:open-more')), className: 'lg:hidden' },
-  ];
   useEffect(() => {
     const h = () => onOpenCommandPalette?.();
     window.addEventListener('atlas:open-search', h);
@@ -126,23 +118,20 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
   return (
     <>
     <TodayBackdrop on={TODAY_PAGES.has(currentPageName || '')} />
-    <header className="y2-head" data-nav={nv}>
+    <header className="y2-head y2-nav">
       <div className="y2-bar">
         <Link to={createPageUrl('Dashboard')} aria-label="atlas, מסך היום" className="y2-bar-logo"><Wordmark size={19} /></Link>
         <button type="button" onClick={onOpenCommandPalette} className="y2-search press" aria-label="חיפוש אורח, הזמנה או יחידה">
-          <Search strokeWidth={1.75} /><span>חיפוש אורח, הזמנה או יחידה</span><span className="y2-search-m" aria-hidden>חיפוש</span>
+          <Search strokeWidth={1.75} /><span>חיפוש אורח, הזמנה או יחידה</span>
         </button>
         <AskFaceDesk />
         <button type="button" className="y2-gb press y2-hide-m" aria-label="עזרה" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /></button>
-        {/* phones: "עוד" moved up here from the tab bar (its slot went to atlas); hidden ≤359px, where the avatar menu has it */}
-        <button type="button" className="y2-gb press y2-more-m" aria-label="כל המסכים" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-more'))}><LayoutGrid strokeWidth={1.75} /></button>
-        {nv === 'C' ? <BellMenu unread={unread} /> : <Link to={createPageUrl('Messages')} className="y2-gb press" aria-label="הודעות"><Bell strokeWidth={1.75} /><i className="y2-gb-dot" aria-hidden /></Link>}
-        {/* quick-add: was a floating "+" beside the tab bar (it overlapped content); now one fixed home in the header */}
+        <BellMenu unread={unread} />
+        {/* quick-add: desktop only; on the phone adding lives in "עוד" and on each screen */}
         <button type="button" className="y2-gb y2-gb--ind press" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
-        <UserMenu user={user} onLogout={onLogout} top={menuTop} hideMore>
-          <button type="button" aria-label={unread.any && nv !== 'C' ? 'החשבון שלי, יש חדש' : 'החשבון שלי'} className="y2-bar-me press">
+        <UserMenu user={user} onLogout={onLogout} hideMore>
+          <button type="button" aria-label="החשבון שלי" className="y2-bar-me press">
             <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} />
-            {unread.any && nv !== 'C' ? <i className="y2-me-dot" aria-hidden /> : null}
           </button>
         </UserMenu>
       </div>
@@ -151,7 +140,7 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
   );
 }
 
-/** Nav C: the bell shows a dot only when something is really new (a guest enquiry or a help reply) and lists it. */
+/** The bell shows a dot only when something is really new (a guest enquiry or a help reply) and lists it. */
 function BellMenu({ unread }) {
   const label = unread.any ? 'התראות, יש חדש' : 'התראות';
   return (
@@ -201,7 +190,7 @@ function AtlasTab({ hot }) {
     <li className="y2-tab-atlas" data-hot={hot ? '' : undefined}>
       <button type="button" className="y2-ta press" aria-label="דברו עם atlas" aria-expanded={isOpen} aria-haspopup="dialog"
         onClick={(e) => openAssistant('voice', e.currentTarget)}>
-        <span className="y2-ta-disc"><AtlasFace live size={navVariant() === 'B' ? 52 : 46} decorative /></span>
+        <span className="y2-ta-disc"><AtlasFace live size={46} decorative /></span>
       </button>
     </li>
   );
@@ -212,19 +201,13 @@ function AtlasTab({ hot }) {
  * style liquid-glass lens that follows the finger, lights the tab under it, ticks a haptic per tab and springs
  * to the nearest tab on release (useLiquidLens). Reduced motion: no lens, taps only. Keyboard/a11y unchanged.
  */
-export function TabBar({ user, onLogout }) {
+export function TabBar({ user }) {
   const active = useActive();
   const navigate = useNavigate();
-  const [moreOpen, setMoreOpen] = useState(false);
-  useEffect(() => { // "עוד" now opens from the header (and the avatar menu)
-    const open = () => setMoreOpen(true);
-    window.addEventListener('atlas:open-more', open);
-    return () => window.removeEventListener('atlas:open-more', open);
-  }, []);
-  // A/B: היום · יומן · [atlas] · פניות · כסף. C: היום · יומן · [atlas] · פניות · עוד  (RTL: first item is rightmost)
-  const nv = navVariant();
+  const moreOpen = useMoreOpen();
+  // היום · יומן · [atlas] · פניות · עוד  (RTL: first item is rightmost)
   const MORE = { page: null, more: true, label: 'עוד', icon: LayoutGrid };
-  const tabs = nv === 'C' ? [...NAV.filter((n) => ['Dashboard', 'MultiCalendar', 'Leads'].includes(n.page)), MORE] : NAV.filter((n) => n.page !== 'Bookings');
+  const tabs = [...NAV.filter((n) => ['Dashboard', 'MultiCalendar', 'Leads'].includes(n.page)), MORE];
   const left = tabs.slice(0, 2); const right = tabs.slice(2);
   const all = [...left, { page: null, atlas: true, label: 'atlas' }, ...right];
   const barRef = useRef(null);
@@ -234,7 +217,7 @@ export function TabBar({ user, onLogout }) {
     const it = all[i];
     if (!it) return;
     if (it.atlas) { openAssistant('voice'); return; }
-    if (it.more) { setMoreOpen(true); return; }
+    if (it.more) { openMore(); return; }
     if (!active(it.page)) navigate(createPageUrl(it.page));
   };
   const { hot, lifted, enabled } = useLiquidLens({ barRef, lensRef, tintRef, onCommit });
@@ -242,7 +225,7 @@ export function TabBar({ user, onLogout }) {
     if (more) {
       return (
         <li key="more" data-hot={hot === i ? '' : undefined}>
-          <button type="button" className={cn('y2-ti press', moreOpen && 'on')} aria-haspopup="dialog" aria-expanded={moreOpen} aria-label="עוד: כל המסכים, חיפוש ופעולות מהירות" onClick={() => setMoreOpen(true)}>
+          <button type="button" className={cn('y2-ti press', moreOpen && 'on')} aria-haspopup="dialog" aria-expanded={moreOpen} aria-label="עוד: כל המסכים, חיפוש ופעולות מהירות" onClick={openMore}>
             {moreOpen ? <motion.i layoutId="y2-tab-on" className="y2-ti-on" transition={SPRING} /> : null}
             <Icon strokeWidth={1.75} /><span>{label}</span>
           </button>
@@ -262,7 +245,7 @@ export function TabBar({ user, onLogout }) {
   return (
     <>
       <div className="y2-tab-scrim" aria-hidden="true" />
-      <nav aria-label="ניווט" className="y2-tab" data-nav={nv} data-lens={lifted ? 'on' : undefined}>
+      <nav aria-label="ניווט" className="y2-tab y2-nav" data-lens={lifted ? 'on' : undefined}>
         <div className="y2-tab-cap">
           <ul ref={barRef}>
             {left.map((t, i) => tab(t, i))}
@@ -281,9 +264,8 @@ export function TabBar({ user, onLogout }) {
           ) : null}
         </div>
       </nav>
-      {nv === 'C'
-        ? <MoreSheetC open={moreOpen} onOpenChange={setMoreOpen} user={user} exclude={['Dashboard', 'MultiCalendar', 'Leads']} />
-        : <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={tabs.map((n) => n.page)} />}
+      {/* one sheet for both layouts (the tab bar is mounted at every width, hidden by CSS on desktop) */}
+      <MoreSheetHost user={user} />
     </>
   );
 }

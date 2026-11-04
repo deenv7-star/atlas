@@ -1,40 +1,27 @@
-/* fix/today-tiles nav (04.11.2026): calmer phone header + tab bar. A = minimal, B = slightly richer. Desktop untouched. */
-.y2-search-m { display: none; }
-.y2-me-dot { position: absolute; top: 3px; inset-inline-end: 3px; width: 10px; height: 10px; border-radius: 99px; background: #3E2BF1; box-shadow: 0 0 0 2px #fff; }
-.y2-bar-me { position: relative; }
-
+/* Navigation (fix/today-tiles-c, 04.11.2026). Phone (<1024): calm top bar logo · bell · avatar, tab bar
+   היום · יומן · atlas · פניות · עוד. No search pill and no "+" on the phone (both live in "עוד").
+   Desktop keeps its header; the rail's "עוד" is in Shell.jsx. `.y2-nav` sits on the header and the tab bar. */
 @media (max-width: 1023px) {
-  /* both: the bar holds logo · (search) · + · avatar */
-  .y2-head[data-nav] .y2-more-m,
-  .y2-head[data-nav] a.y2-gb[href*="essages"] { display: none; }
-  .y2-head[data-nav] .y2-bar { gap: 8px; height: 56px; padding-inline-start: 18px; padding-inline-end: 6px; }
-  /* the "+" : smaller, flat, no glow — still a 44px target */
-  .y2-head[data-nav] .y2-gb--ind { width: 44px; height: 44px; background: transparent; box-shadow: none; }
-  .y2-head[data-nav] .y2-gb--ind::before { content: ''; position: absolute; inset: 5px; border-radius: 99px; background: #3E2BF1; }
-  .y2-head[data-nav] .y2-gb--ind svg { position: relative; width: 18px; height: 18px; color: #fff; }
-  .y2-head[data-nav] .y2-gb--ind:hover { background: transparent; }
-  .y2-head[data-nav] .y2-gb--ind:active::before { background: #2A1AC9; }
+  .y2-head.y2-nav .y2-bar { gap: 8px; height: 56px; padding-inline-start: 18px; padding-inline-end: 6px; }
+  .y2-head.y2-nav .y2-search,
+  .y2-head.y2-nav .y2-gb--ind { display: none; }
+  .y2-head.y2-nav .y2-bell { display: inline-grid; margin-inline-start: auto; background: transparent; }
+  .y2-head.y2-nav .y2-bell svg { width: 22px; height: 22px; }
+  .y2-head.y2-nav .y2-bell .y2-gb-dot { top: 9px; inset-inline-start: 10px; width: 9px; height: 9px; }
 
-  /* A: no search in the bar (it is the first row of the avatar menu); "+" pushed to the end */
-  .y2-head[data-nav="A"] .y2-search { display: none; }
-  .y2-head[data-nav="A"] .y2-gb--ind { margin-inline-start: auto; }
-
-  /* B: a compact search pill with its word, then + and the avatar */
-  .y2-head[data-nav="B"] .y2-search { flex: none; width: auto; min-width: 44px; padding: 0 14px 0 16px; gap: 6px; margin-inline-start: auto; font-size: 15px; font-weight: 500; }
-  .y2-head[data-nav="B"] .y2-search .y2-search-m { display: inline; }
-  .y2-head[data-nav="B"] .y2-search svg { width: 17px; height: 17px; }
-
-  /* tab bar: calmer capsule, smaller atlas, a soft shadow instead of an indigo glow */
-  .y2-shell .y2-tab[data-nav] ul { box-shadow: 0 0 0 1px rgba(27,38,86,.07), 0 10px 24px -16px rgba(27,38,86,.28); }
-  .y2-tab[data-nav] .y2-ta::after { opacity: .55; left: 14px; right: 14px; }
-  .y2-tab[data-nav="A"] .y2-tab-atlas, .y2-tab[data-nav="A"] .y2-ti--atlas { width: 64px; }
-  .y2-tab[data-nav="A"] .y2-ta { width: 56px; height: 56px; margin-top: -12px; }
-  .y2-tab[data-nav="A"] .y2-ta-disc { width: 46px; height: 46px; filter: drop-shadow(0 4px 6px rgba(27,38,86,.18)); }
-  .y2-tab[data-nav="B"] .y2-ta { width: 60px; height: 60px; margin-top: -18px; }
-  .y2-tab[data-nav="B"] .y2-ta-disc { width: 52px; height: 52px; filter: drop-shadow(0 6px 10px rgba(62,43,241,.22)) drop-shadow(0 1px 2px rgba(27,38,86,.18)); }
+  /* tab bar: calm capsule, smaller atlas, a soft shadow instead of an indigo glow */
+  .y2-shell .y2-tab.y2-nav ul { box-shadow: 0 0 0 1px rgba(27,38,86,.07), 0 10px 24px -16px rgba(27,38,86,.28); }
+  .y2-tab.y2-nav .y2-ta::after { opacity: .55; left: 14px; right: 14px; }
+  .y2-tab.y2-nav .y2-tab-atlas, .y2-tab.y2-nav .y2-ti--atlas { width: 64px; }
+  .y2-tab.y2-nav .y2-ta { width: 56px; height: 56px; margin-top: -12px; }
+  .y2-tab.y2-nav .y2-ta-disc { width: 46px; height: 46px; filter: drop-shadow(0 4px 6px rgba(27,38,86,.18)); }
+  .y2-tab.y2-nav button.y2-ti { background: transparent; border: 0; font: inherit; cursor: pointer; }
   /* "ghost pill": cards scrolling under the dock showed through its glass as a second, wider pill.
      A near-opaque capsule and a fuller fade under it hide whatever passes beneath. */
-  .y2-shell .y2-tab[data-nav] ul { background: rgba(255,255,255,.96); }
+  .y2-shell .y2-tab.y2-nav ul { background: rgba(255,255,255,.96); }
   .y2-shell .y2-tab-scrim { height: calc(104px + env(safe-area-inset-bottom));
     background: linear-gradient(to top, rgba(247,248,251,.97), rgba(247,248,251,.9) 50%, rgba(247,248,251,0)); }
 }
+/* desktop rail: "עוד" is a button among links */
+.y2-rail button.y2-ri { background: transparent; border: 0; font: inherit; cursor: pointer; }
+.y2-bell-menu-empty { padding: 10px 10px 12px; font-size: 14.5px; color: rgba(27,38,86,.65); }

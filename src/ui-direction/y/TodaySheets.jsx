@@ -15,7 +15,7 @@ import { unitOccupancy } from '@/lib/stay/occupancy';
 import { isActiveBooking } from '@/lib/stay/bookings';
 import { heCount } from '@/lib/hebrewCount';
 import { checkInTime, checkOutTime } from '@/components/today/TodayBoard';
-import { money, guestLabel, MONTHS } from './model';
+import { money, guestLabel } from './model';
 import Face from './Face';
 import './y-sheets.css';
 
@@ -164,17 +164,17 @@ export function OccupancySheet({ open, onOpenChange, model }) {
 
 export function PendingSheet({ open, onOpenChange, model, onOpenBooking, onRemind }) {
   const known = model.moneyKnown;
-  const list = model.pending || [];
+  const list = model.owed || [];
   return (
     <Sheet open={open} onOpenChange={onOpenChange} title="ממתינים לתשלום"
       sub={known && list.length ? `${money(model.pendingTotal)} פתוחים · ${list.length === 1 ? 'הזמנה אחת' : `${list.length} הזמנות`}` : null}
       action={<Go to={createPageUrl('Payments')} onClick={() => onOpenChange(false)}>למסך כסף</Go>}>
       {!known ? <Empty title="לא הצלחנו לקרוא את התשלומים כרגע" line="נסו שוב בעוד רגע" />
-        : !list.length ? <Empty title="אין יתרות פתוחות" line="יתרה של אורח שמגיע בימים הקרובים תופיע כאן" /> : (
+        : !list.length ? <Empty title="אין יתרות פתוחות" line="כל יתרה שאורח עוד לא שילם תופיע כאן" /> : (
           <ul className="yt-list">
             {list.map(({ booking: b, balance }) => (
               <BookingRow key={b.id} b={b} model={model} onOpen={onOpenBooking}
-                kick={balance.overdue ? 'באיחור' : `מגיעים ${formatDayHe(b.check_in_date, { weekday: false })}`}
+                kick={balance.overdue ? 'באיחור' : b.check_in_date === model.day ? 'מגיעים היום' : `מגיעים ${formatDayHe(b.check_in_date, { weekday: false })}`}
                 time={money(balance.balance)}
                 trailing={(
                   <button type="button" className="yt-wa press" onClick={() => onRemind(b)}>

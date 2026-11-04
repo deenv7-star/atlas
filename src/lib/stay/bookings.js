@@ -108,3 +108,23 @@ export function balanceOf(booking, bookingPayments = [], today = todayISO()) {
 
   return { total, paid, deposit, balance, dueDate, overdue, dueSoon, state };
 }
+
+/**
+ * THE definition of "money guests still owe" (fix/today-tiles-c, 04.11.2026). Today's "ממתינים לתשלום" tile and
+ * the Money page's "ממתין לגבייה" both read this, so the two can never disagree again: the unpaid balance
+ * (total price minus paid payments, net of refunds) of every booking that is not cancelled / waitlisted,
+ * whatever month it falls in. Overdue first, then by check-in date.
+ */
+export function openBalances(bookings, paymentsByBooking, today = todayISO()) {
+  const items = (bookings || [])
+    .filter(isActiveBooking)
+    .map((booking) => ({ booking, balance: balanceOf(booking, paymentsByBooking?.get?.(booking.id) || [], today) }))
+    .filter((x) => x.balance.balance > 0)
+    .sort((a, b) => Number(b.balance.overdue) - Number(a.balance.overdue) || String(a.booking.check_in_date).localeCompare(String(b.booking.check_in_date)));
+  return {
+    items,
+    total: items.reduce((s, x) => s + x.balance.balance, 0),
+    count: items.length,
+    overdue: items.filter((x) => x.balance.overdue).length,
+  };
+}
