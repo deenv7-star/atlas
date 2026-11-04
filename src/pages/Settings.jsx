@@ -23,6 +23,7 @@ import { startTour } from '@/lib/tour/tourState';
 import SecuritySettings from '@/components/settings/SecuritySettings';
 import { readOrgSettings, writeOrgSettings } from '@/lib/onboarding/orgSettings';
 import { isNativeApp } from '@/lib/native';
+import ImportEntryCard from '@/components/import/EntryCard';
 
 // iOS app only: Face ID sign-in on / off. Never loaded on the web.
 const BiometricSetting = lazy(() => import('@/components/settings/BiometricSetting'));
@@ -295,6 +296,7 @@ export default function SettingsPage({ user }) {
           {/* Organization Tab */}
           {activeTab === 'organization' && (
             <>
+            <ImportEntryCard where="settings" className="mb-5" />
             <div className="v7-card mb-5 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Wand2 className="h-5 w-5" strokeWidth={1.75} /></span>

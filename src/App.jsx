@@ -38,6 +38,7 @@ const AppLockHost = lazy(() => import('@/components/nativeApp/AppLockHost.jsx'))
 const NotifyHost = lazy(() => import('@/components/nativeApp/NotifyHost.jsx'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const SetupPage = lazy(() => import('@/pages/Setup'));
+const ImportComplexPage = lazy(() => import('@/pages/ImportComplex'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
 // Platform admin console (/admin): its own shell, gated by the database (migration 011).
 const AdminRoot = lazy(() => import('@/admin/AdminRoot'));
@@ -265,6 +266,8 @@ const AuthenticatedApp = () => {
           </ProtectedRoute>
         }
       />
+      {/* ייבוא מתחם: paste a Booking / Airbnb / own-site link, confirm, answer only what's missing (full screen) */}
+      <Route path="/import" element={<ProtectedRoute requireOnboarding={false}><S><ImportComplexPage /></S></ProtectedRoute>} />
       {/* Guided setup after onboarding (calendars, WhatsApp, units): full screen, needs a set-up account */}
       <Route
         path="/setup"
