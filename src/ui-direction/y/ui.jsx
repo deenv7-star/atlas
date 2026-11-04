@@ -32,7 +32,10 @@ export function useCount(to, { dur = 1200, delay = 0 } = {}) {
 
 /** A big thin numeral with a small unit: <Num value={13270} pre="₪" />, <Num value={41} post="%" /> */
 export function Num({ value, pre = '', post = '', delay = 0, className = '' }) {
-  const v = useCount(value, { delay });
+  const unknown = value == null || Number.isNaN(Number(value));
+  const v = useCount(unknown ? 0 : value, { delay });
+  // Audit 04.11 #2: a value we could not load is "—", never a made-up 0.
+  if (unknown) return <span className={`y-num ${className}`}><span aria-hidden>—</span><span className="sr-only">לא ידוע כרגע</span></span>;
   return (
     <span className={`y-num ${className}`} dir="ltr">
       {pre ? <small>{pre}</small> : null}{Math.round(v).toLocaleString('he-IL')}{post ? <small>{post}</small> : null}

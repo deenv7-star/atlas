@@ -18,6 +18,7 @@ import { heCount } from '@/lib/hebrewCount';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useWhatsAppSend } from '@/hooks/useWhatsAppSend';
 import { renderTemplate, templateByKey, waLink } from '@/lib/stay/whatsapp';
+import { canShowValues } from '@/lib/stay/loadState';
 
 export const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 
@@ -57,6 +58,10 @@ export function useTodayModel({ orgId } = {}) {
   const board = useMemo(() => boardOf(day), [day, data.bookings, data.paymentsByBooking, data.sentByBooking, data.cleaningTasks, data.propertyById]);
   const boardT = useMemo(() => boardOf(tomorrow), [tomorrow, data.bookings, data.paymentsByBooking, data.sentByBooking, data.cleaningTasks, data.propertyById]);
 
+  // Audit 04.11 #2: without a successful payments read, every balance would look unpaid (or paid).
+  // No money values and no balance reminders until the payments are really known.
+  const moneyKnown = canShowValues(data.paymentsState);
+
   const prop = (id) => data.propertyById.get(id) || null;
   const paysOf = (b) => data.paymentsByBooking.get(b.id) || [];
   const sentOf = (b) => data.sentByBooking.get(b.id) || new Set();
@@ -81,13 +86,16 @@ export function useTodayModel({ orgId } = {}) {
       if (e > s) nights += nightsBetween(s, e);
     }
     const cur = months[months.length - 1] || { value: 0, expected: 0 };
+    // Audit 04.11 #7: no units = no occupancy (it used to read "7% · 0 יחידות").
+    const occupancy = (data.properties || []).length ? Math.min(100, Math.round((nights / (units * days)) * 100)) : null;
+    if (!moneyKnown) return { months: [], received: null, expected: null, occupancy, month: MONTHS[m] };
     return {
       months, received: cur.value || 0, expected: (cur.value || 0) + (cur.expected || 0),
-      occupancy: Math.min(100, Math.round((nights / (units * days)) * 100)), month: MONTHS[m],
+      occupancy, month: MONTHS[m],
     };
-  }, [data.bookings, data.properties, data.paymentsByBooking]);
+  }, [data.bookings, data.properties, data.paymentsByBooking, moneyKnown]);
 
-  const pending = board.balances;
+  const pending = moneyKnown ? board.balances : [];
   const next = messages[0]
     ? { kind: 'message', ...messages[0] }
     : openCleanings[0] ? { kind: 'cleaning', c: openCleanings[0] }
@@ -190,9 +198,13 @@ export function useTodayModel({ orgId } = {}) {
   return {
     day, tomorrow, data, board, boardT, prop, paysOf, sentOf, messages, openCleanings, leads, pending,
     queue, queueAll, doItem, doneCount, doneItems, isDone: (id) => doneMap.has(id), total: queue.length + doneMap.size,
-    pendingTotal: board.openBalanceTotal, money: money_, next, rowsFor, markCleaned,
+    pendingTotal: moneyKnown ? board.openBalanceTotal : null, money: money_, next, rowsFor, markCleaned,
+    moneyKnown, paymentsState: data.paymentsState, retryLoad: data.refetch,
     markSent: (bid, key) => setSentNow((s) => new Set(s).add(`${bid}:${key}`)),
-    balanceFor: (b) => balanceOf(b, paysOf(b), day),
+    balanceFor: (b) => {
+      const bal = balanceOf(b, paysOf(b), day);
+      return moneyKnown ? bal : { ...bal, paid: null, balance: null, unknown: true };
+    },
     isEmpty: !data.isLoading && activeCount === 0,
     isLoading: data.isLoading,
   };

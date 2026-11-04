@@ -395,7 +395,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
         onOpenChange={(o) => { if (!o) setComposer(null); }}
         booking={composer?.booking}
         property={composer ? m.prop(composer.booking.property_id) : null}
-        balance={composer ? m.balanceFor(composer.booking) : undefined}
+        balance={composer && m.moneyKnown ? m.balanceFor(composer.booking) : undefined}
         initialTemplate={composer?.template}
         orgId={orgId}
         orgName={user?.organization_name || ''}

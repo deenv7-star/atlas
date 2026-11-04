@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { MessageCircle, MoreHorizontal, Search, Wallet } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useStayData } from '@/hooks/useStayData';
+import { MoneyLoadBanner } from '@/components/app/MoneyLoadBanner';
 import { balanceOf, checkOutOf, isActiveBooking } from '@/lib/stay/bookings';
 import { formatMoney, formatRangeHe, formatDayHe, todayISO, addDays } from '@/lib/stay/format';
 import {
@@ -83,7 +84,10 @@ export default function BalancesPage({ user, orgId }) {
         subtitle="מה שולם, מה נשאר ומי באיחור. תזכורת יוצאת בוואטסאפ בלחיצה."
       />
 
-      {data.isLoading ? (
+      {data.paymentsState === 'error' ? (
+        // Audit 04.11 #2: without the payments every booking would look unpaid. Say so instead.
+        <MoneyLoadBanner onRetry={data.refetch} />
+      ) : data.isLoading || data.paymentsState === 'loading' ? (
         <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[22px]" />)}</div>
       ) : (
         <>
