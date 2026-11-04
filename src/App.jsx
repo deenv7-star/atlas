@@ -31,6 +31,8 @@ const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
 // Google / Apple sign-in lands here (Supabase redirectTo). Not behind the signed-in redirects: the session appears on this page.
 const AuthCallback = lazy(() => import('@/pages/AuthCallback'));
+// iOS app only: Face ID Keychain sync + the one-time "next time with Face ID?" sheet.
+const NativeAuthHost = lazy(() => import('@/components/auth/NativeAuthHost'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const SetupPage = lazy(() => import('@/pages/Setup'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
@@ -189,7 +191,7 @@ const AuthenticatedApp = () => {
       {/* Public landing page — always show at root, no auto-redirect to onboarding */}
       <Route
         path="/"
-        element={<LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>}
+        element={isNativeApp() ? <Navigate to="/login" replace /> : <LayoutWrapper currentPageName="Landing"><Pages.Landing /></LayoutWrapper>}
       />
 
       {/* Auth pages — redirect based on onboarding_completed */}
@@ -233,7 +235,7 @@ const AuthenticatedApp = () => {
       <Route path="/blog/:slug" element={<S><SitePage /></S>} />
       <Route path="/sla" element={<LayoutWrapper currentPageName="SLA"><Pages.SLA /></LayoutWrapper>} />
       <Route path="/how-it-works" element={<LayoutWrapper currentPageName="HowItWorks"><Pages.HowItWorks /></LayoutWrapper>} />
-      <Route path="/pricing" element={<LayoutWrapper currentPageName="PricingPlans"><Pages.PricingPlans /></LayoutWrapper>} />
+      <Route path="/pricing" element={isNativeApp() ? <Navigate to="/login" replace /> : <LayoutWrapper currentPageName="PricingPlans"><Pages.PricingPlans /></LayoutWrapper>} />
 
       {/* Public guest page per booking + direct-booking page per property (no login) */}
       <Route path="/g/:token" element={<Suspense fallback={<PublicFallback />}><GuestStayPage /></Suspense>} />
@@ -372,6 +374,7 @@ function App() {
             <NavigationTracker />
             <AccessSync />
             <AuthenticatedApp />
+            {isNativeApp() ? <Suspense fallback={null}><NativeAuthHost /></Suspense> : null}
           </NuqsAdapter>
           <Toaster />
           <ConflictModalHost />

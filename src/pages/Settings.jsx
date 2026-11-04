@@ -1,5 +1,5 @@
 import { Page, PageHeader } from '@/components/ds';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,10 @@ import HelpHint from '@/components/help/HelpHint';
 import { startTour } from '@/lib/tour/tourState';
 import SecuritySettings from '@/components/settings/SecuritySettings';
 import { readOrgSettings, writeOrgSettings } from '@/lib/onboarding/orgSettings';
+import { isNativeApp } from '@/lib/native';
+
+// iOS app only: Face ID sign-in on / off. Never loaded on the web.
+const BiometricSetting = lazy(() => import('@/components/settings/BiometricSetting'));
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -400,12 +404,14 @@ export default function SettingsPage({ user }) {
           )}
 
           {/* Security Tab */}
+          {activeTab === 'security' && isNativeApp() && (
+            <Suspense fallback={null}><BiometricSetting /></Suspense>
+          )}
           {activeTab === 'security' && (
             <SecuritySettings
               user={user}
               onDeleted={async () => {
-                try { await logout(false); } catch { /* session is already gone */ }
-                window.location.href = '/login?success=' + encodeURIComponent('החשבון נמחק. תודה שהייתם איתנו.');
+                await logout(true, '/login?success=' + encodeURIComponent('החשבון נמחק. תודה שהייתם איתנו.'));
               }}
             />
           )}

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useEnsureGuestToken } from '@/hooks/useGuestToken';
 import { todayIsrael } from '@/lib/localDate';
+import { publicOrigin } from '@/lib/native';
 
 const todayIso = () => todayIsrael();
 
@@ -43,7 +44,7 @@ export default function GuestServiceLinkCard({ orgId }) {
         atlasToastApi.error('לא הצלחנו ליצור קישור להזמנה הזו');
         return;
       }
-      const url = `${window.location.origin}/guest-service?t=${encodeURIComponent(withToken.guest_token)}`;
+      const url = `${publicOrigin()}/guest-service?t=${encodeURIComponent(withToken.guest_token)}`;
       await navigator.clipboard?.writeText(url);
       atlasToastApi.success('הקישור האישי הועתק');
     } finally {

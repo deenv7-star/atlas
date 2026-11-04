@@ -1,11 +1,13 @@
 import { PauseCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { settle, clearAuthStorage, hardRedirectToLogin } from '@/lib/auth/signOutCore';
 
 /** Shown instead of the app when the ATLAS team suspended this organization (admin console). */
 export default function AccountSuspended({ reason }) {
   const logout = async () => {
-    try { await base44.auth.logout(); } catch { /* ignore */ }
-    window.location.assign('/login');
+    await settle(() => base44.auth.logout(), 6000);
+    clearAuthStorage();
+    hardRedirectToLogin('/login');
   };
   return (
     <main dir="rtl" className="flex min-h-[100dvh] items-center justify-center px-5" style={{ background: '#F7F8FB' }}>
