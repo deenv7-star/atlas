@@ -38,13 +38,30 @@ Code: `src/lib/nativeApp/appLockCore.js` (pure, `tests/unit/appLock.test.mjs`), 
 | Pre-prompt | Never on first launch. Shown once the moment is right: signed in, on Today / bookings / calendar, at least one upcoming arrival, no other one-time sheet this session (the Face ID offer), not asked in the last 7 days, at most 3 times. Sheet: **"להזכיר לכם על אורחים שמגיעים?"** / "ב-9:00 בבוקר של יום ההגעה. אפשר לכבות בהגדרות." → "הפעלת תזכורות" (then the iOS dialog) / "לא עכשיו". |
 | Check-in reminder (works now, no server) | Local notification at **09:00 Asia/Jerusalem** on each arrival day (IST/IDT handled, independent of the phone's time zone). One per day: "הגעה היום: נועה לוי" / "הזית, כניסה מ-15:00", or "3 הגעות היום" / names. Cancelled / waitlist / blocked ("חסום…") bookings are skipped. Recomputed on every app open and every return to the app, **diffed** against what iOS holds: unchanged = kept, moved/renamed = cancelled + rescheduled, cancelled booking = removed. Max 40 pending (iOS limit 64). Tap → the booking (`/booking/:id`) or Today. |
 | Settings | הגדרות → התראות → **"תזכורת בבוקר של הגעה"** on/off (off cancels all). If iOS notifications are off: says to turn them on in iPhone Settings → atlas. |
-| Push (client) | After permission: `PushNotifications.register()` → APNs token → `rpc('register_device_token')`. **The table / RPC does not exist yet**: the error is recognised (PGRST202 / 42P01 / PGRST205), nothing is shown, the token is kept locally and retried on the next open. Sign-out calls `unregister_device_token` (best effort). Tap on a push → `data.path` (in-app paths only). |
-| Native | `AppDelegate.swift` forwards `didRegisterForRemoteNotificationsWithDeviceToken` / `didFail…` to Capacitor. `App.entitlements`: `aps-environment = development` (Xcode's default; the App Store/TestFlight export re-signs with the distribution profile's `production`). `project.pbxproj`: `SystemCapabilities → com.apple.Push enabled`. `capacitor.config.json`: `PushNotifications.presentationOptions = badge, sound, alert` (banner while the app is open). |
+| Push (client) | After permission: `PushNotifications.register()` → APNs token → `rpc('register_device_token')`. Table / RPC live since 04.11.2026 (migration 029). If they are ever missing the error is recognised (PGRST202 / 42P01 / PGRST205), nothing is shown, the token is kept locally and retried on the next open. Sign-out calls `unregister_device_token` (best effort). Tap on a push → `data.path` (in-app paths only). |
+| Native | `AppDelegate.swift` forwards `didRegisterForRemoteNotificationsWithDeviceToken` / `didFail…` to Capacitor. Entitlements per configuration: Debug → `App.entitlements` (`aps-environment = development`, Xcode runs), Release → `AppRelease.entitlements` (`aps-environment = production`, what Codemagic archives for TestFlight; matches the App Store profile). `project.pbxproj`: `SystemCapabilities → com.apple.Push enabled`. `capacitor.config.json`: `PushNotifications.presentationOptions = badge, sound, alert` (banner while the app is open). |
 
 Code: `src/lib/nativeApp/notifyCore.js` (pure, `tests/unit/notify.test.mjs`), `src/lib/nativeApp/notify.js`,
 `src/components/nativeApp/NotifyHost.jsx`, `src/components/settings/NativeNotifySetting.jsx`, sign-out hook in `src/api/client.js`.
 
-## 3. Server side — PREPARED, NOT APPLIED (needs Deen's OK)
+## 3. Server side — LIVE since 04.11.2026 (Deen: "כן תפעיל", 12:47 IST)
+
+Status 04.11.2026: App ID Push on · APNs key **SSX97CAFLN** (Sandbox & Production, team scoped; .p8 in the Hark vault, never in git)
+· migration 029 + 030 applied · `send-push` deployed (verify_jwt off, gated by `x-atlas-push`) · secrets APNS_KEY_ID / APNS_TEAM_ID /
+APNS_PRIVATE_KEY / APNS_BUNDLE_ID / ATLAS_PUSH_SECRET set · Vault `atlas_push_secret` (same value) for the DB triggers.
+Verified: APNs accepted the provider token (a fake device token got `400 BadDeviceToken` from both hosts and was disabled, not
+`403 InvalidProviderToken`); trigger → pg_net → send-push → 200; anon gets 401 on the tables and every RPC.
+
+### (e) Triggers — migration `030_push_triggers.sql` (rollback `supabase/checks/030_rollback.sql`)
+- `leads` insert → `lead_new` "פנייה חדשה: <name>" / dates → `/lead/:id`
+- `bookings` insert → `booking_new` "הזמנה חדשה: <guest>" / "12–14.11, <property>" → `/booking/:id`
+  (skips blocks, "חסום…", cancelled, stays already over = the first iCal import)
+- `payments` insert/update of status → PAID → `payment_received` "התקבל תשלום: ₪1,200" / "מ<guest>"
+- **Nothing is sent for what a signed-in app user wrote** (`auth.uid()` set): only site forms, direct booking, iCal/Airbnb/Booking
+  sync and payment webhooks notify. Target = every active phone of the row's org.
+- Throttle 3 per org+event per 10 min (`push_log`, kept 30 days by pg_cron). Failures never block the write.
+- Open: quiet hours / Shabbat (none yet); `checkin_today` server push stays off (the local 09:00 reminder covers it).
+
 
 ### (a) Migration `supabase/migrations/029_device_tokens.sql` (+ rollback `supabase/checks/029_rollback.sql`)
 - `public.device_tokens` (user_id → auth.users cascade, org_id → organizations cascade, token unique + hex check,
@@ -65,7 +82,7 @@ Code: `src/lib/nativeApp/notifyCore.js` (pure, `tests/unit/notify.test.mjs`), `s
 - 410 / BadDeviceToken / Unregistered → token disabled; a production BadDeviceToken is retried once on sandbox (Xcode builds) and the row corrected.
 - Secrets to set at deploy: `APNS_KEY_ID`, `APNS_TEAM_ID=RLBJU5DAPA`, `APNS_PRIVATE_KEY` (.p8 text), `APNS_BUNDLE_ID=com.atlas-il.app`, `ATLAS_PUSH_SECRET`.
 
-### (c) APNs auth key (.p8) — not created; exact steps for Deen
+### (c) APNs auth key (.p8) — created 04.11.2026 (Key ID SSX97CAFLN); steps kept for a future key
 1. developer.apple.com → Account → **Certificates, Identifiers & Profiles → Keys → +**.
 2. Key name "atlas APNs", tick **Apple Push Notifications service (APNs)** → Configure → Environment **Sandbox & Production**,
    Key restriction **Team Scoped (All Topics)** → Save → Continue → **Register**.
@@ -89,7 +106,7 @@ Wiring (later, after approval): Database Webhooks or `pg_net` triggers → `send
 - A provisioning profile only contains `aps-environment` when the **App ID has the Push Notifications capability**. Codemagic's
   `fetch-signing-files` does not turn capabilities on. If the App ID lacks Push, the next build fails at signing
   ("Provisioning profile … doesn't include the aps-environment entitlement").
-- **Needs approval before doing (not done):**
+- **Done 04.11.2026:** Push enabled on the App ID; profile "atlas App Store" (L8527WP473) was Invalid and was regenerated → Active, Push included, same Distribution cert P2WV6VHL3D, expires 08.10.2027. Codemagic picks it up as it is valid. Original steps:
   1. Enable Push Notifications on the App ID: developer.apple.com → Identifiers → `com.atlas-il.app` → tick **Push Notifications** → Save
      (no certificate needed with token auth). Or via the same API key:
      `app-store-connect bundle-ids list --bundle-id-identifier com.atlas-il.app --strict-match-identifier --platform IOS --json` → id,

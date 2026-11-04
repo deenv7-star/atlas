@@ -1,5 +1,5 @@
--- 029_device_tokens (prepared 04.11.2026 for the iOS app push notifications). NOT APPLIED by this PR.
--- Needs Deen's OK before it runs. Additive only: one table, two RPCs, explicit grants (Supabase stopped
+-- 029_device_tokens (prepared 04.11.2026 for the iOS app push notifications). APPLIED to prod 04.11.2026 (Deen's OK 12:47 IST).
+-- Additive only: one table, two RPCs, explicit grants (Supabase stopped
 -- auto-granting new public tables on 30.10.2026). Rollback: supabase/checks/029_rollback.sql.
 --
 -- One row per phone (APNs device token). The app registers through register_device_token(), never by writing
@@ -32,7 +32,9 @@ create policy device_tokens_select_own on public.device_tokens for select to aut
 drop policy if exists device_tokens_delete_own on public.device_tokens;
 create policy device_tokens_delete_own on public.device_tokens for delete to authenticated using (user_id = auth.uid());
 
-revoke all on public.device_tokens from anon;
+revoke all on public.device_tokens from anon, public;
+-- prod still had default privileges granting ALL to authenticated (seen 04.11): take back everything but select/delete
+revoke insert, update, truncate, references, trigger on public.device_tokens from authenticated;
 grant select, delete on public.device_tokens to authenticated;
 grant all on public.device_tokens to service_role;
 
