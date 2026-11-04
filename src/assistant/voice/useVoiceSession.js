@@ -13,13 +13,14 @@
  * Demo (no Supabase): a scripted conversation from the local snapshot, clearly the in-browser stand-in.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { startVoiceSession, endVoiceSession, runVoiceTool, VoiceError, VOICE_ERRORS, ASSISTANT_DEMO } from '../api.js';
+import { startVoiceSession, endVoiceSession, reportVoiceEvent, runVoiceTool, VoiceError, VOICE_ERRORS, ASSISTANT_DEMO } from '../api.js';
 import { VoiceAudio, RealtimeLink } from './realtime.js';
 import { RENEW_BEFORE_S } from './config.js';
 import { demoAnswer, demoProposal } from '../demoAnswer.js';
 import { humanDay } from '../humanLines.js';
 import { PLATFORM } from '../api.js';
 import { statusLine } from './status.js';
+import { createStartGuard } from './startGuard.js';
 import { PERSONA } from '../../../supabase/functions/_shared/brain/persona.js';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -51,6 +52,10 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
   const stateRef = useRef('idle');
   stateRef.current = state;
   const demoT = useRef(0);
+  const guard = useRef(null);
+  if (!guard.current) guard.current = createStartGuard();
+  const opening = useRef(null); // the openSlice in flight (renewal and reconnect never open two slices at once)
+  const failed = useRef(false);
 
   const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.current.push(t); return t; };
   const upsertAtlas = useCallback((text, final) => setTurns((list) => {
@@ -61,6 +66,13 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
   const addUser = useCallback((text) => text && setTurns((list) => [...list, { id: uid(), role: 'user', text, final: true }].slice(-30)), []);
 
   const fail = useCallback((code) => {
+    failed.current = true;
+    // tear the call down fully (no open mic / socket / slice left behind an error screen)
+    timers.current.forEach(clearTimeout); timers.current = [];
+    const l = link.current; link.current = null; l?.close();
+    audio.current?.stop();
+    endVoiceSession(slice.current?.id); slice.current = null;
+    guard.current.release();
     if (!alive.current) return;
     setError({ code, message: VOICE_ERRORS[code] || VOICE_ERRORS.upstream });
     setState('error');
@@ -76,8 +88,19 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
   }, []);
 
   /* ── one slice = one socket ── */
-  const openSlice = useCallback(async ({ resume = '' } = {}) => {
+  const openSlice = useCallback(({ resume = '' } = {}) => {
+    if (opening.current) return opening.current;
+    const p = openSliceNowRef.current({ resume }).finally(() => { if (opening.current === p) opening.current = null; });
+    opening.current = p;
+    return p;
+  }, []); // reads the latest openSliceNow through a ref
+  const openSliceRef = useRef(openSlice);
+  openSliceRef.current = openSlice;
+  const openSliceNowRef = useRef(null);
+
+  const openSliceNow = async ({ resume = '' } = {}) => {
     const s = await startVoiceSession({ page, resume });
+    let renewTimer = 0;
     const next = new RealtimeLink({
       secret: s.client_secret, url: s.ws_url, model: s.model, audio: audio.current,
       on: {
@@ -94,14 +117,27 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
         atlas: upsertAtlas,
         tool: onTool,
         error: (code) => { if (link.current === next || !link.current) fail(code === 'expired' ? 'upstream' : code); },
-        closed: ({ byUs }) => {
-          if (byUs || link.current !== next || !alive.current) return;
-          // the socket dropped (network, slice ended early): reconnect once, quietly, with what was said
+        // telemetry: socket / server errors inside this slice → voice-session logs (no DB write)
+        event: (kind, detail) => reportVoiceEvent(kind, { session_id: s.session_id, state: stateRef.current, ...detail }),
+        closed: (info) => {
+          if (info.byUs) return; // renewal / hang-up: that path already ended the slice
+          clearTimeout(renewTimer);
+          // the socket closed on its own: end the slice now (charged by seconds used) and send the close code/reason
+          console.warn('[atlas voice] socket closed', info.code, info.reason || '', `${Math.round(info.age_ms / 1000)}s`);
+          endVoiceSession(s.session_id, { ...info, state: stateRef.current });
+          if (slice.current?.id === s.session_id) slice.current = null;
+          if (link.current !== next && link.current) return; // an older socket; the current one is fine
+          if (!alive.current) return;
+          if (failed.current) { link.current = null; return; } // a fatal error already ended the call
+          // dropped (network, slice ended early): reconnect once, quietly, with what was said
           if (!reconnected.current) {
             reconnected.current = true; setState('connecting');
-            openSlice({ resume: summaryOf(turnsRef.current) }).catch(() => setState((st) => (st === 'error' ? st : 'ended')));
+            openSliceRef.current({ resume: summaryOf(turnsRef.current) }).catch((e) => fail(e instanceof VoiceError ? e.code : 'network'));
             return;
           }
+          link.current = null;
+          if (!info.open_ms) { fail('network'); return; } // never connected twice in a row: say so, offer writing
+          guard.current.release();
           setState((st) => (st === 'error' ? st : 'ended'));
         },
       },
@@ -111,16 +147,17 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
     // renew before the slice ends, while there is budget left
     if (s.remaining_today >= 15) {
       const renew = async (waited = 0) => {
-        if (!alive.current) return;
+        if (!alive.current || link.current !== next) return; // only the live socket renews (a dead slice's timer never opens a 2nd)
         // never cut atlas mid-answer: wait (up to 15 s) for a quiet moment before moving to the next slice
         if (waited < 15 && (stateRef.current === 'speaking' || stateRef.current === 'thinking' || stateRef.current === 'hearing')) { later(() => renew(waited + 1), 1000); return; }
-        const prevId = slice.current?.id;
-        try { await openSlice({ resume: summaryOf(turnsRef.current) }); endVoiceSession(prevId); } catch (e) { if (e?.code === 'daily_limit') setLeft(0); }
+        const prevId = s.session_id;
+        try { await openSliceRef.current({ resume: summaryOf(turnsRef.current) }); endVoiceSession(prevId); } catch (e) { if (e?.code === 'daily_limit') setLeft(0); }
       };
-      later(() => renew(0), Math.max(5, s.seconds - RENEW_BEFORE_S) * 1000);
+      renewTimer = later(() => renew(0), Math.max(5, s.seconds - RENEW_BEFORE_S) * 1000);
     }
     return next;
-  }, [page, addUser, upsertAtlas, onTool, fail]);
+  };
+  openSliceNowRef.current = openSliceNow; // latest page / handlers, read when a slice opens
 
   /* ── demo: scripted, from the local snapshot only ── */
   const runDemo = useCallback(() => {
@@ -169,6 +206,8 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
 
   /** start({ resume }) — call inside the tap. `resume`: what was already said in writing, so voice continues it. */
   const start = useCallback(async ({ resume = '' } = {}) => {
+    if (!guard.current.tryEnter()) return; // one tap = one session (double tap / effect + tap opened two on 04.11)
+    failed.current = false;
     setError(null); setNote(''); setState('connecting'); reconnected.current = false; alive.current = true;
     if (ASSISTANT_DEMO) {
       const frozen = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('voiceShot') : null;
@@ -182,6 +221,7 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
       await openSlice({ resume });
     } catch (e) {
       audio.current?.stop();
+      reportVoiceEvent('start_failed', { code: e instanceof VoiceError ? e.code : e?.code || 'upstream' });
       fail(e instanceof VoiceError ? e.code : e?.code || 'upstream');
     }
   }, [openSlice, runDemo, shot, fail]);
@@ -191,6 +231,7 @@ export function useVoiceSession({ facts, page = '', owner = '' }) {
     link.current?.close(); link.current = null;
     audio.current?.stop();
     endVoiceSession(slice.current?.id); slice.current = null;
+    guard.current.release();
     setState('ended');
   }, []);
 

@@ -6,7 +6,7 @@ import { runTool, forModel, TOOL_DEFS, TOOL_NAMES, WRITE_TOOLS, chatTools, realt
 import { runBrain, NO_ANSWER } from '../functions/_shared/brain/loop.js';
 import { brainPrompt, NATIVE_RULE } from '../functions/_shared/brain/prompt.js';
 import { searchHelp, kbDigest, ROUTE_SET } from '../functions/_shared/brain/knowledge.js';
-import { secretRequest, clientPayload, VOICE } from '../functions/voice-session/core.js';
+import { secretRequest, clientPayload, VOICE, closeLog, eventLog } from '../functions/voice-session/core.js';
 import { ATLAS_PERSON, PERSONA } from '../functions/_shared/brain/persona.js';
 
 const TODAY = '2026-11-04';
@@ -242,7 +242,7 @@ test('voice session: semantic VAD (the only mode Eleven accepts) that answers sh
   const b = secretRequest({ today: TODAY, seconds: 180, sessionId: 's1' });
   const td = b.session.audio.input.turn_detection;
   assert.equal(td.type, 'semantic_vad'); assert.equal(td.create_response, true); assert.equal(td.interrupt_response, true);
-  assert.ok(['medium', 'high'].includes(td.eagerness));
+  assert.equal(td.eagerness, 'medium'); // what ran live in v8; the v2 'high' guess is reverted (04.11.2026)
   assert.ok(b.session.max_duration_seconds >= 60 && b.session.max_duration_seconds <= VOICE.sliceSeconds);
   assert.match(secretRequest({ today: TODAY, seconds: 180, sessionId: 's', resume: 'הבעלים: היי' }).session.instructions, /לא לברך שוב/);
 });
@@ -254,4 +254,22 @@ test('persona switch: both voices are complete and the prompt follows ATLAS_PERS
   for (const t of TOOL_NAMES.filter((n) => !WRITE_TOOLS.has?.(n))) assert.ok(typeof PERSONA.tools[t] === 'string' || !['get_day_overview', 'find_bookings'].includes(t), t);
   const v = brainPrompt({ mode: 'voice', today: TODAY });
   assert.ok(v.includes(PERSONA.promptVoiceSelf) && v.includes(PERSONA.promptCheck));
+});
+
+/* ── voice reliability (04.11.2026 evening): Hebrew + Max + medium VAD, close-code telemetry is typed and short ── */
+test('voice config: Hebrew, eleven_realtime_v1_max, semantic VAD medium', () => {
+  const b = secretRequest({ today: TODAY, seconds: 180, sessionId: 's1' });
+  assert.equal(VOICE.model, 'eleven_realtime_v1_max');
+  assert.equal(b.session.audio.input.transcription.language, 'he');
+  assert.deepEqual(b.session.audio.input.turn_detection, { type: 'semantic_vad', eagerness: 'medium', create_response: true, interrupt_response: true });
+});
+
+test('voice telemetry: close code/reason logged with typed, truncated fields; unknown event kinds dropped', () => {
+  const c = closeLog({ user: 'u1', session: 's1', close: { code: '1006', reason: 'x'.repeat(500), clean: 'yes', by_us: false, age_ms: 21345.6, open_ms: 20000, state: 'thinking', errors: 'ws_error:ws@21s', evil: { a: 1 } } });
+  assert.equal(c.event, 'close'); assert.equal(c.code, 1006); assert.equal(c.reason.length, 200);
+  assert.equal(c.clean, false); assert.equal(c.age_ms, 21346); assert.equal(c.state, 'thinking'); assert.ok(!('evil' in c));
+  assert.equal(closeLog({ user: 'u', session: 's', close: null }).code, null);
+  const e = eventLog({ user: 'u1', body: { kind: 'server_error', code: 'rate_limit_exceeded', message: 'm', session_id: 's1' } });
+  assert.equal(e.kind, 'server_error'); assert.equal(e.code, 'rate_limit_exceeded');
+  assert.equal(eventLog({ user: 'u1', body: { kind: 'drop_table' } }), null);
 });

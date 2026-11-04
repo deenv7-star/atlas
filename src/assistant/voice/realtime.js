@@ -100,11 +100,20 @@ export class RealtimeLink {
     this.toolOutputs = 0;     // outputs sent since the last response; answer them once the response is done
     this.watch = 0;           // watchdog timer: a turn that got no answer
     this.nudged = false;
+    this.born = Date.now(); this.openedAt = 0; this.errors = []; // telemetry: why a socket died
     this.ws = new WebSocket(`${url}?model=${encodeURIComponent(model)}`, ['realtime', `openai-insecure-api-key.${secret}`]);
-    this.ws.onopen = () => on.open?.();
+    this.ws.onopen = () => { this.openedAt = Date.now(); on.open?.(); };
     this.ws.onmessage = (m) => { let ev; try { ev = JSON.parse(m.data); } catch { return; } this.handle(ev); };
-    this.ws.onerror = () => on.error?.('network');
-    this.ws.onclose = (e) => on.closed?.({ code: e.code, byUs: this.closedByUs });
+    // a socket error is always followed by close: the hook decides there (reconnect once, or end) with the close code
+    this.ws.onerror = () => { this.note('ws_error', 'ws'); on.event?.('ws_error', { age_ms: this.age() }); };
+    this.ws.onclose = (e) => on.closed?.(this.closeInfo(e));
+  }
+  age() { return Date.now() - this.born; }
+  note(kind, code) { if (this.errors.length < 8) this.errors.push(`${kind}:${String(code || '').slice(0, 40)}@${Math.round(this.age() / 1000)}s`); }
+  /** What the app reports when the socket closes: the WebSocket close code/reason (1006 = dropped with no close frame). */
+  closeInfo(e) {
+    return { code: e?.code ?? null, reason: String(e?.reason || '').slice(0, 200), clean: !!e?.wasClean, byUs: this.closedByUs,
+      by_us: this.closedByUs, age_ms: this.age(), open_ms: this.openedAt ? Date.now() - this.openedAt : 0, errors: this.errors.join(' ') };
   }
   get open() { return this.ws.readyState === 1; }
   send(obj) { if (this.open) this.ws.send(JSON.stringify(obj)); }
@@ -169,7 +178,10 @@ export class RealtimeLink {
       }
       case 'error': {
         const code = ev.error?.code || ev.error?.type || '';
-        if (FATAL_ERRORS.has(code)) { on.error?.(code === 'session_expired' ? 'expired' : 'upstream', ev.error); break; }
+        this.note('server', code);
+        const fatal = FATAL_ERRORS.has(code);
+        on.event?.(fatal ? 'fatal_error' : 'server_error', { code, message: String(ev.error?.message || '').slice(0, 200), age_ms: this.age() });
+        if (fatal) { on.error?.(code === 'session_expired' ? 'expired' : 'upstream', ev.error); break; }
         if (/active_response|already has an active response/i.test(`${code} ${ev.error?.message || ''}`)) this.active = true;
         console.warn('[atlas voice] ignored', code || ev.error?.message); // eslint-disable-line no-console
         break;
