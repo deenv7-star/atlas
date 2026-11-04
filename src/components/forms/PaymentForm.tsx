@@ -1,25 +1,15 @@
 import * as React from 'react';
-import { Controller } from 'react-hook-form';
 import { Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  SheetGroup, SheetField, SheetInput, SheetSelect, SheetSegmented, SheetMore,
+  SheetFooter, SheetSubmit, SheetBanner, SheetTextButton, useSheetVariant,
+} from '@/components/ui/sheet/fields';
+import { DateField } from '@/components/ui/sheet/DateRangeField';
 import { useFormMachine } from '@/hooks/useFormMachine';
 import type { PaymentFormValues } from '@/components/forms/atlasFormSchemas';
 import { paymentFormSchema } from '@/components/forms/atlasFormSchemas';
 import { FormRouteLeaveGuard } from '@/components/forms/FormRouteLeaveGuard';
-import {
-  FormMachineErrorBanner,
-  FormMachineFieldHint,
-  formMachineFormClassName,
-} from '@/components/forms/formMachineUi';
+import { formMachineFormClassName } from '@/components/forms/formMachineUi';
 
 const PAYMENT_STATUSES = [
   { value: 'PENDING', label: 'ממתין' },
@@ -50,9 +40,10 @@ export type PaymentFormProps = {
   onRegisterDialogInterceptor?: (fn: ((open: boolean) => void) | null) => void;
   onAfterSubmitSuccess?: () => void;
   bookings?: Array<{ id: string; guest_name?: string | null; check_in_date?: string | null }>;
+  /** Quiet text action under the primary button (e.g. delete when editing). */
+  secondaryAction?: { label: string; onClick: () => void; danger?: boolean; disabled?: boolean } | null;
 };
 
-const NO_BOOKING = '__none__';
 const shortDate = (d?: string | null) => {
   if (!d) return '';
   const [y, m, dd] = String(d).slice(0, 10).split('-');
@@ -63,13 +54,14 @@ export function PaymentForm({
   storageSuffix,
   defaultValues,
   onSubmit,
-  onCancel,
+  onCancel: _onCancel, // closing is the sheet's X
   submitLabel,
   enableRouteGuard = true,
   setDialogOpen,
   onRegisterDialogInterceptor,
   onAfterSubmitSuccess,
   bookings,
+  secondaryAction = null,
 }: PaymentFormProps) {
   const storageKey = `atlas-form-payment-${storageSuffix}`;
 
@@ -94,164 +86,93 @@ export function PaymentForm({
     return () => onRegisterDialogInterceptor?.(null);
   }, [fm.interceptDialogClose, setDialogOpen, onRegisterDialogInterceptor]);
 
+  const v = useSheetVariant();
+  const err = (k: keyof PaymentFormValues) => fm.errors[k as string];
+  const errId = (k: string) => fid(`${k}-err`);
+  const isEdit = storageSuffix !== 'new';
+  const [moreOpen, setMoreOpen] = React.useState(isEdit);
+  const moreHasError = ['method', 'paid_date', 'due_date', 'description'].some((k) => Boolean(fm.errors[k]));
+  React.useEffect(() => { if (moreHasError) setMoreOpen(true); }, [moreHasError]);
+  const simpleStatus = ['PAID', 'PENDING'].includes(String(fm.values.status || ''));
+  const bookingOptions = bookings
+    ? [
+      { value: '', label: 'ללא הזמנה' },
+      ...(fm.values.booking_id && !bookings.some((b) => b.id === fm.values.booking_id) ? [{ value: String(fm.values.booking_id), label: 'הזמנה קיימת' }] : []),
+      ...bookings.map((b) => ({ value: b.id, label: (b.guest_name || 'אורח') + (b.check_in_date ? ` · ${shortDate(b.check_in_date)}` : '') })),
+    ]
+    : null;
+  const methodLabel = PAYMENT_METHODS.find((m) => m.value === fm.values.method)?.label;
+  const summary = [methodLabel, fm.values.description && 'תיאור'].filter(Boolean).join(' · ');
+
   return (
     <>
       <FormRouteLeaveGuard blocker={fm.blocker} />
-      {fm.serverError ? <FormMachineErrorBanner message={fm.serverError} /> : null}
-      <div className={formMachineFormClassName(fm.state)} dir="rtl">
-        <div className="grid grid-cols-2 gap-3 py-2">
-          <div className="col-span-2 space-y-1.5">
-            <Label htmlFor={fid('booking_id')} className="text-[13px] font-semibold text-navy-800">הזמנה <span className="font-normal text-gray-600">(לא חובה)</span></Label>
-            {bookings ? (
-              <Controller
-                control={fm.control}
-                name="booking_id"
-                render={({ field }) => (
-                  <Select
-                    value={field.value ? String(field.value) : NO_BOOKING}
-                    onValueChange={(v) => {
-                      const val = v === NO_BOOKING ? '' : v;
-                      fm.handleChange('booking_id', val);
-                      field.onChange(val);
-                    }}
-                  >
-                    <SelectTrigger id={fid('booking_id')} className="h-11 text-base rounded-xl">
-                      <SelectValue placeholder="בחירת הזמנה" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={NO_BOOKING}>ללא הזמנה</SelectItem>
-                      {field.value && !bookings.some((b) => b.id === field.value) ? (
-                        <SelectItem value={String(field.value)}>הזמנה קיימת</SelectItem>
-                      ) : null}
-                      {bookings.map((b) => (
-                        <SelectItem key={b.id} value={b.id}>
-                          {(b.guest_name || 'אורח') + (b.check_in_date ? ` · ${shortDate(b.check_in_date)}` : '')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+      <div className={formMachineFormClassName(fm.state) + ' flex flex-1 flex-col'} dir="rtl">
+        <SheetBanner>{fm.serverError}</SheetBanner>
+        <SheetGroup title={v === 'b' ? 'התשלום' : null}>
+          <SheetField label="סכום" htmlFor={fid('amount')} error={err('amount')} errorId={errId('amount')}>
+            <div className="relative">
+              <SheetInput
+                id={fid('amount')}
+                type="text"
+                inputMode="decimal"
+                {...fm.register('amount')}
+                invalid={Boolean(err('amount'))}
+                aria-describedby={err('amount') ? errId('amount') : undefined}
+                dir="ltr"
+                className="pe-10 text-[18px] font-semibold"
+                style={{ textAlign: 'right' }}
+              />
+              <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/45">₪</span>
+            </div>
+          </SheetField>
+          <SheetField label="מצב" labelId={fid('status-label')} htmlFor={fid('status')}>
+            {simpleStatus ? (
+              <SheetSegmented
+                labelledBy={fid('status-label')}
+                value={String(fm.values.status)}
+                options={[{ value: 'PAID', label: 'שולם' }, { value: 'PENDING', label: 'ממתין' }]}
+                onChange={(val: string) => fm.handleChange('status', val as never)}
               />
             ) : (
-              <Input id={fid('booking_id')} {...fm.register('booking_id')} placeholder="מזהה הזמנה" className="h-11 text-base rounded-xl" dir="ltr" />
+              <SheetSelect id={fid('status')} value={String(fm.values.status || '')} options={PAYMENT_STATUSES} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => fm.handleChange('status', e.target.value as never)} />
             )}
-            <FormMachineFieldHint error={fm.errors.booking_id} />
-          </div>
-          <div className="col-span-2 space-y-1.5">
-            <Label htmlFor={fid('description')} className="text-[13px] font-semibold text-navy-800">תיאור</Label>
-            <Input id={fid('description')} {...fm.register('description')} placeholder="למשל: מקדמה לסופ״ש" className="h-11 text-base rounded-xl" />
-            <FormMachineFieldHint error={fm.errors.description} validating={fm.isFieldValidating('description')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor={fid('amount')} className="text-[13px] font-semibold text-navy-800">סכום (₪) *</Label>
-            <Input id={fid('amount')} type="text" inputMode="decimal" {...fm.register('amount')} placeholder="0" className="h-11 text-base rounded-xl" />
-            <FormMachineFieldHint error={fm.errors.amount} validating={fm.isFieldValidating('amount')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor={fid('method')} className="text-[13px] font-semibold text-navy-800">אמצעי תשלום</Label>
-            <Controller
-              control={fm.control}
-              name="method"
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={(v) => {
-                    fm.handleChange('method', v);
-                    field.onChange(v);
-                  }}
-                >
-                  <SelectTrigger id={fid('method')} className="h-11 text-base rounded-xl">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PAYMENT_METHODS.map((m) => (
-                      <SelectItem key={m.value} value={m.value}>
-                        {m.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            <FormMachineFieldHint error={fm.errors.method} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor={fid('status')} className="text-[13px] font-semibold text-navy-800">סטטוס</Label>
-            <Controller
-              control={fm.control}
-              name="status"
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={(v) => {
-                    fm.handleChange('status', v);
-                    field.onChange(v);
-                  }}
-                >
-                  <SelectTrigger id={fid('status')} className="h-11 text-base rounded-xl">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PAYMENT_STATUSES.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            <FormMachineFieldHint error={fm.errors.status} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor={fid('paid_date')} className="text-[13px] font-semibold text-navy-800">תאריך תשלום</Label>
-            <Input id={fid('paid_date')} type="date" {...fm.register('paid_date')} className="h-11 text-base rounded-xl" />
-            <FormMachineFieldHint error={fm.errors.paid_date} validating={fm.isFieldValidating('paid_date')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor={fid('due_date')} className="text-[13px] font-semibold text-navy-800">תאריך יעד</Label>
-            <Input id={fid('due_date')} type="date" {...fm.register('due_date')} className="h-11 text-base rounded-xl" />
-            <FormMachineFieldHint error={fm.errors.due_date} validating={fm.isFieldValidating('due_date')} />
-          </div>
-        </div>
-        <div className="flex gap-2 flex-col sm:flex-row pt-2">
-          <Button
-            type="button"
-            onClick={fm.handleSubmit}
-            disabled={fm.state === 'submitting'}
-            className={[
-              'h-11 gap-1.5 rounded-xl w-full sm:w-auto sm:min-w-[140px] font-semibold text-[15px]',
-              fm.state === 'success'
-                ? 'bg-emerald-600 hover:bg-emerald-600 text-white'
-                : 'bg-brand-600 hover:bg-brand-500 text-white',
-            ].join(' ')}
-          >
-            {fm.state === 'submitting' ? (
-              <>
-                <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin motion-reduce:animate-none" aria-hidden />
-                שומרים…
-              </>
-            ) : fm.state === 'success' ? (
-              <>נשמר</>
+          </SheetField>
+          <SheetField label="הזמנה" optional htmlFor={fid('booking_id')} error={err('booking_id')} errorId={errId('booking_id')}>
+            {bookingOptions ? (
+              <SheetSelect
+                id={fid('booking_id')}
+                value={fm.values.booking_id ? String(fm.values.booking_id) : ''}
+                options={bookingOptions}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => fm.handleChange('booking_id', e.target.value as never)}
+              />
             ) : (
-              <>
-                <Check className="w-4 h-4" aria-hidden />
-                {submitLabel}
-              </>
+              <SheetInput id={fid('booking_id')} {...fm.register('booking_id')} dir="ltr" />
             )}
-          </Button>
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => {
-              fm.reset();
-              onCancel();
-            }}
-            className="h-11 rounded-xl w-full sm:w-auto text-[15px]"
-          >
-            ביטול
-          </Button>
-        </div>
+          </SheetField>
+        </SheetGroup>
+        <SheetMore open={moreOpen} onOpenChange={setMoreOpen} summary={summary || 'אמצעי תשלום, תאריכים ותיאור'}>
+          <SheetGroup className="!mb-0">
+            <SheetField label="אמצעי תשלום" htmlFor={fid('method')}>
+              <SheetSelect id={fid('method')} value={String(fm.values.method || '')} placeholder="בחרו" options={PAYMENT_METHODS} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => fm.handleChange('method', e.target.value as never)} />
+            </SheetField>
+            <DateField idPrefix={fid('paid')} label="תאריך תשלום" value={String(fm.values.paid_date || '')} onChange={(iso: string) => fm.handleChange('paid_date', iso as never)} error={err('paid_date')} />
+            <DateField idPrefix={fid('due')} label="תאריך יעד" optional value={String(fm.values.due_date || '')} onChange={(iso: string) => fm.handleChange('due_date', iso as never)} error={err('due_date')} />
+            <SheetField label="תיאור" optional htmlFor={fid('description')} hint="למשל: מקדמה לסוף השבוע">
+              <SheetInput id={fid('description')} {...fm.register('description')} />
+            </SheetField>
+          </SheetGroup>
+        </SheetMore>
+        <SheetFooter>
+          <SheetSubmit onClick={fm.handleSubmit} state={fm.state === 'submitting' ? 'submitting' : fm.state === 'success' ? 'success' : 'idle'}>
+            {submitLabel}
+          </SheetSubmit>
+          {secondaryAction ? (
+            <SheetTextButton tone={secondaryAction.danger ? 'danger' : 'neutral'} disabled={secondaryAction.disabled} onClick={secondaryAction.onClick}>
+              {secondaryAction.label}
+            </SheetTextButton>
+          ) : null}
+        </SheetFooter>
       </div>
     </>
   );
