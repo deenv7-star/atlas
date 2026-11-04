@@ -131,7 +131,7 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName
 const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-[15px] leading-snug text-[#1B2656]/65", className)}
+    className={cn("text-[15px] leading-snug text-[#1B2656]/70", className)}
     {...props} />
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName

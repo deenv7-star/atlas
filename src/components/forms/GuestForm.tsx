@@ -136,7 +136,7 @@ export function GuestForm({
             <SheetField label="תקציב" optional htmlFor={fid('budget')} error={err('budget')}>
               <div className="relative">
                 <SheetInput id={fid('budget')} type="text" inputMode="numeric" dir="ltr" className="pe-10" style={{ textAlign: 'right' }} {...fm.register('budget')} />
-                <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/45">₪</span>
+                <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/70">₪</span>
               </div>
             </SheetField>
             <SheetField label="מצב הפנייה" htmlFor={fid('status')}>

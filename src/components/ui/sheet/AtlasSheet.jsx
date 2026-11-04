@@ -106,7 +106,7 @@ export function AtlasSheet({
                   {title}
                 </DialogPrimitive.Title>
                 {subtitle ? (
-                  <DialogPrimitive.Description className="mt-1 text-[15px] leading-snug text-[#1B2656]/65">
+                  <DialogPrimitive.Description className="mt-1 text-[15px] leading-snug text-[#1B2656]/70">
                     {subtitle}
                   </DialogPrimitive.Description>
                 ) : null}

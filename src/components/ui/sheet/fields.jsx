@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 export function SheetGroup({ title = null, className, children, ...rest }) {
   return (
     <section className={cn('mb-4', className)} {...rest}>
-      {title ? <h3 className="mb-2 ps-1 text-[13px] font-semibold text-[#1B2656]/55">{title}</h3> : null}
+      {title ? <h3 className="mb-2 ps-1 text-[13px] font-semibold text-[#1B2656]/70">{title}</h3> : null}
       <div className="flex flex-col gap-4 rounded-[20px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.06),0_0_0_1px_rgba(27,38,86,0.04)]">
         {children}
       </div>
@@ -35,11 +35,11 @@ export function SheetField({ label, htmlFor, labelId, error, errorId, hint = nul
       {label ? (
         <label htmlFor={htmlFor} id={labelId} className="mb-2 flex items-baseline gap-1.5 text-[15px] font-semibold text-[#1B2656]">
           {label}
-          {optional ? <span className="text-[13px] font-normal text-[#1B2656]/50">לא חובה</span> : null}
+          {optional ? <span className="text-[13px] font-normal text-[#1B2656]/70">לא חובה</span> : null}
         </label>
       ) : null}
       {children}
-      {error ? <SheetError id={errorId}>{error}</SheetError> : hint ? <p className="mt-1.5 text-[13px] leading-snug text-[#1B2656]/55">{hint}</p> : null}
+      {error ? <SheetError id={errorId}>{error}</SheetError> : hint ? <p className="mt-1.5 text-[13px] leading-snug text-[#1B2656]/70">{hint}</p> : null}
     </div>
   );
 }
@@ -76,7 +76,7 @@ export const SheetSelect = React.forwardRef(function SheetSelect({ className, in
       <select
         ref={ref}
         value={value ?? ''}
-        className={cn(inputClass(invalid), 'appearance-none pe-4 ps-10', !value && placeholder ? 'text-[#1B2656]/45' : '', className)}
+        className={cn(inputClass(invalid), 'appearance-none pe-4 ps-10', !value && placeholder ? 'text-[#1B2656]/70' : '', className)}
         aria-invalid={invalid || undefined}
         {...props}
       >
@@ -132,7 +132,7 @@ export function SheetMore({ label = 'פרטים נוספים', summary = '', ope
     >
       <span className="min-w-0 flex-1">
         <span className="block text-[15px] font-semibold text-[#1B2656]">{label}</span>
-        <span className="block truncate text-[13px] text-[#1B2656]/55">{summary || 'טלפון, אימייל, מחיר והערות'}</span>
+        <span className="block truncate text-[13px] text-[#1B2656]/70">{summary || 'טלפון, אימייל, מחיר והערות'}</span>
       </span>
       <ChevronDown aria-hidden className={cn('h-5 w-5 shrink-0 text-[#1B2656]/50 transition-transform duration-200 motion-reduce:transition-none', open && 'rotate-180')} />
     </button>
@@ -144,8 +144,8 @@ export function SheetMore({ label = 'פרטים נוספים', summary = '', ope
         {open ? (
           <>
             <div className="mb-3 flex items-center justify-between">
-              <span className="ps-1 text-[13px] font-semibold text-[#1B2656]/55">{label}</span>
-              <button type="button" onClick={() => onOpenChange(false)} aria-expanded aria-controls={panelId} className="press -me-2 inline-flex min-h-[44px] items-center gap-1 px-2 text-[14px] font-medium text-[#1B2656]/60">
+              <span className="ps-1 text-[13px] font-semibold text-[#1B2656]/70">{label}</span>
+              <button type="button" onClick={() => onOpenChange(false)} aria-expanded aria-controls={panelId} className="press -me-2 inline-flex min-h-[44px] items-center gap-1 px-2 text-[14px] font-medium text-[#1B2656]/70">
                 הסתרה
                 <ChevronDown aria-hidden className="h-4 w-4 rotate-180" />
               </button>

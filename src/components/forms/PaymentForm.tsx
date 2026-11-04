@@ -122,7 +122,7 @@ export function PaymentForm({
                 className="pe-10 text-[18px] font-semibold"
                 style={{ textAlign: 'right' }}
               />
-              <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/45">₪</span>
+              <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/70">₪</span>
             </div>
           </SheetField>
           <SheetField label="מצב" labelId={fid('status-label')} htmlFor={fid('status')}>

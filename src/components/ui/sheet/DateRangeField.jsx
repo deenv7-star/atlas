@@ -40,8 +40,8 @@ export function MonthCalendar({ start = '', end = '', onPick, min = '', hint = n
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </button>
       </div>
-      {hint ? <p className="mb-2 text-center text-[14px] text-[#1B2656]/60">{hint}</p> : null}
-      <div className="grid grid-cols-7 text-center text-[12px] font-medium text-[#1B2656]/45" aria-hidden>
+      {hint ? <p className="mb-2 text-center text-[14px] text-[#1B2656]/70">{hint}</p> : null}
+      <div className="grid grid-cols-7 text-center text-[12px] font-medium text-[#1B2656]/70" aria-hidden>
         {HE_WEEKDAY_SHORT.map((d) => <span key={d} className="py-1.5">{d.replace('׳', '')}</span>)}
       </div>
       <div role="grid" aria-labelledby={idPrefix ? `${idPrefix}-month` : undefined}>
@@ -97,7 +97,7 @@ export function MonthCalendar({ start = '', end = '', onPick, min = '', hint = n
 }
 
 function DateText({ iso, placeholder }) {
-  if (!iso) return <span className="text-[#1B2656]/40">{placeholder}</span>;
+  if (!iso) return <span className="font-normal text-[#1B2656]/70">{placeholder}</span>;
   return <span dir="rtl">{heDate(iso, { year: 'auto' })}</span>;
 }
 
@@ -146,7 +146,7 @@ export function DateRangeField({ start = '', end = '', onChange, labels = { star
               error && !iso && 'shadow-[0_0_0_1px_rgb(252,165,165)]',
             )}
           >
-            <span className="text-[13px] font-medium text-[#1B2656]/55">{labels[k]}</span>
+            <span className="text-[13px] font-medium text-[#1B2656]/70">{labels[k]}</span>
             <span className="mt-0.5 block w-full truncate text-[17px] font-semibold text-[#1B2656]"><DateText iso={iso} placeholder="בחרו" /></span>
           </button>
         );
@@ -184,7 +184,7 @@ export function DateField({ value = '', onChange, label = 'תאריך', error = 
       {label ? (
         <span id={`${idPrefix}-label`} className="mb-2 flex items-baseline gap-1.5 text-[15px] font-semibold text-[#1B2656]">
           {label}
-          {optional ? <span className="text-[13px] font-normal text-[#1B2656]/50">לא חובה</span> : null}
+          {optional ? <span className="text-[13px] font-normal text-[#1B2656]/70">לא חובה</span> : null}
         </span>
       ) : null}
       <button
@@ -200,7 +200,7 @@ export function DateField({ value = '', onChange, label = 'תאריך', error = 
         )}
       >
         <CalendarDays aria-hidden className="h-5 w-5 shrink-0 text-[#1B2656]/45" />
-        <span id={`${idPrefix}-value`} className={cn('min-w-0 flex-1 truncate', value ? 'text-[#1B2656]' : 'text-[#1B2656]/40')} dir="rtl">
+        <span id={`${idPrefix}-value`} className={cn('min-w-0 flex-1 truncate', value ? 'text-[#1B2656]' : 'text-[#1B2656]/70')} dir="rtl">
           {value ? heDate(value) : placeholder}
         </span>
       </button>

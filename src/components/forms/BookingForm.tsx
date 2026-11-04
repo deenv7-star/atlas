@@ -180,7 +180,7 @@ export function BookingForm({
           {!hasUnits ? (
             <div className="rounded-[14px] bg-[#F7F8FB] px-4 py-3" role="status">
               <p className="text-[15px] font-semibold text-[#1B2656]">כדי לשמור הזמנה צריך יחידה</p>
-              <p className="mt-0.5 text-[14px] text-[#1B2656]/65">
+              <p className="mt-0.5 text-[14px] text-[#1B2656]/70">
                 עוד אין יחידות בחשבון.{' '}
                 <a href="/setup" className="inline-flex min-h-[44px] items-center font-semibold text-[#3E2BF1] underline underline-offset-2">הוספת יחידה</a>
               </p>
@@ -268,7 +268,7 @@ export function BookingForm({
                   dir="ltr"
                   style={{ textAlign: 'right' }}
                 />
-                <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/45">₪</span>
+                <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/70">₪</span>
               </div>
             </SheetField>
             <SheetField label="מצב ההזמנה" htmlFor="bf-status" labelId="bf-status-label">

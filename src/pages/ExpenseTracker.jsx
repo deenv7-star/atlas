@@ -233,7 +233,7 @@ function ExpenseFields({ form, setForm, propertyNames, unitValue, tried, amountO
               invalid={tried && !amountOk}
               onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value.replace(/[^\d.,]/g, '') }))}
             />
-            <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/45">₪</span>
+            <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/70">₪</span>
           </div>
         </SheetField>
         <div>
