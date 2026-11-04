@@ -7,7 +7,7 @@
  */
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Mic, MicOff, Square, RotateCcw } from 'lucide-react';
+import { X, Mic, MicOff, Square, RotateCcw, Keyboard } from 'lucide-react';
 import { ProposalCard } from '../ProposalCard.jsx';
 import { Answer, Composer } from '../ui.jsx';
 import { useScreen } from './useScreen.js';
@@ -48,18 +48,18 @@ function NextStep({ step, onAsk, dark = true }) {
 export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
   const s = useScreen({ facts, page });
   const { v, t } = s;
-  const closeRef = useRef(null);
+  const rootRef = useRef(null);
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
-    closeRef.current?.focus({ preventScroll: true });
+    rootRef.current?.focus({ preventScroll: true }); // focus the dialog itself: no ring flashes on a control
     document.documentElement.classList.add('as-lock');
     const onKey = (e) => { if (e.key === 'Escape') { v.end(); onClose(); } };
     document.addEventListener('keydown', onKey);
     return () => { document.documentElement.classList.remove('as-lock'); document.removeEventListener('keydown', onKey); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [t.messages.length, t.messages[t.messages.length - 1]?.content, s.mode]);
+  useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [t.messages.length, t.messages[t.messages.length - 1]?.content, s.mode, s.step?.line]);
 
   const close = () => { v.end(); onClose(); };
   const open = v.proposals.map((p, i) => ({ p, i })).filter(({ p }) => p.state !== 'dismissed');
@@ -68,9 +68,9 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
   const live = ['listening', 'hearing', 'thinking', 'speaking', 'connecting'].includes(v.state);
 
   return createPortal(
-    <div className={`ax ax--${s.mode}${card ? ' has-card' : ''}`} role="dialog" aria-modal="true" aria-label="דברו עם atlas" dir="rtl">
+    <div ref={rootRef} tabIndex={-1} className={`ax ax--${s.mode}${card ? ' has-card' : ''}`} role="dialog" aria-modal="true" aria-label="דברו עם atlas" dir="rtl">
       <header className="ax-top">
-        <button ref={closeRef} type="button" className="ax-icon" onClick={close} aria-label="סגירה"><X size={22} strokeWidth={1.75} /></button>
+        <button type="button" className="ax-icon" onClick={close} aria-label="סגירה"><X size={22} strokeWidth={1.75} /></button>
         <ModeSwitch mode={s.mode} onVoice={s.toVoice} onText={s.toText} />
         <p className="ax-meta" aria-live="off">{v.demo ? 'הדגמה' : s.mode === 'voice' && mins != null ? `${mins} דק׳` : ''}</p>
       </header>
@@ -117,7 +117,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
             ) : (
               <button type="button" className="ax-round ax-round--go" onClick={s.toVoice} aria-label="שיחה קולית חדשה"><Mic size={26} strokeWidth={1.9} aria-hidden="true" /></button>
             )}
-            <span className="ax-round ax-round--ghost" aria-hidden="true" />
+            <button type="button" className="ax-round" onClick={s.toText} aria-label="מעבר לכתיבה"><Keyboard size={24} strokeWidth={1.75} aria-hidden="true" /></button>
           </footer>
           <p className="ax-fine">{v.demo ? 'הדגמה: השיחה מתוסרטת מהנתונים בדפדפן הזה.' : 'פעולות קורות רק אחרי אישור שלכם. השמע לא נשמר.'}</p>
         </>

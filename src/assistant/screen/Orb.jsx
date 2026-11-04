@@ -23,7 +23,7 @@ export function Orb({ state, levels, size = 220, label = '' }) {
       const { mic = 0, out = 0 } = levels?.() || {};
       const target = s === 'hearing' ? mic : s === 'speaking' ? out : 0;
       lv += (target - lv) * 0.18;
-      const r = size / 2 * (0.78 + (s === 'speaking' ? lv * 0.1 : 0) + (s === 'listening' ? Math.sin(t * 1.6) * 0.012 : 0));
+      const r = size / 2 * (0.78 + (s === 'speaking' ? lv * 0.05 : 0) + (s === 'listening' ? Math.sin(t * 1.6) * 0.012 : 0));
       const cx = S / 2; const cy = S / 2;
       g.clearRect(0, 0, S, S);
       // light around it: indigo, soft, brighter while someone speaks
@@ -32,11 +32,11 @@ export function Orb({ state, levels, size = 220, label = '' }) {
       glow.addColorStop(1, 'rgba(62, 43, 241, 0)');
       g.fillStyle = glow; g.beginPath(); g.arc(cx, cy, r * 1.75, 0, Math.PI * 2); g.fill();
       // the body: a circle that ripples with the voice
-      const amp = (s === 'hearing' || s === 'speaking') ? 0.02 + lv * 0.07 : 0.008;
+      const amp = (s === 'hearing' || s === 'speaking') ? 0.008 + lv * 0.016 : 0.005; // a ripple, not a blob
       g.beginPath();
       for (let i = 0; i <= 120; i += 1) {
         const a = (i / 120) * Math.PI * 2;
-        const k = 1 + amp * (Math.sin(a * 3 + t * 2.1) + 0.6 * Math.sin(a * 5 - t * 1.7) + 0.35 * Math.sin(a * 2 + t * 3.3));
+        const k = 1 + amp * (Math.sin(a * 3 + t * 2.1) + 0.4 * Math.sin(a * 5 - t * 1.7) + 0.2 * Math.sin(a * 2 + t * 3.3));
         const x = cx + Math.cos(a) * r * k; const y = cy + Math.sin(a) * r * k;
         if (i) g.lineTo(x, y); else g.moveTo(x, y);
       }

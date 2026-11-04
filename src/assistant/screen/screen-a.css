@@ -6,6 +6,7 @@
   font-family: 'Heebo', system-ui, sans-serif; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); overflow: hidden;
   animation: ax-in 320ms var(--ease) both; -webkit-font-smoothing: antialiased; }
 @keyframes ax-in { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
+.ax:focus { outline: none; }
 .ax button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .ax button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
