@@ -9,7 +9,7 @@ import { money, dayLabel, parseDay, withPrefix } from './facts.js';
 export const SAFE_LINK = Object.freeze({
   '/today': 'היום',
   '/dashboard': 'היום',
-  '/calendar': 'לוח שנה',
+  '/calendar': 'יומן',
   '/bookings': 'הזמנות',
   '/booking': 'הזמנה',
   '/leads': 'פניות',

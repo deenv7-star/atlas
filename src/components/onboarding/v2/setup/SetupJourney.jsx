@@ -24,6 +24,7 @@ import {
 } from '@/lib/onboarding/v2/model';
 import { writeOrgSettings } from '@/lib/onboarding/orgSettings';
 import { loadSetupFacts, markSetup, saveCalendarLink, saveWhatsApp, saveUnit, unitView } from '@/lib/onboarding/v2/actions';
+import { isNativeApp } from '@/lib/nativePlatform';
 
 const EASE = [0.23, 1, 0.32, 1];
 const ICONS = { units: Home, booking: CalendarDays, airbnb: CalendarDays, whatsapp: MessageCircle, plan: BadgeCheck, payments: CreditCard };
@@ -434,6 +435,18 @@ function UnitsStep({ facts, variant, step, onBack, onDone, prog }) {
 
 function PlanStep({ facts, variant, step, onBack, onDone, onSkip, prog }) {
   const p = getPlanByKey(facts.planChoice?.key);
+  // iOS app (Apple 3.1.1 / audit 04.11 C1): no price and no way toward buying a plan.
+  if (isNativeApp()) {
+    return (
+      <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title={`חבילת ${p.nameHe}`}
+        intro={[`${p.limit}, כל המערכת כלולה.`]}
+        footer={<Primary className="w-full" onClick={onSkip}>המשך<ArrowLeft className="h-5 w-5" aria-hidden /></Primary>}>
+        <ul className="flex flex-col gap-2">
+          {p.features.map((f) => <li key={f} className="flex min-h-[48px] items-center gap-3 rounded-[16px] bg-white px-4 text-[16px] font-semibold text-navy-900"><Check className="h-5 w-5 text-brand-600" strokeWidth={3} aria-hidden />{f}</li>)}
+        </ul>
+      </Shell>
+    );
+  }
   return (
     <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title={`חבילת ${p.nameHe}`}
       intro={[`${p.limit}, כל המערכת כלולה. ₪${p.price} לחודש.`, `${TRIAL_DAYS} הימים הראשונים חינם בכל מקרה. משלימים את החבילה במסך החבילות, ושם צוות atlas חוזר אליכם.`]}

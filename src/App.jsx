@@ -266,9 +266,10 @@ const AuthenticatedApp = () => {
         />
       )}
       {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
-      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<BillingWhileLocked />}><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
+      {/* iOS app (audit 04.11 C1): billing and plans never open there; a locked account still gets the no-purchase paywall. */}
+      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<BillingWhileLocked />}>{isNativeApp() ? <Navigate to="/settings" replace /> : <LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper>}</ProtectedRoute>} />
       {/* While locked, /subscription IS the paywall (plan choice + request; no purchase UI in the iOS app). */}
-      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<Paywall />}><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
+      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<Paywall />}>{isNativeApp() ? <Navigate to="/settings" replace /> : <LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper>}</ProtectedRoute>} />
       {/* Platform admin console. Access is checked server-side (admin_whoami + every admin_* RPC). */}
       <Route path="/admin/*" element={<Suspense fallback={<PublicFallback />}><AdminRoot /></Suspense>} />
       <Route path="/platform-admin" element={<Navigate to="/admin" replace />} />
