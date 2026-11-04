@@ -107,8 +107,9 @@ workflows:
           PDIR="$HOME/Library/MobileDevice/Provisioning Profiles"
           TMP=$(mktemp -d)
           app-store-connect profiles list --type IOS_APP_STORE --state ACTIVE --name "atlas App Store" --save --profiles-dir "$TMP"
-          has_push() { security cms -D -i "$1" 2>/dev/null | plutil -extract Entitlements.aps-environment raw -o - - >/dev/null 2>&1; }
-          app_id() { security cms -D -i "$1" 2>/dev/null | plutil -extract Entitlements.application-identifier raw -o - - 2>/dev/null; }
+          decode() { security cms -D -i "$1" -o "$TMP/p.plist" >/dev/null 2>&1; }
+          has_push() { decode "$1" && /usr/libexec/PlistBuddy -c "Print :Entitlements:aps-environment" "$TMP/p.plist" >/dev/null 2>&1; }
+          app_id() { decode "$1" && /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" "$TMP/p.plist" 2>/dev/null; }
           FOUND=""
           for f in "$TMP"/*.mobileprovision; do
             [ -f "$f" ] || continue
