@@ -26,6 +26,7 @@ export const SOFT = { type: 'spring', stiffness: 260, damping: 26 };
 export function cardFor(question = '', tool = '', f = null) {
   if (!f) return null;
   const q = String(question);
+  if (/תכינ|תוסיפ|תרשמ|לרשום|לקבוע|הזמנה חדשה|הודעה|תזכורת|וואטסאפ|נציג/.test(q)) return null; // an action: its own card says it
   if (tool === 'get_money' || /חייב|תשלום|יתר|גבי|כסף|שולם/.test(q)) return (f.overdue.length || f.dueSoon.length) ? 'unpaid' : null;
   if (tool === 'check_availability' || /פנוי|פנויים|סוף ה?שבוע|לילות/.test(q)) return f.freeNights.length ? 'free' : null;
   if (tool === 'get_day_overview' || /מגיע|נכנס|כניס|יוצא|היום/.test(q)) return (f.arrivals.length || f.departures.length) ? 'arrivals' : null;
@@ -128,7 +129,7 @@ function Strip({ ci, co, guest, done }) {
         ); })}
       </div>
       <div className="lc-track">
-        <motion.span className={`lc-stay${done ? ' is-done' : ''}`} style={{ insetInlineStart: `calc(${(a / 7) * 100}% + ${100 / 14}%)`, width: `${((b - a) / 7) * 100}%` }}
+        <motion.span className={`lc-stay${done ? ' is-done' : ''}`} style={{ insetInlineStart: `calc(${(a / 7) * 100}% + 3px)`, width: `calc(${((b - a) / 7) * 100}% - 6px)` }}
           initial={reduce ? false : { scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }} transition={{ ...SPRING, delay: 0.35 }}>
           {done ? <Check size={14} strokeWidth={2.6} aria-hidden="true" /> : null}{guest}
         </motion.span>
