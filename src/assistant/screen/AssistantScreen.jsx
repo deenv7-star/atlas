@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
 import { X, Mic, MicOff, Square, RotateCcw, Keyboard } from 'lucide-react';
 import { ProposalCard } from '../ProposalCard.jsx';
 import { Answer, Composer } from '../ui.jsx';
-import { useScreen } from './useScreen.js';
+import { useScreen, usePinnedBottom } from './useScreen.js';
 import { Wave } from './Wave.jsx';
 import './screen-b.css';
 
@@ -56,8 +56,10 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
     return () => { document.documentElement.classList.remove('as-lock'); document.removeEventListener('keydown', onKey); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const lastV = v.turns[v.turns.length - 1];
+  const pinned = usePinnedBottom(scrollRef, [s.mode]);
   useEffect(() => { // to the newest line, again once cards have laid out
     const el = scrollRef.current; if (!el) return undefined;
+    pinned.current = true;
     el.scrollTo({ top: el.scrollHeight });
     const id = setTimeout(() => el.scrollTo({ top: el.scrollHeight }), 320);
     return () => clearTimeout(id);
