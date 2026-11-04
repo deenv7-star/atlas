@@ -5,6 +5,7 @@
  * a question the snapshot cannot answer gets an honest "here is what I can answer".
  */
 import { money, dayLabel, withPrefix } from './facts.js';
+import { isSmallTalk } from './nextStep.js';
 
 const pct = (n) => `${Math.round((Number(n) || 0) * 100)}%`;
 const short = (iso) => (iso ? iso.split('-').reverse().slice(0, 2).join('.') : '');
@@ -76,12 +77,18 @@ const ROUTES = [
   [/ליד|פני|לקוחות חדשים/, leads_],
 ];
 
-export function demoAnswer(question, facts) {
+export function demoAnswer(question, facts, { native = false } = {}) {
   const q = String(question || '');
+  if (isSmallTalk(q)) return /תודה/.test(q) ? 'בשמחה. מה עוד לבדוק?' : 'הכל טוב, תודה. נבדוק מה מחכה לכם היום?';
+  // Apple 3.1.1: inside the iOS app no plan prices and no buying outside it
+  if (/כמה עולה|מחיר.*(מסלול|מנוי|atlas)|מסלול|מנוי|לשדרג|שדרוג/.test(q)) {
+    return native ? 'את פרטי המנוי לא מציגים כאן באפליקציה. אפשר לשאול על ההזמנות, הכסף והפניות, או לפנות לנציג בנושא החשבון.'
+      : 'את המסלולים והמחירים רואים במסך המנוי.\n\n[פתיחת המנוי](/subscription)';
+  }
   if (!facts?.hasData) return 'עוד אין הזמנות ביומן, אז אין לי ממה לענות. אחרי שתוסיפו הזמנה ראשונה או תחברו את Booking ו-Airbnb, אפשר לשאול כאן על כסף, לילות פנויים ואורחים.\n\n[ערוצים וחיבורים](/integrations)';
   const hit = ROUTES.find(([re]) => re.test(q));
   if (hit) return hit[1](facts);
-  return `בהדגמה אפשר לשאול על מה שכבר רשום ביומן: כסף שעוד לא שולם, לילות פנויים, מי מגיע היום ומחר, החודש מול החודש שעבר ופניות פתוחות.\n\nלמשל: "מי עוד חייב לנו כסף?"`;
+  return `את זה לא נוכל לבדוק בהדגמה, כי היא עונה רק ממה שכבר רשום ביומן. אפשר לשאול על כסף שעוד לא שולם, לילות פנויים, מי מגיע היום ומחר, החודש מול החודש שעבר ופניות פתוחות.\n\nלמשל: "מי עוד חייב לנו כסף?"`;
 }
 
 export const DEMO_STREAM_PATH = '/api/assistant/stream';

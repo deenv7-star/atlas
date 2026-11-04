@@ -9,12 +9,14 @@ export const VOICE = {
   sliceSeconds: 180,              // one secret = one slice; the app renews quietly (see 031_voice_usage.sql)
   secretTtl: 60,                  // the secret must be used within a minute
   wsUrl: 'wss://api.elevenlabs.io/v1/convai/realtime',
+  turn: { type: 'semantic_vad', eagerness: 'high', create_response: true, interrupt_response: true },
+  temperature: 0.7, // a natural spoken tone; facts still come only from tools
 };
 
 /** The ElevenLabs "Create realtime client secret" body. Same rules and tools as the text brain. */
-export function secretRequest({ today, seconds, sessionId, owner = '', page = '', resume = '' }) {
-  const instructions = brainPrompt({ mode: 'voice', today, page, owner })
-    + (resume ? `\n\nהמשך שיחה. זה מה שנאמר עד עכשיו (לא לחזור עליו, רק להמשיך):\n${String(resume).slice(0, 1500)}` : '');
+export function secretRequest({ today, seconds, sessionId, owner = '', page = '', resume = '', native = false }) {
+  const instructions = brainPrompt({ mode: 'voice', today, page, owner, native })
+    + (resume ? `\n\nהמשך שיחה. זה מה שנאמר עד עכשיו (לא לחזור עליו, לא לברך שוב, רק להמשיך מאותה נקודה):\n${String(resume).slice(0, 1500)}` : '');
   return {
     session: {
       type: 'realtime',
@@ -25,13 +27,15 @@ export function secretRequest({ today, seconds, sessionId, owner = '', page = ''
         input: {
           format: { type: 'audio/pcm', rate: 24000 },
           transcription: { language: 'he' },
-          turn_detection: { type: 'semantic_vad', eagerness: 'medium', create_response: true, interrupt_response: true },
+          // semantic_vad is the only mode Eleven accepts. 'high' ends the turn sooner after a short Hebrew question
+          // (medium can wait for "more" after a short question; not verified live, one constant to revert); the app adds a watchdog for a turn left unanswered.
+          turn_detection: VOICE.turn,
         },
         output: { format: { type: 'audio/pcm' }, voice: VOICE.voice },
       },
       tools: realtimeTools(),
       tool_choice: 'auto',
-      temperature: 0.6,
+      temperature: VOICE.temperature,
       max_response_output_tokens: 1024, // Max needs >= 1024
       max_duration_seconds: Math.max(60, Math.min(VOICE.sliceSeconds, Math.floor(seconds))), // ElevenLabs rejects < 60 (422)
       tracing: sessionId ? { group_id: String(sessionId).slice(0, 64) } : 'auto',
