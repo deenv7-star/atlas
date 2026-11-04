@@ -9,8 +9,8 @@ import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
-import { setAssistantOpen, useAssistantOpen } from '@/assistant/launcher';
-import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, MoreHorizontal, Bell, LifeBuoy, Settings } from 'lucide-react';
+import { openAssistant, useAssistantOpen } from '@/assistant/launcher';
+import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, MoreHorizontal, LayoutGrid, Bell, LifeBuoy, Settings } from 'lucide-react';
 import { Wordmark, useIsActive, MoreSheet, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -18,6 +18,7 @@ import { useLiquidLens } from './useLiquidLens';
 import TodayBackdrop, { TODAY_PAGES } from './TodayBackdrop';
 import './y2.css';
 import './y-bg.css';
+import './y-atlas-tab.css';
 
 export const shellClass = 'y2-shell';
 
@@ -84,10 +85,13 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         <button type="button" onClick={onOpenCommandPalette} className="y2-search press" aria-label="חיפוש אורח, הזמנה או יחידה">
           <Search strokeWidth={1.75} /><span>חיפוש אורח, הזמנה או יחידה</span>
         </button>
-        <AskFace />
+        <AskFaceDesk />
         <button type="button" className="y2-gb press y2-hide-m" aria-label="עזרה" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /></button>
+        {/* phones: "עוד" moved up here from the tab bar (its slot went to atlas); hidden ≤359px, where the avatar menu has it */}
+        <button type="button" className="y2-gb press y2-more-m" aria-label="כל המסכים" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-more'))}><LayoutGrid strokeWidth={1.75} /></button>
         <Link to={createPageUrl('Messages')} className="y2-gb press" aria-label="הודעות"><Bell strokeWidth={1.75} /><i className="y2-gb-dot" aria-hidden /></Link>
-        <button type="button" className="y2-gb y2-gb--ind press y2-hide-m" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
+        {/* quick-add: was a floating "+" beside the tab bar (it overlapped content); now one fixed home in the header */}
+        <button type="button" className="y2-gb y2-gb--ind press" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
         <UserMenu user={user} onLogout={onLogout}>
           <button type="button" aria-label="החשבון שלי" className="y2-bar-me press">
             <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} />
@@ -99,16 +103,29 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
   );
 }
 
-/** The living atlas face in the top bar: opens "שאלו את atlas" and reacts to what happens in the app. */
-function AskFace() {
+/** Desktop only (phones have it in the centre of the tab bar): the living atlas face opens a voice conversation. */
+function AskFaceDesk() {
   const { isOpen } = useAssistantOpen();
   const { pathname } = useLocation();
   if (pathname.startsWith('/ai-assistant')) return null;
   return (
-    <button type="button" className="y2-gb y2-gb--face press" aria-label="שאלו את atlas" aria-expanded={isOpen} aria-haspopup="dialog"
-      onClick={(e) => setAssistantOpen(!isOpen, e.currentTarget)}>
+    <button type="button" className="y2-gb y2-gb--face press y2-hide-m" aria-label="דברו עם atlas" aria-expanded={isOpen} aria-haspopup="dialog"
+      onClick={(e) => openAssistant('voice', e.currentTarget)}>
       <AtlasFace live size={34} decorative />
     </button>
+  );
+}
+
+/** The centre of the phone tab bar: atlas itself, raised. One tap opens straight into a live voice conversation. */
+function AtlasTab({ hot }) {
+  const { isOpen } = useAssistantOpen();
+  return (
+    <li className="y2-tab-atlas" data-hot={hot ? '' : undefined}>
+      <button type="button" className="y2-ta press" aria-label="דברו עם atlas" aria-expanded={isOpen} aria-haspopup="dialog"
+        onClick={(e) => openAssistant('voice', e.currentTarget)}>
+        <span className="y2-ta-disc"><AtlasFace live size={48} decorative /></span>
+      </button>
+    </li>
   );
 }
 
@@ -119,57 +136,61 @@ function AskFace() {
  */
 export function TabBar({ user, onLogout }) {
   const active = useActive();
-  const quick = useQuickBooking();
   const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
-  const items = NAV.filter((n) => n.page !== 'Bookings');
-  const anyOn = items.some((n) => active(n.page));
-  const all = [...items, { page: null, label: 'עוד', icon: MoreHorizontal }];
+  useEffect(() => { // "עוד" now opens from the header (and the avatar menu)
+    const open = () => setMoreOpen(true);
+    window.addEventListener('atlas:open-more', open);
+    return () => window.removeEventListener('atlas:open-more', open);
+  }, []);
+  // היום · יומן · [atlas] · פניות · כסף  (RTL: first item is rightmost)
+  const tabs = NAV.filter((n) => n.page !== 'Bookings');
+  const left = tabs.slice(0, 2); const right = tabs.slice(2);
+  const all = [...left, { page: null, atlas: true, label: 'atlas' }, ...right];
   const barRef = useRef(null);
   const lensRef = useRef(null);
   const tintRef = useRef(null);
   const onCommit = (i) => { // the hook keeps the latest one in a ref, so a fresh function per render is fine
     const it = all[i];
     if (!it) return;
-    if (!it.page) { setMoreOpen(true); return; }
+    if (it.atlas) { openAssistant('voice'); return; }
     if (!active(it.page)) navigate(createPageUrl(it.page));
   };
   const { hot, lifted, enabled } = useLiquidLens({ barRef, lensRef, tintRef, onCommit });
+  const tab = ({ page, label, icon: Icon }, i) => {
+    const on = active(page);
+    return (
+      <li key={page} data-hot={hot === i ? '' : undefined}>
+        <Link to={createPageUrl(page)} aria-current={on ? 'page' : undefined} className={cn('y2-ti press', on && 'on')} draggable={false}>
+          {on ? <motion.i layoutId="y2-tab-on" className="y2-ti-on" transition={SPRING} /> : null}
+          <Icon strokeWidth={1.75} /><span>{label}</span>
+        </Link>
+      </li>
+    );
+  };
   return (
     <>
+      <div className="y2-tab-scrim" aria-hidden="true" />
       <nav aria-label="ניווט" className="y2-tab" data-lens={lifted ? 'on' : undefined}>
         <div className="y2-tab-cap">
           <ul ref={barRef}>
-            {items.map(({ page, label, icon: Icon }, i) => {
-              const on = active(page);
-              return (
-                <li key={page} data-hot={hot === i ? '' : undefined}>
-                  <Link to={createPageUrl(page)} aria-current={on ? 'page' : undefined} className={cn('y2-ti press', on && 'on')} draggable={false}>
-                    {on ? <motion.i layoutId="y2-tab-on" className="y2-ti-on" transition={SPRING} /> : null}
-                    <Icon strokeWidth={1.75} /><span>{label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-            <li data-hot={hot === items.length ? '' : undefined}>
-              <button type="button" onClick={() => setMoreOpen(true)} className={cn('y2-ti press', !anyOn && 'on')}>
-                {!anyOn ? <motion.i layoutId="y2-tab-on" className="y2-ti-on" transition={SPRING} /> : null}
-                <MoreHorizontal strokeWidth={1.75} /><span>עוד</span>
-              </button>
-            </li>
+            {left.map((t, i) => tab(t, i))}
+            <AtlasTab hot={hot === 2} />
+            {right.map((t, i) => tab(t, i + 3))}
           </ul>
           {enabled ? (
             <div ref={lensRef} className="y2-lens" aria-hidden="true">
               <div ref={tintRef} className="y2-lens-row">
-                {all.map(({ label, icon: Icon }) => <span key={label} className="y2-ti"><Icon strokeWidth={1.75} /><span>{label}</span></span>)}
+                {all.map(({ label, icon: Icon, atlas }) => (atlas
+                  ? <span key="atlas" className="y2-ti y2-ti--atlas" />
+                  : <span key={label} className="y2-ti"><Icon strokeWidth={1.75} /><span>{label}</span></span>))}
               </div>
               <i className="y2-lens-rim" />
             </div>
           ) : null}
         </div>
-        <button type="button" onClick={() => quick.open()} className="y2-tab-new press" aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
       </nav>
-      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={items.map((n) => n.page)} />
+      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} user={user} onLogout={onLogout} exclude={tabs.map((n) => n.page)} />
     </>
   );
 }

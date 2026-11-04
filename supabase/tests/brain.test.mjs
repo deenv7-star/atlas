@@ -3,8 +3,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeDb } from './fakeDb.mjs';
 import { runTool, forModel, TOOL_DEFS, TOOL_NAMES, WRITE_TOOLS, chatTools, realtimeTools } from '../functions/_shared/brain/tools.js';
-import { runBrain } from '../functions/_shared/brain/loop.js';
-import { brainPrompt } from '../functions/_shared/brain/prompt.js';
+import { runBrain, NO_ANSWER } from '../functions/_shared/brain/loop.js';
+import { brainPrompt, NATIVE_RULE } from '../functions/_shared/brain/prompt.js';
 import { searchHelp, kbDigest, ROUTE_SET } from '../functions/_shared/brain/knowledge.js';
 import { secretRequest, clientPayload, VOICE } from '../functions/voice-session/core.js';
 
@@ -126,11 +126,11 @@ test('help search and digest come from the code-built KB (prices, limits)', () =
   assert.ok(ROUTE_SET.has('/bookings'));
 });
 
-test('prompt: plural, no invented features, actions need confirmation, voice speaks numbers', () => {
+test('prompt: owner in plural, atlas in first person, no invented features, actions need confirmation, voice speaks numbers', () => {
   const t = brainPrompt({ mode: 'text', today: TODAY });
   const v = brainPrompt({ mode: 'voice', today: TODAY });
   for (const p of [t, v]) { assert.match(p, /אסור להמציא/); assert.match(p, /אישור/); assert.match(p, /24\/7/); assert.match(p, /2026-11-04/); }
-  assert.match(v, /במילים/); assert.match(v, /בוקינג/); assert.match(v, /אנחנו יכולים/);
+  assert.match(v, /במילים/); assert.match(v, /בוקינג/); assert.match(v, /אני יכולה/); // first person, female (Deen, 04.11: "להרגיש אנושית")
   assert.ok(v.length < 9000, `voice prompt too long: ${v.length}`); // paid per token on every turn
 });
 
@@ -172,4 +172,74 @@ test('voice secret: Max model, Hebrew, same tools, slice-capped, short TTL, no k
   const p = clientPayload({ secret: { value: 'ek_x', expires_at: 1 }, sessionId: 's1', seconds: 180, usedToday: 600 });
   assert.equal(p.remaining_today, 1800 - 600 - 180);
   assert.ok(!JSON.stringify(p).includes('xi-api-key'));
+});
+
+/* ── v2 (04.11.2026): answers every question, natural + business-focused, guides to a next step, iOS 3.1.1 ── */
+test('prompt v2: always answers, steers small talk back, one next step, options when unsure (text + voice)', () => {
+  for (const mode of ['text', 'voice']) {
+    const p = brainPrompt({ mode, today: TODAY });
+    assert.match(p, /עונים על כל שאלה, תמיד/);
+    assert.match(p, /ומציעים את הפעולה הקרובה/);
+    assert.match(p, /שיחת חולין/); assert.match(p, /מחזירים לעסק/); assert.match(p, /לא מנהלים שיחת חולין ארוכה/);
+    assert.match(p, /צעד הבא אחד/); assert.match(p, /הצעה אחת בלבד, בלי לחץ/); assert.match(p, /שתיים או שלוש אפשרויות/);
+    assert.match(p, /שאלת המשך קצרה/); // follow-ups keep context
+    assert.match(p, /אף פעם לא אומרים שהפעולה בוצעה/); // proposals still need the owner's tap
+    assert.ok(!/מחוץ לנושא.*לא עונים/.test(p));
+  }
+  const v = brainPrompt({ mode: 'voice', today: TODAY });
+  assert.match(v, /לא רובוטי/); assert.match(v, /לא שמעתי טוב/); assert.match(v, /רגע, בודקת/); assert.match(v, /גוף ראשון נקבה/);
+  assert.ok(v.length < 9000, `voice prompt too long: ${v.length}`);
+});
+
+test('iOS app (Apple 3.1.1): no plan prices, no buying outside, in prompt, help search and voice', async () => {
+  const web = brainPrompt({ mode: 'text', today: TODAY });
+  const ios = brainPrompt({ mode: 'text', today: TODAY, native: true });
+  assert.match(web, /699/);
+  assert.ok(!/399|699|999|319|559|799|מתחיל \(Starter\)/.test(ios), 'native prompt leaks a plan price');
+  assert.ok(ios.includes(NATIVE_RULE)); assert.match(ios, /אסור לומר מחירים של מסלולי atlas/);
+  const webHelp = await call('search_help', { query: 'כמה עולה מסלול מקצועי מחיר' });
+  assert.match(JSON.stringify(webHelp.result), /₪/);
+  const iosHelp = await call('search_help', { query: 'כמה עולה מסלול מקצועי מחיר' }, ctx({ native: true }));
+  assert.ok(!/₪|699|399|999|atlas-il\.com\/(pricing|subscription|billing)/.test(JSON.stringify(iosHelp.result)), 'native help leaks a price');
+  const sec = secretRequest({ today: TODAY, seconds: 180, sessionId: 's', native: true });
+  assert.ok(!/399|699|999/.test(sec.session.instructions)); assert.match(sec.session.instructions, /אפליקציית האייפון/);
+  assert.match(secretRequest({ today: TODAY, seconds: 180, sessionId: 's' }).session.instructions, /699/);
+});
+
+test('loop never goes silent: empty reply → one words-only retry → honest fallback with a next step', async () => {
+  const opts = [];
+  let n = 0;
+  const llm1 = async (_m, _s, o = {}) => { opts.push(o); n += 1; return n === 1 ? { message: { content: '' }, usage: {} } : { message: { content: 'היום מגיעים שני אורחים.' }, usage: {} }; };
+  const ev = [];
+  const r1 = await runBrain({ system: 'S', turns: [{ role: 'user', content: 'מי מגיע?' }], llm: llm1, ctx: ctx(), emit: (e) => ev.push(e) });
+  assert.equal(r1.text, 'היום מגיעים שני אורחים.'); assert.equal(opts[1].noTools, true);
+  const r2 = await runBrain({ system: 'S', turns: [{ role: 'user', content: 'q' }], llm: async () => ({ message: { content: '  ' }, usage: {} }), ctx: ctx(), emit: () => {} });
+  assert.equal(r2.text, NO_ANSWER); assert.match(NO_ANSWER, /נעביר|במילים אחרות/);
+  const r3 = await runBrain({ system: 'S', turns: [{ role: 'user', content: 'q' }], llm: async () => { throw new Error('down'); }, ctx: ctx(), emit: () => {} }).catch((e) => e);
+  assert.ok(r3 instanceof Error, 'a hard upstream error still surfaces (the edge fn turns it into a visible error frame)');
+});
+
+test('loop: the last round asks for words only (tool_choice none)', async () => {
+  const seen = [];
+  const llm = async (_m, _s, o = {}) => { seen.push(!!o.noTools); return seen.length < 5 ? { message: { tool_calls: [{ id: `t${seen.length}`, function: { name: 'search_help', arguments: '{"query":"x"}' } }] }, usage: {} } : { message: { content: 'סוף' }, usage: {} }; };
+  await runBrain({ system: 'S', turns: [{ role: 'user', content: 'q' }], llm, ctx: ctx() });
+  assert.deepEqual(seen, [false, false, false, false, true]);
+});
+
+test('a failing tool tells the model what to say instead of going quiet', async () => {
+  const q = new Proxy({}, { get: (_t, k) => (k === 'then' ? (res) => res({ data: null, error: { message: 'db down' } }) : () => q) });
+  const broken = { from: () => q };
+  const { result } = await call('get_day_overview', {}, ctx({ db: broken }));
+  assert.equal(result.error, 'lookup_failed'); assert.match(result.say, /לא הצלחתם לבדוק/);
+  const none = await call('search_help', { query: 'זזזזזזזזזז קקקקקק' });
+  if (!none.result.results.length) assert.match(none.result.note, /נציג/);
+});
+
+test('voice session: semantic VAD (the only mode Eleven accepts) that answers short questions', () => {
+  const b = secretRequest({ today: TODAY, seconds: 180, sessionId: 's1' });
+  const td = b.session.audio.input.turn_detection;
+  assert.equal(td.type, 'semantic_vad'); assert.equal(td.create_response, true); assert.equal(td.interrupt_response, true);
+  assert.ok(['medium', 'high'].includes(td.eagerness));
+  assert.ok(b.session.max_duration_seconds >= 60 && b.session.max_duration_seconds <= VOICE.sliceSeconds);
+  assert.match(secretRequest({ today: TODAY, seconds: 180, sessionId: 's', resume: 'הבעלים: היי' }).session.instructions, /לא לברך שוב/);
 });
