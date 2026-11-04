@@ -14,28 +14,28 @@ const UserNotRegisteredError = () => {
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-gray-900">אין לך גישה למערכת</h1>
+            <h1 className="text-2xl font-bold text-gray-900">אין לכם גישה לחשבון הזה</h1>
             <p className="text-gray-500 leading-relaxed">
-              המשתמש שלך אינו רשום לאפליקציה זו.
+              המייל הזה לא רשום בחשבון.
               <br />
-              צור קשר עם מנהל המערכת כדי לקבל גישה.
+              בקשו מבעל החשבון להוסיף אתכם, או כתבו לנו.
             </p>
           </div>
 
           <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-600 text-right space-y-2">
-            <p className="font-medium text-gray-700">מה ניתן לעשות?</p>
+            <p className="font-medium text-gray-700">מה אפשר לעשות?</p>
             <ul className="space-y-1.5">
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-600 flex-shrink-0" />
-                ודא שנכנסת עם החשבון הנכון
+                בדקו שנכנסתם עם המייל הנכון
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-600 flex-shrink-0" />
-                פנה למנהל המערכת לקבלת הרשאה
+                בקשו מבעל החשבון הרשאה
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-600 flex-shrink-0" />
-                נסה להתנתק ולהתחבר מחדש
+                צאו מהחשבון והיכנסו שוב
               </li>
             </ul>
           </div>

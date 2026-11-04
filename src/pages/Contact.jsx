@@ -8,7 +8,7 @@ import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { submitPublicContact, buildContactMailto } from '@/lib/submitPublicContact';
 
 const SUBJECT_OPTIONS = [
-  { value: '', label: 'בחר נושא' },
+  { value: '', label: 'בחרו נושא' },
   { value: 'sales', label: 'שאלה לפני רכישה' },
   { value: 'support', label: 'תמיכה טכנית' },
   { value: 'billing', label: 'חיוב ותשלומים' },
@@ -102,7 +102,7 @@ export default function Contact() {
 
       <main className="max-w-5xl mx-auto px-4 py-16">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">צור קשר</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">דברו איתנו</h1>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
             נשמח לשמוע ממך. צוות atlas זמין בימים א–ה 09:00–18:00, גם בוואטסאפ וגם במייל.
           </p>
@@ -136,7 +136,7 @@ export default function Contact() {
               className="flex items-center gap-3 bg-[#14804A] text-white rounded-xl px-5 py-3.5 font-semibold hover:bg-[#106B3D] transition-colors mt-8 w-fit"
             >
               <MessageCircle className="w-5 h-5" />
-              שלח הודעה בוואטסאפ
+              שליחת הודעה בוואטסאפ
             </a>
 
             <div className="mt-8">
@@ -250,7 +250,7 @@ export default function Contact() {
                   onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = '#3E2BF1'; }}
                 >
                   {submitting ? <Loader2 className="w-5 h-5 animate-spin" aria-hidden /> : null}
-                  {submitting ? 'שולח…' : 'שלח הודעה'}
+                  {submitting ? 'שולחים…' : 'שליחת הודעה'}
                 </button>
                 <p className="text-xs text-gray-500 text-center leading-relaxed">
                   לחלופין:{' '}

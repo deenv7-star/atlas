@@ -227,8 +227,8 @@ function CalendarStep({ facts, variant, provider, step, onBack, onSkip, onDone, 
   };
 
   const intro = variant === 'b'
-    ? [`כשמחברים את ${G.name}, כל הזמנה משם נכנסת ללוח של atlas לבד, ו-atlas מתריע אם תאריכים חופפים.`, `${G.tip} נעשה את זה יחד, שלב אחד בכל פעם.`]
-    : [`כל הזמנה מ-${G.name} תיכנס ללוח לבד, בלי להקליד, ו-atlas מתריע אם תאריכים חופפים.`, G.tip];
+    ? [`כשמחברים את ${G.name}, כל הזמנה משם נכנסת ליומן לבד, ותקבלו התראה אם תאריכים חופפים.`, `${G.tip} נעשה את זה יחד, שלב אחד בכל פעם.`]
+    : [`כל הזמנה מ-${G.name} תיכנס ליומן לבד, בלי להקליד, ותקבלו התראה אם תאריכים חופפים.`, G.tip];
 
   return (
     <Shell variant={variant} onBack={onBack} kicker={step.title} step={`שלב ${prog.handled + 1} מתוך ${prog.total}`} title={`מחברים את ${G.name}`} intro={intro}

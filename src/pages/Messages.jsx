@@ -62,7 +62,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
     onSuccess: (_data, vars) => {
       queryClient.invalidateQueries({ queryKey: ['message-logs'] });
       setReplyText('');
-      if (vars?.status === 'logged') toast({ title: 'ההודעה נרשמה כאן', description: 'היא לא נשלחה. שליחה ב-SMS ובמייל מתוך atlas תגיע בקרוב.' });
+      if (vars?.status === 'logged') toast({ title: 'ההודעה נרשמה כאן', description: 'היא לא נשלחה. שליחה ב-SMS ובמייל מכאן תגיע בקרוב.' });
       else toast({ title: 'וואטסאפ נפתח עם ההודעה', description: 'שלחו אותה בוואטסאפ. היא נשמרה בשיחה כאן.' });
     },
     onError: () => toast({ title: 'ההודעה לא נשלחה. בדקו את המספר ונסו שוב.', variant: 'destructive' }),
@@ -128,7 +128,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
       // ENG-05d: only WhatsApp actually opens with the text (wa.me). Other channels have no sender yet, so the
       // row is recorded as a note ('logged', shown as "נרשם"), never as 'sent'.
       status: isWa ? 'sent' : 'logged',
-      subject: isWa ? 'וואטסאפ · הודעה ידנית' : 'נרשם · לא נשלח מ-atlas',
+      subject: isWa ? 'וואטסאפ · הודעה ידנית' : 'נרשם כאן, לא נשלח',
     });
   };
 
@@ -155,7 +155,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
   return (
     <div className="flex h-full flex-col overflow-hidden" dir="rtl">
       <div className="mx-auto w-full max-w-[var(--page-max,1200px)] flex-shrink-0 px-5 pt-3 md:px-10 md:pt-5">
-        <PageHeader title="הודעות" help="messages.page" tour="messages-page" subtitle="ההודעות ששלחתם לאורחים מתוך atlas. התשובות שלהם מגיעות לוואטסאפ שלכם." className="!mb-4 md:!mb-5" />
+        <PageHeader title="הודעות" help="messages.page" tour="messages-page" subtitle="ההודעות ששלחתם לאורחים מכאן. התשובות שלהם מגיעות לוואטסאפ שלכם." className="!mb-4 md:!mb-5" />
       </div>
       <div className="mx-auto flex min-h-0 w-full max-w-[var(--page-max,1200px)] flex-1 flex-col overflow-hidden md:mb-6 md:px-10">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[22px] md:border md:shadow-card">

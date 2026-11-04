@@ -329,7 +329,7 @@ export default function InvoicesPage({ orgId }) {
                             variant="ghost"
                             aria-label="מחיקה"
                             onClick={() => {
-                              askConfirm({ title: 'למחוק את הרישום?', description: 'רק הרישום ב-atlas יימחק. המסמך בתוכנת החשבונות שלכם נשאר.' })
+                              askConfirm({ title: 'למחוק את הרישום?', description: 'רק הרישום כאן יימחק. המסמך בתוכנת החשבונות שלכם נשאר.' })
                                 .then((ok) => { if (ok) deleteMutation.mutate(invoice.id); });
                             }}
                           >

@@ -20,7 +20,7 @@ const DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
 export const SOURCES = [
   { value: 'booking', label: 'Booking.com', short: 'Booking', mark: 'B.', tone: 'bg-navy-900 text-white' },
   { value: 'airbnb', label: 'Airbnb', short: 'Airbnb', mark: 'A', tone: 'bg-brand-600 text-white' },
-  { value: 'phone', label: 'טלפון ווואטסאפ', short: 'וואטסאפ', Icon: Phone, tone: 'bg-brand-100 text-brand-700' },
+  { value: 'phone', label: 'טלפון או וואטסאפ', short: 'וואטסאפ', Icon: Phone, tone: 'bg-brand-100 text-brand-700' },
   { value: 'website', label: 'אתר משלי', short: 'אתר משלי', Icon: Globe, tone: 'bg-brand-100 text-brand-700' },
   { value: 'social', label: 'פייסבוק ואינסטגרם', short: 'רשתות', Icon: Instagram, tone: 'bg-brand-100 text-brand-700' },
   { value: 'portals', label: 'אתרי צימרים', short: 'אתרי צימרים', Icon: MapPin, tone: 'bg-brand-100 text-brand-700' },

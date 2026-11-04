@@ -13,12 +13,12 @@ export default function OwnerReports() {
   return (
     <div dir="rtl">
       <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10">
-        <PageHeader title="דוחות לבעלי נכסים" subtitle="דוח תשלום לכל בעל נכס שאתם מנהלים עבורו." className="!mb-0" />
+        <PageHeader title="דוח לבעלי הצימר" subtitle="דוח תשלום לכל בעלים של יחידה שאתם מנהלים עבורם." className="!mb-0" />
         <div className="v7-card">
           <EmptyState
             icon={FileBarChart}
-            title="דוחות לבעלי נכסים יגיעו בקרוב"
-            description="כדי להפיק דוח לבעל נכס צריך לשייך כל יחידה לבעלים ולעמלה שלכם, ואת זה עוד אי אפשר לעשות כאן. בינתיים, הדוח החודשי מראה הכנסות, הוצאות ותפוסה לכל יחידה, ואפשר להוריד אותו לרואה החשבון."
+            title="דוח לבעלי הצימר יגיע בקרוב"
+            description="כדי להפיק דוח לבעלים צריך לשייך כל יחידה לבעלים ולעמלה שלכם, ואת זה עוד אי אפשר לעשות כאן. בינתיים, הדוח החודשי מראה הכנסות, הוצאות ותפוסה לכל יחידה, ואפשר להוריד אותו לרואה החשבון."
             action={<Button asChild><Link to="/monthly-report">לדוח החודשי</Link></Button>}
           />
         </div>
