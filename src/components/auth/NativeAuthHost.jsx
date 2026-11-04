@@ -4,14 +4,15 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ScanFace } from 'lucide-react';
+import { Drawer as DrawerPrimitive } from 'vaul';
 import { supabase } from '@/api/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { isNativeApp } from '@/lib/native';
 import { shouldOfferLock, lockErrorKind, SHEET_SESSION_KEY } from '@/lib/nativeApp/appLockCore';
 import { lockPrefs, markLockOffered, enableLock } from '@/lib/nativeApp/appLock';
 import { biometricAvailability, startBiometricSync } from '@/lib/auth/biometric';
-import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
+import { Drawer, DrawerPortal, DrawerOverlay, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
+import FaceIdGlyph from '@/components/nativeApp/FaceIdGlyph.jsx';
 
 /** Let the screen the owner landed on paint and settle before the sheet comes up. */
 const OFFER_DELAY_MS = 1200;
@@ -75,37 +76,43 @@ export default function NativeAuthHost() {
 
   return (
     <Drawer open={open} onOpenChange={(v) => { if (!saving) setOpen(v); }}>
-      <DrawerContent dir="rtl" data-testid="faceid-offer" className="px-6 pb-[max(24px,env(safe-area-inset-bottom))]">
-        <div className="mx-auto mt-6 flex h-14 w-14 items-center justify-center rounded-[16px] bg-[#3E2BF1]/10">
-          <ScanFace className="h-7 w-7 text-[#3E2BF1]" aria-hidden />
-        </div>
-        <DrawerTitle className="mt-4 text-center text-[22px] font-extrabold leading-tight text-[#1B2656]">
-          לפתוח את atlas עם <span dir="ltr">{label}</span>?
-        </DrawerTitle>
-        <DrawerDescription className="mt-2 text-center text-[15px] leading-relaxed text-[#1B2656]/70">
-          מבט אחד ואתם בפנים, וההזמנות נשארות רק שלכם. אפשר לכבות בהגדרות.
-        </DrawerDescription>
-        {error ? <p role="alert" className="mt-3 text-center text-[14px] font-medium text-danger-600">{error}</p> : null}
-        <div className="mt-6 flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={accept}
-            disabled={saving}
-            data-testid="faceid-offer-yes"
-            className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-[#3E2BF1] text-[16px] font-bold text-white transition-transform duration-150 ease-out active:scale-[0.97] disabled:opacity-60"
-          >
-            {saving ? 'מפעילים…' : <>כן, להפעיל <span dir="ltr">{label}</span></>}
-          </button>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            disabled={saving}
-            className="flex h-[52px] w-full items-center justify-center rounded-[14px] text-[16px] font-medium text-[#1B2656]"
-          >
-            לא עכשיו
-          </button>
-        </div>
-      </DrawerContent>
+      <DrawerPortal>
+        <DrawerOverlay className="bg-[rgba(12,16,34,0.32)]" />
+        <DrawerPrimitive.Content
+          dir="rtl"
+          data-testid="faceid-offer"
+          className="faceid-offer fixed inset-x-0 bottom-0 z-50 flex flex-col items-center rounded-t-[28px] bg-white px-7 pb-[max(20px,env(safe-area-inset-bottom))] text-center outline-none"
+        >
+          <div className="mt-2 h-[5px] w-9 rounded-full bg-[#1B2656]/15" aria-hidden />
+          <FaceIdGlyph size={60} state={open ? 'intro' : 'idle'} className="mt-9 text-[#3E2BF1]" />
+          <DrawerTitle className="mt-6 text-[24px] font-bold leading-[1.2] tracking-[-0.015em] text-[#1B2656]">
+            לפתוח את atlas במבט?
+          </DrawerTitle>
+          <DrawerDescription className="mt-2 max-w-[300px] text-[16px] leading-[1.5] text-[#1B2656]/60">
+            עם <span dir="ltr">{label}</span>, ההזמנות ופרטי האורחים נשארים רק אצלכם.
+          </DrawerDescription>
+          {error ? <p role="alert" className="mt-3 text-[14px] font-medium text-danger-600">{error}</p> : null}
+          <div className="mt-8 flex w-full flex-col gap-1">
+            <button
+              type="button"
+              onClick={accept}
+              disabled={saving}
+              data-testid="faceid-offer-yes"
+              className="flex h-[50px] w-full items-center justify-center rounded-full bg-[#3E2BF1] text-[16px] font-semibold text-white transition-transform duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3E2BF1]/40 focus-visible:ring-offset-2 disabled:opacity-60"
+            >
+              {saving ? 'מפעילים…' : <>הפעלת{'\u00A0'}<bdi>{label}</bdi></>}
+            </button>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              disabled={saving}
+              className="flex h-[48px] w-full items-center justify-center rounded-full text-[16px] font-medium text-[#1B2656]/70 transition-colors duration-150 active:bg-[#1B2656]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B2656]/20"
+            >
+              לא עכשיו
+            </button>
+          </div>
+        </DrawerPrimitive.Content>
+      </DrawerPortal>
     </Drawer>
   );
 }
