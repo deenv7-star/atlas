@@ -9,7 +9,7 @@
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion, MotionConfig } from 'framer-motion';
 import { X, Mic, MicOff, Square, RotateCcw, Keyboard } from 'lucide-react';
 import { Answer, Composer } from '../ui.jsx';
 import { useScreen, usePinnedBottom } from './useScreen.js';
@@ -107,6 +107,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
   const charMood = s.notice && s.mode === 'text' ? 'concerned' : s.feel.mood;
 
   return createPortal(
+    <MotionConfig reducedMotion="user">
     <div ref={rootRef} tabIndex={-1} className={`a3 a3--${s.mode}${talked ? ' is-talk' : ''}${closing ? ' is-closing' : ''}`} role="dialog" aria-modal="true" aria-label="דברו עם atlas" dir="rtl">
       <div className="a3-sky" aria-hidden="true">
         <picture>
@@ -222,7 +223,8 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
           <Composer onSend={s.ask} onStop={t.stop} busy={t.busy} inputRef={inputRef} autoFocus={!s.notice} placeholder="כתבו לי שאלה" onVoice={s.notice?.code === 'not_configured' || s.notice?.code === 'voice_not_ready' ? null : s.toVoice} />
         </div>
       )}
-    </div>,
+    </div>
+    </MotionConfig>,
     document.body,
   );
 }
