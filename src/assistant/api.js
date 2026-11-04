@@ -181,9 +181,15 @@ export async function startVoiceSession({ page = '', resume = '' } = {}, signal)
   if (body?.client_secret) return body;
   throw new VoiceError(body?.error || (status === 429 ? 'daily_limit' : 'upstream'));
 }
-export function endVoiceSession(sessionId) {
+/** End a slice (the server charges the seconds actually used). `close`: the socket's close code/reason, logged server-side. */
+export function endVoiceSession(sessionId, close = null) {
   if (!sessionId || ASSISTANT_DEMO) return;
-  callFn('voice-session', { op: 'end', session_id: sessionId }).catch(() => {});
+  callFn('voice-session', close ? { op: 'end', session_id: sessionId, close } : { op: 'end', session_id: sessionId }).catch(() => {});
+}
+/** Telemetry only: a socket/server error inside a voice slice (no DB write; shows up in the voice-session logs). */
+export function reportVoiceEvent(kind, detail = {}) {
+  if (ASSISTANT_DEMO) return;
+  callFn('voice-session', { op: 'event', kind, ...detail }).catch(() => {});
 }
 
 export const VOICE_ERRORS = {
