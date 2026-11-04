@@ -6,7 +6,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Mic, MicOff, PhoneOff, Keyboard, RotateCcw } from 'lucide-react';
-import { AtlasFace } from '@/components/mascot/AtlasFace';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { ProposalCard } from '../ProposalCard.jsx';
 import { useVoiceSession } from './useVoiceSession.js';
 import { STATE_LINE, STATE_MOOD } from './status.js';
