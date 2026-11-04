@@ -96,6 +96,7 @@ export function usePinnedBottom(ref, deps = []) {
     const onScroll = () => { pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80; };
     el.addEventListener('scroll', onScroll, { passive: true });
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => { if (pinned.current) el.scrollTop = el.scrollHeight; }) : null;
+    ro?.observe(el); // the scroller itself shrinks too (keyboard, safe area)
     if (el.firstElementChild) ro?.observe(el.firstElementChild);
     return () => { el.removeEventListener('scroll', onScroll); ro?.disconnect(); };
   }, [ref, ...deps]); // eslint-disable-line react-hooks/exhaustive-deps
