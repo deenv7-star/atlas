@@ -270,7 +270,6 @@ export function BlockDialog({ actions, units }) {
               idPrefix="blk-dates"
               label="תאריכים"
               labels={{ start: 'מתאריך', end: 'עד' }}
-            placeholder="בחרו תאריכים"
               start={v.start || ''}
               end={v.end || ''}
               onChange={({ start, end }) => setBlock({ ...v, start, end })}

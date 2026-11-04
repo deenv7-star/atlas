@@ -1,34 +1,19 @@
 /**
- * Field kit for AtlasSheet. Same API in both variants; looks come from SheetContext.variant.
+ * Field kit for AtlasSheet: white SheetGroup cards on the canvas sheet, soft-fill inputs, chips.
  * Rules: inputs 16px+ (no iOS zoom), taps 44px+, labels above, errors only after the owner acts.
  */
 import * as React from 'react';
 import { Check, ChevronDown, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SheetContext } from './AtlasSheet';
-import { SHEET_VARIANT } from './theme';
 
-export function useSheetVariant() {
-  const ctx = React.useContext(SheetContext);
-  return ctx?.inSheet ? ctx.variant : SHEET_VARIANT;
-}
-
-/** A block of related fields. Variant B: a white card with a small title. */
+/** A block of related fields: a white card with an optional small title above it. */
 export function SheetGroup({ title = null, className, children, ...rest }) {
-  const v = useSheetVariant();
-  if (v === 'b') {
-    return (
-      <section className={cn('mb-4', className)} {...rest}>
-        {title ? <h3 className="mb-2 ps-1 text-[13px] font-semibold text-[#1B2656]/55">{title}</h3> : null}
-        <div className="flex flex-col gap-4 rounded-[20px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.06),0_0_0_1px_rgba(27,38,86,0.04)]">
-          {children}
-        </div>
-      </section>
-    );
-  }
   return (
-    <section className={cn('mb-5 flex flex-col gap-5', className)} {...rest}>
-      {children}
+    <section className={cn('mb-4', className)} {...rest}>
+      {title ? <h3 className="mb-2 ps-1 text-[13px] font-semibold text-[#1B2656]/55">{title}</h3> : null}
+      <div className="flex flex-col gap-4 rounded-[20px] bg-white p-4 shadow-[0_1px_2px_rgba(27,38,86,0.06),0_0_0_1px_rgba(27,38,86,0.04)]">
+        {children}
+      </div>
     </section>
   );
 }
@@ -59,29 +44,25 @@ export function SheetField({ label, htmlFor, labelId, error, errorId, hint = nul
   );
 }
 
-export function inputClass(v, invalid) {
+export function inputClass(invalid) {
   return cn(
     'block h-12 w-full min-w-0 rounded-[14px] px-4 text-[16px] text-[#1B2656] outline-none transition-[background-color,box-shadow,border-color] duration-150',
     'placeholder:text-[#1B2656]/35 disabled:opacity-50',
-    v === 'b'
-      ? 'border border-transparent bg-[#F7F8FB] focus:bg-white focus:shadow-[0_0_0_2px_#3E2BF1]'
-      : 'border border-[#E3E6EF] bg-white hover:border-[#D3D7E3] focus:border-[#3E2BF1] focus:shadow-[0_0_0_3px_rgba(62,43,241,0.14)]',
+    'border border-transparent bg-[#F7F8FB] focus:bg-white focus:shadow-[0_0_0_2px_#3E2BF1]',
     invalid && 'border-red-300 bg-red-50/40',
   );
 }
 
 export const SheetInput = React.forwardRef(function SheetInput({ className, invalid, ...props }, ref) {
-  const v = useSheetVariant();
-  return <input ref={ref} className={cn(inputClass(v, invalid), className)} aria-invalid={invalid || undefined} {...props} />;
+  return <input ref={ref} className={cn(inputClass(invalid), className)} aria-invalid={invalid || undefined} {...props} />;
 });
 
 export const SheetTextarea = React.forwardRef(function SheetTextarea({ className, invalid, rows = 2, ...props }, ref) {
-  const v = useSheetVariant();
   return (
     <textarea
       ref={ref}
       rows={rows}
-      className={cn(inputClass(v, invalid), 'h-auto min-h-[76px] resize-none py-3 leading-relaxed', className)}
+      className={cn(inputClass(invalid), 'h-auto min-h-[76px] resize-none py-3 leading-relaxed', className)}
       aria-invalid={invalid || undefined}
       {...props}
     />
@@ -90,13 +71,12 @@ export const SheetTextarea = React.forwardRef(function SheetTextarea({ className
 
 /** Native select (iOS wheel picker), styled like the inputs. options: [{value,label}]. */
 export const SheetSelect = React.forwardRef(function SheetSelect({ className, invalid, options = [], placeholder = null, value, ...props }, ref) {
-  const v = useSheetVariant();
   return (
     <div className="relative min-w-0">
       <select
         ref={ref}
         value={value ?? ''}
-        className={cn(inputClass(v, invalid), 'appearance-none pe-4 ps-10', !value && placeholder ? 'text-[#1B2656]/45' : '', className)}
+        className={cn(inputClass(invalid), 'appearance-none pe-4 ps-10', !value && placeholder ? 'text-[#1B2656]/45' : '', className)}
         aria-invalid={invalid || undefined}
         {...props}
       >
@@ -108,42 +88,10 @@ export const SheetSelect = React.forwardRef(function SheetSelect({ className, in
   );
 });
 
-/** One-of choice. A: segmented track. B: chips. */
+/** One-of choice as chips (wrap on narrow screens). */
 export function SheetSegmented({ value, onChange, options, ariaLabel, labelledBy, className }) {
-  const v = useSheetVariant();
-  if (v === 'b') {
-    return (
-      <div role="radiogroup" aria-label={labelledBy ? undefined : ariaLabel} aria-labelledby={labelledBy} className={cn('flex flex-wrap gap-2', className)}>
-        {options.map((o) => {
-          const on = value === o.value;
-          return (
-            <button
-              key={o.value}
-              type="button"
-              role="radio"
-              aria-checked={on}
-              onClick={() => onChange(o.value)}
-              className={cn(
-                'press inline-flex h-11 min-w-[44px] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[15px] font-medium transition-colors',
-                on ? 'border-[#3E2BF1] bg-[#3E2BF1]/[0.06] text-[#3E2BF1]' : 'border-[#E3E6EF] bg-white text-[#1B2656]/80',
-              )}
-            >
-              {on ? <Check className="h-4 w-4" strokeWidth={2.4} aria-hidden /> : null}
-              {o.label}
-            </button>
-          );
-        })}
-      </div>
-    );
-  }
   return (
-    <div
-      role="radiogroup"
-      aria-label={labelledBy ? undefined : ariaLabel}
-      aria-labelledby={labelledBy}
-      className={cn('grid gap-1 rounded-[14px] bg-[#F7F8FB] p-1', className)}
-      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
-    >
+    <div role="radiogroup" aria-label={labelledBy ? undefined : ariaLabel} aria-labelledby={labelledBy} className={cn('flex flex-wrap gap-2', className)}>
       {options.map((o) => {
         const on = value === o.value;
         return (
@@ -154,10 +102,11 @@ export function SheetSegmented({ value, onChange, options, ariaLabel, labelledBy
             aria-checked={on}
             onClick={() => onChange(o.value)}
             className={cn(
-              'press inline-flex h-11 min-w-0 items-center justify-center truncate rounded-[11px] px-2 text-[15px] font-medium transition-[background-color,color,box-shadow] duration-150',
-              on ? 'bg-white text-[#1B2656] shadow-[0_1px_3px_rgba(27,38,86,0.12)]' : 'text-[#1B2656]/60',
+              'press inline-flex h-11 min-w-[44px] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[15px] font-medium transition-colors',
+              on ? 'border-[#3E2BF1] bg-[#3E2BF1]/[0.06] text-[#3E2BF1]' : 'border-[#E3E6EF] bg-white text-[#1B2656]/80',
             )}
           >
+            {on ? <Check className="h-4 w-4" strokeWidth={2.4} aria-hidden /> : null}
             {o.label}
           </button>
         );
@@ -168,7 +117,6 @@ export function SheetSegmented({ value, onChange, options, ariaLabel, labelledBy
 
 /** "פרטים נוספים": collapsed extras. `summary` lists what is filled ("טלפון, מחיר"). */
 export function SheetMore({ label = 'פרטים נוספים', summary = '', open, onOpenChange, children, id }) {
-  const v = useSheetVariant();
   const autoId = React.useId();
   const panelId = id || `${autoId}-more`;
   const btn = (
@@ -179,7 +127,7 @@ export function SheetMore({ label = 'פרטים נוספים', summary = '', ope
       onClick={() => onOpenChange(!open)}
       className={cn(
         'press flex min-h-[52px] w-full items-center gap-3 text-start focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3E2BF1] focus-visible:ring-offset-2',
-        v === 'b' ? 'rounded-[20px] bg-white px-4 shadow-[0_1px_2px_rgba(27,38,86,0.06),0_0_0_1px_rgba(27,38,86,0.04)]' : 'rounded-[14px] border border-dashed border-[#D9DDE8] px-4',
+        'rounded-[20px] bg-white px-4 shadow-[0_1px_2px_rgba(27,38,86,0.06),0_0_0_1px_rgba(27,38,86,0.04)]',
       )}
     >
       <span className="min-w-0 flex-1">
@@ -196,7 +144,7 @@ export function SheetMore({ label = 'פרטים נוספים', summary = '', ope
         {open ? (
           <>
             <div className="mb-3 flex items-center justify-between">
-              <span className={cn('text-[13px] font-semibold text-[#1B2656]/55', v === 'b' && 'ps-1')}>{label}</span>
+              <span className="ps-1 text-[13px] font-semibold text-[#1B2656]/55">{label}</span>
               <button type="button" onClick={() => onOpenChange(false)} aria-expanded aria-controls={panelId} className="press -me-2 inline-flex min-h-[44px] items-center gap-1 px-2 text-[14px] font-medium text-[#1B2656]/60">
                 הסתרה
                 <ChevronDown aria-hidden className="h-4 w-4 rotate-180" />
@@ -212,8 +160,7 @@ export function SheetMore({ label = 'פרטים נוספים', summary = '', ope
 
 /** Sticky action area at the bottom of the sheet body. Put ONE SheetSubmit in it. */
 export function SheetFooter({ note = null, children, className }) {
-  const v = useSheetVariant();
-  const bg = v === 'b' ? '#F7F8FB' : '#FFFFFF';
+  const bg = '#F7F8FB';
   return (
     <div
       data-sheet-footer=""

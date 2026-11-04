@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Check } from 'lucide-react';
 import {
   SheetGroup, SheetField, SheetInput, SheetSelect, SheetSegmented, SheetMore,
-  SheetFooter, SheetSubmit, SheetBanner, SheetTextButton, useSheetVariant,
+  SheetFooter, SheetSubmit, SheetBanner, SheetTextButton,
 } from '@/components/ui/sheet/fields';
 import { DateField } from '@/components/ui/sheet/DateRangeField';
 import { useFormMachine } from '@/hooks/useFormMachine';
@@ -86,7 +86,6 @@ export function PaymentForm({
     return () => onRegisterDialogInterceptor?.(null);
   }, [fm.interceptDialogClose, setDialogOpen, onRegisterDialogInterceptor]);
 
-  const v = useSheetVariant();
   const err = (k: keyof PaymentFormValues) => fm.errors[k as string];
   const errId = (k: string) => fid(`${k}-err`);
   const isEdit = storageSuffix !== 'new';
@@ -109,7 +108,7 @@ export function PaymentForm({
       <FormRouteLeaveGuard blocker={fm.blocker} />
       <div className={formMachineFormClassName(fm.state) + ' flex flex-1 flex-col'} dir="rtl">
         <SheetBanner>{fm.serverError}</SheetBanner>
-        <SheetGroup title={v === 'b' ? 'התשלום' : null}>
+        <SheetGroup title="התשלום">
           <SheetField label="סכום" htmlFor={fid('amount')} error={err('amount')} errorId={errId('amount')}>
             <div className="relative">
               <SheetInput

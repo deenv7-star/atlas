@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Controller } from 'react-hook-form';
 import {
   SheetGroup, SheetField, SheetInput, SheetSelect, SheetSegmented, SheetMore,
-  SheetFooter, SheetSubmit, SheetBanner, useSheetVariant,
+  SheetFooter, SheetSubmit, SheetBanner,
 } from '@/components/ui/sheet/fields';
 import { DateRangeField } from '@/components/ui/sheet/DateRangeField';
 import { displayUnits } from '@/lib/unitName';
@@ -105,7 +105,6 @@ export function BookingForm({
     () => nightsBetweenISO(fm.values.check_in_date || '', fm.values.check_out_date || '') ?? 0,
     [fm.values.check_in_date, fm.values.check_out_date],
   );
-  const v = useSheetVariant();
   const units = React.useMemo(() => displayUnits(properties), [properties]);
   const isEdit = storageSuffix !== 'new' && !storageSuffix.startsWith('quick') && !storageSuffix.startsWith('lead-');
   const errId = (k: string) => `bf-${k}-err`;
@@ -144,7 +143,7 @@ export function BookingForm({
       <FormRouteLeaveGuard blocker={fm.blocker} />
       <div className={formMachineFormClassName(fm.state) + ' flex flex-1 flex-col'} dir="rtl">
         <SheetBanner>{fm.serverError}</SheetBanner>
-        <SheetGroup title={v === 'b' ? 'האורח' : null}>
+        <SheetGroup title="האורח">
           <SheetField label="שם האורח" htmlFor="bf-guest-name" error={err('guest_name')} errorId={errId('guest_name')}>
             <SheetInput
               id="bf-guest-name"
@@ -189,7 +188,7 @@ export function BookingForm({
           ) : null}
         </SheetGroup>
 
-        <SheetGroup title={v === 'b' ? 'מתי ומאיפה' : null}>
+        <SheetGroup title="מתי ומאיפה">
           <DateRangeField
             idPrefix="bf-dates"
             label="תאריכים"
@@ -304,7 +303,7 @@ export function BookingForm({
             onClick={fm.handleSubmit}
             state={fm.state === 'submitting' ? 'submitting' : fm.state === 'success' ? 'success' : 'idle'}
             disabled={overlapBlocked}
-            meta={v === 'b' && nights > 0 ? heNights(nights) : null}
+            meta={nights > 0 ? heNights(nights) : null}
           >
             {submitLabel}
           </SheetSubmit>

@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useExpenses } from '@/hooks/useExpenses';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { Button } from '@/components/ui/button';
-import { AtlasSheet, SheetGroup, SheetField, SheetInput, SheetSelect, SheetFooter, SheetSubmit, SheetError, DateField, useSheetVariant } from '@/components/ui/sheet/index';
+import { AtlasSheet, SheetGroup, SheetField, SheetInput, SheetSelect, SheetFooter, SheetSubmit, SheetError, DateField } from '@/components/ui/sheet/index';
 import { Receipt, Plus, TrendingDown, Calendar, DollarSign, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { todayIsrael } from '@/lib/localDate';
@@ -217,10 +217,9 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
 }
 
 function ExpenseFields({ form, setForm, propertyNames, unitValue, tried, amountOk }) {
-  const v = useSheetVariant();
   return (
     <>
-      <SheetGroup title={v === 'b' ? 'ההוצאה' : null}>
+      <SheetGroup title="ההוצאה">
         <SheetField label="סכום" htmlFor="exp-amount" error={tried && !amountOk ? 'כתבו סכום גדול מ-0' : ''} errorId="exp-amount-err">
           <div className="relative">
             <SheetInput
@@ -262,7 +261,7 @@ function ExpenseFields({ form, setForm, propertyNames, unitValue, tried, amountO
           <SheetError id="exp-cat-err">{tried && !form.category ? 'בחרו קטגוריה' : ''}</SheetError>
         </div>
       </SheetGroup>
-      <SheetGroup title={v === 'b' ? 'פרטים' : null}>
+      <SheetGroup title="פרטים">
         {propertyNames.length > 1 ? (
           <SheetField label="יחידה" htmlFor="exp-unit" error={tried && !unitValue ? 'בחרו יחידה' : ''}>
             <SheetSelect

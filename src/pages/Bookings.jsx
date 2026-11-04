@@ -417,7 +417,6 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
             idPrefix="bk-f-dates"
             label="תאריך כניסה"
             labels={{ start: 'מתאריך', end: 'עד' }}
-            placeholder="בחרו טווח תאריכים"
             start={dateInputValue(dateFrom)}
             end={dateInputValue(dateTo)}
             onChange={({ start, end }) => void setUrlState({

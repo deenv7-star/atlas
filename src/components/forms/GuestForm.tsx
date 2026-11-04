@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   SheetGroup, SheetField, SheetInput, SheetTextarea, SheetSelect, SheetMore,
-  SheetFooter, SheetSubmit, SheetBanner, useSheetVariant,
+  SheetFooter, SheetSubmit, SheetBanner,
 } from '@/components/ui/sheet/fields';
 import { DateRangeField } from '@/components/ui/sheet/DateRangeField';
 import { displayUnits } from '@/lib/unitName';
@@ -79,7 +79,6 @@ export function GuestForm({
     return () => onRegisterDialogInterceptor?.(null);
   }, [fm.interceptDialogClose, setDialogOpen, onRegisterDialogInterceptor]);
 
-  const v = useSheetVariant();
   const units = React.useMemo(() => displayUnits(properties), [properties]);
   const err = (k: keyof GuestFormValues) => (fm.errors as Record<string, string>)[k as string];
   const errId = (k: string) => fid(`${k}-err`);
@@ -95,7 +94,7 @@ export function GuestForm({
       <FormRouteLeaveGuard blocker={fm.blocker} />
       <div className={formMachineFormClassName(fm.state) + ' flex flex-1 flex-col'} dir="rtl">
         <SheetBanner>{fm.serverError}</SheetBanner>
-        <SheetGroup title={v === 'b' ? 'מי פנה' : null}>
+        <SheetGroup title="מי פנה">
           <SheetField label="שם" htmlFor={fid('full_name')} error={err('full_name')} errorId={errId('full_name')}>
             <SheetInput id={fid('full_name')} {...fm.register('full_name')} invalid={Boolean(err('full_name'))} aria-describedby={err('full_name') ? errId('full_name') : undefined} autoComplete="off" />
           </SheetField>
@@ -103,7 +102,7 @@ export function GuestForm({
             <SheetInput id={fid('phone')} type="tel" inputMode="tel" dir="ltr" className="text-right" {...fm.register('phone')} invalid={Boolean(err('phone'))} autoComplete="off" />
           </SheetField>
         </SheetGroup>
-        <SheetGroup title={v === 'b' ? 'מה ביקשו' : null}>
+        <SheetGroup title="מה ביקשו">
           <DateRangeField
             idPrefix={fid('dates')}
             label="תאריכים"
