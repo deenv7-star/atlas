@@ -10,6 +10,7 @@
 // Plain JS on purpose (Deno + node --test). `db` is a supabase-js client created with the user's JWT.
 import { todayIL, isDay, addDays, nights, monthRange, clampRange, heDay } from './dates.js';
 import { searchHelp } from './knowledge.js';
+import { PROFILE_TOOL_DEFS, PROFILE_EXEC } from './propertyProfile.js'; // import v1: the complex the owner imported
 
 const ACTIVE_BOOKING = (s) => !['CANCELLED', 'CANCELED', 'WAITLIST', 'cancelled', 'canceled', 'waitlist'].includes(String(s || ''));
 const PAID = new Set(['PAID', 'paid', 'COMPLETED', 'completed', 'SUCCEEDED', 'succeeded']);
@@ -104,6 +105,7 @@ export const TOOL_DEFS = [
     description: 'מציע לבעלים להעביר את השאלה לנציג אנושי מצוות atlas (זמין 24/7). אחרי אישור נפתחת שיחה עם נציג.',
     parameters: { type: 'object', additionalProperties: false, required: ['summary'], properties: { summary: { type: 'string', description: 'תקציר קצר של הבקשה, בעברית' } } },
   },
+  ...PROFILE_TOOL_DEFS,
 ];
 export const TOOL_NAMES = TOOL_DEFS.map((t) => t.name);
 export const WRITE_TOOLS = new Set(['propose_booking', 'propose_guest_message', 'propose_support_handoff']);
@@ -141,6 +143,7 @@ async function overlapping(db, from, to) { // stays touching [from, to)
 
 /* ── executors ───────────────────────────────────────────────────────────────────────────────────── */
 const EXEC = {
+  ...PROFILE_EXEC,
   async get_day_overview(db, a, ctx) {
     const d = isDay(a.date) ? a.date : ctx.today;
     const [units, stays, cleaning] = await Promise.all([
