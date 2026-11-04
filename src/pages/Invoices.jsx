@@ -208,6 +208,7 @@ export default function InvoicesPage({ orgId }) {
           <div className="relative">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-400" />
             <Input
+              aria-label="חיפוש מסמך"
               placeholder="חיפוש לפי שם או מספר..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
