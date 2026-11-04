@@ -72,7 +72,8 @@ Deno.serve(async (req) => {
   if (!r?.session_id || !(r.granted_seconds > 0)) return json({ error: "daily_limit", used_today: r?.used_today ?? null }, 429);
 
   const owner = String((u.user.user_metadata as Record<string, unknown>)?.full_name || "").trim().split(/\s+/)[0] || "";
-  const reqBody = secretRequest({ today: todayIL(), seconds: r.granted_seconds, sessionId: r.session_id, owner,
+  const native = body.platform === "ios" || origin === "capacitor://localhost"; // Apple 3.1.1
+  const reqBody = secretRequest({ today: todayIL(), seconds: r.granted_seconds, sessionId: r.session_id, owner, native,
     page: typeof body.page === "string" ? body.page : "", resume: typeof body.resume === "string" ? body.resume : "" });
   let res: Response;
   try {

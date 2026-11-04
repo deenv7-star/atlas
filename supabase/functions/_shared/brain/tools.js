@@ -268,9 +268,9 @@ const EXEC = {
     };
   },
 
-  async search_help(_db, a) {
-    const hits = searchHelp(a.query);
-    return hits.length ? { results: hits } : { results: [], note: 'לא נמצא במדריך. אל תמציאו: הציעו נציג.' };
+  async search_help(_db, a, ctx) {
+    const hits = searchHelp(a.query, 4, 3200, { native: !!ctx?.native });
+    return hits.length ? { results: hits } : { results: [], note: 'לא נמצא במדריך. ענו ממה שבתקציר אם יש שם תשובה. אם אין, אמרו בכנות שאין לכם תשובה בטוחה, אל תמציאו, והציעו להעביר לנציג.' };
   },
 
   /* proposals: validated, never executed here */
@@ -341,6 +341,6 @@ export async function runTool(name, rawArgs, ctx) {
     const result = await EXEC[name](c.db, args, c);
     return { result, proposal: result?.proposal || null };
   } catch (e) {
-    return { result: { error: 'lookup_failed', detail: clip(e?.message, 120) } };
+    return { result: { error: 'lookup_failed', detail: clip(e?.message, 120), say: 'אמרו שלא הצלחתם לבדוק את זה כרגע, והציעו לפתוח את המסך המתאים באפליקציה או לנסות שוב.' } };
   }
 }
