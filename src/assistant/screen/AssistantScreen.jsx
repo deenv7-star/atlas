@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
 import { X, Mic, MicOff, Square, RotateCcw, Keyboard } from 'lucide-react';
 import { ProposalCard } from '../ProposalCard.jsx';
 import { Answer, Composer } from '../ui.jsx';
-import { useScreen } from './useScreen.js';
+import { useScreen, usePinnedBottom } from './useScreen.js';
 import { Orb } from './Orb.jsx';
 import './screen-a.css';
 
@@ -59,7 +59,8 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
     document.addEventListener('keydown', onKey);
     return () => { document.documentElement.classList.remove('as-lock'); document.removeEventListener('keydown', onKey); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [t.messages.length, t.messages[t.messages.length - 1]?.content, s.mode, s.step?.line]);
+  const pinned = usePinnedBottom(scrollRef, [s.mode]);
+  useEffect(() => { const el = scrollRef.current; if (el) { pinned.current = true; el.scrollTop = el.scrollHeight; } }, [t.messages.length, t.messages[t.messages.length - 1]?.content, s.mode, s.step?.line]);
 
   const close = () => { v.end(); onClose(); };
   const open = v.proposals.map((p, i) => ({ p, i })).filter(({ p }) => p.state !== 'dismissed');
@@ -77,7 +78,7 @@ export default function AssistantScreen({ facts, page, onClose, onNavigate }) {
 
       {s.mode === 'voice' ? (
         <>
-          <main className="ax-stage" data-state={v.state}>
+          <main className="ax-stage" data-state={v.state} tabIndex={0} aria-label="השיחה הקולית">
             <div className="ax-light">
               <Orb state={v.state} levels={v.levels} size={card ? 76 : 168} label={s.line} />
             </div>
