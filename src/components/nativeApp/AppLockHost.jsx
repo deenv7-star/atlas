@@ -136,7 +136,7 @@ export default function AppLockHost({ initialLocked = false }) {
             <div className="atlas-lock__halo">
               <AtlasFace live mood={failed && kind !== 'cancel' ? 'concerned' : leaving ? 'happy' : 'neutral'} size={96} decorative />
             </div>
-            <h1 id="atlas-lock-title" className="mt-7 text-[26px] font-extrabold leading-tight tracking-[-0.01em]">
+            <h1 id="atlas-lock-title" className="mt-7 text-[26px] text-white font-extrabold leading-tight tracking-[-0.01em]">
               ברוכים השבים
             </h1>
             <p className="mt-2 min-h-[48px] text-[16px] leading-relaxed text-white/75" aria-live="polite">
