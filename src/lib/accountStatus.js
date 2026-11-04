@@ -22,7 +22,13 @@ export async function fetchAccountStatus() {
       if (isMissingSchemaError(error)) missing = true;
       return null;
     }
-    const value = data && typeof data === 'object' ? { suspended: Boolean(data.suspended), reason: data.reason || '' } : null;
+    // Forward-compatible: if my_account_status() ever returns current_period_end from platform_subscriptions
+    // (qa/trial-paywall/server-side-proposal.md), src/lib/access.js uses it. Today it returns only suspension.
+    const value = data && typeof data === 'object' ? {
+      suspended: Boolean(data.suspended),
+      reason: data.reason || '',
+      ...(data.current_period_end ? { current_period_end: data.current_period_end } : {}),
+    } : null;
     cache = { key: uid, at: Date.now(), value };
     return value;
   } catch {

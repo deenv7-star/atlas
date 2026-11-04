@@ -22,6 +22,23 @@
  */
 
 import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
+import { assertWritable } from '@/lib/accessLock';
+import { isNetworkError } from '@/lib/auth/authFailure';
+
+// Trial over and not paid (src/lib/access.js): writes are refused here for every backend (Supabase, REST, local demo).
+const WRITE_METHOD = /^(create|update|delete|bulk|upsert|insert|remove|set)/i;
+function guardCollection(coll) {
+  return new Proxy(coll, {
+    get(target, method, recv) {
+      const v = Reflect.get(target, method, recv);
+      if (typeof v !== 'function' || typeof method !== 'string' || !WRITE_METHOD.test(method)) return v;
+      return (...args) => { assertWritable(); return v.apply(target, args); };
+    },
+  });
+}
+function guardEntities(entities) {
+  return new Proxy(entities, { get(target, name, recv) { const c = Reflect.get(target, name, recv); return c && typeof c === 'object' ? guardCollection(c) : c; } });
+}
 import { publicOrigin, isNativeApp } from '@/lib/native';
 import { safeSignOut } from '@/lib/auth/signOutCore';
 
@@ -467,14 +484,29 @@ const supabaseAuth = {
     // RLS still guards every query, so the server-verified getUser() is only a fallback.
     let user = null;
     let error = null;
+    let sessionError = null;
     try {
-      const { data: { session } = {} } = await supabase.auth.getSession();
+      const { data: { session } = {}, error: sErr } = await supabase.auth.getSession();
       user = session?.user || null;
-    } catch { /* fall through */ }
+      sessionError = sErr || null;
+    } catch (e) { sessionError = e; }
+    // Audit 04.11: the stored session could not be refreshed because the network failed. That is not
+    // "signed out": supabase-js keeps the session in storage, and so do we (AuthContext shows offline).
+    if (!user && sessionError && isNetworkError(sessionError)) {
+      const e = new Error('session refresh failed (network)');
+      e.isTransient = true;
+      throw e;
+    }
     if (!user) {
-      const r = await supabase.auth.getUser();
+      let r;
+      try { r = await supabase.auth.getUser(); } catch (e) { r = { data: {}, error: e }; }
       user = r.data?.user || null;
       error = r.error;
+      if (error && isNetworkError(error)) {
+        const e = new Error('getUser failed (network)');
+        e.isTransient = true;
+        throw e;
+      }
     }
     if (error || !user) {
       const err = new Error('Not authenticated');
@@ -547,6 +579,8 @@ const supabaseAuth = {
       trial_ends_at:        profile?.trial_ends_at || null,
       subscription_status:  profile?.subscription_status || 'trialing',
       is_platform_admin:    Boolean(profile?.is_platform_admin),
+      // Signup time: the trial fallback (signup + 14 days) when trial_ends_at is missing, same as the admin console.
+      created_at:           user.created_at || null,
     };
   },
 
@@ -827,6 +861,7 @@ const localAuth = {
 const integrations = {
   Core: {
     async InvokeLLM({ prompt, model = 'gpt-4o-mini' } = {}) {
+      assertWritable();
       const token = getStoredToken();
       const root = apiRootPrefix();
       const aiUrl = root ? `${root}/api/ai/chat` : '/api/ai/chat';
@@ -871,6 +906,7 @@ const integrations = {
     },
 
     async SendEmail({ to, subject, body } = {}) {
+      assertWritable();
       const token = getStoredToken();
       const root = apiRootPrefix();
       const emailUrl = root ? `${root}/api/email/send` : '/api/email/send';
@@ -899,6 +935,7 @@ const integrations = {
     },
 
     async UploadFile({ file } = {}) {
+      assertWritable();
       if (isSupabaseConfigured) {
         // Upload to Supabase Storage
         const ext      = file.name?.split('.').pop() || 'bin';
@@ -947,7 +984,7 @@ export function createClient(_options = {}) {
   // 1. Supabase cloud (highest priority)
   if (isSupabaseConfigured) {
     return {
-      entities:     supabaseEntitiesProxy,
+      entities:     guardEntities(supabaseEntitiesProxy),
       auth:         supabaseAuth,
       integrations,
       appLogs,
@@ -1000,13 +1037,13 @@ export function createClient(_options = {}) {
       },
     });
 
-    _restClientCache = { entities: hybridEntities, auth: hybridAuth, integrations, appLogs };
+    _restClientCache = { entities: guardEntities(hybridEntities), auth: hybridAuth, integrations, appLogs };
     return _restClientCache;
   }
 
   // 3. Pure localStorage fallback
   return {
-    entities:     localEntitiesProxy,
+    entities:     guardEntities(localEntitiesProxy),
     auth:         localAuth,
     integrations,
     appLogs,

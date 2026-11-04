@@ -254,7 +254,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             <p className="font-medium text-gray-700">
               לא מצאנו את &quot;{search.trim() || '…'}&quot;
             </p>
-            <p className="mt-2 text-xs text-gray-400">נסו מילה אחרת, או הוסיפו הזמנה או ליד מהפעולות המהירות.</p>
+            <p className="mt-2 text-xs text-gray-400">נסו מילה אחרת, או הוסיפו הזמנה או פנייה מהפעולות המהירות.</p>
           </CommandEmpty>
 
           {!search.trim() && recents.length > 0 ? (
@@ -317,13 +317,13 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-guests"
-              keywords={['לידים', 'ליד', 'אורחים']}
-              data-announce={announce('לידים')}
+              keywords={['פניות', 'פנייה', 'לידים', 'ליד', 'אורחים']}
+              data-announce={announce('פניות')}
               onSelect={() => go(createPageUrl('Leads'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <Users className="h-4 w-4 shrink-0 text-brand-500" aria-hidden />
-              <span className="flex-1 text-start font-medium">לידים</span>
+              <span className="flex-1 text-start font-medium">פניות</span>
               <ChordHint keys={['G']} isApple={isApple} />
             </CommandItem>
             <CommandItem
@@ -390,13 +390,13 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="act-new-guest"
-              keywords={['ליד חדש', 'ליד חדש']}
-              data-announce={announce('ליד חדש')}
+              keywords={['פנייה חדשה', 'ליד חדש']}
+              data-announce={announce('פנייה חדשה')}
               onSelect={() => go(createPageUrl('Leads'), { commandPalette: { newGuest: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <UserPlus className="h-4 w-4 shrink-0 text-brand-500" aria-hidden />
-              <span className="flex-1 text-start font-medium">ליד חדש</span>
+              <span className="flex-1 text-start font-medium">פנייה חדשה</span>
             </CommandItem>
             <CommandItem
               value="act-new-maintenance"

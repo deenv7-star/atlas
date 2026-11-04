@@ -13,6 +13,7 @@ import { useBlocker, UNSAFE_DataRouterContext, type Blocker, type BlockerFunctio
 import type { z } from 'zod';
 import type { FormState } from '@/hooks/formMachineTypes';
 import { askConfirm } from '@/components/common/confirmDialog';
+import { heError, NET_FALLBACK } from '@/lib/heError';
 
 export type { FormState } from '@/hooks/formMachineTypes';
 
@@ -80,13 +81,9 @@ function clearStorage(key: string) {
   }
 }
 
+/** Audit 04.11 #4: never a raw English error ("Failed to fetch", "TypeError…") in a form. Hebrew or the fallback. */
 function toHebrewServerMessage(err: unknown): string {
-  if (err && typeof err === 'object' && 'message' in err && typeof (err as { message: unknown }).message === 'string') {
-    const m = (err as { message: string }).message;
-    if (m) return m;
-  }
-  if (typeof err === 'string' && err) return err;
-  return 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.';
+  return heError(err, NET_FALLBACK);
 }
 
 export function useFormMachine<TFieldValues extends FieldValues>({

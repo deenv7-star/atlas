@@ -85,7 +85,7 @@ export default function AssistantPanel() {
               <AtlasFace live size={38} />
               <div className="as-ph-title">
                 <b id="as-panel-title">שאלו את atlas</b>
-                <span>{where ? `מתוך: ${where}` : 'על ההזמנות, הכסף והלידים'}</span>
+                <span>{where ? `מתוך: ${where}` : 'על ההזמנות, הכסף והפניות'}</span>
               </div>
               {hasThread ? (
                 <button type="button" className="as-icon" onClick={clear} aria-label="שיחה חדשה">

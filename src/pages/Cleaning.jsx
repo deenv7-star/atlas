@@ -218,7 +218,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
         title="ניקיון"
         subtitle="משימות ניקיון לכל יחידה, עם שם האחראי ורשימת בדיקה."
         className="!mb-0"
-        actions={
+        actions={tasks.length === 0 && !isLoading ? null : (
           <>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
               <SelectTrigger className="w-[160px]" aria-label="סינון לפי סטטוס">
@@ -236,7 +236,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
               משימה חדשה
             </Button>
           </>
-        }
+        )}
       />
 
       {/* Tasks Grid */}
@@ -262,7 +262,7 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
 
               >
                 <Plus className="w-4 h-4" />
-                משימת ניקיון חדשה
+                משימה חדשה
               </Button>
             </div>
           </CardContent>

@@ -81,8 +81,8 @@
           "value": "geolocation=(), microphone=(), camera=()"
         },
         {
-          "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; script-src 'self' 'sha256-8wUgboqOByFQSfQnkulH/WVMpxa7+2Wa1GgGVihhv5c=' 'sha256-ZKWG+4zkv5Po7qpkBL+qFfKg9yB10AvB3a1vCtrMVc4=' 'sha256-r+XbxZXRohJ5M37DBK9jsdvptSZZvcHZi918BSXZXHs='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://romvmqbcinurscwdsskx.supabase.co https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://romvmqbcinurscwdsskx.supabase.co wss://romvmqbcinurscwdsskx.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'sha256-8wUgboqOByFQSfQnkulH/WVMpxa7+2Wa1GgGVihhv5c=' 'sha256-80pQrz9mqZC1xHY6m27O9NPvhl9O8+qVXfPT6k3e07M=' 'sha256-Q8hShK5LJ7JlzCCGzbFh1HwBOScIEfZTJo65iCrj+Ro='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://romvmqbcinurscwdsskx.supabase.co https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://romvmqbcinurscwdsskx.supabase.co wss://romvmqbcinurscwdsskx.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         },
         {
           "key": "Cache-Control",

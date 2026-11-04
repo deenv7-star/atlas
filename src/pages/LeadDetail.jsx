@@ -24,12 +24,12 @@ import { formatRangeHe, firstName } from '@/lib/stay/format';
 import { nightsBetween } from '@/lib/entityPayloads';
 
 const STATUS = {
-  NEW: { label: 'חדש', tone: 'brand' },
+  NEW: { label: 'חדשה', tone: 'brand' },
   CONTACTED: { label: 'בטיפול', tone: 'warning' },
   OFFER_SENT: { label: 'הצעה נשלחה', tone: 'sky' },
-  CONFIRMED: { label: 'נסגר', tone: 'sky' },
-  WON: { label: 'נסגר', tone: 'success' },
-  REJECTED: { label: 'לא מתאים לנו', tone: 'neutral' },
+  CONFIRMED: { label: 'נסגרה', tone: 'sky' },
+  WON: { label: 'נסגרה', tone: 'success' },
+  REJECTED: { label: 'לא מתאימה לנו', tone: 'neutral' },
   LOST: { label: 'הזמין במקום אחר', tone: 'neutral' },
 };
 
@@ -144,13 +144,13 @@ export default function LeadDetail() {
     setConverting(true);
     quickBooking.open(leadToBookingPreset(lead), {
       leadId: lead.id,
-      title: 'הזמנה מהליד',
+      title: 'הזמנה מהפנייה',
       onClose: () => setConverting(false),
       onCreated: async (booking) => {
         try {
           await updateMutation.mutateAsync({ id: lead.id, data: { status: 'WON' } });
         } catch {
-          atlasToastApi.error('ההזמנה נשמרה, אבל לא הצלחנו לסמן את הליד כנסגר. סמנו אותו ידנית.');
+          atlasToastApi.error('ההזמנה נשמרה, אבל לא הצלחנו לסמן את הפנייה כסגורה. סמנו אותה ידנית.');
         }
         linked.refetch();
         if (booking?.id) window.setTimeout(() => navigate(`${createPageUrl('BookingDetail')}/${booking.id}`), 750);
@@ -177,8 +177,8 @@ export default function LeadDetail() {
   if (!lead) {
     return (
       <div className="p-10 text-center">
-        <h1 className="text-[18px] font-bold text-navy-900">לא מצאנו את הליד</h1>
-        <p className="mt-1 text-[16px] text-ink-600">ייתכן שנמחק, או שהקישור ישן. חזרו לרשימת הלידים.</p>
+        <h1 className="text-[18px] font-bold text-navy-900">לא מצאנו את הפנייה</h1>
+        <p className="mt-1 text-[16px] text-ink-600">ייתכן שנמחקה, או שהקישור ישן. חזרו לרשימת הפניות.</p>
       </div>
     );
   }
@@ -202,14 +202,14 @@ export default function LeadDetail() {
         <div className="mb-3 flex items-center justify-between gap-2">
           <button type="button" onClick={() => navigate(createPageUrl('Leads'))} className="press -ms-2 inline-flex h-11 items-center gap-1 rounded-full px-3 text-[15px] font-medium text-brand-600 hover:bg-brand-50">
             <ChevronRight className="h-5 w-5" />
-            לידים
+            פניות
           </button>
           <div className="flex items-center gap-1">
             <Button variant="ghost" className="h-11" onClick={() => navigate(`${createPageUrl('Leads')}?openGuestId=${encodeURIComponent(lead.id)}`)}>
               <Pencil />
               עריכה
             </Button>
-            <Button variant="ghost" size="icon" className="h-11 w-11 text-ink-600 hover:text-danger-600" aria-label="מחיקת ליד" onClick={() => setConfirmDelete(true)}>
+            <Button variant="ghost" size="icon" className="h-11 w-11 text-ink-600 hover:text-danger-600" aria-label="מחיקת פנייה" onClick={() => setConfirmDelete(true)}>
               <Trash2 />
             </Button>
           </div>
@@ -218,12 +218,12 @@ export default function LeadDetail() {
         <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
           <DialogContent className="max-w-[420px]" dir="rtl">
             <DialogHeader>
-              <DialogTitle className="text-[20px] font-bold text-navy-900">למחוק את הליד?</DialogTitle>
+              <DialogTitle className="text-[20px] font-bold text-navy-900">למחוק את הפנייה?</DialogTitle>
             </DialogHeader>
-            <p className="text-[15px] text-ink-600">{lead.full_name || 'הליד'} יוסר מרשימת הלידים.</p>
+            <p className="text-[15px] text-ink-600">{lead.full_name ? `הפנייה של ${lead.full_name}` : 'הפנייה'} תוסר מרשימת הפניות.</p>
             <DialogFooter>
               <Button variant="outline" onClick={() => setConfirmDelete(false)}>ביטול</Button>
-              <Button variant="destructive" disabled={deleteLead.isPending} onClick={() => { const leadId = lead.id; setConfirmDelete(false); navigate(createPageUrl('Leads')); deleteLead.mutate(leadId, { onSuccess: () => atlasToastApi.success('הליד נמחק'), onError: () => atlasToastApi.error('לא הצלחנו למחוק את הליד. נסו שוב.') }); }}>מחיקה</Button>
+              <Button variant="destructive" disabled={deleteLead.isPending} onClick={() => { const leadId = lead.id; setConfirmDelete(false); navigate(createPageUrl('Leads')); deleteLead.mutate(leadId, { onSuccess: () => atlasToastApi.success('הפנייה נמחקה'), onError: () => atlasToastApi.error('לא הצלחנו למחוק את הפנייה. נסו שוב.') }); }}>מחיקה</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -231,9 +231,9 @@ export default function LeadDetail() {
         <div className="space-y-4">
           <section className="v5-rise v7-card p-5 md:p-6">
             <div className="flex items-center gap-4">
-              <GuestAvatar name={lead.full_name || 'ליד'} size={64} ring />
+              <GuestAvatar name={lead.full_name || 'פנייה'} size={64} ring />
               <div className="min-w-0 flex-1">
-                <h1 className="truncate text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900 md:text-[30px]">{lead.full_name || 'ליד'}</h1>
+                <h1 className="truncate text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900 md:text-[30px]">{lead.full_name || 'פנייה'}</h1>
                 <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-ink-600 md:text-[15px]">
                   <StatusPill label={status.label} tone={status.tone} />
                   {SOURCE[lead.source] ? <span>מ{SOURCE[lead.source]}</span> : null}
@@ -258,19 +258,19 @@ export default function LeadDetail() {
                     className="press inline-flex h-12 min-w-[48px] items-center justify-center gap-2 rounded-full bg-[#F1F1F8] px-4 text-[15px] font-semibold text-navy-900 hover:bg-[#E8E8F2]"
                   >
                     <Phone className="h-[18px] w-[18px]" aria-hidden />
-                    <span className="sr-only">שיחה ל-{lead.full_name || 'ליד'}: </span>
+                    <span className="sr-only">שיחה ל-{lead.full_name || 'פנייה'}: </span>
                     <span dir="ltr" className="tabular">{lead.phone}</span>
                   </a>
                 </>
               ) : lead.phone ? (
                 <p className="text-[14px] text-ink-600">
-                  המספר <span dir="ltr">{lead.phone}</span> לא נראה תקין. ערכו את הליד כדי לחייג או לשלוח וואטסאפ.
+                  המספר <span dir="ltr">{lead.phone}</span> לא נראה תקין. ערכו את הפנייה כדי לחייג או לשלוח וואטסאפ.
                 </p>
               ) : (
-                <p className="text-[14px] text-ink-600">אין טלפון בליד. הוסיפו אותו בעריכה כדי לענות בוואטסאפ.</p>
+                <p className="text-[14px] text-ink-600">אין טלפון בפנייה. הוסיפו אותו בעריכה כדי לענות בוואטסאפ.</p>
               )}
               {lead.email ? (
-                <a href={`mailto:${lead.email}`} aria-label={`מייל ל-${lead.full_name || 'ליד'}`} className="press inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F1F1F8] text-navy-900 hover:bg-[#E8E8F2]">
+                <a href={`mailto:${lead.email}`} aria-label={`מייל ל-${lead.full_name || 'פנייה'}`} className="press inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F1F1F8] text-navy-900 hover:bg-[#E8E8F2]">
                   <Mail className="h-[18px] w-[18px]" aria-hidden />
                 </a>
               ) : null}
@@ -311,9 +311,9 @@ export default function LeadDetail() {
             />
           </Section>
 
-          <Section title="מצב הליד">
+          <Section title="מצב הפנייה">
             <Select value={lead.status} onValueChange={(value) => updateMutation.mutate({ id: lead.id, data: { status: value } })}>
-              <SelectTrigger className="h-12 rounded-xl text-base md:text-[15px]" aria-label="מצב הליד">
+              <SelectTrigger className="h-12 rounded-xl text-base md:text-[15px]" aria-label="מצב הפנייה">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -337,7 +337,7 @@ export default function LeadDetail() {
             {linkedBooking ? 'פתיחת ההזמנה' : 'הפיכה להזמנה'}
           </Button>
           {linkedBooking ? (
-            <p className="text-center text-[14px] text-ink-600">כבר יצרתם הזמנה מהליד הזה.</p>
+            <p className="text-center text-[14px] text-ink-600">כבר יצרתם הזמנה מהפנייה הזו.</p>
           ) : null}
         </div>
       </Page>

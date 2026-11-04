@@ -10,14 +10,17 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useStayData, useStayMutations } from '@/hooks/useStayData';
 import { buildDayBoard } from '@/lib/stay/today';
-import { todayISO, addDays, nightsBetween, firstName } from '@/lib/stay/format';
-import { isActiveBooking, checkOutOf, balanceOf, channelOf } from '@/lib/stay/bookings';
+import { todayISO, addDays, firstName } from '@/lib/stay/format';
+import { isActiveBooking, balanceOf, channelOf } from '@/lib/stay/bookings';
 import { monthlyRevenue } from '@/components/today/RevenueChart';
 import { checkInTime, checkOutTime } from '@/components/today/TodayBoard';
 import { heCount } from '@/lib/hebrewCount';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { useWhatsAppSend } from '@/hooks/useWhatsAppSend';
 import { renderTemplate, templateByKey, waLink } from '@/lib/stay/whatsapp';
+import { canShowValues } from '@/lib/stay/loadState';
+import { monthOccupancy } from '@/lib/stay/occupancy';
+import { openExternal } from '@/lib/openExternal';
 
 export const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 
@@ -57,6 +60,10 @@ export function useTodayModel({ orgId } = {}) {
   const board = useMemo(() => boardOf(day), [day, data.bookings, data.paymentsByBooking, data.sentByBooking, data.cleaningTasks, data.propertyById]);
   const boardT = useMemo(() => boardOf(tomorrow), [tomorrow, data.bookings, data.paymentsByBooking, data.sentByBooking, data.cleaningTasks, data.propertyById]);
 
+  // Audit 04.11 #2: without a successful payments read, every balance would look unpaid (or paid).
+  // No money values and no balance reminders until the payments are really known.
+  const moneyKnown = canShowValues(data.paymentsState);
+
   const prop = (id) => data.propertyById.get(id) || null;
   const paysOf = (b) => data.paymentsByBooking.get(b.id) || [];
   const sentOf = (b) => data.sentByBooking.get(b.id) || new Set();
@@ -68,26 +75,18 @@ export function useTodayModel({ orgId } = {}) {
   const money_ = useMemo(() => {
     const now = new Date();
     const months = monthlyRevenue(data.bookings, 6, now, data.paymentsByBooking);
-    const y = now.getFullYear(); const m = now.getMonth();
-    const first = `${y}-${String(m + 1).padStart(2, '0')}-01`;
-    const nextM = `${m === 11 ? y + 1 : y}-${String(m === 11 ? 1 : m + 2).padStart(2, '0')}-01`;
-    const days = new Date(y, m + 1, 0).getDate();
-    const units = Math.max(1, (data.properties || []).length);
-    let nights = 0;
-    for (const b of data.bookings || []) {
-      if (!isActiveBooking(b)) continue;
-      const s = b.check_in_date > first ? b.check_in_date : first;
-      const e = checkOutOf(b) < nextM ? checkOutOf(b) : nextM;
-      if (e > s) nights += nightsBetween(s, e);
-    }
+    const m = now.getMonth();
     const cur = months[months.length - 1] || { value: 0, expected: 0 };
+    // Audit 04.11 #7: no units = no occupancy (it used to read "7% · 0 יחידות").
+    const occupancy = monthOccupancy({ bookings: data.bookings || [], unitCount: (data.properties || []).length, now });
+    if (!moneyKnown) return { months: [], received: null, expected: null, occupancy, month: MONTHS[m] };
     return {
       months, received: cur.value || 0, expected: (cur.value || 0) + (cur.expected || 0),
-      occupancy: Math.min(100, Math.round((nights / (units * days)) * 100)), month: MONTHS[m],
+      occupancy, month: MONTHS[m],
     };
-  }, [data.bookings, data.properties, data.paymentsByBooking]);
+  }, [data.bookings, data.properties, data.paymentsByBooking, moneyKnown]);
 
-  const pending = board.balances;
+  const pending = moneyKnown ? board.balances : [];
   const next = messages[0]
     ? { kind: 'message', ...messages[0] }
     : openCleanings[0] ? { kind: 'cleaning', c: openCleanings[0] }
@@ -177,7 +176,7 @@ export function useTodayModel({ orgId } = {}) {
         await markCleaned(q.c, { silent: true });
       } else if (q.kind === 'lead') {
         const first = firstName(q.lead.full_name) || '';
-        window.open(waLink(q.lead.phone, `שלום${first ? ` ${first}` : ''}, תודה שפניתם. `), '_blank', 'noopener,noreferrer');
+        openExternal(waLink(q.lead.phone, `שלום${first ? ` ${first}` : ''}, תודה שפניתם. `));
         try { await base44.entities.Lead.update(q.lead.id, { status: 'CONTACTED' }); } catch { /* the reply itself already went out */ }
       }
     } catch { /* the message opened in WhatsApp even if saving the log failed */ }
@@ -190,9 +189,13 @@ export function useTodayModel({ orgId } = {}) {
   return {
     day, tomorrow, data, board, boardT, prop, paysOf, sentOf, messages, openCleanings, leads, pending,
     queue, queueAll, doItem, doneCount, doneItems, isDone: (id) => doneMap.has(id), total: queue.length + doneMap.size,
-    pendingTotal: board.openBalanceTotal, money: money_, next, rowsFor, markCleaned,
+    pendingTotal: moneyKnown ? board.openBalanceTotal : null, money: money_, next, rowsFor, markCleaned,
+    moneyKnown, paymentsState: data.paymentsState, retryLoad: data.refetch,
     markSent: (bid, key) => setSentNow((s) => new Set(s).add(`${bid}:${key}`)),
-    balanceFor: (b) => balanceOf(b, paysOf(b), day),
+    balanceFor: (b) => {
+      const bal = balanceOf(b, paysOf(b), day);
+      return moneyKnown ? bal : { ...bal, paid: null, balance: null, unknown: true };
+    },
     isEmpty: !data.isLoading && activeCount === 0,
     isLoading: data.isLoading,
   };

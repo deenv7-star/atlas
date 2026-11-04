@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { WifiOff, RotateCw } from 'lucide-react';
+import { isMissingSchemaError } from '@/config/dbFeatures';
 
 const SLOW_MS = 12000;
 
@@ -55,6 +56,9 @@ export default function ConnectionNotice() {
 function isNetworkError(err) {
   if (!err) return false;
   if (err.isTimeout || err.name === 'TimeoutError' || err.name === 'AbortError') return true;
+  // Audit 04.11 #5: a server error (5xx) on refresh gets the same retry strip as a timeout.
+  // (Not a missing optional table: _wrapError reports those as 500 too, and they never recover on retry.)
+  if (typeof err.status === 'number' && (err.status === 0 || err.status >= 500) && !isMissingSchemaError(err)) return true;
   const m = String(err.message || err);
   return /Failed to fetch|NetworkError|Load failed|timeout|ERR_/i.test(m);
 }

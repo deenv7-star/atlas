@@ -132,10 +132,19 @@
   </head>
   <body>
     <div id="root">
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F7F8FB;font-family:Heebo,system-ui,sans-serif">
-        <div style="text-align:center">
-          <div style="width:40px;height:40px;border:3px solid #E6E8F0;border-top-color:#3E2BF1;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px"></div>
-          <p style="color:#4A5578;font-size:14px">טוען...</p>
+      <div role="status" aria-busy="true" aria-label="טוען" style="min-height:100vh;background:#F7F8FB;font-family:Heebo,system-ui,sans-serif">
+        <div style="height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px">
+          <span style="width:76px;height:22px;border-radius:8px;background:#E8EAF1"></span>
+          <span style="width:40px;height:40px;border-radius:50%;background:#E8EAF1"></span>
+        </div>
+        <div style="max-width:1200px;margin:0 auto;padding:10px 20px">
+          <div style="width:58%;max-width:320px;height:30px;border-radius:10px;background:#E8EAF1"></div>
+          <div style="width:82%;max-width:440px;height:14px;margin-top:12px;border-radius:7px;background:#EEF0F5"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px">
+            <div style="height:112px;border-radius:22px;background:#fff"></div>
+            <div style="height:112px;border-radius:22px;background:#fff"></div>
+          </div>
+          <div style="height:220px;margin-top:12px;border-radius:22px;background:#fff"></div>
         </div>
       </div>
     </div>

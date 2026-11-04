@@ -55,7 +55,7 @@ export default function MonthlyReportPage({ user }) {
               <Btn size="sm" variant="secondary" aria-label="החודש הקודם" className="!min-h-[44px] min-w-[44px]" onClick={() => shift(-1)} icon={ChevronRight} />
               <Btn size="sm" variant="secondary" aria-label="החודש הבא" className="!min-h-[44px] min-w-[44px]" onClick={() => shift(1)} icon={ChevronLeft} />
             </div>
-            <Btn variant="secondary" icon={Download} onClick={exportCsv} disabled={busy || data.isLoading}>ייצוא CSV</Btn>
+            <Btn variant="secondary" icon={Download} onClick={exportCsv} disabled={busy || data.isLoading}>הורדה לאקסל</Btn>
             <a className="ab-btn ab-btn-primary" href={`/monthly-report/print?m=${monthParam(year, monthIndex)}`} target="_blank" rel="noreferrer">
               <Printer size={18} strokeWidth={1.75} aria-hidden /> הדפסה / PDF
             </a>

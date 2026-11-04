@@ -62,7 +62,7 @@ function month_(f) {
 }
 
 function leads_(f) {
-  if (!f.openLeads.length) return 'אין פניות פתוחות. כל הלידים קיבלו תשובה.\n\n[פתיחת הלידים](/leads)';
+  if (!f.openLeads.length) return 'אין פניות פתוחות. כל הפניות קיבלו תשובה.\n\n[פתיחת הפניות](/leads)';
   const rows = f.openLeads.slice(0, 6).map((l) => `- **${l.name}**${l.since ? `, מ-${short(l.since)}` : ''}${l.dates ? `, מבקשים את ${short(l.dates)}` : ''}`);
   return `${f.openLeads.length === 1 ? 'פנייה אחת מחכה' : `${f.openLeads.length} פניות מחכות`} לתשובה. הוותיקה ראשונה:\n\n${rows.join('\n')}\n\nכדאי לענות קודם לפנייה הוותיקה.\n\n[פתיחת הלידים](/leads)`;
 }

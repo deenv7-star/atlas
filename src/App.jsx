@@ -9,8 +9,7 @@ import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary';
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { Route, Routes, Navigate, useParams } from 'react-router-dom';
-import { isNativeApp } from '@/lib/native';
+import { Route, Routes, Navigate, useParams, Link } from 'react-router-dom';
 import { readLockPrefs, lockAtColdStart } from '@/lib/nativeApp/appLockCore';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import BackendNotConfigured from '@/components/common/BackendNotConfigured';
@@ -18,6 +17,13 @@ import { isProductionBackendConfigured } from '@/lib/backendConfig';
 import { createPageUrl } from '@/utils';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/routes';
+// Trial over and not paid (src/lib/access.js): every app route shows the paywall; writes are refused (src/lib/accessLock.js).
+import AccessGate, { Paywall, LockedFrame } from '@/components/paywall/AccessGate';
+import { AccessSync } from '@/hooks/useAccess';
+import { isNativeApp } from '@/lib/nativePlatform';
+// Stored session, network down on the first load: offline screen with retry (audit 04.11), never /login.
+// Static import: when the network is down a lazy chunk may not load either.
+import OfflineAuthScreen from '@/components/common/OfflineAuthScreen';
 // Code-split: the landing page should not download the app shell or the auth screens.
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
@@ -97,10 +103,29 @@ function LockCover() {
   return <div aria-hidden className="fixed inset-0 z-[2147483000]" style={{ background: '#1B2656' }} />;
 }
 
+/**
+ * Audit 04.11 #9 / m15: while the shell or the session loads, show the shape of the app (top bar, title,
+ * cards, tab bar) instead of a lone spinner on a blank canvas. Static, so it is also calm with reduced motion.
+ */
 function AppFallback() {
+  const bar = { background: '#E8EAF1' };
   return (
-    <div className="fixed inset-0 flex items-center justify-center" style={{ background: '#F7F8FB' }} role="status" aria-busy="true" aria-label="טוען">
-      <div className="h-8 w-8 rounded-full border-[3px] border-[#E6E8F0] border-t-[#3E2BF1] motion-safe:animate-spin" />
+    <div className="fixed inset-0 overflow-hidden" style={{ background: '#F7F8FB' }} role="status" aria-busy="true" aria-label="טוען" dir="rtl">
+      <div className="flex h-16 items-center justify-between px-5">
+        <span className="h-[22px] w-[76px] rounded-lg" style={bar} />
+        <span className="h-10 w-10 rounded-full" style={bar} />
+      </div>
+      <div className="mx-auto w-full max-w-[1200px] px-5 pt-2.5">
+        <div className="h-[30px] w-[58%] max-w-[320px] rounded-[10px]" style={bar} />
+        <div className="mt-3 h-3.5 w-[82%] max-w-[440px] rounded-md" style={{ background: '#EEF0F5' }} />
+        <div className="mt-[22px] grid grid-cols-2 gap-2.5 lg:grid-cols-3">
+          <div className="h-28 rounded-[22px] bg-white" />
+          <div className="h-28 rounded-[22px] bg-white" />
+          <div className="hidden h-28 rounded-[22px] bg-white lg:block" />
+        </div>
+        <div className="mt-3 h-[220px] rounded-[22px] bg-white" />
+      </div>
+      <div className="absolute inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] h-16 rounded-[28px] bg-white/90 shadow-[0_8px_24px_-12px_rgba(27,38,86,.25)] lg:hidden" />
     </div>
   );
 }
@@ -126,14 +151,11 @@ function hasOnboardingBypass(user) {
 // Redirects to /login if not authenticated; preserves return URL.
 // If requireOnboarding=true (default), redirects to /onboarding when user hasn't completed it.
 
-const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = false }) => {
-  const { isLoadingAuth, isAuthenticated, user } = useAuth();
-  if (isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="h-8 w-8 rounded-full border-[3px] border-[#E6E8F0] border-t-[#3E2BF1] motion-safe:animate-spin" aria-label="טוען" role="status"></div>
-      </div>
-    );
+const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = false, lockedRender = null }) => {
+  const { isLoadingAuth, isAuthenticated, user, authOffline, retryAuth } = useAuth();
+  if (isLoadingAuth) return <AppFallback />;
+  if (!isAuthenticated && authOffline) {
+    return <OfflineAuthScreen onRetry={retryAuth} />;
   }
   if (!isAuthenticated) {
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
@@ -145,16 +167,37 @@ const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = f
   if (user?.account_suspended && !allowSuspended) {
     return <S><AccountSuspended reason={user.account_suspended_reason} /></S>;
   }
-  if (requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass(user)) {
-    return <Navigate to="/onboarding" replace />;
-  }
-  return children;
+  // Expired and unpaid: the paywall before anything else (also before onboarding), so no app screen mounts.
+  const inner = requireOnboarding && !user?.onboarding_completed && !hasOnboardingBypass(user)
+    ? <Navigate to="/onboarding" replace />
+    : children;
+  return <AccessGate locked={lockedRender}>{inner}</AccessGate>;
 };
+
+/** /billing while locked: the web keeps the billing page (no app shell); the iOS app gets the no-purchase screen. */
+function BillingWhileLocked() {
+  const { user } = useAuth();
+  if (isNativeApp()) return <Paywall />;
+  return <LockedFrame><Suspense fallback={<AppFallback />}><Pages.Billing user={user} /></Suspense></LockedFrame>;
+}
+
+/** Minimal 404 for the iOS app: what happened + one way back. */
+function AppNotFound() {
+  return (
+    <main dir="rtl" className="flex min-h-[100dvh] items-center justify-center px-6" style={{ background: '#F7F8FB' }}>
+      <div className="w-full max-w-sm text-center">
+        <h1 className="text-[22px] font-bold text-[#1B2656]">המסך הזה לא נמצא</h1>
+        <p className="mt-2 text-[16px] text-[#1B2656]/75">ייתכן שהקישור ישן.</p>
+        <Link to="/dashboard" className="mt-6 inline-flex min-h-[48px] items-center justify-center rounded-xl bg-[#3E2BF1] px-6 text-[16px] font-semibold text-white">חזרה להיום</Link>
+      </div>
+    </main>
+  );
+}
 
 const AuthenticatedApp = () => {
   // Do not block public routes (/, /pricing, /status, /contact, …) on auth hydration.
   // Slow or hanging /auth/me would otherwise show a full-screen spinner for everyone.
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, authOffline } = useAuth();
 
   return (
     <Routes>
@@ -168,7 +211,7 @@ const AuthenticatedApp = () => {
       <Route
         path="/login"
         element={
-          isAuthenticated
+          isAuthenticated || authOffline
             ? <Navigate to="/dashboard" replace />
             : <S><Login /></S>
         }
@@ -264,8 +307,10 @@ const AuthenticatedApp = () => {
         />
       )}
       {/* Billing & Subscription — protected, no onboarding redirect (always accessible) */}
-      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false} allowSuspended><LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper></ProtectedRoute>} />
-      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended><LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper></ProtectedRoute>} />
+      {/* iOS app (audit 04.11 C1): billing and plans never open there; a locked account still gets the no-purchase paywall. */}
+      <Route path="/billing" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<BillingWhileLocked />}>{isNativeApp() ? <Navigate to="/settings" replace /> : <LayoutWrapper currentPageName="Billing"><Pages.Billing /></LayoutWrapper>}</ProtectedRoute>} />
+      {/* While locked, /subscription IS the paywall (plan choice + request; no purchase UI in the iOS app). */}
+      <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<Paywall />}>{isNativeApp() ? <Navigate to="/settings" replace /> : <LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper>}</ProtectedRoute>} />
       {/* Platform admin console. Access is checked server-side (admin_whoami + every admin_* RPC). */}
       <Route path="/admin/*" element={<Suspense fallback={<PublicFallback />}><AdminRoot /></Suspense>} />
       <Route path="/platform-admin" element={<Navigate to="/admin" replace />} />
@@ -321,7 +366,8 @@ const AuthenticatedApp = () => {
           />
         ))}
 
-      <Route path="*" element={<S><SiteNotFound /></S>} />
+      {/* Audit 04.11 #8: the iOS app never shows the marketing header (prices, blog) on a wrong link. */}
+      <Route path="*" element={isNativeApp() ? <AppNotFound /> : <S><SiteNotFound /></S>} />
     </Routes>
   );
 };
@@ -339,6 +385,7 @@ function App() {
         <QueryClientProvider client={queryClientInstance}>
           <NuqsAdapter>
             <NavigationTracker />
+            <AccessSync />
             <AuthenticatedApp />
             {isNativeApp() ? <Suspense fallback={null}><NativeAuthHost /></Suspense> : null}
             {isNativeApp() ? <Suspense fallback={null}><NotifyHost /></Suspense> : null}

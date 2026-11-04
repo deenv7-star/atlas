@@ -50,7 +50,12 @@ export default function AdminGate({ children }) {
   const enabled = Boolean(isAuthenticated && ADMIN_DB_READY);
   const who = useQuery({
     queryKey: ['admin', 'whoami', user?.id || user?.email],
-    queryFn: () => adminApi.whoami(user),
+    // Audit 04.11 (minor): the access check waited for the 15 s request timeout behind a spinner.
+    // Give it 5 s; a timeout fails closed (the no-access card), never open.
+    queryFn: () => Promise.race([
+      adminApi.whoami(user),
+      new Promise((_, reject) => { window.setTimeout(() => reject(Object.assign(new Error('admin check timed out'), { isTimeout: true })), 5000); }),
+    ]),
     enabled,
     retry: false,
     staleTime: 60_000,
