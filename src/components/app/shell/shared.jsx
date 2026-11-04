@@ -65,16 +65,36 @@ export function initialsOf(user) {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) || 'א';
 }
 
-export function UserMenu({ user, onLogout, children, align = 'end', side }) {
+/**
+ * top (fix/today-tiles nav): optional rows above the account items, for the phone header that moved
+ * search / notifications / all screens into the avatar menu. Each: { key, label, icon, onSelect | to, badge, className }.
+ */
+export function UserMenu({ user, onLogout, children, align = 'end', side, top = null, hideMore = false }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent align={align} side={side} className="w-60" dir="rtl">
+      <DropdownMenuContent align={align} side={side} className="w-64" dir="rtl">
         <div className="px-2.5 py-2">
           <p className="truncate text-[15px] font-bold text-navy-900">{user?.full_name || 'החשבון שלי'}</p>
           <p className="truncate text-[13px] text-ink-400" dir="ltr">{user?.email}</p>
         </div>
         <DropdownMenuSeparator />
+        {top?.length ? (
+          <>
+            {top.map(({ key, label, icon: Icon, onSelect, to, badge, className }) => (
+              to ? (
+                <DropdownMenuItem key={key} asChild className={cn('min-h-11 gap-2.5 text-[15px]', className)}>
+                  <Link to={to}><Icon className="h-[18px] w-[18px] text-ink-600" /><span className="flex-1">{label}</span>{badge ? <span className="h-2 w-2 rounded-full bg-brand-600" aria-label="חדש" /> : null}</Link>
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem key={key} onSelect={onSelect} className={cn('min-h-11 gap-2.5 text-[15px]', className)}>
+                  <Icon className="h-[18px] w-[18px] text-ink-600" /><span className="flex-1">{label}</span>{badge ? <span className="h-2 w-2 rounded-full bg-brand-600" aria-label="חדש" /> : null}
+                </DropdownMenuItem>
+              )
+            ))}
+            <DropdownMenuSeparator />
+          </>
+        ) : null}
         <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
           <Link to={createPageUrl('Settings')}><Settings className="h-[18px] w-[18px] text-ink-600" />הגדרות</Link>
         </DropdownMenuItem>
@@ -83,9 +103,9 @@ export function UserMenu({ user, onLogout, children, align = 'end', side }) {
             <Link to={createPageUrl('Subscription')}><CreditCard className="h-[18px] w-[18px] text-ink-600" />מנוי</Link>
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem onSelect={() => window.dispatchEvent(new CustomEvent('atlas:open-more'))} className="min-h-11 gap-2.5 text-[15px] lg:hidden">
+        {hideMore ? null : <DropdownMenuItem onSelect={() => window.dispatchEvent(new CustomEvent('atlas:open-more'))} className="min-h-11 gap-2.5 text-[15px] lg:hidden">
           <LayoutGrid className="h-[18px] w-[18px] text-ink-600" />כל המסכים
-        </DropdownMenuItem>
+        </DropdownMenuItem>}
         <DropdownMenuItem onSelect={() => startTour(0)} className="min-h-11 gap-2.5 text-[15px]">
           <Compass className="h-[18px] w-[18px] text-ink-600" />סיור מודרך
         </DropdownMenuItem>
