@@ -11,6 +11,7 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { Route, Routes, Navigate, useParams } from 'react-router-dom';
 import { isNativeApp } from '@/lib/native';
+import { readLockPrefs, lockAtColdStart } from '@/lib/nativeApp/appLockCore';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import BackendNotConfigured from '@/components/common/BackendNotConfigured';
 import { isProductionBackendConfigured } from '@/lib/backendConfig';
@@ -27,6 +28,8 @@ const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
 const AuthCallback = lazy(() => import('@/pages/AuthCallback'));
 // iOS app only: Face ID Keychain sync + the one-time "next time with Face ID?" sheet.
 const NativeAuthHost = lazy(() => import('@/components/auth/NativeAuthHost'));
+const AppLockHost = lazy(() => import('@/components/nativeApp/AppLockHost.jsx'));
+const NotifyHost = lazy(() => import('@/components/nativeApp/NotifyHost.jsx'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const SetupPage = lazy(() => import('@/pages/Setup'));
 const AppLayout = lazy(() => import('./Layout.jsx'));
@@ -83,6 +86,16 @@ function LegacyLeadDetailRedirect() {
 }
 
 const PUBLIC_LAYOUT_PAGES = new Set(['Landing', 'Login', 'Register', 'Privacy', 'Terms', 'GuestService', 'About', 'DataSecurity', 'Accessibility', 'SLA', 'Contact', 'Status', 'HowItWorks', 'PricingPlans']);
+
+/** iOS app with Face ID lock on: decided once, before anything renders, so no guest data flashes. */
+const LOCK_AT_START = (() => {
+  try { return lockAtColdStart({ native: isNativeApp(), prefs: readLockPrefs(window.localStorage) }); } catch { return false; }
+})();
+
+/** Plain cover while the lock screen chunk loads (same navy as the lock glass). */
+function LockCover() {
+  return <div aria-hidden className="fixed inset-0 z-[2147483000]" style={{ background: '#1B2656' }} />;
+}
 
 function AppFallback() {
   return (
@@ -328,6 +341,8 @@ function App() {
             <NavigationTracker />
             <AuthenticatedApp />
             {isNativeApp() ? <Suspense fallback={null}><NativeAuthHost /></Suspense> : null}
+            {isNativeApp() ? <Suspense fallback={null}><NotifyHost /></Suspense> : null}
+            {isNativeApp() ? <Suspense fallback={LOCK_AT_START ? <LockCover /> : null}><AppLockHost initialLocked={LOCK_AT_START} /></Suspense> : null}
           </NuqsAdapter>
           <Toaster />
           <ConflictModalHost />

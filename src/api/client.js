@@ -584,7 +584,11 @@ const supabaseAuth = {
     // removed at the end whatever the network did. iOS app: also forgets the Face ID sign-in.
     const { server } = await safeSignOut(supabase, {
       beforeSignOut: isNativeApp()
-        ? () => import('@/lib/auth/biometric').then((m) => m.clearBiometric())
+        ? () => Promise.all([
+          import('@/lib/auth/biometric').then((m) => m.clearBiometric()),
+          // This phone stops getting the account's pushes and check-in reminders (needs the session, so first).
+          import('@/lib/nativeApp/notify').then((m) => m.forgetDevice()),
+        ])
         : undefined,
     });
     return { success: true, server };
@@ -618,6 +622,7 @@ const supabaseAuth = {
     // The auth user no longer exists: drop the local session without calling the server.
     // Drop the stored session directly: signOut() would call /logout for a user that no longer exists (403).
     if (isNativeApp()) await import('@/lib/auth/biometric').then((m) => m.clearBiometric({ keepOffered: false })).catch(() => {});
+    if (isNativeApp()) await import('@/lib/nativeApp/notify').then((m) => m.cancelAllReminders()).catch(() => {});
     try {
       Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
     } catch { /* ignore */ }

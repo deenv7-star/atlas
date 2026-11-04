@@ -26,6 +26,7 @@ import { isNativeApp } from '@/lib/native';
 
 // iOS app only: Face ID sign-in on / off. Never loaded on the web.
 const BiometricSetting = lazy(() => import('@/components/settings/BiometricSetting'));
+const NativeNotifySetting = lazy(() => import('@/components/settings/NativeNotifySetting.jsx'));
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -340,6 +341,9 @@ export default function SettingsPage({ user }) {
           )}
 
           {/* Notifications Tab */}
+          {activeTab === 'notifications' && isNativeApp() && (
+            <Suspense fallback={null}><NativeNotifySetting /></Suspense>
+          )}
           {activeTab === 'notifications' && (
             <Card>
               <CardHeader>
