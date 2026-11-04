@@ -38,7 +38,7 @@
 .ycm-act--p svg { color: #fff; }
 .ycm-act:active { transform: scale(.97); }
 
-.ycm-sec { margin: 18px 4px 8px; font-size: 13.5px; font-weight: 600; color: rgba(27,38,86,.6); }
+.ycm-sec { margin: 18px 4px 8px; font-size: 13.5px; font-weight: 600; color: rgba(27,38,86,.72); }
 .ycm-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .ycm-find + .ycm-grid { margin-top: 10px; }
 .ycm-tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; width: 100%; min-height: 96px;
@@ -58,5 +58,5 @@
 .ycm-find svg, .ycm-help svg { width: 20px; height: 20px; flex: none; color: rgba(27,38,86,.55); }
 .ycm-find svg:first-child { color: #3E2BF1; }
 .ycm-dot { width: 9px; height: 9px; border-radius: 99px; background: #3E2BF1; flex: none; }
-.ycm-none { margin: 10px 4px 0; font-size: 14.5px; color: rgba(27,38,86,.65); }
+.ycm-none { margin: 10px 4px 0; font-size: 14.5px; color: rgba(27,38,86,.72); }
 

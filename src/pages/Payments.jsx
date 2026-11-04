@@ -96,8 +96,10 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
 
   const paymentsQ = useQuery({
     queryKey: ['payments', orgId],
+    // Same scope as Today (useStayData): RLS limits rows to the org. The old { org_id } filter dropped rows the
+    // totals counted, so the list could read "עדיין אין תשלומים" under a ₪ total.
     queryFn: () =>
-      orgId ? base44.entities.Payment.filter({ org_id: orgId }, '-created_date') : Promise.resolve([]),
+      orgId ? base44.entities.Payment.filter({}, '-created_date', 3000) : Promise.resolve([]),
     staleTime: 2 * 60 * 1000,
   });
   const { isLoading, isError, error: paymentsError } = paymentsQ;
@@ -256,7 +258,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       {(listEmpty && !stats.pendingCount && !stats.paid) || loadFailed ? null : (
       <ErrorBoundary section="financial-summary" variant="inline" resetKey={orgId ?? 'no-org'}>
         <div className="stat-row mb-5" data-tour="payments-stats">
-          <StatTile hero label={`התקבל ב${monthName}`} hint="תשלומים ששולמו החודש" help="payments.received" value={owedKnown ? fmtMoney(stats.paid) : '—'} loading={!owedKnown && stay.isLoading} icon={CheckCircle2} tone="success" />
+          <StatTile hero label={`התקבל ב${monthName}`} help="payments.received" value={owedKnown ? fmtMoney(stats.paid) : '—'} loading={!owedKnown && stay.isLoading} icon={CheckCircle2} tone="success" />
           <StatTile label="ממתין לגבייה" hint={owedKnown && stats.pendingCount ? (stats.pendingCount === 1 ? 'הזמנה אחת עם יתרה' : `${stats.pendingCount} הזמנות עם יתרה`) : undefined} help="payments.pending" value={owedKnown ? fmtMoney(stats.pending) : '—'} loading={!owedKnown && stay.isLoading} icon={Clock} tone="amber" />
           <StatTile label="באיחור" help="payments.overdue" value={owedKnown ? stats.overdue : '—'} loading={!owedKnown && stay.isLoading} icon={AlertCircle} tone={stats.overdue ? 'danger' : undefined} />
         </div>
