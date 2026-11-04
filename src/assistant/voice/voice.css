@@ -1,0 +1,80 @@
+/* atlas voice screens. Palette #3E2BF1 #1B2656 #F7F8FB white only (tints = alpha). Heebo, RTL, 44px+ targets,
+   16px inputs. Motion: transform/opacity, one CSS variable (--lv 0..1) from rAF; none under reduced motion. */
+.vc { --b: #3E2BF1; --n: #1B2656; --m: #F7F8FB; --soft: rgba(27, 38, 86, 0.66); --hair: rgba(27, 38, 86, 0.1); --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; background: var(--m); color: var(--n);
+  font-family: 'Heebo', system-ui, sans-serif; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); overflow: hidden;
+  animation: vc-in 260ms var(--ease) both; }
+@keyframes vc-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.vc-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; padding: 8px 12px; }
+.vc-title { margin: 0; font-size: 16px; font-weight: 700; text-align: center; }
+.vc-meta { margin: 0; justify-self: end; font-size: 14px; font-weight: 500; color: var(--soft); font-variant-numeric: tabular-nums; padding-inline-end: 6px; }
+.vc-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; border: 0; background: transparent;
+  color: var(--n); cursor: pointer; transition: background-color 160ms ease, transform 120ms var(--ease); }
+.vc-icon:hover { background: rgba(27, 38, 86, 0.06); }
+.vc-icon:active { transform: scale(0.94); }
+
+/* stage */
+.vc-stage { --lv: 0; flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 24px; text-align: center; }
+.vc-face { position: relative; width: 196px; height: 196px; display: grid; place-items: center; }
+.vc-face .af-wrap { position: relative; z-index: 1; transition: transform 220ms var(--ease); }
+.vc-stage[data-state='speaking'] .vc-face .af-wrap { transform: scale(calc(1 + var(--lv) * 0.05)); }
+.vc-ring { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(27, 38, 86, 0.1); opacity: 0.0; transform: scale(0.78);
+  transition: opacity 240ms ease, transform 160ms var(--ease); }
+.vc-ring--2 { inset: -26px; border-color: rgba(62, 43, 241, 0.12); }
+.vc-stage[data-state='listening'] .vc-ring--1 { opacity: 1; transform: scale(0.86); }
+.vc-stage[data-state='hearing'] .vc-ring, .vc-stage[data-state='speaking'] .vc-ring { opacity: 1; }
+.vc-stage[data-state='hearing'] .vc-ring--1, .vc-stage[data-state='speaking'] .vc-ring--1 { transform: scale(calc(0.86 + var(--lv) * 0.12)); }
+.vc-stage[data-state='hearing'] .vc-ring--2, .vc-stage[data-state='speaking'] .vc-ring--2 { transform: scale(calc(0.8 + var(--lv) * 0.2)); }
+.vc-stage[data-state='hearing'] .vc-ring--1 { border-color: rgba(62, 43, 241, 0.35); }
+.vc-state { margin: 18px 0 0; min-height: 26px; font-size: 17px; font-weight: 700; color: var(--b); }
+.vc-stage[data-state='error'] .vc-state, .vc-stage[data-state='ended'] .vc-state { color: var(--n); }
+.vc-lines { margin-top: 18px; width: 100%; max-width: 520px; display: grid; gap: 10px; }
+.vc-said { margin: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+.vc-said--user { font-size: 16px; line-height: 1.5; color: var(--soft); -webkit-line-clamp: 2; }
+.vc-said--atlas { font-size: 20px; line-height: 1.5; font-weight: 600; -webkit-line-clamp: 5; }
+.vc-hint { margin: 0; font-size: 16px; line-height: 1.55; color: var(--soft); text-wrap: balance; }
+.vc-error { margin-top: 14px; max-width: 360px; }
+.vc-error p { margin: 0 0 14px; font-size: 16px; line-height: 1.55; }
+.vc-error-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+/* proposal + typed fallback */
+.vc-cards { padding: 0 16px; max-width: 560px; width: 100%; margin: 0 auto; animation: vc-up 240ms var(--ease) both; }
+@keyframes vc-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.vc-type { display: flex; gap: 8px; padding: 0 16px 8px; max-width: 560px; width: 100%; margin: 0 auto; }
+.vc-type input { flex: 1; min-width: 0; min-height: 48px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(27, 38, 86, 0.16); background: #fff;
+  color: var(--n); font: inherit; font-size: 16px; }
+.vc-type input:focus-visible { outline: 2px solid var(--b); outline-offset: 1px; }
+.vc-pill { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(27, 38, 86, 0.14);
+  background: #fff; color: var(--n); font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 120ms var(--ease); }
+.vc-pill:active { transform: scale(0.97); }
+.vc-pill:disabled { opacity: 0.55; cursor: default; }
+.vc-pill--primary { background: var(--b); border-color: var(--b); color: #fff; }
+
+/* controls */
+.vc-controls { display: flex; justify-content: center; align-items: flex-start; gap: 28px; padding: 14px 16px 6px; }
+.vc-ctl { display: grid; justify-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--soft); }
+.vc-round { display: inline-flex; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 999px; border: 0; background: #fff; color: var(--n);
+  box-shadow: 0 0 0 1px var(--hair), 0 10px 24px -16px rgba(27, 38, 86, 0.5); cursor: pointer; transition: transform 120ms var(--ease), background-color 160ms ease; }
+.vc-round:active { transform: scale(0.95); }
+.vc-round:disabled { opacity: 0.5; cursor: default; }
+.vc-round.is-on { background: var(--n); color: #fff; }
+.vc-round--small { width: 56px; height: 56px; margin: 6px 0; } /* 56 + 6 + 6 = 68: labels share one baseline with the 68px buttons */
+.vc-round--end { background: var(--n); color: #fff; box-shadow: 0 10px 24px -14px rgba(27, 38, 86, 0.7); }
+.vc-fine { margin: 6px 16px 10px; text-align: center; font-size: 13px; color: var(--soft); }
+.vc button:focus-visible { outline: 2px solid var(--b); outline-offset: 3px; }
+/* A with a proposal on screen: the face steps back, the card leads */
+.vc--a.has-card .vc-stage { flex: 0 0 auto; padding-top: 4px; }
+.vc--a.has-card .vc-face { width: 104px; height: 104px; }
+.vc--a.has-card .vc-ring--2 { inset: -12px; }
+.vc--a.has-card .vc-state { margin-top: 8px; }
+.vc--a.has-card .vc-said--user { display: none; }
+.vc--a.has-card .vc-lines { margin-top: 6px; }
+.vc--a.has-card .vc-said--atlas { font-size: 17px; -webkit-line-clamp: 3; }
+.vc--a.has-card .vc-cards { flex: 1; min-height: 0; overflow-y: auto; }
+@media (min-width: 1024px) {
+  .vc { inset: 24px; left: auto; width: 440px; border-radius: 28px; box-shadow: 0 0 0 1px var(--hair), 0 30px 80px -30px rgba(27, 38, 86, 0.45); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vc, .vc-cards { animation: none; }
+  .vc-ring, .vc-face .af-wrap, .vc-round, .vc-pill, .vc-icon { transition: none; }
+}

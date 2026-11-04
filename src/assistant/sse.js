@@ -1,6 +1,6 @@
 /**
  * Server-sent events reader shared by the browser client and the tests.
- * Understands the ai-chat v4 frames ({"d":"text"} … {"done":true} / {"error":"code"}) and, for safety,
+ * Understands the ai-chat v5 frames ({"status":"…"} {"action":{…}} {"d":"text"} … {"done":true} / {"error":"code"}) and, for safety,
  * raw OpenAI frames ({"choices":[{"delta":{"content":"…"}}]}) and the literal "[DONE]".
  */
 export function createSSEParser(onEvent) {
@@ -17,6 +17,8 @@ export function createSSEParser(onEvent) {
         if (data === '[DONE]') { onEvent({ done: true }); continue; }
         let j; try { j = JSON.parse(data); } catch { continue; }
         if (typeof j.d === 'string') onEvent({ delta: j.d });
+        else if (typeof j.status === 'string') onEvent({ status: j.status });
+        else if (j.action && typeof j.action === 'object') onEvent({ action: j.action });
         else if (j.error) onEvent({ error: String(j.error) });
         else if (j.done) onEvent({ done: true, meta: j });
         else if (j.choices?.[0]?.delta?.content) onEvent({ delta: j.choices[0].delta.content });

@@ -63,7 +63,9 @@ export function useAssistant({ facts, page }) {
         facts: ctx.current.facts,
         page: ctx.current.page,
         signal: ac.signal,
-        onDelta: (d) => set((list) => list.map((m) => (m.id === answerId ? { ...m, status: 'streaming', content: m.content + d } : m))),
+        onDelta: (d) => set((list) => list.map((m) => (m.id === answerId ? { ...m, status: 'streaming', content: m.content + d, working: '' } : m))),
+        onStatus: (line) => patch({ working: String(line).slice(0, 60) }),
+        onAction: (a) => set((list) => list.map((m) => (m.id === answerId ? { ...m, proposals: [...(m.proposals || []), { ...a, state: 'proposed' }].slice(-3) } : m))),
       });
       patch({ status: 'done' });
     } catch (e) {
@@ -93,10 +95,15 @@ export function useAssistant({ facts, page }) {
     const i = list.findIndex((m) => m.id === answerId);
     if (i < 1 || list[i - 1].role !== 'user') return;
     const history = list.slice(0, i).filter((m) => m.status === 'done' && m.content);
-    set((l) => l.map((m) => (m.id === answerId ? { ...m, content: '', status: 'pending', error: undefined } : m)));
+    set((l) => l.map((m) => (m.id === answerId ? { ...m, content: '', status: 'pending', error: undefined, proposals: [], working: '' } : m)));
     run(history, answerId);
   }, [run]);
 
   const clear = useCallback(() => { controller?.abort(); set(() => []); }, []);
-  return { messages, busy, send, stop, retry, clear };
+
+  /** A proposal card changed state: 'confirmed' | 'dismissed' | 'failed' (+ result for links / messages). */
+  const resolveProposal = useCallback((msgId, index, state, result = null) => {
+    set((list) => list.map((m) => (m.id === msgId ? { ...m, proposals: (m.proposals || []).map((p, i) => (i === index ? { ...p, state, result } : p)) } : m)));
+  }, []);
+  return { messages, busy, send, stop, retry, clear, resolveProposal };
 }

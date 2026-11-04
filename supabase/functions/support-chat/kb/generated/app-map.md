@@ -25,15 +25,15 @@ generated: true
 בטלפון, לידים, כספים, הודעות, הגדרות נמצאים תחת **עוד**.
 
 ## מה יש תחת "עוד"
-- **תפעול**: ניקיון (/cleaning), בקשות שירות (/service-requests), ביקורות (/reviews), חוזים (/contracts), אוטומציות (/automations)
-- **אורחים**: דף אורח והזמנה ישירה (/guest-portal), שלבי האירוח (/guest-journey), עוזר אישי (/ai-assistant)
+- **תפעול**: ניקיון (/cleaning), בקשות שירות (/service-requests), ביקורות (/reviews), חוזים (/contracts), הודעות לאורחים (/automations)
+- **אורחים**: דף אורח והזמנה ישירה (/guest-portal), שאלו את atlas (/ai-assistant)
 - **דוחות**: הכנסות (/revenue-intelligence), תמחור חגים (/dynamic-pricing), דוחות בעלים (/owner-reports)
 - **חשבון**: ערוצים וחיבורים (/integrations), מנוי (/subscription), חיובים (/billing)
 
 ## לשוניות במסך כספים
 - תשלומים (/payments)
 - יתרות (/balances)
-- חשבוניות (/invoices)
+- מסמכים שהוצאתם (/invoices)
 - הוצאות (/expense-tracker)
 - דוח חודשי (/monthly-report)
 
