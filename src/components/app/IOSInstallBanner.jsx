@@ -6,7 +6,12 @@ const isTyping = () => {
   if (typeof document === 'undefined') return false;
   const el = document.activeElement;
   if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) return true;
-  return Boolean(document.querySelector('[role="dialog"]:not([aria-label="הוספת atlas למסך הבית"]), [role="alertdialog"]'));
+  // Only a dialog that is actually on screen (the support / assistant panels keep hidden ones in the DOM).
+  return [...document.querySelectorAll('[role="dialog"], [role="alertdialog"]')].some((d) => {
+    if (d.closest('[hidden], [aria-hidden="true"]')) return false;
+    const r = d.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 && getComputedStyle(d).visibility !== 'hidden';
+  });
 };
 
 /**
