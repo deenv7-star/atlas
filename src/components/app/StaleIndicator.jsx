@@ -6,15 +6,17 @@ import { cn } from '@/lib/utils';
 
 /**
  * Audit 04.11 #6: a quiet mark next to a screen title when what it shows is the last saved copy
- * (offline, or the refresh failed). Tap = refresh. Renders nothing while the data is fresh.
+ * (the refresh failed). Tap = refresh. Renders nothing while the data is fresh.
+ * 05.11 corners: offline is said once, by the global OfflineBanner pill ("אין חיבור לאינטרנט"), so this
+ * mark stays hidden while the device is offline (no second "אין חיבור" pill in the header).
  * @param {{ queries: object[], onRetry?: () => void, className?: string }} props
  */
 export default function StaleIndicator({ queries, onRetry, className }) {
   const online = useOnline();
   const st = staleStateOf(queries, { online });
-  if (!st.show) return null;
+  if (!st.show || st.reason === 'offline') return null;
   const at = staleTimeLabel(st.updatedAt);
-  const label = st.reason === 'offline' ? 'אין חיבור' : 'לא עודכן';
+  const label = 'לא עודכן';
   const full = `${label}${at ? `. מוצג המידע מ-${at}` : ''}. נגיעה לרענון`;
   return (
     <button
