@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { useOptimisticConflictModalState } from '@/lib/optimistic/conflictModalState';
 import { preloadForInitialRoute, prefetchDataForInitialRoute } from '@/lib/appPreload';
-import { BootDone, hideBoot } from '@/lib/boot';
+import { BootDone, hideBoot, isBootShown } from '@/lib/boot';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AtlasToaster } from '@/components/ui/AtlasToast';
 import { QueryClientProvider } from '@tanstack/react-query'
@@ -372,7 +372,27 @@ const AuthenticatedApp = () => {
  * The full app: providers + every route. The Router, scroll reset and SEO tags live in src/Root.jsx,
  * which serves "/" and /pricing (lean public pages) without this module. Every other URL renders this, lazily.
  */
+/**
+ * perf/cold-start: the iOS-only hosts (Face ID Keychain sync + offer sheet, notifications, app lock on resume) are not
+ * part of the first screen. They load a moment after the boot screen has gone, so their code does not compete with
+ * the shell and Today on a phone's CPU. A lock at cold start (LOCK_AT_START) still mounts at once.
+ */
+function useAfterFirstScreen(delayMs = 800, maxMs = 4000) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    let t1; let t2;
+    const go = () => setReady(true);
+    const later = () => { t1 = window.setTimeout(go, delayMs); };
+    if (isBootShown()) window.addEventListener('atlas:boot-done', later, { once: true });
+    else later();
+    t2 = window.setTimeout(go, maxMs);
+    return () => { window.removeEventListener('atlas:boot-done', later); window.clearTimeout(t1); window.clearTimeout(t2); };
+  }, [delayMs, maxMs]);
+  return ready;
+}
+
 function App() {
+  const nativeHosts = useAfterFirstScreen();
   if (!isProductionBackendConfigured()) { hideBoot(); return <BackendNotConfigured />; }
   return (
     <GlobalErrorBoundary>
@@ -383,9 +403,9 @@ function App() {
             <AccessSync />
             <OfflineBanner />
             <AuthenticatedApp />
-            {isNativeApp() ? <Suspense fallback={null}><NativeAuthHost /></Suspense> : null}
-            {isNativeApp() ? <Suspense fallback={null}><NotifyHost /></Suspense> : null}
-            {isNativeApp() ? <Suspense fallback={LOCK_AT_START ? <LockCover /> : null}><AppLockHost initialLocked={LOCK_AT_START} /></Suspense> : null}
+            {isNativeApp() && nativeHosts ? <Suspense fallback={null}><NativeAuthHost /></Suspense> : null}
+            {isNativeApp() && nativeHosts ? <Suspense fallback={null}><NotifyHost /></Suspense> : null}
+            {isNativeApp() && (nativeHosts || LOCK_AT_START) ? <Suspense fallback={LOCK_AT_START ? <LockCover /> : null}><AppLockHost initialLocked={LOCK_AT_START} /></Suspense> : null}
           </NuqsAdapter>
           <Toaster />
           <ConflictModalHost />

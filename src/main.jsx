@@ -63,10 +63,18 @@ if (!lean) loadFullApp()
 // perf/cold-start: a returning owner opening Today (also every iOS cold start with a stored session, see
 // nativeStartRedirect) gets the shell and Today's code requested now, in parallel with the app code, instead of
 // after App.jsx has loaded and auth has answered (entry → App → Layout → Dashboard was a 4-step waterfall).
-// Same modules as the lazy() imports in App.jsx / pages.config.js, so each is fetched once.
+// Same files Vite's loader asks for on the lazy() imports in App.jsx / pages.config.js, so each is fetched once.
+// modulepreload = download + compile only: nothing runs before the app code, so the session restore starts first.
+// The chunk list comes from the build (scripts/prerender.mjs → <meta name="atlas-today-preload"> in app.html).
 if (!lean && /^\/dashboard\/?$/.test(window.location.pathname) && hasStoredSupabaseSession()) {
-  import('@/Layout.jsx').catch(() => {})
-  import('@/pages/Dashboard').catch(() => {})
+  const list = document.querySelector('meta[name="atlas-today-preload"]')?.getAttribute('content') || ''
+  for (const href of list.split(/\s+/).filter((h) => /^\/assets\/[\w.-]+\.(js|css)$/.test(h))) {
+    if (document.querySelector(`link[href="${href}"]`)) continue
+    const l = document.createElement('link')
+    if (href.endsWith('.css')) { l.rel = 'preload'; l.as = 'style' } else { l.rel = 'modulepreload'; l.crossOrigin = '' }
+    l.href = href
+    document.head.appendChild(l)
+  }
 }
 
 // Sign-in screens: request the screen's own code together with the app code, not after the app has

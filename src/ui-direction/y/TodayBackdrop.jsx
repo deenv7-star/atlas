@@ -45,18 +45,20 @@ export default function TodayBackdrop({ on }) {
     if (document.readyState === 'complete') later(); else window.addEventListener('load', later, { once: true });
     return () => { window.removeEventListener('load', later); window.clearTimeout(t); };
   }, [on, mounted]);
-  if (!mounted || !host) return null;
+  // perf/cold-start: the layer (with its blurred placeholder, y-bg.css) is up as soon as Today is; only the photo waits.
+  if (!host || (!mounted && !on)) return null;
   return createPortal(
-    <div className={cn('y2-bgphoto', on && ready && 'is-on')} aria-hidden="true">
-      <picture>
+    <div className={cn('y2-bgphoto', on && 'is-on')} aria-hidden="true">
+      {mounted ? <picture>
         <source type="image/avif" media={DESK} srcSet={`${SRC}-d.avif`} />
         <source type="image/avif" srcSet={`${SRC}-m.avif`} />
         <source type="image/webp" media={DESK} srcSet={`${SRC}-d.webp`} />
         <source type="image/webp" srcSet={`${SRC}-m.webp`} />
         <source media={DESK} srcSet={`${SRC}-d.jpg`} />
         <img src={`${SRC}-m.jpg`} alt="" decoding="async" fetchPriority="low" draggable={false}
+          className={cn(ready && 'is-ready')}
           ref={(img) => { if (img && img.complete && img.naturalWidth) setReady(true); }} onLoad={() => setReady(true)} />
-      </picture>
+      </picture> : null}
     </div>,
     host,
   );

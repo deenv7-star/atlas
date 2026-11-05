@@ -48,10 +48,16 @@ body .y2-shell .y2-side, body .y2-shell .y3-panel { background: #1B2656; backdro
 /* ── Today: the photo layer (portalled into the shell by TodayBackdrop) ── */
 .y2-shell > .y2-bgphoto { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; background: #D6E6F3; transition: opacity .45s var(--ease); }
 .y2-shell > .y2-bgphoto.is-on { opacity: 1; }
-.y2-bgphoto picture, .y2-bgphoto img { display: block; width: 100%; height: 100%; }
-.y2-bgphoto img { object-fit: cover; object-position: 50% 100%; -webkit-user-select: none; user-select: none; }
+/* perf/cold-start: a 200-byte blurred copy of the same photo paints with the shell; the real photo (deferred, low
+   priority) fades in over it when decoded, so Today never flashes plain blue first. */
+.y2-shell > .y2-bgphoto::before { content: ''; position: absolute; inset: -24px; filter: blur(14px);
+  background: url("data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACQBACdASoQACMAPrVQoUwnJKMiKqgA4BaJZAC7OQAAbGpt8MaHbbaH2D7ZEIAA/vunlBgWBtIYD9sgAaA13a2TnKsV9Lei0I1WEWAuOHnobvJyeVYXBmZH/d4jHYzso9uOW/hu3a52BAg+HIiA9QWbSwDJ9hJzJGkrTn9ufjKAAA==") 50% 100% / cover no-repeat; }
+@media (min-width: 768px) { .y2-shell > .y2-bgphoto::before { background-image: url("data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAABQBQCdASogABIAPrVKnkmnJCKhMAgA4BaJQBYj5DBeG7X+bzGvUr+ZG72GJU7uTJxAJ1gA/t7vcEgSpX4kuONapcWEJQKOb7wf/xHakh3KdCOQY8jEASKhaCKcMhi5enB/vYJLbQlPrGtPRS0giVUK+XbQXIQa5Qz1Thj1oOT3P5HZ+oIAFaYhJoohIoWwZU4Ndj2krybhbyqdq20FyctcwyDXgP3xAAA="); background-position: 50% 60%; } }
+.y2-bgphoto picture, .y2-bgphoto img { position: relative; display: block; width: 100%; height: 100%; }
+.y2-bgphoto img { object-fit: cover; object-position: 50% 100%; -webkit-user-select: none; user-select: none; opacity: 0; transition: opacity .45s var(--ease); }
+.y2-bgphoto img.is-ready { opacity: 1; }
 @media (min-width: 768px) { .y2-bgphoto img { object-position: 50% 60%; } }
-@media (prefers-reduced-motion: reduce) { .y2-shell > .y2-bgphoto { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .y2-shell > .y2-bgphoto, .y2-bgphoto img { transition: none; } }
 
 /* Today: frosted-white panes so the hills read around them; text stays navy on white (contrast as on canvas) */
 .y2-shell[data-page="Dashboard"] .y2-tile, .y2-shell[data-page="Today"] .y2-tile,
