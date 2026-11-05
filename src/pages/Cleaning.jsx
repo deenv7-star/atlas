@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PageHeader, SkelLine, EmptyState } from '@/components/ds';
 import {
   useCleaningTasks,
@@ -8,7 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Check as CheckIcon } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -16,12 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import {
   Sheet,
   SheetContent,
@@ -41,8 +35,7 @@ import {
 } from 'lucide-react';
 import { format, parseISO, isToday, isTomorrow, isPast } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { MaintenanceRequestForm } from '@/components/forms/MaintenanceRequestForm';
-import { emptyMaintenanceRequestFormValues } from '@/components/forms/atlasFormSchemas';
+import CleaningTaskSheet from '@/components/cleaning/CleaningTaskSheet';
 import { cn } from '@/lib/utils';
 import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 
@@ -62,13 +55,6 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
-  const maintenanceDialogInterceptRef = useRef(null);
-
-  useEffect(() => {
-    if (!isCreateOpen) maintenanceDialogInterceptRef.current = null;
-  }, [isCreateOpen]);
-
-  const maintenanceFormDefaults = useMemo(() => emptyMaintenanceRequestFormValues(), [isCreateOpen]);
 
   const taskFilters = useMemo(
     () => ({
@@ -88,10 +74,6 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
     if (selectedTask?.id === taskId) {
       setSelectedTask({ ...selectedTask, status: newStatus });
     }
-  };
-
-  const closeMaintenanceDialog = () => {
-    setIsCreateOpen(false);
   };
 
   const handleMaintenanceSubmit = async (data) => {
@@ -362,21 +344,26 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                     </div>
                     <div className="space-y-2">
                       {selectedTask.checklist.map((item, index) => (
-                        <div
+                        <button
+                          type="button"
+                          role="checkbox"
+                          aria-checked={Boolean(item.done)}
                           key={index}
                           className={cn(
-                            'flex items-center gap-3 p-3 bg-canvas rounded-xl cursor-pointer hover:bg-neutral-100 transition-colors',
+                            'press flex min-h-[48px] w-full items-center gap-3 rounded-xl bg-canvas p-3 text-start text-[16px] transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3E2BF1]',
                             updateMutation.isPending &&
                               updateMutation.variables?.id === selectedTask.id &&
                               'motion-safe:animate-pulse ring-[0.5px] ring-amber-400/80',
                           )}
                           onClick={() => handleChecklistToggle(selectedTask.id, index, selectedTask.checklist)}
                         >
-                          <Checkbox checked={item.done} />
+                          <span aria-hidden className={cn('flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] border-2', item.done ? 'border-[#3E2BF1] bg-[#3E2BF1] text-white' : 'border-[#1B2656]/30 bg-white')}>
+                            {item.done ? <CheckIcon className="h-4 w-4" strokeWidth={3} /> : null}
+                          </span>
                           <span className={item.done ? 'line-through text-ink-400' : ''}>
                             {item.item}
                           </span>
-                        </div>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -397,39 +384,8 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
         </SheetContent>
       </Sheet>
 
-      {/* Create Task Dialog */}
-      <Dialog
-        open={isCreateOpen}
-        onOpenChange={(open) => {
-          const h = maintenanceDialogInterceptRef.current;
-          if (h) {
-            h(open);
-            return;
-          }
-          setIsCreateOpen(open);
-        }}
-      >
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>משימת ניקיון חדשה</DialogTitle>
-          </DialogHeader>
-          <MaintenanceRequestForm
-            key={`${orgId}-${selectedPropertyId || 'all'}-${isCreateOpen}`}
-            storageSuffix={`${orgId}-${selectedPropertyId || 'all'}`}
-            defaultValues={maintenanceFormDefaults}
-            onSubmit={handleMaintenanceSubmit}
-            onCancel={closeMaintenanceDialog}
-            setDialogOpen={setIsCreateOpen}
-            onRegisterDialogInterceptor={(fn) => {
-              maintenanceDialogInterceptRef.current = fn;
-            }}
-            onAfterSubmitSuccess={() => {
-              window.setTimeout(closeMaintenanceDialog, 2000);
-            }}
-            submitLabel="יצירת משימה"
-          />
-        </DialogContent>
-      </Dialog>
+      {/* Create task (audit 05.11 FORM-1: AtlasSheet + field kit) */}
+      <CleaningTaskSheet open={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleMaintenanceSubmit} />
     </div>
   );
 }
