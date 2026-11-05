@@ -1,0 +1,18 @@
+/* today/wow (05.11.2026): the cleaner tab bar from the landing mockup. Five tabs in one capsule (היום · יומן · פניות · כסף · עוד),
+   the active one a white pill, and atlas beside it as its own round button (the mockup's "+" spot, on the left in RTL). */
+@media (max-width: 1023px) {
+  .y2-nav--clean { gap: 10px; }
+  .y2-shell .y2-nav--clean ul { gap: 0; padding: 5px; background: rgba(255,255,255,.82); backdrop-filter: blur(24px) saturate(1.8); -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    box-shadow: 0 0 0 1px rgba(27,38,86,.06), 0 14px 30px -18px rgba(27,38,86,.4); }
+  .y2-nav--clean .y2-ti { width: 58px; height: 54px; font-size: 12px; color: rgba(27,38,86,.72); }
+  .y2-nav--clean .y2-ti.on { color: #3E2BF1; }
+  .y2-shell .y2-nav--clean .y2-ti-on { background: #fff; box-shadow: 0 6px 16px -8px rgba(27,38,86,.35), 0 0 0 1px rgba(27,38,86,.04); }
+  .y2-fab { flex: none; display: grid; place-items: center; width: 60px; height: 60px; border-radius: 999px; border: 0; cursor: pointer;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(24px) saturate(1.8); -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    box-shadow: 0 0 0 1px rgba(27,38,86,.06), 0 14px 30px -16px rgba(27,38,86,.45); -webkit-tap-highlight-color: transparent; }
+  .y2-fab:active { transform: scale(.94); }
+  .y2-fab:focus-visible { outline: 2px solid #1B2656; outline-offset: 3px; }
+  html[data-assistant-open] .y2-fab { opacity: .5; }
+}
+@media (max-width: 389px) { .y2-nav--clean .y2-ti { width: 54px; } .y2-fab { width: 56px; height: 56px; } }
+@media (max-width: 359px) { .y2-nav--clean { gap: 6px; padding-inline: 8px; } .y2-nav--clean .y2-ti { width: 48px; } .y2-fab { width: 52px; height: 52px; } }

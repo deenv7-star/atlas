@@ -43,7 +43,8 @@ export function useMoreOpen() {
 }
 
 /** What each layout already shows, so the sheet lists only the rest. Phone: the tab bar. Desktop: the rail. */
-const ON_PHONE_BAR = ['Dashboard', 'MultiCalendar', 'Leads'];
+// today/wow (05.11.2026): כסף joined the phone tab bar, so the עוד sheet doesn't list it twice
+const ON_PHONE_BAR = ['Dashboard', 'MultiCalendar', 'Leads', 'Payments'];
 const ON_RAIL = ['Dashboard', 'MultiCalendar', 'Bookings', 'Leads', 'Payments', 'Settings'];
 const DESKTOP_Q = '(min-width: 1024px)';
 function useDesktop() {
