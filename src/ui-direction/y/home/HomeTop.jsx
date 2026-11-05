@@ -1,2 +1,2 @@
-// Today variation A4 (home/var-a4): the day as one sentence on a glass card. Swap this re-export to try another variation.
-export { default, HOME_VAR, HIDE_PHOTO, HIDE_TILES, HIDE_CHART } from './VarA4';
+// Today variation A6 (home/var-a6): the month's number, large, with the day in a floating dock. Swap this re-export to try another variation.
+export { default, HOME_VAR, HIDE_PHOTO, HIDE_TILES, HIDE_CHART } from './VarA6';
