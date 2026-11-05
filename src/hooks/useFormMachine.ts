@@ -165,6 +165,16 @@ export function useFormMachine<TFieldValues extends FieldValues>({
     ),
   );
 
+  const inFlightRef = useRef(false); // double-submit lock, see onValid below
+  // A value changed after a successful save (still showing "נשמר", or back to idle 2s later): that is an intentional
+  // new save, so the lock opens again.
+  const releaseAfterSuccess = useCallback(() => {
+    const st = machineRef.current;
+    if (!inFlightRef.current || (st !== 'success' && st !== 'idle')) return;
+    inFlightRef.current = false;
+    if (st === 'success') setMachineState('dirty');
+  }, []);
+
   const handleBlur = useCallback(
     async (name: Path<TFieldValues>) => {
       const field = form.getFieldState(name);
@@ -200,11 +210,12 @@ export function useFormMachine<TFieldValues extends FieldValues>({
             setMachineState('dirty');
             setServerError(null);
           }
+          releaseAfterSuccess();
           reg.onChange(e);
         },
       };
     },
-    [register, handleBlur],
+    [register, handleBlur, releaseAfterSuccess],
   );
 
   const handleChange = useCallback(
@@ -213,15 +224,17 @@ export function useFormMachine<TFieldValues extends FieldValues>({
         setMachineState('dirty');
         setServerError(null);
       }
+      releaseAfterSuccess();
       setValue(name, value, { shouldDirty: true, shouldValidate: false });
     },
     [setValue],
   );
 
   // ENG-04: a double tap (or Enter + click) must never run onSubmit twice. The button's `disabled` only lands on
-  // the next render, so guard synchronously. Stays locked 1.5s after a success (a sheet closes at 0.7s); released
-  // at once on an error, an invalid form, or a reset.
-  const inFlightRef = useRef(false);
+  // the next render, so guard synchronously. Released at once on an error, an invalid form, or a reset.
+  // Deen 05.11.2026 (two identical payments saved 2.0s apart, two "התשלום נשמר" toasts): the lock used to drop 1.5s
+  // after a success while the payment sheet stays open 2s showing "נשמר", so a second tap saved the same row again.
+  // After a success the form now stays locked until a value is changed (an intentional second save) or a reset.
 
   const onValid: SubmitHandler<TFieldValues> = useCallback(
     async (data) => {
@@ -229,7 +242,6 @@ export function useFormMachine<TFieldValues extends FieldValues>({
       setServerError(null);
       try {
         await onSubmit(data);
-        window.setTimeout(() => { inFlightRef.current = false; }, 1500);
         setMachineState('success');
         onAfterSubmitSuccess?.();
       } catch (err) {

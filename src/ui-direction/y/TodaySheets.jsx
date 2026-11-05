@@ -111,16 +111,18 @@ export function IncomeSheet({ open, onOpenChange, model }) {
   const inMonth = (model.data.bookings || []).filter(isActiveBooking).filter((b) => String(b.check_in_date).slice(0, 7) === ym)
     .map((b) => ({ b, bal: model.balanceFor(b) }))
     .sort((a, z) => (Number(z.b.total_price) || 0) - (Number(a.b.total_price) || 0));
-  const paid = inMonth.reduce((s, x) => s + (Number(x.bal.paid) || 0), 0);
+  const booked = inMonth.reduce((s, x) => s + (Number(x.b.total_price) || 0), 0);
   const open_ = inMonth.reduce((s, x) => s + (Number(x.bal.balance) || 0), 0);
+  // Deen 05.11: the first number is what really came in this month (paid payments by paid date), the same number as
+  // the big "נכנסו ב…" on Today; the other two are about the stays that start this month.
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} title={`הכסף של ${model.money.month}`} sub="לפי הזמנות שמתחילות החודש"
+    <Sheet open={open} onOpenChange={onOpenChange} title={`הכסף של ${model.money.month}`} sub="מה נכנס, ומה עוד צפוי מההזמנות של החודש"
       action={<Go to={createPageUrl('Payments')} onClick={() => onOpenChange(false)}>למסך כסף</Go>}>
       {!known ? <Empty title="לא הצלחנו לקרוא את התשלומים כרגע" line="נסו שוב בעוד רגע" /> : (
         <>
           <div className="yt-stats">
-            <Stat label={`הכנסות ${model.money.month}`} value={money(model.money.received)} strong />
-            <Stat label="מתוכן שולם" value={money(paid)} />
+            <Stat label={`נכנסו ב${model.money.month}`} value={money(model.money.received)} strong />
+            <Stat label="הזמנות החודש" value={money(booked)} />
             <Stat label="יתרה פתוחה" value={money(open_)} />
           </div>
           {inMonth.length ? (

@@ -48,13 +48,20 @@ export default function BalancesPage({ user, orgId }) {
   const [payment, setPayment] = useState(null);
   const today = todayISO();
 
-  const rows = useMemo(() => {
+  // Deen 05.11.2026: a booking saved without a price has no balance, so it was dropped here silently and the page
+  // read ₪0 / "אין הזמנות" while the booking existed. It still stays out of the totals (no price = nothing to
+  // compute), but the page now says how many are missing a price and links straight to them.
+  const { rows, noPrice } = useMemo(() => {
     const from = addDays(today, -60);
-    return data.bookings
-      .filter((b) => isActiveBooking(b) && checkOutOf(b) >= from)
-      .map((b) => ({ booking: b, balance: balanceOf(b, data.paymentsByBooking.get(b.id) || [], today), unit: data.propertyById.get(b.property_id)?.name || b.property_name || '' }))
-      .filter((r) => r.balance.state !== 'no_price')
-      .sort((a, b) => Number(b.balance.overdue) - Number(a.balance.overdue) || a.booking.check_in_date.localeCompare(b.booking.check_in_date));
+    const all = data.bookings
+      .filter((b) => isActiveBooking(b) && !b.is_block && checkOutOf(b) >= from)
+      .map((b) => ({ booking: b, balance: balanceOf(b, data.paymentsByBooking.get(b.id) || [], today), unit: data.propertyById.get(b.property_id)?.name || b.property_name || '' }));
+    return {
+      rows: all.filter((r) => r.balance.state !== 'no_price')
+        .sort((a, b) => Number(b.balance.overdue) - Number(a.balance.overdue) || a.booking.check_in_date.localeCompare(b.booking.check_in_date)),
+      noPrice: all.filter((r) => r.balance.state === 'no_price')
+        .sort((a, b) => a.booking.check_in_date.localeCompare(b.booking.check_in_date)),
+    };
   }, [data.bookings, data.paymentsByBooking, data.propertyById, today]);
 
   const totals = useMemo(() => ({
@@ -96,6 +103,18 @@ export default function BalancesPage({ user, orgId }) {
             <StatTile label="באיחור" value={formatMoney(totals.overdue)} hint={heCount(totals.overdueCount, 'booking')} tone={totals.overdueCount ? 'danger' : undefined} />
             <StatTile label="מקדמות שהתקבלו" value={formatMoney(totals.deposits)} hint="בהזמנות פעילות" />
           </div>
+
+          {noPrice.length ? (
+            <div className="ab-card mb-4 flex min-h-[64px] flex-wrap items-center gap-x-4 gap-y-1 px-5 py-3" role="status">
+              <p className="flex-1 min-w-[200px] text-[15px]" style={{ color: 'var(--ink-900)' }}>
+                <b>{noPrice.length === 1 ? 'הזמנה אחת בלי מחיר' : `${noPrice.length} הזמנות בלי מחיר`}</b>
+                {noPrice.length === 1 ? ' לא נכנסת ליתרות.' : ' לא נכנסות ליתרות.'}
+              </p>
+              <Link to={`/booking/${noPrice[0].booking.id}`} className="inline-flex min-h-[44px] items-center font-semibold underline underline-offset-4" style={{ color: 'var(--brand-600)' }}>
+                הוסיפו מחיר
+              </Link>
+            </div>
+          ) : null}
 
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-3">
             <Segmented label="סינון" value={filter} onChange={setFilter} options={FILTERS} />

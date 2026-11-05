@@ -20,6 +20,7 @@ import { useWhatsAppSend } from '@/hooks/useWhatsAppSend';
 import { renderTemplate, templateByKey, waLink } from '@/lib/stay/whatsapp';
 import { canShowValues } from '@/lib/stay/loadState';
 import { monthOccupancy } from '@/lib/stay/occupancy';
+import { monthlyReceived } from '@/lib/stay/received';
 import { openExternal } from '@/lib/openExternal';
 
 export const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
@@ -79,12 +80,15 @@ export function useTodayModel({ orgId } = {}) {
     const cur = months[months.length - 1] || { value: 0, expected: 0 };
     // Audit 04.11 #7: no units = no occupancy (it used to read "7% · 0 יחידות").
     const occupancy = monthOccupancy({ bookings: data.bookings || [], unitCount: (data.properties || []).length, now });
-    if (!moneyKnown) return { months: [], received: null, expected: null, occupancy, month: MONTHS[m] };
+    if (!moneyKnown) return { months: [], received: null, prevReceived: null, expected: null, occupancy, month: MONTHS[m] };
+    // Deen 05.11: "נכנסו ב…" = payments received this month by paid date (was: bookings by check-in month, so a saved
+    // payment never moved it). prevReceived is the same measure for last month, for the "באוק׳" comparison.
+    const rec = monthlyReceived(data.payments, 2, now);
     return {
-      months, received: cur.value || 0, expected: (cur.value || 0) + (cur.expected || 0),
+      months, received: rec[1].value, prevReceived: rec[0].value, expected: (cur.value || 0) + (cur.expected || 0),
       occupancy, month: MONTHS[m],
     };
-  }, [data.bookings, data.properties, data.paymentsByBooking, moneyKnown]);
+  }, [data.bookings, data.properties, data.payments, data.paymentsByBooking, moneyKnown]);
 
   // Reminders in today's queue: balances that matter now (overdue, arriving within 3 days, in house).
   const pending = moneyKnown ? board.balances : [];

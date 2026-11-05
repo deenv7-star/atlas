@@ -21,25 +21,36 @@ import {
 
 /* ── toolbar ─────────────────────────────────────────────────────────────── */
 
-export function MonthToolbar({ month, onPrev, onNext, onToday, isCurrent, children }) {
-  const heb = hebrewMonthsLabel(month);
+export function MonthToolbar({ month, onPrev, onNext, onToday, isCurrent, title = null, unit = 'month', view = null, onView, children }) {
+  const heb = unit === 'month' ? hebrewMonthsLabel(month) : '';
+  const week = unit === 'week';
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
         <div className="flex items-center gap-1">
-          <button type="button" onClick={onPrev} aria-label="החודש הקודם" className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 ring-1 ring-inset ring-navy-900/10 hover:bg-[#F7F8FB]">
+          <button type="button" onClick={onPrev} aria-label={week ? 'השבוע הקודם' : 'החודש הקודם'} className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 ring-1 ring-inset ring-navy-900/10 hover:bg-[#F7F8FB]">
             <ChevronRight className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
           </button>
-          <button type="button" onClick={onNext} aria-label="החודש הבא" className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 ring-1 ring-inset ring-navy-900/10 hover:bg-[#F7F8FB]">
+          <button type="button" onClick={onNext} aria-label={week ? 'השבוע הבא' : 'החודש הבא'} className="press inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-navy-900 ring-1 ring-inset ring-navy-900/10 hover:bg-[#F7F8FB]">
             <ChevronLeft className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
           </button>
         </div>
         <div className="min-w-0">
-          <h2 className="text-[20px] font-bold leading-tight text-navy-900 tabular md:text-[22px]" aria-live="polite">{monthTitle(month)}</h2>
+          <h2 className="text-[20px] font-bold leading-tight text-navy-900 tabular md:text-[22px]" aria-live="polite">{title || monthTitle(month)}</h2>
           {heb ? <p className="text-[13px] text-navy-900/70">{heb}</p> : null}
         </div>
         {!isCurrent ? (
-          <button type="button" onClick={onToday} className="press h-11 rounded-full bg-white px-4 text-[14px] font-semibold text-brand-600 ring-1 ring-inset ring-navy-900/10 hover:bg-[#F7F8FB]">היום</button>
+          <button type="button" onClick={onToday} className="press h-11 rounded-full bg-white px-4 text-[14px] font-semibold text-brand-600 ring-1 ring-inset ring-navy-900/10 hover:bg-[#F7F8FB]">{week ? 'השבוע' : 'החודש'}</button>
+        ) : null}
+        {view ? (
+          <div role="group" aria-label="תצוגה" className="flex rounded-full bg-white p-1 ring-1 ring-inset ring-navy-900/10">
+            {[['month', 'חודש'], ['week', 'שבוע']].map(([v, l]) => (
+              <button key={v} type="button" aria-pressed={view === v} onClick={() => onView?.(v)}
+                className={cn('press h-11 min-w-[64px] rounded-full px-4 text-[14px] font-semibold', view === v ? 'bg-navy-900 text-white' : 'text-navy-900 hover:bg-[#F7F8FB]')}>
+                {l}
+              </button>
+            ))}
+          </div>
         ) : null}
       </div>
       {children}
@@ -182,46 +193,54 @@ export function DaySheet({ actions, units, stays, holidays }) {
     return subset.map((u) => ({ unit: u, ...dayAtUnit(stays, u.id, d) }));
   }, [d, day, named, stays]);
   const hol = d ? holidays.get(d) : null;
-  const singleUnit = list.length === 1 ? list[0].unit : null;
-  const anyFree = list.some((r) => r.freeNight);
+  const freeCount = list.filter((r) => r.freeNight).length;
+  // Deen 05.11: the old sheet read like a form ("G — הלילה פנוי" + one big button) and owners tried to type into it.
+  // Now every unit is one row that says plainly whether the night is free, with its own button: free → "הזמנה חדשה"
+  // (opens the booking form filled with this unit and date), taken → the booking itself.
+  const status = list.length > 1
+    ? (freeCount === 0 ? 'כל היחידות תפוסות הלילה' : freeCount === list.length ? 'כל היחידות פנויות הלילה' : `${freeCount === 1 ? 'יחידה אחת פנויה' : `${freeCount} יחידות פנויות`} הלילה`)
+    : (freeCount ? 'הלילה פנוי' : 'הלילה תפוס');
+  const sub = [hol?.length ? hol.map((h) => h.title).join(' · ') : null, d === todayIso() ? 'היום' : null, status].filter(Boolean).join(' · ');
   return (
-    <AtlasSheet
-      open={Boolean(d)}
-      onOpenChange={(o) => { if (!o) setDay(null); }}
-      title={d ? longDay(d) : ''}
-      subtitle={d ? (hol?.length ? hol.map((h) => h.title).join(' · ') : (d === todayIso() ? 'היום' : 'מה קורה ביום הזה')) : null}
-    >
+    <AtlasSheet open={Boolean(d)} onOpenChange={(o) => { if (!o) setDay(null); }} title={d ? longDay(d) : ''} subtitle={d ? sub : null}>
       {d ? (
         <>
-          <ul className="mb-5 space-y-2">
-            {list.map((r) => (
-              <li key={r.unit.id} className="rounded-[16px] bg-[#F7F8FB] px-4 py-3">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="truncate text-[16px] font-semibold text-[#1B2656]">{r.unit.name}</span>
-                  <span className={cn('shrink-0 text-[14px] font-semibold', r.freeNight ? 'text-[#3E2BF1]' : 'text-[#1B2656]/60')}>{r.freeNight ? 'הלילה פנוי' : 'הלילה תפוס'}</span>
-                </div>
-                {[...r.leaving.map((s) => ['יוצאים', s]), ...r.arriving.map((s) => ['מגיעים', s]), ...r.staying.map((s) => ['שוהים', s])].map(([k, s]) => (
-                  <Link key={`${k}-${s.id}`} to={`${createPageUrl('BookingDetail')}/${s.id}`} className="mt-1 flex min-h-[44px] items-center gap-2 rounded-[12px] px-1 text-[15px] text-[#1B2656] hover:bg-white">
-                    <span className="w-[56px] shrink-0 text-[#1B2656]/60">{s.isBlock ? 'חסום' : k}</span>
-                    <span className="min-w-0 flex-1 truncate font-medium">{s.isBlock ? `עד ${shortDay(s.end)}` : stayLabel(s)}</span>
-                    {!s.isBlock ? <SourceBadge channel={s.channel} /> : null}
-                  </Link>
-                ))}
-              </li>
-            ))}
+          <ul className="mb-4 space-y-2" aria-label="היחידות ביום הזה">
+            {list.map((r) => {
+              const here = [...r.leaving.map((s) => ['יוצאים', s]), ...r.arriving.map((s) => ['מגיעים', s]), ...r.staying.map((s) => ['שוהים', s])];
+              return (
+                <li key={r.unit.id} className="rounded-[16px] bg-white px-4 py-3 shadow-[0_1px_2px_rgba(27,38,86,0.06)]">
+                  <div className="flex min-h-[44px] items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-[17px] font-semibold text-[#1B2656]">{r.unit.name}</p>
+                      <p className={cn('text-[14px]', r.freeNight ? 'text-[#3E2BF1]' : 'text-[#1B2656]/70')}>{r.freeNight ? 'פנוי הלילה' : 'תפוס הלילה'}</p>
+                    </div>
+                    {r.freeNight ? (
+                      <button type="button" onClick={() => newBooking(r.unit, d)}
+                        className="press inline-flex h-12 shrink-0 items-center gap-1.5 rounded-full bg-[#3E2BF1] px-4 text-[15px] font-semibold text-white hover:bg-[#3322D9]">
+                        <Plus aria-hidden className="h-[18px] w-[18px]" strokeWidth={2.25} />הזמנה חדשה
+                      </button>
+                    ) : null}
+                  </div>
+                  {here.map(([k, s]) => (
+                    <Link key={`${k}-${s.id}`} to={`${createPageUrl('BookingDetail')}/${s.id}`} className="mt-1 flex min-h-[44px] items-center gap-2 rounded-[12px] px-1 text-[15px] text-[#1B2656] hover:bg-[#F7F8FB]">
+                      <span className="w-[56px] shrink-0 text-[#1B2656]/70">{s.isBlock ? 'חסום' : k}</span>
+                      <span className="min-w-0 flex-1 truncate font-medium underline-offset-4 hover:underline">{s.isBlock ? `עד ${shortDay(s.end)}` : stayLabel(s)}</span>
+                      {!s.isBlock ? <SourceBadge channel={s.channel} /> : null}
+                      <ChevronLeft aria-hidden className="h-4 w-4 shrink-0 text-[#1B2656]/50" />
+                    </Link>
+                  ))}
+                </li>
+              );
+            })}
           </ul>
-          {anyFree ? (
+          {freeCount ? (
             <SheetFooter>
-              <SheetSubmit onClick={() => newBooking(singleUnit || list.find((r) => r.freeNight)?.unit, d)}>
-                <span className="inline-flex items-center gap-1.5"><Plus aria-hidden className="h-5 w-5" />הזמנה חדשה</span>
-              </SheetSubmit>
-              <SheetTextButton onClick={() => newBlock(singleUnit?.id || list.find((r) => r.freeNight)?.unit.id, d)}>
-                <Lock aria-hidden className="h-4 w-4" />חסימת תאריכים
+              <SheetTextButton onClick={() => newBlock(list.length === 1 ? list[0].unit.id : list.find((r) => r.freeNight)?.unit.id, d)}>
+                <Lock aria-hidden className="h-4 w-4" />חסימת התאריך הזה
               </SheetTextButton>
             </SheetFooter>
-          ) : (
-            <p className="text-[15px] text-[#1B2656]/65">כל היחידות תפוסות בלילה הזה.</p>
-          )}
+          ) : null}
         </>
       ) : null}
     </AtlasSheet>
