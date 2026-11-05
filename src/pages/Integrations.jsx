@@ -9,13 +9,11 @@ import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CalendarDays, RefreshCw, Trash2, Copy, Check, Plus,
-  AlertTriangle, ChevronDown, ArrowDownToLine, ArrowUpFromLine, Info,
+  AlertTriangle, ChevronDown, Info,
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import HelpHint from '@/components/help/HelpHint';
 import { PageHeader, SegmentedControl, SkelLine, Card, StatusPill } from '@/components/ds';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { UnitPhoto } from '@/components/app/atoms';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
@@ -23,6 +21,8 @@ import { DB_FEATURES } from '@/config/dbFeatures';
 import { callEdge, icalExportUrl, minutesAgoHe } from '@/lib/real/edge';
 import { formatDayHe } from '@/lib/stay/format';
 import { cn } from '@/lib/utils';
+import ConnectFlow from '@/components/channels/ConnectWizard';
+import ChannelLogo from '@/components/channels/ChannelLogo';
 
 const PROVIDERS = {
   AIRBNB: { name: 'Airbnb', short: 'A', tone: 'bg-[#FFE8EA] text-[#C2273B]', channel: 'airbnb' },
@@ -38,22 +38,6 @@ export function isSuspiciousFeed(url, events) {
   const u = String(url || '');
   if (/airbnb\.|booking\.com/i.test(u)) return false;
   return Number(events) > SUSPICIOUS_FEED_EVENTS;
-}
-
-function guessProvider(url) {
-  if (/airbnb\./i.test(url)) return 'AIRBNB';
-  if (/booking\.com/i.test(url)) return 'BOOKING_COM';
-  if (/google\.com/i.test(url)) return 'GOOGLE';
-  if (/outlook|office365|live\.com/i.test(url)) return 'OUTLOOK';
-  return 'ICAL';
-}
-
-function validUrl(raw) {
-  const v = String(raw || '').trim().replace(/^webcal:\/\//i, 'https://');
-  try {
-    const u = new URL(v);
-    return /^https?:$/.test(u.protocol) ? v : '';
-  } catch { return ''; }
 }
 
 function CopyRow({ label, hint, value }) {
@@ -101,7 +85,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
   return (
     <li className="min-w-0 rounded-[16px] border border-[#ECEEF4] p-3" data-sync-id={sync.id}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span aria-hidden className={cn('inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] text-[15px] font-bold', p.tone)}>{p.short}</span>
+        <ChannelLogo channel={PROVIDERS[sync.provider] && ['AIRBNB', 'BOOKING_COM'].includes(sync.provider) ? sync.provider : 'ICAL'} size={40} />
         <div className="min-w-[160px] flex-1">
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] font-semibold text-navy-900">
             <span className="min-w-0 truncate">{sync.label || p.name}</span>
@@ -155,94 +139,51 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
   );
 }
 
-function AddFeed({ property, onAdd, busy }) {
-  const [url, setUrl] = useState('');
-  const [provider, setProvider] = useState('');
-  const [err, setErr] = useState('');
-  const effective = provider || (url ? guessProvider(url) : 'AIRBNB');
-  const submit = (e) => {
-    e.preventDefault();
-    const v = validUrl(url);
-    if (!v) { setErr('הדביקו קישור מלא שמתחיל ב-https (קישור הייצוא מהערוץ, בדרך כלל נגמר ב-.ics)'); return; }
-    setErr('');
-    onAdd({ property, url: v, provider: effective }).then((ok) => { if (ok) { setUrl(''); setProvider(''); } });
-  };
-  return (
-    <form onSubmit={submit} className="space-y-2" aria-label={`חיבור יומן ל${property.name}`}>
-      <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="מאיזה ערוץ">
-        {['AIRBNB', 'BOOKING_COM', 'ICAL'].map((k) => (
-          <button
-            key={k} type="button" role="radio" aria-checked={effective === k} onClick={() => setProvider(k)}
-            className={cn('press inline-flex h-11 items-center rounded-full px-4 text-[14px] font-semibold', effective === k ? 'bg-navy-900 text-white' : 'bg-white text-ink-600 ring-1 ring-inset ring-[#E3E6EF]')}
-          >{PROVIDERS[k].name}</button>
-        ))}
-      </div>
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Input
-          value={url} onChange={(e) => { setUrl(e.target.value); setErr(''); }} dir="ltr" inputMode="url" autoComplete="off"
-          placeholder="https://www.airbnb.com/calendar/ical/....ics" aria-label={`קישור ייצוא מ-${PROVIDERS[effective].name}`}
-          aria-invalid={!!err} className="h-12 min-h-12 text-left sm:flex-1"
-        />
-        <Button type="submit" className="h-12 shrink-0 px-5" disabled={busy || !url.trim()}>
-          {busy ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" strokeWidth={2} />}
-          {busy ? 'מחברים…' : 'חיבור הערוץ'}
-        </Button>
-      </div>
-      {err ? <p role="alert" className="text-[13px] text-[var(--st-red-fg,#B42318)]">{err}</p> : null}
-    </form>
-  );
-}
-
-function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, onAdd, adding }) {
+function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, onConnect }) {
   const last = syncs.map((s) => s.last_success_at).filter(Boolean).sort().pop();
+  const has = (k) => syncs.some((s) => s.provider === k);
   return (
     <Card as="section" className="overflow-hidden" aria-label={`יומנים של ${property.name}`} data-unit-id={property.id}>
       <div className="flex items-center gap-3 px-5 pt-5 md:px-6">
         <UnitPhoto property={property} className="h-12 w-12" rounded="rounded-[16px]" />
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-[17px] font-bold text-navy-900">{property.name}</h2>
-          <p className="truncate text-[13px] text-ink-400">
+          <h2 className="truncate text-[18px] font-bold text-navy-900">{property.name}</h2>
+          <p className="truncate text-[15px] text-ink-500">
             {syncs.length ? `${syncs.length} ${syncs.length === 1 ? 'ערוץ מחובר' : 'ערוצים מחוברים'} · ${minutesAgoHe(last)}` : 'עוד לא חובר ערוץ'}
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-5 p-5 md:grid-cols-2 md:px-6 [&>*]:min-w-0">
-        <div className="min-w-0 space-y-3">
-          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowDownToLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייבוא: הזמנות מהערוצים אל atlas<HelpHint id="integrations.ical" /></h3>
-          {syncs.length ? (
-            <ul className="space-y-2">
-              {syncs.map((s) => <SyncRow key={s.id} sync={s} onSync={onSync} syncing={syncingId === s.id || syncingId === 'all'} onToggle={onToggle} onDelete={onDelete} />)}
-            </ul>
-          ) : null}
-          <AddFeed property={property} onAdd={onAdd} busy={adding === property.id} />
-        </div>
-        <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-[14px] font-bold text-navy-900"><ArrowUpFromLine className="h-4 w-4 text-brand-600" strokeWidth={1.75} />ייצוא: ההזמנות שלכם אל הערוצים</h3>
-          {property.ical_export_token ? (
-            <>
-              <CopyRow label="להדבקה ב-Airbnb" hint="כל ההזמנות חוץ מאלה שהגיעו מ-Airbnb" value={icalExportUrl(property, 'airbnb')} />
-              <CopyRow label="להדבקה ב-Booking.com" hint="כל ההזמנות חוץ מאלה שהגיעו מ-Booking" value={icalExportUrl(property, 'booking')} />
-              <CopyRow label="קישור כללי" hint="ל-Google Calendar או לכל ערוץ אחר" value={icalExportUrl(property)} />
-            </>
-          ) : <p className="text-[14px] text-ink-400">קישור הייצוא נוצר בשמירה הבאה של היחידה.</p>}
-        </div>
-      </div>
-      <div className="space-y-2 px-5 pb-5 md:px-6">
-        <Help title="איך מחברים את Airbnb">
-          <p><b>1. ייבוא מ-Airbnb:</b> ב-Airbnb נכנסים ללוח השנה ← בוחרים את המודעה ← זמינות ← <i>חיבור לוחות שנה</i> ← <i>ייצוא לוח שנה</i>. מעתיקים את הקישור ומדביקים אותו למעלה ב"ייבוא".</p>
-          <p><b>2. ייצוא אל Airbnb:</b> באותו מסך בוחרים <i>ייבוא לוח שנה</i>, מדביקים את "להדבקה ב-Airbnb", ונותנים לו את השם atlas.</p>
-        </Help>
-        <Help title="איך מחברים את Booking.com">
-          <p><b>1. ייבוא מ-Booking:</b> ב-Extranet נכנסים ל<i>תעריפים וזמינות</i> ← <i>סנכרון לוחות שנה</i> ← בוחרים את סוג החדר ← <i>ייצוא לוח שנה</i>. מעתיקים ומדביקים למעלה.</p>
-          <p><b>2. ייצוא אל Booking:</b> באותו מסך <i>הוספת חיבור לוח שנה</i> ← מדביקים את "להדבקה ב-Booking.com".</p>
-        </Help>
-        <Help title="מה חשוב לדעת">
-          <p>atlas בודק את הערוצים כל 15 דקות, ואפשר ללחוץ על עדכון בכל רגע. הערוצים עצמם מושכים את היומן של atlas בקצב שלהם: Booking בערך כל שעתיים, Airbnb בערך כל 3 שעות. בחלון הזה עדיין אפשרית הזמנה כפולה, ולכן כשיש חפיפה atlas לא דורס הזמנה קיימת ומסמן חפיפה.</p>
-          <p>יומן iCal מעביר רק תאריכים תפוסים, בלי שם, טלפון או מחיר. כדי לקבל את הטלפון של האורח שלחו לו את קישור הצ'ק-אין מתוך ההזמנה.</p>
-        </Help>
+      <div className="space-y-3 p-5 md:px-6">
+        {syncs.length ? (
+          <ul className="space-y-2">
+            {syncs.map((s) => <SyncRow key={s.id} sync={s} onSync={onSync} syncing={syncingId === s.id || syncingId === 'all'} onToggle={onToggle} onDelete={onDelete} />)}
+          </ul>
+        ) : (
+          <div className="flex items-center gap-2" aria-hidden>
+            {['AIRBNB', 'BOOKING_COM'].map((k) => <ChannelLogo key={k} channel={k} size={36} />)}
+            <span className="text-[15px] text-ink-500">Airbnb, Booking ואתרים אחרים. בחינם.</span>
+          </div>
+        )}
+        <button type="button" onClick={() => onConnect(property)} className="ch-btn is-primary ch-press ch-entry-btn" data-testid="connect-channel">
+          <Plus strokeWidth={2.25} aria-hidden />{CONNECT_LABEL(syncs.length, has)}
+        </button>
+        {property.ical_export_token && syncs.length ? (
+          <Help title="הקישורים של atlas להדבקה בערוצים">
+            <CopyRow label="להדבקה ב-Airbnb" hint="כל ההזמנות חוץ מאלה שהגיעו מ-Airbnb" value={icalExportUrl(property, 'airbnb')} />
+            <CopyRow label="להדבקה ב-Booking.com" hint="כל ההזמנות חוץ מאלה שהגיעו מ-Booking" value={icalExportUrl(property, 'booking')} />
+            <CopyRow label="קישור כללי" hint="לכל אתר או יומן אחר" value={icalExportUrl(property)} />
+          </Help>
+        ) : null}
       </div>
     </Card>
   );
+}
+
+function CONNECT_LABEL(n, has) {
+  if (!n) return 'חיבור Airbnb או Booking';
+  if (has('AIRBNB') && !has('BOOKING_COM')) return 'חיבור Booking או ערוץ נוסף';
+  if (has('BOOKING_COM') && !has('AIRBNB')) return 'חיבור Airbnb או ערוץ נוסף';
+  return 'חיבור ערוץ נוסף';
 }
 
 function ProviderStatus({ items }) {
@@ -277,7 +218,8 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
   const setTab = (t) => setParams((p) => { const n = new URLSearchParams(p); n.set('tab', t); return n; }, { replace: true });
   const orgId = orgIdProp ?? user?.organization_id ?? user?.org_id ?? null;
   const [syncingId, setSyncingId] = useState(null);
-  const [adding, setAdding] = useState(null);
+  const [connectFor, setConnectFor] = useState(null);
+  const connectParam = params.get('connect');
 
   const propsQ = useQuery({
     queryKey: ['properties', orgId],
@@ -343,25 +285,6 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
     }
   };
 
-  const add = async ({ property, url, provider }) => {
-    setAdding(property.id);
-    try {
-      const created = await base44.entities.CalendarSync.create({
-        org_id: orgId, property_id: property.id, provider, ical_url: url, sync_direction: 'IMPORT', sync_status: 'ACTIVE', is_active: true,
-      });
-      qc.invalidateQueries({ queryKey: ['calendar-syncs'] });
-      const res = await callEdge('ical-sync', { sync_id: created.id });
-      report(res?.results?.[0], url);
-      return true;
-    } catch (e) {
-      atlasToastApi.error(e.message || 'לא הצלחנו לחבר את היומן. בדקו את הקישור ונסו שוב.');
-      return false;
-    } finally {
-      setAdding(null);
-      refresh();
-    }
-  };
-
   const toggle = useMutation({
     mutationFn: ({ sync, on }) => base44.entities.CalendarSync.update(sync.id, { sync_status: on ? 'ACTIVE' : 'PAUSED' }),
     onSuccess: (_, { on }) => { refresh(); atlasToastApi.success(on ? 'הסנכרון הופעל' : 'הסנכרון הושהה'); },
@@ -402,9 +325,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
       />
 
       {tab === 'calendars' ? (
-        !DB_FEATURES.realCore ? (
-          <Card className="p-6"><p className="text-[15px] text-ink-600">חיבור הערוצים עובד אחרי שתתחברו לחשבון. בחשבון הדוגמה רק רואים איך זה נראה.</p></Card>
-        ) : loading ? (
+        loading ? (
           <div className="space-y-3" role="status" aria-busy="true" aria-label="טוען"><SkelLine className="h-64 rounded-[24px]" /><SkelLine className="h-64 rounded-[24px]" /></div>
         ) : properties.length === 0 ? (
           <Card className="p-6 text-center"><p className="text-[16px] font-semibold text-navy-900">עוד אין יחידות</p><p className="mt-1 text-[14px] text-ink-400">הוסיפו יחידה ואז חברו לה את Airbnb או Booking.com.</p></Card>
@@ -419,8 +340,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
                 syncingId={syncingId}
                 onToggle={(sync, on) => toggle.mutate({ sync, on })}
                 onDelete={(sync) => remove.mutate(sync)}
-                onAdd={add}
-                adding={adding}
+                onConnect={(prop) => setConnectFor(prop.id)}
               />
             ))}
           </div>
@@ -449,6 +369,20 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
         ]} />
       ) : null}
 
+      {(() => {
+        const id = connectFor || connectParam;
+        const prop = id ? properties.find((p) => p.id === id) : null;
+        if (!prop) return null;
+        const close = () => { setConnectFor(null); if (connectParam) setParams((p) => { const n = new URLSearchParams(p); n.delete('connect'); n.delete('channel'); return n; }, { replace: true }); };
+        return (
+          <ConnectFlow
+            property={prop} orgId={orgId} existing={syncs}
+            initialChannel={['AIRBNB', 'BOOKING_COM', 'ICAL'].includes(params.get('channel')) ? params.get('channel') : ''}
+            onClose={close} onDone={refresh}
+          />
+        );
+      })()}
+      {tab === 'calendars' && !DB_FEATURES.realCore ? <p className="text-[14px] text-ink-500">חשבון דוגמה: אפשר לעבור על כל החיבור, אבל שום דבר לא נשלח לערוצים.</p> : null}
       <p className="flex items-center gap-2 text-[13px] text-ink-400"><CalendarDays className="h-4 w-4" strokeWidth={1.75} aria-hidden />חיבור שמסומן "בקרוב" לא שולח ולא גובה כלום עדיין.</p>
     </div>
   );

@@ -10,6 +10,9 @@ import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 
 export const TODAY_PAGES = new Set(['Dashboard', 'Today']);
+/** 05.11.2026 "one continuous story": the Today photo continues behind every screen. 'dim' = photo at low opacity under the
+ *  canvas; 'glass' = full photo behind a milky veil with frosted cards (y-bg-story.css); 'off' = Today only (as before). */
+export const APP_BG = ['dim', 'glass', 'off'].includes(import.meta.env.VITE_APP_BG) ? import.meta.env.VITE_APP_BG : 'glass';
 const SRC = '/app-bg/today-hills';
 const DESK = '(min-width: 768px)';
 

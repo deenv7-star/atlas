@@ -243,7 +243,7 @@ export function checkIcalLink(provider, raw) {
   if (provider === 'BOOKING_COM') {
     if (/airbnb\./.test(host)) return { ok: false, message: 'זה קישור של Airbnb. כאן מדביקים את הקישור מ-Booking.com.' };
     if (!/booking\.com$/.test(host)) return { ok: false, message: 'זה לא נראה כמו קישור של Booking.com. הוא מתחיל בדרך כלל ב-https://ical.booking.com' };
-    if (/^(www\.)?booking\.com$/.test(host) && /\/hotel\//.test(path)) return { ok: false, message: 'זה הקישור לדף המודעה. צריך את קישור הייצוא מ"סנכרון לוחות שנה".' };
+    if (/^(www\.)?booking\.com$/.test(host) && /\/hotel\//.test(path)) return { ok: false, message: 'זה הקישור לדף המודעה. צריך את קישור הייצוא מ"סנכרון יומנים".' };
     if (/admin\.booking\.com/.test(host)) return { ok: false, message: 'זה הקישור לאקסטרא-נט עצמו. צריך את קישור הייצוא שמופיע אחרי "העתקת קישור".' };
     return { ok: true, message: 'קישור תקין של Booking.com' };
   }

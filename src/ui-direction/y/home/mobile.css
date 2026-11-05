@@ -1,0 +1,63 @@
+/* Today on the phone (M2, 05.11.2026): one column, 16/24 rhythm, one card style, one accent (#3E2BF1). Navy #1B2656 is text. */
+.y2.hm-on { padding: 8px 16px 24px; }
+.hm { display: flex; flex-direction: column; gap: 16px; color: #1B2656; direction: rtl; }
+.hm-hello { padding: 8px 8px 8px; }
+.hm-hello h1 { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 500; letter-spacing: -.02em; color: #1B2656; }
+.hm-hello h1 b { font-weight: 800; }
+.hm-hello p { margin: 8px 0 0; font-size: 15px; color: rgba(27,38,86,.8); display: flex; align-items: center; gap: 8px; }
+
+/* the one card */
+.hm-card { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 24px; color: #1B2656; text-align: start;
+  background: rgba(255,255,255,.86); backdrop-filter: blur(28px) saturate(1.4); -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 24px 48px -32px rgba(27,38,86,.5); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .hm-card { background: #fff; } }
+.hm-k { margin: 0; font-size: 13px; font-weight: 600; color: rgba(27,38,86,.8); letter-spacing: .01em; }
+.hm-h { margin: 0; font-size: 19px; line-height: 1.35; font-weight: 700; }
+.hm-sub { margin: -8px 0 0; font-size: 15px; line-height: 1.45; color: rgba(27,38,86,.8); }
+.hm-row-h { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 24px; }
+.hm-link { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; margin: -10px -8px; padding: 0 8px; font-size: 14px; font-weight: 600; color: #1B2656; }
+.hm-link svg { width: 16px; height: 16px; }
+.hm-link { white-space: nowrap; flex: none; }
+/* 320–359px: the kicker keeps "הדבר הבא" and drops the kind, so it and "כל המשימות" stay on one line each */
+@media (max-width: 359px) { .hm-kind { display: none; } }
+
+/* the sentence */
+.hm-s { margin: 0; font-size: 21px; line-height: 1.6; font-weight: 400; letter-spacing: -.012em; color: #1B2656; text-wrap: pretty; }
+.hm-n { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin: -8px 0; padding: 0 2px; vertical-align: baseline; font: inherit; font-size: 1.4em; font-weight: 800; line-height: 1;
+  letter-spacing: -.03em; color: #3E2BF1; font-variant-numeric: tabular-nums; border-radius: 10px; }
+button.hm-n:active { transform: scale(.97); }
+.hm-n.is-short { min-width: 44px; margin-inline: -6px; }
+.hm-n.is-short.is-tight { margin-inline-start: -14px; }
+.hm-n:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
+.hm-faces { display: inline-flex; vertical-align: middle; margin-inline: 4px 2px; }
+
+/* next */
+.hm-thumb { position: relative; flex: none; width: 56px; height: 56px; border-radius: 16px; overflow: hidden; background: #F7F8FB; display: grid; place-items: center; }
+.hm-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hm-next-b { display: flex; align-items: center; gap: 16px; }
+.hm-next-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.hm-next-t b { font-size: 18px; line-height: 1.35; font-weight: 700; }
+.hm-next-t small { font-size: 14px; color: rgba(27,38,86,.8); }
+.hm-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 16px; background: #3E2BF1; color: #fff; font-size: 16px; font-weight: 700; }
+.hm-btn svg { width: 18px; height: 18px; }
+.hm-btn.is-go { background: #1B2656; }
+
+/* today rows + quiet money */
+.hm-list ul { list-style: none; margin: -8px 0; padding: 0; }
+.hm-list li + li { border-top: 1px solid rgba(27,38,86,.08); }
+.hm-li { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 64px; padding: 8px 0; text-align: start; color: #1B2656; }
+.hm-li-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.hm-li-t b { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-li-t small { font-size: 14px; color: rgba(27,38,86,.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-li-time { flex: none; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.hm-money { flex-direction: row; gap: 0; padding: 8px; }
+.hm-mi { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 64px; padding: 8px 16px; text-align: start; color: #1B2656; }
+.hm-mi + .hm-mi { border-inline-start: 1px solid rgba(27,38,86,.08); }
+.hm-mi span { font-size: 13px; color: rgba(27,38,86,.8); white-space: nowrap; }
+.hm-mi b { font-size: 19px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* empty: the next setup step's actions */
+.hm .hv-acts { gap: 8px; }
+.hm .hv-btn { border-radius: 16px; }
+.hm .hm-n.is-static { min-height: 0; margin: 0; }
+.hm-nw { white-space: nowrap; }
