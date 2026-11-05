@@ -28,6 +28,7 @@ const ALIASES = {
   Settings: 'יחידות פרטים הגדרות',
   Integrations: 'booking airbnb ערוצים סנכרון',
   Cleaning: 'ניקיון מנקה',
+  ServiceRequests: 'תקלה תקלות תחזוקה תיקון בקשות שירות',
   Reviews: 'ביקורות דירוג',
   DynamicPricing: 'מחיר מחירים חגים',
   MonthlyReport: 'הכנסות דוח דוחות רואה חשבון',

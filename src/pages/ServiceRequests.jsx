@@ -28,6 +28,9 @@ import { MaintenanceTable } from '@/components/tables/MaintenanceTable';
 import { useMaintenanceUrlState } from '@/hooks/url-state/useMaintenanceUrlState';
 import { ShareViewButton } from '@/components/ui/ShareViewButton';
 import GuestServiceLinkCard from '@/components/service/GuestServiceLinkCard';
+import { GuideEmpty, GuideHint } from '@/components/pageguide/PageGuide';
+import { GUIDES } from '@/components/pageguide/guides';
+import { Plus } from 'lucide-react';
 
 export default function ServiceRequests({ orgId, selectedPropertyId }) {
   const location = useLocation();
@@ -162,7 +165,15 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
       >
         {/* Header & Stats */}
         <div className="space-y-5">
-          <PageHeader title="בקשות שירות" subtitle="בקשות תחזוקה מאורחים ומהצוות." className="!mb-0" />
+          <PageHeader title="תקלות ותחזוקה" subtitle="תקלות שאורחים או הצוות דיווחו, ומה מטופל." className="!mb-0"
+            actions={!isLoading && requests.length ? <Button onClick={() => { setNewRequestForm((f) => ({ ...f, property_id: selectedPropertyId || f.property_id || '' })); setNewRequestOpen(true); }}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />תקלה חדשה</Button> : null} />
+          {!isLoading && !isError && requests.length === 0 ? (
+            <>
+              <GuideEmpty guide={GUIDES.maintenance} actions={[{ label: 'תקלה חדשה', icon: Plus, onClick: () => { setNewRequestForm((f) => ({ ...f, property_id: selectedPropertyId || f.property_id || '' })); setNewRequestOpen(true); } }]} />
+              <GuestServiceLinkCard orgId={orgId} />
+            </>
+          ) : (<>
+          {!isLoading && requests.length > 0 ? <GuideHint id="maintenance" text={GUIDES.maintenance.hint} /> : null}
           <GuestServiceLinkCard orgId={orgId} />
           
           <div className="stat-row">
@@ -201,15 +212,17 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
               </SelectContent>
             </Select>
           </div>
+          </>)}
         </div>
 
         {/* Requests table */}
+        {!isLoading && !isError && requests.length === 0 ? null : (
         <div className="rounded-2xl border border-line bg-white shadow-sm overflow-hidden">
           <MaintenanceTable
             requests={filteredRequests}
             properties={properties}
             isLoading={isLoading}
-            error={isError ? (requestsError instanceof Error ? requestsError : new Error('לא הצלחנו לטעון את הבקשות')) : null}
+            error={isError ? (requestsError instanceof Error ? requestsError : new Error('לא הצלחנו לטעון את התקלות')) : null}
             onOpen={(row) => {
               setSelectedRequest(row);
               setOpenMaintenanceId(row.id);
@@ -217,11 +230,12 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
             highlightRowId={openMaintenanceId}
           />
         </div>
+        )}
 
         <Dialog open={newRequestOpen} onOpenChange={setNewRequestOpen}>
           <DialogContent className="max-w-md" dir="rtl">
             <DialogHeader>
-              <DialogTitle>בקשת תחזוקה חדשה</DialogTitle>
+              <DialogTitle>תקלה חדשה</DialogTitle>
             </DialogHeader>
             <form
               className="space-y-4 pt-2"
@@ -235,7 +249,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   org_id: orgId,
                   property_id: propertyId,
                   guest_name: newRequestForm.guest_name.trim() || 'צוות',
-                  title: newRequestForm.title.trim() || 'בקשת תחזוקה',
+                  title: newRequestForm.title.trim() || 'תקלה',
                   description: newRequestForm.description.trim() || '—',
                   urgency: newRequestForm.urgency,
                   request_type: newRequestForm.request_type,
@@ -327,7 +341,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   )
                 }
               >
-                {createMutation.isPending ? 'שולחים…' : 'יצירת בקשה'}
+                {createMutation.isPending ? 'שומרים…' : 'שמירת התקלה'}
               </Button>
             </form>
           </DialogContent>
@@ -379,7 +393,7 @@ export default function ServiceRequests({ orgId, selectedPropertyId }) {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-navy-900 mb-2">תיאור הבקשה</h4>
+                    <h4 className="font-semibold text-navy-900 mb-2">מה קרה</h4>
                     <p className="text-sm text-[#64748B] leading-relaxed whitespace-pre-wrap">
                       {selectedRequest.description}
                     </p>

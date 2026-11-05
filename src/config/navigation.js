@@ -5,7 +5,7 @@
  */
 import {
   Sun, CalendarRange, BedDouble, Users, Star,
-  Brush, Headset, FileSignature, Send, Wallet,
+  Brush, Wrench, FileSignature, Send, Wallet,
   Tags, Link2, Globe, CreditCard, Settings, Shield,
 } from 'lucide-react';
 import { DB_FEATURES } from '@/config/dbFeatures';
@@ -36,7 +36,7 @@ export const NAV_GROUPS = [
     label: 'המתחם ביום-יום',
     items: [
       { page: 'Cleaning', label: 'ניקיון', icon: Brush, desc: 'מה לנקות היום ומי מנקה' },
-      { page: 'ServiceRequests', label: 'בקשות שירות', icon: Headset, desc: 'תקלות ובקשות של אורחים, עד שמטפלים' },
+      { page: 'ServiceRequests', label: 'תקלות ותחזוקה', icon: Wrench, desc: 'מה התקלקל ומה אורחים ביקשו, עד שמטפלים' },
       { page: 'Reviews', label: 'ביקורות', icon: Star, desc: 'מה אורחים כתבו עליכם, ובקשת ביקורת' },
       { page: 'Contracts', label: 'חוזים', icon: FileSignature, desc: 'חוזה לאורח, נחתם בטלפון' },
     ],
@@ -67,7 +67,7 @@ export const NAV_DESC = {
   Bookings: 'כל ההזמנות, לפי תאריך הגעה',
   Messages: 'שיחות עם אורחים במקום אחד',
   Settings: 'היחידות, שעות כניסה, פרטים וסיסמה',
-  Leads: 'אורחים ששאלו על תאריכים',
+  Leads: 'כל השיחות עם אורחים, במקום אחד',
   Payments: 'מי שילם ומי עוד חייב',
 };
 
