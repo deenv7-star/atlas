@@ -85,7 +85,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
   return (
     <li className="min-w-0 rounded-[16px] border border-[#ECEEF4] p-3" data-sync-id={sync.id}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span aria-hidden className={cn('inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] text-[15px] font-bold', p.tone)}>{p.short}</span>
+        <ChannelLogo channel={PROVIDERS[sync.provider] && ['AIRBNB', 'BOOKING_COM'].includes(sync.provider) ? sync.provider : 'ICAL'} size={40} />
         <div className="min-w-[160px] flex-1">
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] font-semibold text-navy-900">
             <span className="min-w-0 truncate">{sync.label || p.name}</span>

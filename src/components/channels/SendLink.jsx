@@ -7,11 +7,11 @@ import { Check, ChevronDown, ExternalLink, Phone, RefreshCw } from 'lucide-react
 import { WHATSAPP } from '@/components/landing/v5/brandPaths';
 import { CHANNELS, ATLAS_EVERY, SUPPORT, checkPasted } from './channelKit';
 import ChannelLogo from './ChannelLogo';
-import { Sheet, PasteField, CopyBig, exportLinkFor, useConnect } from './ConnectParts';
+import { Sheet, PasteField, CopyBig, exportLinkFor, useConnect, Bidi } from './ConnectParts';
 
 const TIPS = [
   { k: 'AIRBNB', title: 'איפה הקישור ב-Airbnb?', steps: ['לוח שנה ← בוחרים את המודעה.', 'לוחצים "זמינות" (Availability).', '"חיבור לאתר אחר" (Connect to another website).', 'מעתיקים את הקישור שנגמר ב-ics.'] },
-  { k: 'BOOKING_COM', title: 'איפה הקישור ב-Booking?', steps: ['באקסטרא-נט: "תעריפים וזמינות" ← "סנכרון לוחות שנה".', 'ליד היחידה: "הוספת חיבור" (Add calendar connection).', '"דילוג לייצוא" (Skip to export).', 'כותבים atlas ולוחצים "העתקת קישור" (Copy link).'] },
+  { k: 'BOOKING_COM', title: 'איפה הקישור ב-Booking?', steps: ['באקסטרא-נט: "תעריפים וזמינות" ← "סנכרון יומנים".', 'ליד היחידה: "הוספת חיבור ליומן" (Add calendar connection).', '"דילוג לייצוא" (Skip to export).', 'כותבים atlas ולוחצים "העתקת קישור" (Copy link).'] },
   { k: 'ICAL', title: 'אתר אחר?', steps: ['בהגדרות היומן שם חפשו "ייצוא יומן" או "iCal" (כך נקרא קישור יומן).', 'מעתיקים את הקישור, בדרך כלל נגמר ב-ics.'] },
 ];
 
@@ -25,7 +25,7 @@ function Tip({ t }) {
       </button>
       {open ? (
         <div id={`tip-${t.k}`}>
-          <ol>{t.steps.map((s) => <li key={s}>{s}</li>)}</ol>
+          <ol>{t.steps.map((s) => <li key={s}><Bidi text={s} /></li>)}</ol>
           {C.open ? <a href={C.open} target="_blank" rel="noopener noreferrer" className="ch-a">פתחו את {C.name === 'Booking.com' ? 'Booking' : C.name}<ExternalLink strokeWidth={2} aria-hidden /></a> : null}
         </div>
       ) : null}
@@ -46,7 +46,7 @@ function HelpBox({ unit, link }) {
       <h2 id="ch-help-h">צריכים עזרה? נחבר יחד בטלפון</h2>
       <p>{SUPPORT.line}. בשיחה אחת מחברים את כל הערוצים.</p>
       <a href={SUPPORT.phoneHref} className="ch-btn is-white ch-press"><Phone strokeWidth={2} aria-hidden />התקשרו: <bdi dir="ltr">{SUPPORT.phoneDisplay}</bdi></a>
-      <a href={SUPPORT.whatsapp(text)} target="_blank" rel="noopener noreferrer" className="ch-btn is-line ch-press"><WaIcon />{link ? 'שלחו לנו את הקישור בוואטסאפ' : 'כתבו לנו בוואטסאפ'}</a>
+      <a href={SUPPORT.whatsapp(text)} target="_blank" rel="noopener noreferrer" className="ch-btn is-line ch-press"><WaIcon />{link ? 'שלחו את הקישור בוואטסאפ' : 'כתבו לנו בוואטסאפ'}</a>
     </section>
   );
 }
@@ -87,8 +87,8 @@ export default function SendLink({ property, orgId, existing, onClose, onDone })
           </ul>
         </div>
         <section className="ch-tip" style={{ marginTop: 18, padding: '16px 16px 18px' }} aria-labelledby="ch-back-h">
-          <h2 id="ch-back-h" className="ch-label" style={{ margin: 0 }}>ועכשיו שגם {name} יחסום תאריכים מ-atlas</h2>
-          <p className="ch-sub" style={{ marginTop: 6 }}>העתיקו, והדביקו ב-{name} באותו מקום שממנו העתקתם. או התקשרו ונעשה את זה יחד.</p>
+          <h2 id="ch-back-h" className="ch-label" style={{ margin: 0, fontSize: 21 }}>ועכשיו בכיוון השני</h2>
+          <p className="ch-sub" style={{ marginTop: 6 }}>כדי ש-{name} יחסום תאריכים שנתפסו אצלכם. העתיקו, והדביקו ב-{name} באותו מקום שממנו העתקתם.</p>
           <CopyBig value={exportLinkFor(property, result.channel)} />
           <p className="ch-help" style={{ marginTop: 8 }}><a href={SUPPORT.phoneHref} className="ch-a"><Phone strokeWidth={2} aria-hidden />נעשה את זה יחד בטלפון</a></p>
         </section>
@@ -100,7 +100,7 @@ export default function SendLink({ property, orgId, existing, onClose, onDone })
   return (
     <Sheet title="חיבור ערוץ" label={`חיבור ערוץ ל${unit}`} onClose={onClose} stepKey="send"
       footer={<>
-        <button type="button" className="ch-btn is-primary ch-press" onClick={submit} disabled={!check.ok || busy} aria-disabled={!check.ok || busy}>
+        <button type="button" className={`ch-btn is-primary ch-press ${busy ? 'is-busy' : ''}`} onClick={submit} disabled={!check.ok || busy} aria-disabled={!check.ok || busy}>
           {busy ? <><RefreshCw className="ch-spin" strokeWidth={2} aria-hidden />בודקים את הקישור…</> : 'חברו'}
         </button>
         {!check.ok && !busy ? <p className="ch-hint">הדביקו קישור, ואנחנו נזהה מאיזה ערוץ הוא</p> : null}

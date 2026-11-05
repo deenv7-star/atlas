@@ -14,7 +14,9 @@
 .ch-foot .ch-inner { display: flex; flex-direction: column; gap: 10px; }
 .ch-press { transition: transform 160ms cubic-bezier(.2,.8,.2,1), background-color 160ms, box-shadow 160ms; -webkit-tap-highlight-color: transparent; cursor: pointer; }
 .ch-press:active { transform: scale(.97); }
-.ch-press:focus-visible, .ch-field input:focus-visible { outline: 3px solid #3E2BF1; outline-offset: 2px; }
+.ch-press:focus-visible { outline: 3px solid #3E2BF1; outline-offset: 2px; }
+.ch-field input:focus, .ch-field input:focus-visible { outline: none; box-shadow: none; }
+.ch-field:focus-within { border-color: #3E2BF1; box-shadow: 0 0 0 4px rgba(62,43,241,.16); }
 
 .ch-kicker { margin: 0 0 6px; font-size: 16px; font-weight: 600; color: #3E2BF1; }
 .ch-h1 { margin: 0; font-size: 28px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; outline: none; text-wrap: balance; }
@@ -130,6 +132,9 @@
 .chm-tap { position: absolute; top: -13px; right: -10px; background: #3E2BF1; color: #fff; font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 99px; box-shadow: 0 3px 10px rgba(62,43,241,.35); font-family: 'Heebo', sans-serif; white-space: nowrap; animation: chm-bob 1.6s ease-in-out infinite; }
 @keyframes chm-bob { 50% { transform: translateY(-2px); } }
 
+.ch-sheet bdi[dir='ltr'] { display: inline-block; }
+.ch-btn.is-busy[disabled] { background: #3E2BF1; opacity: .85; color: #fff; cursor: progress; }
+
 /* V2 */
 .ch-tips { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
 .ch-tip { background: #fff; border: 1.5px solid #E3E6EF; border-radius: 18px; overflow: hidden; }
@@ -141,8 +146,8 @@
 .ch-tip ol li::before { content: counter(s); position: absolute; inset-inline-start: 0; top: 0; width: 28px; height: 28px; border-radius: 999px; background: #EEF0FE; color: #3E2BF1; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; }
 .ch-tip .ch-a { margin: 0 12px 10px; }
 .ch-helpbox { margin-top: 26px; padding: 20px; border-radius: 22px; background: #1B2656; color: #fff; }
-.ch-helpbox h2 { margin: 0; font-size: 22px; font-weight: 800; }
-.ch-helpbox p { margin: 6px 0 14px; font-size: 18px; line-height: 1.5; color: rgba(255,255,255,.88); }
+.ch-sheet .ch-helpbox h2 { margin: 0; font-size: 22px; font-weight: 800; color: #fff; }
+.ch-sheet .ch-helpbox p { margin: 6px 0 14px; font-size: 18px; line-height: 1.5; color: rgba(255,255,255,.88); }
 .ch-helpbox .ch-btn + .ch-btn { margin-top: 10px; }
 .ch-helpbox .ch-btn.is-white { background: #fff; color: #1B2656; }
 .ch-helpbox .ch-btn.is-line { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.5); }
