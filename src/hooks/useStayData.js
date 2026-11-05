@@ -25,30 +25,52 @@ const safe = (p) => p.catch((e) => {
   throw e;
 });
 
+/** The fetch behind each Today query: shared by useStayData and the boot prefetch (same key + fn = one request). */
+const STAY_FETCH = {
+  bookings: () => base44.entities.Booking.filter({}, '-check_in_date', 2000),
+  properties: () => base44.entities.Property.list({}, { limit: 500 }),
+  payments: () => base44.entities.Payment.filter({}, '-created_date', 3000),
+  messageLogs: () => safe(base44.entities.MessageLog.filter({}, '-created_date', 1000)),
+  cleaning: () => safe(base44.entities.CleaningTask.filter({}, '-scheduled_date', 500)),
+};
+
+/**
+ * perf/cold-start: start Today's reads at boot, in parallel with the shell's code, instead of after the Today
+ * screen has mounted. Same keys, fns and staleness as useStayData, so the screen picks the answers up (or the
+ * request already in flight) and asks for nothing twice. A restored copy is shown meanwhile (src/lib/queryPersist.js).
+ */
+export function prefetchStayData(queryClient) {
+  if (!queryClient) return;
+  const live = ['bookings', 'payments', 'messageLogs', 'cleaning'];
+  ['bookings', 'properties', 'payments', 'messageLogs', 'cleaning'].forEach((k) => {
+    queryClient.prefetchQuery({ queryKey: STAY_KEYS[k], queryFn: STAY_FETCH[k], staleTime: live.includes(k) ? STALE_LIVE_MS : STALE_REFERENCE_MS }).catch(() => {});
+  });
+}
+
 export function useStayData({ withExpenses = false, withCleaning = true } = {}) {
   const bookingsQ = useQuery({
     queryKey: STAY_KEYS.bookings,
-    queryFn: () => base44.entities.Booking.filter({}, '-check_in_date', 2000),
+    queryFn: STAY_FETCH.bookings,
     staleTime: STALE_LIVE_MS,
   });
   const propertiesQ = useQuery({
     queryKey: STAY_KEYS.properties,
-    queryFn: () => base44.entities.Property.list({}, { limit: 500 }),
+    queryFn: STAY_FETCH.properties,
     staleTime: STALE_REFERENCE_MS,
   });
   const paymentsQ = useQuery({
     queryKey: STAY_KEYS.payments,
-    queryFn: () => base44.entities.Payment.filter({}, '-created_date', 3000),
+    queryFn: STAY_FETCH.payments,
     staleTime: STALE_LIVE_MS,
   });
   const logsQ = useQuery({
     queryKey: STAY_KEYS.messageLogs,
-    queryFn: () => safe(base44.entities.MessageLog.filter({}, '-created_date', 1000)),
+    queryFn: STAY_FETCH.messageLogs,
     staleTime: STALE_LIVE_MS,
   });
   const cleaningQ = useQuery({
     queryKey: STAY_KEYS.cleaning,
-    queryFn: () => safe(base44.entities.CleaningTask.filter({}, '-scheduled_date', 500)),
+    queryFn: STAY_FETCH.cleaning,
     staleTime: STALE_LIVE_MS,
     enabled: withCleaning,
   });

@@ -16,7 +16,7 @@ import { base44 } from '@/api/base44Client';
 import { useHelpUnread } from '@/support/openHelp';
 import { MoreSheetHost, openMore, useMoreOpen } from './MoreSheet';
 import { Wordmark, useIsActive, UserMenu } from '@/components/app/shell/shared';
-import { GuestAvatar } from '@/components/app/atoms';
+import { GuestAvatar, guestInitials } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { useLiquidLens } from './useLiquidLens';
 import TodayBackdrop, { TODAY_PAGES, APP_BG } from './TodayBackdrop';
@@ -92,7 +92,7 @@ export function Sidebar({ user, onLogout }) {
       <div className="y2-rail-end">
         <Link to={createPageUrl('Settings')} className="y2-ri press" aria-label="הגדרות"><Settings strokeWidth={1.75} /><span>הגדרות</span></Link>
         <UserMenu user={user} onLogout={onLogout} side="left">
-          <button type="button" aria-label="החשבון שלי" className="y2-rail-me press">
+          <button type="button" aria-label={`החשבון שלי, ${guestInitials(user?.full_name || user?.email || '')}`} className="y2-rail-me press">
             <span aria-hidden="true" className="contents"><GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={44} /></span>
           </button>
         </UserMenu>
@@ -132,7 +132,8 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         {/* quick-add: desktop only; on the phone adding lives in "עוד" and on each screen */}
         <button type="button" className="y2-gb y2-gb--ind press" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
         <UserMenu user={user} onLogout={onLogout} hideMore>
-          <button type="button" aria-label="החשבון שלי" className="y2-bar-me press">
+          {/* a11y (label-in-name): the label carries the initials the avatar shows */}
+          <button type="button" aria-label={`החשבון שלי, ${guestInitials(user?.full_name || user?.email || '')}`} className="y2-bar-me press">
             <span aria-hidden="true" className="contents"><GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} /></span>
           </button>
         </UserMenu>
