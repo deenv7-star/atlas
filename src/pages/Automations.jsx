@@ -8,7 +8,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Check, ArrowUp, Mic, Moon, Trash2 } from 'lucide-react';
+import { Check, ArrowUp, Mic, Moon, Trash2, ChevronRight, ChevronLeft, Clock, Eye } from 'lucide-react';
+import { clarityVariant } from '@/components/pageguide/flag';
 import { SkelLine } from '@/components/ds';
 import { Switch } from '@/components/ui/switch';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
@@ -106,18 +107,106 @@ function ConfirmSheet({ ask, onClose, gm, onDone }) {
 /* ── one suggestion in the deck ─────────────────────────────────────────────────────────────────── */
 function Suggestion({ step, gm, onYes, onLater, i }) {
   const reduce = useReducedMotion();
+  const [full, setFull] = useState(false);
   return (
-    <motion.article layout className="flex w-[300px] flex-col rounded-[28px] bg-white p-4 md:w-[340px]"
+    <motion.article layout className="mg-idea flex flex-col rounded-[28px] bg-white p-4"
       initial={reduce ? false : { opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.9, y: -30 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30, delay: reduce ? 0 : 0.1 + i * 0.07 }} aria-label={step.ask}>
       <p className="flex items-center gap-2 text-[13px] font-semibold text-brand-600"><AssistantFace size={22} /> הצעה של atlas</p>
       <p className="mt-2 min-h-[3.2em] text-[18px] font-bold leading-snug text-navy-900">{step.ask}</p>
-      <WaBubble compact className="mt-3" text={gm.textFor(step)} guest={gm.ctx.booking?.guest_name || 'נועה לוי'} time={hhmm(gm.timeOf(step)) || 'עכשיו'} sample={gm.ctx.sample} />
-      <div className="mt-4 flex items-center gap-2">
+      <p className="mt-1 flex items-center gap-1.5 text-[14px] text-ink-600"><Clock className="h-4 w-4" strokeWidth={1.75} aria-hidden />{step.whenPlain}{step.defaultTime ? `, ${hhmm(gm.timeOf(step)) || step.defaultTime}` : ''}</p>
+      <WaBubble compact={!full} className="mt-3" text={gm.textFor(step)} guest={gm.ctx.booking?.guest_name || 'נועה לוי'} time={hhmm(gm.timeOf(step)) || 'עכשיו'} sample={gm.ctx.sample} />
+      <button type="button" className="mg-more" aria-expanded={full} onClick={() => setFull((v) => !v)}>{full ? 'הסתרת ההודעה המלאה' : 'הצגת ההודעה המלאה'}</button>
+      <div className="mt-auto flex items-center gap-2 pt-3">
         <button type="button" className="mg-cta mg-cta-indigo flex-1" onClick={() => onYes(step)} disabled={gm.busy || !gm.canWrite}>כן, תפעילו</button>
         <button type="button" className="min-h-[48px] rounded-full px-4 text-[15px] font-semibold text-ink-600" onClick={() => onLater(step)}>לא עכשיו</button>
       </div>
     </motion.article>
+  );
+}
+
+/* ── feat/pages-clarity: how this screen works, in four plain steps (honest about sending: one tap, not automatic) ── */
+const HOW = [
+  'בוחרים אילו הודעות לשלוח: אישור הזמנה, הוראות הגעה יום לפני, ברוכים הבאים, תודה וביקורת.',
+  'atlas ממלא לבד את שם האורח, התאריכים, השעות והניווט.',
+  'בזמן הנכון ההודעה מחכה מוכנה בלוח היום. לחיצה אחת פותחת וואטסאפ, אפשר לשנות מילה, ושולחים.',
+  'האורחים עונים לוואטסאפ שלכם, כמו תמיד.',
+];
+function HowItWorks({ gm }) {
+  const v = clarityVariant();
+  const guest = gm.ctx.booking?.guest_name || 'נועה לוי';
+  return (
+    <section className={cn('mg-how', v === 'b' && 'mg-how--b')} aria-labelledby="mg-how-t" data-clarity={v}>
+      <h2 id="mg-how-t" className="text-[20px] font-bold text-navy-900">איך זה עובד</h2>
+      <p className="mt-1 text-[16px] text-ink-600">חוסך לכם להקליד את אותן הודעות לכל אורח מחדש.</p>
+      <ol className="mg-how-steps">
+        {HOW.map((t, i) => <li key={t}><span className="mg-how-n" aria-hidden>{i + 1}</span><span>{t}</span></li>)}
+      </ol>
+      {v === 'b' ? (
+        <figure className="mg-how-ex" aria-label="דוגמה: הודעה שמחכה בלוח היום">
+          <figcaption><span className="mg-how-pill">דוגמה</span>כך זה נראה בלוח היום</figcaption>
+          <div className="mg-how-row">
+            <span className="mg-how-av" aria-hidden>{guest[0]}</span>
+            <span className="min-w-0 flex-1"><span className="block text-[16px] font-bold text-navy-900">הוראות הגעה ל{guest}</span><span className="block text-[14px] text-ink-600">מחר מגיעים · מוכן לשליחה</span></span>
+            <span className="mg-how-send" aria-hidden>שליחה בוואטסאפ</span>
+          </div>
+        </figure>
+      ) : null}
+    </section>
+  );
+}
+
+/* ── every message, one row each: when it goes out, on/off, preview + time ──────────────────────────── */
+function AllMessages({ gm, onOpen }) {
+  return (
+    <section aria-labelledby="mg-all" className="space-y-2">
+      <h2 id="mg-all" className="px-1 text-[20px] font-bold text-navy-900">ההודעות לאורחים</h2>
+      <p className="px-1 text-[15px] text-ink-600">מה יוצא, ומתי. לפני כל שליחה אפשר לשנות את הנוסח.</p>
+      <ul className="space-y-2 pt-1">
+        {gm.steps.map((s) => {
+          const on = gm.isOn(s);
+          const t = s.defaultTime ? (hhmm(gm.timeOf(s)) || s.defaultTime) : null;
+          return (
+            <li key={s.key} className="mg-row">
+              <span className="min-w-0 flex-1 ps-2">
+                <span className="block text-[16px] font-bold text-navy-900">{s.short}</span>
+                <span className="block text-[14px] text-ink-600">{s.whenPlain}{t ? `, ${t}` : ''} · {on ? 'פועל' : 'כבוי'}</span>
+              </span>
+              <button type="button" className="mg-row-btn" onClick={() => onOpen(s)} aria-label={`תצוגה ושעה: ${s.short}`}><Eye className="h-4 w-4" strokeWidth={1.75} aria-hidden /><span className="mg-row-btn-l">תצוגה ושעה</span></button>
+              <Switch checked={on} disabled={gm.busy || !gm.canWrite} onCheckedChange={(v) => gm.save(s, { on: v, sendTime: gm.timeOf(s) })} aria-label={`${s.short}: ${on ? 'פועל' : 'כבוי'}`} />
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+/* ── the suggestions: a grid on desktop, a swipe row with a peek, dots and arrows on the phone ────────── */
+function IdeasDeck({ children, count }) {
+  const ref = React.useRef(null);
+  const [at, setAt] = useState(0);
+  const onScroll = () => {
+    const el = ref.current; if (!el) return;
+    const card = el.firstElementChild?.getBoundingClientRect().width || 300;
+    setAt(Math.min(count - 1, Math.round(Math.abs(el.scrollLeft) / (card + 12))));
+  };
+  const go = (i) => {
+    const el = ref.current; const kids = el?.children; if (!kids?.[i]) return;
+    kids[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  };
+  return (
+    <>
+      <div ref={ref} className="mg-ideas mt-3" onScroll={onScroll}>{children}</div>
+      {count > 1 ? (
+        <div className="mg-ideas-nav" aria-label="מעבר בין ההצעות">
+          <button type="button" className="mg-nav-btn" onClick={() => go(Math.max(0, at - 1))} disabled={at === 0} aria-label="ההצעה הקודמת"><ChevronRight className="h-5 w-5" strokeWidth={1.75} /></button>
+          <span className="mg-dots" aria-hidden>{Array.from({ length: count }).map((_, i) => <i key={i} className={i === at ? 'is-on' : ''} />)}</span>
+          <span className="sr-only">{`הצעה ${at + 1} מתוך ${count}`}</span>
+          <button type="button" className="mg-nav-btn" onClick={() => go(Math.min(count - 1, at + 1))} disabled={at >= count - 1} aria-label="ההצעה הבאה"><ChevronLeft className="h-5 w-5" strokeWidth={1.75} /></button>
+        </div>
+      ) : null}
+    </>
   );
 }
 
@@ -192,16 +281,20 @@ export default function AutomationsPage({ orgId }) {
         ) : null}
       </section>
 
+      <HowItWorks gm={gm} />
+
       {ideas.length ? (
         <section aria-labelledby="mg-ideas">
           <h2 id="mg-ideas" className="px-1 text-[20px] font-bold text-navy-900">הצעות בשבילכם</h2>
-          <div className="mg-deck mt-3">
+          <IdeasDeck count={ideas.length}>
             <AnimatePresence>
               {ideas.map((s, i) => <Suggestion key={s.key} step={s} gm={gm} i={i} onYes={yes} onLater={(x) => setLater((p) => new Set(p).add(x.key))} />)}
             </AnimatePresence>
-          </div>
+          </IdeasDeck>
         </section>
       ) : null}
+
+      <AllMessages gm={gm} onOpen={setSheet} />
 
       <section className="rounded-[28px] bg-white p-4 md:p-5" aria-labelledby="mg-ask">
         <h2 id="mg-ask" className="px-1 text-[16px] font-bold text-navy-900">רוצים משהו אחר? כתבו במילים שלכם</h2>

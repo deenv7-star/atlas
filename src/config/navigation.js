@@ -5,7 +5,7 @@
  */
 import {
   Sun, CalendarRange, BedDouble, Users, MessageSquare, Star,
-  Brush, Headset, FileSignature, Send, Wallet, BarChart3,
+  Brush, Wrench, FileSignature, Send, Wallet, BarChart3,
   Tags, Link2, Globe, CreditCard, Settings, Shield,
 } from 'lucide-react';
 import { DB_FEATURES } from '@/config/dbFeatures';
@@ -34,7 +34,7 @@ export const NAV_GROUPS = [
     label: 'תפעול',
     items: [
       { page: 'Cleaning', label: 'ניקיון', icon: Brush },
-      { page: 'ServiceRequests', label: 'בקשות שירות', icon: Headset },
+      { page: 'ServiceRequests', label: 'תקלות ותחזוקה', icon: Wrench },
       { page: 'Reviews', label: 'ביקורות', icon: Star },
       { page: 'Contracts', label: 'חוזים', icon: FileSignature },
       { page: 'Automations', label: 'הודעות אוטומטיות', icon: Send },

@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { GuideEmpty, GuideHint } from '@/components/pageguide/PageGuide';
+import { GUIDES } from '@/components/pageguide/guides';
 import { STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 
 const STATUS_OPTIONS = [
@@ -99,6 +101,7 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
 
       {/* M6 (audit 04.11): no zero stats or filters before the first review */}
       {!isLoading && reviews.length === 0 ? null : (<>
+      <GuideHint id="reviews" text={GUIDES.reviews.hint} />
       <div className="stat-row">
         <StatTile label="דירוג ממוצע" value={stats.avg} icon={Star} tone="amber" />
         <StatTile label="התקבלו" value={stats.reviewed} icon={CheckCircle2} tone="success" />
@@ -129,6 +132,8 @@ export default function ReviewsPage({ user, selectedPropertyId, orgId }) {
       <div className="space-y-3">
         {isLoading ? (
           [...Array(4)].map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)
+        ) : reviews.length === 0 ? (
+          <GuideEmpty guide={GUIDES.reviews} actions={[{ label: 'הפעלת הודעת תודה וביקורת', icon: Send, to: '/automations' }]} />
         ) : filtered.length === 0 ? (
           <Card>
             <EmptyState
