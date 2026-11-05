@@ -208,8 +208,8 @@ export default function InvoicesPage({ orgId }) {
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <FinanceTabs className="!mb-0" />
       <PageHeader
-        title="מסמכי תשלום"
-        subtitle="רושמים כאן מספר מסמך מהתוכנה שלכם, כדי שיופיע בדוח החודשי."
+        title="קבלות וחשבוניות"
+        subtitle="את הקבלה מפיקים בתוכנה שלכם. כאן רושמים את המספר שלה, כדי שהדוח לרואה החשבון יהיה שלם."
         className="!mb-0"
         actions={
           <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
@@ -264,7 +264,7 @@ export default function InvoicesPage({ orgId }) {
             compact
             icon={FileText}
             title={rawInvoices.length === 0 ? 'עוד לא נרשמו מסמכים' : 'אין מסמכים שמתאימים'}
-            description={rawInvoices.length === 0 ? 'מספר מסמך שתרשמו יופיע כאן ובדוח החודשי.' : 'נסו חיפוש או סינון אחר.'}
+            description={rawInvoices.length === 0 ? 'קיבלתם תשלום והפקתם קבלה? רשמו כאן את מספר הקבלה, והוא יופיע ליד התשלום ובדוח החודשי.' : 'נסו חיפוש או סינון אחר.'}
             action={rawInvoices.length === 0 ? (
               <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
                 <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />

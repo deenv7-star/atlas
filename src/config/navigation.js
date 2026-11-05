@@ -77,7 +77,7 @@ export const FINANCE_TABS = [
   { page: 'Payments', label: 'תשלומים' },
   { page: 'Balances', label: 'יתרות' },
   ...(DB_FEATURES.expenses ? [{ page: 'ExpenseTracker', label: 'הוצאות' }] : []),
-  { page: 'Invoices', label: 'מסמכים' },
+  { page: 'Invoices', label: 'קבלות' },
   // persona-clarity: "דוחות" holds the month report AND the 12-month view that used to be the separate "הכנסות" screen
   { page: 'MonthlyReport', label: 'דוחות' },
 ];
