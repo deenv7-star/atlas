@@ -43,36 +43,12 @@ function useIsApplePlatform(): boolean {
   return typeof navigator !== 'undefined' && /Mac|iPhone|iPad|iPod/i.test(navigator.platform || '');
 }
 
-function modLabel(isApple: boolean): string {
-  return isApple ? '⌘' : 'Ctrl';
+/** persona-clarity (05.11.2026): keyboard chords still work, but their hints (G → D, Win, Ctrl+K, Esc) are not shown;
+ *  owners who are not technical read them as noise. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function ChordHint(_props: { keys: string[]; isApple: boolean }): React.ReactElement | null {
+  return null;
 }
-
-function ChordHint({ keys, isApple }: { keys: string[]; isApple: boolean }): React.ReactElement {
-  return (
-    <span className="flex items-center gap-0.5 text-[10px] font-medium text-gray-400 tabular-nums" dir="ltr">
-      <kbd className="rounded border border-gray-200 bg-gray-50 px-1 py-0.5 font-mono text-[10px] text-gray-600">G</kbd>
-      <span className="text-gray-300">←</span>
-      {keys.map((k) => (
-        <kbd
-          key={k}
-          className="rounded border border-gray-200 bg-gray-50 px-1 py-0.5 font-mono text-[10px] uppercase text-gray-600"
-        >
-          {k}
-        </kbd>
-      ))}
-      <span className="mr-1 text-[9px] text-gray-300">{isApple ? 'Mac' : 'Win'}</span>
-    </span>
-  );
-}
-
-function OpenHint({ isApple }: { isApple: boolean }): React.ReactElement {
-  return (
-    <kbd className="rounded border border-gray-200 bg-gray-50 px-1.5 py-0.5 font-mono text-[10px] text-gray-600" dir="ltr">
-      {isApple ? '⌘' : 'Ctrl'}+K
-    </kbd>
-  );
-}
-
 const CHORD_MAP: Record<string, string> = {
   d: createPageUrl('Dashboard'),
   b: createPageUrl('Bookings'),
@@ -254,7 +230,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             <p className="font-medium text-gray-700">
               לא מצאנו את &quot;{search.trim() || '…'}&quot;
             </p>
-            <p className="mt-2 text-xs text-gray-400">נסו מילה אחרת, או הוסיפו הזמנה או פנייה מהפעולות המהירות.</p>
+            <p className="mt-2 text-[14px] text-ink-600">נסו מילה אחרת, או הוסיפו הזמנה או פנייה מהפעולות המהירות.</p>
           </CommandEmpty>
 
           {!search.trim() && recents.length > 0 ? (
@@ -279,7 +255,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                   </span>
                   <span className="min-w-0 flex-1 text-start">
                     <span className="block truncate font-medium">{r.title}</span>
-                    {r.subtitle ? <span className="block truncate text-xs text-gray-500">{r.subtitle}</span> : null}
+                    {r.subtitle ? <span className="block truncate text-[14px] text-ink-600">{r.subtitle}</span> : null}
                   </span>
                   <Clock className="h-3.5 w-3.5 shrink-0 text-gray-300" aria-hidden />
                 </CommandItem>
@@ -300,7 +276,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               onSelect={() => go(createPageUrl('Dashboard'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <LayoutDashboard className="h-4 w-4 shrink-0 text-brand-500" aria-hidden />
+              <LayoutDashboard className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">היום</span>
               <ChordHint keys={['D']} isApple={isApple} />
             </CommandItem>
@@ -311,7 +287,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               onSelect={() => go(createPageUrl('Bookings'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <CalendarDays className="h-4 w-4 shrink-0 text-blue-500" aria-hidden />
+              <CalendarDays className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">הזמנות</span>
               <ChordHint keys={['B']} isApple={isApple} />
             </CommandItem>
@@ -322,19 +298,19 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               onSelect={() => go(createPageUrl('Leads'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <Users className="h-4 w-4 shrink-0 text-brand-500" aria-hidden />
+              <Users className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">פניות</span>
               <ChordHint keys={['G']} isApple={isApple} />
             </CommandItem>
             <CommandItem
               value="nav-calendar"
               keywords={['לוח שנה', 'יומן', 'לוח']}
-              data-announce={announce('לוח שנה')}
+              data-announce={announce('יומן')}
               onSelect={() => go(createPageUrl('MultiCalendar'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <CalendarDays className="h-4 w-4 shrink-0 text-teal-600" aria-hidden />
-              <span className="flex-1 text-start font-medium">לוח שנה</span>
+              <CalendarDays className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
+              <span className="flex-1 text-start font-medium">יומן</span>
               <ChordHint keys={['C']} isApple={isApple} />
             </CommandItem>
             <CommandItem
@@ -344,19 +320,19 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               onSelect={() => go(createPageUrl('ServiceRequests'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <Wrench className="h-4 w-4 shrink-0 text-orange-600" aria-hidden />
+              <Wrench className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">בקשות שירות</span>
               <ChordHint keys={['M']} isApple={isApple} />
             </CommandItem>
             <CommandItem
               value="nav-financials"
               keywords={['תשלומים', 'תשלומים', 'כספים', 'כסף']}
-              data-announce={announce('תשלומים')}
+              data-announce={announce('כסף')}
               onSelect={() => go(createPageUrl('Payments'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <Wallet className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-              <span className="flex-1 text-start font-medium">תשלומים</span>
+              <Wallet className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
+              <span className="flex-1 text-start font-medium">כסף</span>
               <ChordHint keys={['F']} isApple={isApple} />
             </CommandItem>
             <CommandItem
@@ -366,7 +342,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               onSelect={() => go(createPageUrl('Settings'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <Settings className="h-4 w-4 shrink-0 text-gray-600" aria-hidden />
+              <Settings className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">הגדרות</span>
               <ChordHint keys={['S']} isApple={isApple} />
             </CommandItem>
@@ -395,7 +371,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               onSelect={() => go(createPageUrl('Leads'), { commandPalette: { newGuest: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <UserPlus className="h-4 w-4 shrink-0 text-brand-500" aria-hidden />
+              <UserPlus className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">פנייה חדשה</span>
             </CommandItem>
             <CommandItem
@@ -405,7 +381,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               onSelect={() => go(createPageUrl('ServiceRequests'), { commandPalette: { newMaintenance: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <ClipboardList className="h-4 w-4 shrink-0 text-orange-600" aria-hidden />
+              <ClipboardList className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">בקשת שירות חדשה</span>
             </CommandItem>
             <CommandItem
@@ -415,7 +391,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
               onSelect={() => go(createPageUrl('Payments'), { commandPalette: { newPayment: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
-              <Banknote className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+              <Banknote className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
               <span className="flex-1 text-start font-medium">תשלום חדש</span>
             </CommandItem>
           </CommandGroup>
@@ -428,7 +404,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                 className="px-1 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-ink-400"
               >
                 {remoteLoading ? (
-                  <div className="px-3 py-2 text-xs text-gray-400">טוען…</div>
+                  <div className="px-3 py-2 text-[14px] text-ink-600">טוען…</div>
                 ) : null}
                 {remote.bookings.map((h) => (
                   <CommandItem
@@ -442,10 +418,10 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                     }}
                     className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
                   >
-                    <CalendarDays className="h-4 w-4 shrink-0 text-blue-500" />
+                    <CalendarDays className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />
                     <span className="min-w-0 flex-1 text-start">
                       <span className="block truncate font-medium">{h.title}</span>
-                      <span className="block truncate text-xs text-gray-500">{h.subtitle}</span>
+                      <span className="block truncate text-[14px] text-ink-600">{h.subtitle}</span>
                     </span>
                     <Search className="h-3.5 w-3.5 shrink-0 text-gray-300" aria-hidden />
                   </CommandItem>
@@ -465,7 +441,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                     <Users className="h-4 w-4 shrink-0 text-brand-500" />
                     <span className="min-w-0 flex-1 text-start">
                       <span className="block truncate font-medium">{h.title}</span>
-                      <span className="block truncate text-xs text-gray-500">{h.subtitle}</span>
+                      <span className="block truncate text-[14px] text-ink-600">{h.subtitle}</span>
                     </span>
                     <Search className="h-3.5 w-3.5 shrink-0 text-gray-300" aria-hidden />
                   </CommandItem>
@@ -491,7 +467,7 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                     <Building2 className="h-4 w-4 shrink-0 text-gray-600" />
                     <span className="min-w-0 flex-1 text-start">
                       <span className="block truncate font-medium">{h.title}</span>
-                      <span className="block truncate text-xs text-gray-500">{h.subtitle}</span>
+                      <span className="block truncate text-[14px] text-ink-600">{h.subtitle}</span>
                     </span>
                     <Search className="h-3.5 w-3.5 shrink-0 text-gray-300" aria-hidden />
                   </CommandItem>
@@ -499,18 +475,12 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
                 {!remoteLoading &&
                 remote.bookings.length + remote.guests.length + remote.units.length === 0 &&
                 search.trim().length >= 2 ? (
-                  <div className="px-3 py-2 text-xs text-gray-400">לא מצאנו הזמנה, אורח או יחידה בשם הזה.</div>
+                  <div className="px-3 py-2 text-[14px] text-ink-600">לא מצאנו הזמנה, אורח או יחידה בשם הזה.</div>
                 ) : null}
               </CommandGroup>
             </>
           ) : null}
         </CommandList>
-        <div className="flex items-center justify-between border-t border-gray-100 px-3 py-2 text-[10px] text-gray-400">
-          <span>
-            {modLabel(isApple)}+K לפתיחה · Esc לסגירה
-          </span>
-          <OpenHint isApple={isApple} />
-        </div>
       </div>
     </CommandDialog>
   );

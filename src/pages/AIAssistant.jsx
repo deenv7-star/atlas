@@ -28,7 +28,7 @@ export default function AIAssistantPage({ user, orgId: orgIdProp }) {
             <AtlasFace live size={48} className="as-head-face" />
             <div className="as-head-txt">
               <h1>שאלו את atlas</h1>
-              <p>תשובות מההזמנות, הכסף והפניות שלכם.</p>
+              <p>שאלו בקול או בכתב. atlas עונה מתוך ההזמנות והכסף שלכם, ויכול לרשום הזמנה או להכין הודעה לאורח.</p>
             </div>
             {hasThread ? <button type="button" className="as-new" onClick={clear}>שיחה חדשה</button> : null}
           </header>

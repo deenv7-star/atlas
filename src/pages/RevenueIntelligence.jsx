@@ -65,7 +65,8 @@ function Kpi({ label, value, delta, hint }) {
   );
 }
 
-export default function RevenueIntelligence() {
+/** `embedded` (persona-clarity 05.11.2026): shown inside כסף → דוחות → "12 חודשים"; no page frame or title of its own. */
+export default function RevenueIntelligence({ embedded = false }) {
   const { bookings, properties, payments, isLoading, isError, refetch } = useStayData({ withCleaning: false });
 
   const model = useMemo(() => {
@@ -112,8 +113,8 @@ export default function RevenueIntelligence() {
 
   return (
     <div dir="rtl">
-      <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10">
-        <PageHeader title="הכנסות" subtitle="12 החודשים האחרונים, מתוך ההזמנות שלכם." className="!mb-0" />
+      <div className={embedded ? 'space-y-8' : 'mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10'}>
+        {embedded ? null : <PageHeader title="הכנסות" subtitle="12 החודשים האחרונים, מתוך ההזמנות שלכם." className="!mb-0" />}
 
         {isLoading ? (
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4" aria-busy="true" aria-label="טוען">
@@ -142,9 +143,9 @@ export default function RevenueIntelligence() {
           <>
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               <Kpi label="הכנסות" value={formatMoney(model.now.income)} delta={model.hasPrev ? changePct(model.now.income, model.before.income) : null} hint={model.hasPrev ? 'מול 12 החודשים שלפני' : null} />
-              <Kpi label="ממוצע ללילה" value={formatMoney(model.now.adr)} delta={model.hasPrev ? changePct(model.now.adr, model.before.adr) : null} />
-              <Kpi label="תפוסה" value={`${Math.round(model.now.occupancy * 100)}%`} delta={model.hasPrev ? changePct(model.now.occupancy, model.before.occupancy) : null} hint={`${model.now.nights.toLocaleString('he-IL')} לילות שנמכרו`} />
-              <Kpi label="הכנסה ללילה זמין" value={formatMoney(model.now.revpar)} delta={model.hasPrev ? changePct(model.now.revpar, model.before.revpar) : null} hint="כולל לילות ריקים" />
+              <Kpi label="מחיר ממוצע ללילה" value={formatMoney(model.now.adr)} delta={model.hasPrev ? changePct(model.now.adr, model.before.adr) : null} />
+              <Kpi label="תפוסה" value={`${Math.round(model.now.occupancy * 100)}%`} delta={model.hasPrev ? changePct(model.now.occupancy, model.before.occupancy) : null} hint={`${model.now.nights.toLocaleString('he-IL')} לילות מלאים מכל הלילות ביומן`} />
+              <Kpi label="הכנסה ממוצעת לכל לילה ביומן" value={formatMoney(model.now.revpar)} delta={model.hasPrev ? changePct(model.now.revpar, model.before.revpar) : null} hint="גם לילות ריקים נספרים" />
             </div>
 
             <section className="v7-card overflow-hidden" aria-label="הכנסות לפי חודש">

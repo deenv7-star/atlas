@@ -80,3 +80,10 @@
 
 /* audit 05.11 UX-5: inline guest/booking matches */
 .ycm-meta { font-weight: 400; color: rgba(27,38,86,.72); }
+
+/* persona-clarity (05.11.2026): each row says in one line what the screen gives */
+.ycm-row--2 { min-height: 64px; padding-block: 10px; }
+.ycm-row .ycm-lb { font-size: 16px; font-weight: 600; }
+.ycm-desc { display: block; margin-top: 2px; font-size: 14px; font-weight: 400; line-height: 1.35; color: #4A5578; }
+.ycm-row.on .ycm-desc { color: #4A5578; }
+.ycm-sec { font-size: 14px; }

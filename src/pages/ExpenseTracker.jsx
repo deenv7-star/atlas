@@ -38,7 +38,7 @@ export default function ExpenseTracker({ orgId }) {
     return (
       <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
         <FinanceTabs className="!mb-0" />
-        <PageHeader title="הוצאות" subtitle="כל ההוצאות לפי יחידה, כדי לדעת כמה באמת נשאר." className="!mb-0" />
+        <PageHeader title="הוצאות" subtitle="רושמים הוצאה (ניקיון, כביסה, חשמל) ורואים כמה באמת נשאר לכם." className="!mb-0" />
         <ComingSoon icon={Receipt} title="מעקב הוצאות יגיע בקרוב" description="נפתח לכם את המסך הזה ברגע שהוא מוכן. עד אז ההכנסות והתשלומים מחכים בכספים." />
       </div>
     );
@@ -110,7 +110,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
       <FinanceTabs className="!mb-0" />
       <PageHeader
         title="הוצאות"
-        subtitle="כל ההוצאות לפי יחידה, כדי לדעת כמה באמת נשאר."
+        subtitle="רושמים הוצאה (ניקיון, כביסה, חשמל) ורואים כמה באמת נשאר לכם."
         className="!mb-0"
         actions={<Button onClick={() => setDialogOpen(true)}><Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />הוצאה חדשה</Button>}
       />
