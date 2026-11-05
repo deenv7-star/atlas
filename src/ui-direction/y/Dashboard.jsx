@@ -23,7 +23,7 @@ import Face from './Face';
 import { Num, Ticks, Wave, DotGrid, Ring, FaceStack, useBookingList, whenOf } from './ui';
 import { BookingsPanel, BookingSheet, isPhone } from './Bookings';
 import { ArrivalsSheet, IncomeSheet, OccupancySheet, PendingSheet, RevenueSheet, DaySheet } from './TodaySheets';
-import HomeTop, { HOME_VAR, HIDE_PHOTO } from './home/HomeTop';
+import HomeTop, { HOME_VAR, HIDE_PHOTO, HIDE_TILES, HIDE_CHART } from './home/HomeTop';
 import { ChartPlaceholder } from './home/shared';
 import './home/home.css';
 import { useQuickBooking } from '@/components/app/QuickBooking';
@@ -163,9 +163,11 @@ export default function DashboardView({ user, orgId }) {
           {/* 0 units: one way in, the import card (ייבוא מתחם → /import); manual setup stays inside /import */}
           {noUnits ? <ImportEntryCard where="today" className="y-first-unit-import" /> : null}
 
-          {noUnits ? null : <HomeTop m={m} noBookings={noBookings} onAdd={() => quick.open()} hero={hero} heroUnit={heroUnit} heroBal={heroBal} openBooking={openBooking} />}
+          {noUnits ? null : <HomeTop m={m} noBookings={noBookings} onAdd={() => quick.open()} hero={hero} heroUnit={heroUnit} heroBal={heroBal} openBooking={openBooking}
+            arrivals={arrivals} departures={departures} wave={wave} hasRevenue={hasRevenue} dueCount={dueCount} onTile={setTileSheet}
+            bestLabel={bestI >= 0 && hasRevenue ? money((months[bestI]?.value || 0) + (months[bestI]?.expected || 0)) : ''} />}
 
-          {noUnits ? null : (
+          {noUnits || HIDE_TILES ? null : (
           <section className={cn('y2-tiles', noBookings && 'is-empty')} aria-label="היום במספרים">
             <motion.div className="y2-tile" {...rise(1)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="מגיעים היום: פירוט" onClick={() => setTileSheet('arrivals')} />
@@ -201,8 +203,8 @@ export default function DashboardView({ user, orgId }) {
           )}
 
           {noUnits ? null : (
-          <div className={cn('y2-mid', (HIDE_PHOTO || !hero) && 'is-solo')}>
-            <motion.section className="y2-card y2-chart" aria-label="הכנסות" {...rise(5)}>
+          <div className={cn('y2-mid', (HIDE_PHOTO || !hero || HIDE_CHART) && 'is-solo')}>
+            {HIDE_CHART ? null : <motion.section className="y2-card y2-chart" aria-label="הכנסות" {...rise(5)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="הכנסות: פירוט לפי חודש" onClick={() => setTileSheet('revenue')} />
               <div className="y2-card-h"><h2>הכנסות</h2><span className="y2-seg">6 חודשים</span></div>
               {/* release 04.11: payments not read (loading / 500 / offline / timeout) = "—", never "עוד אין הכנסות" or ₪0K */}
@@ -227,7 +229,7 @@ export default function DashboardView({ user, orgId }) {
               </div>
               )}
               <div className="y2-chart-x" aria-hidden>{months.map((x, i) => <span key={i}>{x.label || ''}</span>)}</div>
-            </motion.section>
+            </motion.section>}
 
             {hero && !HIDE_PHOTO ? (
               <motion.button type="button" className={cn('y2-photo press', !unitPhoto(heroUnit) && 'y2-photo--none')} onClick={() => openBooking(hero)}

@@ -1,0 +1,38 @@
+/* A4 "היום במשפט אחד": one frosted-glass card over the hills; the day as a sentence with its numbers set big inside
+   the words; revenue as a horizon along the bottom edge. Palette #3E2BF1 #1B2656 white glass, one amber dot. */
+.hv4 { position: relative; overflow: hidden; display: grid; gap: 16px; padding: 22px 20px 0; border-radius: 32px; color: #1B2656;
+  background: linear-gradient(180deg, rgba(255,255,255,.86) 0%, rgba(255,255,255,.74) 100%);
+  backdrop-filter: blur(30px) saturate(1.5); -webkit-backdrop-filter: blur(30px) saturate(1.5);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), inset 0 1px 0 #fff, 0 30px 60px -36px rgba(27,38,86,.55); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .hv4 { background: #fff; } }
+@media (min-width: 1024px) { .hv4 { padding: 30px 32px 0; border-radius: 36px; gap: 20px; } }
+.hv4-s { margin: 0; font-size: 21px; line-height: 1.62; font-weight: 400; letter-spacing: -.012em; color: #1B2656; text-wrap: pretty; }
+@media (min-width: 1024px) { .hv4-s { font-size: 28px; line-height: 1.55; max-width: 30ch; } }
+.hv4-n { display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px; margin: -6px 0; vertical-align: baseline; font: inherit; font-size: 1.62em; font-weight: 800; line-height: 1; letter-spacing: -.04em;
+  color: #1B2656; font-variant-numeric: tabular-nums; border-radius: 10px; background: linear-gradient(transparent 72%, rgba(62,43,241,.16) 72%, rgba(62,43,241,.16) 90%, transparent 90%);
+  transition: background-color .2s var(--ease, ease), transform .16s var(--ease, ease); }
+.hv4-n:not(.is-static) { cursor: pointer; }
+.hv4-n:not(.is-static):hover { background-color: rgba(62,43,241,.06); }
+.hv4-n:not(.is-static):active { transform: scale(.97); }
+.hv4-n:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
+.hv4-n.is-ind { color: #3E2BF1; background: linear-gradient(transparent 72%, rgba(62,43,241,.22) 72%, rgba(62,43,241,.22) 90%, transparent 90%); }
+.hv4-faces { display: inline-flex; vertical-align: middle; margin-inline: 4px 2px; }
+.hv4-amber { display: inline-block; width: 7px; height: 7px; margin-inline: 3px 4px; border-radius: 99px; background: var(--amber, #F5A524); vertical-align: super; }
+/* horizon: full-bleed along the bottom edge */
+.hv4-hz { position: relative; display: block; width: calc(100% + 40px); margin: 0 -20px; height: 96px; padding: 0; text-align: start; background: none; }
+@media (min-width: 1024px) { .hv4-hz { width: calc(100% + 64px); margin: 0 -32px; height: 110px; } .hv4-hz svg { height: 110px; } }
+.hv4-hz svg { display: block; }
+.hv4-hz-l { fill: none; stroke: #3E2BF1; stroke-width: 2.6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.hv4-hz.is-empty .hv4-hz-l { stroke: rgba(62,43,241,.42); stroke-width: 2; stroke-dasharray: 5 7; }
+.hv4-hz-peak { position: absolute; transform: translate(-50%, calc(-100% - 8px)); padding: 4px 10px; border-radius: 99px; background: #1B2656; color: #fff; font-size: 12px; font-weight: 700; white-space: nowrap; direction: ltr; }
+.hv4-hz-k { position: absolute; bottom: 10px; inset-inline-start: 20px; font-size: 12px; font-weight: 600; color: #1B2656; padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.8); }
+@media (min-width: 1024px) { .hv4-hz-k { inset-inline-start: 32px; } }
+/* empty: the three steps as a quiet row */
+.hv4-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; color: rgba(27,38,86,.66); }
+.hv4-steps li { display: inline-flex; align-items: center; gap: 6px; }
+.hv4-steps i { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 99px; font-style: normal; font-size: 12px; font-weight: 700; box-shadow: inset 0 0 0 1.5px rgba(27,38,86,.18); }
+.hv4-steps i svg { width: 12px; height: 12px; }
+.hv4-steps li.is-done { color: #1B2656; } .hv4-steps li.is-done i { background: #3E2BF1; color: #fff; box-shadow: none; }
+.hv4-steps li.is-next { color: #1B2656; font-weight: 600; } .hv4-steps li.is-next i { box-shadow: inset 0 0 0 2px #3E2BF1; color: #3E2BF1; }
+.hv4.is-empty .hv4-s { font-size: 19px; }
+@media (min-width: 1024px) { .hv4.is-empty .hv4-s { font-size: 24px; } }
