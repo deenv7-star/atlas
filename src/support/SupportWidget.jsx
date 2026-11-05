@@ -111,7 +111,7 @@ function AskAtlasCard({ onGo }) {
         <span className="sp-ask-face" aria-hidden><AtlasFace live size={44} decorative /></span>
         <div className="min-w-0">
           <h3 id="sp-ask-t">שאלו את atlas</h3>
-          <p>שאלה או בקשה במילים שלכם, למשל „מי מגיע מחר?" או „תזכירו לדנה לשלם". atlas עונה ועושה בשבילכם.</p>
+          <p>שאלו במילים שלכם, למשל „מי מגיע מחר?". atlas עונה מתוך ההזמנות שלכם, ויכול גם לרשום הזמנה או להכין הודעה לאורח.</p>
         </div>
       </div>
       <div className="sp-ask-btns">

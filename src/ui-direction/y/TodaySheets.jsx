@@ -223,7 +223,7 @@ export function RevenueSheet({ open, onOpenChange, model }) {
 }
 
 const KIND = { message: 'הודעה', clean: 'ניקיון', lead: 'פנייה', balance: 'תשלום' };
-const VERB = { message: 'שליחה', clean: 'סימון', lead: 'מענה', balance: 'תזכורת' };
+const VERB = { message: 'שליחה', clean: 'נוקה', lead: 'מענה', balance: 'תזכורת' };
 
 export function DaySheet({ open, onOpenChange, model, onDo }) {
   const q = model.queue;
@@ -232,7 +232,7 @@ export function DaySheet({ open, onOpenChange, model, onDo }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange} title={q.length ? 'מה מחכה לכם היום' : 'אין משימות להיום'}
       sub={q.length ? (q.length === 1 ? 'דבר אחד' : `${q.length} דברים`) : `מחר: ${t.arrivals.length === 1 ? 'הגעה אחת' : `${t.arrivals.length} הגעות`}, ${t.departures.length === 1 ? 'יציאה אחת' : `${t.departures.length} יציאות`}`}
-      action={<Go to="/messages" onClick={() => onOpenChange(false)}>כל המשימות</Go>}>
+      action={<Go to="/messages" onClick={() => onOpenChange(false)}>כל ההודעות לאורחים</Go>}>
       {HELP_ENABLED && helpUnread ? (
         <ul className="yt-list" style={{ marginBottom: 8 }}>
           <li className="yt-row">

@@ -178,7 +178,7 @@ export function PageHeader({ title, subtitle, actions, children, className, help
         <h1 className="flex items-center gap-1 text-[26px] font-extrabold leading-[1.2] tracking-[-0.02em] text-navy-900">
           <span className="min-w-0">{title}</span>
         </h1>
-        {subtitle ? <p className="mt-2 text-[15px] text-ink-400">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-2 max-w-[640px] text-[16px] leading-relaxed text-ink-600">{subtitle}</p> : null}
         {children}
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
