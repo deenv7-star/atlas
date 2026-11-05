@@ -20,6 +20,7 @@ import { PUBLIC_PAGE_KEYS, LEGACY_REDIRECTS, getSafeReturnUrl } from '@/config/r
 // Trial over and not paid (src/lib/access.js): every app route shows the paywall; writes are refused (src/lib/accessLock.js).
 import AccessGate, { Paywall, LockedFrame } from '@/components/paywall/AccessGate';
 import { AccessSync } from '@/hooks/useAccess';
+import OfflineBanner from '@/components/common/OfflineBanner';
 import { isNativeApp } from '@/lib/nativePlatform';
 // Stored session, network down on the first load: offline screen with retry (audit 04.11), never /login.
 // Static import: when the network is down a lazy chunk may not load either.
@@ -402,6 +403,7 @@ function App() {
           <NuqsAdapter>
             <NavigationTracker />
             <AccessSync />
+            <OfflineBanner />
             <AuthenticatedApp />
             {isNativeApp() ? <Suspense fallback={null}><NativeAuthHost /></Suspense> : null}
             {isNativeApp() ? <Suspense fallback={null}><NotifyHost /></Suspense> : null}

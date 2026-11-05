@@ -14,6 +14,11 @@ export const queryClientInstance = new QueryClient({
 			retry: (count, err) => !err?.isTimeout && count < 1,
 			staleTime: STALE_REFERENCE_MS,
 		},
+		// Audit 05.11 NET-2: react-query pauses mutations while offline, so a save sat on "שומרים…" forever.
+		// Run them anyway: the API layer fails at once offline (src/lib/offline.js) and the form shows why.
+		mutations: {
+			networkMode: 'always',
+		},
 	},
 });
 

@@ -23,6 +23,7 @@
 
 import { supabase, isSupabaseConfigured, LOCAL_API_URL, fetchWithTimeout } from './supabaseClient';
 import { assertWritable } from '@/lib/accessLock';
+import { assertOnline } from '@/lib/offline';
 import { isNetworkError } from '@/lib/auth/authFailure';
 
 // Trial over and not paid (src/lib/access.js): writes are refused here for every backend (Supabase, REST, local demo).
@@ -32,7 +33,7 @@ function guardCollection(coll) {
     get(target, method, recv) {
       const v = Reflect.get(target, method, recv);
       if (typeof v !== 'function' || typeof method !== 'string' || !WRITE_METHOD.test(method)) return v;
-      return (...args) => { assertWritable(); return v.apply(target, args); };
+      return (...args) => { assertWritable(); assertOnline(); return v.apply(target, args); };
     },
   });
 }

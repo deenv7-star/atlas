@@ -186,7 +186,7 @@ export default function GuestStayPage() {
           <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(62,43,241,0.08)] text-[#3E2BF1]" aria-hidden><KeyRound size={24} strokeWidth={1.75} /></span>
           <h1 className="mt-5 text-[22px] font-bold leading-tight text-[#1B2656]">הקישור הזה לא פעיל כרגע</h1>
           <p className="mt-2 text-[15px] leading-relaxed text-[#4A5578]">ייתכן שההזמנה עודכנה. כדאי לבקש מהמארחים קישור חדש, בטלפון או בוואטסאפ.</p>
-          <a href="/" className="mt-6 inline-flex min-h-[44px] items-center justify-center px-2 text-[15px] font-semibold text-[#3E2BF1]">מה זה <bdi className="ms-1">atlas</bdi>?</a>
+          <a href="/" className="mt-6 inline-flex min-h-[44px] items-center justify-center px-2 text-[15px] font-semibold text-[#3E2BF1]"><span>מה זה <bdi>atlas</bdi>?</span></a>
         </main>
       </Shell>
     );

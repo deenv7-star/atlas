@@ -107,6 +107,8 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   const unitName = booking.property_name || allProperties.find((p) => p.id === booking.property_id)?.name || 'יחידה';
   const bookingUnitPhoto = unitPhoto(allProperties.find((p) => p.id === booking.property_id) || { id: booking.property_id });
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // Audit 05.11 UX-1: cancelling from the status menu asks first, then offers undo.
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
   // Fetch payments for this booking
   const { data: payments = [] } = useQuery({
@@ -137,6 +139,25 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   });
 
   const updateBookingMutation = useUpdateBooking();
+  const changeStatus = (value) => {
+    if (!booking || value === booking.status) return;
+    if (value === 'CANCELLED') { setConfirmCancel(true); return; }
+    updateBookingMutation.mutate({ id: booking.id, data: { status: value } });
+  };
+  const cancelBooking = () => {
+    const previous = booking.status;
+    const id = booking.id;
+    setConfirmCancel(false);
+    updateBookingMutation.mutate({ id, data: { status: 'CANCELLED' } }, {
+      onSuccess: () => {
+        atlasToastApi.undo(`ההזמנה של ${booking.guest_name || 'האורח'} בוטלה.`, () => {
+          updateBookingMutation.mutate({ id, data: { status: previous } }, {
+            onSuccess: () => atlasToastApi.success('ההזמנה חזרה למצב הקודם.'),
+          });
+        });
+      },
+    });
+  };
 
   // Create payment mutation
   const createPaymentMutation = useMutation({
@@ -286,6 +307,13 @@ export default function BookingDetails({ booking, onClose, orgId }) {
           </SheetFooter>
         </AtlasSheet>
 
+        <AtlasSheet open={confirmCancel} onOpenChange={setConfirmCancel} size="sm" title="לבטל את ההזמנה?" subtitle={`ההזמנה של ${booking.guest_name || 'האורח'} תסומן כבוטלה, והתאריכים יתפנו בלוח. אפשר לשחזר מיד אחרי.`}>
+          <SheetFooter>
+            <SheetSubmit className="!bg-red-600 hover:!bg-red-700 !shadow-none" onClick={cancelBooking}>ביטול ההזמנה</SheetSubmit>
+            <button type="button" className="press mt-2 flex h-12 w-full items-center justify-center rounded-full text-[15px] font-semibold text-[#1B2656] hover:bg-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#3E2BF1]/30" onClick={() => setConfirmCancel(false)}>השארת ההזמנה</button>
+          </SheetFooter>
+        </AtlasSheet>
+
         {/* v8 C bento: guest tile + ONE solid-indigo balance tile, then payments beside the unit photo + progress */}
         <div className="grid grid-cols-[minmax(0,1fr)] gap-3 md:gap-4 lg:grid-cols-12">
           <ErrorBoundary section="guest-details" variant="inline" resetKey={booking.id}>
@@ -293,7 +321,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               <div className="flex items-center gap-4">
                 <GuestAvatar name={booking.guest_name || 'אורח'} size={76} ring className="shadow-[0_8px_20px_-10px_rgba(27,38,86,0.5)]" />
                 <div className="min-w-0 flex-1">
-                  <h1 className="truncate text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900 md:text-[30px]">{booking.guest_name}</h1>
+                  <h1 className="line-clamp-2 break-words text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900 md:text-[30px]">{booking.guest_name}</h1>
                   <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-ink-600 md:text-[15px]">
                     <StatusPill status={booking.status} />
                     <span>{unitName}</span>
@@ -457,7 +485,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               </ol>
               <div className="mt-4 border-t border-[#F0F0F6] pt-4">
                 <Label className="text-[13px] font-medium text-ink-400">מצב ההזמנה</Label>
-                <Select value={booking.status} onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}>
+                <Select value={booking.status} onValueChange={changeStatus}>
                   <SelectTrigger className="mt-1.5 h-12 rounded-full" aria-label="מצב ההזמנה">
                     <SelectValue />
                   </SelectTrigger>
