@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { monthlyReceived, receivedThisMonth, paidMonthKey } from '../../src/lib/stay/received.js';
-import { computeBrief, nextWeekendNights, nightsLabel } from '../../src/components/calendar/calendarBrief.js';
+import { computeBrief, nextWeekendNights, nightsLabel } from '../../src/components/calendar/briefModel.js';
 import { occupancyByUnit, gapWindows } from '../../src/lib/calendar/calendarModel.js';
 
 const NOW = new Date(2026, 10, 5, 12); // Thu 5 Nov 2026
