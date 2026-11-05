@@ -50,22 +50,15 @@ export function AtlasSheet({
   const { inset, viewport } = useKeyboardInset(open && phone);
   const bodyRef = React.useRef(null);
   useScrollFocusedIntoView(bodyRef, open);
-  const [state, setState] = React.useState('open');
   const nodeRef = React.useRef(null);
-  React.useLayoutEffect(() => {
-    const node = nodeRef.current;
-    if (!node) return undefined;
-    const sync = () => setState(node.getAttribute('data-state') || 'closed');
-    sync();
-    const mo = new MutationObserver(sync);
-    mo.observe(node, { attributes: true, attributeFilter: ['data-state'] });
-    return () => mo.disconnect();
-  });
   // Above the keyboard: lift the sheet and cap its height to what is visible.
   const phoneStyle = phone
     ? { bottom: inset, maxHeight: inset && viewport ? `${Math.max(320, viewport - 12)}px` : undefined }
     : undefined;
-  const shown = state === 'open';
+  // Follow `open` directly. The content only exists while open (Radix unmounts it on close), and its portal
+  // mounts a render after ours, so a state synced from the node's data-state went stale: on the second open the
+  // sheet stayed parked below the screen under the dim overlay (iPhone report 05.11: "new booking" did nothing).
+  const shown = !!open;
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
