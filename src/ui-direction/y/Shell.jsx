@@ -19,9 +19,10 @@ import { Wordmark, useIsActive, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { useLiquidLens } from './useLiquidLens';
-import TodayBackdrop, { TODAY_PAGES } from './TodayBackdrop';
+import TodayBackdrop, { TODAY_PAGES, APP_BG } from './TodayBackdrop';
 import './y2.css';
 import './y-bg.css';
+import './y-bg-story.css';
 import './y-atlas-tab.css';
 import './y-nav.css';
 
@@ -112,11 +113,12 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
     const shell = document.querySelector('.y2-shell');
     if (!shell) return undefined;
     shell.dataset.page = currentPageName || '';
-    return () => { delete shell.dataset.page; };
+    shell.dataset.bg = APP_BG;
+    return () => { delete shell.dataset.page; delete shell.dataset.bg; };
   }, [currentPageName]);
   return (
     <>
-    <TodayBackdrop on={TODAY_PAGES.has(currentPageName || '')} />
+    <TodayBackdrop on={APP_BG !== 'off' || TODAY_PAGES.has(currentPageName || '')} />
     <header className="y2-head y2-nav">
       <div className="y2-bar">
         <Link to={createPageUrl('Dashboard')} aria-label="atlas, מסך היום" className="y2-bar-logo"><Wordmark size={19} /></Link>
