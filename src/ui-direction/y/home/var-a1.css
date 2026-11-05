@@ -1,0 +1,32 @@
+/* A1 "contrast rhythm": one strong tile per row. Row 1: הכנסות in solid navy; row 2: ממתינים לתשלום in solid indigo;
+   the rest stay white. Setup card stays white with the indigo progress. Palette #3E2BF1 #1B2656 #F7F8FB white. */
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(2),
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(4) { backdrop-filter: none; -webkit-backdrop-filter: none; color: #fff; }
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(2) { background: #1B2656; box-shadow: 0 0 0 1px rgba(27,38,86,.9), 0 22px 40px -26px rgba(27,38,86,.8); }
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(4) { background: #3E2BF1; box-shadow: 0 0 0 1px rgba(62,43,241,.9), 0 22px 40px -24px rgba(62,43,241,.75); }
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(2) .y2-tk,
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(4) .y2-tk { color: rgba(255,255,255,.8); }
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(2) .y-num,
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(4) .y-num { color: #fff; font-weight: 600; }
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(2) .y2-tn span:not(.y-num),
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(4) .y2-tn span:not(.y-num),
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(2) .hv-hint,
+body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(4) .hv-hint { color: rgba(255,255,255,.78); }
+/* navy tile: indigo line with a soft indigo light under it, white marker */
+body .y2-shell .y2.hv-a1 .y2-tile:nth-child(2) .y-wave-line { stroke: #3E2BF1; stroke-width: 3; stroke-width: 3.4; filter: drop-shadow(0 0 4px rgba(62,43,241,1)) drop-shadow(0 0 10px rgba(62,43,241,.9)); }
+body .y2-shell .y2.hv-a1 .y2-tile:nth-child(2) .y-wave-fill { opacity: 1; }
+body .y2-shell .y2.hv-a1 .y2-tile:nth-child(2) .y-wave stop { stop-color: #3E2BF1; }
+body .y2-shell .y2.hv-a1 .y2-tile:nth-child(2) .y-wave stop:first-child { stop-opacity: .7; }
+body .y2-shell .y2.hv-a1 .y2-tile:nth-child(2) .y-wave-dot { fill: #fff; stroke: #3E2BF1; }
+body .y2-shell .y2.hv-a1 .y2-tile:nth-child(2) .hv-flat path { stroke: rgba(255,255,255,.34); }
+/* indigo tile: white dots on, soft white off; amber dot stays */
+body .y2-shell .y2.hv-a1 .y2-tile:nth-child(4) .y-dots i { background: rgba(255,255,255,.22); }
+body .y2-shell .y2.hv-a1 .y2-tile:nth-child(4) .y-dots i.on { background: #fff; }
+body .y2-shell .y2.hv-a1 .y2-tiles.is-empty .y2-tile:nth-child(4) .y-dots i { background: transparent !important; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.38); }
+body .y2-shell .y2.hv-a1 .y2-tiles.is-empty .y2-tile:nth-child(2) .y-num,
+body .y2-shell .y2.hv-a1 .y2-tiles.is-empty .y2-tile:nth-child(4) .y-num { color: rgba(255,255,255,.62); }
+/* white tiles: numbers a touch firmer so the row reads as one rhythm, not white vs colour */
+body .y2-shell .y2.hv-a1 .y2-tile .y-num { font-weight: 500; }
+body .y2-shell .y2.hv-a1 .hva-count { padding: 3px 10px; border-radius: 99px; background: rgba(62,43,241,.08); }
+/* phone (2 columns): a checkerboard, navy top-left, indigo bottom-right */
+@media (max-width: 1023px) { body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(4) { order: 3; } body .y2-shell .y2.hv-a1 .y2-tiles .y2-tile:nth-child(3) { order: 4; } }
