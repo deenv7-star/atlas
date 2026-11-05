@@ -107,6 +107,8 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   const unitName = booking.property_name || allProperties.find((p) => p.id === booking.property_id)?.name || 'יחידה';
   const bookingUnitPhoto = unitPhoto(allProperties.find((p) => p.id === booking.property_id) || { id: booking.property_id });
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // Audit 05.11 UX-1: cancelling from the status menu asks first, then offers undo.
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
   // Fetch payments for this booking
   const { data: payments = [] } = useQuery({
@@ -137,6 +139,25 @@ export default function BookingDetails({ booking, onClose, orgId }) {
   });
 
   const updateBookingMutation = useUpdateBooking();
+  const changeStatus = (value) => {
+    if (!booking || value === booking.status) return;
+    if (value === 'CANCELLED') { setConfirmCancel(true); return; }
+    updateBookingMutation.mutate({ id: booking.id, data: { status: value } });
+  };
+  const cancelBooking = () => {
+    const previous = booking.status;
+    const id = booking.id;
+    setConfirmCancel(false);
+    updateBookingMutation.mutate({ id, data: { status: 'CANCELLED' } }, {
+      onSuccess: () => {
+        atlasToastApi.undo(`ההזמנה של ${booking.guest_name || 'האורח'} בוטלה.`, () => {
+          updateBookingMutation.mutate({ id, data: { status: previous } }, {
+            onSuccess: () => atlasToastApi.success('ההזמנה חזרה למצב הקודם.'),
+          });
+        });
+      },
+    });
+  };
 
   // Create payment mutation
   const createPaymentMutation = useMutation({
@@ -283,6 +304,13 @@ export default function BookingDetails({ booking, onClose, orgId }) {
         <AtlasSheet open={confirmDelete} onOpenChange={setConfirmDelete} size="sm" title="למחוק את ההזמנה?" subtitle={`ההזמנה של ${booking.guest_name || 'האורח'} תימחק. אפשר לשחזר אותה מיד אחרי המחיקה.`}>
           <SheetFooter>
             <SheetSubmit className="!bg-red-600 hover:!bg-red-700 !shadow-none" onClick={() => { setConfirmDelete(false); deleteBookingWithUndo(queryClient, booking.id); navigate(createPageUrl('Bookings')); }}>מחיקת ההזמנה</SheetSubmit>
+          </SheetFooter>
+        </AtlasSheet>
+
+        <AtlasSheet open={confirmCancel} onOpenChange={setConfirmCancel} size="sm" title="לבטל את ההזמנה?" subtitle={`ההזמנה של ${booking.guest_name || 'האורח'} תסומן כבוטלה, והתאריכים יתפנו בלוח. אפשר לשחזר מיד אחרי.`}>
+          <SheetFooter>
+            <SheetSubmit className="!bg-red-600 hover:!bg-red-700 !shadow-none" onClick={cancelBooking}>ביטול ההזמנה</SheetSubmit>
+            <button type="button" className="press mt-2 flex h-12 w-full items-center justify-center rounded-full text-[15px] font-semibold text-[#1B2656] hover:bg-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#3E2BF1]/30" onClick={() => setConfirmCancel(false)}>השארת ההזמנה</button>
           </SheetFooter>
         </AtlasSheet>
 
@@ -457,7 +485,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               </ol>
               <div className="mt-4 border-t border-[#F0F0F6] pt-4">
                 <Label className="text-[13px] font-medium text-ink-400">מצב ההזמנה</Label>
-                <Select value={booking.status} onValueChange={(value) => updateBookingMutation.mutate({ id: booking.id, data: { status: value } })}>
+                <Select value={booking.status} onValueChange={changeStatus}>
                   <SelectTrigger className="mt-1.5 h-12 rounded-full" aria-label="מצב ההזמנה">
                     <SelectValue />
                   </SelectTrigger>

@@ -6,7 +6,11 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const Select = SelectPrimitive.Root
+// Audit 05.11 RTL-1: Radix reads the direction from a DirectionProvider (none in the app), not from
+// <html dir="rtl">, so every Select rendered dir="ltr" (value on the left, chevron and checks on the wrong side).
+// The app is Hebrew: default to rtl; a caller can still pass dir="ltr".
+const Select = ({ dir = "rtl", ...props }) => <SelectPrimitive.Root dir={dir} {...props} />
+Select.displayName = "Select"
 
 const SelectGroup = SelectPrimitive.Group
 
@@ -91,11 +95,11 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-[8px] min-h-11 md:min-h-10 py-2 pl-2 pr-8 text-[15px] outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex w-full cursor-default select-none items-center rounded-[8px] min-h-11 md:min-h-10 py-2 pe-2 ps-8 text-[15px] text-start outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}>
-    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute start-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
         <Check className="h-4 w-4" />
       </SelectPrimitive.ItemIndicator>

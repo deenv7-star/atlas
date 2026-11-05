@@ -3,6 +3,7 @@
  * All modules MUST use these hooks/services. No direct supabase.from() calls.
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { OFFLINE_SAVE_MESSAGE } from '@/lib/offline';
 import { base44 } from '@/api/base44Client';
 import { STALE_LIVE_MS, STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
@@ -99,7 +100,7 @@ export function useUpdateBooking() {
         );
       }
       if (status !== 409) {
-        atlasToastApi.error('לא הצלחנו לשמור, אז השינויים בוטלו. נסו שוב.');
+        atlasToastApi.error(err?.isOffline ? OFFLINE_SAVE_MESSAGE : 'לא הצלחנו לשמור, אז השינויים בוטלו. נסו שוב.');
       }
     },
     onSettled: (_d, err, _v, context) => {
