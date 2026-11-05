@@ -57,7 +57,9 @@
 .ih-b-k { margin: 0; font-size: 17px; color: rgba(255,255,255,.86); }
 .ih-b-k b { color: #fff; font-size: 20px; }
 .ih-b-sum .ih-search { border-color: transparent; }
-.ih-b-body { margin-top: 20px; display: grid; gap: 16px; grid-template-columns: 1fr; }
+.ih-b-body { margin-top: 20px; display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.ih-b-body > * { min-width: 0; }
+.ih-a-bar > * { min-width: 0; }
 .ih-b-nav { display: none; }
 @media (min-width: 1024px) {
   .ih-b-sum { flex-direction: row; align-items: center; justify-content: space-between; padding: 14px 14px 14px 22px; }
