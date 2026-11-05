@@ -9,24 +9,24 @@ import { ExternalLink, Check, ChevronLeft, Phone, RefreshCw } from 'lucide-react
 import { CHANNELS, ATLAS_EVERY, SUPPORT, checkPasted } from './channelKit';
 import ChannelLogo from './ChannelLogo';
 import ScreenMock from './ScreenMock';
-import { Sheet, PasteField, CopyBig, exportLinkFor, useConnect } from './ConnectParts';
+import { Sheet, PasteField, CopyBig, exportLinkFor, useConnect, Bidi } from './ConnectParts';
 
 const FLOWS = {
   AIRBNB: [
     { kind: 'guide', mock: 'a-open', title: 'פתחו את לוח השנה ב-Airbnb', text: (u) => `היכנסו עם השם והסיסמה הרגילים, ובחרו את המודעה של ${u}.`, open: true },
     { kind: 'guide', mock: 'a-avail', title: 'לחצו על "זמינות"', en: 'Availability', text: () => 'הכפתור נמצא ליד לוח השנה.' },
-    { kind: 'guide', mock: 'a-connect', title: 'לחצו על "חיבור לאתר אחר"', en: 'Connect to another website', text: () => 'גללו למטה עד "חיבור לוחות שנה".' },
+    { kind: 'guide', mock: 'a-connect', title: 'לחצו על "חיבור לאתר אחר"', en: 'Connect to another website', text: () => 'גללו למטה עד "חיבור לוחות שנה" (Connect calendars).' },
     { kind: 'guide', mock: 'a-copy', title: 'העתיקו את הקישור של Airbnb', en: 'Copy', text: () => 'בחלון שנפתח יש קישור שנגמר ב-ics. לחצו "העתקה" לידו.' },
     { kind: 'paste' },
     { kind: 'export', mock: 'a-import', items: ['חזרו לאותו חלון ב-Airbnb.', 'הדביקו בשדה "כתובת לוח השנה" (Calendar address).', 'בשם כתבו atlas, ולחצו "הוספת לוח שנה" (Add calendar).'] },
   ],
   BOOKING_COM: [
-    { kind: 'guide', mock: 'b-open', title: 'פתחו את "סנכרון לוחות שנה" ב-Booking', text: () => 'הכפתור פותח את האקסטרא-נט, האתר שבו מנהלים את המודעה. היכנסו עם השם והסיסמה הרגילים.', open: true, note: 'לא מופיע "סנכרון לוחות שנה"? Booking פותח אותו רק כשבכל סוג חדר יש יחידה אחת. התקשרו אלינו ונבדוק יחד.' },
-    { kind: 'guide', mock: 'b-add', title: 'ליד היחידה, לחצו "הוספת חיבור"', en: 'Add calendar connection', text: (u) => `בחרו את השורה של ${u}.` },
+    { kind: 'guide', mock: 'b-open', title: 'פתחו את "סנכרון יומנים" ב-Booking', text: () => 'הכפתור פותח את האקסטרא-נט, האתר שבו מנהלים את המודעה. היכנסו עם השם והסיסמה הרגילים.', open: true, note: 'לא מופיע "סנכרון יומנים"? Booking פותח אותו רק כשבכל סוג חדר יש יחידה אחת. התקשרו אלינו ונבדוק יחד.' },
+    { kind: 'guide', mock: 'b-add', title: 'ליד היחידה, לחצו "הוספת חיבור ליומן"', en: 'Add calendar connection', text: (u) => `בחרו את השורה של ${u}.` },
     { kind: 'guide', mock: 'b-skip', title: 'לחצו "דילוג לייצוא"', en: 'Skip to export', text: () => 'את הקישור של atlas נדביק שם בשלב הבא.' },
     { kind: 'guide', mock: 'b-copy', title: 'כתבו atlas ולחצו "העתקת קישור"', en: 'Copy link', text: () => 'הקישור נשמר בטלפון או במחשב, מוכן להדבקה.' },
     { kind: 'paste' },
-    { kind: 'export', mock: 'b-import', items: ['ב-Booking לחצו שוב "הוספת חיבור" ליד אותה יחידה.', 'הדביקו בשדה הקישור, ובשם כתבו atlas.', 'לחצו "השלב הבא" (Next step), ואז "סיום" (Done).'] },
+    { kind: 'export', mock: 'b-import', items: ['ב-Booking לחצו שוב "הוספת חיבור ליומן" ליד אותה יחידה.', 'הדביקו בשדה הקישור, ובשם כתבו atlas.', 'לחצו "השלב הבא" (Next step), ואז "סיום" (Done).'] },
   ],
   ICAL: [
     { kind: 'guide', mock: 'o-copy', title: 'העתיקו את קישור היומן מהאתר השני', text: () => 'בהגדרות היומן שם חפשו "ייצוא יומן", "סנכרון" או "iCal" (כך נקרא קישור יומן). בדרך כלל הוא נגמר ב-ics.' },
@@ -113,7 +113,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         <p className="ch-kicker">שלב {i + 1} מתוך {total}</p>
         <h1 className="ch-h1" tabIndex={-1}>{step.title}</h1>
         {step.en ? <p className="ch-en">באנגלית: <bdi dir="ltr">{step.en}</bdi></p> : null}
-        <p className="ch-sub">{step.text(unit)}</p>
+        <p className="ch-sub"><Bidi text={step.text(unit)} /></p>
         <ScreenMock id={step.mock} caption={step.title} />
         {step.note ? <p className="ch-note">{step.note}</p> : null}
       </>
@@ -145,7 +145,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
     );
     footer = (
       <>
-        <button type="button" className="ch-btn is-primary ch-press" onClick={submit} disabled={!check.ok || busy} aria-disabled={!check.ok || busy}>
+        <button type="button" className={`ch-btn is-primary ch-press ${busy ? 'is-busy' : ''}`} onClick={submit} disabled={!check.ok || busy} aria-disabled={!check.ok || busy}>
           {busy ? <><RefreshCw className="ch-spin" strokeWidth={2} aria-hidden />בודקים את הקישור…</> : 'חברו את היומן'}
         </button>
         {!check.ok && !busy ? <p className="ch-hint">הדביקו קישור כדי להמשיך</p> : null}
@@ -160,7 +160,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         <h1 className="ch-h1" tabIndex={-1}>עכשיו בכיוון השני</h1>
         <p className="ch-sub">{channel === 'ICAL' ? 'כדי שגם האתר השני יחסום תאריכים שנתפסו אצלכם.' : `כדי ש-${name} יחסום תאריכים שנתפסו אצלכם בטלפון או בערוץ אחר.`}</p>
         <CopyBig value={exportLinkFor(property, result?.channel || channel)} />
-        <ol className="ch-list">{step.items.map((t) => <li key={t}>{t}</li>)}</ol>
+        <ol className="ch-list">{step.items.map((t) => <li key={t}><Bidi text={t} /></li>)}</ol>
         <ScreenMock id={step.mock} caption="הדבקת הקישור של atlas בערוץ" />
       </>
     );

@@ -140,3 +140,9 @@ export function useConnect({ orgId, property, existing = [] }) {
   };
   return { connect, busy };
 }
+
+/** Hebrew sentence with English button names in parentheses: keeps "(Add calendar)" in one piece and in order. */
+export function Bidi({ text }) {
+  const parts = String(text).split(/(\([A-Za-z][^)]*\))/);
+  return <>{parts.map((p, i) => (i % 2 ? <bdi key={i} dir="ltr">{p}</bdi> : p))}</>;
+}

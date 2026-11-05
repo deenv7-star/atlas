@@ -76,7 +76,9 @@ export function checkPasted(raw, { exportToken } = {}) {
     return { ok: true, channel, url: url.replace(/^webcal:\/\//i, 'https://'), message: 'קישור יומן מאתר אחר. נבדוק אותו כשתלחצו "חברו".' };
   }
   const r = checkIcalLink(channel, url);
-  return { ok: r.ok, channel, url: url.replace(/^webcal:\/\//i, 'https://'), message: r.message };
+  // Booking's own Hebrew label is "סנכרון יומנים" (partner.booking.com/he, checked 05.11.2026).
+  const message = channel === 'BOOKING_COM' ? String(r.message || '').replace('סנכרון לוחות שנה', 'סנכרון יומנים') : r.message;
+  return { ok: r.ok, channel, url: url.replace(/^webcal:\/\//i, 'https://'), message };
 }
 
 /** Server result codes from ical-sync → one plain sentence (same meaning as hebrewError there). */
