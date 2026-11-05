@@ -268,15 +268,18 @@ export function useFormMachine<TFieldValues extends FieldValues>({
     (nextOpen: boolean, setOpen: (value: boolean) => void) => {
       if (
         !nextOpen &&
-        (machineRef.current === 'dirty' || machineRef.current === 'error')
+        (machineRef.current === 'dirty' || machineRef.current === 'error') &&
+        // audit 05.11 UX-4: a failed empty submit is not a change; ask only when a value actually changed
+        form.formState.isDirty
       ) {
         void askConfirm({ title: 'לצאת בלי לשמור?', description: 'השינויים בטופס עוד לא נשמרו.', confirmLabel: 'יציאה בלי שמירה', cancelLabel: 'חזרה לטופס' })
           .then((ok) => { if (!ok) return; resetAll(); setOpen(nextOpen); });
         return;
       }
+      if (!nextOpen && machineRef.current === 'error') resetAll(); // clear the empty-submit errors for next time
       setOpen(nextOpen);
     },
-    [resetAll],
+    [resetAll, form],
   );
 
   const values = watch();
