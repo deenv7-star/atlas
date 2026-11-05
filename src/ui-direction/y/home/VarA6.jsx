@@ -40,7 +40,7 @@ function Horizon({ values, labels = [], peak = '', empty = false }) {
 }
 
 function Tok({ children, onClick, label, tone }) {
-  return <button type="button" className={cn('hv6-n', tone && `is-${tone}`)} onClick={onClick} aria-haspopup="dialog" aria-label={label}>{children}</button>;
+  return <button type="button" className={cn('hv6-n', tone && `is-${tone}`, String(children).length <= 2 && 'is-short')} onClick={onClick} aria-haspopup="dialog" aria-label={label}>{children}</button>;
 }
 
 /* the rest of the day told in one sentence under the big number. The month's income is already the big number,
@@ -108,10 +108,12 @@ export default function HomeTop({ m, noBookings, onAdd, arrivals = [], departure
           ) : null}
         </div>
         <DaySentence m={m} arrivals={arrivals} departures={departures} dueCount={dueCount} onTile={onTile} />
-        <button type="button" className="hv6-hzb" onClick={() => onTile('revenue')} aria-label="הכנסות לפי חודש: פירוט">
+        {/* the horizon's own labels stay visible text; the tap target is an empty overlay so its name never mismatches them */}
+        <div className="hv6-hzb">
           <Horizon values={hasRevenue ? [...wave].reverse() : []} empty={!hasRevenue} labels={labels}
             peak={prev && bestLabel === money((prev.value || 0) + (prev.expected || 0)) ? '' : bestLabel} />
-        </button>
+          <button type="button" className="hv6-hzhit" onClick={() => onTile('revenue')} aria-haspopup="dialog" aria-label="הכנסות לפי חודש: פירוט" />
+        </div>
       </section>
     </div>
   );

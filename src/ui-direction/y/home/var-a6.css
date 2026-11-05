@@ -17,6 +17,8 @@
 .hv6-cmp span { font-size: 12px; color: rgba(27,38,86,.62); }
 .hv6-cmp b { font-size: 15px; font-weight: 700; color: #1B2656; }
 .hv6-hzb { position: relative; z-index: 1; display: block; margin: 4px -20px 0; width: calc(100% + 40px); height: 150px; padding: 0; }
+.hv6-hzhit { position: absolute; inset: 0; z-index: 2; border-radius: 0 0 32px 32px; cursor: pointer; }
+.hv6-hzhit:focus-visible { outline: 2px solid #3E2BF1; outline-offset: -4px; }
 .hv6-hz { position: absolute; inset: 0 0 26px; }
 .hv6-hz svg { display: block; }
 .hv6-hz-l { fill: none; stroke: #3E2BF1; stroke-width: 2.8; stroke-linecap: round; vector-effect: non-scaling-stroke; }
@@ -75,6 +77,8 @@
 .hv6-n { display: inline-flex; align-items: center; min-height: 44px; margin: -8px 0; padding: 0 2px; vertical-align: baseline; font: inherit; font-size: 1.36em; font-weight: 800; line-height: 1;
   letter-spacing: -.03em; color: #1B2656; font-variant-numeric: tabular-nums; border-radius: 10px; transition: background-color .2s var(--ease, ease); }
 .hv6-n:hover { background-color: rgba(62,43,241,.07); }
+.hv6-n { justify-content: center; }
+.hv6-n.is-short { min-width: 44px; margin-inline: -6px; }
 .hv6-n:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
 .hv6-n.is-ind { color: #3E2BF1; }
 .hv6-sfaces { display: inline-flex; vertical-align: middle; margin-inline: 4px 2px; }

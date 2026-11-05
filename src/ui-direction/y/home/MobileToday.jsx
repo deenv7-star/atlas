@@ -25,8 +25,10 @@ const one = (n, s, p) => (n === 1 ? s : p);
 const BTN = { message: 'שליחה', clean: 'סימון', lead: 'מענה', balance: 'תזכורת' };
 const KICK = { message: 'הודעה מוכנה', clean: 'ניקיון', lead: 'פנייה חדשה', balance: 'תשלום' };
 
+/** a tappable number inside the sentence; a 1–2 digit number gets a full 44×44 target (is-short), its side margins
+ *  eat the nbsp around it so the sentence keeps its rhythm */
 function N({ children, onClick, label }) {
-  return <button type="button" className="hm-n" onClick={onClick} aria-haspopup="dialog" aria-label={label}>{children}</button>;
+  return <button type="button" className={cn('hm-n', String(children).length <= 2 && 'is-short')} onClick={onClick} aria-haspopup="dialog" aria-label={label}>{children}</button>;
 }
 
 const NB = '\u00A0';

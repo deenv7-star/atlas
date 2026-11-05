@@ -36,5 +36,5 @@
   .y2.hv .y3-panel:not(.y3-panel--page) .y3-split-d, .y2.hv .y3-panel:not(.y3-panel--page) .y3-split-d > div { display: contents; }
   .y2.hv .y3-panel:not(.y3-panel--page) .y3d { grid-column: 2; grid-row: 1 / span 2; }
   .y2.hv .y3-panel:not(.y3-panel--page) .y3j { grid-column: 1; grid-row: 2; margin: 0; }
-  .y2.hv .y3-panel:not(.y3-panel--page) .y3j-steps li { white-space: nowrap; font-size: 11px; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3j-steps li { white-space: normal; font-size: 12px !important; line-height: 1.25; text-wrap: balance; }
 }
