@@ -23,6 +23,13 @@ export function DayLine({ events = [] }) {
   events.forEach((e) => { const m = toMin(e.t); if (m == null) return; const g = groups.find((x) => x.m === m); if (g) g.items.push(e); else groups.push({ m, t: e.t, items: [e] }); });
   if (!groups.length) return null;
   groups.sort((a, b) => a.m - b.m);
+  // two hours closer than 75 min share one stop (15:00 and 16:00 drew on top of each other at 390)
+  for (let i = groups.length - 1; i > 0; i -= 1) {
+    if (groups[i].m - groups[i - 1].m < 75) {
+      const g = groups[i - 1]; g.items.push(...groups[i].items); g.last = groups[i].last || groups[i].t; g.mEnd = groups[i].mEnd || groups[i].m; groups.splice(i, 1);
+    }
+  }
+  groups.forEach((g) => { if (g.last) g.t = `${parseInt(g.t, 10)}–${parseInt(g.last, 10)}`; });
   const nowM = now.getHours() * 60 + now.getMinutes();
   const start = Math.min(8 * 60, Math.floor((groups[0].m - 60) / 60) * 60);
   const end = Math.max(22 * 60, Math.ceil((groups[groups.length - 1].m + 60) / 60) * 60);
@@ -33,8 +40,8 @@ export function DayLine({ events = [] }) {
     <div className="lv-line" role="img" aria-label={label}>
       <i className="lv-fill" style={{ '--p': `${inDay ? pct(nowM) : nowM > end ? 100 : 0}%` }} />
       {groups.map((g, i) => (
-        <span key={g.m} className={cn('lv-ev', g.m <= nowM && 'is-done')} style={{ insetInlineStart: `${pct(g.m)}%`, '--i': i }}>
-          <span className="lv-dot">{g.m <= nowM ? <i className="lv-ck"><Check strokeWidth={3} /></i> : null}<FaceStack names={g.items.map((x) => x.name || '')} size={24} max={2} /></span>
+        <span key={g.m} className={cn('lv-ev', (g.mEnd || g.m) <= nowM && 'is-done')} style={{ insetInlineStart: `${pct(g.m)}%`, '--i': i }}>
+          <span className="lv-dot">{(g.mEnd || g.m) <= nowM ? <i className="lv-ck"><Check strokeWidth={3} /></i> : null}<FaceStack names={g.items.map((x) => x.name || '')} size={24} max={2} /></span>
           <span className="lv-t" dir="ltr">{g.t}</span>
         </span>
       ))}
