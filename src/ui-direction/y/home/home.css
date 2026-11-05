@@ -1,0 +1,46 @@
+/* Today (05.11.2026): shared Today rules (desktop board + phone). Palette #3E2BF1 #1B2656 #F7F8FB white. */
+
+/* phone: the org card repeats the avatar in the top bar */
+@media (max-width: 1023px) { .y2.hv .y2-me { display: none; } }
+
+/* shared setup bits */
+.hv-acts { display: flex; gap: 8px; }
+.hv-btn { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; padding: 0 14px; border-radius: 16px; background: #3E2BF1; color: #fff; font-size: 15px; font-weight: 700; white-space: nowrap; }
+.hv-btn svg { width: 18px; height: 18px; }
+.hv-btn:hover { background: #2A1AC9; }
+.hv-btn--ghost { background: #F7F8FB; color: #1B2656; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(27,38,86,.08); }
+.hv-btn--ghost:hover { background: #EEF0F6; }
+@media (min-width: 1024px) { .hv-acts.is-compact .hv-btn { flex: 0 0 auto; padding: 0 20px; } }
+.y2.hv section[class^="hv"] h2 { margin: 0; }
+
+/* ── desktop layout (05.11.2026, Deen: "on desktop it looks bad"). The greeting is its own full-width row; the main
+   column and the side column start on one line under it; the page widens on big screens instead of floating in the
+   middle; on an empty account the first card stretches to the side column's height, so nothing hangs in the air. ── */
+@media (max-width: 1023px) { .y2.hv .y2-hello { order: -1; } }
+@media (min-width: 1024px) {
+  .y2.hv .y2-win { grid-template-columns: minmax(0, 1fr) 340px; column-gap: 24px; row-gap: 18px; align-items: stretch; }
+  .y2.hv .y2-hello { grid-column: 1 / -1; padding: 6px 8px 0; align-items: center; }
+  .y2.hv .y2-main { grid-column: 1; padding: 0; }
+  .y2.hv .y2-side { grid-column: 2; }
+  .y2.hv.hv-empty .y2-main > section[class^="hv"] { flex: 1 1 auto; }
+  .y2.hv.hv-empty .y2-side { align-self: stretch; }
+}
+@media (min-width: 1280px) { .y2.hv .y2-win { grid-template-columns: minmax(0, 1fr) 360px; column-gap: 28px; } }
+@media (min-width: 1600px) { .y2.hv { max-width: 1520px; } .y2.hv .y2-win { grid-template-columns: minmax(0, 1fr) 380px; column-gap: 32px; row-gap: 22px; } }
+
+/* desktop bookings panel on Today: the guest journey moves under the list, so a short list does not leave a tall
+   empty navy column beside the chosen booking */
+@media (min-width: 1024px) {
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3-split { grid-template-rows: auto 1fr; align-items: start; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3-split-l { grid-column: 1; grid-row: 1; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3-split-d, .y2.hv .y3-panel:not(.y3-panel--page) .y3-split-d > div { display: contents; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3d { grid-column: 2; grid-row: 1 / span 2; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3j { grid-column: 1; grid-row: 2; margin: 0; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3j-steps li { white-space: normal; font-size: 12px !important; line-height: 1.25; text-wrap: balance; }
+}
+
+/* WCAG AA over the hills photo and the frosted cards (05.11.2026 release QA): quiet text is navy at 80%, never lighter */
+.y2.hv .y2-nc:not(.is-hot) :is(.y2-nc-k, .y2-nc-s) { color: rgba(27,38,86,.8); }
+.y2.hv .y2-nc.is-hot .y2-nc-s { color: rgba(255,255,255,.88); }
+.y2.hv .y3j-steps li:not(.ok):not(.cur) { color: rgba(255,255,255,.72); }
+.y2.hv .hv6-dock.is-steps .hv6-di.is-next .hv6-dl { color: rgba(255,255,255,.92); }

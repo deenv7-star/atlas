@@ -1,6 +1,5 @@
 import { useAuth } from '@/lib/AuthContext';
-import { computeAccess } from '@/lib/access';
-import { readForcedAccess, accessUser } from '@/hooks/useAccess';
+import { useAccess } from '@/hooks/useAccess';
 
 /**
  * Trial / plan state for the banner and the sidebar card. The decision itself ("trial over and not paid")
@@ -11,7 +10,8 @@ import { readForcedAccess, accessUser } from '@/hooks/useAccess';
 export function useSubscription() {
   const { user, isAuthenticated } = useAuth();
   const isLoading = !isAuthenticated && !user ? false : !user;
-  const a = computeAccess(accessUser(user), { force: readForcedAccess() });
+  // Same answer as the gate, including the offline fallback (audit 05.11 NET-1).
+  const a = useAccess();
 
   return {
     plan: user?.selected_plan || 'trial',

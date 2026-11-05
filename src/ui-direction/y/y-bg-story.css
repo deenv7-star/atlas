@@ -1,0 +1,21 @@
+/* 05.11.2026 "one continuous story" (Deen): the Today hills photo continues behind every screen, so moving between
+   tabs feels like one place. Today keeps the full photo (y-bg.css). Other screens, by data-bg on the shell:
+   dim   = the photo at ~40% under the canvas, a canvas veil at the top for the header; cards stay solid white.
+   glass = the full photo behind a milky veil; cards turn milky frosted glass (84% white + blur), text stays navy on
+           near-white, so contrast stays AA; titles that sit straight on the photo get a white halo. */
+.y2-shell[data-bg="dim"]:not([data-page="Dashboard"], [data-page="Today"]) > .y2-bgphoto { background: #F7F8FB; }
+.y2-shell[data-bg="dim"]:not([data-page="Dashboard"], [data-page="Today"]) > .y2-bgphoto img { opacity: .4; transition: opacity .45s var(--ease); }
+.y2-shell[data-bg="dim"]:not([data-page="Dashboard"], [data-page="Today"]) > .y2-bgphoto::after { content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(247,248,251,.85) 0%, rgba(247,248,251,.35) 30%, rgba(247,248,251,0) 60%); }
+.y2-shell > .y2-bgphoto::after { pointer-events: none; }
+
+.y2-shell[data-bg="glass"]:not([data-page="Dashboard"], [data-page="Today"]) > .y2-bgphoto::after { content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(247,248,251,.55) 0%, rgba(247,248,251,.18) 45%, rgba(247,248,251,.28) 100%); }
+.y2-shell[data-bg="glass"]:not([data-page="Dashboard"], [data-page="Today"]) #atlas-main-scroll :is(.v7-card, ul.bg-white, .v5-rise.bg-white, button.bg-white, a.bg-white) {
+  background: rgba(255,255,255,.84); backdrop-filter: blur(30px) saturate(1.5); -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.85), 0 16px 34px -26px rgba(27,38,86,.45); }
+.y2-shell[data-bg="glass"]:not([data-page="Dashboard"], [data-page="Today"]) #atlas-main-scroll :is(h1, h2, h3) { text-shadow: 0 0 16px rgba(255,255,255,.9), 0 1px 2px rgba(255,255,255,.7); }
+.y2-shell[data-bg="glass"]:not([data-page="Dashboard"], [data-page="Today"]) #atlas-main-scroll .v7-card :is(h1, h2, h3) { text-shadow: none; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .y2-shell[data-bg="glass"]:not([data-page="Dashboard"], [data-page="Today"]) #atlas-main-scroll :is(.v7-card, ul.bg-white, .v5-rise.bg-white, button.bg-white, a.bg-white) { background: #fff; }
+}

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
+import { dropLastAccess } from '@/lib/lastAccess';
 import { base44 } from '@/api/base44Client';
 import { supabase, isSupabaseConfigured, storedSessionUser } from '@/api/supabaseClient';
 import { clearPersistedQueries } from '@/lib/queryPersist';
@@ -60,6 +61,7 @@ export const AuthProvider = ({ children }) => {
     queryClientInstance.clear();
     clearPersistedQueries();
     dropCachedMe();
+    dropLastAccess();
     setUser(null);
     setIsAuthenticated(false);
     setAuthOffline(false);

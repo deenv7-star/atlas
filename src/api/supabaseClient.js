@@ -11,6 +11,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { isBlockedSupabaseRequest, lockedResponse } from '@/lib/accessLock';
+import { isOffline, offlineError } from '@/lib/offline';
 import { guardRefreshResponse } from '@/lib/auth/refreshGuard';
 import { REQUEST_TIMEOUT_MS, requestTimeoutMs } from '@/lib/requestTimeout';
 
@@ -78,6 +79,11 @@ export const supabase = (supabaseUrl && supabaseKey)
           const url = typeof input === 'string' ? input : input?.url;
           if (isBlockedSupabaseRequest(url, init.method || (typeof input === 'object' && input?.method) || 'GET')) {
             return Promise.resolve(lockedResponse());
+          }
+          // No network: a write fails at once with a clear Hebrew message instead of hanging (audit 05.11 NET-2).
+          const method = String(init.method || (typeof input === 'object' && input?.method) || 'GET').toUpperCase();
+          if (isOffline() && method !== 'GET' && method !== 'HEAD' && !String(url || '').includes('/auth/v1/')) {
+            return Promise.reject(offlineError());
           }
           // A 5xx on the token refresh must not sign the owner out (src/lib/auth/refreshGuard.js).
           return fetchWithTimeout(input, init, requestTimeoutMs(url, init.body))

@@ -461,13 +461,13 @@ export function AtlasTable<TData extends object>(props: AtlasTableProps<TData>):
         </div>
         <div className="flex items-center gap-2">
           {csvExport ? (
-            <Button type="button" variant="outline" size="sm" className="h-10 gap-1.5 text-[14px]" onClick={handleExportView}>
+            <Button type="button" variant="outline" size="sm" className="h-11 gap-1.5 text-[14px]" onClick={handleExportView}>
               ייצוא לאקסל
             </Button>
           ) : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" size="icon" className="h-10 w-10 shrink-0" aria-label="עמודות">
+              <Button type="button" variant="outline" size="icon" className="h-11 w-11 shrink-0" aria-label="עמודות">
                 <Settings2 className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

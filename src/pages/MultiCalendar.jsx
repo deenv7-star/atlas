@@ -110,7 +110,7 @@ export default function MultiCalendar({ selectedPropertyId }) {
           {data.loadFailed ? (
             <div className="v7-card p-4"><ErrorFallback onRetry={() => data.refetch()} /></div>
           ) : data.isLoading ? (
-            <div className="v7-card space-y-3 p-5" aria-busy="true" aria-label="טוען את הלוח">
+            <div role="status" className="v7-card space-y-3 p-5" aria-busy="true" aria-label="טוען את הלוח">
               {Array.from({ length: 6 }, (_, i) => <SkelLine key={i} className="h-16 w-full" />)}
             </div>
           ) : (

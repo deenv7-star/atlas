@@ -19,8 +19,8 @@ export const GUIDES = {
     tip: 'הכי נוח מהמחשב. כל יחידה ב-Booking מקבלת קישור משלה.',
     steps: [
       { title: 'נכנסים לאקסטרא-נט', en: 'admin.booking.com', text: 'האתר שבו מנהלים את המודעה ב-Booking. נכנסים עם השם והסיסמה הרגילים.', pic: 'b1' },
-      { title: 'תעריפים וזמינות ← סנכרון לוחות שנה', en: 'Rates & Availability → Sync calendars', text: 'בתפריט למעלה לוחצים על "תעריפים וזמינות", ואז על "סנכרון לוחות שנה".', pic: 'b2' },
-      { title: 'ליד היחידה: הוספת חיבור', en: 'Add calendar connection → Skip this step', text: 'ליד היחידה לוחצים "הוספת חיבור לוח שנה". בחלון שנפתח גוללים למטה ולוחצים "דילוג על השלב".', pic: 'b3' },
+      { title: 'תעריפים וזמינות ← סנכרון יומנים', en: 'Rates & Availability → Sync calendars', text: 'בתפריט למעלה לוחצים על "תעריפים וזמינות", ואז על "סנכרון יומנים".', pic: 'b2' },
+      { title: 'ליד היחידה: הוספת חיבור ליומן', en: 'Add calendar connection → Skip to export', text: 'ליד היחידה לוחצים "הוספת חיבור ליומן". בחלון שנפתח לוחצים "דילוג לייצוא".', pic: 'b3' },
       { title: 'נותנים שם ומעתיקים את הקישור', en: 'Name it "atlas" → Copy link', text: 'כותבים atlas בשם החיבור ולוחצים "העתקת קישור". הקישור נשמר בזיכרון של המחשב או הטלפון.', pic: 'b4' },
     ],
   },
@@ -90,7 +90,7 @@ export function GuidePic({ pic, n }) {
               <span className={cn('relative whitespace-nowrap rounded-[7px] px-1.5 py-1 text-[9px] font-bold', r === 0 ? 'ob2-hot text-navy-900' : 'bg-[#F1F2F7] text-ink-600')}>Add calendar connection{r === 0 ? <Mark n={n} className="-end-4 -top-4" /> : null}</span>
             </div>
           ))}
-          <span className="self-end text-[10px] font-semibold text-brand-700 underline">Skip this step</span>
+          <span className="self-end text-[10px] font-semibold text-brand-700 underline">Skip to export</span>
         </div>
       </>);
       break;

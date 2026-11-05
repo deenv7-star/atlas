@@ -1,12 +1,11 @@
 /**
- * Y3 · "השילוב" = Y2 "זכוכית" (after the visionOS glass board). One frosted window over a real zimmer photo.
- * Four white metric tiles, each with its own tiny live viz; the month's income as a glowing wave next to
- * a real photo card of who arrives next; "הדבר הבא" as three cards, the first one indigo. A darker glass
- * column on the side: the month calendar with colored days and who comes and goes today, with photos.
- * Y3: below them Y1's bookings panel in navy glass (list + the chosen booking beside it); on the phone a row
- * opens the same detail as a navy glass sheet.
+ * Today (release/today-channels, 05.11.2026). Desktop: one frosted window over the hills photo; at the top the month's
+ * income as one large number with the day told in one sentence under it and the six-month horizon (./home/VarA6),
+ * then "הדבר הבא" as three cards, the month calendar + today's list in the side column, and the navy bookings panel.
+ * Phone (<1024): its own calm single column (./home/MobileToday): greeting, the day's sentence, one next thing,
+ * today's rows, a quiet money row.
  */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, MoreHorizontal, Sparkles } from 'lucide-react';
@@ -16,13 +15,15 @@ import { formatDayHe, firstName, parseDay } from '@/lib/stay/format';
 import { isActiveBooking, checkOutOf, channelOf } from '@/lib/stay/bookings';
 import { dayPart, GuestAvatar } from '@/components/app/atoms';
 import { cn } from '@/lib/utils';
-import { heCount } from '@/lib/hebrewCount';
 import { createPageUrl } from '@/utils';
-import { useTodayModel, money, moneyNum, guestLabel, MONTHS } from './model';
+import { useTodayModel, money, guestLabel, MONTHS } from './model';
 import Face from './Face';
-import { Num, Ticks, Wave, DotGrid, Ring, FaceStack, useBookingList, whenOf } from './ui';
+import { useBookingList, whenOf } from './ui';
 import { BookingsPanel, BookingSheet, isPhone } from './Bookings';
-import { ArrivalsSheet, IncomeSheet, OccupancySheet, PendingSheet, RevenueSheet, DaySheet, NoBookingsCard } from './TodaySheets';
+import { ArrivalsSheet, IncomeSheet, OccupancySheet, PendingSheet, RevenueSheet, DaySheet } from './TodaySheets';
+import HomeTop from './home/HomeTop';
+import MobileToday from './home/MobileToday';
+import './home/home.css';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import './y3.css';
 import './y-fix.css';
@@ -69,8 +70,21 @@ function MonthCal({ model }) {
   );
 }
 
+const NARROW = '(max-width: 1023px)';
+function useNarrow() {
+  const [n, setN] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.(NARROW).matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.(NARROW); if (!mq) return undefined;
+    const on = () => setN(mq.matches); on(); mq.addEventListener?.('change', on);
+    return () => mq.removeEventListener?.('change', on);
+  }, []);
+  return n;
+}
+
 export default function DashboardView({ user, orgId }) {
   const m = useTodayModel({ orgId });
+  // release/today-channels (05.11.2026): the phone (<1024) gets its own calm single-column Today (M2); desktop keeps the board
+  const narrow = useNarrow();
   const list = useBookingList(m);
   const [sheet, setSheet] = useState(null);
   const [selId, setSelId] = useState(null);
@@ -116,22 +130,8 @@ export default function DashboardView({ user, orgId }) {
   const mx = Math.max(1, ...months.map((x) => (x.value || 0) + (x.expected || 0)));
   const wave = months.map((x) => ((x.value || 0) + (x.expected || 0)) / mx);
   const bestI = wave.indexOf(Math.max(...wave));
-  // no revenue at all: an empty state instead of "₪0K" three times; small totals stay in shekels, not "₪0K/₪1K"
+  // no revenue at all: the horizon draws dashed instead of a flat ₪0 line
   const hasRevenue = months.some((x) => (x.value || 0) + (x.expected || 0) > 0);
-  const tick = (v) => (v === 0 ? '₪0' : mx >= 10000 ? `₪${moneyNum(v / 1000)}K` : mx >= 1000 ? `₪${(Math.round(v / 100) / 10).toLocaleString('he-IL')}K` : `₪${moneyNum(v)}`);
-
-  // the day as hour ticks 8..20: arrivals hot, departures on
-  const hours = useMemo(() => Array.from({ length: 13 }, (_, i) => {
-    const h = 8 + i;
-    const inH = arrivals.some((a) => String(m.prop(a.booking.property_id)?.check_in_time || '15:00').startsWith(String(h).padStart(2, '0')));
-    const outH = departures.some((a) => String(m.prop(a.booking.property_id)?.check_out_time || '11:00').startsWith(String(h).padStart(2, '0')));
-    return inH ? 1 : outH ? 0.72 : (arrivals.length || departures.length) ? 0.22 + ((i * 37) % 5) / 30 : 0.18;
-  }), [arrivals, departures, m]);
-  const hotHour = hours.indexOf(1);
-
-  const hero = arrivals[0]?.booking || list[0] || null;
-  const heroUnit = hero ? m.prop(hero.property_id) : null;
-  const heroBal = hero ? m.balanceFor(hero) : null;
   const q3 = m.queue.slice(0, 3);
   const dueCount = m.owed.length;
 
@@ -142,108 +142,35 @@ export default function DashboardView({ user, orgId }) {
   // reducedMotion="user": with reduced motion the entrance keeps only the fade, no scale(.985) shrinking 44px targets to 43
   return (
     <MotionConfig reducedMotion="user">
-    <div className="y2" dir="rtl">
+    <div className={cn('y2 hv hv-a6', noBookings && 'hv-empty', narrow && 'hm-on')} dir="rtl">
+      {narrow ? (
+        <motion.div {...rise(0)}>
+          <MobileToday m={m} name={name} noUnits={noUnits} noBookings={noBookings} onAdd={() => quick.open()}
+            arrivals={arrivals} departures={departures} dueCount={dueCount} onTile={setTileSheet}
+            openBooking={openBooking} onDo={go} going={going} />
+        </motion.div>
+      ) : (
       <motion.div className="y2-win" {...rise(0)}>
-        <div className="y2-main">
-          <div className="y2-hello">
-            <div>
-              <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
-              <p className="y2-sub">{formatDayHe(m.day)}{boardKnown ? ` · ${arrivals.length} מגיעים, ${departures.length} יוצאים` : ''}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
-            </div>
-            {noUnits || !boardKnown ? null : (
-              <button type="button" className="y2-hello-chip press" aria-haspopup="dialog" onClick={() => setTileSheet('day')}><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'אין משימות להיום'}</button>
-            )}
+        {/* home/var desktop (05.11.2026): the greeting is the full-width first row, so the side column and the first card share one top edge */}
+        <div className="y2-hello">
+          <div>
+            <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
+            <p className="y2-sub">{formatDayHe(m.day)}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
           </div>
+          {noUnits || !boardKnown ? null : (
+            <button type="button" className="y2-hello-chip press" aria-haspopup="dialog" onClick={() => setTileSheet('day')}><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'אין משימות להיום'}</button>
+          )}
+        </div>
 
+        <div className="y2-main">
           {m.paymentsState === 'error' ? <MoneyLoadBanner onRetry={m.retryLoad} /> : null}
 
           {/* 0 units: one way in, the import card (ייבוא מתחם → /import); manual setup stays inside /import */}
           {noUnits ? <ImportEntryCard where="today" className="y-first-unit-import" /> : null}
 
-          {noBookings ? <NoBookingsCard onAdd={() => quick.open()} /> : null}
-
-          {noUnits || noBookings ? null : (
-          <section className="y2-tiles" aria-label="היום במספרים">
-            <motion.div className="y2-tile" {...rise(1)}>
-              <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="מגיעים היום: פירוט" onClick={() => setTileSheet('arrivals')} />
-              <p className="y2-tk">מגיעים היום<FaceStack names={arrivals.map((a) => a.booking.guest_name || '')} size={26} max={3} /></p>
-              <Ticks values={hours} hot={hotHour} height={50} className="y2-tile-viz" />
-              <p className="y2-tn"><Num value={arrivals.length} /><span>אורחים · {departures.length} יוצאים</span></p>
-            </motion.div>
-            <motion.div className="y2-tile" {...rise(2)}>
-              <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label={`הכנסות ${m.money.month} מהזמנות החודש: פירוט`} onClick={() => setTileSheet('income')} />
-              <p className="y2-tk">הכנסות {m.money.month}</p>
-              <div className="y2-tile-viz"><Wave values={[...wave].reverse()} h={50} /></div>
-              <p className="y2-tn"><Num value={m.money.received} pre="₪" delay={80} /></p>
-            </motion.div>
-            <motion.div className="y2-tile y2-tile--ring" {...rise(3)}>
-              <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label={`תפוסה ב${m.money.month}: פירוט לפי יחידה`} onClick={() => setTileSheet('occupancy')} />
-              <p className="y2-tk">תפוסה ב{m.money.month}</p>
-              <Ring value={(m.money.occupancy || 0) / 100} size={86} stroke={9} className="y2-tile-viz">
-                <Num value={m.money.occupancy} post="%" delay={160} className="y2-ring-n" />
-              </Ring>
-              <p className="y2-tn y2-tn--s"><span>{(m.data.properties || []).length ? heCount((m.data.properties || []).length, 'unit') : 'עוד אין יחידות'}</span></p>
-            </motion.div>
-            <motion.div className="y2-tile" {...rise(4)}>
-              <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="ממתינים לתשלום: פירוט" onClick={() => setTileSheet('pending')} />
-              <p className="y2-tk">ממתינים לתשלום<i className="y2-amber" aria-hidden /></p>
-              <DotGrid total={20} on={m.moneyKnown ? Math.min(20, Math.round((m.money.received / Math.max(1, m.money.expected)) * 20)) : 0} cols={10} className="y2-tile-viz y2-dots" />
-              <p className="y2-tn"><Num value={m.pendingTotal} pre="₪" delay={240} />{m.moneyKnown ? <span>{dueCount} {dueCount === 1 ? 'הזמנה' : 'הזמנות'}</span> : null}</p>
-            </motion.div>
-          </section>
-          )}
-
-          {noBookings ? null : (
-          <div className="y2-mid">
-            <motion.section className="y2-card y2-chart" aria-label="הכנסות" {...rise(5)}>
-              <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="הכנסות: פירוט לפי חודש" onClick={() => setTileSheet('revenue')} />
-              <div className="y2-card-h"><h2>הכנסות</h2><span className="y2-seg">6 חודשים</span></div>
-              {/* release 04.11: payments not read (loading / 500 / offline / timeout) = "—", never "עוד אין הכנסות" or ₪0K */}
-              {!m.moneyKnown ? (
-                <div className="y2-chart-empty y2-chart-unknown" role="status">
-                  <b aria-label="אין נתונים כרגע">—</b>
-                  {m.paymentsState === 'error' ? <span>לא הצלחנו לקרוא את ההכנסות כרגע</span> : null}
-                </div>
-              ) : !hasRevenue ? (
-                <div className="y2-chart-empty">
-                  <b>עוד אין הכנסות להצגה</b>
-                  <span>הגרף יתמלא מההזמנה הראשונה</span>
-                </div>
-              ) : (
-              <div className="y2-chart-b">
-                <div className="y2-chart-y" aria-hidden>{[1, 0.66, 0.33, 0].map((t) => <span key={t}>{tick(mx * t)}</span>)}</div>
-                <div className="y2-chart-p">
-                  <Wave values={[...wave].reverse()} w={520} h={190} />
-                  {bestI >= 0 ? (
-                    <span className="y2-tip" style={{ right: `${(bestI / Math.max(1, wave.length - 1)) * 100}%`, bottom: `${wave[bestI] * 78 + 8}%` }}>
-                      {money((months[bestI]?.value || 0) + (months[bestI]?.expected || 0))}
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-              )}
-              <div className="y2-chart-x" aria-hidden>{months.map((x, i) => <span key={i}>{x.label || ''}</span>)}</div>
-            </motion.section>
-
-            {hero ? (
-              <motion.button type="button" className={cn('y2-photo press', !unitPhoto(heroUnit) && 'y2-photo--none')} onClick={() => openBooking(hero)}
-                initial={{ y: 16, scale: 0.985 }} animate={{ y: 0, scale: 1 }} transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}>
-                {unitPhoto(heroUnit) ? <img src={unitPhoto(heroUnit)} alt="" fetchPriority="high" /> : null}
-                <span className="y2-photo-shade" aria-hidden />
-                <span className="y2-photo-t">
-                  <small>{whenOf(hero, m.day)}</small>
-                  <b dir="auto">{guestLabel(hero)}</b>
-                  <em><bdi>{heroUnit?.name}</bdi></em>
-                </span>
-                <span className="y2-photo-face"><Face name={hero.guest_name || ''} size={46} ring /></span>
-                <span className="y2-photo-s">
-                  <span><b dir="ltr">{heroUnit?.check_in_time || '15:00'}</b><small>כניסה</small></span>
-                  <span><b dir="ltr">{heroBal ? `₪${moneyNum(heroBal.total)}` : ''}</b><small>{heroBal?.unknown ? 'יתרה —' : heroBal?.balance > 0 ? `יתרה ₪${moneyNum(heroBal.balance)}` : 'שולם'}</small></span>
-                </span>
-              </motion.button>
-            ) : null}
-          </div>
-          )}
+          {noUnits ? null : <HomeTop m={m} noBookings={noBookings} onAdd={() => quick.open()}
+            arrivals={arrivals} departures={departures} wave={wave} hasRevenue={hasRevenue} dueCount={dueCount} onTile={setTileSheet}
+            bestLabel={bestI >= 0 && hasRevenue ? money((months[bestI]?.value || 0) + (months[bestI]?.expected || 0)) : ''} />}
 
           {!q3.length ? null : (
           <section className="y2-next" aria-label="הדבר הבא">
@@ -284,6 +211,7 @@ export default function DashboardView({ user, orgId }) {
           </div>
           {/* M7 (audit 04.11): the side column's own 3 numbers repeated the tiles; removed for a calmer desktop. */}
           <MonthCal model={m} />
+          {noBookings ? null : <>
           <div className="y2-sec-h y2-sec-h--d"><h2>היום</h2><Link to="/bookings" className="y2-link">כל ההזמנות</Link></div>
           <ul className="y2-arr">
             {[...today.map((x) => ({ b: x.booking, dir: x.dir })), ...upcoming.map((b) => ({ b, dir: 'soon' }))].slice(0, 5).map(({ b, dir }, i) => {
@@ -303,11 +231,13 @@ export default function DashboardView({ user, orgId }) {
               );
             })}
           </ul>
+          </>}
         </aside>
 
-        <BookingsPanel ref={panelRef} model={m} list={list} selId={selId} setSelId={setSelId} onOpen={setSheet} delay={0.45}
-          onWhatsApp={(b, t) => setComposer({ booking: b, template: t })} />
+        {noBookings ? null : <BookingsPanel ref={panelRef} model={m} list={list} selId={selId} setSelId={setSelId} onOpen={setSheet} delay={0.45}
+          onWhatsApp={(b, t) => setComposer({ booking: b, template: t })} />}
       </motion.div>
+      )}
 
       <ArrivalsSheet open={tileSheet === 'arrivals'} onOpenChange={closeTile} model={m} onOpenBooking={fromTile} />
       <IncomeSheet open={tileSheet === 'income'} onOpenChange={closeTile} model={m} />

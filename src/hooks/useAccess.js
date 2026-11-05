@@ -5,6 +5,9 @@ import { computeAccess } from '@/lib/access';
 import { setAccessLocked } from '@/lib/accessLock';
 import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 import { DEMO_ADMIN_EMAILS } from '@/admin/config';
+import { useOnline } from '@/hooks/useOnline';
+import { isNetworkError } from '@/lib/auth/authFailure';
+import { readLastAccess, writeLastAccess, offlineAccess } from '@/lib/lastAccess';
 
 const FORCE_KEY = 'atlas.qa.access';
 const FORCE_VALUES = ['expired', 'trial', 'paid'];
@@ -35,12 +38,23 @@ export function accessUser(user) {
   return { ...user, created_date: undefined, created_at: undefined };
 }
 
-/** Platform staff (platform_admins, migration 011) keep full access. Fails closed: any error → not admin. */
+/**
+ * Platform staff (platform_admins, migration 011) keep full access. Fails closed: a server error → not admin.
+ * A network failure is NOT an answer (audit 05.11 NET-1): it throws, and useAccess falls back to the last
+ * known access instead of locking the owner out with the paywall.
+ */
 async function checkPlatformAdmin(user) {
   if (!user) return false;
   if (!isSupabaseConfigured || !supabase) return DEMO_ADMIN_EMAILS.includes(String(user.email || '').toLowerCase());
   const { data, error } = await supabase.rpc('is_platform_admin');
-  if (error) return false;
+  if (error) {
+    if (isNetworkError(error) || (typeof navigator !== 'undefined' && navigator.onLine === false)) {
+      const e = new Error('platform admin check failed (network)');
+      e.isTransient = true;
+      throw e;
+    }
+    return false;
+  }
   return data === true;
 }
 
@@ -50,6 +64,7 @@ async function checkPlatformAdmin(user) {
  */
 export function useAccess() {
   const { user: authUser } = useAuth();
+  const online = useOnline();
   const user = accessUser(authUser);
   const force = readForcedAccess();
   const base = computeAccess(user, { force });
@@ -57,13 +72,22 @@ export function useAccess() {
   const admin = useQuery({
     queryKey: ['access', 'platform-admin', user?.id || user?.email || ''],
     queryFn: () => checkPlatformAdmin(user),
-    enabled: needAdmin,
+    enabled: needAdmin && online,
     retry: false,
     staleTime: 5 * 60_000,
   });
   const isAdmin = Boolean(user?.is_platform_admin) || admin.data === true;
   const access = computeAccess(user, { force, isAdmin });
-  return { ...access, checking: needAdmin && admin.isLoading };
+  // Audit 05.11 NET-1: no network (or the admin lookup failed on the network) is never "expired".
+  // Keep the last access this device saw online for this account; with none, keep the app open (read-only
+  // in practice: every write fails offline, and the database stays the real gate).
+  const unknown = needAdmin && admin.data === undefined && (!online || (admin.isError && admin.error?.isTransient));
+  const uid = user?.id || '';
+  useEffect(() => {
+    if (uid && online && !force && !unknown && !(needAdmin && admin.isLoading)) writeLastAccess(uid, access);
+  }, [uid, online, force, unknown, needAdmin, admin.isLoading, access.locked, access.state, access.isAdmin]);
+  if (unknown) return { ...offlineAccess(access, readLastAccess(uid)), checking: false, offline: true };
+  return { ...access, checking: needAdmin && online && admin.isLoading, offline: !online };
 }
 
 /** Keeps the API-layer write lock (src/lib/accessLock.js) in step with the account. Mounted once in App. */

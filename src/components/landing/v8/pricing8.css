@@ -49,7 +49,7 @@
 .v8p-table thead th { padding: 10px 2px; font-size: 14px; font-weight: 800; color: var(--navy); text-align: center; vertical-align: bottom; }
 .v8p-table thead th:first-child { width: 40%; }
 .v8p-table thead th.is-pop { color: var(--indigo); }
-.v8p-mini { display: block; margin-top: 2px; font-size: 11px; font-weight: 700; color: var(--indigo); }
+.v8p-mini { display: block; margin-top: 2px; font-size: 12px; font-weight: 700; color: var(--indigo); }
 .v8p-table tbody th { padding: 10px 6px 10px 0; text-align: start; font-weight: 500; color: var(--ink); line-height: 1.4; }
 .v8p-table tbody td { padding: 10px 2px; text-align: center; vertical-align: middle; color: var(--navy); font-weight: 700; }
 .v8p-table tbody tr { border-top: 1px solid var(--line); }

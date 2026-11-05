@@ -3,6 +3,7 @@
  * All modules MUST use these hooks/services. No direct supabase.from() calls.
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { OFFLINE_SAVE_MESSAGE } from '@/lib/offline';
 import { base44 } from '@/api/base44Client';
 import { STALE_LIVE_MS, STALE_REFERENCE_MS } from '@/lib/queryStaleTimes';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
@@ -73,15 +74,21 @@ export function useUpdateBooking() {
       await qc.cancelQueries({ queryKey: [CACHE_KEYS.bookings] });
       const previousBookings = snapshotBookingQueries(qc);
       patchBookingInAllBookingQueries(qc, id, data);
+      // The booking page reads ['booking', id] (src/pages/BookingDetail.jsx): patch it too, or its status menu
+      // kept showing the old value after a change (launch fixes 05.11, found while testing UX-1).
+      await qc.cancelQueries({ queryKey: ['booking', id] });
+      const previousDetail = qc.getQueryData(['booking', id]);
+      if (previousDetail) qc.setQueryData(['booking', id], { ...previousDetail, ...data });
       setOptimisticEntityPhase(id, 'pending');
       // Failure toast is raised in onError only. (A 200ms timer here fired on every
       // request slower than 200ms, showing "operation failed" after successful saves.)
       const rollbackToastTimer = null;
-      return { previousBookings, rollbackToastTimer, bookingId: id };
+      return { previousBookings, previousDetail, rollbackToastTimer, bookingId: id };
     },
     onError: (err, variables, context) => {
       if (context?.rollbackToastTimer) window.clearTimeout(context.rollbackToastTimer);
       restoreBookingQueriesSnapshot(qc, context?.previousBookings);
+      if (context?.previousDetail && variables?.id) qc.setQueryData(['booking', variables.id], context.previousDetail);
       const id = variables?.id;
       if (id) setOptimisticEntityPhase(id, 'rollback');
       const status = getErrorHttpStatus(err);
@@ -99,13 +106,14 @@ export function useUpdateBooking() {
         );
       }
       if (status !== 409) {
-        atlasToastApi.error('לא הצלחנו לשמור, אז השינויים בוטלו. נסו שוב.');
+        atlasToastApi.error(err?.isOffline ? OFFLINE_SAVE_MESSAGE : 'לא הצלחנו לשמור, אז השינויים בוטלו. נסו שוב.');
       }
     },
     onSettled: (_d, err, _v, context) => {
       if (context?.rollbackToastTimer) window.clearTimeout(context.rollbackToastTimer);
       if (!err && context?.bookingId) setOptimisticEntityPhase(context.bookingId, 'idle');
       qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings] });
+      if (context?.bookingId) qc.invalidateQueries({ queryKey: ['booking', context.bookingId] });
     },
   });
 }

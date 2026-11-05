@@ -158,7 +158,7 @@ export function WhatsAppPreview({ text, title = 'נועה כהן', className }) 
 const HOWTO = {
   BOOKING_COM: [
     'נכנסים ל-Booking.com לניהול הנכס (Extranet)',
-    'תעריפים וזמינות ← סנכרון לוחות שנה ← ייצוא',
+    'תעריפים וזמינות ← סנכרון יומנים ← ייצוא',
     'מעתיקים את הקישור ומדביקים כאן',
   ],
   AIRBNB: [

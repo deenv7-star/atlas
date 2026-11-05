@@ -151,7 +151,8 @@ function LayoutContent({ children, currentPageName }) {
               <Suspense fallback={null}><AssistantPanel /></Suspense>
             </ErrorBoundary>
           ) : null}
-          <IOSInstallBanner />
+          {/* Audit 05.11 UI-5: only on Today, never over the assistant (panel or page) or any input. */}
+          <IOSInstallBanner hidden={assistant.isOpen || currentPageName !== "Dashboard"} />
         </div>
         <TourHost user={user} />
       </div>

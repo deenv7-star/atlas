@@ -125,9 +125,10 @@ export function actionsColumn<T extends object>(id: string, header: string, getA
   return {
     id,
     header,
-    size: 56,
-    minSize: 52,
-    maxSize: 64,
+    // 44px tap target plus the cell padding (launch audit 05.11 UI-1: it was squeezed to 41px).
+    size: 68,
+    minSize: 64,
+    maxSize: 76,
     enableSorting: false,
     enableHiding: false,
     cell: ({ row }) => {
@@ -137,7 +138,7 @@ export function actionsColumn<T extends object>(id: string, header: string, getA
         <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button type="button" variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="פעולות">
+              <Button type="button" variant="ghost" size="icon" className="h-11 w-11 min-w-11 shrink-0" aria-label="פעולות">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

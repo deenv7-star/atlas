@@ -19,9 +19,10 @@ import { Wordmark, useIsActive, UserMenu } from '@/components/app/shell/shared';
 import { GuestAvatar } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { useLiquidLens } from './useLiquidLens';
-import TodayBackdrop, { TODAY_PAGES } from './TodayBackdrop';
+import TodayBackdrop, { TODAY_PAGES, APP_BG } from './TodayBackdrop';
 import './y2.css';
 import './y-bg.css';
+import './y-bg-story.css';
 import './y-atlas-tab.css';
 import './y-nav.css';
 
@@ -91,7 +92,7 @@ export function Sidebar({ user, onLogout }) {
         <Link to={createPageUrl('Settings')} className="y2-ri press" aria-label="הגדרות"><Settings strokeWidth={1.75} /><span>הגדרות</span></Link>
         <UserMenu user={user} onLogout={onLogout} side="left">
           <button type="button" aria-label="החשבון שלי" className="y2-rail-me press">
-            <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={44} />
+            <span aria-hidden="true" className="contents"><GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={44} /></span>
           </button>
         </UserMenu>
       </div>
@@ -112,11 +113,12 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
     const shell = document.querySelector('.y2-shell');
     if (!shell) return undefined;
     shell.dataset.page = currentPageName || '';
-    return () => { delete shell.dataset.page; };
+    shell.dataset.bg = APP_BG;
+    return () => { delete shell.dataset.page; delete shell.dataset.bg; };
   }, [currentPageName]);
   return (
     <>
-    <TodayBackdrop on={TODAY_PAGES.has(currentPageName || '')} />
+    <TodayBackdrop on={APP_BG !== 'off' || TODAY_PAGES.has(currentPageName || '')} />
     <header className="y2-head y2-nav">
       <div className="y2-bar">
         <Link to={createPageUrl('Dashboard')} aria-label="atlas, מסך היום" className="y2-bar-logo"><Wordmark size={19} /></Link>
@@ -130,7 +132,7 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         <button type="button" className="y2-gb y2-gb--ind press" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
         <UserMenu user={user} onLogout={onLogout} hideMore>
           <button type="button" aria-label="החשבון שלי" className="y2-bar-me press">
-            <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} />
+            <span aria-hidden="true" className="contents"><GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} /></span>
           </button>
         </UserMenu>
       </div>
