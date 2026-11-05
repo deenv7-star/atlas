@@ -154,7 +154,7 @@ export default function MobileTiles(props) {
     return 0.16;
   });
   const nowH = new Date().getHours() - 8;
-  const daysToNext = next ? daysBetween(m.day, next.check_in_date) : null;
+  const soon = act.filter((b) => b.check_in_date > m.day && daysBetween(m.day, b.check_in_date) <= 30);
 
   if (noUnits) return <div className="tl"><Hello m={m} name={name} arrivals={[]} departures={[]} quiet onTile={onTile} /><ImportEntryCard where="today" className="y-first-unit-import" /></div>;
 
@@ -181,10 +181,11 @@ export default function MobileTiles(props) {
                 <span className="tl-tn"><Num value={arrivals.length} /><span>{one(arrivals.length, 'הגעה', 'הגעות')} · {departures.length} {one(departures.length, 'יציאה', 'יציאות')}</span></span>
               </Tile>
             ) : next ? (
-              <Tile i={0} label={`ההגעה הבאה: ${guestLabel(next)} בעוד ${daysToNext} ימים`} onClick={() => openBooking(next)} className="is-ind">
-                <span className="tl-tk">ההגעה הבאה</span>
-                <span className="tl-viz tl-cd"><Face name={next.guest_name || ''} size={40} ring /><b dir="auto">{firstName(next.guest_name || '') || guestLabel(next)}</b></span>
-                <span className="tl-tn">{daysToNext === 1 ? <span className="tl-word">מחר</span> : <><Num value={daysToNext} delay={120} /><span>ימים · {formatDayHe(next.check_in_date, { weekday: false })}</span></>}</span>
+              /* quiet day: the hero below already counts down to the next guest, so this tile says how many are coming */
+              <Tile i={0} label={`${soon.length} הזמנות ב-30 הימים הבאים. לכל ההזמנות`} to="/bookings" className="is-ind">
+                <span className="tl-tk">בקרוב<FaceStack names={soon.map((x) => x.guest_name || '').filter((x) => x.trim())} size={24} max={3} /></span>
+                <span className="tl-viz tl-empty">ב-30 הימים הבאים</span>
+                <span className="tl-tn"><Num value={soon.length} delay={120} /><span>{one(soon.length, 'הגעה', 'הגעות')}</span></span>
               </Tile>
             ) : (
               <Tile i={0} label="אין הגעות קרובות. הוספת הזמנה" onClick={onAdd}>
