@@ -27,9 +27,11 @@ export function briefVariant() {
 
 const freeNights = (n) => (n === 1 ? 'לילה פנוי אחד' : `${n} לילות פנויים`);
 
+/** { name: 'נובמבר' | 'השבוע', inName: 'בנובמבר' | 'השבוע' } */
 function periodWord(view, days, today) {
-  if (view === 'week') return days.includes(today) ? 'השבוע' : 'בשבוע הזה';
-  return `ב${HE_MONTHS[parseIso(days[Math.floor(days.length / 2)]).getMonth()]}`;
+  if (view === 'week') { const w = days.includes(today) ? 'השבוע' : 'בשבוע הזה'; return { name: w, inName: w }; }
+  const m = HE_MONTHS[parseIso(days[Math.floor(days.length / 2)]).getMonth()];
+  return { name: m, inName: `ב${m}` };
 }
 
 /** The actions worth taking, most useful first, max two. Each opens a new booking already filled in. */
@@ -47,8 +49,8 @@ function actionsOf(b) {
 /** Version A: the whole status in one sentence. */
 function sentenceA(b, period) {
   const parts = [];
-  if (b.empty) parts.push(`${period} עוד אין הזמנות.`);
-  else parts.push(`${period} ${b.pct}% תפוסה${b.arrivals ? `, ${b.arrivals === 1 ? 'הגעה אחת' : `${b.arrivals} הגעות`}` : ''}.`);
+  if (b.empty) parts.push(`${period.inName} עוד אין הזמנות.`);
+  else parts.push(`${period.name}: ${b.pct}% תפוסה${b.arrivals ? `, ${b.arrivals === 1 ? 'הגעה אחת' : `${b.arrivals} הגעות`}` : ''}.`);
   if (b.weekend) {
     parts.push(b.weekend.free
       ? `בסוף השבוע (${b.weekend.label}) עוד ${freeNights(b.weekend.free)}.`
@@ -83,7 +85,7 @@ export default function CalendarBrief({ variant = 'a', view = 'month', days, tod
 
   if (variant === 'b') {
     const facts = [
-      { k: view === 'week' ? 'תפוסה השבוע' : `תפוסה ${period}`, v: b.empty ? 'אין הזמנות' : `${b.pct}%`, sub: b.empty ? '' : `${b.booked} מתוך ${heCount(b.total, 'night')}` },
+      { k: view === 'week' ? 'תפוסה השבוע' : `תפוסה ${period.inName}`, v: b.empty ? 'אין הזמנות' : `${b.pct}%`, sub: b.empty ? '' : `${b.booked} מתוך ${heCount(b.total, 'night')}` },
       b.weekend ? { k: `סוף השבוע · ${b.weekend.label}`, v: b.weekend.free ? freeNights(b.weekend.free) : 'מלא', sub: b.weekend.free ? (b.weekend.freeUnits === 1 ? 'ביחידה אחת' : `ב־${b.weekend.freeUnits} יחידות`) : '' } : null,
       { k: 'בין הזמנות', v: b.gaps ? freeNights(b.gaps.nights) : 'אין חורים', sub: b.gaps ? 'לילות שקשה למכור לבד' : '' },
     ].filter(Boolean);
