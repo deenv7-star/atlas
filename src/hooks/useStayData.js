@@ -111,7 +111,7 @@ export function useStayMutations() {
 
   const updateBooking = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
-    onSuccess: () => { invalidate(STAY_KEYS.bookings); invalidateGlobal('bookings'); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: STAY_KEYS.bookings, refetchType: 'all' }); qc.invalidateQueries({ queryKey: ['bookings'], refetchType: 'all' }); }, // UX-2
   });
   const createPayment = useMutation({
     mutationFn: (data) => base44.entities.Payment.create(data),

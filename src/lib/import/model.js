@@ -68,6 +68,20 @@ export function summaryChips(r) {
   return chips;
 }
 
+/** audit 05.11 COPY-1: Airbnb sends English district names ("North District"); show them in Hebrew or not at all. */
+const REGION_HE = [
+  [/^north(ern)?( district)?$/i, 'מחוז הצפון'], [/^haifa( district)?$/i, 'מחוז חיפה'], [/^cent(er|re|ral)( district)?$/i, 'מחוז המרכז'],
+  [/^tel[- ]aviv( district)?$/i, 'מחוז תל אביב'], [/^jerusalem( district)?$/i, 'מחוז ירושלים'], [/^south(ern)?( district)?$/i, 'מחוז הדרום'],
+  [/^(judea and samaria|judea & samaria)( area| district)?$/i, 'יהודה ושומרון'], [/^golan( heights)?$/i, 'רמת הגולן'],
+];
+export function regionHe(region) {
+  const v = String(region || '').trim();
+  if (!v) return '';
+  if (/[\u0590-\u05FF]/.test(v)) return v;
+  const hit = REGION_HE.find(([re]) => re.test(v));
+  return hit ? hit[1] : '';
+}
+
 /** Friendly rows for the preview: what we found, each tappable to fix. `check` = medium/low confidence. */
 export function foundRows(r) {
   if (!r) return [];
@@ -75,7 +89,7 @@ export function foundRows(r) {
   const add = (id, title, value, field = id) => { if (value) rows.push({ id, title, value, check: ['medium', 'low'].includes(conf(r, field)) }); };
   add('business_name', 'שם המתחם', r.business_name);
   if (r.property_type || r.unit_count) add('unit_count', 'יחידות', [r.property_type ? kindInfo(r.property_type).label : '', r.unit_count ? unitsLabelHe(r.property_type, r.unit_count) : ''].filter(Boolean).join(' · '));
-  add('location', 'מיקום', [r.location?.address && !String(r.location.address).includes(r.location?.locality || '@@') ? r.location.address : '', r.location?.locality, r.location?.region].filter(Boolean).join(', ') || null);
+  add('location', 'מיקום', [r.location?.address && !String(r.location.address).includes(r.location?.locality || '@@') ? r.location.address : '', r.location?.locality, regionHe(r.location?.region)].filter(Boolean).join(', ') || null);
   if (r.check_in_time || r.check_out_time) add('check_in_time', 'שעות', [r.check_in_time && `כניסה ${r.check_in_time}`, r.check_out_time && `יציאה ${r.check_out_time}`].filter(Boolean).join(' · '));
   add('parking', 'חניה', r.parking);
   add('arrival_instructions', 'כניסה למתחם', r.arrival_instructions);

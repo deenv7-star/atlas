@@ -7,7 +7,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import * as D from '@radix-ui/react-dialog';
-import { X, ChevronLeft, MessageCircle, Plus, Check } from 'lucide-react';
+import { X, ChevronLeft, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
 import { formatDayHe } from '@/lib/stay/format';
@@ -256,36 +256,5 @@ export function DaySheet({ open, onOpenChange, model, onDo }) {
         </ul>
       )}
     </Sheet>
-  );
-}
-
-/**
- * Empty account (units, no bookings), ecosystem v1 #2: no board of zeros. One setup card with 3 steps; the unit
- * step is already done (units exist), the next two are the actions.
- */
-export function NoBookingsCard({ onAdd }) {
-  const steps = [
-    { t: 'הוסיפו יחידה', done: true },
-    { t: 'חברו את Booking או Airbnb' },
-    { t: 'הוסיפו הזמנה ראשונה' },
-  ];
-  return (
-    <section className="yt-nobook" aria-labelledby="yt-nobook-h">
-      <div>
-        <h2 id="yt-nobook-h">נתחיל מההזמנה הראשונה</h2>
-        <ol className="yt-nobook-steps">
-          {steps.map((s, i) => (
-            <li key={s.t} className={cn(s.done && 'is-done')}>
-              <i aria-hidden>{s.done ? <Check strokeWidth={2.5} /> : i + 1}</i>
-              <span>{s.t}{s.done ? <span className="sr-only"> (בוצע)</span> : null}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div className="yt-nobook-a">
-        <button type="button" className="yt-go press" onClick={onAdd}><Plus strokeWidth={2} aria-hidden />הוספת הזמנה</button>
-        <Link to={createPageUrl('Integrations')} className="yt-ghost press">חיבור ערוצים</Link>
-      </div>
-    </section>
   );
 }

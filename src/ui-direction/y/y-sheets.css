@@ -79,15 +79,7 @@
 .y2-chart .y2-card-h { position: relative; }
 .y2-hello-chip { border: 0; font: inherit; cursor: pointer; }
 
-/* no bookings yet */
-.yt-nobook { display: flex; flex-direction: column; gap: 14px; margin: 0 0 12px; padding: 18px; border-radius: 24px; background: #fff; color: #1B2656;
-  box-shadow: 0 0 0 1px rgba(27,38,86,.06), 0 20px 36px -28px rgba(27,38,86,.4); }
-.yt-nobook h2 { margin: 0; font-size: 18px; font-weight: 700; }
-.yt-nobook p { text-wrap: balance; margin: 4px 0 0; font-size: 14px; color: rgba(27,38,86,.66); }
-.yt-nobook-a { display: flex; gap: 8px; flex-wrap: wrap; }
-.yt-nobook-a .yt-go { width: auto; flex: 1 1 160px; min-height: 48px; padding: 0 16px; }
 .yt-ghost { display: inline-flex; align-items: center; justify-content: center; flex: 1 1 120px; min-height: 48px; padding: 0 16px; border-radius: 16px; background: #F7F8FB; color: #1B2656; font-size: 15px; font-weight: 600; }
-@media (min-width: 1024px) { .yt-nobook { flex-direction: row; align-items: center; justify-content: space-between; } .yt-nobook-a { flex-wrap: nowrap; } }
 
 /* ecosystem v1 #21: the payment row is avatar · name · amount + one 44px WhatsApp icon; "באיחור" in danger */
 .yt-row:has(.yt-wa-i) { display: flex; align-items: center; padding-inline-end: 8px; }
@@ -97,13 +89,3 @@
 .yt-wa-i svg { width: 20px; height: 20px; }
 .yt-danger { color: #B4303A; }
 
-/* ecosystem v1 #2: the first-day setup card, 3 steps */
-.yt-nobook-steps { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.yt-nobook-steps li { display: flex; align-items: center; gap: 10px; font-size: 15px; color: #1B2656; }
-.yt-nobook-steps i { flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; font-style: normal; font-size: 13px; font-weight: 700;
-  background: rgba(62,43,241,.08); color: #3E2BF1; }
-.yt-nobook-steps i svg { width: 14px; height: 14px; }
-.yt-nobook-steps li.is-done { color: #4A5578; }
-.yt-nobook-steps li.is-done > span { text-decoration: line-through; text-decoration-color: rgba(27,38,86,.3); }
-.yt-nobook-steps li.is-done i { background: #3E2BF1; color: #fff; }
-.yt-nobook h2 { font-size: 20px; }

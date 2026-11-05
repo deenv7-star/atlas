@@ -65,7 +65,10 @@ export function guestInitials(name = '') {
   const parts = clean.split(/\s+/).filter((p) => p && p !== 'ו' && !/^ו?[״"']/.test(p));
   if (!parts.length) return 'א';
   const first = parts[0][0] || '';
-  const second = parts.length > 1 ? (parts[parts.length - 1].replace(/^ו/, '')[0] || '') : '';
+  let second = parts.length > 1 ? (parts[parts.length - 1].replace(/^ו/, '')[0] || '') : '';
+  // audit 05.11 UI-4: never mix scripts in one avatar ('QA-TEST אורח' was 'Qא')
+  const heb = (c) => /[\u0590-\u05FF]/.test(c);
+  if (second && heb(second) !== heb(first)) second = '';
   return (first + second).toUpperCase();
 }
 /**

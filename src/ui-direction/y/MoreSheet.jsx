@@ -6,8 +6,10 @@
  */
 import React, { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import * as D from '@radix-ui/react-dialog';
-import { X, Search, Plus, Receipt, UserPlus, LifeBuoy, ChevronLeft } from 'lucide-react';
+import { X, Search, Plus, Receipt, UserPlus, LifeBuoy, ChevronLeft, UserRound } from 'lucide-react';
+import { formatDayHe } from '@/lib/stay/format';
 import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
 import { DB_FEATURES } from '@/config/dbFeatures';
@@ -84,6 +86,21 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
   const term = q.trim().toLowerCase();
   const shown = term ? screens.filter((s) => `${s.label} ${ALIASES[s.page] || ''}`.toLowerCase().includes(term)) : screens;
 
+  // audit 05.11 UX-5: guests/bookings already on the device show inline (top 5), no extra tap; no network call here.
+  const qc = useQueryClient();
+  const people = useMemo(() => {
+    if (term.length < 2) return [];
+    const seen = new Map();
+    for (const [, data] of qc.getQueriesData({ queryKey: ['bookings'] })) {
+      if (!Array.isArray(data)) continue;
+      for (const b of data) {
+        if (!b?.id || seen.has(b.id)) continue;
+        const hay = `${b.guest_name || ''} ${b.guest_phone || ''}`.toLowerCase();
+        if (hay.includes(term)) seen.set(b.id, b);
+      }
+    }
+    return [...seen.values()].sort((a, b) => String(b.check_in_date || '').localeCompare(String(a.check_in_date || ''))).slice(0, 5);
+  }, [qc, term, open]);
   const close = () => { onOpenChange(false); setQ(''); };
   const go = (page, state) => { close(); navigate(createPageUrl(page), state ? { state } : undefined); };
   const actions = [
@@ -128,7 +145,24 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
             </button>
           ) : null}
 
-          {(term ? [{ id: 'found', label: null, items: shown }] : sections).map((g) => (
+          {people.length ? (
+            <section className="ycm-group" aria-label="אורחים והזמנות">
+              <p className="ycm-sec">אורחים והזמנות</p>
+              <ul className="ycm-list">
+                {people.map((b) => (
+                  <li key={b.id}>
+                    <button type="button" className="ycm-row press" onClick={() => { close(); navigate(`${createPageUrl('BookingDetail')}/${b.id}`); }}>
+                      <UserRound strokeWidth={1.75} aria-hidden className="ycm-row-ic" />
+                      <span className="ycm-lb">{b.guest_name || 'אורח'}{b.check_in_date ? <span className="ycm-meta"> · {formatDayHe(b.check_in_date, { weekday: false })}</span> : null}</span>
+                      <ChevronLeft strokeWidth={1.75} aria-hidden className="ycm-row-chev" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {(term ? (shown.length ? [{ id: 'found', label: people.length ? 'מסכים' : null, items: shown }] : []) : sections).map((g) => (
             <section key={g.id} className="ycm-group" aria-label={g.label || 'תוצאות'}>
               {g.label ? <p className="ycm-sec">{g.label}</p> : null}
               {g.items.length ? (
@@ -149,7 +183,7 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
               ) : null}
             </section>
           ))}
-          {term && !shown.length ? <p className="ycm-none">אין מסך בשם הזה. אפשר לחפש אותו באורחים ובהזמנות.</p> : null}
+          {term && !shown.length && !people.length ? <p className="ycm-none">אין מסך בשם הזה. אפשר לחפש אותו באורחים ובהזמנות.</p> : null}
 
           {HELP_ENABLED && !term ? (
             <button type="button" className="ycm-help press" onClick={() => { close(); window.setTimeout(openHelp, 0); }}>

@@ -229,10 +229,11 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                       key={s.id}
                       {...barProps}
                       className={cn('absolute top-[8px] z-10 block h-[44px]', sliver && 'pointer-events-none', optimisticEntityClassName(s.id))}
-                      style={{ right: `calc(${(seg.from / n) * 100}% + 1px)`, width: `calc(${(w / n) * 100}% - 2px)` }}
+                      // 05.11 corners: the link spans the full day columns (≥44px at 1440 for a 1-night stay); the drawn bar keeps its 1px inset
+                      style={{ right: `${(seg.from / n) * 100}%`, width: `${(w / n) * 100}%` }}
                     >
                       <span className={cn(
-                        'press flex h-full flex-col justify-center gap-0.5 overflow-hidden px-2.5 text-[13px] leading-tight',
+                        'press mx-px flex h-full flex-col justify-center gap-0.5 overflow-hidden px-2.5 text-[13px] leading-tight',
                         seg.startsHere ? 'rounded-s-[14px]' : 'rounded-s-[4px]',
                         seg.endsHere ? 'rounded-e-[14px]' : 'rounded-e-[4px]',
                         s.isBlock ? 'bg-[repeating-linear-gradient(135deg,rgba(27,38,86,0.06),rgba(27,38,86,0.06)_5px,rgba(27,38,86,0.11)_5px,rgba(27,38,86,0.11)_10px)] text-navy-900/70'

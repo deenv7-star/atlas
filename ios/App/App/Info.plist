@@ -5,7 +5,11 @@
     <key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>he</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>he</string>
+	</array>
 	<key>CFBundleDisplayName</key>
         <string>atlas</string>
 	<key>CFBundleExecutable</key>
@@ -67,8 +71,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>

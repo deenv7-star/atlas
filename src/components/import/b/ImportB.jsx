@@ -9,7 +9,7 @@ import { ArrowRight, Check, MessageCircle, Mic, Globe } from 'lucide-react';
 import { Wordmark } from '@/components/app/shell/shared';
 import { HELP_WA } from '@/components/onboarding/v2/ui';
 import { firstName } from '@/components/onboarding/y/model';
-import { linkOk, stillMissing } from '@/lib/import/model';
+import { linkOk, linkKind, stillMissing } from '@/lib/import/model';
 import { useImportFlow, useSave, LinksEditor, ReadingList, PreviewCard, QuestionInput, FallbackInputs, SaveList, foundSentence } from '../shared';
 import './b.css';
 
@@ -44,6 +44,8 @@ export default function ImportB({ user }) {
   });
 
   const okLinks = s.links.filter(linkOk);
+  // audit 05.11 COPY-1: a website import is 'האתר', not 'המודעה'
+  const siteOnly = okLinks.length > 0 && okLinks.every((l) => linkKind(l).kind === 'site');
   const total = s.queue.length;
   const left = stillMissing(s.draft || {}, s.skipped);
   const key = s.phase === 'ask' ? `ask-${q?.id}` : s.phase;
@@ -67,7 +69,7 @@ export default function ImportB({ user }) {
       </>
     );
   } else if (s.phase === 'reading') {
-    head = { title: s.mode === 'fallback' ? 'קוראים את מה ששלחתם' : 'קוראים את המודעה', sub: 'זה לוקח כחצי דקה. אפשר להישאר כאן.' };
+    head = { title: s.mode === 'fallback' ? 'קוראים את מה ששלחתם' : siteOnly ? 'קוראים את האתר' : 'קוראים את המודעה', sub: 'זה לוקח כחצי דקה. אפשר להישאר כאן.' };
     body = (
       <>
         <div className="imb-skel" aria-hidden><i /><span /><span /><span /></div>
@@ -90,7 +92,7 @@ export default function ImportB({ user }) {
     );
   } else if (s.phase === 'found') {
     head = { eyebrow: foundSentence(s.draft) || 'מצאנו', title: 'מצאנו את המתחם שלכם', sub: 'בדקו שהכל נכון. נגיעה בשורה מתקנת אותה.' };
-    body = <PreviewCard draft={s.draft} onFix={f.fix} eyebrow="מהמודעה שלכם" />;
+    body = <PreviewCard draft={s.draft} onFix={f.fix} eyebrow={s.mode === 'fallback' ? 'ממה ששלחתם' : siteOnly ? 'מהאתר שלכם' : 'מהמודעה שלכם'} />;
     foot = (
       <>
         <button type="button" className="im-btn im-press" onClick={f.confirm}><Check aria-hidden />נכון, ממשיכים</button>

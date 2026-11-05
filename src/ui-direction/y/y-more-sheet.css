@@ -77,3 +77,6 @@
 .ycm-find, .ycm-help { font-size: 15px; }
 .ycm-none { font-size: 15px; }
 @media (max-width: 349px) { .ycm-act { font-size: 13px; } }
+
+/* audit 05.11 UX-5: inline guest/booking matches */
+.ycm-meta { font-weight: 400; color: rgba(27,38,86,.72); }
