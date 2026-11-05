@@ -36,6 +36,20 @@ const FLOWS = {
   ],
 };
 
+/**
+ * A named iCal site from the integrations hub (Vrbo, Expedia, Google Calendar…): the same ICAL flow, with that
+ * site's own "where to copy" step, its own way back (or none, for a read-only source like Google Calendar).
+ */
+function icalFlowFor(site) {
+  if (!site || !site.copy) return FLOWS.ICAL;
+  const steps = [
+    { kind: 'guide', mock: null, title: site.copy.title, text: () => '', steps: site.copy.steps, open: !!site.open, siteNote: site.note },
+    { kind: 'paste' },
+  ];
+  if (site.back) steps.push({ kind: 'export', mock: null, items: site.back });
+  return steps;
+}
+
 function PickChannel({ unit, onPick }) {
   const opts = [
     { k: 'AIRBNB', line: 'לוח השנה של Airbnb' },
@@ -73,7 +87,7 @@ function HelpLine({ unit }) {
   );
 }
 
-export default function ConnectWizard({ property, orgId, existing, onClose, onDone, initialChannel = '' }) {
+export default function ConnectWizard({ property, orgId, existing, onClose, onDone, initialChannel = '', site = null }) {
   const unit = property?.name || 'היחידה';
   const [channel, setChannel] = useState(initialChannel);
   const [i, setI] = useState(0);
@@ -81,11 +95,13 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const { connect, busy } = useConnect({ orgId, property, existing });
+  const siteName = site && site.copy ? site.name : '';
 
-  const flow = channel ? FLOWS[channel] : null;
+  const flow = channel ? (channel === 'ICAL' ? icalFlowFor(site) : FLOWS[channel]) : null;
   const step = flow && i < flow.length ? flow[i] : null;
   const done = flow && i >= flow.length;
-  const C = CHANNELS[result?.channel || channel] || CHANNELS.ICAL;
+  const C0 = CHANNELS[result?.channel || channel] || CHANNELS.ICAL;
+  const C = siteName && (result?.channel || channel) === 'ICAL' ? { ...C0, name: siteName, pullsEvery: site.pullsEvery || C0.pullsEvery } : C0;
   const total = flow ? flow.length : 0;
   const check = checkPasted(link, { exportToken: property?.ical_export_token });
 
@@ -100,7 +116,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
   const submit = async () => {
     if (!check.ok) return;
     setError('');
-    const r = await connect({ url: check.url, channel: check.channel });
+    const r = await connect({ url: check.url, channel: check.channel, label: check.channel === 'ICAL' && siteName ? siteName : '', provider: check.channel === 'ICAL' && site?.provider ? site.provider : '' });
     if (!r.ok) { setError(r.message); return; }
     setResult({ ...r, channel: check.channel });
     onDone?.();
@@ -118,16 +134,19 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         <p className="ch-kicker">שלב {i + 1} מתוך {total}</p>
         <h1 className="ch-h1" tabIndex={-1}>{step.title}</h1>
         {step.en ? <p className="ch-en">באנגלית: <bdi dir="ltr">{step.en}</bdi></p> : null}
-        <p className="ch-sub"><Bidi text={step.text(unit)} /></p>
-        <ScreenMock id={step.mock} caption={step.title} />
+        {step.steps ? (
+          <ol className="ch-list">{step.steps.map((t) => <li key={t}><Bidi text={t} /></li>)}</ol>
+        ) : <p className="ch-sub"><Bidi text={step.text(unit)} /></p>}
+        {step.mock ? <ScreenMock id={step.mock} caption={step.title} /> : null}
+        {step.siteNote ? <p className="ch-note">{step.siteNote}</p> : null}
         {step.note ? <HelpBox unit={unit} title={step.note.title} text={step.note.text} /> : null}
       </>
     );
     footer = (
       <>
         {step.open ? (
-          <a href={CHANNELS[channel].open} target="_blank" rel="noopener noreferrer" className="ch-btn is-primary ch-press" onClick={() => window.setTimeout(() => setI(i + 1), 400)}>
-            פתחו את {CHANNELS[channel].name === 'Booking.com' ? 'Booking' : CHANNELS[channel].name}<ExternalLink strokeWidth={2} aria-hidden />
+          <a href={siteName ? site.open : CHANNELS[channel].open} target="_blank" rel="noopener noreferrer" className="ch-btn is-primary ch-press" onClick={() => window.setTimeout(() => setI(i + 1), 400)}>
+            פתחו את {siteName || (CHANNELS[channel].name === 'Booking.com' ? 'Booking' : CHANNELS[channel].name)}<ExternalLink strokeWidth={2} aria-hidden />
           </a>
         ) : null}
         <button type="button" className={`ch-btn ${step.open ? 'is-ghost' : 'is-primary'} ch-press`} onClick={() => setI(i + 1)}>
@@ -141,7 +160,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
       <>
         <p className="ch-kicker">שלב {i + 1} מתוך {total}</p>
         <h1 className="ch-h1" tabIndex={-1}>הדביקו כאן את הקישור</h1>
-        <p className="ch-sub">{channel === 'ICAL' ? 'את הקישור שהעתקתם מהאתר השני.' : `את הקישור שהעתקתם מ-${CHANNELS[channel].name}.`}</p>
+        <p className="ch-sub">{channel === 'ICAL' ? (siteName ? `את הקישור שהעתקתם מ-${siteName}.` : 'את הקישור שהעתקתם מהאתר השני.') : `את הקישור שהעתקתם מ-${CHANNELS[channel].name}.`}</p>
         <PasteField value={link} onChange={(v) => { setLink(v); setError(''); }} exportToken={property?.ical_export_token} expected={channel} />
         {error ? (
           <div className="ch-err" role="alert"><b>לא הצלחנו לחבר</b><p>{error}</p></div>
@@ -166,7 +185,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         <p className="ch-sub">{channel === 'ICAL' ? 'כדי שגם האתר השני יחסום תאריכים שנתפסו אצלכם.' : `כדי ש-${name} יחסום תאריכים שנתפסו אצלכם בטלפון או בערוץ אחר.`}</p>
         <CopyBig value={exportLinkFor(property, result?.channel || channel)} />
         <ol className="ch-list">{step.items.map((t) => <li key={t}><Bidi text={t} /></li>)}</ol>
-        <ScreenMock id={step.mock} caption="הדבקת הקישור של atlas בערוץ" />
+        {step.mock ? <ScreenMock id={step.mock} caption="הדבקת הקישור של atlas בערוץ" /> : null}
       </>
     );
     footer = (
@@ -187,6 +206,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
           <li>הזמנות מ-{C.name === 'אתר אחר' ? 'האתר השני' : C.name} נכנסות ליומן של atlas לבד. atlas בודק {ATLAS_EVERY}.</li>
           {result?.skippedExport
             ? <li>הכיוון השני עוד לא חובר. אפשר להשלים אותו מכאן בכל רגע.</li>
+            : flow && !flow.some((st) => st.kind === 'export') ? <li>זה חיבור בכיוון אחד: atlas קורא את {C.name}, ולא כותב אליו.</li>
             : <li>{C.name === 'אתר אחר' ? 'האתר השני' : C.name} בודק את atlas {C.pullsEvery}, ולכן הזמנה חדשה נחסמת שם תוך כמה שעות.</li>}
           {result?.warning ? <li>{result.warning}</li> : null}
         </ul>
@@ -203,7 +223,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
 
   return (
     <Sheet
-      title={channel ? `חיבור ${CHANNELS[channel].name === 'אתר אחר' ? 'יומן' : CHANNELS[channel].name}` : 'חיבור ערוץ'}
+      title={channel ? `חיבור ${siteName || (CHANNELS[channel].name === 'אתר אחר' ? 'יומן' : CHANNELS[channel].name)}` : 'חיבור ערוץ'}
       label={`חיבור ערוץ ל${unit}`}
       onClose={onClose}
       onBack={done ? null : back}
