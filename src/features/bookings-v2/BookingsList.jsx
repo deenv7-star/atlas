@@ -27,20 +27,20 @@ export function BookingRow({ booking: b, model: m, selected, onOpen }) {
         type="button"
         className={cn('bk2-row press', selected && 'is-sel', isCancelled(b) && 'is-off')}
         aria-current={selected ? 'true' : undefined}
-        aria-label={`${name}, ${unit?.name ? `${unit.name}, ` : ''}${src.label}, ${formatRangeHe(b.check_in_date, checkOutOf(b))}, ${nightsLabel(n)}${bal.total ? `, ${ils(bal.total)}` : ''}${pay.label ? `, ${pay.label}` : ''}${showStatus ? `, ${st.label}` : ''}`}
         onClick={() => onOpen(b)}
       >
         <Face name={b.guest_name || ''} size={44} />
         <span className="bk2-row-who">
           <b dir="auto">{name}</b>
-          <small>{unit?.name ? <bdi>{unit.name}</bdi> : null}{unit?.name ? <i aria-hidden> · </i> : null}<span className="bk2-row-dm">{formatRangeHe(b.check_in_date, checkOutOf(b))} · {nightsLabel(n)}</span></small>
+          <small className="bk2-row-dm">{formatRangeHe(b.check_in_date, checkOutOf(b))} · {nightsLabel(n)}</small>
+          {unit?.name ? <small className="bk2-row-unit-d"><bdi>{unit.name}</bdi></small> : null}
         </span>
-        <span className="bk2-row-when" aria-hidden><b>{formatRangeHe(b.check_in_date, checkOutOf(b))}</b><small>{nightsLabel(n)}</small></span>
-        <span className="bk2-row-money" aria-hidden>
+        <span className="bk2-row-when" ><b>{formatRangeHe(b.check_in_date, checkOutOf(b))}</b><small>{nightsLabel(n)}</small></span>
+        <span className="bk2-row-money">
           <b dir="ltr">{bal.total ? ils(bal.total) : '—'}</b>
           {pay.label ? <Chip kind={pay.key}>{pay.label}</Chip> : null}
         </span>
-        <span className="bk2-row-tags" aria-hidden>{showStatus ? <Chip kind={st.key}>{st.label}</Chip> : null}<Chip kind="src">{src.label}</Chip></span>
+        <span className="bk2-row-tags">{unit?.name ? <span className="bk2-row-unit-m"><bdi>{unit.name}</bdi></span> : null}{showStatus ? <Chip kind={st.key}>{st.label}</Chip> : null}{src.key !== 'direct' ? <Chip kind="src">{src.label}</Chip> : null}</span>
         <ChevronLeft className="bk2-row-chev" aria-hidden strokeWidth={1.75} />
       </button>
     </li>

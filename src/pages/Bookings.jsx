@@ -28,6 +28,8 @@ import { useBookingsUrlState } from '@/hooks/url-state/useBookingsUrlState';
 import { WhatsAppComposer } from '@/components/stay/WhatsAppComposer';
 import { RecordPaymentSheet } from '@/components/stay/RecordPaymentSheet';
 import { dueTemplateFor } from '@/lib/stay/whatsapp';
+import { formatRangeHe } from '@/lib/stay/format';
+import { checkOutOf } from '@/lib/stay/bookings';
 import { useTodayModel, guestLabel } from '@/ui-direction/y/model';
 import { BookingGroups } from '@/features/bookings-v2/BookingsList';
 import { BookingDrawer } from '@/features/bookings-v2/BookingDrawer';
@@ -113,7 +115,10 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
   const rows = useMemo(() => searched.filter((b) => matchesChip(chip, b, day, m.balanceFor(b))), [searched, chip, day, m]);
   const groups = useMemo(() => groupRows(chip, rows, day), [chip, rows, day]);
   const attention = useMemo(() => (variant === 'b' && chip === 'upcoming'
-    ? rows.filter((b) => { const s = nextStepOf(b, m.balanceFor(b), day); return s && (s.key === 'approve' || s.key === 'pay'); }).slice(0, 4)
+    ? rows.map((b) => ({ b, s: nextStepOf(b, m.balanceFor(b), day) }))
+      .filter((x) => x.s && (x.s.key === 'approve' || x.s.key === 'pay'))
+      .sort((x, y) => Number(y.s.key === 'approve') - Number(x.s.key === 'approve'))
+      .slice(0, 4).map((x) => x.b)
     : []), [variant, chip, rows, day, m]);
 
   const sel = bookings.find((b) => b.id === selId) || null;
@@ -225,7 +230,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
                 <li key={b.id}>
                   <button type="button" className={cn('bk2-att-card press', paneBooking?.id === b.id && 'is-sel')} onClick={() => openBooking(b)}>
                     <i className={cn('bk2-dot', s.key === 'approve' ? 'bk2-dot--ind' : 'bk2-dot--amber')} aria-hidden />
-                    <span><b dir="auto">{guestLabel(b)}</b><small>{s.text}</small></span>
+                    <span><b dir="auto">{guestLabel(b)}</b><small>{s.key === 'pay' ? `נשאר לגבות ₪${Math.round(m.balanceFor(b).balance).toLocaleString('he-IL')}` : `${formatRangeHe(b.check_in_date, checkOutOf(b))} · מחכה לאישור`}</small></span>
                     <em>{s.key === 'approve' ? 'לאשר' : 'לגבות'}</em>
                   </button>
                 </li>
@@ -255,7 +260,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
           <div className="min-w-0">
             <h1 className="bk2-h1">הזמנות</h1>
             <p className="bk2-sub" aria-live="polite">{summary}</p>
-            {bookings.length ? <p className="bk2-hint">לחצו על הזמנה כדי לראות פרטים, לרשום תשלום, לבטל או למחוק.</p> : null}
+            {bookings.length ? <p className="bk2-hint">לחצו על הזמנה כדי לראות פרטים ופעולות.</p> : null}
           </div>
           <div className="bk2-h-acts">
             {bookings.length ? (
@@ -263,7 +268,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
                 <Download aria-hidden strokeWidth={1.75} />ייצוא
               </button>
             ) : null}
-            <button type="button" onClick={openNew} className="bk2-btn bk2-btn--pri bk2-new press"><Plus aria-hidden strokeWidth={2} />הזמנה חדשה</button>
+            {noneAtAll ? null : <button type="button" onClick={openNew} className="bk2-btn bk2-btn--pri bk2-new press"><Plus aria-hidden strokeWidth={2} />הזמנה חדשה</button>}
           </div>
         </header>
 
@@ -293,7 +298,7 @@ export default function BookingsPage({ selectedPropertyId, user, orgId }) {
                   type="search"
                   value={search}
                   onChange={(e) => void setUrlState({ search: e.target.value, page: 1 })}
-                  placeholder="חיפוש לפי שם, טלפון או יחידה"
+                  placeholder="חיפוש אורח"
                   aria-label="חיפוש הזמנה לפי שם, טלפון או יחידה"
                 />
               </label>
