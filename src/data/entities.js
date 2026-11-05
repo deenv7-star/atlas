@@ -41,6 +41,8 @@ const CACHE_KEYS = {
 };
 
 // ─── Bookings (used by Calendar, Bookings page, Dashboard, Invoices, Cleaning) ───
+// audit 05.11 UX-2: after a booking change every bookings list refetches now (refetchType 'all', inactive too),
+// so the persisted copy is fresh and the list never opens on the old values.
 export function useBookings(filters = {}, sort = '-created_at', limit = 200) {
   return useQuery({
     queryKey: [CACHE_KEYS.bookings, filters, sort, limit],
@@ -62,7 +64,7 @@ export function useCreateBooking() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data) => base44.entities.Booking.create(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings], refetchType: 'all' }),
   });
 }
 
@@ -112,7 +114,7 @@ export function useUpdateBooking() {
     onSettled: (_d, err, _v, context) => {
       if (context?.rollbackToastTimer) window.clearTimeout(context.rollbackToastTimer);
       if (!err && context?.bookingId) setOptimisticEntityPhase(context.bookingId, 'idle');
-      qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings] });
+      qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings], refetchType: 'all' });
       if (context?.bookingId) qc.invalidateQueries({ queryKey: ['booking', context.bookingId] });
     },
   });
@@ -155,7 +157,7 @@ export function useDeleteBooking() {
     onSettled: (_d, err, variables, context) => {
       if (context?.rollbackToastTimer) window.clearTimeout(context.rollbackToastTimer);
       if (!err && variables?.id) setOptimisticEntityPhase(variables.id, 'idle');
-      qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings] });
+      qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings], refetchType: 'all' });
     },
   });
 }
@@ -281,7 +283,7 @@ export function useCreatePayment() {
     mutationFn: (data) => base44.entities.Payment.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [CACHE_KEYS.payments] });
-      qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings] });
+      qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings], refetchType: 'all' });
     },
   });
 }
@@ -363,7 +365,7 @@ export function useCreateCleaningTask() {
     mutationFn: (data) => base44.entities.CleaningTask.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [CACHE_KEYS.cleaningTasks] });
-      qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings] });
+      qc.invalidateQueries({ queryKey: [CACHE_KEYS.bookings], refetchType: 'all' });
     },
   });
 }
