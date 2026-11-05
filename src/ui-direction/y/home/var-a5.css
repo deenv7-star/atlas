@@ -1,0 +1,136 @@
+/* A5 "מהלך היום": the day as a story along a line. Glass over the hills. #3E2BF1 #1B2656 white, one amber dot. */
+.hv5, .hv5-month { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 20px 18px; border-radius: 30px; color: #1B2656;
+  background: linear-gradient(180deg, rgba(255,255,255,.86), rgba(255,255,255,.74));
+  backdrop-filter: blur(30px) saturate(1.5); -webkit-backdrop-filter: blur(30px) saturate(1.5);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), inset 0 1px 0 #fff, 0 30px 60px -36px rgba(27,38,86,.55); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .hv5, .hv5-month { background: #fff; } }
+.hv5-k { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .01em; color: #3E2BF1; }
+.hv5-k svg { width: 16px; height: 16px; }
+.hv5-t { margin: 0; font-size: 22px; line-height: 1.45; font-weight: 500; letter-spacing: -.015em; color: #1B2656; text-wrap: pretty; }
+.hv5.is-empty .hv5-t { font-size: 19px; font-weight: 400; }
+.hv5-n { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; margin: -8px 0; padding: 0 4px; font: inherit; font-size: 1.5em; font-weight: 800; letter-spacing: -.04em; color: #3E2BF1; border-radius: 12px; vertical-align: baseline; }
+.hv5-n:hover { background: rgba(62,43,241,.07); }
+.hv5-n:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
+.hv5-head { display: flex; flex-direction: column; gap: 6px; }
+
+/* phone: the vertical story line */
+.hv5-line { list-style: none; margin: 0; padding: 0; position: relative; display: flex; flex-direction: column; gap: 10px; }
+.hv5-line::before { content: ''; position: absolute; top: 18px; bottom: 18px; inset-inline-start: 27px; width: 2px; border-radius: 2px; background: linear-gradient(180deg, rgba(27,38,86,.18), rgba(62,43,241,.5)); }
+.hv5-m { position: relative; width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 20px; background: rgba(255,255,255,.78); box-shadow: inset 0 0 0 1px rgba(27,38,86,.06); color: #1B2656; text-align: start; }
+button.hv5-m:hover { background: #fff; }
+.hv5-mt { flex: none; width: 32px; font-size: 14px; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; position: relative; z-index: 1; background: transparent; }
+.hv5-line .hv5-mt { width: 56px; margin-inline-start: -12px; padding: 6px 0; text-align: center; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1px rgba(27,38,86,.08); font-size: 13px; }
+.hv5-line li.is-in .hv5-mt { background: #3E2BF1; color: #fff; box-shadow: none; }
+.hv5-line li.is-out .hv5-mt { background: #1B2656; color: #fff; box-shadow: none; }
+.hv5-mb { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
+.hv5-mk { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; font-style: normal; font-size: 12px; font-weight: 700; color: rgba(27,38,86,.66); }
+.hv5-mk svg { width: 13px; height: 13px; }
+.hv5-mk.is-in { color: #3E2BF1; }
+.hv5-mb b { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+.hv5-mb small { font-size: 13px; color: rgba(27,38,86,.66); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hv5-owe { color: #1B2656; font-weight: 700; }
+.hv5-amber { display: inline-block; width: 7px; height: 7px; margin-inline: 4px 0; border-radius: 99px; background: var(--amber, #F5A524); vertical-align: middle; }
+.hv5-mic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 99px; background: #F7F8FB; color: #3E2BF1; box-shadow: inset 0 0 0 1px rgba(27,38,86,.08); }
+.hv5-mic svg { width: 18px; height: 18px; }
+.hv5-m.is-clean { background: rgba(247,248,251,.7); }
+.hv5-tmr { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 14px; border-radius: 99px; background: rgba(27,38,86,.06); color: #1B2656; text-align: start; }
+.hv5-tmr:hover { background: rgba(27,38,86,.1); }
+.hv5-tmr span { font-size: 12px; font-weight: 700; color: #fff; background: #1B2656; padding: 2px 10px; border-radius: 99px; }
+.hv5-tmr b { font-size: 14px; font-weight: 700; white-space: nowrap; }
+.hv5-tmr small { flex: 1; min-width: 0; font-size: 13px; color: rgba(27,38,86,.66); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* the hour axis: desktop only (phone shows the vertical line) */
+.hv5-axis { display: none; }
+.hv5.is-empty .hv5-axis { display: block; position: relative; height: 96px; margin: 4px 8px 0; }
+.hv5-rail { position: absolute; inset-inline: 0; top: 50%; height: 2px; border-radius: 2px; background: linear-gradient(270deg, rgba(27,38,86,.2), rgba(62,43,241,.55)); }
+.hv5-rail span { position: absolute; top: 10px; transform: translateX(50%); font-size: 11px; font-weight: 600; color: rgba(27,38,86,.55); direction: ltr; white-space: nowrap; }
+.hv5-rail span i { position: absolute; top: -14px; left: 50%; width: 1px; height: 8px; background: rgba(27,38,86,.22); }
+.hv5-now { position: absolute; top: 8%; bottom: 8%; width: 2px; transform: translateX(50%); background: #3E2BF1; border-radius: 2px; }
+.hv5-now b { position: absolute; top: -4px; left: 50%; transform: translate(-50%, -100%); padding: 2px 8px; border-radius: 99px; background: #3E2BF1; color: #fff; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.hv5-ghost { position: absolute; top: calc(50% + 26px); transform: translateX(50%); display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; color: rgba(27,38,86,.6); white-space: nowrap; }
+.hv5-ghost.is-up { top: auto; bottom: calc(50% + 10px); }
+.hv5-ghost b { font-size: 13px; font-weight: 800; color: #1B2656; padding: 2px 10px; border-radius: 99px; box-shadow: inset 0 0 0 1.5px rgba(62,43,241,.4); background: rgba(255,255,255,.8); }
+.hv5.is-empty .hv5-axis::after { content: ''; position: absolute; inset-inline: 0; top: 50%; height: 2px; }
+
+/* empty: steps */
+.hv5-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; color: rgba(27,38,86,.66); }
+.hv5-steps li { display: inline-flex; align-items: center; gap: 6px; }
+.hv5-steps i { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 99px; font-style: normal; font-size: 12px; font-weight: 700; box-shadow: inset 0 0 0 1.5px rgba(27,38,86,.18); }
+.hv5-steps i svg { width: 12px; height: 12px; }
+.hv5-steps li.is-done { color: #1B2656; } .hv5-steps li.is-done i { background: #3E2BF1; color: #fff; box-shadow: none; }
+.hv5-steps li.is-next { color: #1B2656; font-weight: 600; } .hv5-steps li.is-next i { box-shadow: inset 0 0 0 2px #3E2BF1; color: #3E2BF1; }
+
+/* the month card */
+.hv5-month { gap: 12px; padding-bottom: 0; overflow: hidden; }
+.hv5-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.hv5-st { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 64px; padding: 4px 12px; text-align: start; color: #1B2656; border-inline-start: 1px solid rgba(27,38,86,.1); }
+.hv5-st:first-child { border-inline-start: 0; padding-inline-start: 0; }
+.hv5-st b { font-size: 24px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.hv5-st b.is-ind { color: #3E2BF1; }
+.hv5-st span { font-size: 12px; color: rgba(27,38,86,.66); line-height: 1.3; }
+.hv5-hzb { position: relative; display: block; margin: 0 -18px; width: calc(100% + 36px); height: 92px; padding: 0; }
+.hv5-hz { position: absolute; inset: 0; }
+.hv5-hz svg { display: block; }
+.hv5-hz-l { fill: none; stroke: #3E2BF1; stroke-width: 2.6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.hv5-hz-peak { position: absolute; transform: translate(-50%, calc(-100% - 8px)); padding: 3px 9px; border-radius: 99px; background: #1B2656; color: #fff; font-size: 12px; font-weight: 700; white-space: nowrap; direction: ltr; }
+.hv5-hz-k { position: absolute; bottom: 8px; inset-inline-start: 18px; font-size: 12px; font-weight: 600; color: #1B2656; padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.8); }
+
+@media (min-width: 1024px) {
+  .hv5, .hv5-month { padding: 28px 32px; border-radius: 36px; gap: 18px; }
+  .hv5-t { font-size: clamp(26px, 2vw, 32px); }
+  .hv5.is-empty .hv5-t { font-size: clamp(22px, 1.6vw, 26px); max-width: 44ch; }
+  .hv5-head { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 24px; }
+  .hv5-line { display: none; }
+  .hv5-axis { display: block; position: relative; height: 230px; margin: 0 6px; }
+  .hv5.is-empty .hv5-axis { height: 120px; margin: 8px 6px; }
+  .hv5-pin { position: absolute; top: 50%; width: 0; }
+  .hv5-dot { position: absolute; top: -7px; left: -7px; width: 14px; height: 14px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 3px #1B2656; }
+  .hv5-dot.is-in { box-shadow: 0 0 0 3px #3E2BF1; background: #3E2BF1; }
+  .hv5-dot.is-clean { box-shadow: 0 0 0 2px rgba(27,38,86,.35); width: 10px; height: 10px; top: -5px; left: -5px; }
+  .hv5-pin .hv5-m { position: absolute; width: 250px; left: 0; transform: translateX(-50%); }
+  .hv5-pin.is-up .hv5-m { bottom: 22px; }
+  .hv5-pin.is-down .hv5-m { top: 22px; }
+  .hv5-pin.al-r .hv5-m { transform: translateX(-88%); }
+  .hv5-pin.al-l .hv5-m { transform: translateX(-12%); }
+  .hv5-pin .hv5-m::after { content: ''; position: absolute; left: 50%; width: 1px; height: 14px; background: rgba(27,38,86,.2); }
+  .hv5-pin.is-up .hv5-m::after { top: 100%; } .hv5-pin.is-down .hv5-m::after { bottom: 100%; }
+  .hv5-pin.al-r .hv5-m::after { left: 88%; } .hv5-pin.al-l .hv5-m::after { left: 12%; }
+  .hv5-pin .hv5-mt { width: auto; font-size: 15px; }
+  .hv5-pin.is-in .hv5-m { box-shadow: inset 0 0 0 1.5px rgba(62,43,241,.35), 0 12px 24px -18px rgba(62,43,241,.6); }
+  .hv5-tmr { align-self: flex-start; padding-inline-end: 8px; }
+  .hv5-st b { font-size: 30px; }
+  .hv5-st { padding: 4px 20px; min-height: 72px; }
+  .hv5-hzb { margin: auto -32px 0; width: calc(100% + 64px); height: 120px; }
+  .hv5-hz-k { inset-inline-start: 32px; }
+  .hv5-month { padding-bottom: 0; }
+}
+@media (min-width: 1600px) { .hv5-axis { height: 250px; } .hv5-pin .hv5-m { width: 270px; } }
+
+/* desktop grid (with bookings): the story spans the full width under the greeting; the month card and the next
+   steps sit beside the calendar; the side's own "today" list is not repeated (the story already tells it) */
+@media (min-width: 1024px) {
+  .y2.hv-a5:not(.hv-empty) .y2-main { display: contents; }
+  .y2.hv-a5:not(.hv-empty) .y2-main > * { grid-column: 1; }
+  .y2.hv-a5:not(.hv-empty) .y2-main > .hv5 { grid-column: 1 / -1; }
+  .y2.hv-a5:not(.hv-empty) .y2-mid { display: none; }
+  .y2.hv-a5:not(.hv-empty) .y2-side { grid-column: 2; grid-row: 3 / span 2; }
+  .y2.hv-a5:not(.hv-empty) .y2-side .y2-sec-h--d, .y2.hv-a5:not(.hv-empty) .y2-side .y2-arr { display: none; }
+  .y2.hv-a5:not(.hv-empty) .y2-next .y2-next-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* round 2 */
+.hv5-line.is-ghost .hv5-m { background: rgba(255,255,255,.5); box-shadow: inset 0 0 0 1.5px rgba(62,43,241,.18); box-shadow: none; border: 1.5px dashed rgba(62,43,241,.28); }
+.hv5-line.is-ghost .hv5-mt { background: #fff !important; color: #1B2656 !important; box-shadow: inset 0 0 0 1.5px rgba(62,43,241,.4) !important; }
+.hv5-line.is-ghost .hv5-mb b { font-weight: 600; font-size: 15px; }
+.hv5.is-empty .hv5-axis { display: none; }
+@media (min-width: 1024px) {
+  .hv5-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .hv5.is-empty .hv5-axis { display: block; }
+  .hv5-line.is-ghost { display: none; }
+  .hv5-pin { z-index: 2; }
+  .hv5-pin .hv5-m { background: #fff; box-shadow: 0 0 0 1px rgba(27,38,86,.07), 0 14px 28px -20px rgba(27,38,86,.45); }
+  .hv5-pin .hv5-m.is-clean { background: #F7F8FB; }
+  .hv5-now { z-index: 1; top: 4%; bottom: 4%; opacity: .9; }
+  .hv5-now b { top: auto; bottom: -6px; transform: translate(-50%, 100%); }
+  .hv5.is-empty .hv5-now { top: 18%; bottom: 50%; }
+  .hv5.is-empty .hv5-now b { bottom: auto; top: -6px; transform: translate(-50%, -100%); }
+}
