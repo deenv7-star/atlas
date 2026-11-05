@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { expected } from '../../scripts/spa-routes.mjs';
+import { expected, vercelRoute } from '../../scripts/spa-routes.mjs';
 
 const read = (f) => fs.readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8');
 
@@ -10,8 +10,15 @@ test('SPA routes: vercel.json, _redirects and server list match the app routes (
   assert.ok(segs.includes('today') && segs.includes('dashboard') && segs.includes('auth'));
   assert.ok(!segs.includes('pricing') && !segs.includes('blog'));
   const vj = JSON.parse(read('vercel.json'));
-  assert.deepEqual(vj.rewrites.at(-1), vercel);
-  assert.ok(!vj.rewrites.some((r) => r.source === '/(.*)'), 'no catch-all: unknown URLs must 404');
+  if (Array.isArray(vj.routes)) {
+    const spa = vj.routes.filter((r) => String(r.dest || '').startsWith('/app.html'));
+    assert.equal(spa.length, 1);
+    assert.deepEqual(spa[0], vercelRoute(segs));
+    assert.ok(!vj.routes.some((r) => r.src === '^(?:/(.*))$' && r.dest), 'no catch-all: unknown URLs must 404');
+  } else {
+    assert.deepEqual(vj.rewrites.at(-1), vercel);
+    assert.ok(!vj.rewrites.some((r) => r.source === '/(.*)'), 'no catch-all: unknown URLs must 404');
+  }
   const lines = read('public/_redirects').trim().split('\n');
   for (const l of redirects) assert.ok(lines.includes(l), l);
   assert.equal(lines.at(-1), '/*    /404.html   404');

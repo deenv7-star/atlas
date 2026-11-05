@@ -1,201 +1,197 @@
 {
-  "trailingSlash": false,
-  "redirects": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
     {
-      "source": "/how-it-works",
-      "destination": "/",
-      "statusCode": 301
-    },
-    {
-      "source": "/how-it-works/",
-      "destination": "/",
-      "statusCode": 301
-    },
-    {
-      "source": "/changelog",
-      "destination": "/",
-      "statusCode": 301
-    },
-    {
-      "source": "/api-docs",
-      "destination": "/",
-      "statusCode": 301
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/manifest.webmanifest",
-      "destination": "/manifest.json"
-    },
-    {
-      "source": "/blog",
-      "destination": "/blog/index.html"
-    },
-    {
-      "source": "/blog/:slug",
-      "destination": "/blog/:slug/index.html"
-    },
-    {
-      "source": "/:page(about|contact|privacy|terms|cookies|cancellation|data-processing|data-security|accessibility)",
-      "destination": "/:page/index.html"
-    },
-    {
-      "source": "/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/:page(pricing|register|login)",
-      "destination": "/:page/index.html"
-    },
-    {
-      "source": "/book/:slug",
-      "destination": "/book.html"
-    },
-    {
-      "source": "/:seg(AIAssistant|Automations|Billing|BookingDetail|Bookings|Cleaning|Contracts|Dashboard|DynamicPricing|ExpenseTracker|GuestJourney|GuestPortal|GuestService|HowItWorks|Integrations|Invoices|Landing|LeadDetail|Leads|Legal|Login|Messages|MultiCalendar|Onboarding|OwnerReports|Payments|PlatformAdmin|Pricing|PricingPlans|Register|RevenueIntelligence|Reviews|Security|ServiceRequests|Settings|Subscription|admin|ai-assistant|auth|automations|balances|billing|book|booking|bookings|calendar|cleaning|contracts|dashboard|dev|dynamic-pricing|expense-tracker|g|guest-journey|guest-portal|guest-service|how-it-works|import|integrations|invoices|lead|leads|legal|messages|monthly-report|onboarding|owner-reports|payments|platform-admin|reset-password|revenue-intelligence|reviews|security|service-requests|settings|setup|sla|status|subscription|today|update-password|verify-email)/:rest*",
-      "destination": "/app.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
+      "src": "^/(.*)$",
+      "has": [
         {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=63072000; includeSubDomains"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "geolocation=(), microphone=(self), camera=()"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-8wUgboqOByFQSfQnkulH/WVMpxa7+2Wa1GgGVihhv5c=' 'sha256-80pQrz9mqZC1xHY6m27O9NPvhl9O8+qVXfPT6k3e07M=' 'sha256-Q8hShK5LJ7JlzCCGzbFh1HwBOScIEfZTJo65iCrj+Ro='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://romvmqbcinurscwdsskx.supabase.co https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://romvmqbcinurscwdsskx.supabase.co wss://romvmqbcinurscwdsskx.supabase.co wss://api.elevenlabs.io; worker-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, max-age=0, must-revalidate"
+          "type": "host",
+          "value": "www.atlas-il.com"
         }
-      ]
+      ],
+      "headers": {
+        "Location": "https://atlas-il.com/$1"
+      },
+      "status": 308
     },
     {
-      "source": "/(landing-hero|landing-v6|landing-v7|landing-v8|demo|blog/covers|og)/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=2592000, stale-while-revalidate=604800"
-        }
-      ]
+      "src": "^/(.*)/$",
+      "headers": {
+        "Location": "/$1"
+      },
+      "status": 308
     },
     {
-      "source": "/tour/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        }
-      ]
+      "src": "^/how-it-works$",
+      "headers": {
+        "Location": "/"
+      },
+      "status": 301
     },
     {
-      "source": "/llms(.*).txt",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
-      ]
+      "src": "^/how-it-works/$",
+      "headers": {
+        "Location": "/"
+      },
+      "status": 301
     },
     {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
+      "src": "^/changelog$",
+      "headers": {
+        "Location": "/"
+      },
+      "status": 301
     },
     {
-      "source": "/fonts/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
+      "src": "^/api-docs$",
+      "headers": {
+        "Location": "/"
+      },
+      "status": 301
     },
     {
-      "source": "/(icons/.*|favicon.ico|favicon.svg|favicon-16x16.png|favicon-32x32.png|apple-touch-icon.png|og-image.png|atlas-logo.png|atlas-logo.svg|atlas-logo-clean.png|atlas-logo-final.png|atlas-logo-transparent.png)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        }
-      ]
+      "src": "^(?:/(.*))$",
+      "headers": {
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "geolocation=(), microphone=(self), camera=()",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'sha256-8wUgboqOByFQSfQnkulH/WVMpxa7+2Wa1GgGVihhv5c=' 'sha256-80pQrz9mqZC1xHY6m27O9NPvhl9O8+qVXfPT6k3e07M=' 'sha256-Q8hShK5LJ7JlzCCGzbFh1HwBOScIEfZTJo65iCrj+Ro='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://romvmqbcinurscwdsskx.supabase.co https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://romvmqbcinurscwdsskx.supabase.co wss://romvmqbcinurscwdsskx.supabase.co wss://api.elevenlabs.io; worker-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+        "Cache-Control": "no-cache, max-age=0, must-revalidate"
+      },
+      "continue": true
     },
     {
-      "source": "/data/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        }
-      ]
+      "src": "^/llms(.*)\\.txt$",
+      "headers": {
+        "Content-Type": "text/plain; charset=utf-8"
+      },
+      "continue": true
     },
     {
-      "source": "/:file(manifest.json|manifest.webmanifest)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, max-age=0, must-revalidate"
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/manifest+json; charset=utf-8"
-        }
-      ]
+      "src": "^(?:/(manifest.json|manifest.webmanifest))$",
+      "headers": {
+        "Cache-Control": "no-cache, max-age=0, must-revalidate",
+        "Content-Type": "application/manifest+json; charset=utf-8"
+      },
+      "continue": true
     },
     {
-      "source": "/:file(sw.js|registerSW.js|sw-cleanup.js|push-sw.js)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
+      "src": "^(?:/(sw.js|registerSW.js|sw-cleanup.js|push-sw.js))$",
+      "headers": {
+        "Cache-Control": "no-store, max-age=0"
+      },
+      "continue": true
     },
     {
-      "source": "/:page(reset-password|update-password|verify-email|onboarding|setup|import|auth)/:rest*",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, follow"
-        }
-      ]
+      "src": "^(?:/(reset-password|update-password|verify-email|onboarding|setup|import|auth))(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?$",
+      "headers": {
+        "X-Robots-Tag": "noindex, follow"
+      },
+      "continue": true
     },
     {
-      "source": "/.well-known/security.txt",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        }
-      ]
+      "src": "^/\\.well-known/security\\.txt$",
+      "headers": {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "public, max-age=86400"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/manifest\\.webmanifest$",
+      "dest": "/manifest.json",
+      "check": true
+    },
+    {
+      "src": "^/blog$",
+      "dest": "/blog/index.html",
+      "check": true
+    },
+    {
+      "src": "^/blog(?:/([^/]+?))$",
+      "dest": "/blog/$1/index.html",
+      "check": true
+    },
+    {
+      "src": "^(?:/(about|contact|privacy|terms|cookies|cancellation|data-processing|data-security|accessibility))$",
+      "dest": "/$1/index.html",
+      "check": true
+    },
+    {
+      "src": "^/$",
+      "dest": "/index.html",
+      "check": true
+    },
+    {
+      "src": "^(?:/(pricing|register|login))$",
+      "dest": "/$1/index.html",
+      "check": true
+    },
+    {
+      "src": "^/book(?:/([^/]+?))$",
+      "dest": "/book.html?slug=$1",
+      "check": true
+    },
+    {
+      "src": "^(?:/(AIAssistant|Automations|Billing|BookingDetail|Bookings|Cleaning|Contracts|Dashboard|DynamicPricing|ExpenseTracker|GuestJourney|GuestPortal|GuestService|HowItWorks|Integrations|Invoices|Landing|LeadDetail|Leads|Legal|Login|Messages|MultiCalendar|Onboarding|OwnerReports|Payments|PlatformAdmin|Pricing|PricingPlans|Register|RevenueIntelligence|Reviews|Security|ServiceRequests|Settings|Subscription|admin|ai-assistant|auth|automations|balances|billing|book|booking|bookings|calendar|cleaning|contracts|dashboard|dev|dynamic-pricing|expense-tracker|g|guest-journey|guest-portal|guest-service|how-it-works|import|integrations|invoices|lead|leads|legal|messages|monthly-report|onboarding|owner-reports|payments|platform-admin|reset-password|revenue-intelligence|reviews|security|service-requests|settings|setup|sla|status|subscription|today|update-password|verify-email))(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?$",
+      "dest": "/app.html?seg=$1&rest=$2",
+      "check": true
+    },
+    {
+      "handle": "hit"
+    },
+    {
+      "src": "^(?:/(landing-hero|landing-v6|landing-v7|landing-v8|demo|blog/covers|og))(?:/(.*))$",
+      "headers": {
+        "Cache-Control": "public, max-age=2592000, stale-while-revalidate=604800"
+      },
+      "continue": true,
+      "important": true
+    },
+    {
+      "src": "^/tour(?:/(.*))$",
+      "headers": {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800"
+      },
+      "continue": true,
+      "important": true
+    },
+    {
+      "src": "^/assets(?:/(.*))$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true,
+      "important": true
+    },
+    {
+      "src": "^/fonts(?:/(.*))$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true,
+      "important": true
+    },
+    {
+      "src": "^(?:/(icons/.*|favicon.ico|favicon.svg|favicon-16x16.png|favicon-32x32.png|apple-touch-icon.png|og-image.png|atlas-logo.png|atlas-logo.svg|atlas-logo-clean.png|atlas-logo-final.png|atlas-logo-transparent.png))$",
+      "headers": {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800"
+      },
+      "continue": true,
+      "important": true
+    },
+    {
+      "src": "^/data(?:/(.*))$",
+      "headers": {
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800"
+      },
+      "continue": true,
+      "important": true
     }
   ]
 }
