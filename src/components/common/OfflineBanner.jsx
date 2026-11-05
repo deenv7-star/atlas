@@ -6,7 +6,7 @@ import { useOnline } from '@/hooks/useOnline';
 /**
  * Audit 05.11 NET-2: one global mark that the device is offline, on every signed-in screen, so the owner
  * knows nothing is being saved. A short "החיבור חזר" when it comes back. Never covers a control: a small pill
- * under the status bar, pointer-events off.
+ * in the middle of the header row (between the wordmark and the avatar), pointer-events off.
  */
 export default function OfflineBanner() {
   const { isAuthenticated, authOffline } = useAuth();
@@ -30,7 +30,7 @@ export default function OfflineBanner() {
       aria-live="polite"
       dir="rtl"
       className="pointer-events-none fixed inset-x-0 z-[90] flex justify-center px-4"
-      style={{ top: 'calc(env(safe-area-inset-top, 0px) + 8px)' }}
+      style={{ top: 'calc(env(safe-area-inset-top, 0px) + 22px)' }}
     >
       {show ? (
         <span
@@ -39,7 +39,7 @@ export default function OfflineBanner() {
         >
           {online
             ? <><Wifi className="h-4 w-4" strokeWidth={1.75} aria-hidden />החיבור חזר</>
-            : <><WifiOff className="h-4 w-4" strokeWidth={1.75} aria-hidden />אין חיבור. שינויים לא יישמרו עד שהחיבור יחזור</>}
+            : <><WifiOff className="h-4 w-4" strokeWidth={1.75} aria-hidden /><span aria-hidden>אין חיבור לאינטרנט</span><span className="sr-only">אין חיבור לאינטרנט. שינויים לא יישמרו עד שהחיבור יחזור.</span></>}
         </span>
       ) : null}
     </div>
