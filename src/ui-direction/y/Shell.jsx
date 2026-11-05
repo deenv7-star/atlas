@@ -91,7 +91,7 @@ export function Sidebar({ user, onLogout }) {
         <Link to={createPageUrl('Settings')} className="y2-ri press" aria-label="הגדרות"><Settings strokeWidth={1.75} /><span>הגדרות</span></Link>
         <UserMenu user={user} onLogout={onLogout} side="left">
           <button type="button" aria-label="החשבון שלי" className="y2-rail-me press">
-            <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={44} />
+            <span aria-hidden="true" className="contents"><GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={44} /></span>
           </button>
         </UserMenu>
       </div>
@@ -130,7 +130,7 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         <button type="button" className="y2-gb y2-gb--ind press" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
         <UserMenu user={user} onLogout={onLogout} hideMore>
           <button type="button" aria-label="החשבון שלי" className="y2-bar-me press">
-            <GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} />
+            <span aria-hidden="true" className="contents"><GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} /></span>
           </button>
         </UserMenu>
       </div>

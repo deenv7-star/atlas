@@ -321,7 +321,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               <div className="flex items-center gap-4">
                 <GuestAvatar name={booking.guest_name || 'אורח'} size={76} ring className="shadow-[0_8px_20px_-10px_rgba(27,38,86,0.5)]" />
                 <div className="min-w-0 flex-1">
-                  <h1 className="truncate text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900 md:text-[30px]">{booking.guest_name}</h1>
+                  <h1 className="line-clamp-2 break-words text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-navy-900 md:text-[30px]">{booking.guest_name}</h1>
                   <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-ink-600 md:text-[15px]">
                     <StatusPill status={booking.status} />
                     <span>{unitName}</span>
