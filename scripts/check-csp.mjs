@@ -45,12 +45,15 @@ export function inlineScriptHashes(dist = DIST) {
 function policyHashes() {
   const v = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
   const out = {};
-  for (const block of v.headers || []) {
-    for (const h of block.headers || []) {
-      if (/^content-security-policy(-report-only)?$/i.test(h.key)) {
-        const script = (h.value.match(/script-src([^;]*)/) || [])[1] || '';
-        out[h.key] = new Set([...script.matchAll(/'(sha256-[^']+)'/g)].map((x) => x[1]));
-      }
+  // vercel.json uses `routes` (OPS-2: long cache only after a filesystem hit); older form had `headers`.
+  const pairs = [
+    ...(v.headers || []).flatMap((block) => (block.headers || []).map((h) => [h.key, h.value])),
+    ...(v.routes || []).flatMap((r) => Object.entries(r.headers || {})),
+  ];
+  for (const [key, value] of pairs) {
+    if (/^content-security-policy(-report-only)?$/i.test(key)) {
+      const script = (value.match(/script-src([^;]*)/) || [])[1] || '';
+      out[key] = new Set([...script.matchAll(/'(sha256-[^']+)'/g)].map((x) => x[1]));
     }
   }
   return out;

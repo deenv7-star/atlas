@@ -32,6 +32,12 @@ export function spaSegments() {
 }
 
 const vercelRewrite = (segs) => ({ source: `/:seg(${segs.join('|')})/:rest*`, destination: '/app.html' });
+/** Same catch-all in vercel.json `routes` form (what Vercel compiles the rewrite above into). */
+export const vercelRoute = (segs) => ({
+  src: `^(?:/(${segs.join('|')}))(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?$`,
+  dest: '/app.html?seg=$1&rest=$2',
+  check: true,
+});
 const redirectsLines = (segs) => segs.flatMap((s) => [`/${s}    /app.html   200`, `/${s}/*    /app.html   200`]);
 
 export function expected() {
@@ -44,8 +50,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (!process.argv.includes('--write')) { console.log(segs.join('\n')); process.exit(0); }
   // vercel.json: the last rewrite is the SPA catch-all; unmatched URLs fall through to 404.html (404).
   const vj = JSON.parse(read('vercel.json'));
-  vj.rewrites = vj.rewrites.filter((r) => r.destination !== '/app.html');
-  vj.rewrites.push(vercel);
+  if (Array.isArray(vj.routes)) {
+    const i = vj.routes.findIndex((r) => String(r.dest || '').startsWith('/app.html'));
+    if (i < 0) throw new Error('vercel.json routes: SPA catch-all (dest /app.html) not found');
+    vj.routes[i] = vercelRoute(segs);
+  } else {
+    vj.rewrites = vj.rewrites.filter((r) => r.destination !== '/app.html');
+    vj.rewrites.push(vercel);
+  }
   fs.writeFileSync(path.join(ROOT, 'vercel.json'), `${JSON.stringify(vj, null, 2)}\n`);
   // Netlify: _redirects runs before netlify.toml; a non-forced 200 rewrite only applies when no file exists.
   const head = ['/    /index.html   200', '/pricing    /pricing/index.html   200',
