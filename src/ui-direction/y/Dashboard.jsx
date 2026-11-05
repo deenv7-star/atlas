@@ -22,7 +22,7 @@ import { useBookingList, whenOf } from './ui';
 import { BookingsPanel, BookingSheet, isPhone } from './Bookings';
 import { ArrivalsSheet, IncomeSheet, OccupancySheet, PendingSheet, RevenueSheet, DaySheet } from './TodaySheets';
 import HomeTop from './home/HomeTop';
-import MobileToday from './home/MobileToday';
+import MobileTiles from './home/MobileTiles';
 import './home/home.css';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import './y3.css';
@@ -145,9 +145,9 @@ export default function DashboardView({ user, orgId }) {
     <div className={cn('y2 hv hv-a6', noBookings && 'hv-empty', narrow && 'hm-on')} dir="rtl">
       {narrow ? (
         <motion.div {...rise(0)}>
-          <MobileToday m={m} name={name} noUnits={noUnits} noBookings={noBookings} onAdd={() => quick.open()}
+          <MobileTiles m={m} name={name} noUnits={noUnits} noBookings={noBookings} onAdd={() => quick.open()}
             arrivals={arrivals} departures={departures} dueCount={dueCount} onTile={setTileSheet}
-            openBooking={openBooking} onDo={go} going={going} />
+            openBooking={openBooking} onDo={go} going={going} onWhatsApp={(b, t) => setComposer({ booking: b, template: t })} />
         </motion.div>
       ) : (
       <motion.div className="y2-win" {...rise(0)}>
