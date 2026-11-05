@@ -5,6 +5,9 @@
 .tl > * { animation: tl-in .7s cubic-bezier(.23,1,.32,1) both; }
 .tl > :nth-child(2) { animation-delay: .08s; } .tl > :nth-child(3) { animation-delay: .16s; } .tl > :nth-child(4) { animation-delay: .24s; }
 @keyframes tl-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+/* final QA 05.11: the greeting (the page's largest text, its LCP) only slides, it never starts invisible, so it paints on the first frame */
+.tl > .tl-hello:first-child { animation-name: tl-in-y; }
+@keyframes tl-in-y { from { transform: translateY(10px); } to { transform: none; } }
 .tl .press { transition: transform .18s cubic-bezier(.23,1,.32,1), box-shadow .25s, background-color .25s; -webkit-tap-highlight-color: transparent; }
 .tl .press:active { transform: scale(.97); }
 
@@ -71,7 +74,10 @@
   background: #1B2656; box-shadow: 0 30px 50px -30px rgba(27,38,86,.7); }
 .tl-hero > img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; animation: tl-zoom 1.4s cubic-bezier(.23,1,.32,1) both; }
 @keyframes tl-zoom { from { transform: scale(1.08); } }
-.tl-hero-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(27,38,86,.6) 0%, rgba(27,38,86,0) 45%, rgba(27,38,86,.6) 100%); }
+.tl-hero-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(27,38,86,.66) 0%, rgba(27,38,86,.18) 42%, rgba(27,38,86,0) 55%, rgba(27,38,86,.6) 100%); }
+/* final QA 05.11: the countdown sits on the photo's brightest corner in some shots, so it gets its own soft shade */
+.tl-hero:not(.is-plain) .tl-count { position: relative; }
+.tl-hero:not(.is-plain) .tl-count::before { content: ''; position: absolute; inset: -18px -22px; z-index: -1; border-radius: 999px; background: radial-gradient(closest-side, rgba(27,38,86,.5), rgba(27,38,86,0)); }
 .tl-hero.is-plain { min-height: 200px; background: radial-gradient(120% 90% at 85% 0%, rgba(62,43,241,.75), rgba(62,43,241,0) 60%), #1B2656; }
 .tl-hero.is-plain .tl-hero-shade { display: none; }
 .tl-hero-hit { position: absolute; inset: 0; z-index: 0; border-radius: inherit; }
@@ -81,7 +87,7 @@
 .tl-hero-t small { font-size: 13px; font-weight: 600; opacity: .9; }
 .tl-hero-t b { margin-top: 6px; font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
 .tl-hero-t em { margin-top: 4px; font-style: normal; font-size: 14px; opacity: .9; }
-.tl-count { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.tl-count { display: flex; flex-direction: column; align-items: center; line-height: 1; text-shadow: 0 1px 2px rgba(27,38,86,.55), 0 0 14px rgba(27,38,86,.45); }
 .tl-count .y-num { font-size: 56px; font-weight: 300; color: #fff; }
 .tl-count small { margin-top: 2px; font-size: 13px; font-weight: 600; opacity: .9; }
 .tl-hero-s { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; pointer-events: none; }
