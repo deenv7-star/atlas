@@ -1,0 +1,11 @@
+/* B: tiles lead; setup is one slim strip under the greeting */
+.hvb-strip { display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 10px 10px 10px 10px; padding-inline-start: 12px; border-radius: 22px; background: #fff; color: #1B2656; box-shadow: inset 0 0 0 1px rgba(27,38,86,.06); }
+@media (min-width: 1024px) { .hvb-strip { padding: 12px 14px; border-radius: 26px; } }
+.hvb-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.hvb-t h2 { font-size: 15px; font-weight: 700; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hvb-link { align-self: flex-start; display: inline-flex; align-items: center; min-height: 28px; font-size: 13px; color: #3E2BF1; text-decoration: underline; text-decoration-color: rgba(62,43,241,.3); text-underline-offset: 3px; white-space: nowrap; }
+.hvb-link { position: relative; }
+.hvb-link::after { content: ''; position: absolute; inset: -8px -4px; }
+.hvb-add { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border-radius: 999px; background: #3E2BF1; color: #fff; font-size: 14px; font-weight: 700; }
+.hvb-add svg { width: 17px; height: 17px; }
+.hvb-add:hover { background: #2A1AC9; }
