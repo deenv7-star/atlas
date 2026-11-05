@@ -25,6 +25,7 @@ import { BookingsPanel, BookingSheet, isPhone } from './Bookings';
 import { ArrivalsSheet, IncomeSheet, OccupancySheet, PendingSheet, RevenueSheet, DaySheet } from './TodaySheets';
 import HomeTop, { HOME_VAR, HIDE_PHOTO, HIDE_TILES, HIDE_CHART } from './home/HomeTop';
 import { ChartPlaceholder } from './home/shared';
+import MobileToday, { mobileVariant } from './home/MobileToday';
 import './home/home.css';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import './y3.css';
@@ -72,8 +73,22 @@ function MonthCal({ model }) {
   );
 }
 
+const NARROW = '(max-width: 1023px)';
+function useNarrow() {
+  const [n, setN] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.(NARROW).matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.(NARROW); if (!mq) return undefined;
+    const on = () => setN(mq.matches); on(); mq.addEventListener?.('change', on);
+    return () => mq.removeEventListener?.('change', on);
+  }, []);
+  return n;
+}
+
 export default function DashboardView({ user, orgId }) {
   const m = useTodayModel({ orgId });
+  // home/var-combo (05.11.2026): the phone gets its own calm single-column Today (M1 or M2); desktop keeps the board
+  const narrow = useNarrow();
+  const [mVar] = useState(mobileVariant);
   const list = useBookingList(m);
   const [sheet, setSheet] = useState(null);
   const [selId, setSelId] = useState(null);
@@ -145,13 +160,20 @@ export default function DashboardView({ user, orgId }) {
   // reducedMotion="user": with reduced motion the entrance keeps only the fade, no scale(.985) shrinking 44px targets to 43
   return (
     <MotionConfig reducedMotion="user">
-    <div className={cn('y2 hv', `hv-${HOME_VAR}`, noBookings && 'hv-empty')} dir="rtl">
+    <div className={cn('y2 hv', `hv-${HOME_VAR}`, noBookings && 'hv-empty', narrow && 'hm-on')} dir="rtl">
+      {narrow ? (
+        <motion.div {...rise(0)}>
+          <MobileToday variant={mVar} m={m} name={name} noUnits={noUnits} noBookings={noBookings} onAdd={() => quick.open()}
+            arrivals={arrivals} departures={departures} dueCount={dueCount} onTile={setTileSheet}
+            hero={hero} heroUnit={heroUnit} heroBal={heroBal} openBooking={openBooking} onDo={go} going={going} />
+        </motion.div>
+      ) : (
       <motion.div className="y2-win" {...rise(0)}>
         {/* home/var desktop (05.11.2026): the greeting is the full-width first row, so the side column and the first card share one top edge */}
         <div className="y2-hello">
           <div>
             <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
-            <p className="y2-sub">{formatDayHe(m.day)}{boardKnown && !noBookings ? ` · ${arrivals.length} מגיעים, ${departures.length} יוצאים` : ''}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
+            <p className="y2-sub">{formatDayHe(m.day)}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
           </div>
           {noUnits || !boardKnown ? null : (
             <button type="button" className="y2-hello-chip press" aria-haspopup="dialog" onClick={() => setTileSheet('day')}><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'אין משימות להיום'}</button>
@@ -317,6 +339,7 @@ export default function DashboardView({ user, orgId }) {
         {noBookings ? null : <BookingsPanel ref={panelRef} model={m} list={list} selId={selId} setSelId={setSelId} onOpen={setSheet} delay={0.45}
           onWhatsApp={(b, t) => setComposer({ booking: b, template: t })} />}
       </motion.div>
+      )}
 
       <ArrivalsSheet open={tileSheet === 'arrivals'} onOpenChange={closeTile} model={m} onOpenBooking={fromTile} />
       <IncomeSheet open={tileSheet === 'income'} onOpenChange={closeTile} model={m} />

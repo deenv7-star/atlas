@@ -86,3 +86,17 @@ button.hv6-di:hover { background: rgba(255,255,255,.08); }
 }
 @media (min-width: 1024px) { .y2.hv-a6 .y2-mid { display: none; } }
 .hv6-hz-now { margin: -6px 0 0 4px; }
+
+/* combo (05.11.2026): A4's sentence under the big number, numbers tappable; the dock is not rendered */
+.hv6-s { position: relative; z-index: 1; margin: 4px 0 0; max-width: 40ch; font-size: 19px; line-height: 1.6; font-weight: 400; letter-spacing: -.012em; color: #1B2656; text-wrap: pretty; }
+.hv6-n { display: inline-flex; align-items: center; min-height: 44px; margin: -8px 0; padding: 0 2px; vertical-align: baseline; font: inherit; font-size: 1.36em; font-weight: 800; line-height: 1;
+  letter-spacing: -.03em; color: #1B2656; font-variant-numeric: tabular-nums; border-radius: 10px; transition: background-color .2s var(--ease, ease); }
+.hv6-n:hover { background-color: rgba(62,43,241,.07); }
+.hv6-n:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
+.hv6-n.is-ind { color: #3E2BF1; }
+.hv6-sfaces { display: inline-flex; vertical-align: middle; margin-inline: 4px 2px; }
+.hv6-samber { display: inline-block; width: 7px; height: 7px; margin-inline: 3px 4px; border-radius: 99px; background: var(--amber, #F5A524); vertical-align: super; }
+.hv6-wrap.has-sentence .hv6-hzb { margin-top: 8px; }
+@media (min-width: 1024px) { .hv6-s { font-size: clamp(22px, 1.7vw, 27px); max-width: 34ch; } }
+.hv6-nw { white-space: nowrap; }
+@media (min-width: 1024px) { .hv6-wrap.has-sentence .hv6-s { max-width: 52ch; font-size: clamp(22px, 1.6vw, 26px); } }
