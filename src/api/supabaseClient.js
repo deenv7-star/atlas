@@ -12,12 +12,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { isBlockedSupabaseRequest, lockedResponse } from '@/lib/accessLock';
 import { guardRefreshResponse } from '@/lib/auth/refreshGuard';
+import { REQUEST_TIMEOUT_MS, requestTimeoutMs } from '@/lib/requestTimeout';
 
 const supabaseUrl  = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey  = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-/** Every network call gives up after this long so loading states never hang. */
-export const REQUEST_TIMEOUT_MS = 15000;
+/** Every network call gives up after this long so loading states never hang (per-call rules: src/lib/requestTimeout.js). */
+export { REQUEST_TIMEOUT_MS };
 
 /**
  * fetch with a hard timeout. Respects a caller-provided AbortSignal as well.
@@ -78,10 +79,8 @@ export const supabase = (supabaseUrl && supabaseKey)
           if (isBlockedSupabaseRequest(url, init.method || (typeof input === 'object' && input?.method) || 'GET')) {
             return Promise.resolve(lockedResponse());
           }
-          const b = init.body;
-          const isUpload = typeof Blob !== 'undefined' && (b instanceof Blob || b instanceof FormData || b instanceof ArrayBuffer);
           // A 5xx on the token refresh must not sign the owner out (src/lib/auth/refreshGuard.js).
-          return fetchWithTimeout(input, init, isUpload ? 120000 : REQUEST_TIMEOUT_MS)
+          return fetchWithTimeout(input, init, requestTimeoutMs(url, init.body))
             .then((res) => guardRefreshResponse(url, res));
         },
       },
