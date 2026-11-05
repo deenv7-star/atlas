@@ -27,6 +27,7 @@
   letter-spacing: -.03em; color: #3E2BF1; font-variant-numeric: tabular-nums; border-radius: 10px; }
 button.hm-n:active { transform: scale(.97); }
 .hm-n.is-short { min-width: 44px; margin-inline: -6px; }
+.hm-n.is-short.is-tight { margin-inline-start: -14px; }
 .hm-n:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
 .hm-faces { display: inline-flex; vertical-align: middle; margin-inline: 4px 2px; }
 

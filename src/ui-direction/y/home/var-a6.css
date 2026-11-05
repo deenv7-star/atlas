@@ -79,6 +79,7 @@
 .hv6-n:hover { background-color: rgba(62,43,241,.07); }
 .hv6-n { justify-content: center; }
 .hv6-n.is-short { min-width: 44px; margin-inline: -6px; }
+.hv6-n.is-short.is-tight { margin-inline-start: -12px; }
 .hv6-n:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
 .hv6-n.is-ind { color: #3E2BF1; }
 .hv6-sfaces { display: inline-flex; vertical-align: middle; margin-inline: 4px 2px; }

@@ -39,8 +39,8 @@ function Horizon({ values, labels = [], peak = '', empty = false }) {
   );
 }
 
-function Tok({ children, onClick, label, tone }) {
-  return <button type="button" className={cn('hv6-n', tone && `is-${tone}`, String(children).length <= 2 && 'is-short')} onClick={onClick} aria-haspopup="dialog" aria-label={label}>{children}</button>;
+function Tok({ children, onClick, label, tone, tight = false }) {
+  return <button type="button" className={cn('hv6-n', tone && `is-${tone}`, String(children).length <= 2 && 'is-short', tight && String(children).length === 1 && 'is-tight')} onClick={onClick} aria-haspopup="dialog" aria-label={label}>{children}</button>;
 }
 
 /* the rest of the day told in one sentence under the big number. The month's income is already the big number,
@@ -54,7 +54,7 @@ function DaySentence({ m, arrivals, departures, dueCount, onTile }) {
           <span className="hv6-nw">היום{NB}<Tok onClick={() => onTile('arrivals')} label={`מגיעים היום: ${a}. פירוט`}>{a}</Tok>
             {a ? <FaceStack names={arrivals.map((x) => x.booking.guest_name || '')} size={28} max={3} className="hv6-sfaces" /> : null}
             {NB}{one(a, 'הגעה', 'הגעות')}</span>{' '}
-          <span className="hv6-nw">ו־<Tok onClick={() => onTile('arrivals')} label={`יוצאים היום: ${dd}. פירוט`}>{dd}</Tok>{NB}{one(dd, 'יציאה', 'יציאות')}.</span>
+          <span className="hv6-nw">ו־<Tok tight onClick={() => onTile('arrivals')} label={`יוצאים היום: ${dd}. פירוט`}>{dd}</Tok>{NB}{one(dd, 'יציאה', 'יציאות')}.</span>
         </>
       ) : <>היום אין הגעות ויציאות.</>}
       {' '}

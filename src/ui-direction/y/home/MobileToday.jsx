@@ -26,9 +26,9 @@ const BTN = { message: 'שליחה', clean: 'סימון', lead: 'מענה', bala
 const KICK = { message: 'הודעה מוכנה', clean: 'ניקיון', lead: 'פנייה חדשה', balance: 'תשלום' };
 
 /** a tappable number inside the sentence; a 1–2 digit number gets a full 44×44 target (is-short), its side margins
- *  eat the nbsp around it so the sentence keeps its rhythm */
-function N({ children, onClick, label }) {
-  return <button type="button" className={cn('hm-n', String(children).length <= 2 && 'is-short')} onClick={onClick} aria-haspopup="dialog" aria-label={label}>{children}</button>;
+ *  eat the nbsp around it so the sentence keeps its rhythm; tight = glued to a prefix (ו־2), no gap before it */
+function N({ children, onClick, label, tight = false }) {
+  return <button type="button" className={cn('hm-n', String(children).length <= 2 && 'is-short', tight && String(children).length === 1 && 'is-tight')} onClick={onClick} aria-haspopup="dialog" aria-label={label}>{children}</button>;
 }
 
 const NB = '\u00A0';
@@ -44,7 +44,7 @@ function Sentence({ arrivals, departures, onTile, tasks = 0 }) {
           <span className="hm-nw">היום{NB}<N onClick={() => onTile('arrivals')} label={`מגיעים היום: ${a}. פירוט`}>{a}</N>
             {a ? <FaceStack names={arrivals.map((x) => x.booking.guest_name || '')} size={24} max={3} className="hm-faces" /> : null}
             {NB}{one(a, 'הגעה', 'הגעות')}</span>{' '}
-          <span className="hm-nw">ו־<N onClick={() => onTile('arrivals')} label={`יוצאים היום: ${d}. פירוט`}>{d}</N>{NB}{one(d, 'יציאה', 'יציאות')}.</span>
+          <span className="hm-nw">ו־<N tight onClick={() => onTile('arrivals')} label={`יוצאים היום: ${d}. פירוט`}>{d}</N>{NB}{one(d, 'יציאה', 'יציאות')}.</span>
         </>
       ) : <>היום אין הגעות ויציאות.</>}
       {' '}
