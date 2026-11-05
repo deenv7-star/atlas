@@ -5,11 +5,10 @@
  */
 import {
   Sun, CalendarRange, BedDouble, Users, MessageSquare, Star,
-  Brush, Headset, FileSignature, Send, Wallet, BarChart3,
+  Brush, Headset, FileSignature, Send, Wallet,
   Tags, Link2, Globe, CreditCard, Settings, Shield,
 } from 'lucide-react';
 import { DB_FEATURES } from '@/config/dbFeatures';
-import { SparkMark } from '@/assistant/mark';
 
 /**
  * Simplicity rules (16.10.2026): the sidebar shows exactly seven places. Everything else
@@ -29,31 +28,27 @@ export const NAV_GROUPS = [
       { page: 'Settings', label: 'הגדרות', icon: Settings },
     ],
   },
+  /*
+   * persona-clarity (05.11.2026): every screen lives in exactly ONE place, and every row in "עוד" says in one line what it
+   * gives (desc). Removed duplicates: "שאלו את atlas" (now "עזרה" in the top bar), "הכנסות" (now כסף → דוחות → 12 חודשים).
+   */
   {
     id: 'ops',
-    label: 'תפעול',
+    label: 'המתחם ביום-יום',
     items: [
-      { page: 'Cleaning', label: 'ניקיון', icon: Brush },
-      { page: 'ServiceRequests', label: 'בקשות שירות', icon: Headset },
-      { page: 'Reviews', label: 'ביקורות', icon: Star },
-      { page: 'Contracts', label: 'חוזים', icon: FileSignature },
-      { page: 'Automations', label: 'הודעות אוטומטיות', icon: Send },
+      { page: 'Cleaning', label: 'ניקיון', icon: Brush, desc: 'מה לנקות היום ומי מנקה' },
+      { page: 'ServiceRequests', label: 'בקשות שירות', icon: Headset, desc: 'תקלות ובקשות של אורחים, עד שמטפלים' },
+      { page: 'Reviews', label: 'ביקורות', icon: Star, desc: 'מה אורחים כתבו עליכם, ובקשת ביקורת' },
+      { page: 'Contracts', label: 'חוזים', icon: FileSignature, desc: 'חוזה לאורח, נחתם בטלפון' },
     ],
   },
   {
     id: 'guests',
-    label: 'אורחים',
+    label: 'אורחים ומחירים',
     items: [
-      ...(DB_FEATURES.guestPages ? [{ page: 'GuestPortal', label: 'דף אורח והזמנה ישירה', icon: Globe }] : []),
-      { page: 'AIAssistant', label: 'שאלו את atlas', icon: SparkMark },
-    ],
-  },
-  {
-    id: 'insights',
-    label: 'דוחות',
-    items: [
-      { page: 'RevenueIntelligence', label: 'הכנסות', icon: BarChart3 },
-      { page: 'DynamicPricing', label: 'תמחור חגים', icon: Tags },
+      { page: 'Automations', label: 'הודעות אוטומטיות', icon: Send, desc: 'הודעות לאורחים שמוכנות לבד בזמן הנכון' },
+      ...(DB_FEATURES.guestPages ? [{ page: 'GuestPortal', label: 'דף אורח והזמנה ישירה', icon: Globe, desc: 'דף שלכם להזמנה בלי עמלה' }] : []),
+      { page: 'DynamicPricing', label: 'תמחור חגים', icon: Tags, desc: 'מחיר מתאים לחגים ולסופי שבוע' },
       // ecosystem v1 #7: owner reports are not built yet; the route stays, nothing links to it until it ships.
     ],
   },
@@ -61,12 +56,21 @@ export const NAV_GROUPS = [
     id: 'account',
     label: 'חשבון',
     items: [
-      { page: 'Integrations', label: 'ערוצים וחיבורים', icon: Link2 },
+      { page: 'Integrations', label: 'ערוצים וחיבורים', icon: Link2, desc: 'הזמנות מ-Booking ומ-Airbnb ביומן אחד' },
       // ecosystem v1 #6: one row for the plan and its charges (Billing is reached from inside Subscription)
-      { page: 'Subscription', label: 'מנוי וחיובים', icon: CreditCard },
+      { page: 'Subscription', label: 'מנוי וחיובים', icon: CreditCard, desc: 'המסלול שלכם והחשבוניות' },
     ],
   },
 ];
+
+/** One line under each primary screen when it shows in "עוד" (phone: הזמנות, הודעות, הגדרות). */
+export const NAV_DESC = {
+  Bookings: 'כל ההזמנות, לפי תאריך הגעה',
+  Messages: 'שיחות עם אורחים במקום אחד',
+  Settings: 'היחידות, שעות כניסה, פרטים וסיסמה',
+  Leads: 'אורחים ששאלו על תאריכים',
+  Payments: 'מי שילם ומי עוד חייב',
+};
 
 /** "כספים" is one place; these are its tabs. */
 export const FINANCE_TABS = [
@@ -74,13 +78,14 @@ export const FINANCE_TABS = [
   { page: 'Balances', label: 'יתרות' },
   ...(DB_FEATURES.expenses ? [{ page: 'ExpenseTracker', label: 'הוצאות' }] : []),
   { page: 'Invoices', label: 'מסמכים' },
-  { page: 'MonthlyReport', label: 'דוח' },
+  // persona-clarity: "דוחות" holds the month report AND the 12-month view that used to be the separate "הכנסות" screen
+  { page: 'MonthlyReport', label: 'דוחות' },
 ];
 
 /** Pages that light up a primary nav item without being in the sidebar themselves. */
 export const NAV_PARENT = {
   Today: 'Dashboard',
-  Balances: 'Payments', Invoices: 'Payments', ExpenseTracker: 'Payments', MonthlyReport: 'Payments',
+  Balances: 'Payments', Invoices: 'Payments', ExpenseTracker: 'Payments', MonthlyReport: 'Payments', RevenueIntelligence: 'Payments',
   BookingDetail: 'Bookings', LeadDetail: 'Leads',
 };
 
@@ -94,7 +99,7 @@ export const PAGE_TITLES = Object.fromEntries(
 );
 Object.assign(PAGE_TITLES, {
   Today: 'היום',
-  Balances: 'כסף', Invoices: 'כסף', ExpenseTracker: 'כסף', MonthlyReport: 'כסף', Payments: 'כסף',
+  Balances: 'כסף', Invoices: 'כסף', ExpenseTracker: 'כסף', MonthlyReport: 'כסף', Payments: 'כסף', RevenueIntelligence: 'כסף', AIAssistant: 'שאלו את atlas',
   BookingDetail: 'פרטי הזמנה',
   LeadDetail: 'פרטי פנייה',
   Onboarding: 'הקמת החשבון',

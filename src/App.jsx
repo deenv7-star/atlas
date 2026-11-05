@@ -74,6 +74,8 @@ function ConflictModalHost() {
 }
 
 const EXPLICIT_PROTECTED_KEYS = new Set([
+  // persona-clarity (05.11.2026): "הכנסות" lives in כסף → דוחות → 12 חודשים; the old address redirects there
+  'RevenueIntelligence',
   'Dashboard',
   'Billing',
   'Subscription',
@@ -331,6 +333,7 @@ const AuthenticatedApp = () => {
       {/* Platform admin console. Access is checked server-side (admin_whoami + every admin_* RPC). */}
       <Route path="/admin/*" element={<Suspense fallback={<PublicFallback />}><AdminRoot /></Suspense>} />
       <Route path="/platform-admin" element={<Navigate to="/admin" replace />} />
+      <Route path="/revenue-intelligence" element={<Navigate to="/monthly-report?view=year" replace />} />
       {/* Legacy routes — redirect to canonical lowercase paths */}
       {/* caseSensitive is required: React Router matches case-insensitively by default,
           so "/Bookings" -> "/bookings" also matched "/bookings" itself and rendered a blank page. */}

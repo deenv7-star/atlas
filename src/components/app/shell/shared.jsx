@@ -13,9 +13,8 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { ChevronLeft, LogOut, Settings, CreditCard, Compass, LifeBuoy, LayoutGrid } from 'lucide-react';
+import { ChevronLeft, LogOut, Settings, LifeBuoy, LayoutGrid } from 'lucide-react';
 import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
-import { startTour } from '@/lib/tour/tourState';
 
 export { Wordmark } from './wordmark';
 
@@ -98,22 +97,10 @@ export function UserMenu({ user, onLogout, children, align = 'end', side, top = 
         <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
           <Link to={createPageUrl('Settings')}><Settings className="h-[18px] w-[18px] text-ink-600" />הגדרות</Link>
         </DropdownMenuItem>
-        {isNativeApp() ? null : (
-          <DropdownMenuItem asChild className="min-h-11 gap-2.5 text-[15px]">
-            <Link to={createPageUrl('Subscription')}><CreditCard className="h-[18px] w-[18px] text-ink-600" />מנוי</Link>
-          </DropdownMenuItem>
-        )}
+        {/* persona-clarity (05.11.2026): one place per thing. מנוי lives in עוד → חשבון, the tour in הגדרות, help in the top bar. */}
         {hideMore ? null : <DropdownMenuItem onSelect={() => window.dispatchEvent(new CustomEvent('atlas:open-more'))} className="min-h-11 gap-2.5 text-[15px] lg:hidden">
           <LayoutGrid className="h-[18px] w-[18px] text-ink-600" />כל המסכים
         </DropdownMenuItem>}
-        <DropdownMenuItem onSelect={() => startTour(0)} className="min-h-11 gap-2.5 text-[15px]">
-          <Compass className="h-[18px] w-[18px] text-ink-600" />סיור מודרך
-        </DropdownMenuItem>
-        {HELP_ENABLED ? (
-          <DropdownMenuItem onSelect={() => window.setTimeout(openHelp, 0)} className="min-h-11 gap-2.5 text-[15px]">
-            <LifeBuoy className="h-[18px] w-[18px] text-ink-600" />עזרה
-          </DropdownMenuItem>
-        ) : null}
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={onLogout} className="min-h-11 gap-2.5 text-[15px] text-danger-600 focus:text-danger-700">
           <LogOut className="h-[18px] w-[18px]" />יציאה מהחשבון

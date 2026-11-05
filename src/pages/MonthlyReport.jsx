@@ -1,5 +1,7 @@
 /** Monthly report for the accountant: income by channel, expenses, net, occupancy, ADR. CSV + print/PDF. */
 import FinanceTabs from '@/components/app/FinanceTabs';
+import RevenueIntelligence from '@/pages/RevenueIntelligence';
+import { cn } from '@/lib/utils';
 import React, { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Download, Printer } from 'lucide-react';
@@ -21,6 +23,9 @@ export const monthParam = (y, mi) => `${y}-${String(mi + 1).padStart(2, '0')}`;
 export default function MonthlyReportPage({ user }) {
   const [params, setParams] = useSearchParams();
   const { year, monthIndex } = parseMonthParam(params.get('m'));
+  // persona-clarity (05.11.2026): one "דוחות" place. החודש = the accountant's month report; 12 חודשים = what used to be "הכנסות".
+  const view = params.get('view') === 'year' ? 'year' : 'month';
+  const setView = (v) => setParams(v === 'year' ? { view: 'year' } : {}, { replace: true });
   const data = useStayData({ withExpenses: true, withCleaning: false });
   const [busy, setBusy] = useState(false);
 
@@ -45,10 +50,24 @@ export default function MonthlyReportPage({ user }) {
   return (
     <StayPage wide>
       <FinanceTabs />
+      <div role="tablist" aria-label="איזה דוח" className="mb-5 inline-flex rounded-full bg-white p-1 ring-1 ring-inset ring-[#E8EAF2]">
+        {[['month', 'החודש, לרואה החשבון'], ['year', '12 חודשים אחרונים']].map(([id, label]) => (
+          <button key={id} type="button" role="tab" aria-selected={view === id} onClick={() => setView(id)}
+            className={cn('press min-h-[44px] rounded-full px-4 text-[15px]', view === id ? 'bg-navy-900 font-bold text-white' : 'font-semibold text-ink-600 hover:text-navy-900')}>
+            {label}
+          </button>
+        ))}
+      </div>
+      {view === 'year' ? (
+        <>
+          <PageHeader title="12 החודשים האחרונים" subtitle="כמה הרווחתם בכל חודש, איזה חודש היה הכי חזק, ואיזו יחידה מכניסה הכי הרבה." />
+          <RevenueIntelligence embedded />
+        </>
+      ) : (<>
       <PageHeader
         eyebrow="דוח לרואה החשבון"
         title={report.label}
-        subtitle="הכנסות לפי ערוץ, הוצאות, נטו, תפוסה ומחיר ממוצע ללילה."
+        subtitle="כל מה שרואה החשבון צריך על החודש, בדף אחד: הכנסות, הוצאות ומה נשאר. מורידים לאקסל או מדפיסים."
         actions={(
           <>
             <div className="inline-flex items-center gap-1">
@@ -70,6 +89,7 @@ export default function MonthlyReportPage({ user }) {
           emptyExpensesAction={<Link to="/expense-tracker" className="ab-btn ab-btn-secondary ab-btn-sm">רישום הוצאה</Link>}
         />
       )}
+      </>)}
     </StayPage>
   );
 }

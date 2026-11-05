@@ -1,4 +1,7 @@
 /**
+ * persona-clarity (05.11.2026): the ONE help place. The labelled "עזרה" button in the top bar opens this panel, which
+ * starts with three plain blocks: שאלו את atlas (the assistant, voice or text) · דברו עם נציג (a person, 24/7) ·
+ * מדריכים קצרים (how-to answers from the help bot, here in the panel).
  * Help in every app screen: a quiet "עזרה" button → the ATLAS help bot, with a human one tap away.
  *   Desktop: white pill bottom-left, opens a 400px panel anchored to it (non-modal, the app stays usable).
  *   Phone:   a 48px round button above the floating tab bar (never covers the tab bar or its "+"),
@@ -8,7 +11,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LifeBuoy, X, Headset, ArrowUp, Clock, SquarePen, ChevronLeft, ThumbsUp, ThumbsDown, WifiOff, RotateCw, MessageCircle, ArrowUpLeft } from 'lucide-react';
+import { X, Headset, ArrowUp, Clock, SquarePen, ChevronLeft, ThumbsUp, ThumbsDown, WifiOff, RotateCw, MessageCircle, ArrowUpLeft, Mic, Keyboard } from 'lucide-react';
+import { openAssistant } from '@/assistant/launcher';
+import { VOICE_ENABLED } from '@/assistant/voice/config.js';
+import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { useAuth } from '@/lib/AuthContext';
 import { useShellProperties } from '@/components/app/shell/shared';
 import { supportApi } from './api';
@@ -96,6 +102,26 @@ function Msg({ m, last, onLink, onFollow, onFeedback, onRetry }) {
   );
 }
 
+/* ── שאלו את atlas: the assistant, from inside help ───────────────────── */
+function AskAtlasCard({ onGo }) {
+  const go = (how) => (e) => { onGo(); openAssistant(how, e.currentTarget); };
+  return (
+    <section className="sp-ask" aria-labelledby="sp-ask-t">
+      <div className="sp-ask-top">
+        <span className="sp-ask-face" aria-hidden><AtlasFace live size={44} decorative /></span>
+        <div className="min-w-0">
+          <h3 id="sp-ask-t">שאלו את atlas</h3>
+          <p>שאלה או בקשה במילים שלכם, למשל „מי מגיע מחר?" או „תזכירו לדנה לשלם". atlas עונה ועושה בשבילכם.</p>
+        </div>
+      </div>
+      <div className="sp-ask-btns">
+        {VOICE_ENABLED ? <button type="button" className="sp-primary" onClick={go('voice')}><Mic size={18} strokeWidth={2} aria-hidden />דברו</button> : null}
+        <button type="button" className={VOICE_ENABLED ? 'sp-secondary' : 'sp-primary'} onClick={go('text')}><Keyboard size={18} strokeWidth={1.75} aria-hidden />כתבו</button>
+      </div>
+    </section>
+  );
+}
+
 /* ── the widget ───────────────────────────────────────────────────────── */
 export default function SupportWidget() {
   const { user } = useAuth();
@@ -179,8 +205,10 @@ export default function SupportWidget() {
   // opened from the navigation (openHelp)
   // panel is portalled to <body> so it also opens above full-screen sheets (channels wizard) that call openHelp({ text })
   const prefillRef = useRef('');
-  useEffect(() => onHelpOpen(({ opener, text }) => {
+  const personRef = useRef(false);
+  useEffect(() => onHelpOpen(({ opener, text, person }) => {
     openerRef.current = opener || null; setOpen(true); setView('chat');
+    if (person) personRef.current = true;
     if (text) setDraft((d) => { const keep = d && d !== prefillRef.current; prefillRef.current = text; return keep ? d : text; });
   }), []);
   useEffect(() => { reportHelpUnread(unread); }, [unread]);
@@ -248,6 +276,13 @@ export default function SupportWidget() {
     } finally { setHandingOff(false); }
   }, [handingOff, mode, convId, page, device, user]);
 
+  // "דברו עם נציג" from the top-bar menu (version B): open straight into a person, once the thread is ready
+  useEffect(() => {
+    if (!open || !personRef.current || ready !== true) return;
+    personRef.current = false;
+    handoff('menu');
+  }, [open, ready, handoff]);
+
   const onLink = (path) => { navigate(path); if (!isDesktop) close(); };
   const onFeedback = async (m, v) => {
     setMessages((l) => l.map((x) => (x.id === m.id ? { ...x, feedback: v } : x)));
@@ -281,7 +316,7 @@ export default function SupportWidget() {
                 {view === 'chat' ? (
                   mode === 'human'
                     ? <p className="sp-live"><i aria-hidden />נציג מצוות atlas בשיחה</p>
-                    : <p>תשובות מיידיות על atlas. נציג אנושי בלחיצה.</p>
+                    : <p>{empty ? 'שאלה, בקשה או בן אדם מהצוות. הכל כאן.' : 'תשובות מיידיות. נציג אנושי בלחיצה.'}</p>
                 ) : null}
               </div>
               {view === 'chat' && SUPPORT_DB_READY ? (
@@ -292,7 +327,7 @@ export default function SupportWidget() {
               ) : null}
               <button type="button" className="sp-icon" onClick={close} aria-label="סגירת העזרה"><X size={20} strokeWidth={1.75} /></button>
             </div>
-            {view === 'chat' && SUPPORT_DB_READY ? (
+            {view === 'chat' && SUPPORT_DB_READY && !empty ? (
               <div className="sp-human">
                 {mode === 'human' ? (
                   <span className="sp-human-on"><Headset size={16} strokeWidth={1.75} aria-hidden />השיחה אצל נציג. התשובה תגיע לכאן.</span>
@@ -308,11 +343,16 @@ export default function SupportWidget() {
           {!online ? <div className="sp-offline" role="status"><WifiOff size={16} strokeWidth={1.75} aria-hidden />אין חיבור לאינטרנט. נחזור לעבוד כשהחיבור יחזור.</div> : null}
 
           {!SUPPORT_DB_READY ? (
-            <div className="sp-body sp-body--center">
-              <span className="sp-hello-icon" aria-hidden><MessageCircle size={22} strokeWidth={1.75} /></span>
-              <h3>העזרה בצ׳אט תיפתח בקרוב</h3>
-              <p>בינתיים נשמח לעזור בוואטסאפ. בן אדם מהצוות עונה, בדרך כלל באותו יום.</p>
-              <a className="sp-primary" href={waSupportLink('שלום, צריך עזרה עם atlas')} target="_blank" rel="noreferrer"><MessageCircle size={18} strokeWidth={1.75} aria-hidden />וואטסאפ {SUPPORT_WHATSAPP_DISPLAY}</a>
+            <div className="sp-body">
+              <AskAtlasCard onGo={close} />
+              <section className="sp-person" aria-labelledby="sp-person-t">
+                <span className="sp-hello-icon" aria-hidden><MessageCircle size={22} strokeWidth={1.75} /></span>
+                <div className="min-w-0">
+                  <h3 id="sp-person-t">דברו עם נציג</h3>
+                  <p>בן אדם מהצוות עונה בוואטסאפ, בדרך כלל באותו יום.</p>
+                </div>
+                <a className="sp-secondary" href={waSupportLink('שלום, צריך עזרה עם atlas')} target="_blank" rel="noreferrer">וואטסאפ</a>
+              </section>
             </div>
           ) : view === 'history' ? (
             <div className="sp-body">
@@ -335,10 +375,18 @@ export default function SupportWidget() {
               {loading ? <p className="sp-muted">טוען את השיחה…</p> : null}
               {empty ? (
                 <div className="sp-hello">
-                  <p className="sp-hello-hi">{name ? `שלום ${name},` : 'שלום,'}</p>
-                  <h3>במה אפשר לעזור?</h3>
-                  <p className="sp-hello-sub">אנחנו מכירים כל מסך וכפתור כאן. אם לא נדע, נציג מהצוות ימשיך מכאן, 24/7.</p>
-                  <ul className="sp-suggest" aria-label="שאלות נפוצות">
+                  <p className="sp-hello-hi">{name ? `שלום ${name}, במה אפשר לעזור?` : 'במה אפשר לעזור?'}</p>
+                  <AskAtlasCard onGo={close} />
+                  <section className="sp-person" aria-labelledby="sp-person-t">
+                    <span className="sp-hello-icon" aria-hidden><Headset size={22} strokeWidth={1.75} /></span>
+                    <div className="min-w-0">
+                      <h3 id="sp-person-t">דברו עם נציג</h3>
+                      <p>בן אדם מהצוות, 24/7. הוא רואה את השאלה שלכם וממשיך מכאן.</p>
+                    </div>
+                    <button type="button" className="sp-secondary" onClick={() => handoff('button')} disabled={handingOff}>{handingOff ? 'מחברים…' : 'לנציג'}</button>
+                  </section>
+                  <h3 className="sp-guides-t">מדריכים קצרים</h3>
+                  <ul className="sp-suggest" aria-label="מדריכים קצרים">
                     {suggestions.map((q) => (
                       <li key={q}><button type="button" onClick={() => send(q)}><span>{q}</span><ArrowUpLeft size={16} strokeWidth={1.75} aria-hidden /></button></li>
                     ))}
@@ -377,7 +425,7 @@ export default function SupportWidget() {
                 rows={1}
                 value={draft}
                 maxLength={2000}
-                placeholder={mode === 'human' ? 'כתבו לנציג…' : 'כתבו שאלה…'}
+                placeholder={mode === 'human' ? 'כתבו לנציג…' : 'או כתבו כאן שאלה על איך עושים משהו…'}
                 onChange={(e) => setDraft(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && isDesktop && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }}
                 enterKeyHint="send"
