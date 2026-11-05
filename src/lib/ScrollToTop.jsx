@@ -23,7 +23,13 @@ export default function ScrollToTop() {
     const raf = requestAnimationFrame(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-    return () => cancelAnimationFrame(raf);
+    // deep links into the landing ("/#calendar" from the blog): the hero and lazy images can still change the page
+    // height after the first scroll, so land on the target once more when the layout has settled
+    const settle = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el && Math.abs(el.getBoundingClientRect().top) > 120) el.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }, 900);
+    return () => { cancelAnimationFrame(raf); clearTimeout(settle); };
   }, [hash, pathname]);
 
   return null;

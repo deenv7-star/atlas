@@ -140,7 +140,8 @@ function outPath(route) {
 }
 
 function sitemap(routes, posts) {
-  const lastmod = { '/': '2026-10-18' };
+  // bump a page here when its content changes (Google uses lastmod only when it is accurate)
+  const lastmod = { '/': '2026-11-05', '/about': '2026-11-05', '/contact': '2026-11-05' };
   posts.forEach((p) => { lastmod[`/blog/${p.slug}`] = p.updated; });
   const all = ['/', '/pricing', ...routes]; // /register and /login are noindex (A18/SEO-003), so not in the sitemap
   const prio = (r) => (r === '/' ? '1.0' : r === '/blog' || r === '/pricing' ? '0.9' : r.startsWith('/blog/') ? '0.8' : r === '/register' ? '0.8' : '0.5');
@@ -209,7 +210,7 @@ function llmsFull(mod) {
 
 /* ---------------- lean pages ("/", /pricing): prerendered + hydrated ---------------- */
 
-const LANDING_OG = `${ORIGIN}/og-image.png?v=7`;
+const LANDING_OG = `${ORIGIN}/og-image.png?v=8`; // keep in sync with src/site/seo.js LANDING_OG and index.html
 
 function readManifest() {
   const file = path.join(DIST, '.vite', 'manifest.json');

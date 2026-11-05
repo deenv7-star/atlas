@@ -16,6 +16,8 @@ export const ORG_ID = `${SITE_ORIGIN}/#organization`;
 export const SITE_ID = `${SITE_ORIGIN}/#website`;
 export const APP_ID = `${SITE_ORIGIN}/#software`;
 export const DEFAULT_OG = `${SITE_ORIGIN}/og/og-default.png`;
+/** The landing's social card (public/og-image.png). Bump ?v= whenever the file changes, so WhatsApp / Facebook re-fetch it. */
+export const LANDING_OG = `${SITE_ORIGIN}/og-image.png?v=8`;
 
 export const ATLAS_ONE_LINER =
   'atlas מסדר לבעלי צימרים, וילות ומתחמי נופש בישראל את היומן, הכסף והוואטסאפ: יומן אחד לכל היחידות והערוצים (Booking.com, Airbnb והזמנות ישירות), פניות, מעקב מקדמות ויתרות, הודעות וואטסאפ לאורחים בנוסח מוכן, משימות ניקיון ודוח הכנסות חודשי. עובד מהדפדפן במחשב ובטלפון, עם 14 יום חינם ותמיכה אנושית 24/7.';
@@ -31,6 +33,8 @@ export function organizationLd() {
     '@type': 'Organization',
     '@id': ORG_ID,
     name: 'atlas',
+    // the Hebrew spelling people type into Google ("אטלס"); the visible brand stays Latin lowercase
+    alternateName: ['אטלס', 'atlas-il'],
     url: `${SITE_ORIGIN}/`,
     logo: `${SITE_ORIGIN}/icons/icon-512x512.png?v=2`,
     description: ATLAS_ONE_LINER,
@@ -53,7 +57,7 @@ export function organizationLd() {
 }
 
 export function websiteLd() {
-  return { '@type': 'WebSite', '@id': SITE_ID, url: `${SITE_ORIGIN}/`, name: 'atlas', inLanguage: 'he-IL', publisher: { '@id': ORG_ID } };
+  return { '@type': 'WebSite', '@id': SITE_ID, url: `${SITE_ORIGIN}/`, name: 'atlas', alternateName: ['אטלס', 'atlas-il.com'], inLanguage: 'he-IL', publisher: { '@id': ORG_ID } };
 }
 
 export function softwareLd() {
@@ -62,12 +66,14 @@ export function softwareLd() {
     '@type': 'SoftwareApplication',
     '@id': APP_ID,
     name: 'atlas',
-    alternateName: 'atlas מערכת ניהול לצימרים ומתחמי נופש',
+    alternateName: ['אטלס', 'אטלס מערכת ניהול לצימרים', 'atlas מערכת ניהול לצימרים ומתחמי נופש'],
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     url: `${SITE_ORIGIN}/`,
     inLanguage: 'he-IL',
     description: ATLAS_ONE_LINER,
+    image: LANDING_OG,
+    screenshot: `${SITE_ORIGIN}/landing-hero/ui-d-today-y3-1200.webp`,
     publisher: { '@id': ORG_ID },
     offers: {
       '@type': 'AggregateOffer',
