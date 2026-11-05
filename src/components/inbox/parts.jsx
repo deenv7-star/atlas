@@ -9,6 +9,7 @@ import {
   CalendarCheck, CalendarX, CalendarRange, Clock3, Copy, Check, BedDouble, ChevronRight, Send, MoreHorizontal,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { FriendlyText } from '@/components/magic/FriendlyText';
 import { GuestAvatar } from '@/components/app/atoms';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -187,7 +188,7 @@ function Bubble({ m }) {
   return (
     <div className={cn('flex', out ? 'justify-start' : 'justify-end')}>
       <div className={cn('max-w-[85%] rounded-[20px] px-3.5 py-2.5 text-[15px] leading-relaxed', out ? 'rounded-tr-[6px] bg-brand-600 text-white' : 'rounded-tl-[6px] border border-[#E8EAF2] bg-white text-navy-900')}>
-        <p className="whitespace-pre-wrap">{m.body}</p>
+        <p className="whitespace-pre-wrap"><FriendlyText text={m.body} asLinks linkClassName={out ? 'underline underline-offset-2 text-white' : 'underline underline-offset-2 text-brand-700'} /></p>
         <p className={cn('mt-1 text-[12px] tabular', out ? 'text-white/85' : 'text-ink-400')}>
           {at ? new Date(at).toLocaleString('he-IL', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
           {m.status === 'logged' ? ' · נרשם' : out ? ' · נשלח מהוואטסאפ שלכם' : ''}
@@ -216,7 +217,7 @@ function InquiryCard({ lead, unitName, av }) {
         {lead.phone ? (<><dt className="text-ink-600">טלפון</dt><dd className="font-semibold text-navy-900" dir="ltr" style={{ textAlign: 'right' }}>{lead.phone}</dd></>) : null}
       </dl>
       {av && av.state !== 'nodates' ? <AvailabilityChip av={av} className="mt-3" /> : null}
-      {text ? <p className="mt-3 whitespace-pre-wrap rounded-[14px] bg-[#F7F8FB] p-3 text-[15px] text-navy-900">{text}</p> : null}
+      {text ? <p className="mt-3 whitespace-pre-wrap rounded-[14px] bg-[#F7F8FB] p-3 text-[15px] text-navy-900"><FriendlyText text={text} asLinks linkClassName="underline underline-offset-2 text-brand-700" /></p> : null}
     </div>
   );
 }
@@ -279,7 +280,7 @@ export function ThreadView({ thread, unitName, av, actions, suggestion, onBack, 
         {suggestion && canReply ? (
           <div className="rounded-[20px] border border-dashed border-[#C9C3FB] bg-white p-4">
             <p className="text-[13px] font-semibold text-brand-700">מוכנה לשליחה היום: {suggestion.title}</p>
-            <p className="mt-2 line-clamp-4 whitespace-pre-wrap text-[15px] text-navy-900">{suggestion.text}</p>
+            <p className="mt-2 line-clamp-4 whitespace-pre-wrap text-[15px] text-navy-900"><FriendlyText text={suggestion.text} linkClassName="underline underline-offset-2 text-brand-700" /></p>
             <Button type="button" className="mt-3 min-h-[44px] gap-1.5" onClick={() => send(suggestion.text, suggestion.subject)}>
               <MessageCircle size={18} strokeWidth={2} aria-hidden /> שליחה בוואטסאפ
             </Button>

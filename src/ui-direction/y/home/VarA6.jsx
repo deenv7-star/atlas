@@ -107,7 +107,8 @@ export default function HomeTop({ m, noBookings, onAdd, arrivals = [], departure
           </div>
           {prev && m.money.prevReceived != null ? (
             /* same measure as the big number (received by paid date), so the two can be compared */
-            <p className="hv6-cmp"><span>{prev.label ? `ב${prev.label}` : 'בחודש הקודם'}</span><b dir="ltr">{money(m.money.prevReceived)}</b></p>
+            /* round 05.11: full month in plain words ("באוקטובר נכנסו"), never the clipped "באוק׳" */
+            <p className="hv6-cmp"><span>{m.money.prevMonth ? `ב${m.money.prevMonth} נכנסו` : 'בחודש הקודם נכנסו'}</span><b dir="ltr">{money(m.money.prevReceived)}</b></p>
           ) : null}
         </div>
         <DaySentence m={m} arrivals={arrivals} departures={departures} dueCount={dueCount} onTile={onTile} />

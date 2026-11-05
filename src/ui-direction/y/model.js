@@ -82,11 +82,11 @@ export function useTodayModel({ orgId } = {}) {
     const occupancy = monthOccupancy({ bookings: data.bookings || [], unitCount: (data.properties || []).length, now });
     if (!moneyKnown) return { months: [], received: null, prevReceived: null, expected: null, occupancy, month: MONTHS[m] };
     // Deen 05.11: "נכנסו ב…" = payments received this month by paid date (was: bookings by check-in month, so a saved
-    // payment never moved it). prevReceived is the same measure for last month, for the "באוק׳" comparison.
+    // payment never moved it). prevReceived is the same measure for last month, for the "באוקטובר נכנסו ₪X" comparison.
     const rec = monthlyReceived(data.payments, 2, now);
     return {
       months, received: rec[1].value, prevReceived: rec[0].value, expected: (cur.value || 0) + (cur.expected || 0),
-      occupancy, month: MONTHS[m],
+      occupancy, month: MONTHS[m], prevMonth: MONTHS[(m + 11) % 12],
     };
   }, [data.bookings, data.properties, data.payments, data.paymentsByBooking, moneyKnown]);
 

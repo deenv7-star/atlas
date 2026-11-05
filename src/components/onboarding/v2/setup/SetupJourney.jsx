@@ -7,6 +7,7 @@
  * variant 'b': the same steps told by an assistant voice, one instruction at a time ("עשיתי, הלאה").
  */
 import React, { useEffect, useMemo, useState } from 'react';
+import { FriendlyText } from '@/components/magic/FriendlyText';
 import { useSearchParams } from 'react-router-dom';
 import { MotionConfig, motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2, Plus, ExternalLink, ClipboardPaste, X, CalendarDays, MessageCircle, CreditCard, Home, BadgeCheck, Trash2 } from 'lucide-react';
@@ -335,7 +336,7 @@ function WhatsAppStep({ facts, user, variant, step, onBack, onDone, prog }) {
         </div>
         <div className="rounded-[24px] bg-[#EEF0F6] p-4" aria-label="כך ההודעה תיראה">
           <p className="mb-2 text-[13px] font-bold text-ink-600">כך האורח יקבל את ההודעה</p>
-          <p className="ms-auto max-w-[92%] whitespace-pre-line rounded-[16px] rounded-se-[4px] bg-white px-4 py-3 text-[16px] leading-relaxed text-navy-900 shadow-[0_1px_1px_rgba(27,38,86,0.08)]">{sample}</p>
+          <p className="ms-auto max-w-[92%] whitespace-pre-line rounded-[16px] rounded-se-[4px] bg-white px-4 py-3 text-[16px] leading-relaxed text-navy-900 shadow-[0_1px_1px_rgba(27,38,86,0.08)]"><FriendlyText text={sample} linkClassName="underline underline-offset-2 text-brand-700" /></p>
         </div>
         {test ? (
           <a href={test} target="_blank" rel="noopener noreferrer" className="ob-press flex min-h-[56px] items-center justify-center gap-2 rounded-full border-2 border-[#E1E4EE] bg-white px-5 text-[16px] font-bold text-navy-900">

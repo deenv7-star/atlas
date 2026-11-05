@@ -62,7 +62,7 @@ export const LEAD_SOURCES = [
 export const SOURCE_STATUS_LABEL = {
   live: 'פעיל',
   needs_deploy: 'בקרוב',
-  meta_review: 'בתהליך אישור מול Meta',
+  meta_review: 'בקרוב', // no Meta app exists yet (05.11.2026): plain "בקרוב", no promise of an approval process
   soon: 'בקרוב',
 };
 
