@@ -1,7 +1,7 @@
 /**
- * Help lives inside the navigation (APP-020 / APP-D05): no floating button over the content.
- * Phones: a row at the top of "עוד" and in the account menu. Desktop: a quiet item in the sidebar.
- * Any of them calls openHelp(); the lazily loaded SupportWidget listens and opens its panel.
+ * Help has ONE entry (persona-clarity, 05.11.2026): the labelled "עזרה" button in the top bar, on every width.
+ * Other screens may still call openHelp() (e.g. the channels wizard with a prefilled question);
+ * the lazily loaded SupportWidget listens and opens its panel.
  * The widget reports unread agent replies back, so the entry points can show a count.
  */
 import { useEffect, useState } from 'react';
@@ -13,9 +13,10 @@ const UNREAD = 'atlas:help-unread';
 let lastUnread = 0;
 
 /** `text` (optional) is put in the chat box, ready to send; the user still presses send. */
-export function openHelp({ text = '' } = {}) {
+/** `person: true` opens straight into a conversation with a person from the team (the "דברו עם נציג" row). */
+export function openHelp({ text = '', person = false } = {}) {
   const opener = typeof document !== 'undefined' ? document.activeElement : null;
-  window.dispatchEvent(new CustomEvent(OPEN, { detail: { opener, text: typeof text === 'string' ? text : '' } }));
+  window.dispatchEvent(new CustomEvent(OPEN, { detail: { opener, text: typeof text === 'string' ? text : '', person: !!person } }));
 }
 
 export function onHelpOpen(fn) {

@@ -110,7 +110,7 @@ export function exportLinkFor(property, channel) {
  */
 export function useConnect({ orgId, property, existing = [] }) {
   const [busy, setBusy] = useState(false);
-  const connect = async ({ url, channel }) => {
+  const connect = async ({ url, channel, label = '', provider = '' }) => {
     if (existing.some((s) => s.property_id === property.id && String(s.ical_url || '').trim() === url)) {
       return { ok: false, message: 'הקישור הזה כבר מחובר ליחידה הזו.' };
     }
@@ -120,12 +120,12 @@ export function useConnect({ orgId, property, existing = [] }) {
         await new Promise((r) => setTimeout(r, 900));
         const now = new Date().toISOString();
         try {
-          await base44.entities.CalendarSync.create({ org_id: orgId, property_id: property.id, provider: channel, ical_url: url, sync_direction: 'IMPORT', sync_status: 'ACTIVE', is_active: true, last_success_at: now, last_sync_at: now, events_count: 6 });
+          await base44.entities.CalendarSync.create({ org_id: orgId, property_id: property.id, provider: provider || channel, ...(label ? { label } : {}), ical_url: url, sync_direction: 'IMPORT', sync_status: 'ACTIVE', is_active: true, last_success_at: now, last_sync_at: now, events_count: 6 });
         } catch { /* demo storage is best effort */ }
         return { ok: true, events: 6, demo: true, at: now };
       }
       const created = await base44.entities.CalendarSync.create({
-        org_id: orgId, property_id: property.id, provider: channel, ical_url: url, sync_direction: 'IMPORT', sync_status: 'ACTIVE', is_active: true,
+        org_id: orgId, property_id: property.id, provider: provider || channel, ...(label ? { label } : {}), ical_url: url, sync_direction: 'IMPORT', sync_status: 'ACTIVE', is_active: true,
       });
       const res = await callEdge('ical-sync', { sync_id: created.id });
       const r = res?.results?.[0];

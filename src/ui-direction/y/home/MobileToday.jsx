@@ -22,7 +22,8 @@ import StaleIndicator from '@/components/app/StaleIndicator';
 import './mobile.css';
 
 const one = (n, s, p) => (n === 1 ? s : p);
-const BTN = { message: 'שליחה', clean: 'סימון', lead: 'מענה', balance: 'תזכורת' };
+// persona-clarity: "סימון" said nothing; the button marks the unit as cleaned
+const BTN = { message: 'שליחה', clean: 'נוקה', lead: 'מענה', balance: 'תזכורת' };
 const KICK = { message: 'הודעה מוכנה', clean: 'ניקיון', lead: 'פנייה חדשה', balance: 'תשלום' };
 
 /** a tappable number inside the sentence; a 1–2 digit number gets a full 44×44 target (is-short), its side margins
@@ -79,7 +80,7 @@ function Next({ m, q, onDo, going, empty, onAdd }) {
   const photo = q.kind === 'lead' ? null : unitPhoto(m.prop(q.booking?.property_id || q.c?.departure?.property_id));
   return (
     <section className="hm-card hm-next" aria-label="הדבר הבא">
-      <div className="hm-row-h"><p className="hm-k">הדבר הבא{KICK[q.kind] ? <span className="hm-kind"> · {KICK[q.kind]}</span> : null}</p>{m.queue.length > 1 ? <Link to="/messages" className="hm-link">כל המשימות<ChevronLeft strokeWidth={1.75} /></Link> : null}</div>
+      <div className="hm-row-h"><p className="hm-k">הדבר הבא{KICK[q.kind] ? <span className="hm-kind"> · {KICK[q.kind]}</span> : null}</p>{m.queue.length > 1 ? <Link to="/leads?f=guests" className="hm-link">כל המשימות<ChevronLeft strokeWidth={1.75} /></Link> : null}</div>
       <div className="hm-next-b">
         <span className="hm-thumb">{photo ? <img src={photo} alt="" loading="lazy" decoding="async" /> : <Face name={q.kind === 'lead' ? q.lead.full_name : (q.booking?.guest_name || '')} size={56} />}</span>
         <span className="hm-next-t"><b>{q.title}</b><small>{q.sub}</small></span>

@@ -123,7 +123,7 @@ export default function DynamicPricing() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader title="תמחור חגים" subtitle="מחיר בסיס, סוף שבוע וחגים. atlas מציע מחיר לכל לילה לפי הלוח העברי וההזמנות שלכם." className="!mb-0" />
+      <PageHeader title="תמחור חגים" subtitle="יותר הכנסה בחגים ובסופי שבוע, בלי לחשב לבד. קובעים מחיר בסיס, והחגים כבר מסומנים עם מחיר מוצע לכל לילה." className="!mb-0" />
 
       {properties.length === 0 ? (
         <Card className="p-6 text-center"><p className="text-[16px] font-semibold text-navy-900">עוד אין יחידות</p><p className="mt-1 text-[14px] text-ink-400">הוסיפו יחידה כדי לקבוע לה מחירים.</p></Card>

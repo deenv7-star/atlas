@@ -28,17 +28,40 @@ export function publicOrigin() {
 }
 
 /**
- * Native start page: the app never shows the marketing landing / pricing. A cold start on "/" (or
- * /pricing) is rewritten to /login before the router reads the URL; /login itself sends a signed-in
- * owner on to /dashboard (Today), see src/App.jsx.
+ * Native start page: the app never shows the marketing landing / pricing. A cold start on "/" (or /pricing, or the
+ * start file itself: capacitor.config.json server.appStartPath = app.html) is rewritten before the router reads the URL:
+ *   - a stored session on the device → straight to /dashboard (Today). perf/cold-start 05.11: going through /login
+ *     first cost a redirect, and Today's code was only requested after it (the shell waited ~1.5 s on a phone).
+ *   - no session, or a Supabase auth result in the URL (hash / ?code=) → /login, as before.
+ * Every request is still authorised by the server; a refused session lands on /login from /dashboard as before.
  */
 export const NATIVE_START_PATH = '/login';
-export const NATIVE_BLOCKED_PATHS = ['/', '/pricing'];
+export const NATIVE_HOME_PATH = '/dashboard';
+export const NATIVE_BLOCKED_PATHS = ['/', '/pricing', '/app.html', '/index.html'];
 
-export function nativeStartRedirect(loc = typeof window !== 'undefined' ? window.location : null) {
+/** A Supabase session is stored on this device (sb-<ref>-auth-token with a user id). No network, no supabase-js. */
+export function hasStoredSupabaseSession(storage = typeof window !== 'undefined' ? window.localStorage : null) {
+  if (!storage) return false;
+  try {
+    for (let i = 0; i < storage.length; i += 1) {
+      const k = storage.key(i);
+      if (!k || !/^sb-[a-z0-9]+-auth-token$/i.test(k)) continue;
+      const s = JSON.parse(storage.getItem(k) || 'null');
+      const sess = s?.currentSession || s;
+      if (sess?.user?.id && (sess.refresh_token || sess.access_token)) return true;
+    }
+  } catch { /* private mode / bad JSON: treat as signed out */ }
+  return false;
+}
+
+export function nativeStartRedirect(loc = typeof window !== 'undefined' ? window.location : null, storage) {
   if (!loc || !isNativeApp()) return null;
   const path = (loc.pathname || '/').replace(/\/+$/, '') || '/';
   if (!NATIVE_BLOCKED_PATHS.includes(path)) return null;
-  // Keep a Supabase auth result in the URL (hash / ?code=) so the full app still picks it up.
-  return `${NATIVE_START_PATH}${loc.search || ''}${loc.hash || ''}`;
+  const search = loc.search || '';
+  const hash = loc.hash || '';
+  const authInUrl = /[?&]code=|access_token=|error_code=|[?&]error=/.test(search + hash);
+  // Keep a Supabase auth result in the URL (hash / ?code=) so the full app still picks it up on /login.
+  if (!authInUrl && hasStoredSupabaseSession(storage)) return NATIVE_HOME_PATH;
+  return `${NATIVE_START_PATH}${search}${hash}`;
 }

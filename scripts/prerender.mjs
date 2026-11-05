@@ -140,7 +140,8 @@ function outPath(route) {
 }
 
 function sitemap(routes, posts) {
-  const lastmod = { '/': '2026-10-18' };
+  // bump a page here when its content changes (Google uses lastmod only when it is accurate)
+  const lastmod = { '/': '2026-11-05', '/about': '2026-11-05', '/contact': '2026-11-05' };
   posts.forEach((p) => { lastmod[`/blog/${p.slug}`] = p.updated; });
   const all = ['/', '/pricing', ...routes]; // /register and /login are noindex (A18/SEO-003), so not in the sitemap
   const prio = (r) => (r === '/' ? '1.0' : r === '/blog' || r === '/pricing' ? '0.9' : r.startsWith('/blog/') ? '0.8' : r === '/register' ? '0.8' : '0.5');
@@ -209,7 +210,7 @@ function llmsFull(mod) {
 
 /* ---------------- lean pages ("/", /pricing): prerendered + hydrated ---------------- */
 
-const LANDING_OG = `${ORIGIN}/og-image.png?v=7`;
+const LANDING_OG = `${ORIGIN}/og-image.png?v=8`; // keep in sync with src/site/seo.js LANDING_OG and index.html
 
 function readManifest() {
   const file = path.join(DIST, '.vite', 'manifest.json');
@@ -236,6 +237,23 @@ function chunkAssets(manifest, key) {
   if (!manifest[key]) throw new Error(`no manifest entry for ${key}`);
   visit(key);
   return { css, js };
+}
+
+/* perf/cold-start: the app shell's and Today's chunk list, for src/main.jsx to modulepreload (download + compile,
+   no evaluation) at boot when a signed-in owner opens Today (also the iOS app's cold start). A <meta>, not an inline
+   script: the URLs change every build and inline scripts are pinned by hash in the CSP (scripts/check-csp.mjs). */
+function withTodayPreload(manifest, html) {
+  const files = [];
+  // src/Layout.jsx is a shared dynamic chunk in the manifest ("_Layout-<hash>.js", name "Layout"), not a src key
+  const layoutKey = manifest['src/Layout.jsx'] ? 'src/Layout.jsx'
+    : Object.keys(manifest).find((k) => manifest[k].name === 'Layout' && manifest[k].isDynamicEntry && k.endsWith('.js'));
+  for (const key of [layoutKey, 'src/pages/Dashboard.jsx']) {
+    const { css, js } = chunkAssets(manifest, key);
+    for (const f of [...js, ...css]) if (!files.includes(f)) files.push(f);
+  }
+  const out = html.replace('</head>', `    <meta name="atlas-today-preload" content="${files.join(' ')}" />\n  </head>`);
+  if (out === html) throw new Error('app.html has no </head>');
+  return out;
 }
 
 function cssLinks({ css }) {
@@ -364,7 +382,7 @@ function prerenderLean(mod, template, index) {
   const manifest = readManifest();
   // every URL that is not a prerendered file gets the plain SPA shell (vercel.json / _redirects / netlify.toml).
   // App screens, /admin and guest links are private: noindex, and no canonical pointing at the landing.
-  fs.writeFileSync(path.join(DIST, 'app.html'), spaShell(index, 'noindex,nofollow'));
+  fs.writeFileSync(path.join(DIST, 'app.html'), withTodayPreload(manifest, spaShell(index, 'noindex,nofollow')));
   // /book/:slug is a host's public direct-booking page: indexable, but it is not the landing (no canonical to "/").
   fs.writeFileSync(path.join(DIST, 'book.html'), spaShell(index, 'index,follow'));
 

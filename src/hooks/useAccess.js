@@ -7,7 +7,7 @@ import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
 import { DEMO_ADMIN_EMAILS } from '@/admin/config';
 import { useOnline } from '@/hooks/useOnline';
 import { isNetworkError } from '@/lib/auth/authFailure';
-import { readLastAccess, writeLastAccess, offlineAccess } from '@/lib/lastAccess';
+import { readLastAccess, writeLastAccess, offlineAccess, trustLastStaffAccess } from '@/lib/lastAccess';
 
 const FORCE_KEY = 'atlas.qa.access';
 const FORCE_VALUES = ['expired', 'trial', 'paid'];
@@ -87,14 +87,25 @@ export function useAccess() {
     if (uid && online && !force && !unknown && !(needAdmin && admin.isLoading)) writeLastAccess(uid, access);
   }, [uid, online, force, unknown, needAdmin, admin.isLoading, access.locked, access.state, access.isAdmin]);
   if (unknown) return { ...offlineAccess(access, readLastAccess(uid)), checking: false, offline: true };
-  return { ...access, checking: needAdmin && online && admin.isLoading, offline: !online };
+  const checking = needAdmin && online && admin.isLoading;
+  // perf/cold-start (05.11): platform staff whose trial date has passed waited on this lookup at EVERY cold start
+  // (after the token refresh, a bare spinner for 1-3 s on a phone). When this device last saw this same account
+  // open as staff, open it now and let the lookup confirm in the background: a "no" still locks it the moment it
+  // lands. Writes stay refused until then (AccessSync, fail closed); the database is the real gate.
+  if (checking) {
+    if (trustLastStaffAccess(readLastAccess(uid))) {
+      return { ...computeAccess(user, { force, isAdmin: true }), checking: false, pending: true, offline: !online };
+    }
+  }
+  return { ...access, checking, pending: false, offline: !online };
 }
 
 /** Keeps the API-layer write lock (src/lib/accessLock.js) in step with the account. Mounted once in App. */
 export function AccessSync() {
-  const { locked, checking } = useAccess();
-  // While the admin lookup runs, an expired account is treated as locked (fail closed).
-  const value = locked || checking;
+  const { locked, checking, pending } = useAccess();
+  // While the admin lookup runs, an expired account is treated as locked (fail closed), also when it is shown
+  // open from the last known staff access (pending).
+  const value = locked || checking || Boolean(pending);
   useEffect(() => { setAccessLocked(value); }, [value]);
   return null;
 }

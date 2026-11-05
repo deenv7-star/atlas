@@ -9,14 +9,13 @@
  *   onCreated  async (booking) => void, after a successful save
  *   onClose    () => void, when the sheet closes (saved or not)
  */
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { AtlasSheet } from '@/components/ui/sheet/AtlasSheet';
-import { isPlaceholderUnitName } from '@/lib/unitName';
-import { BookingForm } from '@/components/forms/BookingForm';
-import { emptyBookingFormValues } from '@/components/forms/atlasFormSchemas';
-import { useCreateBooking, useProperties } from '@/data/entities';
-import { useToast } from '@/components/ui/AtlasToast';
-import { bookingFormToPayload } from '@/lib/entityPayloads';
+import React, { createContext, lazy, Suspense, useCallback, useContext, useMemo, useRef, useState } from 'react';
+
+// perf/cold-start: the booking form (form machine, schemas, date picker, sheet) is ~150 KB of code the first screen
+// never shows. The provider stays in the shell (one tap from anywhere); the sheet's code loads on the first open,
+// or when the browser is idle after the shell is up, so the first tap does not wait either.
+const loadSheet = () => import('./QuickBookingSheet');
+const QuickBookingSheet = lazy(loadSheet);
 
 const QuickBookingContext = createContext({ open: () => {} });
 
@@ -38,11 +37,14 @@ export function useQuickBooking() {
 
 export function QuickBookingProvider({ children }) {
   const [state, setState] = useState({ open: false, preset: null, opts: null, nonce: 0 });
-  const interceptRef = useRef(null);
-  const { data: properties = [] } = useProperties();
-  const createMutation = useCreateBooking();
-  const { success } = useToast();
   const optsRef = useRef(null);
+
+  React.useEffect(() => {
+    const ric = window.requestIdleCallback || ((cb) => window.setTimeout(cb, 3000));
+    const cancel = window.cancelIdleCallback || window.clearTimeout;
+    const id = ric(() => { loadSheet().catch(() => {}); }, { timeout: 6000 });
+    return () => cancel(id);
+  }, []);
 
   const open = useCallback((preset = null, opts = null) => {
     optsRef.current = opts;
@@ -63,56 +65,15 @@ export function QuickBookingProvider({ children }) {
   }, [notifyClosed]);
 
   const value = useMemo(() => ({ open }), [open]);
-  const preset = state.preset || {};
-  const opts = state.opts || {};
-  const { property_name: presetPropertyName, ...presetValues } = preset;
-  // Name a unit in the subtitle only when it is a real name and there is more than one to choose from.
-  const unitLine = presetPropertyName && properties.length > 1 && !isPlaceholderUnitName(presetPropertyName) ? presetPropertyName : '';
-  const defaults = useMemo(() => ({ ...emptyBookingFormValues, ...presetValues }), [state.nonce]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <QuickBookingContext.Provider value={value}>
       {children}
-      <AtlasSheet
-        open={state.open}
-        onOpenChange={(o) => {
-          const h = interceptRef.current;
-          if (h) { h(o); return; }
-          setOpen(o);
-        }}
-        title={opts.title || 'הזמנה חדשה'}
-        subtitle={opts.leadId
-          ? 'מילאנו את מה שהיה בפנייה. בדקו תאריכים ושמרו.'
-          : unitLine
-            ? `${unitLine} · את השאר אפשר להשלים אחר כך.`
-            : 'את השאר אפשר להשלים אחר כך.'}
-      >
-        <BookingForm
-          key={`quick-${state.nonce}`}
-          storageSuffix={opts.leadId ? `lead-${opts.leadId}` : preset.check_in_date || preset.property_id ? `quick-${preset.property_id || ''}-${preset.check_in_date || ''}` : 'quick'}
-          defaultValues={defaults}
-          properties={properties.map((p) => ({ id: p.id, name: p.name }))}
-          enableRouteGuard={false}
-          onSubmit={async (data) => {
-            const payload = bookingFormToPayload(data);
-            if (opts.leadId) payload.lead_id = opts.leadId;
-            let created;
-            try {
-              created = await createMutation.mutateAsync(payload);
-            } catch (err) {
-              // Audit 04.11 #4: the form shows this in its banner; no second copy as a toast.
-              throw new Error(bookingSaveErrorHe(err));
-            }
-            success('ההזמנה נשמרה');
-            if (opts.onCreated) await opts.onCreated(created);
-          }}
-          onCancel={close}
-          setDialogOpen={setOpen}
-          onRegisterDialogInterceptor={(fn) => { interceptRef.current = fn; }}
-          onAfterSubmitSuccess={() => window.setTimeout(close, 700)}
-          submitLabel="שמירת הזמנה"
-        />
-      </AtlasSheet>
+      {state.nonce > 0 ? (
+        <Suspense fallback={null}>
+          <QuickBookingSheet state={state} close={close} setOpen={setOpen} />
+        </Suspense>
+      ) : null}
     </QuickBookingContext.Provider>
   );
 }

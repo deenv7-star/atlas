@@ -25,6 +25,8 @@ import StaleIndicator from '@/components/app/StaleIndicator';
 import { canShowValues } from '@/lib/stay/loadState';
 import { useStayData, STAY_KEYS } from '@/hooks/useStayData';
 import { openBalances } from '@/lib/stay/bookings';
+import { todayISO } from '@/lib/stay/format';
+import { receivedThisMonth } from '@/lib/stay/received';
 import { Page, PageHeader, StatTile, SegmentedControl, EmptyState as DsEmptyState, StatusPill, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
 
 const HE_MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
@@ -153,11 +155,8 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
   const owed = useMemo(() => openBalances(stay.bookings, stay.paymentsByBooking), [stay.bookings, stay.paymentsByBooking]);
   const stats = useMemo(() => {
     const now = new Date();
-    const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    const amt = (p) => parseFloat(p.amount) || 0;
-    const paidMonth = (p) => String(p.paid_date || p.created_date || p.created_at || '').slice(0, 7) === ym;
     return {
-      paid:    stay.payments.filter((p) => p.status === 'PAID' && paidMonth(p)).reduce((s, p) => s + amt(p), 0),
+      paid:    receivedThisMonth(stay.payments, now), // same measure as Today's "נכנסו ב…" (src/lib/stay/received.js)
       pending: owed.total,
       pendingCount: owed.count,
       overdue: owed.overdue,
@@ -213,7 +212,10 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
       await updateMutation.mutateAsync({ id: editingPayment.id, data: paymentFormToPayload(data) });
       toast({ title: 'התשלום עודכן' });
     } else {
-      await createMutation.mutateAsync({ ...paymentFormToPayload(data), org_id: orgId });
+      const payload = paymentFormToPayload(data);
+      // A new payment marked paid with no date was received today (Today's "נכנסו ב…" and this page count by paid date).
+      if (String(payload.status).toUpperCase() === 'PAID' && !payload.paid_date) payload.paid_date = todayISO();
+      await createMutation.mutateAsync({ ...payload, org_id: orgId });
       toast({ title: 'התשלום נשמר' });
     }
   };
@@ -239,7 +241,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         title="תשלומים"
         help="payments.page"
         tour="payments-page"
-        subtitle="מקדמות, יתרות ותשלומים שהתקבלו."
+        subtitle="כל תשלום מאורחים במקום אחד. הדוח לרואה החשבון מתעדכן לבד."
         actions={
           <>
             <StaleIndicator queries={[paymentsQ]} onRetry={() => paymentsQ.refetch()} />

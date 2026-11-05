@@ -35,7 +35,8 @@ import { canShowValues } from '@/lib/stay/loadState';
 const EASE = [0.23, 1, 0.32, 1];
 const rise = (i = 0) => ({ initial: { opacity: 0, y: 16, scale: 0.985 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { duration: 0.7, ease: EASE, delay: 0.05 + i * 0.07 } });
 const KICK = { message: 'הודעה מוכנה', clean: 'ניקיון', lead: 'פנייה חדשה', balance: 'תשלום' };
-const BTN = { message: 'שליחה', clean: 'סימון', lead: 'מענה', balance: 'תזכורת' };
+// persona-clarity: "סימון" said nothing; the button marks the unit as cleaned
+const BTN = { message: 'שליחה', clean: 'נוקה', lead: 'מענה', balance: 'תזכורת' };
 const DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
 
 function MonthCal({ model }) {
@@ -174,7 +175,7 @@ export default function DashboardView({ user, orgId }) {
 
           {!q3.length ? null : (
           <section className="y2-next" aria-label="הדבר הבא">
-            <div className="y2-sec-h"><h2>הדבר הבא</h2><Link to="/messages" className="y2-link">כל המשימות</Link></div>
+            <div className="y2-sec-h"><h2>הדבר הבא</h2><button type="button" className="y2-link" aria-haspopup="dialog" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-day'))}>כל מה שמחכה ({m.queue.length})</button></div>
             <ul className="y2-next-row">
               <AnimatePresence initial={false} mode="popLayout">
                 {q3.map((a, i) => {

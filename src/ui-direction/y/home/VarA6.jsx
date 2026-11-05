@@ -8,7 +8,7 @@
 import React, { useMemo } from 'react';
 import { SETUP_DONE, SETUP_STEPS, SetupActions } from './shared';
 import { FaceStack } from '../ui';
-import { money } from '../model';
+import { money, moneyNum } from '../model';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import './var-a6.css';
@@ -101,17 +101,21 @@ export default function HomeTop({ m, noBookings, onAdd, arrivals = [], departure
         <div className="hv6-top">
           <div>
             <p className="hv6-k" id="hv6-h">נכנסו ב{month}</p>
-            <p className="hv6-big"><span dir="ltr">{money(m.money.received)}</span></p>
+            {/* Deen 05.11: at 132px the ₪ glyph was as tall and heavy as the digits and read as "0ש"; the sign is now a
+                quieter, lighter mark before the number (same ₪-first order as fmtMoney everywhere else) */}
+            <p className="hv6-big"><span dir="ltr" className="hv6-amt"><span className="hv6-cur" aria-hidden>₪</span>{moneyNum(m.money.received)}</span></p>
           </div>
-          {prev ? (
-            <p className="hv6-cmp"><span>{prev.label ? `ב${prev.label}` : 'בחודש הקודם'}</span><b dir="ltr">{money((prev.value || 0) + (prev.expected || 0))}</b></p>
+          {prev && m.money.prevReceived != null ? (
+            /* same measure as the big number (received by paid date), so the two can be compared */
+            /* round 05.11: full month in plain words ("באוקטובר נכנסו"), never the clipped "באוק׳" */
+            <p className="hv6-cmp"><span>{m.money.prevMonth ? `ב${m.money.prevMonth} נכנסו` : 'בחודש הקודם נכנסו'}</span><b dir="ltr">{money(m.money.prevReceived)}</b></p>
           ) : null}
         </div>
         <DaySentence m={m} arrivals={arrivals} departures={departures} dueCount={dueCount} onTile={onTile} />
         {/* the horizon's own labels stay visible text; the tap target is an empty overlay so its name never mismatches them */}
         <div className="hv6-hzb">
           <Horizon values={hasRevenue ? [...wave].reverse() : []} empty={!hasRevenue} labels={labels}
-            peak={prev && bestLabel === money((prev.value || 0) + (prev.expected || 0)) ? '' : bestLabel} />
+            peak={bestLabel} />
           <button type="button" className="hv6-hzhit" onClick={() => onTile('revenue')} aria-haspopup="dialog" aria-label="הכנסות לפי חודש: פירוט" />
         </div>
       </section>

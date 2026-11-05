@@ -10,7 +10,7 @@
 .y3-panel-h { display: flex; align-items: center; gap: 12px; padding: 0 6px 14px; flex-wrap: wrap; }
 @media (min-width: 1024px) { .y3-panel-h { padding: 2px 8px 20px; } }
 .y3-panel-t { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; letter-spacing: -.01em; margin-inline-end: auto; }
-.y3-panel-t::before { content: ''; width: 4px; height: 20px; border-radius: 99px; background: #fff; }
+/* persona-clarity (05.11.2026): the 4px bar beside section titles read as a stray text caret; removed */
 .y3-hide-m { display: none !important; }
 @media (min-width: 1024px) { .y3-hide-m { display: inline-grid !important; } }
 

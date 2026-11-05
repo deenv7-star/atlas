@@ -9,7 +9,7 @@ import { CheckCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { emitMascot } from '@/components/mascot/useMascotMood';
-import { URL_RE, TRAIL, shortLink } from './links';
+import { FriendlyText } from './FriendlyText';
 import './magic.css';
 
 function initials(name) {
@@ -17,15 +17,6 @@ function initials(name) {
   return (p[0]?.[0] || 'א') + (p[1]?.[0] || '');
 }
 
-/** Long links (Waze, the guest page) read as a short underlined host, like WhatsApp's link previews. */
-function withShortLinks(text) {
-  return String(text || '').split(URL_RE).flatMap((part, i) => {
-    if (!part || i % 2 === 0) return part ? [part] : [];
-    const trail = (part.match(TRAIL) || [''])[0];
-    const url = trail ? part.slice(0, -trail.length) : part;
-    return [<span key={i} className="mg-link" dir="ltr">{shortLink(url)}</span>, trail];
-  });
-}
 
 export function WaBubble({ text, guest = 'נועה לוי', time = '10:00', sample = false, className, compact = false, delay = 0 }) {
   const reduce = useReducedMotion();
@@ -44,7 +35,7 @@ export function WaBubble({ text, guest = 'נועה לוי', time = '10:00', samp
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 380, damping: 30, delay }}
       >
-        <p className="whitespace-pre-line">{withShortLinks(text)}</p>
+        <p className="whitespace-pre-line"><FriendlyText text={text} /></p>
         <span className="mg-bubble-meta" dir="ltr">
           <span className="tabular">{time}</span>
           <CheckCheck className="h-[15px] w-[15px]" strokeWidth={1.75} aria-hidden />

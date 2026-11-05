@@ -10,13 +10,16 @@ import { createPageUrl } from '@/utils';
 import { cn } from '@/lib/utils';
 import { AtlasFace } from '@/components/mascot/AtlasFace.jsx';
 import { openAssistant, useAssistantOpen } from '@/assistant/launcher';
-import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, LayoutGrid, Bell, LifeBuoy, Settings } from 'lucide-react';
+import { Search, Plus, Sun, CalendarRange, BedDouble, Inbox, Wallet, LayoutGrid, Bell, Settings, CircleHelp, Headset, BookOpen } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { openHelp } from '@/support/openHelp';
+import { helpVariant } from '@/support/helpVariant';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useHelpUnread } from '@/support/openHelp';
 import { MoreSheetHost, openMore, useMoreOpen } from './MoreSheet';
 import { Wordmark, useIsActive, UserMenu } from '@/components/app/shell/shared';
-import { GuestAvatar } from '@/components/app/atoms';
+import { GuestAvatar, guestInitials } from '@/components/app/atoms';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import { useLiquidLens } from './useLiquidLens';
 import TodayBackdrop, { TODAY_PAGES, APP_BG } from './TodayBackdrop';
@@ -26,6 +29,7 @@ import './y-bg-story.css';
 import './y-atlas-tab.css';
 import './y-nav-clean.css';
 import './y-nav.css';
+import './y-help.css';
 
 export const shellClass = 'y2-shell';
 
@@ -52,7 +56,7 @@ const NAV = [
   { page: 'Dashboard', label: 'היום', icon: Sun },
   { page: 'MultiCalendar', label: 'יומן', icon: CalendarRange },
   { page: 'Bookings', label: 'הזמנות', icon: BedDouble },
-  { page: 'Leads', label: 'פניות', icon: Inbox },
+  { page: 'Leads', label: 'שיחות', icon: Inbox },
   { page: 'Payments', label: 'כסף', icon: Wallet },
 ];
 const SPRING = { type: 'spring', duration: 0.45, bounce: 0.18 };
@@ -92,7 +96,7 @@ export function Sidebar({ user, onLogout }) {
       <div className="y2-rail-end">
         <Link to={createPageUrl('Settings')} className="y2-ri press" aria-label="הגדרות"><Settings strokeWidth={1.75} /><span>הגדרות</span></Link>
         <UserMenu user={user} onLogout={onLogout} side="left">
-          <button type="button" aria-label="החשבון שלי" className="y2-rail-me press">
+          <button type="button" aria-label={`החשבון שלי, ${guestInitials(user?.full_name || user?.email || '')}`} className="y2-rail-me press">
             <span aria-hidden="true" className="contents"><GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={44} /></span>
           </button>
         </UserMenu>
@@ -126,13 +130,14 @@ export function Header({ user, onOpenCommandPalette, onLogout, currentPageName }
         <button type="button" onClick={onOpenCommandPalette} className="y2-search press" aria-label="חיפוש אורח, הזמנה או יחידה">
           <Search strokeWidth={1.75} /><span>חיפוש אורח, הזמנה או יחידה</span>
         </button>
-        <AskFaceDesk />
-        <button type="button" className="y2-gb press y2-hide-m" aria-label="עזרה" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-support'))}><LifeBuoy strokeWidth={1.75} /></button>
+        {/* persona-clarity (05.11.2026): ONE help entry, labelled, on every width (was: lifebuoy + atlas face + two rows in עוד + the account menu) */}
+        <HelpButton unread={unread.help} />
         <BellMenu unread={unread} />
-        {/* quick-add: desktop only; on the phone adding lives in "עוד" and on each screen */}
-        <button type="button" className="y2-gb y2-gb--ind press" onClick={() => quick.open()} aria-label="הזמנה חדשה"><Plus strokeWidth={2} /></button>
+        {/* quick-add: desktop only; on the phone adding lives in "עוד" and on each screen. Labelled so nobody has to guess "+". */}
+        <button type="button" className="y2-gb y2-gb--ind y2-gb--lbl press" onClick={() => quick.open()} aria-label="הזמנה חדשה" title="רישום הזמנה חדשה"><Plus strokeWidth={2} /><span className="y2-gb-t" aria-hidden="true">הזמנה חדשה</span></button>
         <UserMenu user={user} onLogout={onLogout} hideMore>
-          <button type="button" aria-label="החשבון שלי" className="y2-bar-me press">
+          {/* a11y (label-in-name): the label carries the initials the avatar shows */}
+          <button type="button" aria-label={`החשבון שלי, ${guestInitials(user?.full_name || user?.email || '')}`} className="y2-bar-me press">
             <span aria-hidden="true" className="contents"><GuestAvatar name={user?.full_name || user?.email || ''} src={user?.avatar_url} owner size={36} /></span>
           </button>
         </UserMenu>
@@ -156,13 +161,47 @@ function BellMenu({ unread }) {
     else navigate(`${createPageUrl('Dashboard')}?sheet=day`);
   };
   return (
-    <button type="button" className="y2-gb y2-bell press" aria-label={label} aria-haspopup="dialog" onClick={open}>
-      <Bell strokeWidth={1.75} />{unread.any ? <i className="y2-gb-dot" aria-hidden /> : null}
+    <button type="button" className="y2-gb y2-bell y2-gb--lbl press" aria-label={label} aria-haspopup="dialog" onClick={open} title="מה מחכה לכם היום: הודעות לשלוח, ניקיונות ותשלומים">
+      <Bell strokeWidth={1.75} />{unread.any ? <i className="y2-gb-dot" aria-hidden /> : null}<span className="y2-gb-t" aria-hidden="true">מה מחכה</span>
     </button>
   );
 }
 
-/** Desktop only (phones have it in the centre of the tab bar): the living atlas face opens a voice conversation. */
+/**
+ * The one help entry (persona-clarity, 05.11.2026). 'hub' (default): opens the help panel (שאלו את atlas · דברו עם נציג ·
+ * מדריכים קצרים). 'menu' (version B): a small menu with the same three rows. See src/support/helpVariant.js.
+ */
+function HelpButton({ unread = 0 }) {
+  const variant = helpVariant();
+  const btn = (props) => (
+    <button type="button" className="y2-help press" aria-label={unread ? 'עזרה, יש תשובה חדשה מנציג' : 'עזרה: שאלו את atlas, נציג או מדריך'} title="עזרה: שאלו את atlas, דברו עם נציג או קראו מדריך קצר" {...props}>
+      <CircleHelp strokeWidth={1.9} aria-hidden /><span>עזרה</span>{unread ? <i className="y2-gb-dot" aria-hidden /> : null}
+    </button>
+  );
+  if (variant !== 'menu') return btn({ 'aria-haspopup': 'dialog', onClick: () => openHelp() });
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>{btn({})}</DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="y2-help-menu w-[300px] p-2" dir="rtl">
+        <DropdownMenuItem className="y2-help-item" onSelect={() => openAssistant('voice')}>
+          <span className="y2-help-ic y2-help-ic--face" aria-hidden><AtlasFace live size={30} decorative /></span>
+          <span className="min-w-0"><b>שאלו את atlas</b><small>שאלה או בקשה, בקול או בכתב</small></span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="y2-help-item" onSelect={() => window.setTimeout(() => openHelp({ person: true }), 0)}>
+          <span className="y2-help-ic" aria-hidden><Headset strokeWidth={1.75} /></span>
+          <span className="min-w-0"><b>דברו עם נציג</b><small>בן אדם מהצוות, 24/7</small></span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="y2-help-item" onSelect={() => window.setTimeout(() => openHelp(), 0)}>
+          <span className="y2-help-ic" aria-hidden><BookOpen strokeWidth={1.75} /></span>
+          <span className="min-w-0"><b>מדריכים קצרים</b><small>איך מחברים את Booking, מוסיפים חדר ועוד</small></span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+/** (persona-clarity: no longer in the header; the assistant opens from "עזרה" → שאלו את atlas, and from the phone's round atlas button.) */
+// eslint-disable-next-line no-unused-vars
 function AskFaceDesk() {
   const { isOpen } = useAssistantOpen();
   const { pathname } = useLocation();

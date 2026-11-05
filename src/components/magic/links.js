@@ -13,3 +13,23 @@ export function shortLink(raw) {
     return s.length > 28 ? `${s.slice(0, 24)}…` : s;
   }
 }
+
+/**
+ * Round 05.11.2026: a raw "waze.com/…" in a guest-message bubble means nothing to an older owner.
+ * Known links read as what they do; anything else falls back to the short host. Pure.
+ */
+export function friendlyLink(raw) {
+  const s = String(raw || '');
+  let host = '';
+  let path = '';
+  try {
+    const u = new URL(/^https?:\/\//i.test(s) ? s : `https://${s}`);
+    host = u.hostname.replace(/^www\./i, '').toLowerCase();
+    path = u.pathname;
+  } catch { /* fall through */ }
+  if (host === 'waze.com' || host.endsWith('.waze.com')) return { label: 'ניווט בוויז', rtl: true };
+  if ((host.startsWith('google.') || host === 'maps.google.com' || host === 'maps.app.goo.gl' || host === 'goo.gl') && (/maps/.test(host) || path.startsWith('/maps'))) return { label: 'ניווט במפות', rtl: true };
+  if (/(^|\.)atlas-il\.com$/.test(host) && path.startsWith('/g/')) return { label: 'דף האורח', rtl: true };
+  if (/(^|\.)atlas-il\.com$/.test(host) && (path.startsWith('/b/') || path.startsWith('/book'))) return { label: 'דף ההזמנה', rtl: true };
+  return { label: shortLink(s), rtl: false };
+}

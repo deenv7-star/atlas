@@ -8,14 +8,14 @@ import React, { useEffect, useMemo, useState, useSyncExternalStore } from 'react
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import * as D from '@radix-ui/react-dialog';
-import { X, Search, Plus, Receipt, UserPlus, LifeBuoy, ChevronLeft, UserRound } from 'lucide-react';
+import { X, Search, Plus, Receipt, UserPlus, ChevronLeft, UserRound } from 'lucide-react';
 import { formatDayHe } from '@/lib/stay/format';
 import { cn } from '@/lib/utils';
 import { createPageUrl } from '@/utils';
 import { DB_FEATURES } from '@/config/dbFeatures';
 import { useNavGroups, useIsActive } from '@/components/app/shell/shared';
 import { useQuickBooking } from '@/components/app/QuickBooking';
-import { HELP_ENABLED, openHelp, useHelpUnread } from '@/support/openHelp';
+import { NAV_DESC } from '@/config/navigation';
 import './y-more-sheet.css';
 
 /** Extra words people type for a screen, so "ניקיון" or a tax-document word finds the right tile. */
@@ -24,13 +24,14 @@ const ALIASES = {
   ExpenseTracker: 'הוצאות',
   Invoices: 'קבלות חשבוניות מסמכים',
   Bookings: 'הזמנה אורחים',
-  Messages: 'וואטסאפ הודעות',
+  Leads: 'פניות הודעות וואטסאפ אורחים',
   Settings: 'יחידות פרטים הגדרות',
   Integrations: 'booking airbnb ערוצים סנכרון',
   Cleaning: 'ניקיון מנקה',
+  ServiceRequests: 'תקלה תקלות תחזוקה תיקון בקשות שירות',
   Reviews: 'ביקורות דירוג',
   DynamicPricing: 'מחיר מחירים חגים',
-  RevenueIntelligence: 'הכנסות דוח',
+  MonthlyReport: 'הכנסות דוח דוחות רואה חשבון',
 };
 
 /** Open state lives outside React so the rail, the tab bar and the sheet share it without prop drilling. */
@@ -69,7 +70,6 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
   const navigate = useNavigate();
   const quick = useQuickBooking();
   const isActive = useIsActive();
-  const helpUnread = useHelpUnread();
   const [q, setQ] = useState('');
   const groups = useNavGroups(user);
 
@@ -78,7 +78,7 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
     const seen = new Set();
     return groups.map((g) => ({
       id: g.id,
-      label: g.label || 'עיקרי',
+      label: g.label || 'מסכים ראשיים',
       items: g.items.filter((i) => { if (exclude.includes(i.page) || seen.has(i.page)) return false; seen.add(i.page); return true; }),
     })).filter((g) => g.items.length);
   }, [groups, exclude]);
@@ -168,13 +168,14 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
               {g.label ? <p className="ycm-sec">{g.label}</p> : null}
               {g.items.length ? (
                 <ul className="ycm-list">
-                  {g.items.map(({ page, label, icon: Icon }) => {
+                  {g.items.map(({ page, label, icon: Icon, desc }) => {
                     const on = isActive(page);
+                    const line = desc || NAV_DESC[page];
                     return (
                       <li key={page}>
-                        <button type="button" className={cn('ycm-row press', on && 'on')} aria-current={on ? 'page' : undefined} onClick={() => go(page)}>
+                        <button type="button" className={cn('ycm-row press', on && 'on', line && 'ycm-row--2')} aria-current={on ? 'page' : undefined} onClick={() => go(page)}>
                           <Icon strokeWidth={1.75} aria-hidden className="ycm-row-ic" />
-                          <span className="ycm-lb">{label}</span>
+                          <span className="ycm-lb">{label}{line ? <span className="ycm-desc">{line}</span> : null}</span>
                           <ChevronLeft strokeWidth={1.75} aria-hidden className="ycm-row-chev" />
                         </button>
                       </li>
@@ -186,13 +187,7 @@ export function MoreSheet({ open, onOpenChange, user, exclude = [] }) {
           ))}
           {term && !shown.length && !people.length ? <p className="ycm-none">אין מסך בשם הזה. אפשר לחפש אותו באורחים ובהזמנות.</p> : null}
 
-          {HELP_ENABLED && !term ? (
-            <button type="button" className="ycm-help press" onClick={() => { close(); window.setTimeout(openHelp, 0); }}>
-              <LifeBuoy strokeWidth={1.75} aria-hidden /><span>עזרה ושאלות</span>
-              {helpUnread ? <i className="ycm-dot" aria-label="יש תשובה חדשה" /> : null}
-              <ChevronLeft strokeWidth={1.75} aria-hidden />
-            </button>
-          ) : null}
+          {/* persona-clarity (05.11.2026): no help row here any more; help has ONE place, "עזרה" in the top bar */}
         </D.Content>
       </D.Portal>
     </D.Root>

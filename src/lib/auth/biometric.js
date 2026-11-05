@@ -91,7 +91,7 @@ export async function clearBiometric({ keepOffered = true } = {}) {
  */
 export async function signInWithBiometric(supabase, { reason } = {}) {
   const { NB } = await plugin();
-  const { value } = await NB.getSecureData({ key: BIOMETRIC_SECRET_KEY, reason: reason || 'כניסה ל-atlas' });
+  const { value } = await NB.getSecureData({ key: BIOMETRIC_SECRET_KEY, reason: reason || 'כניסה לחשבון' });
   if (!value) {
     const e = new Error('No protected data found for key');
     e.code = '21';

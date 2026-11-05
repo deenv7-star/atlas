@@ -38,7 +38,7 @@ export default function BiometricLoginButton({ onSignedIn, className }) {
     setBusy(true);
     setError('');
     try {
-      await signInWithBiometric(supabase, { reason: 'כניסה ל-atlas' });
+      await signInWithBiometric(supabase, { reason: 'כניסה לחשבון' });
       await onSignedIn?.();
     } catch (err) {
       const kind = biometricErrorKind(err);

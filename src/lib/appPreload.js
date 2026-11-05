@@ -11,7 +11,7 @@ import { storedSessionUser, isSupabaseConfigured } from '@/api/supabaseClient';
 const loadLayout = () => import('@/Layout.jsx').catch(() => null);
 
 /** The screens owners open most; their code is fetched in the background after the app is up. */
-const MAIN_PAGES = ['Dashboard', 'Today', 'MultiCalendar', 'Bookings', 'Leads', 'Messages', 'Payments', 'Settings'];
+const MAIN_PAGES = ['Dashboard', 'Today', 'MultiCalendar', 'Bookings', 'Leads', 'Payments', 'Settings'];
 
 export function hasStoredSession() {
   if (isSupabaseConfigured) return Boolean(storedSessionUser());
@@ -57,4 +57,16 @@ export function prefetchMainPagesWhenIdle(delayMs = 2500) {
     };
     idle(next);
   }, delayMs);
+}
+
+const DATA_PAGES = new Set(['Dashboard', 'Today']);
+/**
+ * perf/cold-start: a signed-in owner opening Today gets its data requested at boot (with the code), not after the
+ * screen mounts. Only with a stored session; supabase-js restores (or refreshes) it before the first request.
+ */
+export function prefetchDataForInitialRoute(queryClient) {
+  if (typeof window === 'undefined' || !isSupabaseConfigured) return;
+  const key = getPageKeyFromPathname(window.location.pathname);
+  if (!DATA_PAGES.has(key) || !hasStoredSession()) return;
+  import('@/hooks/useStayData').then((m) => m.prefetchStayData(queryClient)).catch(() => {});
 }

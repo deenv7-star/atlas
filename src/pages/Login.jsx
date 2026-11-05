@@ -19,6 +19,7 @@ import SocialButtons from '@/components/auth/SocialButtons';
 import { socialProviders } from '@/lib/auth/socialAuth';
 import { SOCIAL_LAYOUT } from '@/config/socialAuth';
 import { isNativeApp } from '@/lib/native';
+import { BootHold } from '@/lib/boot';
 
 // iOS app only: "כניסה עם Face ID" (renders nothing until Face ID was turned on). Never loaded on the web.
 const BiometricLoginButton = lazy(() => import('@/components/auth/BiometricLoginButton'));
@@ -123,17 +124,8 @@ export default function Login() {
     }
   };
 
-  if (isLoadingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F7F8FB' }} dir="rtl">
-        <div
-          className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"
-          role="status"
-          aria-label="טוען"
-        />
-      </div>
-    );
-  }
+  // perf/cold-start: while the stored session is checked, the branded boot screen stays up (no bare spinner).
+  if (isLoadingAuth) return <BootHold />;
 
   const hasSocial = socialProviders().length > 0;
   const social = (divider) => <SocialButtons intent="login" divider={divider} returnTo={searchParams.get('return')} />;

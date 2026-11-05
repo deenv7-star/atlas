@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import SeoManager from '@/components/seo/SeoManager';
 import ScrollToTop from '@/lib/ScrollToTop';
+import { BootDone } from '@/lib/boot';
 
 /**
  * The route tree under the Router (see src/Root.jsx). Shared by the browser (lazy pages, src/Root.jsx) and the
@@ -44,7 +45,7 @@ class LeanErrorBoundary extends React.Component {
 export function RootTree({ lean, pages, full }) {
   const page = (P) => (
     <LeanErrorBoundary>
-      <Suspense fallback={<PublicFallback />}><P /></Suspense>
+      <Suspense fallback={<PublicFallback />}><P /><BootDone /></Suspense>
     </LeanErrorBoundary>
   );
   return (

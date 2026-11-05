@@ -13,7 +13,7 @@ function toastPoint() {
 }
 
 const DURATION_MS = {
-  success: 3000,
+  success: 3500,
   error: 6000,
   info: 4000,
   undo: 5000,
@@ -22,6 +22,16 @@ const DURATION_MS = {
 
 const baseToast =
   'rounded-xl border shadow-md backdrop-blur-sm !pointer-events-auto max-w-[min(100vw-1.5rem,24rem)]';
+
+/** Optional extras for a toast. `description` renders as a second, quieter line. */
+export type ToastOpts = { description?: string };
+
+/**
+ * Deen 05.11.2026: two identical "התשלום נשמר" toasts stacked. The same message raised again while it is still on
+ * screen reuses its id, so sonner refreshes the one toast (and restarts its timer) instead of stacking a copy.
+ */
+const dedupeId = (kind: string, message: string, description?: string): string =>
+  `atlas:${kind}:${message}${description ? `|${description}` : ''}`;
 
 export type PersistentToastAction = {
   label: string;
@@ -32,16 +42,21 @@ export type PersistentToastAction = {
  * Single module that imports `sonner`. App code must use `useToast()` or this API from data layers that cannot call hooks.
  */
 export const atlasToastApi = {
-  success(message: string): void {
+  success(message: string, opts: ToastOpts = {}): string {
     emitMascot('success', toastPoint());
+    const id = dedupeId('success', message, opts.description);
     toast.success(message, {
+      id,
+      description: opts.description,
       duration: DURATION_MS.success,
       className: `${baseToast} border-emerald-200 bg-emerald-50 text-emerald-950`,
     });
+    return id;
   },
 
-  error(message: string, detail?: string): void {
+  error(message: string, detail?: string, opts: ToastOpts = {}): string {
     emitMascot('error', toastPoint());
+    const id = dedupeId('error', message, detail || opts.description);
     if (detail) {
       toast.custom(
         () => (
@@ -58,26 +73,34 @@ export const atlasToastApi = {
             </details>
           </div>
         ),
-        { duration: DURATION_MS.error },
+        { id, duration: DURATION_MS.error },
       );
-      return;
+      return id;
     }
     toast.error(message, {
+      id,
+      description: opts.description,
       duration: DURATION_MS.error,
       className: `${baseToast} border-red-200 bg-red-50 text-red-950`,
     });
+    return id;
   },
 
-  info(message: string): void {
+  info(message: string, opts: ToastOpts = {}): string {
+    const id = dedupeId('info', message, opts.description);
     toast.info(message, {
+      id,
+      description: opts.description,
       duration: DURATION_MS.info,
       className: `${baseToast} border-slate-200 bg-slate-50 text-slate-900`,
     });
+    return id;
   },
 
   realtime(message: string): void {
     emitMascot('look', toastPoint());
     toast(message, {
+      id: dedupeId('realtime', message),
       duration: DURATION_MS.realtime,
       className: `${baseToast} border-blue-300 bg-blue-50 text-blue-950`,
     });
@@ -135,6 +158,11 @@ export const atlasToastApi = {
 
   dismissPersistent(id: string): void {
     usePersistentToastStore.getState().dismiss(id);
+  },
+
+  /** Closes one toast by the id a call above returned. */
+  dismiss(id?: string | number | null): void {
+    if (id != null) toast.dismiss(id);
   },
 
   /** Clears all Sonner toasts (e.g. after sign-out). Does not touch persistent store. */
