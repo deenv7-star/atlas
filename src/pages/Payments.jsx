@@ -241,7 +241,7 @@ export default function PaymentsPage({ user, selectedPropertyId, orgId }) {
         title="תשלומים"
         help="payments.page"
         tour="payments-page"
-        subtitle="מקדמות, יתרות ותשלומים שהתקבלו."
+        subtitle="כל תשלום מאורחים במקום אחד. הדוח לרואה החשבון מתעדכן לבד."
         actions={
           <>
             <StaleIndicator queries={[paymentsQ]} onRetry={() => paymentsQ.refetch()} />

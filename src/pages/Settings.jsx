@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
@@ -29,11 +28,12 @@ import ImportEntryCard from '@/components/import/EntryCard';
 const BiometricSetting = lazy(() => import('@/components/settings/BiometricSetting'));
 const NativeNotifySetting = lazy(() => import('@/components/settings/NativeNotifySetting.jsx'));
 
+// persona-clarity (05.11.2026): the business (units, hours) first, because that is what owners come here to change.
 const tabs = [
-  { id: 'profile', label: 'פרופיל', icon: User },
-  { id: 'organization', label: 'העסק', icon: Building2 },
+  { id: 'organization', label: 'העסק והיחידות', icon: Building2 },
+  { id: 'profile', label: 'הפרטים שלי', icon: User },
   { id: 'notifications', label: 'התראות', icon: Bell },
-  { id: 'security', label: 'אבטחה', icon: Shield },
+  { id: 'security', label: 'סיסמה ואבטחה', icon: Shield },
 ];
 
 export default function SettingsPage({ user }) {
@@ -41,8 +41,8 @@ export default function SettingsPage({ user }) {
   const [activeTab, setActiveTab] = useState(() => {
     try {
       const t = new URLSearchParams(window.location.search).get('tab');
-      return tabs.some((x) => x.id === t) ? t : 'profile';
-    } catch { return 'profile'; }
+      return tabs.some((x) => x.id === t) ? t : 'organization';
+    } catch { return 'organization'; }
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -163,18 +163,7 @@ export default function SettingsPage({ user }) {
 
   return (
     <Page className="max-w-[1000px]">
-      <PageHeader title="הגדרות" help="settings.page" subtitle="הפרטים שלכם, פרטי העסק, ההתראות והאבטחה." />
-
-      <div data-tour="settings-tour" className="v7-card mb-6 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Compass className="h-5 w-5" strokeWidth={1.75} /></span>
-          <div className="min-w-0">
-            <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">סיור מודרך<HelpHint id="settings.tour" /></p>
-            <p className="mt-0.5 text-[14px] text-ink-600">דקה אחת על המסכים העיקריים, עם הסבר קולי אם רוצים.</p>
-          </div>
-        </div>
-        <Button variant="outline" className="h-11 shrink-0 rounded-full px-5" onClick={() => startTour(0)}>התחלת הסיור</Button>
-      </div>
+      <PageHeader title="הגדרות" help="settings.page" subtitle="כאן משנים את היחידות, שעות הכניסה, הפרטים והסיסמה." />
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Tab list */}
@@ -228,7 +217,7 @@ export default function SettingsPage({ user }) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-[18px] font-bold">פרטים אישיים</CardTitle>
-                <CardDescription>השם והטלפון שלכם</CardDescription>
+                <CardDescription className="text-[15px]">השם והטלפון של מי שמנהל את החשבון</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
                 {/* Avatar */}
@@ -240,14 +229,14 @@ export default function SettingsPage({ user }) {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium text-navy-900">{user?.full_name || 'החשבון שלי'}</p>
-                    <p className="text-xs text-ink-600">{user?.email}</p>
+                    <p className="text-[16px] font-medium text-navy-900">{user?.full_name || 'החשבון שלי'}</p>
+                    <p className="text-[14px] text-ink-600" dir="ltr">{user?.email}</p>
                   </div>
                 </div>
                 <Separator />
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="full_name" className="text-[14px] font-medium text-navy-900">שם מלא</Label>
+                    <Label htmlFor="full_name" className="text-[15px] font-medium text-navy-900">שם מלא</Label>
                     <Input
                       id="full_name"
                       value={profileForm.full_name}
@@ -256,7 +245,7 @@ export default function SettingsPage({ user }) {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="phone" className="text-[14px] font-medium text-navy-900">טלפון</Label>
+                    <Label htmlFor="phone" className="text-[15px] font-medium text-navy-900">טלפון</Label>
                     <Input
                       id="phone"
                       value={profileForm.phone}
@@ -265,14 +254,14 @@ export default function SettingsPage({ user }) {
                     />
                   </div>
                   <div className="space-y-1.5 sm:col-span-2">
-                    <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">אימייל</Label>
+                    <Label htmlFor="email" className="text-[15px] font-medium text-navy-900">אימייל</Label>
                     <Input
                       id="email"
                       value={profileForm.email}
                       disabled
                       className="bg-canvas"
                     />
-                    <p className="text-[12px] text-ink-400">את המייל אי אפשר לשנות כאן. צריכים? כתבו לנו.</p>
+                    <p className="text-[14px] text-ink-600">את המייל משנים דרך „עזרה" למעלה: כתבו לנו ונעשה את זה בשבילכם.</p>
                   </div>
                 </div>
                 <div className="flex justify-end pt-2">
@@ -296,61 +285,66 @@ export default function SettingsPage({ user }) {
           {/* Organization Tab */}
           {activeTab === 'organization' && (
             <>
-            <ImportEntryCard where="settings" className="mb-5" />
             <div className="v7-card mb-5 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Wand2 className="h-5 w-5" strokeWidth={1.75} /></span>
                 <div>
-                  <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">הגדרת העסק<HelpHint id="settings.setup" /></p>
-                  <p className="mt-0.5 text-[14px] text-ink-600">השם, היחידות, שעות הכניסה, וואטסאפ והערוצים, במסלול הקצר.</p>
+                  <p className="flex items-center gap-0.5 text-[17px] font-bold text-navy-900">היחידות ושעות הכניסה<HelpHint id="settings.setup" /></p>
+                  <p className="mt-0.5 text-[15px] text-ink-600">הוספת חדר או צימר, שינוי שמות, שעות כניסה ויציאה, מספר הוואטסאפ והחיבור ל-Booking ו-Airbnb.</p>
                 </div>
               </div>
               <Button asChild variant="outline" className="h-11 shrink-0 rounded-full px-5">
-                <Link to="/onboarding?again=1">פתיחת ההגדרה</Link>
+                <Link to="/onboarding?again=1">שינוי</Link>
               </Button>
             </div>
+            <ImportEntryCard where="settings" className="mb-5" />
             <Card>
               <CardHeader>
                 <CardTitle className="text-[18px] font-bold">פרטי העסק</CardTitle>
-                <CardDescription>השם, הטלפון והכתובת של העסק</CardDescription>
+                <CardDescription className="text-[15px]">מופיעים לאורחים בהודעות ובחוזים</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-[14px] font-medium text-navy-900">שם העסק</Label>
+                    <Label htmlFor="org_name" className="text-[15px] font-medium text-navy-900">שם העסק</Label>
                     <Input
+                      id="org_name"
                       value={orgForm.name}
                       onChange={e => setOrgForm(prev => ({ ...prev, name: e.target.value }))}
                       placeholder="למשל: צימרי הגליל"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[14px] font-medium text-navy-900">אימייל עסקי</Label>
+                    <Label htmlFor="org_email" className="text-[15px] font-medium text-navy-900">אימייל עסקי</Label>
                     <Input
+                      id="org_email"
                       value={orgForm.email}
                       onChange={e => setOrgForm(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="info@company.com"
+                      placeholder="למשל: info@zimmer.co.il"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[14px] font-medium text-navy-900">טלפון</Label>
+                    <Label htmlFor="org_phone" className="text-[15px] font-medium text-navy-900">טלפון</Label>
                     <Input
+                      id="org_phone"
                       value={orgForm.phone}
                       onChange={e => setOrgForm(prev => ({ ...prev, phone: e.target.value }))}
-                      placeholder="03-0000000"
+                      placeholder="למשל: 04-6900000"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[14px] font-medium text-navy-900">אתר אינטרנט</Label>
+                    <Label htmlFor="org_website" className="text-[15px] font-medium text-navy-900">אתר אינטרנט</Label>
                     <Input
+                      id="org_website"
                       value={orgForm.website}
                       onChange={e => setOrgForm(prev => ({ ...prev, website: e.target.value }))}
-                      placeholder="https://www.example.com"
+                      placeholder="לא חובה"
                     />
                   </div>
                   <div className="space-y-1.5 sm:col-span-2">
-                    <Label className="text-[14px] font-medium text-navy-900">כתובת</Label>
+                    <Label htmlFor="org_address" className="text-[15px] font-medium text-navy-900">כתובת</Label>
                     <Input
+                      id="org_address"
                       value={orgForm.address}
                       onChange={e => setOrgForm(prev => ({ ...prev, address: e.target.value }))}
                       placeholder="רחוב, עיר, מיקוד"
@@ -386,38 +380,26 @@ export default function SettingsPage({ user }) {
                 {/* COPY-053 (01.11.2026): nothing sends these yet (no reader in supabase/functions or src/lib),
                     so the toggles are shown disabled under "בקרוב" instead of promising alerts */}
                 <CardTitle className="flex items-center gap-2 text-[18px] font-bold">התראות במייל ובטלפון<span className="rounded-full bg-[#F1F2F7] px-2.5 py-0.5 text-[13px] font-bold text-ink-600">בקרוב</span></CardTitle>
-                <CardDescription>עוד לא נשלחות התראות. כשזה יהיה מוכן, תבחרו כאן על מה לקבל התראה.</CardDescription>
+                <CardDescription className="text-[15px]">עוד לא נשלחות התראות. כשזה יהיה מוכן, תקבלו הודעה על:</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-1">
-                {[
-                  { key: 'new_booking', label: 'הזמנה חדשה', desc: 'כשנכנסת הזמנה חדשה' },
-                  { key: 'new_lead', label: 'פנייה חדשה', desc: 'כשאורח מבקש לבדוק תאריכים' },
-                  { key: 'payment_received', label: 'תשלום התקבל', desc: 'כשמתקבל תשלום' },
-                  { key: 'system_updates', label: 'חידושים', desc: 'כשמשהו חדש מגיע' },
-                ].map(item => (
-                  <div key={item.key} className="flex items-center justify-between py-3 border-b border-line last:border-0">
-                    <div>
-                      <p className="text-sm font-medium text-navy-900">{item.label}</p>
-                      <p className="text-xs text-ink-400">{item.desc}</p>
-                    </div>
-                    <Switch
-                      checked={false}
-                      disabled
-                      aria-label={`${item.label} (בקרוב)`}
-                      className="data-[state=checked]:bg-brand-600"
-                    />
-                  </div>
-                ))}
-                <div className="pt-3 flex justify-end">
-                  <Button
-                    onClick={saveNotif}
-                    disabled
-                    className="gap-2"
-                  >
-                    <Save className="w-4 h-4" />
-                    {savingNotif ? 'שומרים…' : 'שמירה'}
-                  </Button>
-                </div>
+              <CardContent>
+                {/* persona-clarity (05.11.2026): no disabled switches and no disabled "שמירה"; just what is coming */}
+                <ul className="space-y-1">
+                  {[
+                    { key: 'new_booking', label: 'הזמנה חדשה', desc: 'כשנכנסת הזמנה, גם מ-Booking או Airbnb' },
+                    { key: 'new_lead', label: 'פנייה חדשה', desc: 'כשאורח שואל על תאריכים' },
+                    { key: 'payment_received', label: 'תשלום התקבל', desc: 'כשנרשם תשלום' },
+                  ].map((item) => (
+                    <li key={item.key} className="flex min-h-[56px] items-center gap-3 border-b border-line py-2 last:border-0">
+                      <Bell className="h-[18px] w-[18px] shrink-0 text-ink-400" strokeWidth={1.75} aria-hidden />
+                      <div>
+                        <p className="text-[16px] font-medium text-navy-900">{item.label}</p>
+                        <p className="text-[14px] text-ink-600">{item.desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-[15px] text-ink-600">בינתיים, כל מה שמחכה לכם מופיע במסך „היום" ובכפתור „מה מחכה" למעלה.</p>
               </CardContent>
             </Card>
           )}
@@ -436,6 +418,18 @@ export default function SettingsPage({ user }) {
           )}
         </div>
       </div>
+      {/* persona-clarity: the tour is a nice-to-have; what owners come to change (units, hours) comes first */}
+      <div data-tour="settings-tour" className="v7-card mt-8 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Compass className="h-5 w-5" strokeWidth={1.75} /></span>
+          <div className="min-w-0">
+            <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">סיור מודרך<HelpHint id="settings.tour" /></p>
+            <p className="mt-0.5 text-[15px] text-ink-600">דקה אחת שמראה איפה כל דבר נמצא. אפשר גם עם הסבר בקול.</p>
+          </div>
+        </div>
+        <Button variant="outline" className="h-11 shrink-0 rounded-full px-5" onClick={() => startTour(0)}>התחלת הסיור</Button>
+      </div>
+
     </Page>
   );
 }

@@ -27,7 +27,8 @@ import StaleIndicator from '@/components/app/StaleIndicator';
 import './tiles.css';
 
 const one = (n, s, p) => (n === 1 ? s : p);
-const BTN = { message: 'שליחה', clean: 'סימון', lead: 'מענה', balance: 'תזכורת' };
+// persona-clarity: "סימון" said nothing; the button marks the unit as cleaned
+const BTN = { message: 'שליחה', clean: 'נוקה', lead: 'מענה', balance: 'תזכורת' };
 const KICK = { message: 'הודעה מוכנה', clean: 'ניקיון', lead: 'פנייה חדשה', balance: 'תשלום' };
 const DAY_L = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
 const daysBetween = (a, b) => Math.round((parseDay(b) - parseDay(a)) / 86400000);
@@ -119,7 +120,7 @@ function Next({ m, q, onDo, going }) {
   const photo = q.kind === 'lead' ? null : unitPhoto(m.prop(q.booking?.property_id || q.c?.departure?.property_id));
   return (
     <section className="tl-next" aria-label="הדבר הבא">
-      <div className="tl-row-h"><p className="tl-k">הדבר הבא<span className="tl-kind"> · {KICK[q.kind]}</span></p>{m.queue.length > 1 ? <Link to="/messages" className="tl-link">כל המשימות<ChevronLeft strokeWidth={1.75} /></Link> : null}</div>
+      <div className="tl-row-h"><p className="tl-k">הדבר הבא<span className="tl-kind"> · {KICK[q.kind]}</span></p>{m.queue.length > 1 ? <button type="button" className="tl-link" aria-haspopup="dialog" onClick={() => window.dispatchEvent(new CustomEvent('atlas:open-day'))}>כל מה שמחכה ({m.queue.length})<ChevronLeft strokeWidth={1.75} /></button> : null}</div>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div key={q.id} className="tl-next-b" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 380, damping: 34 }}>
           <span className="tl-thumb">{photo ? <img src={photo} alt="" loading="lazy" decoding="async" /> : <Face name={q.kind === 'lead' ? q.lead.full_name : (q.booking?.guest_name || '')} size={52} />}</span>
@@ -230,7 +231,7 @@ export default function MobileTiles(props) {
               <Tile k i={3} label={`ממתינים לתשלום: ${money(m.pendingTotal)} מ-${dueCount} הזמנות. פירוט`} onClick={() => onTile('pending')}>
                 <span className="tl-tk">ממתינים לתשלום<i className="tl-amber" aria-hidden /></span>
                 <DotGrid total={20} on={Math.min(20, Math.round((received / Math.max(1, expected)) * 20))} cols={10} className="tl-viz tl-dots" />
-                <span className="tl-tn"><Num value={m.pendingTotal} pre="₪" delay={240} /><span>{dueCount} {one(dueCount, 'הזמנה', 'הזמנות')}</span></span>
+                <span className="tl-tn"><Num value={m.pendingTotal} pre="₪" delay={240} /><span>{dueCount} {one(dueCount, 'הזמנה', 'הזמנות')} · תזכורת בלחיצה</span></span>
               </Tile>
             ) : noPrice.length ? (
               <Tile i={3} label={`${noPrice.length} הזמנות בלי מחיר. הוספת מחיר`} onClick={() => openBooking(noPrice[0])} className="is-nudge">

@@ -22,7 +22,8 @@ import StaleIndicator from '@/components/app/StaleIndicator';
 import './mobile.css';
 
 const one = (n, s, p) => (n === 1 ? s : p);
-const BTN = { message: 'שליחה', clean: 'סימון', lead: 'מענה', balance: 'תזכורת' };
+// persona-clarity: "סימון" said nothing; the button marks the unit as cleaned
+const BTN = { message: 'שליחה', clean: 'נוקה', lead: 'מענה', balance: 'תזכורת' };
 const KICK = { message: 'הודעה מוכנה', clean: 'ניקיון', lead: 'פנייה חדשה', balance: 'תשלום' };
 
 /** a tappable number inside the sentence; a 1–2 digit number gets a full 44×44 target (is-short), its side margins

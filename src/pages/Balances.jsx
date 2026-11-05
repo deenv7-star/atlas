@@ -2,8 +2,7 @@
 import FinanceTabs from '@/components/app/FinanceTabs';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, MoreHorizontal, Search, Wallet } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Check, MessageCircle, Search, Wallet } from 'lucide-react';
 import { useStayData } from '@/hooks/useStayData';
 import { MoneyLoadBanner } from '@/components/app/MoneyLoadBanner';
 import { balanceOf, checkOutOf, isActiveBooking } from '@/lib/stay/bookings';
@@ -88,7 +87,7 @@ export default function BalancesPage({ user, orgId }) {
       <FinanceTabs />
       <PageHeader
         title="יתרות"
-        subtitle="מקדמות ויתרות: מה שולם, מה נשאר ומי באיחור. תזכורת יוצאת בוואטסאפ בלחיצה."
+        subtitle="מי עוד חייב לכם כסף. תזכורת בוואטסאפ בלחיצה, בלי שיחות לא נעימות."
       />
 
       {data.paymentsState === 'error' ? (
@@ -145,20 +144,18 @@ export default function BalancesPage({ user, orgId }) {
                     <Money value={balance.balance} className="block whitespace-nowrap text-[16px] font-semibold" style={{ color: balance.overdue ? 'var(--st-red-fg)' : 'var(--ink-900)' }} />
                     <span className="ab-faint">{balance.balance > 0 ? (balance.overdue ? 'באיחור' : 'יתרה') : 'שולם'}</span>
                   </div>
-                  {balance.balance > 0 ? (
-                    <DropdownMenu dir="rtl">
-                      <DropdownMenuTrigger asChild>
-                        <button type="button" aria-label="פעולות" className="press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] hover:bg-neutral-100" style={{ color: 'var(--ink-600)' }}>
-                          <MoreHorizontal className="h-5 w-5" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => setPayment({ booking, balance })}>תשלום התקבל</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => setComposer({ booking, balance })}><MessageCircle className="h-4 w-4" />תזכורת בוואטסאפ</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : <div className="w-11 shrink-0" />}
                 </div>
+                {/* persona-clarity (05.11.2026): the two things you do with a balance are written on the row, not hidden behind "⋯" */}
+                {balance.balance > 0 ? (
+                  <div className="flex flex-wrap gap-2 pb-1">
+                    <button type="button" onClick={() => setComposer({ booking, balance })} className="press inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 text-[15px] font-semibold ring-1 ring-inset ring-[#E8EAF2] hover:bg-[#F7F8FB]" style={{ color: 'var(--ink-900)' }}>
+                      <MessageCircle className="h-[18px] w-[18px]" style={{ color: 'var(--brand-600)' }} aria-hidden />תזכורת בוואטסאפ
+                    </button>
+                    <button type="button" onClick={() => setPayment({ booking, balance })} className="press inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 text-[15px] font-semibold hover:bg-[#F7F8FB]" style={{ color: 'var(--ink-600)' }}>
+                      <Check className="h-[18px] w-[18px]" aria-hidden />האורח שילם
+                    </button>
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>
