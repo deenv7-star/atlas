@@ -7,7 +7,7 @@
 .lv-line::before { content: ''; position: absolute; inset-inline: -18px; top: 15px; height: 4px; border-radius: 4px; background: rgba(27,38,86,.1); }
 .lv-fill { position: absolute; inset-inline-start: -18px; top: 15px; height: 4px; width: calc(var(--p) + 18px); border-radius: 4px; background: #3E2BF1; transform-origin: right center; animation: lv-grow 1.3s cubic-bezier(.23,1,.32,1) .4s both; }
 @keyframes lv-grow { from { transform: scaleX(0); } }
-.lv-ev { position: absolute; top: 0; width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; animation: lv-pop .5s cubic-bezier(.34,1.56,.64,1) both; animation-delay: calc(.55s + var(--i) * .1s); }
+.lv-ev { position: absolute; z-index: 2; top: 0; width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; animation: lv-pop .5s cubic-bezier(.34,1.56,.64,1) both; animation-delay: calc(.55s + var(--i) * .1s); }
 @keyframes lv-pop { from { opacity: 0; transform: scale(.5); } }
 .lv-dot { position: relative; display: inline-flex; padding: 2px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1.5px #3E2BF1, 0 6px 14px -8px rgba(27,38,86,.5); }
 .lv-dot .y-stack { display: inline-flex; }
@@ -15,9 +15,9 @@
 .lv-ev.is-done .y-stack { opacity: .5; filter: grayscale(1); }
 .lv-ck { position: absolute; z-index: 1; inset-inline-end: -6px; top: -5px; width: 16px; height: 16px; border-radius: 99px; background: #1B2656; color: #fff; display: grid; place-items: center; }
 .lv-ck svg { width: 10px; height: 10px; }
-.lv-t { font-size: 12px; font-weight: 700; color: #1B2656; font-variant-numeric: tabular-nums; }
+.lv-t { white-space: nowrap; font-size: 12px; font-weight: 700; color: #1B2656; font-variant-numeric: tabular-nums; }
 .lv-ev.is-done .lv-t { color: rgba(27,38,86,.65); }
-.lv-now { position: absolute; top: 9px; width: 0; animation: lv-fade .4s ease 1.4s both; }
+.lv-now { position: absolute; z-index: 1; top: 9px; width: 0; animation: lv-fade .4s ease 1.4s both; }
 .lv-now::before { content: ''; position: absolute; left: -7px; top: 0; width: 14px; height: 14px; border-radius: 99px; background: #3E2BF1; box-shadow: 0 0 0 3px #fff; }
 .lv-now::after { content: ''; position: absolute; left: -7px; top: 0; width: 14px; height: 14px; border-radius: 99px; animation: lv-pulse 2.4s ease-out 1.8s infinite; }
 .lv-now span { position: absolute; top: -22px; left: 0; transform: translateX(-50%); padding: 1px 6px; border-radius: 6px; background: #3E2BF1; color: #fff !important; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
