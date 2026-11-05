@@ -88,7 +88,7 @@ export function MaintenanceTable(props: MaintenanceTableProps): React.ReactEleme
         cell: ({ getValue }) => {
           const v = String(getValue() ?? '');
           const u = URGENCY_MAP[v] ?? { label: v || '—', className: 'bg-gray-100 text-gray-600' };
-          return <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${u.className}`}>{u.label}</span>;
+          return <span className={`inline-flex rounded-full px-2 py-0.5 text-[12px] font-semibold ${u.className}`}>{u.label}</span>;
         },
       },
       {

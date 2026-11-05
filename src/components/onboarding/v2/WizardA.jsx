@@ -65,7 +65,7 @@ export default function WizardA({ user, again = false }) {
               const on = a.kind === t.value;
               return (
                 <button key={t.value} type="button" role="radio" aria-checked={on} onClick={() => update((cur) => applyKind(cur, t.value))}
-                  className="ob-choice ob-press flex-row items-center !rounded-[22px] sm:flex-col sm:items-stretch">
+                  className="ob-choice ob-press flex-row items-center !rounded-[24px] sm:flex-col sm:items-stretch">
                   <span className="relative block h-[84px] w-[104px] shrink-0 overflow-hidden bg-[#E9ECF4] sm:h-auto sm:w-full sm:aspect-[16/10]">
                     <img src={t.photo} alt="" className="h-full w-full object-cover" draggable={false} />
                   </span>

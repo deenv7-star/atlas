@@ -29,7 +29,7 @@ export default function BarChart({ data, height = 240, className, barClass = 'ro
         {/* grid lines + y labels */}
         {grid.map((g, i) => (
           <div key={g} aria-hidden className="absolute inset-x-0 flex items-center gap-2" style={{ top: `${(i / (grid.length - 1)) * 100}%`, transform: 'translateY(-50%)' }}>
-            <span className="w-10 shrink-0 text-right text-[11px] tabular text-ink-400">{g ? compact(g) : '0'}</span>
+            <span className="w-10 shrink-0 text-right text-[12px] tabular text-ink-400">{g ? compact(g) : '0'}</span>
             <span className="h-px flex-1 border-t border-dashed border-[#E6E8F0]" />
           </div>
         ))}

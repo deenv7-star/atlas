@@ -108,7 +108,10 @@ export function useFormMachine<TFieldValues extends FieldValues>({
   const form = useForm<TFieldValues>({
     resolver: zodResolver(schema),
     defaultValues: mergedDefaults,
-    mode: 'onTouched',
+    // Sheets v1: no red text before the owner did anything. Validate on submit, then live while they fix it.
+    // A field they typed in is checked on blur (handleBlur below); an untouched empty field never is.
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
   });
 
   const { watch, setValue, reset, handleSubmit: rhfHandleSubmit, formState, getValues, register, control } = form;
@@ -164,8 +167,12 @@ export function useFormMachine<TFieldValues extends FieldValues>({
 
   const handleBlur = useCallback(
     async (name: Path<TFieldValues>) => {
+      const field = form.getFieldState(name);
+      const submitted = form.formState.submitCount > 0;
+      // Untouched and never submitted: focusing and leaving a field is not a mistake.
+      if (!field.isDirty && !submitted) return;
       setValidatingFields((prev) => new Set(prev).add(String(name)));
-      setMachineState((prev) => (prev === 'idle' ? 'dirty' : prev === 'error' ? 'dirty' : prev));
+      if (field.isDirty) setMachineState((prev) => (prev === 'idle' ? 'dirty' : prev === 'error' ? 'dirty' : prev));
       try {
         await form.trigger(name);
       } finally {

@@ -52,6 +52,23 @@ export function createPageUrl(pageName: string) {
   return pagePathMap[pageName] ?? '/' + pageName.replace(/ /g, '-');
 }
 
+/**
+ * ecosystem v1 #24: a legacy PascalCase / wrong-case path ("/MonthlyReport", "/expensetracker") → its canonical path,
+ * or null when the first segment is not a page key. Case-insensitive; keeps the rest of the path, query and hash.
+ */
+export function canonicalPathFor(pathname: string, search = '', hash = ''): string | null {
+  const parts = String(pathname || '').split('/');
+  const seg = (parts[1] || '').toLowerCase();
+  if (!seg) return null;
+  for (const [key, p] of Object.entries(pagePathMap)) {
+    if (key.toLowerCase() === seg && p.toLowerCase() !== ('/' + seg)) {
+      const rest = parts.slice(2).join('/');
+      return p + (rest ? '/' + rest : '') + (search || '') + (hash || '');
+    }
+  }
+  return null;
+}
+
 /** First URL segment → React page key (for analytics / matching). */
 export function getPageKeyFromPathname(pathname: string): string | null {
   if (!pathname || pathname === '/') return 'Landing';

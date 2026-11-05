@@ -1,0 +1,43 @@
+/* iOS app lock, direction A ("native Apple"): a thick light system material over the app.
+   Composite-only motion (opacity / transform); reduced motion: fade only, no scale. */
+.atlas-lock {
+  opacity: 1;
+  color: #1B2656;
+  transition-property: opacity, transform;
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  font-family: 'Heebo', system-ui, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  animation: atlas-lock-in 200ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.atlas-lock.is-privacy { animation: none; }
+.atlas-lock.is-leaving { opacity: 0; transform: scale(1.03); pointer-events: none; }
+
+/* iOS "thick material" (light): heavy blur + saturation, a canvas tint, a hairline of light at the top. */
+.atlas-lock__material {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(247, 248, 251, 0.78);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+  backdrop-filter: blur(50px) saturate(180%);
+}
+/* No backdrop-filter (very old WebView): solid canvas, so nothing behind is ever readable. */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .atlas-lock__material { background-color: #F7F8FB; }
+}
+.atlas-lock__mark { color: #1B2656; opacity: 0.9; line-height: 0; }
+.atlas-lock.is-privacy .atlas-lock__mark { margin-top: 12px; }
+
+.atlas-lock__face { transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms ease-out; }
+.atlas-lock__face:active:not(:disabled) { transform: scale(0.96); background-color: rgba(27, 38, 86, 0.05); }
+.atlas-lock__face:focus-visible, .atlas-lock__link:focus-visible { box-shadow: 0 0 0 2px rgba(62, 43, 241, 0.45); }
+.atlas-lock__link { transition: opacity 150ms ease-out, background-color 150ms ease-out; }
+.atlas-lock__link:active:not(:disabled) { background-color: rgba(62, 43, 241, 0.08); }
+
+@keyframes atlas-lock-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .atlas-lock { animation: none; transition-property: opacity; }
+  .atlas-lock.is-leaving { transform: none; }
+  .atlas-lock__face:active:not(:disabled) { transform: none; }
+}

@@ -82,12 +82,12 @@ export default function TermsConsent({ id = 'terms-consent', checked, onChange, 
       <div className={className}>
         <div
           className={cn(
-            'relative flex items-start gap-3 rounded-[14px] border p-4 transition-colors duration-150 ease-out motion-reduce:transition-none',
+            'relative flex items-start gap-3 rounded-[16px] border p-4 transition-colors duration-150 ease-out motion-reduce:transition-none',
             checked ? 'border-brand-600/60 bg-[#F1EFFE]' : error ? 'border-danger-600/70 bg-[#FDEEEE]/50' : 'border-line bg-[#F7F8FB]',
           )}
         >
           {/* The whole card is the label's hit area, except the two links. */}
-          <label htmlFor={id} className="absolute inset-0 cursor-pointer rounded-[14px]" aria-hidden="true" />
+          <label htmlFor={id} className="absolute inset-0 cursor-pointer rounded-[16px]" aria-hidden="true" />
           <span className="relative mt-[1px]"><Box id={id} checked={checked} onChange={onChange} error={error} describedBy={describedBy} size={22} /></span>
           <span className="relative min-w-0">
             <label htmlFor={id} className="-my-[11px] block cursor-pointer py-[11px] text-[15px] font-medium leading-[1.5] text-navy-900">

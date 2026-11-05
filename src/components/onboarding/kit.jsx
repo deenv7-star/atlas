@@ -84,7 +84,7 @@ export function PhotoPick({ value, onChange, label, shape = 'circle', max = 640,
     setErr('');
     try { onChange(await fileToDataUrl(file, max)); } catch (e) { setErr(e.message); }
   };
-  const box = shape === 'circle' ? 'h-[112px] w-[112px] rounded-full' : shape === 'tile' ? 'h-[92px] w-[92px] rounded-[18px]' : 'h-[150px] w-full rounded-[22px]';
+  const box = shape === 'circle' ? 'h-[112px] w-[112px] rounded-full' : shape === 'tile' ? 'h-[92px] w-[92px] rounded-[16px]' : 'h-[150px] w-full rounded-[24px]';
   return (
     <div className={cn('flex flex-col items-center gap-2', shape === 'wide' && 'items-stretch', className)}>
       <button
@@ -273,7 +273,7 @@ export function SettlementInput({ value, onChange, autoFocus }) {
         onChange={(e) => { setQ(e.target.value); onChange(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 150)} />
       {listShown ? (
-        <ul id={`${id}-list`} role="listbox" className="ob-fade overflow-hidden rounded-[18px] bg-white shadow-[0_2px_4px_rgba(27,38,86,0.06),0_18px_36px_-14px_rgba(27,38,86,0.25)]">
+        <ul id={`${id}-list`} role="listbox" className="ob-fade overflow-hidden rounded-[16px] bg-white shadow-[0_2px_4px_rgba(27,38,86,0.06),0_18px_36px_-14px_rgba(27,38,86,0.25)]">
           {matches.map(([n, region]) => (
             <li key={n + region} role="option" aria-selected={n === value}>
               <button type="button" className="ob-press flex min-h-[56px] w-full items-center justify-between gap-3 border-b border-[#F0F2F7] px-5 text-start last:border-0"

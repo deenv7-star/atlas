@@ -52,7 +52,7 @@ function CompactMonth({ month, today, units, occ, gapSet, holidays, onDay, selec
               onClick={() => onDay(d)}
               aria-label={label}
               className={cn(
-                'press relative flex h-[52px] min-w-0 flex-col items-center justify-center gap-1 rounded-[14px]',
+                'press relative flex h-[52px] min-w-0 flex-col items-center justify-center gap-1 rounded-[16px]',
                 isToday ? 'bg-brand-600 text-white' : 'bg-[#F7F8FB] text-navy-900 hover:bg-brand-600/[0.07]',
                 selected === d && 'ring-2 ring-navy-900 ring-offset-1',
               )}
@@ -117,7 +117,7 @@ function MonthFacts({ month, units, stays, occ, gaps }) {
   return (
     <dl className="grid grid-cols-3 gap-3">
       {facts.map((f) => (
-        <div key={f.k} className="rounded-[18px] bg-[#F7F8FB] px-4 py-3">
+        <div key={f.k} className="rounded-[16px] bg-[#F7F8FB] px-4 py-3">
           <dt className="text-[13px] text-navy-900/70">{f.k}</dt>
           <dd className="mt-1 text-[26px] font-bold leading-none text-navy-900 tabular">{f.v}</dd>
           <dd className="mt-1 text-[12px] text-navy-900/70">{f.sub}</dd>
@@ -178,7 +178,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
           {units.map((u) => (
             <React.Fragment key={u.id}>
               <div className="sticky right-0 z-10 flex min-h-[84px] items-center gap-3 border-b border-l border-navy-900/[0.08] bg-white px-3">
-                <UnitPhoto property={u.raw} className="h-11 w-11 shrink-0" rounded="rounded-[14px]" />
+                <UnitPhoto property={u.raw} className="h-11 w-11 shrink-0" rounded="rounded-[16px]" />
                 <div className="min-w-0">
                   <div className="truncate text-[15px] font-semibold text-navy-900">{u.name}</div>
                   <div className="truncate text-[12px] text-navy-900/70">{u.raw?.max_guests ? `עד ${u.raw.max_guests} אורחים` : ''}</div>
@@ -206,7 +206,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                   <span
                     key={`g-${d}`}
                     aria-hidden
-                    className="pointer-events-none absolute top-[8px] flex h-[44px] items-center justify-center rounded-[14px] border border-dashed border-brand-600/60 bg-brand-600/[0.04] text-[11px] font-semibold text-brand-600"
+                    className="pointer-events-none absolute top-[8px] flex h-[44px] items-center justify-center rounded-[16px] border border-dashed border-brand-600/60 bg-brand-600/[0.04] text-[12px] font-semibold text-brand-600"
                     style={{ right: `calc(${((i + 0.5) / n) * 100}% + 2px)`, width: `calc(${100 / n}% - 4px)` }}
                   >
                     פנוי

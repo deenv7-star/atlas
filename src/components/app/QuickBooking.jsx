@@ -10,7 +10,8 @@
  *   onClose    () => void, when the sheet closes (saved or not)
  */
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { AtlasSheet } from '@/components/ui/sheet/AtlasSheet';
+import { isPlaceholderUnitName } from '@/lib/unitName';
 import { BookingForm } from '@/components/forms/BookingForm';
 import { emptyBookingFormValues } from '@/components/forms/atlasFormSchemas';
 import { useCreateBooking, useProperties } from '@/data/entities';
@@ -65,55 +66,53 @@ export function QuickBookingProvider({ children }) {
   const preset = state.preset || {};
   const opts = state.opts || {};
   const { property_name: presetPropertyName, ...presetValues } = preset;
+  // Name a unit in the subtitle only when it is a real name and there is more than one to choose from.
+  const unitLine = presetPropertyName && properties.length > 1 && !isPlaceholderUnitName(presetPropertyName) ? presetPropertyName : '';
   const defaults = useMemo(() => ({ ...emptyBookingFormValues, ...presetValues }), [state.nonce]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <QuickBookingContext.Provider value={value}>
       {children}
-      <Dialog
+      <AtlasSheet
         open={state.open}
         onOpenChange={(o) => {
           const h = interceptRef.current;
           if (h) { h(o); return; }
           setOpen(o);
         }}
+        title={opts.title || 'הזמנה חדשה'}
+        subtitle={opts.leadId
+          ? 'מילאנו את מה שהיה בפנייה. בדקו תאריכים ושמרו.'
+          : unitLine
+            ? `${unitLine} · את השאר אפשר להשלים אחר כך.`
+            : 'את השאר אפשר להשלים אחר כך.'}
       >
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader className="text-right">
-            <DialogTitle className="text-[22px] font-bold text-navy-900">{opts.title || 'הזמנה חדשה'}</DialogTitle>
-            <DialogDescription className="text-[15px] text-ink-600">
-              {opts.leadId
-                ? 'מילאנו את מה שהיה בפנייה. בחרו יחידה, בדקו תאריכים ומחיר ושמרו.'
-                : `${presetPropertyName ? `${presetPropertyName} · ` : ''}שם, תאריכים וערוץ. אפשר להשלים את השאר אחר כך.`}
-            </DialogDescription>
-          </DialogHeader>
-          <BookingForm
-            key={`quick-${state.nonce}`}
-            storageSuffix={opts.leadId ? `lead-${opts.leadId}` : preset.check_in_date || preset.property_id ? `quick-${preset.property_id || ''}-${preset.check_in_date || ''}` : 'quick'}
-            defaultValues={defaults}
-            properties={properties.map((p) => ({ id: p.id, name: p.name }))}
-            enableRouteGuard={false}
-            onSubmit={async (data) => {
-              const payload = bookingFormToPayload(data);
-              if (opts.leadId) payload.lead_id = opts.leadId;
-              let created;
-              try {
-                created = await createMutation.mutateAsync(payload);
-              } catch (err) {
-                // Audit 04.11 #4: the form shows this in its banner; no second copy as a toast.
-                throw new Error(bookingSaveErrorHe(err));
-              }
-              success('ההזמנה נשמרה');
-              if (opts.onCreated) await opts.onCreated(created);
-            }}
-            onCancel={close}
-            setDialogOpen={setOpen}
-            onRegisterDialogInterceptor={(fn) => { interceptRef.current = fn; }}
-            onAfterSubmitSuccess={() => window.setTimeout(close, 700)}
-            submitLabel="שמירת הזמנה"
-          />
-        </DialogContent>
-      </Dialog>
+        <BookingForm
+          key={`quick-${state.nonce}`}
+          storageSuffix={opts.leadId ? `lead-${opts.leadId}` : preset.check_in_date || preset.property_id ? `quick-${preset.property_id || ''}-${preset.check_in_date || ''}` : 'quick'}
+          defaultValues={defaults}
+          properties={properties.map((p) => ({ id: p.id, name: p.name }))}
+          enableRouteGuard={false}
+          onSubmit={async (data) => {
+            const payload = bookingFormToPayload(data);
+            if (opts.leadId) payload.lead_id = opts.leadId;
+            let created;
+            try {
+              created = await createMutation.mutateAsync(payload);
+            } catch (err) {
+              // Audit 04.11 #4: the form shows this in its banner; no second copy as a toast.
+              throw new Error(bookingSaveErrorHe(err));
+            }
+            success('ההזמנה נשמרה');
+            if (opts.onCreated) await opts.onCreated(created);
+          }}
+          onCancel={close}
+          setDialogOpen={setOpen}
+          onRegisterDialogInterceptor={(fn) => { interceptRef.current = fn; }}
+          onAfterSubmitSuccess={() => window.setTimeout(close, 700)}
+          submitLabel="שמירת הזמנה"
+        />
+      </AtlasSheet>
     </QuickBookingContext.Provider>
   );
 }

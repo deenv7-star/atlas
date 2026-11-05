@@ -2,7 +2,7 @@
  * ערוצים וחיבורים: only what really works is shown as working.
  *   יומנים (real, 013): per unit, import Airbnb / Booking.com / any iCal feed (server sync every 15 minutes + "עדכון עכשיו"),
  *            and an export feed to paste into each channel. Status, last sync, errors and conflicts come from the server.
- *   הודעות / תשלומים / חשבוניות: an honest status per provider (what works today, what is coming, what it needs).
+ *   הודעות / תשלומים / הנהלת חשבונות: an honest status per provider (what works today, what is coming, what it needs).
  */
 import React, { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -99,7 +99,7 @@ function SyncRow({ sync, onSync, syncing, onToggle, onDelete }) {
   const conflicts = Array.isArray(sync.conflicts) ? sync.conflicts : [];
   const [confirm, setConfirm] = useState(false);
   return (
-    <li className="min-w-0 rounded-[18px] border border-[#ECEEF4] p-3" data-sync-id={sync.id}>
+    <li className="min-w-0 rounded-[16px] border border-[#ECEEF4] p-3" data-sync-id={sync.id}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span aria-hidden className={cn('inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] text-[15px] font-bold', p.tone)}>{p.short}</span>
         <div className="min-w-[160px] flex-1">
@@ -198,7 +198,7 @@ function UnitChannels({ property, syncs, onSync, syncingId, onToggle, onDelete, 
   return (
     <Card as="section" className="overflow-hidden" aria-label={`יומנים של ${property.name}`} data-unit-id={property.id}>
       <div className="flex items-center gap-3 px-5 pt-5 md:px-6">
-        <UnitPhoto property={property} className="h-12 w-12" rounded="rounded-[14px]" />
+        <UnitPhoto property={property} className="h-12 w-12" rounded="rounded-[16px]" />
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-[17px] font-bold text-navy-900">{property.name}</h2>
           <p className="truncate text-[13px] text-ink-400">
@@ -380,7 +380,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
       <PageHeader
         title="ערוצים וחיבורים"
         help="integrations.page"
-        subtitle="Airbnb ו-Booking.com נכנסים ללוח לבד. כאן רואים שכל חיבור עובד."
+        subtitle={<>הזמנות מ-<bdi>Airbnb</bdi> וגם מ-<bdi>Booking</bdi> נכנסות ליומן לבד. כאן רואים שכל חיבור עובד.</>}
         className="!mb-0"
         actions={tab === 'calendars' && DB_FEATURES.realCore && syncs.length ? (
           <Button variant="outline" className="h-11" onClick={() => runSync(null)} disabled={!!syncingId}>
@@ -397,13 +397,13 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
           { value: 'calendars', label: 'יומנים' },
           { value: 'messages', label: 'הודעות' },
           { value: 'payments', label: 'תשלומים' },
-          { value: 'invoices', label: 'חשבוניות' },
+          { value: 'invoices', label: 'הנהלת חשבונות' },
         ]}
       />
 
       {tab === 'calendars' ? (
         !DB_FEATURES.realCore ? (
-          <Card className="p-6"><p className="text-[15px] text-ink-600">חיבור הערוצים עובד אחרי שתתחברו לחשבון. בהדגמה רק רואים איך זה נראה.</p></Card>
+          <Card className="p-6"><p className="text-[15px] text-ink-600">חיבור הערוצים עובד אחרי שתתחברו לחשבון. בחשבון הדוגמה רק רואים איך זה נראה.</p></Card>
         ) : loading ? (
           <div className="space-y-3" role="status" aria-busy="true" aria-label="טוען"><SkelLine className="h-64 rounded-[24px]" /><SkelLine className="h-64 rounded-[24px]" /></div>
         ) : properties.length === 0 ? (
@@ -445,7 +445,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
 
       {tab === 'invoices' ? (
         <ProviderStatus items={[
-          { name: 'חשבונית ירוקה (Morning) / iCount', live: false, text: 'חשבונית מס/קבלה חוקית לכל תשלום, נשלחת לאורח לבד. מסמך חוקי מופק רק בתוכנה רשומה ברשות המסים, ולכן עד החיבור atlas רק מתעד מספרי מסמכים שהופקו אצלכם.', needs: 'חשבון Morning או iCount עם גישת API.' },
+          { name: 'חשבונית ירוקה (Morning) / iCount', live: false, text: 'מסמך מס חוקי לכל תשלום, נשלח לאורח לבד. מסמך חוקי מופק רק בתוכנה רשומה ברשות המסים, ולכן עד החיבור atlas רק מתעד מספרי מסמכים שהופקו אצלכם.', needs: 'חשבון Morning או iCount עם גישת API.' },
         ]} />
       ) : null}
 

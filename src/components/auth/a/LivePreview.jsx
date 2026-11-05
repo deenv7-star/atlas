@@ -53,11 +53,11 @@ function firstOfEmail(email) {
 function Calendar({ level, compact }) {
   const rows = compact ? 2 : 3;
   return (
-    <div className={cn('rounded-[18px] bg-white', compact ? 'p-2.5' : 'p-4 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_10px_30px_-14px_rgba(27,38,86,0.18)]')}>
+    <div className={cn('rounded-[16px] bg-white', compact ? 'p-2.5' : 'p-4 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_10px_30px_-14px_rgba(27,38,86,0.18)]')}>
       {!compact ? (
         <div className="mb-3 flex items-center justify-between">
           <p className="text-[13px] font-bold text-navy-900">לוח שנה · השבוע</p>
-          <p className="text-[11px] font-medium text-ink-400 tabular-nums">{BOOKINGS.filter((b) => b[3] <= level && b[0] < rows).length} הזמנות</p>
+          <p className="text-[12px] font-medium text-ink-400 tabular-nums">{BOOKINGS.filter((b) => b[3] <= level && b[0] < rows).length} הזמנות</p>
         </div>
       ) : null}
       <div className="grid gap-x-1 gap-y-1.5" style={{ gridTemplateColumns: `${compact ? 44 : 64}px repeat(7, minmax(0, 1fr))` }}>
@@ -75,7 +75,7 @@ function Calendar({ level, compact }) {
                     initial={{ opacity: 0, scaleX: 0.6 }}
                     animate={{ opacity: 1, scaleX: 1, transition: { duration: 0.42, ease: EASE, delay: k * 0.06 } }}
                     exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                    className={cn('absolute top-0 flex items-center overflow-hidden rounded-[7px] px-1.5 font-semibold', TONES[b[4]], compact ? 'h-[22px] text-[9px]' : 'h-[30px] text-[11px]')}
+                    className={cn('absolute top-0 flex items-center overflow-hidden rounded-[7px] px-1.5 font-semibold', TONES[b[4]], compact ? 'h-[22px] text-[9px]' : 'h-[30px] text-[12px]')}
                     style={{ insetInlineStart: `calc(${(b[1] / 7) * 100}% + 1px)`, width: `calc(${(b[2] / 7) * 100}% - 4px)`, transformOrigin: 'right center' }}
                   >
                     <span className="truncate">{GUESTS[(b[0] * 2 + b[1]) % GUESTS.length]}</span>
@@ -97,7 +97,7 @@ function WhatsAppBubble({ name, guest = 'נועה', small }) {
         <MessageCircle className="h-4 w-4" strokeWidth={2.25} />
       </span>
       <div className="relative max-w-[260px] rounded-[16px] rounded-bl-[6px] bg-white px-3.5 py-2.5 shadow-[0_2px_6px_rgba(27,38,86,0.06),0_16px_36px_-14px_rgba(27,38,86,0.3)]">
-        <p className="text-[11px] font-semibold text-[#075E54]">וואטסאפ · מוכן לשליחה</p>
+        <p className="text-[12px] font-semibold text-[#075E54]">וואטסאפ · מוכן לשליחה</p>
         <p className="mt-0.5 text-[13px] leading-[1.45] text-navy-900">היי {guest}, ההזמנה שלכם ב{name || 'מתחם'} אושרה. נתראה ביום ה׳ ב-15:00</p>
         <p className="mt-1 flex items-center justify-end gap-0.5 text-[10px] text-ink-400 tabular-nums">10:24 <Check className="h-3 w-3 text-[#34B7F1]" strokeWidth={3} /><Check className="-ms-2 h-3 w-3 text-[#34B7F1]" strokeWidth={3} /></p>
       </div>
@@ -123,16 +123,16 @@ export function LivePreviewFull({ business, email, level }) {
         {/* the app window */}
         <div className="relative rounded-[24px] bg-[#F7F8FB] p-3 shadow-[0_0_0_1px_rgba(27,38,86,0.06),0_40px_80px_-32px_rgba(27,38,86,0.35)]">
           <div className="flex gap-3">
-            <aside className="flex w-[136px] shrink-0 flex-col gap-3 rounded-[18px] bg-white p-3">
+            <aside className="flex w-[136px] shrink-0 flex-col gap-3 rounded-[16px] bg-white p-3">
               <Wordmark size={14} />
               <div className="flex items-center gap-2 rounded-[12px] bg-[#F3F4F9] p-1.5">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] bg-brand-600 text-[12px] font-extrabold text-white">{name.charAt(0)}</span>
                 <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.span key={name} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }} className="min-w-0 truncate text-[11px] font-bold text-navy-900">{name}</motion.span>
+                  <motion.span key={name} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }} className="min-w-0 truncate text-[12px] font-bold text-navy-900">{name}</motion.span>
                 </AnimatePresence>
               </div>
               {[['היום', Home], ['לוח שנה', CalendarDays], ['הזמנות', Inbox], ['כספים', Wallet], ['הודעות', MessageCircle], ['הגדרות', Settings]].map(([t, Icon], i) => (
-                <span key={t} className={cn('flex h-7 items-center gap-2 rounded-[9px] px-2 text-[11px] font-medium', i === 0 ? 'bg-brand-600 text-white' : 'text-ink-600')}><Icon className="h-3.5 w-3.5" strokeWidth={1.75} />{t}</span>
+                <span key={t} className={cn('flex h-7 items-center gap-2 rounded-[9px] px-2 text-[12px] font-medium', i === 0 ? 'bg-brand-600 text-white' : 'text-ink-600')}><Icon className="h-3.5 w-3.5" strokeWidth={1.75} />{t}</span>
               ))}
             </aside>
             <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -144,17 +144,17 @@ export function LivePreviewFull({ business, email, level }) {
                   </p>
                   <p className="text-[12px] text-ink-400">{who ? `בוקר טוב, ${who}` : 'בוקר טוב'} · 3 יחידות</p>
                 </div>
-                <span className={cn('inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-2.5 text-[11px] font-bold transition-colors duration-300', level >= 4 ? 'bg-brand-600 text-white' : 'bg-white text-ink-400')}>
+                <span className={cn('inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-2.5 text-[12px] font-bold transition-colors duration-300', level >= 4 ? 'bg-brand-600 text-white' : 'bg-white text-ink-400')}>
                   <Sparkles className="h-3 w-3" />{level >= 4 ? 'מוכן' : `${stepsDone(level)}/3`}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="v7-hero flex h-[104px] flex-col justify-between p-4">
-                  <p className="text-[11px] font-medium text-white/80">הכנסות החודש</p>
+                  <p className="text-[12px] font-medium text-white/80">הכנסות החודש</p>
                   <p className="text-[26px] font-extrabold leading-none tabular-nums" dir="ltr"><span className="me-0.5 text-[15px] text-white/70">₪</span>{['0', '2,480', '7,150', '12,940', '18,320'][level]}</p>
                 </div>
-                <div className="flex h-[104px] flex-col justify-between rounded-[18px] bg-white p-4">
-                  <p className="text-[11px] font-medium text-ink-400">תפוסה השבוע</p>
+                <div className="flex h-[104px] flex-col justify-between rounded-[16px] bg-white p-4">
+                  <p className="text-[12px] font-medium text-ink-400">תפוסה השבוע</p>
                   <div>
                     <p className="text-[26px] font-extrabold leading-none text-navy-900 tabular-nums" dir="ltr">{[0, 14, 33, 62, 76][level]}%</p>
                     <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EEF0F6]"><div className="h-full origin-right rounded-full bg-brand-600 transition-transform duration-500 ease-out motion-reduce:transition-none" style={{ transform: `scaleX(${[0, 0.14, 0.33, 0.62, 0.76][level]})` }} /></div>
@@ -173,7 +173,7 @@ export function LivePreviewFull({ business, email, level }) {
                   <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-brand-50 text-[12px] font-extrabold text-brand-700">B.</span>
                   <span className="min-w-0">
                     <span className="block text-[12px] font-bold text-navy-900">הזמנה חדשה מ-Booking</span>
-                    <span className="block text-[11px] text-ink-400 tabular-nums">3 לילות · ₪2,340</span>
+                    <span className="block text-[12px] text-ink-400 tabular-nums">3 לילות · ₪2,340</span>
                   </span>
                 </motion.div>
               ) : null}
@@ -204,14 +204,14 @@ export function LivePreviewFull({ business, email, level }) {
 export function LivePreviewCompact({ business, level }) {
   const name = business.trim() || 'המתחם שלכם';
   return (
-    <div className="relative h-[148px] overflow-hidden rounded-[22px] bg-[#EEF0F8] p-3" aria-hidden>
+    <div className="relative h-[148px] overflow-hidden rounded-[24px] bg-[#EEF0F8] p-3" aria-hidden>
       <div className="pointer-events-none absolute -top-20 left-1/2 h-[220px] w-[360px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(62,43,241,0.16),rgba(62,43,241,0))]" />
       <div className="relative flex h-[30px] items-center justify-between">
         <div className="flex min-w-0 items-center gap-2">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] bg-brand-600 text-[12px] font-extrabold text-white">{name.charAt(0)}</span>
           <span className="truncate text-[15px] font-extrabold text-navy-900">{name}</span>
         </div>
-        <span className={cn('inline-flex h-6 shrink-0 items-center gap-1 rounded-full px-2 text-[11px] font-bold transition-colors duration-300', level >= 4 ? 'bg-brand-600 text-white' : 'bg-white text-ink-400')}>
+        <span className={cn('inline-flex h-6 shrink-0 items-center gap-1 rounded-full px-2 text-[12px] font-bold transition-colors duration-300', level >= 4 ? 'bg-brand-600 text-white' : 'bg-white text-ink-400')}>
           <Sparkles className="h-3 w-3" />{level >= 4 ? 'מוכן' : `${stepsDone(level)}/3`}
         </span>
       </div>

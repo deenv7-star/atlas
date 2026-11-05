@@ -9,9 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { mapAuthErrorToHebrew } from '@/lib/authErrors';
 import { useCrossDeviceVerify } from '@/lib/auth/useCrossDeviceVerify';
+import { publicOrigin } from '@/lib/native';
 
 const EMAIL_KEY = 'atlas_pending_verify_email';
-const redirectUrl = () => `${window.location.origin}/verify-email?confirmed=1`;
+const redirectUrl = () => `${publicOrigin()}/verify-email?confirmed=1`;
 
 /**
  * Three honest states:
@@ -183,7 +184,7 @@ export default function VerifyEmail() {
                 dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-12 rounded-[14px] border-line bg-white text-base"
+                className="h-12 rounded-[16px] border-line bg-white text-base"
               />
             </div>
           )}
@@ -215,7 +216,7 @@ export default function VerifyEmail() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="h-12 rounded-[14px] border-line bg-white text-base"
+                className="h-12 rounded-[16px] border-line bg-white text-base"
               />
             </div>
           )}

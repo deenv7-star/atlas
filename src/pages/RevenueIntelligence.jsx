@@ -172,7 +172,7 @@ export default function RevenueIntelligence() {
                         ) : null}
                         <div className="w-[62%] rounded-t-[6px] bg-brand-600" style={{ height: `${Math.max(b.value > 0 ? 2 : 0, (b.value / maxBar) * 100)}%` }} />
                       </div>
-                      <span className="shrink-0 text-[11px] font-medium text-ink-400 sm:text-[12px]">{b.label}</span>
+                      <span className="shrink-0 text-[12px] font-medium text-ink-400 sm:text-[12px]">{b.label}</span>
                     </div>
                   ))}
                 </div>

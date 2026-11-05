@@ -10,6 +10,8 @@
 // Plain JS on purpose (Deno + node --test). `db` is a supabase-js client created with the user's JWT.
 import { todayIL, isDay, addDays, nights, monthRange, clampRange, heDay } from './dates.js';
 import { searchHelp } from './knowledge.js';
+import { PROFILE_TOOL_DEFS, PROFILE_EXEC } from './propertyProfile.js'; // import v1: the complex the owner imported
+import { askWorld, businessArea, searchAllowed } from './world.js';
 
 const ACTIVE_BOOKING = (s) => !['CANCELLED', 'CANCELED', 'WAITLIST', 'cancelled', 'canceled', 'waitlist'].includes(String(s || ''));
 const PAID = new Set(['PAID', 'paid', 'COMPLETED', 'completed', 'SUCCEEDED', 'succeeded']);
@@ -83,6 +85,17 @@ export const TOOL_DEFS = [
     parameters: { type: 'object', additionalProperties: false, required: ['query'], properties: { query: { type: 'string' } } },
   },
   {
+    name: 'search_web',
+    description: 'מידע עדכני מהעולם, מחוץ לנתוני העסק: מסעדות, אטרקציות ומה לעשות באזור, מזג אוויר, זמני נסיעה, אירועים, שעות פתיחה, חדשות, וכל עובדה שצריך לוודא. כשלא צוין מקום, מחפש סביב מיקום המתחם. מחזיר תשובה קצרה בעברית.',
+    parameters: {
+      type: 'object', additionalProperties: false, required: ['query'],
+      properties: {
+        query: { type: 'string', description: 'השאלה במילים מלאות, בעברית, כולל היום אם רלוונטי ("מזג אוויר מחר", "מסעדות כשרות פתוחות בשבת")' },
+        near: { type: 'string', description: 'מקום מסוים אם נשאל עליו ("הכנרת", "צפת"). ריק = אזור המתחם' },
+      },
+    },
+  },
+  {
     name: 'propose_booking',
     description: 'מכין הזמנה חדשה לאישור הבעלים. לא שומר כלום: הבעלים רואים כרטיס ולוחצים אישור. בודק שהיחידה פנויה.',
     parameters: {
@@ -104,6 +117,7 @@ export const TOOL_DEFS = [
     description: 'מציע לבעלים להעביר את השאלה לנציג אנושי מצוות atlas (זמין 24/7). אחרי אישור נפתחת שיחה עם נציג.',
     parameters: { type: 'object', additionalProperties: false, required: ['summary'], properties: { summary: { type: 'string', description: 'תקציר קצר של הבקשה, בעברית' } } },
   },
+  ...PROFILE_TOOL_DEFS,
 ];
 export const TOOL_NAMES = TOOL_DEFS.map((t) => t.name);
 export const WRITE_TOOLS = new Set(['propose_booking', 'propose_guest_message', 'propose_support_handoff']);
@@ -141,6 +155,7 @@ async function overlapping(db, from, to) { // stays touching [from, to)
 
 /* ── executors ───────────────────────────────────────────────────────────────────────────────────── */
 const EXEC = {
+  ...PROFILE_EXEC,
   async get_day_overview(db, a, ctx) {
     const d = isDay(a.date) ? a.date : ctx.today;
     const [units, stays, cleaning] = await Promise.all([
@@ -268,9 +283,19 @@ const EXEC = {
     };
   },
 
-  async search_help(_db, a) {
-    const hits = searchHelp(a.query);
-    return hits.length ? { results: hits } : { results: [], note: 'לא נמצא במדריך. אל תמציאו: הציעו נציג.' };
+  async search_help(_db, a, ctx) {
+    const hits = searchHelp(a.query, 4, 3200, { native: !!ctx?.native });
+    return hits.length ? { results: hits } : { results: [], note: 'לא נמצא במדריך. ענו ממה שבתקציר אם יש שם תשובה. אם אין, אמרו בכנות שאין לכם תשובה בטוחה, אל תמציאו, והציעו להעביר לנציג.' };
+  },
+
+  /* the world (not business data): web search through the brain's OpenAI key, see world.js */
+  async search_web(db, a, ctx) {
+    const w = ctx?.world;
+    if (!w?.apiKey) return { error: 'not_available', say: 'אמרו שחיפוש מידע עדכני לא זמין כרגע, וענו מהידע הכללי שלכם אם אפשר, עם הסתייגות.' };
+    if (!searchAllowed(ctx.userId)) return { error: 'rate_limited', say: 'אמרו שיש הרבה חיפושים ברגע האחרון, ושאפשר לנסות שוב עוד דקה.' };
+    const area = ctx.area ?? (ctx.area = await businessArea(db, ctx.userId));
+    return askWorld({ apiKey: w.apiKey, model: w.model, effort: w.effort, fetchImpl: w.fetchImpl, signal: w.signal, timeoutMs: w.timeoutMs,
+      query: a.query, near: a.near, area, today: ctx.today, user: ctx.userId });
   },
 
   /* proposals: validated, never executed here */
@@ -341,6 +366,6 @@ export async function runTool(name, rawArgs, ctx) {
     const result = await EXEC[name](c.db, args, c);
     return { result, proposal: result?.proposal || null };
   } catch (e) {
-    return { result: { error: 'lookup_failed', detail: clip(e?.message, 120) } };
+    return { result: { error: 'lookup_failed', detail: clip(e?.message, 120), say: 'אמרו שלא הצלחתם לבדוק את זה כרגע, והציעו לפתוח את המסך המתאים באפליקציה או לנסות שוב.' } };
   }
 }

@@ -170,7 +170,7 @@ export default function BillingPage({ user }) {
       </Card>
 
       <Section title="היסטוריית חיובים" icon={Receipt}>
-        <EmptyState compact title="אין עדיין חיובים" description="אחרי החיוב הראשון הוא יופיע כאן, והקבלה תישלח אליכם במייל." />
+        <EmptyState compact title="אין עדיין חיובים" description="אחרי החיוב הראשון הוא יופיע כאן, עם אישור במייל." />
       </Section>
     </Page>
   );

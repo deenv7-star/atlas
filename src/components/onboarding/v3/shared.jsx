@@ -116,7 +116,7 @@ export function CalendarPreview({ a, compact = false, rows: maxRows = 4 }) {
       <div className="mt-3 grid gap-y-1.5" style={{ gridTemplateColumns: `${compact ? 58 : 72}px repeat(7, minmax(0, 1fr))` }}>
         <span />
         {days.map((d, i) => (
-          <span key={i} className={cn('flex flex-col items-center text-[11px] font-semibold leading-tight', d.weekend ? 'text-brand-700' : 'text-ink-400')}>
+          <span key={i} className={cn('flex flex-col items-center text-[12px] font-semibold leading-tight', d.weekend ? 'text-brand-700' : 'text-ink-400')}>
             <span>{d.wd}</span><span className="tabular-nums text-[12px] text-navy-900">{d.day}</span>
           </span>
         ))}
@@ -127,7 +127,7 @@ export function CalendarPreview({ a, compact = false, rows: maxRows = 4 }) {
               <span className="flex min-h-[30px] items-center truncate pe-2 text-[12px] font-semibold text-navy-900">{nm}</span>
               <span className="relative col-span-7 grid grid-cols-7 gap-[3px]">
                 {days.map((_, c) => <span key={c} className="h-[30px] rounded-[7px] bg-[#F1F2F7]" />)}
-                <span className={cn('ob3-bar absolute inset-y-0 flex items-center rounded-[8px] px-2 text-[11px] font-bold', tints[r % tints.length])}
+                <span className={cn('ob3-bar absolute inset-y-0 flex items-center rounded-[8px] px-2 text-[12px] font-bold', tints[r % tints.length])}
                   style={{ insetInlineStart: `calc(${(s / 7) * 100}% + 1px)`, width: `calc(${(len / 7) * 100}% - 4px)`, animationDelay: `${r * 80}ms` }}>
                   <span className="truncate">{src[r % src.length]}</span>
                 </span>

@@ -153,8 +153,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
               {/* record-only (COPY-044): no tax-document types; legacy values stay readable on old rows */}
               <SelectItem value="INVOICE">מסמך מהתוכנה שלכם</SelectItem>
               <SelectItem value="PROFORMA">חשבון עסקה</SelectItem>
-              {formData.type === 'RECEIPT' ? <SelectItem value="RECEIPT">קבלה (מהתוכנה שלכם)</SelectItem> : null}
-              {formData.type === 'TAX_INVOICE' ? <SelectItem value="TAX_INVOICE">חשבונית מס (מהתוכנה שלכם)</SelectItem> : null}
+              {formData.type === 'RECEIPT' ? <SelectItem value="RECEIPT">מסמך תשלום (מהתוכנה שלכם)</SelectItem> : null}
+              {formData.type === 'TAX_INVOICE' ? <SelectItem value="TAX_INVOICE">מסמך מס (מהתוכנה שלכם)</SelectItem> : null}
             </SelectContent>
           </Select>
         </div>

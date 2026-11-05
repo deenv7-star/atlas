@@ -8,6 +8,7 @@ import { useReducedMotion } from 'framer-motion';
 import { kindInfo, clampInt, UNITS_LIMIT, unitsLabel, checkIcalLink, phoneValid } from '@/lib/onboarding/v2/model';
 import { commitProfile, commitUnits, commitTimes, commitStart, commitLinks, saveWhatsApp } from '@/lib/onboarding/v2/actions';
 import { linksFromAnswers } from '../v3/linksB';
+import { isNativeApp } from '@/lib/nativePlatform';
 
 export const STEPS = ['hello', 'kind', 'name', 'units', 'channels', 'times', 'whatsapp'];
 export const QUESTIONS = STEPS.length - 1; // "hello" is not a question
@@ -68,7 +69,7 @@ export function buildPlan(user, a0) {
       ...(a.links.length ? [{ id: 'links', title: `מחברים את ${names.join(' ו-')}`, detail: 'ההזמנות נכנסות לבד', run: () => commitLinks(user, a) }] : []),
       { id: 'messages', title: 'מכינים הודעות לאורחים', detail: a.timesVary ? 'שעות משתנות, ההודעה מוכנה' : `כניסה ${a.checkIn} · יציאה ${a.checkOut}`, run: () => commitTimes(user, a) },
       ...(phone && phoneValid(phone) ? [{ id: 'whatsapp', title: 'מחברים את הוואטסאפ', detail: phone, run: () => saveWhatsApp(user?.organization_id, phone, null) }] : []),
-      { id: 'start', title: 'פותחים 14 יום חינם', detail: 'בלי כרטיס אשראי', run: () => commitStart(user, { ...a, plan: 'trial' }) },
+      { id: 'start', title: isNativeApp() ? 'פותחים את החשבון' : 'פותחים 14 יום חינם', detail: isNativeApp() ? 'עוד רגע מוכן' : 'בלי כרטיס אשראי', run: () => commitStart(user, { ...a, plan: 'trial' }) },
     ],
   };
 }

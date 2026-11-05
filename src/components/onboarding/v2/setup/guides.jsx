@@ -42,7 +42,7 @@ export const GUIDES = {
 const Bar = ({ url }) => (
   <div className="flex items-center gap-1.5 border-b border-[#EEF0F5] bg-[#F7F8FB] px-3 py-2">
     <span className="h-2 w-2 rounded-full bg-[#D5D9E6]" /><span className="h-2 w-2 rounded-full bg-[#D5D9E6]" /><span className="h-2 w-2 rounded-full bg-[#D5D9E6]" />
-    <span className="ms-2 flex-1 truncate rounded-full bg-white px-3 py-0.5 text-[11px] text-ink-600" dir="ltr">{url}</span>
+    <span className="ms-2 flex-1 truncate rounded-full bg-white px-3 py-0.5 text-[12px] text-ink-600" dir="ltr">{url}</span>
   </div>
 );
 const Mark = ({ n, className }) => <span className={cn('ob2-mark', className)}>{n}</span>;
@@ -66,11 +66,11 @@ export function GuidePic({ pic, n }) {
     case 'b2':
       body = (<>
         <Bar url="admin.booking.com" />
-        <div className={cn('flex items-center gap-3 px-3 py-2 text-[11px] font-semibold text-white/80', brandB)} dir="ltr">
+        <div className={cn('flex items-center gap-3 px-3 py-2 text-[12px] font-semibold text-white/80', brandB)} dir="ltr">
           <span>Home</span><span className="ob2-hot relative px-2 py-0.5 !text-navy-900">Rates &amp; Availability<Mark n={n} className="-end-4 -top-4" /></span><span>Reservations</span>
         </div>
         <div className="flex gap-3 px-3 py-3" dir="ltr">
-          <div className="flex w-[54%] flex-col gap-1 rounded-[10px] border border-[#E1E4EE] p-2 text-[11px] text-navy-900 shadow-sm">
+          <div className="flex w-[54%] flex-col gap-1 rounded-[10px] border border-[#E1E4EE] p-2 text-[12px] text-navy-900 shadow-sm">
             <span className="px-1.5 py-1">Calendar</span>
             <span className="ob2-hot px-1.5 py-1 font-bold">Sync calendars</span>
             <span className="px-1.5 py-1">Rate plans</span>
@@ -86,7 +86,7 @@ export function GuidePic({ pic, n }) {
           <span className="text-[12px] font-extrabold text-navy-900">Sync calendars</span>
           {[0, 1].map((r) => (
             <div key={r} className="flex items-center justify-between rounded-[10px] border border-[#E1E4EE] px-2.5 py-2">
-              <span className="text-[11px] font-semibold text-navy-900">Room {r + 1}</span>
+              <span className="text-[12px] font-semibold text-navy-900">Room {r + 1}</span>
               <span className={cn('relative whitespace-nowrap rounded-[7px] px-1.5 py-1 text-[9px] font-bold', r === 0 ? 'ob2-hot text-navy-900' : 'bg-[#F1F2F7] text-ink-600')}>Add calendar connection{r === 0 ? <Mark n={n} className="-end-4 -top-4" /> : null}</span>
             </div>
           ))}
@@ -99,10 +99,10 @@ export function GuidePic({ pic, n }) {
         <Bar url="admin.booking.com/…/sync" />
         <div className="flex flex-col gap-2 px-3 py-3" dir="ltr">
           <span className="text-[12px] font-extrabold text-navy-900">Export calendar</span>
-          <span className="flex h-7 items-center rounded-[8px] border border-[#E1E4EE] px-2 text-[11px] text-navy-900">atlas</span>
+          <span className="flex h-7 items-center rounded-[8px] border border-[#E1E4EE] px-2 text-[12px] text-navy-900">atlas</span>
           <div className="flex items-center gap-2">
             <span className="flex h-7 flex-1 items-center truncate rounded-[8px] bg-[#F7F8FB] px-2 text-[10px] text-ink-600">https://ical.booking.com/v1/export?t=…</span>
-            <span className="ob2-hot relative flex h-7 items-center px-2 text-[11px] font-bold text-navy-900">Copy link<Mark n={n} className="-end-3 -top-4" /></span>
+            <span className="ob2-hot relative flex h-7 items-center px-2 text-[12px] font-bold text-navy-900">Copy link<Mark n={n} className="-end-3 -top-4" /></span>
           </div>
         </div>
       </>);
@@ -110,7 +110,7 @@ export function GuidePic({ pic, n }) {
     case 'a1':
       body = (<>
         <Bar url="airbnb.com/hosting" />
-        <div className="flex items-center gap-3 px-3 py-2 text-[11px] font-semibold text-ink-600" dir="ltr">
+        <div className="flex items-center gap-3 px-3 py-2 text-[12px] font-semibold text-ink-600" dir="ltr">
           <span>Today</span><span className="ob2-hot relative px-2 py-0.5 !text-navy-900">Calendar<Mark n={n} className="-end-4 -top-4" /></span><span>Listings</span><span>Messages</span>
         </div>
         <div className="grid grid-cols-7 gap-1 px-3 pb-3">{Array.from({ length: 14 }, (_, i) => <span key={i} className="h-5 rounded-[5px] bg-[#F1F2F7]" />)}</div>
@@ -121,7 +121,7 @@ export function GuidePic({ pic, n }) {
         <Bar url="airbnb.com/hosting/calendar" />
         <div className="flex gap-3 px-3 py-3" dir="ltr">
           <div className="grid flex-1 grid-cols-5 gap-1">{Array.from({ length: 15 }, (_, i) => <span key={i} className="h-5 rounded-[5px] bg-[#F1F2F7]" />)}</div>
-          <div className="flex w-[42%] flex-col gap-1 rounded-[10px] border border-[#E1E4EE] p-1.5 text-[11px] text-navy-900">
+          <div className="flex w-[42%] flex-col gap-1 rounded-[10px] border border-[#E1E4EE] p-1.5 text-[12px] text-navy-900">
             <span className="px-1.5 py-1">Pricing</span>
             <span className="ob2-hot relative px-1.5 py-1 font-bold">Availability<Mark n={n} className="-end-3 -top-3" /></span>
           </div>
@@ -134,7 +134,7 @@ export function GuidePic({ pic, n }) {
         <div className="flex flex-col gap-2 px-3 py-3" dir="ltr">
           <Line w="w-1/2" /><Line w="w-2/3" />
           <span className="mt-1 text-[12px] font-extrabold text-navy-900">Connect calendars</span>
-          <span className="ob2-hot relative flex h-8 items-center px-2.5 text-[11px] font-bold text-navy-900">Connect to another website<Mark n={n} className="-end-3 -top-4" /></span>
+          <span className="ob2-hot relative flex h-8 items-center px-2.5 text-[12px] font-bold text-navy-900">Connect to another website<Mark n={n} className="-end-3 -top-4" /></span>
         </div>
       </>);
       break;
@@ -145,7 +145,7 @@ export function GuidePic({ pic, n }) {
           <span className="text-[12px] font-extrabold text-navy-900">Airbnb calendar link</span>
           <div className="flex items-center gap-2">
             <span className="flex h-7 flex-1 items-center truncate rounded-[8px] bg-[#F7F8FB] px-2 text-[10px] text-ink-600">https://www.airbnb.com/calendar/ical/….ics</span>
-            <span className="ob2-hot relative flex h-7 items-center px-2 text-[11px] font-bold text-navy-900">Copy<Mark n={n} className="-end-3 -top-4" /></span>
+            <span className="ob2-hot relative flex h-7 items-center px-2 text-[12px] font-bold text-navy-900">Copy<Mark n={n} className="-end-3 -top-4" /></span>
           </div>
         </div>
       </>);

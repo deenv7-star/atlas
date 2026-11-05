@@ -123,7 +123,7 @@ export default function DynamicPricing() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-5 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
-      <PageHeader title="תמחור חגים וסופ״ש" subtitle="מחיר בסיס, סוף שבוע וחגים. atlas מציע מחיר לכל לילה לפי הלוח העברי וההזמנות שלכם." className="!mb-0" />
+      <PageHeader title="תמחור חגים" subtitle="מחיר בסיס, סוף שבוע וחגים. atlas מציע מחיר לכל לילה לפי הלוח העברי וההזמנות שלכם." className="!mb-0" />
 
       {properties.length === 0 ? (
         <Card className="p-6 text-center"><p className="text-[16px] font-semibold text-navy-900">עוד אין יחידות</p><p className="mt-1 text-[14px] text-ink-400">הוסיפו יחידה כדי לקבוע לה מחירים.</p></Card>
@@ -176,7 +176,7 @@ export default function DynamicPricing() {
                           className={cn('flex min-h-[58px] flex-col items-center justify-center rounded-[12px] px-0.5 py-1', KIND_STYLE[n.kind], past && 'opacity-40')}
                           data-kind={n.kind}
                         >
-                          <span className="text-[11px] leading-none text-ink-600">{dnum}</span>
+                          <span className="text-[12px] leading-none text-ink-600">{dnum}</span>
                           <span className="tabular mt-1 text-[12px] font-bold leading-none md:text-[14px]">{n.kind === 'booked' ? 'תפוס' : n.price ? `₪${n.price.toLocaleString('he-IL')}` : ''}</span>
                           {n.label && n.kind !== 'booked' ? <span className="mt-1 max-w-full truncate text-[10px] leading-none">{n.label}</span> : null}
                         </li>
@@ -199,7 +199,7 @@ export default function DynamicPricing() {
               ) : (
                 <ul className="mt-3 space-y-2">
                   {upcoming.map((n) => (
-                    <li key={n.day} className="flex items-center gap-3 rounded-[14px] bg-[#F7F8FB] px-3 py-2.5">
+                    <li key={n.day} className="flex items-center gap-3 rounded-[16px] bg-[#F7F8FB] px-3 py-2.5">
                       <span className={cn('inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full', n.kind === 'holiday' ? 'bg-[#ECEAFE] text-brand-600' : 'bg-[#E8F7EF] text-[#11603A]')} aria-hidden>
                         {n.kind === 'holiday' ? <Star className="h-4 w-4" strokeWidth={1.75} /> : <Moon className="h-4 w-4" strokeWidth={1.75} />}
                       </span>
@@ -214,7 +214,7 @@ export default function DynamicPricing() {
               )}
               <p className="mt-4 flex gap-2 text-[12px] leading-relaxed text-ink-400">
                 <CalendarDays className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-                אלה הצעות בלבד. atlas לא משנה מחירים ב-Airbnb או ב-Booking, כי הקישור לערוצים מעביר רק תאריכים. עדכנו את המחיר בערוץ עצמו, והשתמשו בו גם בהצעות ללידים.
+                אלה הצעות בלבד. atlas לא משנה מחירים ב-Airbnb או ב-Booking, כי הקישור לערוצים מעביר רק תאריכים. עדכנו את המחיר בערוץ עצמו, והשתמשו בו גם בהצעות מחיר לפניות.
               </p>
             </Card>
           </div>

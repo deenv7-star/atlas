@@ -40,7 +40,7 @@ function AccountActions() {
         ניהול החשבון
       </button>
       {open ? (
-        <div id="pw-account" className="mt-2 space-y-3 rounded-[18px] border border-[#E6E8F0] bg-white p-4 text-right">
+        <div id="pw-account" className="mt-2 space-y-3 rounded-[16px] border border-[#E6E8F0] bg-white p-4 text-right">
           <DeleteAccount
             onDeleted={async () => {
               try { await logout(false); } catch { /* session already gone */ }
@@ -138,7 +138,7 @@ function PlanCard({ plan, yearly, busy, disabled, onChoose }) {
   return (
     <li
       className={cn(
-        'relative flex flex-col rounded-[22px] bg-white p-5 text-right shadow-[0_1px_2px_rgba(27,38,86,0.05),0_12px_32px_-16px_rgba(27,38,86,0.18)] md:p-6',
+        'relative flex flex-col rounded-[24px] bg-white p-5 text-right shadow-[0_1px_2px_rgba(27,38,86,0.05),0_12px_32px_-16px_rgba(27,38,86,0.18)] md:p-6',
         plan.popular ? 'ring-2 ring-[#3E2BF1]' : 'ring-1 ring-[#E6E8F0]',
       )}
     >
@@ -174,7 +174,7 @@ function Requested({ plan, yearly }) {
   const ref = useRef(null);
   useEffect(() => { ref.current?.focus(); }, []);
   return (
-    <div className="mt-8 w-full max-w-[520px] rounded-[22px] bg-white p-6 text-center shadow-[0_1px_2px_rgba(27,38,86,0.05),0_12px_32px_-16px_rgba(27,38,86,0.18)] ring-1 ring-[#E6E8F0]" role="status">
+    <div className="mt-8 w-full max-w-[520px] rounded-[24px] bg-white p-6 text-center shadow-[0_1px_2px_rgba(27,38,86,0.05),0_12px_32px_-16px_rgba(27,38,86,0.18)] ring-1 ring-[#E6E8F0]" role="status">
       <Check className="mx-auto h-8 w-8 text-[#3E2BF1]" strokeWidth={1.75} aria-hidden />
       <h2 ref={ref} tabIndex={-1} className="mt-4 text-[22px] font-bold text-[#1B2656] focus:outline-none">הבקשה התקבלה</h2>
       <p className="mt-2 text-[16px] leading-relaxed text-[#4A5170]">

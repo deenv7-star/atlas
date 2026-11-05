@@ -24,7 +24,7 @@ export default function AuthField({
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={describedBy}
           className={cn(
-            'block w-full rounded-[14px] border bg-white text-navy-900 placeholder:text-ink-300',
+            'block w-full rounded-[16px] border bg-white text-navy-900 placeholder:text-ink-300',
             'transition-[border-color,box-shadow] duration-150 ease-out motion-reduce:transition-none',
             'focus:outline-none focus:border-brand-600 focus:shadow-[0_0_0_4px_rgba(62,43,241,0.14)]',
             size === 'lg' ? 'h-[60px] px-4 text-[19px] font-semibold' : 'h-[52px] px-4 text-[16px]',

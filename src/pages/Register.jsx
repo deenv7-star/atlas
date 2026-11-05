@@ -60,7 +60,7 @@ export default function Register() {
             <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 sm:text-[36px]">פותחים לכם חשבון</h1>
             <p className="mt-2 text-[16px] text-ink-600">14 יום חינם, ואז מחליטים. החשבון מוכן בדקה.</p>
             {picked ? (
-              <p className="mt-3 rounded-[14px] bg-brand-50 px-3.5 py-2.5 text-[15px] leading-snug text-navy-900" data-plan={picked.key}>
+              <p className="mt-3 rounded-[16px] bg-brand-50 px-3.5 py-2.5 text-[15px] leading-snug text-navy-900" data-plan={picked.key}>
                 בחרתם בחבילת <b>{picked.nameHe}</b> ({picked.limit}). 14 הימים הראשונים חינם, ואת החבילה משלימים בסוף הניסיון.
               </p>
             ) : null}
@@ -70,7 +70,7 @@ export default function Register() {
                 <div className="rounded-[16px] border border-[#D9DCFB] bg-brand-50 p-4 text-center" role="alert">
                   <p className="font-semibold text-navy-900">המייל הזה כבר רשום אצלנו</p>
                 </div>
-                <Link to={`/login?email=${encodeURIComponent(form.email)}`} className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-brand-600 text-[16px] font-bold text-white">
+                <Link to={`/login?email=${encodeURIComponent(form.email)}`} className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[16px] bg-brand-600 text-[16px] font-bold text-white">
                   התחברו עם המייל הזה<ArrowLeft className="h-5 w-5" aria-hidden />
                 </Link>
                 <button type="button" onClick={() => r.setEmailExists(false)} className="flex h-11 w-full items-center justify-center text-[14px] font-semibold text-ink-600 hover:text-navy-900">מייל אחר</button>
@@ -94,9 +94,11 @@ export default function Register() {
                 <TermsConsent checked={r.agreed} onChange={r.onConsent} error={r.consentError} className="pt-1" />
 
                 <button type="submit" disabled={!r.canSubmit || isLoading} aria-busy={isLoading}
-                  className="mt-1 flex h-[56px] w-full items-center justify-center gap-2 rounded-[16px] bg-brand-600 text-[17px] font-bold text-white shadow-[0_1px_2px_rgba(42,26,201,0.3),0_14px_30px_-14px_rgba(62,43,241,0.7)] transition-[background-color,transform] duration-150 hover:bg-[#3322E0] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#C9C3FB] disabled:shadow-none motion-reduce:transition-none">
+                  className="mt-1 flex h-[56px] w-full items-center justify-center gap-2 rounded-[16px] bg-brand-600 text-[17px] font-bold text-white shadow-[0_1px_2px_rgba(42,26,201,0.3),0_14px_30px_-14px_rgba(62,43,241,0.7)] transition-[background-color,transform] duration-150 hover:bg-[#3322E0] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none motion-reduce:transition-none" aria-describedby={!r.canSubmit && !isLoading ? 'reg-why' : undefined}>
                   {isLoading ? <><Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden />פותחים חשבון…</> : <>פתיחת חשבון<ArrowLeft className="h-5 w-5" aria-hidden /></>}
                 </button>
+                {/* ecosystem v1 #18: a disabled button says why */}
+                {!r.canSubmit && !isLoading ? <p id="reg-why" className="text-center text-[13px] text-ink-600">{r.agreed ? 'מלאו מייל וסיסמה כדי להמשיך' : 'מלאו את הפרטים וסמנו את התקנון כדי להמשיך'}</p> : null}
               </form>
               {hasSocial && SOCIAL_LAYOUT === 'below' ? (
                 <div className="mt-6">{social('before')}</div>

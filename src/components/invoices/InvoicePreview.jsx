@@ -15,8 +15,8 @@ export default function InvoicePreview({ invoice }) {
 
   const typeLabels = {
     INVOICE: 'רישום מסמך',
-    RECEIPT: 'רישום קבלה',
-    TAX_INVOICE: 'רישום חשבונית מס',
+    RECEIPT: 'רישום מסמך תשלום',
+    TAX_INVOICE: 'רישום מסמך מס',
     PROFORMA: 'חשבון עסקה'
   };
 
@@ -128,7 +128,7 @@ export default function InvoicePreview({ invoice }) {
 
         {/* Footer */}
         <div className="text-center text-xs text-ink-600 pt-6 border-t mt-8">
-          <p>לתיעוד בלבד. זו לא חשבונית מס ולא קבלה: מסמכי מס מפיקים בתוכנה רשומה.</p>
+          <p>לתיעוד בלבד. מסמכי מס מפיקים בתוכנה רשומה.</p>
           <p>תודה, ונשמח לארח אתכם שוב</p>
         </div>
       </div>

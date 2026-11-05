@@ -1,5 +1,5 @@
 import { Page, PageHeader } from '@/components/ds';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,12 @@ import HelpHint from '@/components/help/HelpHint';
 import { startTour } from '@/lib/tour/tourState';
 import SecuritySettings from '@/components/settings/SecuritySettings';
 import { readOrgSettings, writeOrgSettings } from '@/lib/onboarding/orgSettings';
+import { isNativeApp } from '@/lib/native';
+import ImportEntryCard from '@/components/import/EntryCard';
+
+// iOS app only: Face ID sign-in on / off. Never loaded on the web.
+const BiometricSetting = lazy(() => import('@/components/settings/BiometricSetting'));
+const NativeNotifySetting = lazy(() => import('@/components/settings/NativeNotifySetting.jsx'));
 
 const tabs = [
   { id: 'profile', label: 'פרופיל', icon: User },
@@ -41,6 +47,18 @@ export default function SettingsPage({ user }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { logout } = useAuth();
+
+  // Phone: the tab strip scrolls sideways. Keep the selected chip fully in view (opening /settings?tab=security
+  // used to show the dark "אבטחה" chip cut in half at the edge). Only the strip moves, never the page.
+  const stripRef = useRef(null);
+  useEffect(() => {
+    const strip = stripRef.current;
+    const btn = strip?.querySelector(`#settings-tab-${activeTab}`);
+    if (!strip || !btn || strip.scrollWidth <= strip.clientWidth + 1) return;
+    const sr = strip.getBoundingClientRect(), br = btn.getBoundingClientRect(), pad = 20;
+    const dx = br.left < sr.left + pad ? br.left - sr.left - pad : br.right > sr.right - pad ? br.right - sr.right + pad : 0;
+    if (dx) strip.scrollBy({ left: dx, behavior: 'auto' });
+  }, [activeTab]);
 
   const { data: org } = useQuery({
     queryKey: ['organization'],
@@ -162,6 +180,7 @@ export default function SettingsPage({ user }) {
         {/* Tab list */}
         {/* audit 04.11 m6: a real tablist (roles, selected state, arrow keys) */}
         <div
+          ref={stripRef}
           role="tablist"
           aria-label="אזורי ההגדרות"
           aria-orientation="horizontal"
@@ -277,6 +296,7 @@ export default function SettingsPage({ user }) {
           {/* Organization Tab */}
           {activeTab === 'organization' && (
             <>
+            <ImportEntryCard where="settings" className="mb-5" />
             <div className="v7-card mb-5 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Wand2 className="h-5 w-5" strokeWidth={1.75} /></span>
@@ -357,6 +377,9 @@ export default function SettingsPage({ user }) {
           )}
 
           {/* Notifications Tab */}
+          {activeTab === 'notifications' && isNativeApp() && (
+            <Suspense fallback={null}><NativeNotifySetting /></Suspense>
+          )}
           {activeTab === 'notifications' && (
             <Card>
               <CardHeader>
@@ -400,12 +423,14 @@ export default function SettingsPage({ user }) {
           )}
 
           {/* Security Tab */}
+          {activeTab === 'security' && isNativeApp() && (
+            <Suspense fallback={null}><BiometricSetting /></Suspense>
+          )}
           {activeTab === 'security' && (
             <SecuritySettings
               user={user}
               onDeleted={async () => {
-                try { await logout(false); } catch { /* session is already gone */ }
-                window.location.href = '/login?success=' + encodeURIComponent('החשבון נמחק. תודה שהייתם איתנו.');
+                await logout(true, '/login?success=' + encodeURIComponent('החשבון נמחק. תודה שהייתם איתנו.'));
               }}
             />
           )}

@@ -111,7 +111,7 @@ function Donut({ value, size = 128, stroke = 16, label }) {
       </svg>
       <span className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden>
         <span className="v5-num text-[28px] font-extrabold leading-none text-navy-900" dir="ltr">{Math.round(v)}<span className="text-[0.55em] text-ink-400">%</span></span>
-        <span className="mt-1 text-[11px] font-medium text-ink-400">החודש</span>
+        <span className="mt-1 text-[12px] font-medium text-ink-400">החודש</span>
       </span>
     </span>
   );
@@ -156,10 +156,10 @@ function nightlySeries(bookings, day, mode) {
 /* ── Today list ────────────────────────────────────────────────────────────── */
 function DayRow({ property, guest, time, title, detail, attention, action, i }) {
   return (
-    <Rise as="li" i={i} className="c-row flex min-h-[68px] items-center gap-3 rounded-[18px] px-3 py-2">
+    <Rise as="li" i={i} className="c-row flex min-h-[68px] items-center gap-3 rounded-[16px] px-3 py-2">
       {guest
         ? <GuestAvatar name={guest} size={44} />
-        : <UnitPhoto property={property} className="h-11 w-11" rounded="rounded-[14px]" />}
+        : <UnitPhoto property={property} className="h-11 w-11" rounded="rounded-[16px]" />}
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-semibold text-navy-900">{title}</p>
         <p className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
@@ -467,7 +467,7 @@ export default function TodayBoard({ user, orgId }) {
       </div>
       <div className="flex min-h-[260px] flex-1 flex-col px-4 pb-5 pt-6 md:px-6">
         {hasHistory ? (
-          <BarChart key={range} data={chartData} height="fill" barClass="rounded-[14px]" idleClass="bg-[#ECECF5]" />
+          <BarChart key={range} data={chartData} height="fill" barClass="rounded-[16px]" idleClass="bg-[#ECECF5]" />
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
             <p className="text-[15px] font-semibold text-navy-900">הגרף יתמלא עם ההזמנות הבאות</p>

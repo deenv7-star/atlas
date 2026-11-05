@@ -119,6 +119,8 @@
 /guest-service/*    /app.html   200
 /how-it-works    /app.html   200
 /how-it-works/*    /app.html   200
+/import    /app.html   200
+/import/*    /app.html   200
 /integrations    /app.html   200
 /integrations/*    /app.html   200
 /invoices    /app.html   200

@@ -67,11 +67,11 @@ export function UnitsPreview({ d, size = 'lg' }) {
         <p className="text-[12px] font-semibold text-ink-400 tabular-nums">{d.units.length} {d.units.length === 1 ? 'יחידה' : 'יחידות'}{lg && total ? ` · עד ${formatMoney(total)} ללילה` : ''}</p>
       </div>
       <div className="grid gap-x-1 gap-y-1.5" style={{ gridTemplateColumns: `${lg ? 92 : 64}px repeat(7, minmax(0, 1fr))` }}>
-        {lg ? <><span />{DAYS.map((x) => <span key={x} className="text-center text-[11px] font-semibold text-ink-400">{x}</span>)}</> : null}
+        {lg ? <><span />{DAYS.map((x) => <span key={x} className="text-center text-[12px] font-semibold text-ink-400">{x}</span>)}</> : null}
         {units.map((u) => (
             <React.Fragment key={u.key}>
               <motion.span initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0, transition: { duration: 0.28, ease: EASE } }}
-                className={cn('flex min-w-0 items-center gap-1.5 truncate font-semibold text-navy-900', lg ? 'h-[34px] text-[13px]' : 'h-[24px] text-[11px]')}>
+                className={cn('flex min-w-0 items-center gap-1.5 truncate font-semibold text-navy-900', lg ? 'h-[34px] text-[13px]' : 'h-[24px] text-[12px]')}>
                 <span className={cn('shrink-0 overflow-hidden rounded-[7px] bg-brand-100', lg ? 'h-7 w-7' : 'h-5 w-5')}><img src={u.photo || typeInfo(d.type).photo} alt="" className="h-full w-full object-cover" /></span>
                 <span className="truncate">{u.name || 'יחידה'}</span>
               </motion.span>
@@ -83,7 +83,7 @@ export function UnitsPreview({ d, size = 'lg' }) {
           ))}
       </div>
       {lg && d.units.length > 6 ? <p className="mt-3 text-center text-[12px] text-ink-400">ועוד {d.units.length - 6}</p> : null}
-      {lg ? <p className="mt-4 rounded-[14px] bg-brand-50 px-3.5 py-2.5 text-[13px] font-medium text-brand-700">הכל פנוי. ההזמנה הראשונה תופיע כאן.</p> : null}
+      {lg ? <p className="mt-4 rounded-[16px] bg-brand-50 px-3.5 py-2.5 text-[13px] font-medium text-brand-700">הכל פנוי. ההזמנה הראשונה תופיע כאן.</p> : null}
     </div>
   );
 }
@@ -96,7 +96,7 @@ export function SourcesPreview({ d, size = 'lg' }) {
     <div className={cn('rounded-[24px] bg-white shadow-[0_1px_2px_rgba(27,38,86,0.05),0_24px_50px_-24px_rgba(27,38,86,0.35)]', lg ? 'w-[400px] p-6' : 'flex h-[96px] items-center gap-3 overflow-hidden px-3')} aria-hidden>
       <div className={cn('flex', lg ? 'flex-col gap-2.5' : 'min-w-0 flex-1 gap-1.5')}>
         {chosen.length === 0 ? (
-          <p className={cn('rounded-[14px] border border-dashed border-[#D5D9E6] text-center text-ink-400', lg ? 'px-4 py-6 text-[14px]' : 'flex-1 px-2 py-3 text-[12px]')}>בחרו מאיפה מגיעות הזמנות</p>
+          <p className={cn('rounded-[16px] border border-dashed border-[#D5D9E6] text-center text-ink-400', lg ? 'px-4 py-6 text-[14px]' : 'flex-1 px-2 py-3 text-[12px]')}>בחרו מאיפה מגיעות הזמנות</p>
         ) : (
           <AnimatePresence initial={false}>
             {chosen.map((s) => {
@@ -109,7 +109,7 @@ export function SourcesPreview({ d, size = 'lg' }) {
                   </span>
                   {lg ? <span className="flex-1 truncate text-[14px] font-semibold text-navy-900">{s.label}</span> : null}
                   {lg ? (
-                    <span className={cn('inline-flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-bold', on ? 'bg-brand-600 text-white' : 'bg-white text-ink-400')}>
+                    <span className={cn('inline-flex h-6 items-center gap-1 rounded-full px-2 text-[12px] font-bold', on ? 'bg-brand-600 text-white' : 'bg-white text-ink-400')}>
                       {on ? <><Check className="h-3 w-3" strokeWidth={3} />מסונכרן</> : 'נכנס ללוח'}
                     </span>
                   ) : null}

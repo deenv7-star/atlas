@@ -108,7 +108,7 @@ export default function WizardB3({ user, again = false }) {
               const on = a.kind === t.value;
               return (
                 <button key={t.value} type="button" role="radio" aria-checked={on} onClick={() => pickKind(t.value)} className="ob3-kind is-compact ob-press">
-                  <span className="relative block h-[64px] w-[76px] shrink-0 overflow-hidden rounded-[14px] bg-[#E9ECF4]">
+                  <span className="relative block h-[64px] w-[76px] shrink-0 overflow-hidden rounded-[16px] bg-[#E9ECF4]">
                     <img src={kindPhoto(t.value)} alt="" className="h-full w-full object-cover" draggable={false} />
                   </span>
                   <span className="min-w-0 flex-1">

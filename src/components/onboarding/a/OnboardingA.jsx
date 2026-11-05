@@ -180,7 +180,7 @@ export default function OnboardingA({ user, again = false }) {
             </Guide>
             <ol className="grid grid-cols-2 gap-2.5">
               {[{ t: 'עליכם', Icon: Users }, { t: 'העסק והמקום', Icon: Home }, { t: 'מאיפה מגיעות הזמנות', Icon: Link2 }, { t: 'שעות ותשלום', Icon: Clock }].map(({ t, Icon }, k) => (
-                <li key={t} className="ob-pop flex items-center gap-3 rounded-[18px] bg-white p-3.5 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_6px_18px_-10px_rgba(27,38,86,0.14)]" style={{ animationDelay: `${120 + k * 60}ms` }}>
+                <li key={t} className="ob-pop flex items-center gap-3 rounded-[16px] bg-white p-3.5 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_6px_18px_-10px_rgba(27,38,86,0.14)]" style={{ animationDelay: `${120 + k * 60}ms` }}>
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600"><Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden /></span>
                   <span className="text-[15px] font-semibold leading-tight text-navy-900">{t}</span>
                 </li>
@@ -198,7 +198,7 @@ export default function OnboardingA({ user, again = false }) {
                 return (
                   <button key={r.value} type="button" role="radio" aria-checked={d.ownerRole === r.value} className="ob-choice ob-press ob-pop flex-col items-start gap-3 p-4" style={{ animationDelay: `${k * 50}ms` }}
                     onClick={() => { update({ ownerRole: r.value }); clearTimeout(autoNext.current); autoNext.current = setTimeout(() => go(step(i, 1)), 420); }}>
-                    <span className={cn('flex h-12 w-12 items-center justify-center rounded-[14px]', d.ownerRole === r.value ? 'bg-brand-600 text-white' : 'bg-brand-50 text-brand-600')}><Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden /></span>
+                    <span className={cn('flex h-12 w-12 items-center justify-center rounded-[16px]', d.ownerRole === r.value ? 'bg-brand-600 text-white' : 'bg-brand-50 text-brand-600')}><Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden /></span>
                     <span className="flex flex-col"><span className="text-[19px] font-bold text-navy-900">{r.label}</span><span className="text-[14px] text-ink-400">{r.line}</span></span>
                   </button>
                 );
@@ -311,9 +311,9 @@ export default function OnboardingA({ user, again = false }) {
               {d.units.map((u, k) => {
                 const open = T.single || openUnit === k;
                 return (
-                  <li key={u.key} className="ob-pop overflow-hidden rounded-[22px] bg-white shadow-[0_1px_2px_rgba(27,38,86,0.04),0_8px_24px_-12px_rgba(27,38,86,0.16)]" style={{ animationDelay: `${k * 40}ms` }}>
+                  <li key={u.key} className="ob-pop overflow-hidden rounded-[24px] bg-white shadow-[0_1px_2px_rgba(27,38,86,0.04),0_8px_24px_-12px_rgba(27,38,86,0.16)]" style={{ animationDelay: `${k * 40}ms` }}>
                     <button type="button" className="ob-press flex min-h-[72px] w-full items-center gap-3 px-4 text-start" aria-expanded={open} onClick={() => setOpenUnit(open ? -1 : k)}>
-                      <span className="h-12 w-12 shrink-0 overflow-hidden rounded-[14px] bg-[#E4E1FD]">{u.photo || typeInfo(d.type).photo ? <img src={u.photo || typeInfo(d.type).photo} alt="" className="h-full w-full object-cover" /> : null}</span>
+                      <span className="h-12 w-12 shrink-0 overflow-hidden rounded-[16px] bg-[#E4E1FD]">{u.photo || typeInfo(d.type).photo ? <img src={u.photo || typeInfo(d.type).photo} alt="" className="h-full w-full object-cover" /> : null}</span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[18px] font-bold text-navy-900">{u.name || 'יחידה בלי שם'}</span>
                         <span className="block text-[14px] text-ink-400 tabular-nums">עד {u.guests} אורחים · {formatMoney(u.price)} ללילה</span>
@@ -383,7 +383,7 @@ export default function OnboardingA({ user, again = false }) {
             <div role="radiogroup" aria-label="מקדמה" className="flex flex-col gap-2.5">
               {DEPOSIT_OPTIONS.map((o) => (
                 <button key={o.value} type="button" role="radio" aria-checked={d.deposit === o.value} onClick={() => update({ deposit: o.value })}
-                  className="ob-choice ob-press flex-row items-center gap-3 !rounded-[18px] px-4 py-3.5">
+                  className="ob-choice ob-press flex-row items-center gap-3 !rounded-[16px] px-4 py-3.5">
                   <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2', d.deposit === o.value ? 'border-brand-600 bg-brand-600 text-white' : 'border-[#D5D9E6]')}>
                     {d.deposit === o.value ? <Check className="h-4 w-4" strokeWidth={3} aria-hidden /> : null}
                   </span>
@@ -433,7 +433,7 @@ export default function OnboardingA({ user, again = false }) {
               const ch = d.channels[k];
               const setCh = (patch) => update((cur) => ({ channels: { ...cur.channels, [k]: { ...cur.channels[k], ...patch } } }));
               return (
-                <div key={k} className="overflow-hidden rounded-[22px] bg-white shadow-[0_1px_2px_rgba(27,38,86,0.04),0_8px_24px_-12px_rgba(27,38,86,0.16)]">
+                <div key={k} className="overflow-hidden rounded-[24px] bg-white shadow-[0_1px_2px_rgba(27,38,86,0.04),0_8px_24px_-12px_rgba(27,38,86,0.16)]">
                   <button type="button" aria-pressed={ch.on} onClick={() => setCh({ on: !ch.on })} className="ob-press flex min-h-[72px] w-full items-center gap-3 px-4 text-start">
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] text-[15px] font-extrabold text-white" style={{ background: p.color }} aria-hidden>{k === 'AIRBNB' ? 'A' : 'B.'}</span>
                     <span className="flex-1 text-[18px] font-bold text-navy-900">{p.label}</span>
@@ -497,7 +497,7 @@ export default function OnboardingA({ user, again = false }) {
 
           <footer className="fixed inset-x-0 bottom-0 z-10 bg-gradient-to-t from-[var(--canvas)] via-[var(--canvas)] to-transparent px-5 pb-[max(18px,env(safe-area-inset-bottom))] pt-6 md:px-10 lg:absolute">
             {error ? (
-              <p className="mb-3 rounded-[14px] bg-[var(--st-red-bg)] px-4 py-3 text-[15px] font-medium text-[var(--st-red-fg)]" role="alert">{error}</p>
+              <p className="mb-3 rounded-[16px] bg-[var(--st-red-bg)] px-4 py-3 text-[15px] font-medium text-[var(--st-red-fg)]" role="alert">{error}</p>
             ) : null}
             {reveal ? (
               <Primary className="w-full" onClick={toToday} disabled={busy}>
@@ -557,7 +557,7 @@ function Reveal({ d }) {
       <ul className="flex flex-col gap-2.5">
         {rows.map(({ Icon, t, d: line }, k) => (
           <motion.li key={t} initial={still ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.6 + k * 0.07, ease: EASE }}
-            className="flex items-center gap-3.5 rounded-[18px] bg-white p-3.5 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_6px_18px_-10px_rgba(27,38,86,0.14)]">
+            className="flex items-center gap-3.5 rounded-[16px] bg-white p-3.5 shadow-[0_1px_2px_rgba(27,38,86,0.04),0_6px_18px_-10px_rgba(27,38,86,0.14)]">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-brand-50 text-brand-600"><Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden /></span>
             <span className="min-w-0">
               <span className="block truncate text-[16px] font-bold text-navy-900">{t}</span>

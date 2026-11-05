@@ -1,0 +1,79 @@
+/* "עוד" / "כל המסכים" sheet (MoreSheet.jsx). Portalled outside .y2-shell, so colours are literal. indigo #3E2BF1 · navy #1B2656 · canvas #F7F8FB */
+.ycm-scrim { position: fixed; inset: 0; z-index: 80; background: rgba(27,38,86,.32); animation: ycm-fade .2s ease-out; }
+.ycm { position: fixed; z-index: 81; inset-inline: 0; bottom: 0; max-height: 88vh; max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain;
+  background: #F7F8FB; color: #1B2656; font-family: Heebo, system-ui, sans-serif; border-radius: 28px 28px 0 0;
+  padding: 8px 16px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -12px 40px -18px rgba(27,38,86,.35);
+  animation: ycm-up .34s cubic-bezier(.23,1,.32,1); }
+.ycm:focus { outline: none; }
+@media (min-width: 640px) {
+  .ycm { inset: auto; left: 50%; top: 50%; bottom: auto; width: 520px; max-height: 80vh; max-height: 80dvh; border-radius: 28px; padding-bottom: 20px;
+    transform: translate(-50%, -50%); animation: ycm-pop .24s cubic-bezier(.23,1,.32,1); }
+}
+@keyframes ycm-up { from { transform: translateY(100%); } }
+@keyframes ycm-pop { from { opacity: 0; transform: translate(-50%, -48%) scale(.97); } }
+@keyframes ycm-fade { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ycm, .ycm-scrim { animation: none; } }
+
+.ycm-grab { display: block; width: 40px; height: 5px; border-radius: 99px; background: rgba(27,38,86,.16); margin: 0 auto 6px; }
+@media (min-width: 640px) { .ycm-grab { display: none; } } /* a centred panel is not dragged */
+.ycm-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; }
+.ycm-title { font-size: 22px; font-weight: 800; letter-spacing: -.01em; margin: 0; }
+.ycm-x { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 99px; background: #fff; color: #1B2656;
+  box-shadow: 0 0 0 1px rgba(27,38,86,.08); }
+.ycm-x svg { width: 20px; height: 20px; }
+
+.ycm-search { display: flex; align-items: center; gap: 10px; height: 52px; margin-top: 8px; padding: 0 16px; border-radius: 16px; background: #fff;
+  box-shadow: 0 0 0 1px rgba(27,38,86,.1); cursor: text; }
+.ycm-search:focus-within { box-shadow: 0 0 0 2px #3E2BF1; }
+.ycm-search svg { width: 20px; height: 20px; flex: none; color: rgba(27,38,86,.55); }
+.ycm-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; font: inherit; font-size: 16px; color: #1B2656; }
+.ycm-search input::placeholder { color: rgba(27,38,86,.5); }
+.ycm-search input::-webkit-search-cancel-button { display: none; }
+
+.ycm-acts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.ycm-act { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px; padding: 10px 6px;
+  border-radius: 18px; background: #fff; color: #1B2656; box-shadow: 0 0 0 1px rgba(27,38,86,.08); font-size: 15px; font-weight: 600; line-height: 1.2; text-align: center; }
+.ycm-act svg { width: 22px; height: 22px; color: #3E2BF1; }
+.ycm-act--p { background: #3E2BF1; color: #fff; box-shadow: 0 8px 18px -10px rgba(62,43,241,.7); }
+.ycm-act--p svg { color: #fff; }
+.ycm-act:active { transform: scale(.97); }
+
+.ycm-sec { margin: 18px 4px 8px; font-size: 14px; font-weight: 600; color: rgba(27,38,86,.72); }
+.ycm-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.ycm-find + .ycm-grid { margin-top: 10px; }
+.ycm-tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; width: 100%; min-height: 96px;
+  padding: 14px 6px 12px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px rgba(27,38,86,.07); color: #1B2656; text-align: center; }
+.ycm-tile:active { transform: scale(.97); }
+.ycm-ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: rgba(62,43,241,.08); color: #3E2BF1; flex: none; }
+.ycm-ic svg { width: 22px; height: 22px; }
+.ycm-lb { font-size: 14px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.ycm-tile.on { box-shadow: 0 0 0 2px #3E2BF1; }
+@media (max-width: 349px) { .ycm-lb { font-size: 13px; } .ycm-act { font-size: 14px; } }
+
+.ycm-find, .ycm-help { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 0 16px; border-radius: 16px; background: #fff;
+  box-shadow: 0 0 0 1px rgba(27,38,86,.08); color: #1B2656; font-size: 15px; font-weight: 600; text-align: start; }
+.ycm-find { margin-top: 12px; }
+.ycm-help { margin-top: 16px; position: relative; }
+.ycm-find span, .ycm-help span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ycm-find svg, .ycm-help svg { width: 20px; height: 20px; flex: none; color: rgba(27,38,86,.55); }
+.ycm-find svg:first-child { color: #3E2BF1; }
+.ycm-dot { width: 9px; height: 9px; border-radius: 99px; background: #3E2BF1; flex: none; }
+.ycm-none { margin: 10px 4px 0; font-size: 15px; color: rgba(27,38,86,.72); }
+
+
+/* ecosystem v1 #6: grouped list rows (52px), icon 20 + label + chevron, white r16 groups on the canvas */
+.ycm-sec { margin: 20px 4px 8px; font-size: 13px; font-weight: 600; color: #4A5578; }
+.ycm-find + .ycm-group .ycm-list { margin-top: 10px; }
+.ycm-list { list-style: none; margin: 0; padding: 0; background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 1px 2px rgba(27,38,86,.06), 0 4px 16px rgba(27,38,86,.05); }
+.ycm-list li + li .ycm-row { box-shadow: inset 0 1px 0 #E6E8F0; }
+.ycm-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 0 16px; background: transparent; color: #1B2656; text-align: start; }
+.ycm-row:active { background: #F7F8FB; }
+.ycm-row.on { color: #3E2BF1; }
+.ycm-row-ic { width: 20px; height: 20px; flex: none; color: #3E2BF1; }
+.ycm-row-chev { width: 18px; height: 18px; flex: none; color: #8C93AB; }
+.ycm-row .ycm-lb { flex: 1; min-width: 0; font-size: 15px; font-weight: 500; text-align: start; }
+.ycm-act { border-radius: 16px; font-size: 15px; }
+.ycm-find, .ycm-help { font-size: 15px; }
+.ycm-none { font-size: 15px; }
+@media (max-width: 349px) { .ycm-act { font-size: 13px; } }

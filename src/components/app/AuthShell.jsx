@@ -66,7 +66,7 @@ function ProductPreview({ caption }) {
               <span className="text-[12px] text-ink-400">2 כניסות · 1 יציאה</span>
             </div>
             <PreviewRow time="15:00" title="משפחת לוי" meta="הזית · 3 לילות" />
-            <PreviewRow time="15:00" title="Sarah Klein" meta="התאנה · 4 לילות" />
+            <PreviewRow time="15:00" title="נועה כהן" meta="התאנה · 4 לילות" />
             <PreviewRow time="11:00" title="אורית בן חמו" meta="יציאה · הזית" done />
           </div>
         </div>

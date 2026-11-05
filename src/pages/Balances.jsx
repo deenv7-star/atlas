@@ -80,15 +80,15 @@ export default function BalancesPage({ user, orgId }) {
     <StayPage>
       <FinanceTabs />
       <PageHeader
-        title="מקדמות ויתרות"
-        subtitle="מה שולם, מה נשאר ומי באיחור. תזכורת יוצאת בוואטסאפ בלחיצה."
+        title="יתרות"
+        subtitle="מקדמות ויתרות: מה שולם, מה נשאר ומי באיחור. תזכורת יוצאת בוואטסאפ בלחיצה."
       />
 
       {data.paymentsState === 'error' ? (
         // Audit 04.11 #2: without the payments every booking would look unpaid. Say so instead.
         <MoneyLoadBanner onRetry={data.refetch} />
       ) : data.isLoading || data.paymentsState === 'loading' ? (
-        <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[22px]" />)}</div>
+        <div className="space-y-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-[24px]" />)}</div>
       ) : (
         <>
           <div className="stat-row mb-4">

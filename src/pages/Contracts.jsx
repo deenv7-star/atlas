@@ -238,6 +238,8 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
 
         {/* Contracts Tab */}
         <TabsContent value="contracts" className="mt-6">
+          {/* ecosystem v1 #10: while the empty state shows its own "חוזה חדש", the header copy hides */}
+          {!contractsLoading && contracts.length === 0 ? null : (
           <div className="flex justify-end mb-4">
             <Button 
               onClick={() => setIsSendDialogOpen(true)}
@@ -246,6 +248,7 @@ export default function Contracts({ user, selectedPropertyId, orgId }) {
               חוזה חדש
             </Button>
           </div>
+          )}
 
           {/* Desktop: Contracts Table */}
           <Card className="border-0 shadow-sm rounded-2xl overflow-hidden hidden md:block">

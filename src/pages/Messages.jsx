@@ -158,7 +158,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
         <PageHeader title="הודעות" help="messages.page" tour="messages-page" subtitle="ההודעות ששלחתם לאורחים מכאן. התשובות שלהם מגיעות לוואטסאפ שלכם." className="!mb-4 md:!mb-5" />
       </div>
       <div className="mx-auto flex min-h-0 w-full max-w-[var(--page-max,1200px)] flex-1 flex-col overflow-hidden md:mb-6 md:px-10">
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[22px] md:border md:shadow-card">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-line bg-white md:flex-row md:rounded-[24px] md:border md:shadow-card">
       {/* Threads list */}
       <div data-tour="messages-list" className={cn(
         'flex w-full flex-shrink-0 flex-col border-line bg-white md:w-80 md:border-l lg:w-96',
@@ -251,7 +251,7 @@ export default function MessagesPage({ user, selectedPropertyId, orgId }) {
                 return (
                   <div key={i} className={cn('flex', isOutbound ? 'justify-start' : 'justify-end')}>
                     <div className={cn(
-                      'max-w-[80%] rounded-[22px] px-3.5 py-2.5 text-[15px] lg:max-w-md',
+                      'max-w-[80%] rounded-[24px] px-3.5 py-2.5 text-[15px] lg:max-w-md',
                       isOutbound
                         ? 'rounded-tr-[6px] bg-brand-600 text-white'
                         : 'rounded-tl-[6px] border border-line bg-white text-navy-900'

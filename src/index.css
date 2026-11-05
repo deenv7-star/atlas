@@ -740,3 +740,25 @@ input { text-overflow: ellipsis; }
   }
 }
 .sheet-footer-note { margin-bottom: 10px; }
+
+/* ── atlas design system v1 (ecosystem review, 05.11.2026) ─────────────────────────────────────────────
+   Tokens (colour, radius, shadow) + the desktop type step. Desktop (≥1024) uses the same scale as the phone:
+   it never shrinks, and the small captions that made 1440 read like a stretched phone step up one notch. */
+:root {
+  --indigo: #3E2BF1; --indigo-press: #2A1AC9; --indigo-8: rgba(62,43,241,.08);
+  --navy: #1B2656; --ink-2: #4A5578; --ink-3: #8C93AB; --line: #E6E8F0; --canvas: #F7F8FB;
+  --danger: #B4303A; --ok: #1F7A4D; --ok-10: rgba(31,122,77,.10);
+  --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-pill: 999px;
+  --sh-card: 0 1px 2px rgba(27,38,86,.06), 0 4px 16px rgba(27,38,86,.05);
+  --sh-float: 0 12px 40px rgba(27,38,86,.16);
+}
+@media (min-width: 1024px) {
+  :root { --page-max: 1120px; }
+  #atlas-main-scroll .text-xs, #atlas-main-scroll .text-\[12px\] { font-size: 13px; }
+  #atlas-main-scroll .text-sm, #atlas-main-scroll .text-\[13px\] { font-size: 14px; }
+  #atlas-main-scroll .text-\[14px\] { font-size: 15px; }
+}
+/* skeletons appear only after 300ms (no flash on a fast load) */
+.atlas-loader-late { animation: atlas-late .2s ease-out .3s both; }
+@keyframes atlas-late { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .atlas-loader-late { animation: none; } }

@@ -46,8 +46,8 @@ const typeConfig = {
   // record-only (COPY-044): what the owner issued elsewhere. RECEIPT / TAX_INVOICE are legacy values, shown
   // only on old rows and never offered for new ones.
   INVOICE: 'מסמך מהתוכנה שלכם',
-  RECEIPT: 'קבלה (מהתוכנה שלכם)',
-  TAX_INVOICE: 'חשבונית מס (מהתוכנה שלכם)',
+  RECEIPT: 'מסמך תשלום (מהתוכנה שלכם)',
+  TAX_INVOICE: 'מסמך מס (מהתוכנה שלכם)',
   PROFORMA: 'חשבון עסקה'
 };
 
@@ -192,8 +192,8 @@ export default function InvoicesPage({ orgId }) {
     <div className="mx-auto w-full max-w-[1200px] space-y-8 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <FinanceTabs className="!mb-0" />
       <PageHeader
-        title="מסמכים שהוצאתם"
-        subtitle="רושמים כאן את מספר הקבלה או החשבונית שהוצאתם בתוכנה שלכם, כדי שהכל יופיע בדוח החודשי. atlas לא מפיק מסמכי מס."
+        title="מסמכי תשלום"
+        subtitle="רושמים כאן מספר מסמך מהתוכנה שלכם, כדי שיופיע בדוח החודשי."
         className="!mb-0"
         actions={
           <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
@@ -247,8 +247,8 @@ export default function InvoicesPage({ orgId }) {
           <EmptyState
             compact
             icon={FileText}
-            title={rawInvoices.length === 0 ? 'אין עדיין מסמכים רשומים' : 'אין מסמכים שמתאימים'}
-            description={rawInvoices.length === 0 ? 'הוצאתם קבלה או חשבונית בתוכנה שלכם? רשמו כאן את המספר, והיא תופיע בדוח החודשי.' : 'נסו חיפוש או סינון אחר.'}
+            title={rawInvoices.length === 0 ? 'עוד לא נרשמו מסמכים' : 'אין מסמכים שמתאימים'}
+            description={rawInvoices.length === 0 ? 'מספר מסמך שתרשמו יופיע כאן ובדוח החודשי.' : 'נסו חיפוש או סינון אחר.'}
             action={rawInvoices.length === 0 ? (
               <Button onClick={() => { setEditingInvoice(null); setShowCreateDialog(true); }}>
                 <Plus className="h-[18px] w-[18px]" strokeWidth={1.75} />

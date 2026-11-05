@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FinanceTabs from '@/components/app/FinanceTabs';
 import { PageHeader, StatTile, fmtMoney, ComingSoon } from '@/components/ds';
 import { useStayData } from '@/hooks/useStayData';
@@ -6,11 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useExpenses } from '@/hooks/useExpenses';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Receipt, Plus, TrendingDown, Calendar, DollarSign, Wallet, Upload } from 'lucide-react';
+import { AtlasSheet, SheetGroup, SheetField, SheetInput, SheetSelect, SheetFooter, SheetSubmit, SheetError, DateField } from '@/components/ui/sheet/index';
+import { Receipt, Plus, TrendingDown, Calendar, DollarSign, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { todayIsrael } from '@/lib/localDate';
 
@@ -51,6 +49,13 @@ export default function ExpenseTracker({ orgId }) {
 function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
   const stay = useStayData({ withCleaning: false });
   const [dialogOpen, setDialogOpen] = useState(false);
+  // "הוצאה חדשה" from the עוד sheet lands here with the add form already open
+  const location = useLocation(); const navigate = useNavigate();
+  useEffect(() => {
+    if (!location.state?.commandPalette?.newExpense) return;
+    setDialogOpen(true);
+    navigate({ pathname: location.pathname, search: location.search }, { replace: true, state: null });
+  }, [location.state]);
   const [form, setForm] = useState({
     property: '',
     category: '',
@@ -79,17 +84,23 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
   }, {});
   const maxCategoryAmount = Math.max(...Object.values(categoryTotals), 1);
 
+  const [tried, setTried] = useState(false);
+  const onlyUnit = propertyNames.length === 1 ? propertyNames[0] : '';
+  const unitValue = form.property || onlyUnit;
+  const amountOk = parseFloat(String(form.amount).replace(',', '.')) > 0;
   const handleAddExpense = () => {
-    if (!form.property || !form.category || !form.amount) return;
+    setTried(true);
+    if (!unitValue || !form.category || !amountOk) return;
     addExpense({
       date: form.date,
-      propertyName: form.property,
+      propertyName: unitValue,
       category: form.category,
-      amount: parseFloat(form.amount) || 0,
+      amount: parseFloat(String(form.amount).replace(',', '.')) || 0,
       description: form.description || '',
     }).then(() => atlasToastApi.success('ההוצאה נשמרה'))
       .catch(() => atlasToastApi.error('ההוצאה לא נשמרה. נסו שוב.'));
     setForm({ property: '', category: '', amount: '', date: todayIsrael(), description: '' });
+    setTried(false);
     setDialogOpen(false);
   };
 
@@ -105,7 +116,7 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
       />
 
       <div className="stat-row">
-        <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} tone="danger" />
+        <StatTile label="סה״כ הוצאות" value={fmtMoney(totalExpenses)} hint="כל ההוצאות שנרשמו" icon={TrendingDown} />
         <StatTile label="החודש" value={fmtMoney(thisMonthTotal)} hint={`${thisMonth.length} הוצאות החודש`} icon={Calendar} />
         <StatTile label="רווח נקי משוער" value={fmtMoney(netProfitEstimate)} hint="תשלומים שהתקבלו פחות הוצאות" icon={Wallet} tone="success" />
       </div>
@@ -195,87 +206,86 @@ function ExpenseTrackerScreen({ expenses, propertyNames, addExpense }) {
         </CardContent>
       </Card>
 
-      {/* Add Expense Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md" dir="rtl">
-          <DialogHeader>
-            <DialogTitle>הוספת הוצאה חדשה</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div>
-              <Label>יחידה</Label>
-              <Select value={form.property} onValueChange={v => setForm(f => ({ ...f, property: v }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="בחרו יחידה" />
-                </SelectTrigger>
-                <SelectContent>
-                  {propertyNames.map(p => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>קטגוריה</Label>
-              <Select value={form.category} onValueChange={v => setForm(f => ({ ...f, category: v }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="בחרו קטגוריה" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map(c => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>סכום (₪)</Label>
-              <Input
-                type="number"
-                placeholder="0"
-                value={form.amount}
-                onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label>תאריך</Label>
-              <Input
-                type="date"
-                value={form.date}
-                onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label>תיאור (לא חובה)</Label>
-              <Input
-                placeholder="למשל: החלפת נורות במטבח"
-                value={form.description}
-                onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label>קבלה (לא חובה)</Label>
-              <div className="border-2 border-dashed border-line rounded-xl p-6 text-center hover:border-brand-100 transition-colors cursor-pointer">
-                <Upload className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
-                <p className="text-sm text-ink-600">גררו קובץ לכאן או לחצו להעלאה</p>
-                <p className="text-xs text-ink-400 mt-1">PDF, JPG, PNG, עד 5MB</p>
-              </div>
-            </div>
-            <div className="flex gap-2 pt-2">
-              <Button variant="outline" className="flex-1" onClick={() => setDialogOpen(false)}>
-                ביטול
-              </Button>
-              <Button
-                className="flex-1 bg-brand-600 hover:bg-brand-700"
-                onClick={handleAddExpense}
-                disabled={!form.property || !form.category || !form.amount}
-              >
-                שמירת ההוצאה
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Add expense sheet */}
+      <AtlasSheet open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) setTried(false); }} title="הוצאה חדשה" subtitle="סכום וקטגוריה. השאר לא חובה.">
+        <ExpenseFields
+          form={form}
+          setForm={setForm}
+          propertyNames={propertyNames}
+          unitValue={unitValue}
+          tried={tried}
+          amountOk={amountOk}
+        />
+        <SheetFooter>
+          <SheetSubmit onClick={handleAddExpense}>שמירת הוצאה</SheetSubmit>
+        </SheetFooter>
+      </AtlasSheet>
     </div>
+  );
+}
+
+function ExpenseFields({ form, setForm, propertyNames, unitValue, tried, amountOk }) {
+  return (
+    <>
+      <SheetGroup title="ההוצאה">
+        <SheetField label="סכום" htmlFor="exp-amount" error={tried && !amountOk ? 'כתבו סכום גדול מ-0' : ''} errorId="exp-amount-err">
+          <div className="relative">
+            <SheetInput
+              id="exp-amount"
+              type="text"
+              inputMode="decimal"
+              dir="ltr"
+              className="pe-10 text-[18px] font-semibold"
+              style={{ textAlign: 'right' }}
+              value={form.amount}
+              invalid={tried && !amountOk}
+              onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value.replace(/[^\d.,]/g, '') }))}
+            />
+            <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[16px] text-[#1B2656]/70">₪</span>
+          </div>
+        </SheetField>
+        <div>
+          <p id="exp-cat-label" className="mb-2 text-[15px] font-semibold text-[#1B2656]">קטגוריה</p>
+          <div role="radiogroup" aria-labelledby="exp-cat-label" className="flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => {
+              const on = form.category === c.value;
+              return (
+                <button
+                  key={c.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => setForm((f) => ({ ...f, category: c.value }))}
+                  className={cn(
+                    'press h-11 rounded-full border px-4 text-[15px] font-medium transition-colors',
+                    on ? 'border-[#3E2BF1] bg-[#3E2BF1]/[0.06] text-[#3E2BF1]' : 'border-[#E3E6EF] bg-white text-[#1B2656]/80',
+                  )}
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+          <SheetError id="exp-cat-err">{tried && !form.category ? 'בחרו קטגוריה' : ''}</SheetError>
+        </div>
+      </SheetGroup>
+      <SheetGroup title="פרטים">
+        {propertyNames.length > 1 ? (
+          <SheetField label="יחידה" htmlFor="exp-unit" error={tried && !unitValue ? 'בחרו יחידה' : ''}>
+            <SheetSelect
+              id="exp-unit"
+              value={unitValue}
+              placeholder="בחרו יחידה"
+              options={propertyNames.map((p) => ({ value: p, label: p }))}
+              onChange={(e) => setForm((f) => ({ ...f, property: e.target.value }))}
+            />
+          </SheetField>
+        ) : null}
+        <DateField idPrefix="exp-date" label="תאריך" value={form.date} onChange={(iso) => setForm((f) => ({ ...f, date: iso }))} />
+        <SheetField label="תיאור" optional htmlFor="exp-desc" hint="למשל: החלפת נורות במטבח">
+          <SheetInput id="exp-desc" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+        </SheetField>
+      </SheetGroup>
+    </>
   );
 }

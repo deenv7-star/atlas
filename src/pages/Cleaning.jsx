@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { PageHeader, SkelLine } from '@/components/ds';
+import { PageHeader, SkelLine, EmptyState } from '@/components/ds';
 import {
   useCleaningTasks,
   useCreateCleaningTask,
@@ -243,29 +243,14 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
       {isLoading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <SkelLine key={i} className="h-[132px] rounded-[22px]" />
+            <SkelLine key={i} className="h-[132px] rounded-[24px]" />
           ))}
         </div>
       ) : filteredTasks.length === 0 ? (
         <Card className="border-0 shadow-sm rounded-2xl">
-          <CardContent className="p-12">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-2xl bg-canvas flex items-center justify-center mx-auto mb-4">
-                <ClipboardList className="w-8 h-8 text-neutral-300" />
-              </div>
-              <p className="text-[17px] font-bold text-navy-900 mb-1.5">אין משימות ניקיון</p>
-              <p className="text-[15px] text-ink-600 mb-6 max-w-sm mx-auto">
-                משימה נוצרת לבד בכל יציאה של אורחים. אפשר גם להוסיף ידנית.
-              </p>
-              <Button
-                onClick={() => setIsCreateOpen(true)}
-
-              >
-                <Plus className="w-4 h-4" />
-                משימה חדשה
-              </Button>
-            </div>
-          </CardContent>
+          <EmptyState icon={ClipboardList} title="אין משימות ניקיון"
+            description="משימה נוצרת לבד בכל יציאה של אורחים. אפשר גם להוסיף ידנית."
+            action={<Button onClick={() => setIsCreateOpen(true)}><Plus className="w-4 h-4" />משימה חדשה</Button>} />
         </Card>
       ) : (
         <ErrorBoundary

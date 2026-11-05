@@ -1,4 +1,4 @@
-import { Wordmark } from '@/components/app/shell/shared';
+import AuthShell from '@/components/app/AuthShell';
 import { heError } from '@/lib/heError';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { validateEmail } from '@/lib/validation';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 import { cn } from '@/lib/utils';
+import { publicOrigin } from '@/lib/native';
 
 export default function ResetPassword() {
   const [email, setEmail] = useState('');
@@ -33,7 +34,7 @@ export default function ResetPassword() {
     setError('');
     try {
       const { error: err } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/update-password`,
+        redirectTo: `${publicOrigin()}/update-password`,
       });
       if (err) throw err;
       setSent(true);
@@ -52,56 +53,51 @@ export default function ResetPassword() {
     }
   };
 
+  // ecosystem v1 #18: same shell as /login (logo, layout, field style), not a separate centred card
+  const field = (bad) => cn(
+    'h-12 rounded-[16px] border bg-white text-base md:text-base text-navy-900 text-right shadow-[0_1px_2px_rgba(16,24,64,0.04)] placeholder:text-ink-300 focus-visible:border-brand-500 focus-visible:ring-[3px] focus-visible:ring-[rgba(62,43,241,0.14)] focus-visible:ring-offset-0',
+    bad ? 'border-danger-500' : 'border-line',
+  );
+
   if (sent) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#F7F8FB' }}>
-        <div className="w-full max-w-[440px] text-center">
-          <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
-          <div className="v7-card p-6">
-            <p className="text-navy-900 font-bold text-lg">בדקו את המייל</p>
-            <p className="text-ink-600 text-sm mt-2">אם יש חשבון עם {email.trim()}, שלחנו אליו קישור לאיפוס הסיסמה. חפשו גם בספאם. הקישור תקף לשעה.</p>
-          </div>
-          <Link to="/login" className="inline-flex min-h-[44px] items-center mt-6 text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
-        </div>
-      </main>
+      <AuthShell caption="חוזרים לצימר בכמה שניות.">
+        <h1 className="text-[26px] font-extrabold leading-[1.2] tracking-[-0.02em] text-navy-900">בדקו את המייל</h1>
+        <p className="mt-2 text-[15px] text-ink-600">אם יש חשבון עם <bdi dir="ltr">{email.trim()}</bdi>, שלחנו אליו קישור לאיפוס הסיסמה. חפשו גם בספאם. הקישור תקף לשעה.</p>
+        <Link to="/login" className="mt-6 inline-flex min-h-[44px] items-center font-semibold text-brand-600 hover:text-brand-700">חזרה להתחברות</Link>
+      </AuthShell>
     );
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 py-12" dir="rtl" style={{ fontFamily: "'Heebo', sans-serif", background: '#F7F8FB' }}>
-      <div className="w-full max-w-[440px]">
-        <div className="text-center mb-10">
-          <div className="mb-6 flex justify-center"><Wordmark size={30} /></div>
-          <h1 className="text-2xl font-extrabold text-gray-900">איפוס סיסמה</h1>
-          <p className="text-gray-500 text-sm mt-2">כתבו את המייל שאיתו נרשמתם, ונשלח קישור לאיפוס</p>
+    <AuthShell caption="חוזרים לצימר בכמה שניות.">
+      <h1 className="text-[26px] font-extrabold leading-[1.2] tracking-[-0.02em] text-navy-900">איפוס סיסמה</h1>
+      <p className="mt-1.5 text-[15px] text-ink-600">כתבו את המייל שאיתו נרשמתם, ונשלח קישור לאיפוס.</p>
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-[14px] font-medium text-navy-900">מייל</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@example.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            onBlur={handleBlur}
+            className={field(touched && error)}
+            dir="ltr"
+            autoComplete="email"
+            autoFocus
+            maxLength={255}
+          />
+          {touched && error && <p className="text-[14px] text-danger-600">{error}</p>}
         </div>
-
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-1.5">
-              <Label htmlFor="email">מייל</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                onBlur={handleBlur}
-                className={cn("h-12 rounded-xl text-base", touched && error && "border-red-500")}
-                autoFocus
-                maxLength={255}
-              />
-              {touched && error && <p className="text-sm text-red-500">{error}</p>}
-            </div>
-            <Button type="submit" disabled={isLoading} className="w-full h-12 font-bold rounded-xl">
-              {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : 'שליחת קישור לאיפוס'}
-            </Button>
-          </form>
-        </div>
-        <p className="text-center text-sm text-gray-500 mt-6">
-          <Link to="/login" className="inline-flex min-h-[44px] items-center text-brand-600 hover:text-brand-700 font-semibold">חזרה להתחברות</Link>
-        </p>
-      </div>
-    </main>
+        <Button type="submit" size="lg" disabled={isLoading} className="h-12 w-full text-[15px] font-semibold">
+          {isLoading ? 'שולחים…' : 'שליחת קישור לאיפוס'}
+        </Button>
+      </form>
+      <p className="mt-6 text-[15px]">
+        <Link to="/login" className="inline-flex min-h-[44px] items-center font-semibold text-brand-600 hover:text-brand-700">חזרה להתחברות</Link>
+      </p>
+    </AuthShell>
   );
 }
