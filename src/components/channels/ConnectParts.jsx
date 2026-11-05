@@ -29,7 +29,7 @@ export function Sheet({ title, onClose, onBack, children, footer, progress, labe
         <button type="button" className="ch-icon ch-press" onClick={onClose} aria-label="סגירה"><X strokeWidth={2} aria-hidden /></button>
       </header>
       {progress ? (
-        <div className="ch-prog" aria-label={`שלב ${progress[0]} מתוך ${progress[1]}`}>
+        <div className="ch-prog" role="progressbar" aria-valuemin={1} aria-valuemax={progress[1]} aria-valuenow={progress[0]} aria-label={`שלב ${progress[0]} מתוך ${progress[1]}`}>
           {Array.from({ length: progress[1] }, (_, i) => <span key={i} className={i < progress[0] ? 'is-on' : ''} />)}
         </div>
       ) : null}
@@ -165,7 +165,7 @@ export function HelpBox({ unit, link = '', title = 'צריכים עזרה? נח�
       <h2 id={id}>{title}</h2>
       <p>{text} {SUPPORT.line}.</p>
       <a href={SUPPORT.phoneHref} className="ch-btn is-white ch-press"><Phone strokeWidth={2} aria-hidden />התקשרו: <bdi dir="ltr">{SUPPORT.phoneDisplay}</bdi></a>
-      <a href={SUPPORT.whatsapp(msg)} target="_blank" rel="noopener noreferrer" className="ch-btn is-line ch-press"><WaIcon />{link ? 'שלחו לנו את הקישור בוואטסאפ' : 'כתבו לנו בוואטסאפ'}</a>
+      <a href={SUPPORT.whatsapp(msg)} target="_blank" rel="noopener noreferrer" className="ch-btn is-line ch-press"><WaIcon />{link ? 'שלחו לנו בוואטסאפ' : 'כתבו לנו בוואטסאפ'}</a>
     </section>
   );
 }
