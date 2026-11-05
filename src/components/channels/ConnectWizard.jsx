@@ -2,14 +2,15 @@
  * V1 "מדריך צעד־אחר־צעד": pick the channel with a big logo button, then one step per screen with a drawing
  * of the exact screen on Airbnb / Booking.com, a button that opens the right page there, one big paste box
  * (the channel is recognised from the link), the live check, atlas's own link back to the channel, and a
- * plain success screen.
+ * plain success screen. Stuck on the paste step, or Booking does not show "סנכרון יומנים": the navy help box
+ * (phone + WhatsApp with the pasted link already in the message, from V2).
  */
 import React, { useState } from 'react';
 import { ExternalLink, Check, ChevronLeft, Phone, RefreshCw } from 'lucide-react';
 import { CHANNELS, ATLAS_EVERY, SUPPORT, checkPasted } from './channelKit';
 import ChannelLogo from './ChannelLogo';
 import ScreenMock from './ScreenMock';
-import { Sheet, PasteField, CopyBig, exportLinkFor, useConnect, Bidi } from './ConnectParts';
+import { Sheet, PasteField, CopyBig, exportLinkFor, useConnect, Bidi, HelpBox } from './ConnectParts';
 
 const FLOWS = {
   AIRBNB: [
@@ -21,7 +22,7 @@ const FLOWS = {
     { kind: 'export', mock: 'a-import', items: ['חזרו לאותו חלון ב-Airbnb.', 'הדביקו בשדה "כתובת לוח השנה" (Calendar address).', 'בשם כתבו atlas, ולחצו "הוספת לוח שנה" (Add calendar).'] },
   ],
   BOOKING_COM: [
-    { kind: 'guide', mock: 'b-open', title: 'פתחו את "סנכרון יומנים" ב-Booking', text: () => 'הכפתור פותח את האקסטרא-נט, האתר שבו מנהלים את המודעה. היכנסו עם השם והסיסמה הרגילים.', open: true, note: 'לא מופיע "סנכרון יומנים"? Booking פותח אותו רק כשבכל סוג חדר יש יחידה אחת. התקשרו אלינו ונבדוק יחד.' },
+    { kind: 'guide', mock: 'b-open', title: 'פתחו את "סנכרון יומנים" ב-Booking', text: () => 'הכפתור פותח את האקסטרא-נט, האתר שבו מנהלים את המודעה. היכנסו עם השם והסיסמה הרגילים.', open: true, note: { title: 'לא מופיע "סנכרון יומנים"?', text: 'Booking פותח אותו רק כשבכל סוג חדר יש יחידה אחת. נבדוק את זה יחד.' } },
     { kind: 'guide', mock: 'b-add', title: 'ליד היחידה, לחצו "הוספת חיבור ליומן"', en: 'Add calendar connection', text: (u) => `בחרו את השורה של ${u}.` },
     { kind: 'guide', mock: 'b-skip', title: 'לחצו "דילוג לייצוא"', en: 'Skip to export', text: () => 'את הקישור של atlas נדביק שם בשלב הבא.' },
     { kind: 'guide', mock: 'b-copy', title: 'כתבו atlas ולחצו "העתקת קישור"', en: 'Copy link', text: () => 'הקישור נשמר בטלפון או במחשב, מוכן להדבקה.' },
@@ -115,7 +116,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         {step.en ? <p className="ch-en">באנגלית: <bdi dir="ltr">{step.en}</bdi></p> : null}
         <p className="ch-sub"><Bidi text={step.text(unit)} /></p>
         <ScreenMock id={step.mock} caption={step.title} />
-        {step.note ? <p className="ch-note">{step.note}</p> : null}
+        {step.note ? <HelpBox unit={unit} title={step.note.title} text={step.note.text} /> : null}
       </>
     );
     footer = (
@@ -128,7 +129,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         <button type="button" className={`ch-btn ${step.open ? 'is-ghost' : 'is-primary'} ch-press`} onClick={() => setI(i + 1)}>
           {step.open ? 'כבר פתוח אצלי' : 'עשיתי, הלאה'}
         </button>
-        <HelpLine />
+        {step.note ? null : <HelpLine />}
       </>
     );
   } else if (step?.kind === 'paste') {
@@ -141,6 +142,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         {error ? (
           <div className="ch-err" role="alert"><b>לא הצלחנו לחבר</b><p>{error}</p></div>
         ) : null}
+        <HelpBox unit={unit} link={check.url && /^(https?|webcal):\/\//i.test(check.url) ? check.url : ''} />
       </>
     );
     footer = (
@@ -149,7 +151,6 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
           {busy ? <><RefreshCw className="ch-spin" strokeWidth={2} aria-hidden />בודקים את הקישור…</> : 'חברו את היומן'}
         </button>
         {!check.ok && !busy ? <p className="ch-hint">הדביקו קישור כדי להמשיך</p> : null}
-        <HelpLine />
       </>
     );
   } else if (step?.kind === 'export') {

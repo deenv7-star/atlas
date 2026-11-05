@@ -1,11 +1,12 @@
 /** Shared pieces of the channel connection flows: full-screen sheet, paste field, big copy button, save + live check. */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowRight, X, ClipboardPaste, Check, Copy, AlertCircle } from 'lucide-react';
+import { ArrowRight, X, ClipboardPaste, Check, Copy, AlertCircle, Phone } from 'lucide-react';
+import { WHATSAPP } from '@/components/landing/v5/brandPaths';
 import { base44 } from '@/api/base44Client';
 import { DB_FEATURES } from '@/config/dbFeatures';
 import { callEdge, icalExportUrl } from '@/lib/real/edge';
-import { CHANNELS, checkPasted, syncErrorHe, DEMO_EXPORT } from './channelKit';
+import { CHANNELS, checkPasted, syncErrorHe, DEMO_EXPORT, SUPPORT } from './channelKit';
 import ChannelLogo from './ChannelLogo';
 import './channels.css';
 
@@ -145,4 +146,26 @@ export function useConnect({ orgId, property, existing = [] }) {
 export function Bidi({ text }) {
   const parts = String(text).split(/(\([A-Za-z][^)]*\))/);
   return <>{parts.map((p, i) => (i % 2 ? <bdi key={i} dir="ltr">{p}</bdi> : p))}</>;
+}
+
+function WaIcon() {
+  return <svg viewBox="0 0 24 24" aria-hidden><path d={WHATSAPP} fill="currentColor" /></svg>;
+}
+
+/**
+ * The navy help box (from V2): a person connects it with you, by phone or WhatsApp. When a link was pasted, the
+ * WhatsApp message already carries it. "24/7" only, no promise about how fast we answer.
+ */
+export function HelpBox({ unit, link = '', title = 'צריכים עזרה? נחבר יחד בטלפון', text = 'בשיחה אחת מחברים את כל הערוצים.', id = 'ch-help-h' }) {
+  const msg = link
+    ? `שלום, צריך עזרה בחיבור היחידה "${unit}". זה הקישור שהעתקתי:\n${link}`
+    : `שלום, צריך עזרה בחיבור Airbnb או Booking ליחידה "${unit}".`;
+  return (
+    <section className="ch-helpbox" aria-labelledby={id}>
+      <h2 id={id}>{title}</h2>
+      <p>{text} {SUPPORT.line}.</p>
+      <a href={SUPPORT.phoneHref} className="ch-btn is-white ch-press"><Phone strokeWidth={2} aria-hidden />התקשרו: <bdi dir="ltr">{SUPPORT.phoneDisplay}</bdi></a>
+      <a href={SUPPORT.whatsapp(msg)} target="_blank" rel="noopener noreferrer" className="ch-btn is-line ch-press"><WaIcon />{link ? 'שלחו לנו את הקישור בוואטסאפ' : 'כתבו לנו בוואטסאפ'}</a>
+    </section>
+  );
 }

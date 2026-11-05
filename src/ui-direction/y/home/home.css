@@ -1,57 +1,17 @@
-/* home/var (05.11.2026): shared Today fixes for all four variations. Palette #3E2BF1 #1B2656 #F7F8FB white. */
+/* Today (05.11.2026): shared Today rules (desktop board + phone). Palette #3E2BF1 #1B2656 #F7F8FB white. */
 
 /* phone: the org card repeats the avatar in the top bar */
 @media (max-width: 1023px) { .y2.hv .y2-me { display: none; } }
 
-/* empty tiles: same tiles, calm. Outline visuals, muted numbers, one short hint */
-.y2.hv .y2-tiles.is-empty .y2-tile { box-shadow: inset 0 0 0 1px rgba(27,38,86,.08); background: #fff; }
-.y2.hv .y2-tiles.is-empty .y2-tile:hover { transform: none; }
-.y2.hv .y2-tiles.is-empty .y2-tn .y-num { color: rgba(27,38,86,.38); }
-.y2.hv .y2-tiles.is-empty .y-ticks i { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(27,38,86,.12); height: 28% !important; }
-.y2.hv .y2-tiles.is-empty .y2-amber { display: none; }
-.y2.hv .y2-tiles.is-empty .y-dots i { background: transparent !important; box-shadow: inset 0 0 0 1.5px rgba(27,38,86,.14); }
-.y2.hv .y2-tiles.is-empty .y-ring-arc { opacity: 0; }
-.y2.hv .y2-tiles.is-empty .y-ring svg circle:first-child { stroke: rgba(27,38,86,.07); }
-.y2.hv .hv-flat path { fill: none; stroke: rgba(27,38,86,.2); stroke-width: 2; stroke-dasharray: 4 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.y2.hv .hv-hint { margin: 6px 0 0; font-size: 13px; line-height: 1.35; color: rgba(27,38,86,.62); text-wrap: balance; }
-
-/* chart before money: faint dashed line where the wave will be */
-.hv-chart-ph { position: relative; margin-top: 12px; }
-.hv-chart-ph svg { display: block; }
-.hv-chart-grid { stroke: rgba(27,38,86,.06); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.hv-chart-dash { fill: none; stroke: rgba(62,43,241,.28); stroke-width: 2; stroke-dasharray: 5 7; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.hv-chart-ph p { position: absolute; inset: 0; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; }
-.hv-chart-ph b { font-size: 15px; font-weight: 700; color: #1B2656; background: rgba(255,255,255,.85); padding: 0 8px; border-radius: 8px; }
-.hv-chart-ph span { font-size: 13px; color: rgba(27,38,86,.62); background: rgba(255,255,255,.85); padding: 0 8px; border-radius: 8px; }
-.y2.hv .y2-mid.is-solo { grid-template-columns: minmax(0, 1fr); }
-
 /* shared setup bits */
-.hv-sring { position: relative; flex: none; display: inline-grid; place-items: center; }
-.hv-sring svg { position: absolute; inset: 0; }
-.hv-sring-t { stroke: rgba(62,43,241,.12); }
-.hv-sring-a { stroke: #3E2BF1; }
-.hv-sring b { position: relative; font-size: 12px; font-weight: 700; color: #1B2656; letter-spacing: -.01em; }
-.hv-sring.is-light .hv-sring-t { stroke: rgba(255,255,255,.18); }
-.hv-sring.is-light .hv-sring-a { stroke: #fff; }
-.hv-sring.is-light b { color: #fff; }
 .hv-acts { display: flex; gap: 8px; }
 .hv-btn { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; padding: 0 14px; border-radius: 16px; background: #3E2BF1; color: #fff; font-size: 15px; font-weight: 700; white-space: nowrap; }
 .hv-btn svg { width: 18px; height: 18px; }
 .hv-btn:hover { background: #2A1AC9; }
 .hv-btn--ghost { background: #F7F8FB; color: #1B2656; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(27,38,86,.08); }
 .hv-btn--ghost:hover { background: #EEF0F6; }
-.hv-btn.is-light { background: #fff; color: #1B2656; }
-.hv-btn.is-light:hover { background: #F7F8FB; }
-.hv-btn--ghost.is-light { background: rgba(255,255,255,.1); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.22); }
-.hv-btn--ghost.is-light:hover { background: rgba(255,255,255,.16); }
 @media (min-width: 1024px) { .hv-acts.is-compact .hv-btn { flex: 0 0 auto; padding: 0 20px; } }
 .y2.hv section[class^="hv"] h2 { margin: 0; }
-
-/* all 4 tiles on desktop too (M7 had hidden occupancy there) */
-@media (min-width: 1024px) {
-  .y2.hv .y2-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .y2.hv .y2-tile--ring { display: flex; }
-}
 
 /* ── desktop layout (05.11.2026, Deen: "on desktop it looks bad"). The greeting is its own full-width row; the main
    column and the side column start on one line under it; the page widens on big screens instead of floating in the
