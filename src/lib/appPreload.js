@@ -11,7 +11,7 @@ import { storedSessionUser, isSupabaseConfigured } from '@/api/supabaseClient';
 const loadLayout = () => import('@/Layout.jsx').catch(() => null);
 
 /** The screens owners open most; their code is fetched in the background after the app is up. */
-const MAIN_PAGES = ['Dashboard', 'Today', 'MultiCalendar', 'Bookings', 'Leads', 'Messages', 'Payments', 'Settings'];
+const MAIN_PAGES = ['Dashboard', 'Today', 'MultiCalendar', 'Bookings', 'Leads', 'Payments', 'Settings'];
 
 export function hasStoredSession() {
   if (isSupabaseConfigured) return Boolean(storedSessionUser());

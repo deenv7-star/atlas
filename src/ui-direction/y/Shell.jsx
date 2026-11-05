@@ -52,7 +52,7 @@ const NAV = [
   { page: 'Dashboard', label: 'היום', icon: Sun },
   { page: 'MultiCalendar', label: 'יומן', icon: CalendarRange },
   { page: 'Bookings', label: 'הזמנות', icon: BedDouble },
-  { page: 'Leads', label: 'פניות', icon: Inbox },
+  { page: 'Leads', label: 'שיחות', icon: Inbox },
   { page: 'Payments', label: 'כסף', icon: Wallet },
 ];
 const SPRING = { type: 'spring', duration: 0.45, bounce: 0.18 };
