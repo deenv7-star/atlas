@@ -8,8 +8,9 @@ import { SETUP_DONE, SETUP_TOTAL, SETUP_STEPS, SetupActions } from './shared';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import './var-a.css';
+import './var-a3.css';
 
-export const HOME_VAR = 'a';
+export const HOME_VAR = 'a3';
 export const HIDE_PHOTO = false;
 
 export default function HomeTop({ noBookings, onAdd }) {
