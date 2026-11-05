@@ -58,7 +58,7 @@ export const NAV_GROUPS = [
     items: [
       { page: 'Integrations', label: 'ערוצים וחיבורים', icon: Link2, desc: 'הזמנות מ-Booking ומ-Airbnb ביומן אחד' },
       // ecosystem v1 #6: one row for the plan and its charges (Billing is reached from inside Subscription)
-      { page: 'Subscription', label: 'מנוי וחיובים', icon: CreditCard, desc: 'המסלול שלכם והחשבוניות' },
+      { page: 'Subscription', label: 'מנוי וחיובים', icon: CreditCard, desc: 'המסלול שלכם וכמה משלמים לנו' },
     ],
   },
 ];
