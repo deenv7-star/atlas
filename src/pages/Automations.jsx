@@ -172,7 +172,7 @@ function AllMessages({ gm, onOpen }) {
                 <span className="block text-[16px] font-bold text-navy-900">{s.short}</span>
                 <span className="block text-[14px] text-ink-600">{s.whenPlain}{t ? `, ${t}` : ''} · {on ? 'פועל' : 'כבוי'}</span>
               </span>
-              <button type="button" className="mg-row-btn" onClick={() => onOpen(s)} aria-label={`תצוגה ושעה: ${s.short}`}><Eye className="h-4 w-4" strokeWidth={1.75} aria-hidden />תצוגה ושעה</button>
+              <button type="button" className="mg-row-btn" onClick={() => onOpen(s)} aria-label={`תצוגה ושעה: ${s.short}`}><Eye className="h-4 w-4" strokeWidth={1.75} aria-hidden /><span className="mg-row-btn-l">תצוגה ושעה</span></button>
               <Switch checked={on} disabled={gm.busy || !gm.canWrite} onCheckedChange={(v) => gm.save(s, { on: v, sendTime: gm.timeOf(s) })} aria-label={`${s.short}: ${on ? 'פועל' : 'כבוי'}`} />
             </li>
           );

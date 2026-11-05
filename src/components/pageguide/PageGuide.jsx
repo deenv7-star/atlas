@@ -80,9 +80,9 @@ export function GuideEmpty({ guide, actions, variant: forced, className, childre
         <p className="pg-eyebrow">מה עושים כאן</p>
         <h2 className="pg-what">{guide.what}</h2>
         {guide.gain ? <p className="pg-gain"><Check strokeWidth={2.25} aria-hidden />{guide.gain}</p> : null}
+        <Actions actions={actions} />
         <Steps steps={guide.steps} />
         {guide.auto ? <p className="pg-auto">{guide.auto}</p> : null}
-        <Actions actions={actions} />
         {children}
         {guide.sample?.length ? <Sample guide={guide} rows={guide.sample.slice(0, 1)} /> : null}
       </section>
@@ -94,9 +94,9 @@ export function GuideEmpty({ guide, actions, variant: forced, className, childre
       <div className="pg-b-body">
         <h2 className="pg-what">{guide.what}</h2>
         {guide.gain ? <p className="pg-gain"><Check strokeWidth={2.25} aria-hidden />{guide.gain}</p> : null}
+        <Actions actions={actions} />
         <Steps steps={guide.steps} />
         {guide.auto ? <p className="pg-auto">{guide.auto}</p> : null}
-        <Actions actions={actions} />
         {children}
       </div>
     </section>

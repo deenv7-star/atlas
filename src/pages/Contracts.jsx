@@ -379,7 +379,7 @@ export default function Contracts({ selectedPropertyId, orgId }) {
               {bookings.length ? (
                 <Select value={newContract.booking_id} onValueChange={(v) => setNewContract({ ...newContract, booking_id: v })}>
                   <SelectTrigger className="mt-1" aria-label="הזמנה"><SelectValue placeholder="בחרו הזמנה" /></SelectTrigger>
-                  <SelectContent>{bookings.map((b) => <SelectItem key={b.id} value={b.id}>{bookingLabel(b)}</SelectItem>)}</SelectContent>
+                  <SelectContent>{bookings.map((b) => <SelectItem key={b.id} value={b.id} className="min-h-11">{bookingLabel(b)}</SelectItem>)}</SelectContent>
                 </Select>
               ) : <p className="mt-1 rounded-xl bg-[#F7F8FB] p-3 text-[15px] text-ink-600">עוד אין הזמנות. הוסיפו הזמנה, ואז חזרו לכאן.</p>}
             </div>
@@ -390,14 +390,14 @@ export default function Contracts({ selectedPropertyId, orgId }) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>תבניות מוכנות</SelectLabel>
-                    {BUILTIN_TEMPLATES.map((t) => <SelectItem key={t.id} value={`builtin:${t.id}`}>{t.name}</SelectItem>)}
+                    {BUILTIN_TEMPLATES.map((t) => <SelectItem key={t.id} value={`builtin:${t.id}`} className="min-h-11">{t.name}</SelectItem>)}
                   </SelectGroup>
                   {templates.length ? (
                     <>
                       <SelectSeparator />
                       <SelectGroup>
                         <SelectLabel>התבניות שלכם</SelectLabel>
-                        {templates.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                        {templates.map((t) => <SelectItem key={t.id} value={t.id} className="min-h-11">{t.name}</SelectItem>)}
                       </SelectGroup>
                     </>
                   ) : null}

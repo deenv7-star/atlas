@@ -12,7 +12,7 @@
 .pg-step { border: 1px solid #E9ECF4; display: flex; align-items: flex-start; gap: 12px; font-size: 16px; line-height: 1.5; color: #1B2656; background: #F7F8FB; border-radius: 16px; padding: 12px 14px; }
 .pg-num { flex: none; width: 28px; height: 28px; border-radius: 999px; background: #fff; color: #3E2BF1; font-weight: 800; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1.5px rgba(62,43,241,.25); }
 .pg-auto { margin: 14px 0 0; font-size: 15px; line-height: 1.5; color: #4A5578; }
-.pg-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.pg-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 .pg-btn { min-height: 48px; font-size: 16px; }
 @media (max-width: 480px) { .pg-actions .pg-btn { flex: 1 1 100%; } }
 /* example */
@@ -41,3 +41,6 @@
 .pg-hint-x { flex: none; width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; color: #4A5578; }
 .pg-hint-x:hover { background: #F7F8FB; }
 .pg-hint-x svg { width: 18px; height: 18px; }
+
+/* phone: one example row is enough, so the primary action stays near the top */
+@media (max-width: 639px) { .pg-b .pg-sample-rows > .pg-row:nth-child(n+2) { display: none; } }

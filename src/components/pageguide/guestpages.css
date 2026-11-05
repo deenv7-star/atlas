@@ -46,9 +46,16 @@
 @media (max-width: 480px) { .gp-photo-empty { aspect-ratio: auto; min-height: 180px; } }
 /* phone first on small screens: "what the guest sees" before the fields, a little smaller */
 @media (max-width: 1023px) {
-  .gp-grid { display: flex; flex-direction: column; }
+  .gp-grid { display: flex; flex-direction: column; align-items: stretch; }
   .gp-grid > .gp-phone-wrap { order: -1; }
   .gp-phone { width: 260px; }
   .gp-screen { min-height: 440px; }
   .gp-hero { height: 130px; }
+}
+@media (max-width: 479px) {
+  .gp-tabs { display: flex; width: 100%; }
+  .gp-tab { flex: 1 1 0; padding: 0 10px; font-size: 15px; white-space: nowrap; }
+  .gp-unit-pick { width: 100%; }
+  .gp-unit-pick > button { flex: 1; min-width: 0 !important; }
+  .gp-phone { width: min(260px, 100%); }
 }

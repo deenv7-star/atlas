@@ -95,4 +95,4 @@
 @media (max-width: 420px) { .mg-how-send { display: none; } }
 .mg-row-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #3E2BF1; }
 .mg-row-btn:hover { background: #F7F8FB; }
-@media (max-width: 420px) { .mg-row-btn { font-size: 0; gap: 0; width: 44px; justify-content: center; padding: 0; } .mg-row-btn svg { width: 20px; height: 20px; } }
+@media (max-width: 420px) { .mg-row-btn { width: 44px; justify-content: center; padding: 0; } .mg-row-btn-l { display: none; } .mg-row-btn svg { width: 20px; height: 20px; } }
