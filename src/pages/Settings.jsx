@@ -165,17 +165,6 @@ export default function SettingsPage({ user }) {
     <Page className="max-w-[1000px]">
       <PageHeader title="הגדרות" help="settings.page" subtitle="כאן משנים את היחידות, שעות הכניסה, הפרטים והסיסמה." />
 
-      <div data-tour="settings-tour" className="v7-card mb-6 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Compass className="h-5 w-5" strokeWidth={1.75} /></span>
-          <div className="min-w-0">
-            <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">סיור מודרך<HelpHint id="settings.tour" /></p>
-            <p className="mt-0.5 text-[15px] text-ink-600">דקה אחת שמראה איפה כל דבר נמצא. אפשר גם עם הסבר בקול.</p>
-          </div>
-        </div>
-        <Button variant="outline" className="h-11 shrink-0 rounded-full px-5" onClick={() => startTour(0)}>התחלת הסיור</Button>
-      </div>
-
       <div className="flex flex-col md:flex-row gap-6">
         {/* Tab list */}
         {/* audit 04.11 m6: a real tablist (roles, selected state, arrow keys) */}
@@ -296,7 +285,6 @@ export default function SettingsPage({ user }) {
           {/* Organization Tab */}
           {activeTab === 'organization' && (
             <>
-            <ImportEntryCard where="settings" className="mb-5" />
             <div className="v7-card mb-5 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Wand2 className="h-5 w-5" strokeWidth={1.75} /></span>
@@ -309,6 +297,7 @@ export default function SettingsPage({ user }) {
                 <Link to="/onboarding?again=1">שינוי</Link>
               </Button>
             </div>
+            <ImportEntryCard where="settings" className="mb-5" />
             <Card>
               <CardHeader>
                 <CardTitle className="text-[18px] font-bold">פרטי העסק</CardTitle>
@@ -429,6 +418,18 @@ export default function SettingsPage({ user }) {
           )}
         </div>
       </div>
+      {/* persona-clarity: the tour is a nice-to-have; what owners come to change (units, hours) comes first */}
+      <div data-tour="settings-tour" className="v7-card mt-8 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600" aria-hidden><Compass className="h-5 w-5" strokeWidth={1.75} /></span>
+          <div className="min-w-0">
+            <p className="flex items-center gap-0.5 text-[16px] font-bold text-navy-900">סיור מודרך<HelpHint id="settings.tour" /></p>
+            <p className="mt-0.5 text-[15px] text-ink-600">דקה אחת שמראה איפה כל דבר נמצא. אפשר גם עם הסבר בקול.</p>
+          </div>
+        </div>
+        <Button variant="outline" className="h-11 shrink-0 rounded-full px-5" onClick={() => startTour(0)}>התחלת הסיור</Button>
+      </div>
+
     </Page>
   );
 }

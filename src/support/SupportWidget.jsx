@@ -190,7 +190,8 @@ export default function SupportWidget() {
   useEffect(() => { openRef.current = open; if (open && convId && unread) { setUnread(0); supportApi.markRead(convId).catch(() => {}); } }, [open, convId, unread]);
 
   // keep the newest message in view
-  useEffect(() => { const el = listRef.current; if (el) el.scrollTo({ top: el.scrollHeight, behavior: messages.length > 1 ? 'smooth' : 'auto' }); }, [messages, typing, offer, open, view]);
+  // (persona-clarity: the empty hub starts at its top, so "שאלו את atlas" is the first thing seen)
+  useEffect(() => { const el = listRef.current; if (!el) return; if (!messages.length) { el.scrollTop = 0; return; } el.scrollTo({ top: el.scrollHeight, behavior: messages.length > 1 ? 'smooth' : 'auto' }); }, [messages, typing, offer, open, view]);
 
   // open / close + focus
   // focus goes back to whatever opened the panel (a nav row, the sidebar item), else the hidden launcher's spot

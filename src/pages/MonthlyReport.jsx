@@ -60,7 +60,7 @@ export default function MonthlyReportPage({ user }) {
       </div>
       {view === 'year' ? (
         <>
-          <PageHeader title="12 החודשים האחרונים" subtitle="כמה הרווחתם בכל חודש, איזה חודש היה הכי חזק, ואיזו יחידה מכניסה הכי הרבה." />
+          <PageHeader title="12 החודשים האחרונים" subtitle="כמה נכנס בכל חודש, איזה חודש היה הכי חזק, ואיזו יחידה מכניסה הכי הרבה." />
           <RevenueIntelligence embedded />
         </>
       ) : (<>
