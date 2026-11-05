@@ -67,3 +67,14 @@
 }
 @media (min-width: 1280px) { .y2.hv .y2-win { grid-template-columns: minmax(0, 1fr) 360px; column-gap: 28px; } }
 @media (min-width: 1600px) { .y2.hv { max-width: 1520px; } .y2.hv .y2-win { grid-template-columns: minmax(0, 1fr) 380px; column-gap: 32px; row-gap: 22px; } }
+
+/* desktop bookings panel on Today: the guest journey moves under the list, so a short list does not leave a tall
+   empty navy column beside the chosen booking */
+@media (min-width: 1024px) {
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3-split { grid-template-rows: auto 1fr; align-items: start; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3-split-l { grid-column: 1; grid-row: 1; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3-split-d, .y2.hv .y3-panel:not(.y3-panel--page) .y3-split-d > div { display: contents; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3d { grid-column: 2; grid-row: 1 / span 2; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3j { grid-column: 1; grid-row: 2; margin: 0; }
+  .y2.hv .y3-panel:not(.y3-panel--page) .y3j-steps li { white-space: nowrap; font-size: 11px; }
+}
