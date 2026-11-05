@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 /** Radix Select forbids empty-string item values (throws and crashes the page). */
 const NO_BOOKING = '__none__';
 
-export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel }) {
+export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel, initialBookingId = null }) {
   const [formData, setFormData] = useState({
     org_id: orgId,
     booking_id: '',
@@ -40,6 +40,10 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
     notes: '',
     ...invoice,
   });
+
+  useEffect(() => {
+    if (initialBookingId && !invoice) handleBookingSelect(initialBookingId);
+  }, [initialBookingId]);
 
   useEffect(() => {
     calculateTotals();

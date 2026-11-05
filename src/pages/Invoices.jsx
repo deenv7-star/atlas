@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { askConfirm } from '@/components/common/confirmDialog';
 import FinanceTabs from '@/components/app/FinanceTabs';
 import { PageHeader, EmptyState, SkelRows, fmtMoney, fmtShort } from '@/components/ds';
@@ -127,11 +128,26 @@ export default function InvoicesPage({ orgId }) {
     enabled: !!orgId
   });
 
+  // audit 05.11 UX-3: 'מסמך תשלום' on a booking lands here with ?booking=<id> and opens the form for that booking
+  const [searchParams, setSearchParams] = useSearchParams();
+  const bookingParam = searchParams.get('booking');
+  const [prefillBookingId, setPrefillBookingId] = useState(null);
+  const prefillDone = useRef(false);
+  useEffect(() => {
+    if (!bookingParam || prefillDone.current || !bookings.some((b) => b.id === bookingParam)) return;
+    prefillDone.current = true;
+    setEditingInvoice(null);
+    setPrefillBookingId(bookingParam);
+    setShowCreateDialog(true);
+    const next = new URLSearchParams(searchParams); next.delete('booking');
+    setSearchParams(next, { replace: true });
+  }, [bookingParam, bookings, searchParams, setSearchParams]);
+
   const createMutation = useMutation({
     mutationFn: async (payload) => base44.entities.Invoice.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      setShowCreateDialog(false);
+      setShowCreateDialog(false); setPrefillBookingId(null);
       setEditingInvoice(null);
       atlasToastApi.success('המסמך נרשם');
     },
@@ -142,7 +158,7 @@ export default function InvoicesPage({ orgId }) {
     mutationFn: async ({ id, data: payload }) => base44.entities.Invoice.update(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      setShowCreateDialog(false);
+      setShowCreateDialog(false); setPrefillBookingId(null);
       setEditingInvoice(null);
       atlasToastApi.success('המסמך עודכן');
     },
@@ -349,7 +365,7 @@ export default function InvoicesPage({ orgId }) {
         )}
       </Card>
 
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+      <Dialog open={showCreateDialog} onOpenChange={(o) => { setShowCreateDialog(o); if (!o) setPrefillBookingId(null); }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
@@ -358,11 +374,12 @@ export default function InvoicesPage({ orgId }) {
           </DialogHeader>
           <InvoiceForm
             invoice={editingInvoice}
+            initialBookingId={editingInvoice ? null : prefillBookingId}
             bookings={bookings}
             orgId={orgId}
             onSave={handleSave}
             onCancel={() => {
-              setShowCreateDialog(false);
+              setShowCreateDialog(false); setPrefillBookingId(null);
               setEditingInvoice(null);
             }}
           />
