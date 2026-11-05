@@ -1,9 +1,9 @@
 /* Today phone "לוח חי" (today/wow-v2, 05.11.2026): the day line in the greeting card, the guest stack, the prep checklist,
    the next thing's progress. Composite-only motion (transform/opacity). Palette: navy, indigo, white. */
-.tl-chip .y-num { font-size: 1em; font-weight: 800; letter-spacing: 0; }
+.tl-chip .y-num { align-self: center; font-size: 1em; font-weight: 800; letter-spacing: 0; }
 
 /* the day line */
-.lv-line { position: relative; align-self: stretch; height: 58px; margin: 14px 18px 2px; }
+.lv-line { position: relative; align-self: stretch; height: 52px; margin: 30px 18px 2px; }
 .lv-line::before { content: ''; position: absolute; inset-inline: -18px; top: 15px; height: 4px; border-radius: 4px; background: rgba(27,38,86,.1); }
 .lv-fill { position: absolute; inset-inline-start: -18px; top: 15px; height: 4px; width: calc(var(--p) + 18px); border-radius: 4px; background: #3E2BF1; transform-origin: right center; animation: lv-grow 1.3s cubic-bezier(.23,1,.32,1) .4s both; }
 @keyframes lv-grow { from { transform: scaleX(0); } }
@@ -20,7 +20,7 @@
 .lv-now { position: absolute; top: 9px; width: 0; animation: lv-fade .4s ease 1.4s both; }
 .lv-now::before { content: ''; position: absolute; left: -7px; top: 0; width: 14px; height: 14px; border-radius: 99px; background: #3E2BF1; box-shadow: 0 0 0 3px #fff; }
 .lv-now::after { content: ''; position: absolute; left: -7px; top: 0; width: 14px; height: 14px; border-radius: 99px; animation: lv-pulse 2.4s ease-out 1.8s infinite; }
-.lv-now span { position: absolute; top: 22px; left: 0; transform: translateX(-50%); font-size: 12px; font-weight: 800; color: #3E2BF1; font-variant-numeric: tabular-nums; }
+.lv-now span { position: absolute; top: -22px; left: 0; transform: translateX(-50%); padding: 1px 6px; border-radius: 6px; background: #3E2BF1; color: #fff !important; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
 @keyframes lv-pulse { 0% { box-shadow: 0 0 0 0 rgba(62,43,241,.5); } 70%, 100% { box-shadow: 0 0 0 12px rgba(62,43,241,0); } }
 @keyframes lv-fade { from { opacity: 0; } }
 
