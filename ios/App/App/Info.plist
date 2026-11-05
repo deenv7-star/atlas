@@ -79,6 +79,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>atlas משתמש במצלמה רק כשאתם בוחרים לצלם, למשל תמונות של הצימר או של חדר אחרי ניקיון.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>atlas פותח את התמונות שלכם רק כשאתם בוחרים להוסיף תמונה, למשל לעמוד הצימר או לעמוד האורחים.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>atlas שומר תמונה בתמונות שלכם רק כשאתם מבקשים לשמור אותה.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>atlas משתמש במיקרופון רק כשאתם לוחצים על כפתור הדיבור, כדי שתוכלו לשאול בקול על העסק שלכם.</string>
 </dict>
