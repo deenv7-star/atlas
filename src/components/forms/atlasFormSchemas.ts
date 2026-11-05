@@ -197,11 +197,13 @@ export const paymentFormSchema = z.object({
 
 export type PaymentFormValues = z.infer<typeof paymentFormSchema>;
 
+// Deen 05.11.2026: a new payment opened on "ממתין", so money he had received was saved as pending and Today's
+// "נכנסו בנובמבר" stayed ₪0. Recording a payment usually means the money came in: new payments start on "שולם".
 export const emptyPaymentFormValues: PaymentFormValues = {
   booking_id: '',
   amount: '',
   currency: 'ILS',
-  status: 'PENDING',
+  status: 'PAID',
   method: 'credit_card',
   description: '',
   due_date: '',

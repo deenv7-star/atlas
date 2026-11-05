@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Toaster } from "@/components/ui/toaster"
 import { useOptimisticConflictModalState } from '@/lib/optimistic/conflictModalState';
 import { preloadForInitialRoute } from '@/lib/appPreload';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -409,7 +408,6 @@ function App() {
             {isNativeApp() ? <Suspense fallback={null}><NotifyHost /></Suspense> : null}
             {isNativeApp() ? <Suspense fallback={LOCK_AT_START ? <LockCover /> : null}><AppLockHost initialLocked={LOCK_AT_START} /></Suspense> : null}
           </NuqsAdapter>
-          <Toaster />
           <ConflictModalHost />
           <AtlasToaster />
         </QueryClientProvider>

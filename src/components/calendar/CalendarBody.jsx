@@ -1,11 +1,11 @@
 /**
- * Calendar v2 · version B: hybrid.
- * Desktop: a compact month overview (one dot per unit per night) + month facts, then a tall timeline with one
- * row per unit (stays as bars with Booking / Airbnb badges, short gaps highlighted, today marker).
- * Phones: the compact month on top and an agenda list (arrivals, departures, gaps) below it.
+ * Calendar: ONE calendar per screen (Deen 05.11.2026), with a one-line status above it (CalendarBrief).
+ * Desktop: the unit timeline is the calendar, month or week: one row per unit, stays as bars with Booking / Airbnb
+ * badges, short gaps highlighted, today marker. An empty cell opens a new booking for that unit and night.
+ * Phones: the compact month (tap a day) and an agenda list (arrivals, departures, gaps) below it.
  * Every number is counted from real stays.
  */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowDownLeft, ArrowUpRight, Lock, Moon, Plus } from 'lucide-react';
@@ -19,6 +19,7 @@ import {
   HE_DAYS_LONG, HE_DAYS_SHORT, longDay, monthDays, monthKey, monthMatrix, parseIso, rangeSegment, shortDay,
 } from '@/lib/calendar/calendarModel';
 import { SourceBadge, stayBarDetails, stayLabel } from './shared';
+import CalendarBrief from './CalendarBrief';
 
 /* ── compact month: one dot per unit per night ───────────────────────────── */
 
@@ -98,41 +99,12 @@ function Legend({ className }) {
   );
 }
 
-/* ── month facts (real counts) ───────────────────────────────────────────── */
-
-function MonthFacts({ month, units, stays, occ, gaps }) {
-  const days = useMemo(() => monthDays(month), [month]);
-  const mk = monthKey(month);
-  const total = days.length * units.length;
-  let booked = 0;
-  for (const u of units) for (const d of days) if (occ.get(u.id)?.has(d)) booked += 1;
-  const arrivals = stays.filter((s) => !s.isBlock && s.start.slice(0, 7) === mk).length;
-  const gapNights = gaps.filter((g) => g.start.slice(0, 7) === mk).reduce((n, g) => n + g.nights, 0);
-  const pct = total ? Math.round((booked / total) * 100) : 0;
-  const facts = [
-    { k: 'לילות תפוסים', v: `${booked}`, sub: `מתוך ${total} · ${pct}%` },
-    { k: 'הגעות החודש', v: `${arrivals}`, sub: 'הזמנות שמתחילות החודש' },
-    { k: 'לילות פנויים בין הזמנות', v: `${gapNights}`, sub: gapNights ? 'אפשר עוד למכור' : 'הכל רצוף' },
-  ];
-  return (
-    <dl className="grid grid-cols-3 gap-3">
-      {facts.map((f) => (
-        <div key={f.k} className="rounded-[16px] bg-[#F7F8FB] px-4 py-3">
-          <dt className="text-[13px] text-navy-900/70">{f.k}</dt>
-          <dd className="mt-1 text-[26px] font-bold leading-none text-navy-900 tabular">{f.v}</dd>
-          <dd className="mt-1 text-[12px] text-navy-900/70">{f.sub}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
 /* ── timeline: one tall row per unit ─────────────────────────────────────── */
 
-function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDay }) {
-  const days = useMemo(() => monthDays(month), [month]);
+function Timeline({ days, today, units, stays, gapSet, holidays, onCell, focusDay, week = false }) {
   const n = days.length;
-  const cols = `repeat(${n}, minmax(46px, 1fr))`;
+  const colMin = week ? 120 : 46;
+  const cols = `repeat(${n}, minmax(${colMin}px, 1fr))`;
   const scroller = useRef(null);
   const reduce = useReducedMotion();
   const first = useRef(true);
@@ -157,7 +129,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
   return (
     <div className="v7-card overflow-hidden" data-timeline>
       <div ref={scroller} className="overflow-x-auto overscroll-x-contain" tabIndex={-1}>
-        <div className="grid" style={{ gridTemplateColumns: '196px minmax(0,1fr)', minWidth: 196 + n * 46 }}>
+        <div className="grid" style={{ gridTemplateColumns: '196px minmax(0,1fr)', minWidth: 196 + n * colMin }}>
           {/* header */}
           <div className="sticky right-0 z-20 flex items-end border-b border-l border-navy-900/[0.08] bg-white px-4 pb-2 text-[13px] font-semibold text-navy-900/70">יחידה</div>
           <div className="relative grid border-b border-navy-900/[0.08]" style={{ gridTemplateColumns: cols }}>
@@ -167,7 +139,7 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
               const wk = dt.getDay() === 5 || dt.getDay() === 6;
               return (
                 <div key={d} data-col={d} title={hol ? hol.map((h) => h.title).join(' · ') : undefined} className={cn('flex flex-col items-center pb-2 pt-2.5', wk && 'bg-[#F7F8FB]', focusDay === d && focusDay !== today && 'bg-navy-900/[0.06]')}>
-                  <span className={cn('text-[12px]', i === todayIdx ? 'font-semibold text-brand-600' : 'text-navy-900/70')}>{HE_DAYS_SHORT[dt.getDay()]}</span>
+                  <span className={cn('text-[12px]', i === todayIdx ? 'font-semibold text-brand-600' : 'text-navy-900/70')}>{week ? HE_DAYS_LONG[dt.getDay()] : HE_DAYS_SHORT[dt.getDay()]}</span>
                   <span className={cn('mt-1 inline-flex h-7 min-w-7 items-center justify-center rounded-full px-1 text-[13px] font-semibold tabular', i === todayIdx ? 'bg-brand-600 text-white' : 'text-navy-900')}>{dt.getDate()}</span>
                   <span aria-hidden className={cn('mt-1 h-1 w-1 rounded-full', hol ? 'bg-brand-600/60' : 'bg-transparent')} />
                 </div>
@@ -184,20 +156,36 @@ function Timeline({ month, today, units, stays, gapSet, holidays, onDay, focusDa
                   <div className="truncate text-[12px] text-navy-900/70">{u.raw?.max_guests ? `עד ${u.raw.max_guests} אורחים` : ''}</div>
                 </div>
               </div>
-              <div className="relative grid border-b border-navy-900/[0.08]" style={{ gridTemplateColumns: cols }}>
+              <div className="relative grid overflow-hidden border-b border-navy-900/[0.08]" style={{ gridTemplateColumns: cols }}>
                 {days.map((d) => {
                   const dt = parseIso(d);
                   const wk = dt.getDay() === 5 || dt.getDay() === 6;
                   const gap = gapSet.has(`${u.id}|${d}`);
+                  // Deen 05.11: an empty cell opens a new booking for THIS unit and night straight away (no in-between
+                  // sheet); a night that is taken opens that booking. Past nights are not offered for new bookings.
+                  const stay = (byUnit.get(u.id) || []).find((st) => st.start <= d && st.end > d) || null;
+                  const past = d < today;
+                  const label = stay
+                    ? `${u.name}, ${shortDay(d)}: ${stayLabel(stay)}. פתיחת ההזמנה`
+                    : past ? `${u.name}, ${shortDay(d)}: עבר` : `${u.name}, ${shortDay(d)}: פנוי${gap ? ' בין הזמנות' : ''}. הזמנה חדשה`;
                   return (
                     <button
                       key={d}
                       type="button"
-                      onClick={() => onDay(d, u.id)}
-                      aria-label={`${u.name}, ${shortDay(d)}${gap ? ', לילה פנוי בין הזמנות' : ''}`}
-                      className={cn('group/cell relative h-full border-l border-navy-900/[0.05] hover:bg-brand-600/[0.04]', wk && 'bg-[#F7F8FB]', d === today && 'bg-brand-600/[0.05]')}
+                      data-cell=""
+                      data-day={d}
+                      data-unit={u.id}
+                      disabled={past && !stay}
+                      onClick={() => onCell(u, d, stay)}
+                      aria-label={label}
+                      title={stay || past ? undefined : 'הזמנה חדשה'}
+                      className={cn('group/cell relative h-full border-l border-navy-900/[0.05]', !past || stay ? 'hover:bg-brand-600/[0.06] cursor-pointer' : 'cursor-default', wk && 'bg-[#F7F8FB]', d === today && 'bg-brand-600/[0.05]')}
                     >
-                      <Plus aria-hidden className="absolute inset-x-0 bottom-2 mx-auto h-3.5 w-3.5 text-brand-600 opacity-0 transition-opacity duration-150 group-hover/cell:opacity-100" />
+                      {stay || past ? null : (
+                        <span aria-hidden className="absolute inset-x-0 bottom-2 mx-auto flex w-max items-center gap-1 text-[12px] font-semibold text-brand-600 opacity-0 transition-opacity duration-150 group-hover/cell:opacity-100 group-focus-visible/cell:opacity-100">
+                          <Plus className="h-3.5 w-3.5" />{week ? 'הזמנה' : null}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -351,39 +339,42 @@ function Agenda({ month, today, units, stays, gaps, holidays, onDay, onNewBookin
   );
 }
 
-export default function CalendarBody({ month, today, units, stays, occ, gaps, gapSet, holidays, onDay, onNewBooking }) {
+export default function CalendarBody({ month, days: daysIn, view = 'month', briefVariant = 'a', today, units, stays, occ, gaps, gapSet, holidays, onDay, onNewBooking, onOpenStay }) {
   const mobile = useIsMobile();
-  const mk = monthKey(month);
-  const [focusDay, setFocusDay] = useState(today.slice(0, 7) === mk ? today : `${mk}-01`);
-  const compact = mobile
-    ? <CompactMonth month={month} today={today} units={units} occ={occ} gapSet={gapSet} holidays={holidays} onDay={onDay} />
-    : <CompactMonth month={month} today={today} units={units} occ={occ} gapSet={gapSet} holidays={holidays} onDay={setFocusDay} selected={focusDay} />;
+  const monthList = useMemo(() => monthDays(month), [month]);
+  const days = !mobile && view === 'week' && daysIn?.length ? daysIn : monthList;
+  const focusDay = days.includes(today) ? today : days[0];
+  const brief = (
+    <CalendarBrief variant={briefVariant} view={mobile ? 'month' : view} days={days} today={today} units={units} stays={stays} occ={occ} gaps={gaps} onNewBooking={onNewBooking} />
+  );
+  // one unit and a free night from today on: straight to the booking form, no sheet in between
+  const onMonthDay = (d) => {
+    if (units.length === 1 && d >= today && !occ.get(units[0].id)?.has(d)) onNewBooking(units[0], d);
+    else onDay(d);
+  };
   if (mobile) {
+    // phones: one calendar (the month), the status line above it, the month's arrivals and departures below
     return (
       <div className="space-y-4">
+        {brief}
         <div className="v7-card p-3 px-1.5 max-[359px]:-mx-5 max-[359px]:rounded-none max-[359px]:px-1">
-          {compact}
+          <CompactMonth month={month} today={today} units={units} occ={occ} gapSet={gapSet} holidays={holidays} onDay={onMonthDay} />
           <Legend className="mt-3 px-1" />
         </div>
         <Agenda month={month} today={today} units={units} stays={stays} gaps={gaps} holidays={holidays} onDay={onDay} onNewBooking={onNewBooking} />
       </div>
     );
   }
+  // desktop (Deen 05.11): ONE calendar. The small month grid and the facts card are gone; the status line sits above
+  // the unit timeline, which is the calendar (month or week).
+  const onCell = (u, d, stay) => {
+    if (stay) onOpenStay(stay);
+    else if (d >= today) onNewBooking(u, d);
+  };
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 lg:grid-cols-[minmax(320px,400px)_minmax(0,1fr)]">
-        <div className="v7-card p-4">{compact}</div>
-        <div className="v7-card flex flex-col justify-between gap-4 p-5">
-          <div>
-            <h3 className="text-[17px] font-bold text-navy-900">החודש במבט אחד</h3>
-            <p className="text-[14px] text-navy-900/70">{heCount(units.length, 'unit')} · נוגעים ביום כדי לקפוץ אליו בציר</p>
-          </div>
-          <MonthFacts month={month} units={units} stays={stays} occ={occ} gaps={gaps} />
-          <Legend />
-        </div>
-      </div>
-      <Timeline month={month} today={today} units={units} stays={stays} gapSet={gapSet} holidays={holidays} onDay={onDay} focusDay={focusDay} />
+      {brief}
+      <Timeline days={days} today={today} units={units} stays={stays} gapSet={gapSet} holidays={holidays} onCell={onCell} focusDay={focusDay} week={view === 'week'} />
     </div>
   );
 }
-

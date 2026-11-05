@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { atlasToastApi, type PersistentToastAction } from './atlasToastApi';
+import { atlasToastApi, type PersistentToastAction, type ToastOpts } from './atlasToastApi';
 
 export type AtlasToast = {
-  success: (message: string) => void;
-  error: (message: string, detail?: string) => void;
-  info: (message: string) => void;
+  success: (message: string, opts?: ToastOpts) => string;
+  error: (message: string, detail?: string, opts?: ToastOpts) => string;
+  info: (message: string, opts?: ToastOpts) => string;
   undo: (message: string, onUndo: () => void, onExpire?: () => void | Promise<void>) => void;
   persistent: (id: string, message: string, action?: PersistentToastAction) => void;
   dismissPersistent: (id: string) => void;
