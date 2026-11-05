@@ -85,7 +85,7 @@ export function useAccess() {
   const uid = user?.id || '';
   useEffect(() => {
     if (uid && online && !force && !unknown && !(needAdmin && admin.isLoading)) writeLastAccess(uid, access);
-  }, [uid, online, force, unknown, needAdmin, admin.isLoading, access.locked, access.state, access.isAdmin]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [uid, online, force, unknown, needAdmin, admin.isLoading, access.locked, access.state, access.isAdmin]);
   if (unknown) return { ...offlineAccess(access, readLastAccess(uid)), checking: false, offline: true };
   return { ...access, checking: needAdmin && online && admin.isLoading, offline: !online };
 }
