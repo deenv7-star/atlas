@@ -133,6 +133,7 @@
 @keyframes chm-bob { 50% { transform: translateY(-2px); } }
 
 .ch-sheet bdi[dir='ltr'] { display: inline-block; }
+.ch-btn bdi { white-space: nowrap; }
 .ch-btn.is-busy[disabled] { background: #3E2BF1; opacity: .85; color: #fff; cursor: progress; }
 
 /* V2 */
@@ -165,6 +166,8 @@
   .ch-h1 { font-size: 25px; }
   .ch-pick { gap: 12px; padding: 14px; }
   .ch-pick-t b { font-size: 20px; }
+  .ch-btn { font-size: 18px; padding: 0 12px; gap: 8px; }
+  .ch-helpbox { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ch-press, .ch-done-mark, .chm-tap, .ch-spin { animation: none !important; transition: none !important; }
