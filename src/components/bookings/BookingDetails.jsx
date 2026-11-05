@@ -400,7 +400,7 @@ export default function BookingDetails({ booking, onClose, orgId }) {
               {noPrice ? null : <PaidRing pct={paidPct} />}
             </div>
             <p className="v5-num mt-2 text-[44px] font-extrabold leading-none tracking-[-0.03em] text-white">{noPrice ? '—' : fmtMoney(outstandingNow > 0 ? outstandingNow : totalPaid)}</p>
-            <p className="mt-2 text-[14px] text-white/85">{noPrice ? 'מוסיפים מחיר ב״עריכה״, ואז רואים כאן מה שולם ומה נשאר.' : outstandingNow > 0 ? `שולמו ${fmtMoney(totalPaid)} מתוך ${fmtMoney(booking.total_price)}` : 'כל התשלומים של ההזמנה התקבלו'}</p>
+            <p className="mt-2 text-[14px] text-white/85">{noPrice ? 'מוסיפים מחיר ב״עריכה״, ואז רואים כאן מה שולם ומה נשאר.' : outstandingNow > 0 ? <>שולמו <bdi dir="ltr">{fmtMoney(totalPaid).replace('\u200F', '')}</bdi> מתוך <bdi dir="ltr">{fmtMoney(booking.total_price).replace('\u200F', '')}</bdi></> : 'כל התשלומים של ההזמנה התקבלו'}</p>
             <div className="mt-auto flex gap-2 pt-5">
               <button type="button" onClick={() => setIsPaymentDialogOpen(true)} className="press inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full bg-white text-[14px] font-bold text-brand-700 hover:bg-[#F4F3FF]">
                 <Plus className="h-4 w-4" strokeWidth={2.25} />
