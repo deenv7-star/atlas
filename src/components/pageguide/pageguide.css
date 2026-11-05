@@ -9,7 +9,7 @@
 .pg-gain svg { width: 20px; height: 20px; flex: none; margin-top: 3px; color: #3E2BF1; }
 .pg-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 @media (min-width: 900px) { .pg-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; } }
-.pg-step { display: flex; align-items: flex-start; gap: 12px; font-size: 16px; line-height: 1.5; color: #1B2656; background: #F7F8FB; border-radius: 16px; padding: 12px 14px; }
+.pg-step { border: 1px solid #E9ECF4; display: flex; align-items: flex-start; gap: 12px; font-size: 16px; line-height: 1.5; color: #1B2656; background: #F7F8FB; border-radius: 16px; padding: 12px 14px; }
 .pg-num { flex: none; width: 28px; height: 28px; border-radius: 999px; background: #fff; color: #3E2BF1; font-weight: 800; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1.5px rgba(62,43,241,.25); }
 .pg-auto { margin: 14px 0 0; font-size: 15px; line-height: 1.5; color: #4A5578; }
 .pg-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }

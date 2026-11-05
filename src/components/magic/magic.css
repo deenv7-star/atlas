@@ -68,7 +68,7 @@
 .mg-ideas > .mg-idea { flex: none; width: min(300px, calc(100vw - 72px)); scroll-snap-align: center; }
 @media (min-width: 768px) { .mg-ideas { margin: 0 -40px; padding: 4px 40px 8px; scroll-padding-inline: 40px; } .mg-ideas > .mg-idea { width: 320px; } }
 @media (min-width: 1024px) {
-  .mg-ideas { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); overflow: visible; margin: 0; padding: 0; scroll-snap-type: none; }
+  .mg-ideas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; overflow: visible; margin: 0; padding: 0; scroll-snap-type: none; }
   .mg-ideas > .mg-idea { width: auto; }
   .mg-ideas-nav { display: none !important; }
 }

@@ -76,7 +76,8 @@ function BuiltinCard({ t, onUse, onCopy, onPreview }) {
           </div>
         </div>
         <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="נמלא לבד מההזמנה">
-          {fieldsIn(t.content).slice(0, 5).map((f) => <li key={f.token} className="ct-chip ct-chip--sm">{f.label}</li>)}
+          {fieldsIn(t.content).slice(0, 3).map((f) => <li key={f.token} className="ct-chip ct-chip--sm">{f.label}</li>)}
+          {fieldsIn(t.content).length > 3 ? <li className="ct-chip ct-chip--sm">ועוד {fieldsIn(t.content).length - 3}</li> : null}
         </ul>
         <div className="mt-auto flex flex-wrap gap-2 pt-4">
           <Button variant="secondary" className="flex-1" onClick={() => onUse(t)}>השתמשו בתבנית</Button>
@@ -271,7 +272,7 @@ export default function Contracts({ selectedPropertyId, orgId }) {
             </div>
           </section>
 
-          <section aria-labelledby="ct-own">
+          <section aria-labelledby="ct-own" className="v7-card p-5 md:p-6">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h2 id="ct-own" className="text-[20px] font-bold text-navy-900">התבניות שלכם</h2>
@@ -303,7 +304,7 @@ export default function Contracts({ selectedPropertyId, orgId }) {
             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {templatesLoading ? [0, 1].map((i) => <Skeleton key={i} className="h-[120px] rounded-2xl" />)
                 : templates.length === 0 ? (
-                  <p className="col-span-full rounded-2xl bg-white p-5 text-[15px] text-ink-600">עוד אין תבניות משלכם. אפשר לעבוד עם התבניות המוכנות, או ללחוץ "שכפלו ועריכה" ולשנות נוסח.</p>
+                  <p className="col-span-full rounded-2xl bg-[#F7F8FB] p-5 text-[15px] text-ink-600">עוד אין תבניות משלכם. אפשר לעבוד עם התבניות המוכנות, או ללחוץ "שכפלו ועריכה" ולשנות נוסח.</p>
                 ) : templates.map((t) => (
                   <Card key={t.id} className="ct-card">
                     <CardContent className="p-5">
