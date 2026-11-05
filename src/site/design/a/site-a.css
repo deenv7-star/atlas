@@ -70,6 +70,12 @@
 .a-all { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 12px; font-weight: 700; text-decoration: none; }
 
 /* contact */
+.a-intro { margin: 0 0 24px; padding: 24px 28px; border-radius: 20px; background: #F1EFFE; color: var(--s-ink); }
+.a-intro h2 { margin: 0 0 8px; font-size: 20px; font-weight: 800; color: var(--s-navy); }
+.a-intro p { margin: 0; line-height: 1.7; }
+.a-intro p + p { margin-top: 8px; }
+.a-intro a { color: #3E2BF1; font-weight: 700; text-decoration: underline; text-decoration-thickness: 1px; }
+.a-expect { margin: 14px 0 0 !important; font-size: 15px; color: var(--s-ink-2); }
 .a-contact { display: grid; gap: 24px; }
 @media (min-width: 900px) { .a-contact { grid-template-columns: 1fr 1fr; align-items: start; } }
 .a-card { border: 1px solid var(--s-line); border-radius: 20px; padding: 28px; background: #fff; }

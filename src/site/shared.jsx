@@ -184,7 +184,7 @@ export function WhatsAppButton({ className = '', text, children = 'כתבו לנ
 }
 
 /* ---------------- contact form: saved to contact_messages (Supabase), WhatsApp stays one tap away ---------------- */
-const TOPICS = ['שאלה לפני הרשמה', 'תמיכה בשימוש', 'ביטול מנוי', 'פרטיות ומידע אישי', 'נגישות', 'אחר'];
+const TOPICS = ['שאלה לפני הרשמה', 'הדגמה קצרה בשיחה', 'תמיכה בשימוש', 'ביטול מנוי', 'פרטיות ומידע אישי', 'נגישות', 'אחר'];
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 export function ContactForm({ className = '' }) {

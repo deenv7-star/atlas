@@ -5,7 +5,8 @@
  *
  * Supported: ## / ### headings (auto ids, or "## Title {#id}"), paragraphs, - lists,
  * 1. lists, - [ ] checklists, > callouts ("> **בקצרה:** ..."), | tables |, **bold**,
- * [links](/path), {{PLACEHOLDER}} tokens from src/config/legal.js.
+ * [links](/path), {{PLACEHOLDER}} tokens from src/config/legal.js, and product figures on their own line:
+ *   ![alt text](/path.webp =676x304) optional caption   (size is required, so the page never shifts)
  *
  * Missing business details never show as {{KEY}} on the site:
  *   {?text with {{KEY}}?}  renders only when every {{KEY}} inside is filled in.
@@ -48,6 +49,7 @@ export function resolveOptional(text) {
     .replace(/\{!([A-Z_]+)\s([\s\S]*?)!\}/g, (_, key, inner) => (legalValue(key) === null ? inner : ''));
 }
 
+const FIG_RE = /^!\[([^\]]*)\]\((\/[^\s)]+) =(\d+)x(\d+)\)\s*(.*)$/;
 const isBlank = (t) => !String(t).replace(/\*\*|[\s:.,]/g, '').trim();
 const listItem = (t) => !isBlank(t.replace(/^\*\*[^*]+\*\*:?/, ''));
 
@@ -63,6 +65,10 @@ export function parseMd(src) {
     if ((m = line.match(/^(#{2,4})\s+(.*)$/))) {
       const { text, id } = headingParts(m[2]);
       blocks.push({ type: 'h', level: m[1].length, text, id });
+      i += 1; continue;
+    }
+    if ((m = line.match(FIG_RE))) {
+      blocks.push({ type: 'fig', alt: m[1], src: m[2], w: Number(m[3]), h: Number(m[4]), caption: (m[5] || '').trim() });
       i += 1; continue;
     }
     if (line.startsWith('>')) {
@@ -99,7 +105,7 @@ export function parseMd(src) {
       continue;
     }
     const buf = [];
-    while (i < lines.length && lines[i].trim() && !/^(#{2,4}\s|>|\||- |\d+\. )/.test(lines[i])) { buf.push(lines[i].trim()); i += 1; }
+    while (i < lines.length && lines[i].trim() && !/^(#{2,4}\s|>|\||- |\d+\. |!\[)/.test(lines[i])) { buf.push(lines[i].trim()); i += 1; }
     if (!isBlank(buf.join(' '))) blocks.push({ type: 'p', text: buf.join(' ') });
   }
   return blocks;
@@ -122,6 +128,7 @@ export function mdToText(src) {
     if (b.type === 'ul' || b.type === 'ol' || b.type === 'check') return b.items.map((x) => '- ' + stripInline(x)).join('\n');
     if (b.type === 'table') return [b.head, ...b.body].map((r) => r.map(stripInline).join(' | ')).join('\n');
     if (b.type === 'h') return '\n' + stripInline(b.text);
+    if (b.type === 'fig') return stripInline(b.caption || b.alt);
     return stripInline(b.text);
   }).join('\n');
 }
@@ -146,7 +153,9 @@ export function Inline({ text }) {
     else if (m[3]) {
       const href = m[5];
       const label = <Inline text={m[4]} />;
-      if (href.startsWith('/')) out.push(<Link key={k++} to={href}>{label}</Link>);
+      // a section of the landing ("/#calendar"): a plain link, so the prerendered page loads and the browser scrolls to it
+      if (href.startsWith('/#')) out.push(<a key={k++} href={href}>{label}</a>);
+      else if (href.startsWith('/')) out.push(<Link key={k++} to={href}>{label}</Link>);
       else if (href.startsWith('#')) out.push(<a key={k++} href={href}>{label}</a>);
       else out.push(<a key={k++} href={href} target="_blank" rel="noopener noreferrer">{label}<span className="s-sr"> (נפתח בחלון חדש)</span></a>);
     } else if (m[6]) {
@@ -186,6 +195,13 @@ export function Markdown({ source, blocks: given }) {
                   <tbody>{b.body.map((r, j) => <tr key={j}>{r.map((c, n) => <td key={n}><Inline text={c} /></td>)}</tr>)}</tbody>
                 </table>
               </div>
+            );
+          case 'fig':
+            return (
+              <figure key={idx} className="s-fig">
+                <img src={b.src} alt={b.alt} width={b.w} height={b.h} loading="lazy" decoding="async" style={b.w < 1000 ? { maxWidth: `${b.w}px` } : undefined} />
+                {b.caption && <figcaption><Inline text={b.caption} /></figcaption>}
+              </figure>
             );
           case 'check':
             return (
