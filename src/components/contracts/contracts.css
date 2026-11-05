@@ -1,0 +1,27 @@
+/* feat/pages-clarity: contracts. Palette: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white. */
+.ct-card, .ct-row { border: 0; border-radius: 20px; box-shadow: 0 1px 2px rgba(27,38,86,.06); }
+.ct-chip { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; background: rgba(62,43,241,.08); color: #3E2BF1; font-weight: 600; font-size: 14px; padding: 2px 10px; line-height: 1.6; white-space: nowrap; }
+.ct-chip--sm { font-size: 13px; }
+.ct-chip--btn { min-height: 44px; padding: 0 14px; font-size: 15px; border: 1px solid rgba(62,43,241,.18); cursor: pointer; }
+.ct-chip--btn:hover { background: rgba(62,43,241,.14); }
+.ct-chip--btn:focus-visible { outline: 2px solid #3E2BF1; outline-offset: 2px; }
+.ct-doc { background: #fff; border: 1px solid #E4E7F0; border-radius: 16px; padding: 20px; font-size: 16px; line-height: 1.75; color: #1B2656; }
+.ct-doc h2 { font-size: 20px; font-weight: 800; text-align: center; margin: 0 0 12px; }
+.ct-doc h3 { font-size: 17px; font-weight: 700; margin: 16px 0 6px; }
+.ct-doc ul, .ct-doc ol { padding-inline-start: 22px; margin: 6px 0; }
+.ct-doc ul { list-style: disc; } .ct-doc ol { list-style: decimal; }
+.ct-doc p { margin: 6px 0; }
+/* editor: quill.snow.css is now imported; these make it RTL, calm and readable */
+.ct-editor .ql-toolbar.ql-snow { border-radius: 14px 14px 0 0; border-color: #E4E7F0; background: #F7F8FB; direction: ltr; }
+.ct-editor .ql-container.ql-snow { border-radius: 0 0 14px 14px; border-color: #E4E7F0; font-family: inherit; font-size: 16px; }
+.ct-editor .ql-editor { direction: rtl; text-align: right; min-height: 300px; line-height: 1.7; color: #1B2656; }
+.ct-editor .ql-editor.ql-blank::before { right: 15px; left: auto; font-style: normal; color: #8A93AE; }
+.ct-editor .ql-editor ol, .ct-editor .ql-editor ul { padding-left: 0; padding-right: 1.5em; }
+.ct-editor .ql-editor li { padding-left: 0; padding-right: 1.5em; }
+.ct-editor .ql-editor li::before { margin-left: .3em; margin-right: -1.5em; text-align: left; }
+.ct-editor .ql-snow .ql-picker.ql-header { width: 118px; }
+.ct-editor .ql-snow .ql-picker.ql-header .ql-picker-label::before, .ct-editor .ql-snow .ql-picker.ql-header .ql-picker-item::before { content: 'טקסט רגיל'; }
+.ct-editor .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before, .ct-editor .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before { content: 'כותרת'; }
+.ct-editor .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before, .ct-editor .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before { content: 'כותרת משנה'; }
+.ct-editor .ql-toolbar button { width: 44px; height: 44px; }
+.ct-editor .ql-snow .ql-picker { height: 44px; line-height: 44px; }

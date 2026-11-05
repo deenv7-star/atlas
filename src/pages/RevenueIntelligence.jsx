@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHeader, EmptyState } from '@/components/ds';
+import { GuideEmpty, GuideHint } from '@/components/pageguide/PageGuide';
+import { GUIDES } from '@/components/pageguide/guides';
 import { ArrowUpRight, ArrowDownRight, TrendingUp, BarChart3 } from 'lucide-react';
 import { useStayData } from '@/hooks/useStayData';
 import { buildMonthlyReport } from '@/lib/stay/report';
@@ -130,16 +132,13 @@ export default function RevenueIntelligence() {
             />
           </div>
         ) : !hasData ? (
-          <div className="v7-card">
-            <EmptyState
-              icon={TrendingUp}
-              title="עוד אין מספיק הזמנות"
-              description="כאן יופיעו ההכנסות, התפוסה והמחיר הממוצע ללילה, מחושבים מההזמנות שלכם. הוסיפו הזמנות או חברו את Booking.com ו-Airbnb, והמספרים יתמלאו לבד."
-              action={<Button asChild><Link to="/bookings">להזמנות</Link></Button>}
-            />
-          </div>
+          <GuideEmpty guide={GUIDES.revenue} actions={[
+            { label: 'להזמנות', to: '/bookings' },
+            { label: 'חיבור Booking ו-Airbnb', to: '/integrations' },
+          ]} />
         ) : (
           <>
+            <GuideHint id="revenue" text={GUIDES.revenue.hint} />
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               <Kpi label="הכנסות" value={formatMoney(model.now.income)} delta={model.hasPrev ? changePct(model.now.income, model.before.income) : null} hint={model.hasPrev ? 'מול 12 החודשים שלפני' : null} />
               <Kpi label="ממוצע ללילה" value={formatMoney(model.now.adr)} delta={model.hasPrev ? changePct(model.now.adr, model.before.adr) : null} />

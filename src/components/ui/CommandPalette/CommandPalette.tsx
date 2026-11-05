@@ -339,13 +339,13 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="nav-maintenance"
-              keywords={['בקשות שירות', 'תחזוקה', 'תקלות', 'בקשות']}
-              data-announce={announce('בקשות שירות')}
+              keywords={['תקלות ותחזוקה', 'תחזוקה', 'תקלות', 'תיקון', 'בקשות שירות']}
+              data-announce={announce('תקלות ותחזוקה')}
               onSelect={() => go(createPageUrl('ServiceRequests'))}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <Wrench className="h-4 w-4 shrink-0 text-orange-600" aria-hidden />
-              <span className="flex-1 text-start font-medium">בקשות שירות</span>
+              <span className="flex-1 text-start font-medium">תקלות ותחזוקה</span>
               <ChordHint keys={['M']} isApple={isApple} />
             </CommandItem>
             <CommandItem
@@ -400,13 +400,13 @@ export function CommandPalette(props: CommandPaletteProps): React.ReactElement {
             </CommandItem>
             <CommandItem
               value="act-new-maintenance"
-              keywords={['בקשת שירות חדשה']}
-              data-announce={announce('בקשת שירות חדשה')}
+              keywords={['תקלה חדשה', 'דיווח על תקלה', 'בקשת שירות חדשה']}
+              data-announce={announce('תקלה חדשה')}
               onSelect={() => go(createPageUrl('ServiceRequests'), { commandPalette: { newMaintenance: true } })}
               className="mx-1 flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[10px] px-2.5 text-[15px] data-[selected=true]:bg-[var(--color-background-secondary)] data-[selected=true]:outline-none"
             >
               <ClipboardList className="h-4 w-4 shrink-0 text-orange-600" aria-hidden />
-              <span className="flex-1 text-start font-medium">בקשת שירות חדשה</span>
+              <span className="flex-1 text-start font-medium">תקלה חדשה</span>
             </CommandItem>
             <CommandItem
               value="act-new-payment"

@@ -129,7 +129,7 @@ const SEGMENT_TITLE = {
   billing: 'חיובים | atlas',
   g: 'פרטי השהייה | atlas',
   book: 'הזמנה ישירה | atlas',
-  'service-requests': 'בקשות שירות | atlas',
+  'service-requests': 'תקלות ותחזוקה | atlas',
   setup: 'הגדרה ראשונית | atlas',
 };
 

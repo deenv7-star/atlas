@@ -37,6 +37,9 @@ import { format, parseISO, isToday, isTomorrow, isPast } from 'date-fns';
 import { he } from 'date-fns/locale';
 import CleaningTaskSheet from '@/components/cleaning/CleaningTaskSheet';
 import { cn } from '@/lib/utils';
+import { GuideEmpty, GuideHint } from '@/components/pageguide/PageGuide';
+import { GUIDES } from '@/components/pageguide/guides';
+import { MessageCircle, CalendarDays } from 'lucide-react';
 import { optimisticEntityClassName } from '@/lib/optimistic/entityVisualState';
 
 const statusColors = {
@@ -50,6 +53,16 @@ const statusLabels = {
   IN_PROGRESS: 'בתהליך',
   DONE: 'הושלם'
 };
+
+/** The WhatsApp text for the cleaner: when, where, who, and the checklist. */
+function cleanerText(task) {
+  const when = task.scheduled_for ? format(parseISO(task.scheduled_for), "EEEE d/M 'בשעה' HH:mm", { locale: he }) : '';
+  const lines = [`ניקיון${task.title ? `: ${task.title.replace(/^ניקיון\s*/, '')}` : ''}`, when].filter(Boolean);
+  if (task.notes) lines.push(task.notes);
+  const list = (task.checklist || []).map((x) => `- ${x.item}`);
+  if (list.length) lines.push('', 'מה לבדוק:', ...list);
+  return lines.join('\n');
+}
 
 export default function Cleaning({ user, selectedPropertyId, orgId, properties }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -221,6 +234,8 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
         )}
       />
 
+      {!isLoading && tasks.length > 0 ? <GuideHint id="cleaning" text={GUIDES.cleaning.hint} /> : null}
+
       {/* Tasks Grid */}
       {isLoading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -228,11 +243,20 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
             <SkelLine key={i} className="h-[132px] rounded-[24px]" />
           ))}
         </div>
+      ) : tasks.length === 0 ? (
+        /* feat/pages-clarity: what this screen does, how it fills, one primary action, a marked example */
+        <GuideEmpty
+          guide={GUIDES.cleaning}
+          actions={[
+            { label: 'משימת ניקיון חדשה', icon: Plus, onClick: () => setIsCreateOpen(true) },
+            { label: 'ללוח היום', icon: CalendarDays, to: '/dashboard' },
+          ]}
+        />
       ) : filteredTasks.length === 0 ? (
         <Card className="border-0 shadow-sm rounded-2xl">
-          <EmptyState icon={ClipboardList} title="אין משימות ניקיון"
-            description="משימה נוצרת לבד בכל יציאה של אורחים. אפשר גם להוסיף ידנית."
-            action={<Button onClick={() => setIsCreateOpen(true)}><Plus className="w-4 h-4" />משימה חדשה</Button>} />
+          <EmptyState compact icon={ClipboardList} title="אין משימות במצב הזה"
+            description="בחרו מצב אחר, או הציגו את כל המשימות."
+            action={<Button variant="outline" onClick={() => setFilterStatus('all')}>כל המשימות</Button>} />
         </Card>
       ) : (
         <ErrorBoundary
@@ -334,6 +358,14 @@ export default function Cleaning({ user, selectedPropertyId, orgId, properties }
                     </Button>
                   )}
                 </div>
+
+                {/* feat/pages-clarity: send the task to the cleaner. wa.me with no number lets the owner pick the contact. */}
+                <Button asChild variant="outline" className="w-full gap-2">
+                  <a href={`https://wa.me/?text=${encodeURIComponent(cleanerText(selectedTask))}`} target="_blank" rel="noreferrer">
+                    <MessageCircle className="h-4 w-4" />
+                    שליחה למנקים בוואטסאפ
+                  </a>
+                </Button>
 
                 {/* Checklist */}
                 {selectedTask.checklist && selectedTask.checklist.length > 0 && (

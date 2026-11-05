@@ -762,3 +762,9 @@ input { text-overflow: ellipsis; }
 .atlas-loader-late { animation: atlas-late .2s ease-out .3s both; }
 @keyframes atlas-late { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .atlas-loader-late { animation: none; } }
+
+/* feat/pages-clarity (Deen 05.11): a blinking text caret showed beside page titles ("ניקיון|", "הודעות|", "הצעות בשבילכם|").
+   No title is focusable or editable; it is the browser's caret on plain text (caret browsing / a click on a heading).
+   Read-only text never shows a caret; every field still does. */
+html { caret-color: transparent; }
+input, textarea, select, [contenteditable]:not([contenteditable="false"]), .ql-editor { caret-color: auto; }
