@@ -153,7 +153,9 @@ export function Inline({ text }) {
     else if (m[3]) {
       const href = m[5];
       const label = <Inline text={m[4]} />;
-      if (href.startsWith('/')) out.push(<Link key={k++} to={href}>{label}</Link>);
+      // a section of the landing ("/#calendar"): a plain link, so the prerendered page loads and the browser scrolls to it
+      if (href.startsWith('/#')) out.push(<a key={k++} href={href}>{label}</a>);
+      else if (href.startsWith('/')) out.push(<Link key={k++} to={href}>{label}</Link>);
       else if (href.startsWith('#')) out.push(<a key={k++} href={href}>{label}</a>);
       else out.push(<a key={k++} href={href} target="_blank" rel="noopener noreferrer">{label}<span className="s-sr"> (נפתח בחלון חדש)</span></a>);
     } else if (m[6]) {

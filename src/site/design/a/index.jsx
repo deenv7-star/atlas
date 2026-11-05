@@ -122,15 +122,25 @@ export function AboutPage({ path, page }) {
   );
 }
 
+/** Prefilled WhatsApp text from /contact, so the source of the chat is visible in WhatsApp. */
+const CONTACT_WA_TEXT = 'שלום, הגעתי מדף יצירת הקשר באתר atlas.';
+
 export function ContactPage({ path, page }) {
   return (
     <div className="a-wrap a-doc">
       <PageHead path={path} title={page.title} lede={page.lede} />
+      <section className="a-intro" aria-labelledby="c-what">
+        <h2 id="c-what">מה זה atlas, בשתי שורות</h2>
+        <p>מערכת ניהול בעברית לצימרים ומתחמי נופש: יומן אחד ל-Booking.com, ל-Airbnb ולהזמנות ישירות, מעקב מקדמות ויתרות, והודעות וואטסאפ לאורחים בנוסח מוכן.</p>
+        <p>רוצים לראות איך זה ייראה אצלכם? כתבו לנו, ונראה לכם בשיחה קצרה. או <Link to="/register">התחילו 14 יום חינם</Link>, בלי כרטיס אשראי.</p>
+      </section>
       <div className="a-contact">
         <section className="a-card" aria-labelledby="c-wa">
           <h2 id="c-wa">וואטסאפ</h2>
-          <p>הדרך הכי מהירה, 24/7, גם בשבת ובאמצע הלילה: שאלות לפני הרשמה, עזרה בשימוש, ביטול או כל דבר אחר.</p>
-          <WhatsAppButton className="s-btn s-btn-primary">פתיחת שיחה בוואטסאפ</WhatsAppButton>
+          <p>הדרך הכי מהירה, 24/7, גם בשבת ובאמצע הלילה: שאלות לפני הרשמה, הדגמה קצרה, עזרה בשימוש או ביטול.</p>
+          {/* the prefilled text tells Deen which page the chat came from (no tracking tool on the site) */}
+          <WhatsAppButton className="s-btn s-btn-primary" text={CONTACT_WA_TEXT}>פתיחת שיחה בוואטסאפ</WhatsAppButton>
+          <p className="a-expect">מה קורה אחר כך: בן אדם עונה לכם בוואטסאפ. על הטופס עונים במייל.</p>
           <h3 className="a-card-sub">כל הדרכים</h3>
           <ContactDetails />
         </section>
