@@ -128,12 +128,12 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label>הזמנה (לא חובה)</Label>
+          <Label htmlFor="inv-f0">הזמנה (לא חובה)</Label>
           <Select
             value={formData.booking_id || NO_BOOKING}
             onValueChange={(v) => handleBookingSelect(v === NO_BOOKING ? '' : v)}
           >
-            <SelectTrigger>
+            <SelectTrigger id="inv-f0">
               <SelectValue placeholder="בחרו הזמנה" />
             </SelectTrigger>
             <SelectContent>
@@ -148,9 +148,9 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
         </div>
 
         <div>
-          <Label>סוג מסמך</Label>
+          <Label htmlFor="inv-f1">סוג מסמך</Label>
           <Select value={formData.type} onValueChange={(v) => setFormData(prev => ({ ...prev, type: v }))}>
-            <SelectTrigger>
+            <SelectTrigger id="inv-f1">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -164,8 +164,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
         </div>
 
         <div>
-          <Label>מספר המסמך</Label>
-          <Input
+          <Label htmlFor="inv-f2">מספר המסמך</Label>
+          <Input id="inv-f2"
             value={formData.invoice_number}
             onChange={(e) => setFormData(prev => ({ ...prev, invoice_number: e.target.value }))}
             placeholder="המספר מהתוכנה שלכם"
@@ -173,9 +173,9 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
         </div>
 
         <div>
-          <Label>מצב</Label>
+          <Label htmlFor="inv-f3">מצב</Label>
           <Select value={formData.status} onValueChange={(v) => setFormData(prev => ({ ...prev, status: v }))}>
-            <SelectTrigger>
+            <SelectTrigger id="inv-f3">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -193,8 +193,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
         <h3 className="font-semibold mb-4">פרטי לקוח</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label>שם לקוח *</Label>
-            <Input
+            <Label htmlFor="inv-f4">שם לקוח *</Label>
+            <Input id="inv-f4"
               required
               value={formData.guest_name}
               onChange={(e) => setFormData(prev => ({ ...prev, guest_name: e.target.value }))}
@@ -202,8 +202,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
           </div>
 
           <div>
-            <Label>אימייל</Label>
-            <Input
+            <Label htmlFor="inv-f5">אימייל</Label>
+            <Input id="inv-f5"
               type="email"
               value={formData.guest_email}
               onChange={(e) => setFormData(prev => ({ ...prev, guest_email: e.target.value }))}
@@ -211,24 +211,24 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
           </div>
 
           <div>
-            <Label>טלפון</Label>
-            <Input
+            <Label htmlFor="inv-f6">טלפון</Label>
+            <Input id="inv-f6"
               value={formData.customer_phone}
               onChange={(e) => setFormData(prev => ({ ...prev, customer_phone: e.target.value }))}
             />
           </div>
 
           <div>
-            <Label>ת.ז / ח.פ</Label>
-            <Input
+            <Label htmlFor="inv-f7">ת.ז / ח.פ</Label>
+            <Input id="inv-f7"
               value={formData.customer_tax_id}
               onChange={(e) => setFormData(prev => ({ ...prev, customer_tax_id: e.target.value }))}
             />
           </div>
 
           <div className="md:col-span-2">
-            <Label>כתובת</Label>
-            <Input
+            <Label htmlFor="inv-f8">כתובת</Label>
+            <Input id="inv-f8"
               value={formData.customer_address}
               onChange={(e) => setFormData(prev => ({ ...prev, customer_address: e.target.value }))}
             />
@@ -240,8 +240,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
         <h3 className="font-semibold mb-4">תאריכים</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label>תאריך המסמך *</Label>
-            <Input
+            <Label htmlFor="inv-f9">תאריך המסמך *</Label>
+            <Input id="inv-f9"
               type="date"
               required
               value={formData.issue_date}
@@ -250,8 +250,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
           </div>
 
           <div>
-            <Label>תאריך תשלום</Label>
-            <Input
+            <Label htmlFor="inv-f10">תאריך תשלום</Label>
+            <Input id="inv-f10"
               type="date"
               value={formData.due_date}
               onChange={(e) => setFormData(prev => ({ ...prev, due_date: e.target.value }))}
@@ -275,6 +275,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
               <div className="col-span-12 sm:col-span-5">
                 <Input
                   placeholder="תיאור"
+                  aria-label={`תיאור פריט ${index + 1}`}
                   value={item.description}
                   onChange={(e) => handleItemChange(index, 'description', e.target.value)}
                 />
@@ -283,6 +284,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
                 <Input
                   type="number"
                   placeholder="כמות"
+                  aria-label={`כמות פריט ${index + 1}`}
                   min="1"
                   value={item.quantity}
                   onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value) || 0)}
@@ -292,6 +294,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
                 <Input
                   type="number"
                   placeholder="מחיר"
+                  aria-label={`מחיר פריט ${index + 1}`}
                   min="0"
                   step="0.01"
                   value={item.unit_price}
@@ -301,6 +304,7 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
               <div className="col-span-3 sm:col-span-2">
                 <Input
                   value={`₪${item.total.toFixed(2)}`}
+                  aria-label={`סה״כ פריט ${index + 1}`}
                   disabled
                   className="bg-canvas"
                 />
@@ -332,7 +336,8 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
             <div className="flex items-center gap-2">
               <Input
                 type="number"
-                className="w-20 h-8 text-sm"
+                aria-label="אחוז מע״מ"
+                className="w-20 h-11 text-base"
                 value={formData.tax_rate}
                 onChange={(e) => setFormData(prev => ({ ...prev, tax_rate: parseFloat(e.target.value) || 0 }))}
               />
@@ -347,8 +352,9 @@ export default function InvoiceForm({ invoice, bookings, orgId, onSave, onCancel
       </div>
 
       <div>
-        <Label>הערות</Label>
+        <Label htmlFor="inv-notes">הערות</Label>
         <Textarea
+          id="inv-notes"
           value={formData.notes}
           onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
           rows={3}
