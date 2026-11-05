@@ -1,0 +1,40 @@
+/* D: "הקצב של החודש" — three rings + the day line */
+.hvd-card { display: flex; flex-direction: column; gap: 16px; padding: 18px 16px 16px; border-radius: 26px; background: #fff; color: #1B2656; box-shadow: inset 0 0 0 1px rgba(27,38,86,.06), 0 22px 42px -32px rgba(27,38,86,.5); }
+@media (min-width: 1024px) { .hvd-card { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto 1fr auto; gap: 14px 36px; padding: 24px 28px; border-radius: 32px; } .hvd-head { grid-column: 1 / -1; } .hvd-rings { grid-row: 2 / span 2; } .hvd-day { align-self: end; } }
+.hvd-head h2 { font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+.hvd-rings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 1024px) { .hvd-rings { grid-template-columns: repeat(3, 120px); gap: 12px; } }
+.hvd-g { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
+.hvd-g .y-ring { margin-bottom: 8px; }
+.hvd-n { font-size: 18px; font-weight: 700; letter-spacing: -.02em; color: #1B2656; }
+.hvd-g.is-empty .hvd-n { color: rgba(27,38,86,.38); }
+.hvd-g.is-empty .y-ring-arc { opacity: 0; }
+.hvd-g b { font-size: 14px; font-weight: 700; }
+.hvd-g small { font-size: 12px; color: rgba(27,38,86,.62); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.hvd-day { position: relative; padding: 26px 6px 0; }
+.hvd-line { position: relative; height: 8px; border-radius: 99px; background: rgba(27,38,86,.07); }
+.hvd-done { position: absolute; top: 0; bottom: 0; right: 0; border-radius: 99px; background: rgba(62,43,241,.16); }
+.hvd-pin { position: absolute; top: 50%; transform: translate(50%, -50%); display: flex; flex-direction: column; align-items: center; }
+.hvd-pin i { width: 16px; height: 16px; border-radius: 99px; background: #3E2BF1; box-shadow: 0 0 0 3px #fff; }
+.hvd-pin.is-out i { background: #fff; box-shadow: 0 0 0 3px #fff, inset 0 0 0 3px #1B2656; }
+.hvd-pin em { position: absolute; top: 20px; font-style: normal; font-size: 12px; font-weight: 700; color: #1B2656; white-space: nowrap; }
+.hvd-now { position: absolute; top: -26px; bottom: -6px; transform: translateX(50%); display: flex; flex-direction: column; align-items: center; }
+.hvd-now i { order: 2; flex: 1; width: 2px; border-radius: 2px; background: #1B2656; }
+.hvd-now em { order: 1; font-style: normal; font-size: 11px; font-weight: 700; color: #fff; background: #1B2656; padding: 1px 7px; border-radius: 99px; margin-bottom: 2px; }
+.hvd-hours { position: relative; height: 18px; margin-top: 26px; }
+.hvd-day.no-pins .hvd-hours { margin-top: 8px; }
+.hvd-hours span { position: absolute; transform: translateX(50%); font-size: 11px; color: rgba(27,38,86,.55); font-variant-numeric: tabular-nums; }
+.hvd-hours span:first-child { transform: none; }
+.hvd-hours span:last-child { transform: translateX(100%); }
+.hvd-key { margin: 0; display: flex; gap: 16px; font-size: 12px; color: rgba(27,38,86,.62); }
+.hvd-key span { display: inline-flex; align-items: center; gap: 6px; }
+.hvd-key i { width: 10px; height: 10px; border-radius: 99px; background: #3E2BF1; }
+.hvd-key i.is-out { background: #fff; box-shadow: inset 0 0 0 2px #1B2656; }
+@media (min-width: 1024px) { .hvd-key { grid-column: 2; } }
+.hvd-setup { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 12px; border-radius: 22px; background: #fff; color: #1B2656; box-shadow: inset 0 0 0 1px rgba(27,38,86,.06); }
+.hvd-setup-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.hvd-setup h2 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hvd-link { position: relative; align-self: flex-start; display: inline-flex; min-height: 28px; align-items: center; font-size: 13px; color: #3E2BF1; text-decoration: underline; text-decoration-color: rgba(62,43,241,.3); text-underline-offset: 3px; white-space: nowrap; }
+.hvd-link::after { content: ''; position: absolute; inset: -8px -4px; }
+.hvd-add { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border-radius: 999px; background: #3E2BF1; color: #fff; font-size: 14px; font-weight: 700; }
+.hvd-add svg { width: 17px; height: 17px; }
