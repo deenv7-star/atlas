@@ -251,7 +251,7 @@ export function DaySheet({ open, onOpenChange, model, onDo }) {
             <li key={a.id} className="yt-row">
               <div className="yt-row-b yt-row-b--static">
                 <span className="yt-row-t"><em>{KIND[a.kind]}</em><b>{a.title}</b>{a.sub ? <small>{a.sub}</small> : null}</span>
-                <button type="button" className="yt-do press" onClick={() => onDo(a)} aria-label={`${a.verb}: ${a.title}`}>{VERB[a.kind]}</button>
+                <button type="button" className="yt-do press" onClick={() => onDo(a)} aria-label={`${VERB[a.kind] || a.verb}: ${a.title}`}>{VERB[a.kind] || a.verb}</button>
               </div>
             </li>
           ))}

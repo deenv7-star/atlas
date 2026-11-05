@@ -351,7 +351,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
       <PageHeader
         title="ערוצים וחיבורים"
         help="integrations.page"
-        subtitle="מחברים את מה שאתם כבר עובדים איתו, ו-atlas מסדר הכול במקום אחד."
+        subtitle="מחברים את מה שאתם כבר עובדים איתו, והכול מסתדר במקום אחד."
         className="!mb-0"
       />
 

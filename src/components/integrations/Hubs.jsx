@@ -57,7 +57,7 @@ function Empty({ q, onAsk }) {
 function TileA({ it, onOpen }) {
   return (
     <li>
-      <button type="button" className={`ih-tile ch-press is-${it.s}`} onClick={() => onOpen(it)} aria-label={`${it.name}. ${it.gain}. ${STATUS_LABEL[it.s]}`}>
+      <button type="button" className={`ih-tile ch-press is-${it.s}`} onClick={() => onOpen(it)}>
         <span className="ih-tile-m"><BrandTile item={it} size={48} /></span>
         <span className="ih-tile-p"><Pill s={it.s} /></span>
         <span className="ih-tile-n">{it.name}{it.sub ? <small>{it.sub}</small> : null}</span>

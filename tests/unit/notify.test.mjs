@@ -47,7 +47,7 @@ test('plan: future arrivals only, one per day, blocked / cancelled skipped, text
 });
 
 test('plan: text fallbacks and many names', () => {
-  assert.deepEqual(reminderText([{ guest_name: '' }]), { title: 'אורחים מגיעים היום', body: 'פרטי ההזמנה מחכים ב-atlas' });
+  assert.deepEqual(reminderText([{ guest_name: '' }]), { title: 'אורחים מגיעים היום', body: 'פרטי ההזמנה מחכים באפליקציה' });
   const t = reminderText([{ guest_name: 'א' }, { guest_name: 'ב' }, { guest_name: 'ג' }, { guest_name: 'ד' }]);
   assert.equal(t.title, '4 הגעות היום');
   assert.equal(t.body, 'א, ב ועוד 2');

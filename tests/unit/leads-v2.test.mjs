@@ -94,3 +94,11 @@ test('sources catalog for the integrations hub', () => {
   assert.match(siteButtonSnippet('https://a/b'), /^<a href="https:\/\/a\/b"/);
   assert.equal(webhookUrl('https://x.supabase.co/', 'ab'), 'https://x.supabase.co/functions/v1/lead-intake?t=ab');
 });
+
+test('round 05.11: guest-message links read as what they do', async () => {
+  const { friendlyLink } = await import('../../src/components/magic/links.js');
+  assert.equal(friendlyLink('https://waze.com/ul?q=x&navigate=yes').label, 'ניווט בוויז');
+  assert.equal(friendlyLink('waze.com/ul?q=x').label, 'ניווט בוויז');
+  assert.equal(friendlyLink('https://atlas-il.com/g/abc').label, 'דף האורח');
+  assert.equal(friendlyLink('https://example.com/a').label, 'example.com/…');
+});

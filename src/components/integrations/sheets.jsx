@@ -431,7 +431,7 @@ export function AutomationConnect({ item, integ, onClose }) {
           <h1 className="ch-h1" tabIndex={-1}>מחובר <span aria-hidden>✓</span></h1>
           <p className="ch-sub">{step === 'done' ? `שלחנו הודעת בדיקה ל${item.name}. מעכשיו כל אירוע שבחרתם יישלח לשם.` : `נשלח אל ${c?.hint || ''}.`}</p>
         </div>
-        {secret ? (<><p className="ih-step-h">קוד אימות (לא חובה)</p><p className="ch-sub ih-tight">אם תרצו לוודא שההודעות באות מ-atlas, שמרו את הקוד. הוא מוצג עכשיו בלבד.</p><CopyBig value={secret} label="העתיקו את קוד האימות" /></>) : null}
+        {secret ? (<><p className="ih-step-h">קוד אימות (לא חובה)</p><p className="ch-sub ih-tight">אם תרצו לוודא שההודעות באמת מגיעות מאיתנו, שמרו את הקוד. הוא מוצג עכשיו בלבד.</p><CopyBig value={secret} label="העתיקו את קוד האימות" /></>) : null}
         {c?.last_error ? <p className="ch-err" role="alert">{c.last_error}</p> : null}
       </>
     );

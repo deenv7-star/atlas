@@ -77,10 +77,10 @@ export function reminderText(list, propsById = new Map()) {
     const time = String(b.check_in_time || p?.check_in_time || p?.guest_info?.check_in_time || '').slice(0, 5);
     const title = guest ? `הגעה היום: ${guest}` : 'אורחים מגיעים היום';
     const parts = [unit, time ? `כניסה מ-${time}` : ''].filter(Boolean);
-    return { title, body: parts.length ? parts.join(', ') : 'פרטי ההזמנה מחכים ב-atlas' };
+    return { title, body: parts.length ? parts.join(', ') : 'פרטי ההזמנה מחכים באפליקציה' };
   }
   const names = list.map((b) => String(b.guest_name || '').trim()).filter(Boolean);
-  return { title: `${list.length} הגעות היום`, body: names.length ? joinNames(names) : 'פרטי ההזמנות מחכים ב-atlas' };
+  return { title: `${list.length} הגעות היום`, body: names.length ? joinNames(names) : 'פרטי ההזמנות מחכים באפליקציה' };
 }
 
 /**
