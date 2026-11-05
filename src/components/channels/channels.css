@@ -27,6 +27,7 @@
 .ch-help { margin: 2px 0 0; text-align: center; font-size: 17px; color: #4A5578; }
 .ch-a { display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 6px; color: #3E2BF1; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .ch-a svg { width: 18px; height: 18px; }
+button.ch-a { background: none; border: 0; font: inherit; font-size: inherit; cursor: pointer; }
 .ch-hint { margin: 0; text-align: center; font-size: 16px; color: #4A5578; }
 
 .ch-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 60px; padding: 0 20px; border-radius: 18px; font-size: 19px; font-weight: 700; border: 0; text-decoration: none; text-align: center; }

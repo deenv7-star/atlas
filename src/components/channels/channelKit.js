@@ -14,7 +14,7 @@
  *   atlas:       ical-sync runs every 15 minutes (pg_cron) and right after a link is added.
  */
 import { checkIcalLink } from '@/lib/onboarding/v2/model';
-import { LEGAL, WHATSAPP_URL } from '@/config/legal';
+import { HELP_ENABLED, openHelp } from '@/support/openHelp';
 
 export const CHANNELS = {
   AIRBNB: {
@@ -91,11 +91,13 @@ export function syncErrorHe(code) {
   return 'לא הצלחנו לקרוא את היומן מהקישור הזה. נסו שוב, או שלחו לנו אותו ונבדוק.';
 }
 
+/**
+ * Help inside the wizard goes to the in-app help chat (bot + "שיחה עם נציג"), never to a personal phone number
+ * (Deen, 05.11.2026). `text` lands in the chat box ready to send (e.g. the link that was pasted).
+ */
 export const SUPPORT = {
-  phoneHref: `tel:+${LEGAL.WHATSAPP_NUMBER_INTL}`,
-  phoneDisplay: LEGAL.BUSINESS_PHONE,
-  line: 'תמיכה אנושית 24/7, גם בשבת',
-  whatsapp(text) { return `${WHATSAPP_URL}?text=${encodeURIComponent(text)}`; },
+  enabled: HELP_ENABLED,
+  open(text = '') { openHelp({ text }); },
 };
 
 /** Demo account only: a stand-in export link so the screens can be shown (never a real feed). */

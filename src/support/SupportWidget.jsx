@@ -176,7 +176,7 @@ export default function SupportWidget() {
     }, 0);
   }, []);
   // opened from the navigation (openHelp)
-  useEffect(() => onHelpOpen(({ opener }) => { openerRef.current = opener || null; setOpen(true); setView('chat'); }), []);
+  useEffect(() => onHelpOpen(({ opener, text }) => { openerRef.current = opener || null; setOpen(true); setView('chat'); if (text) setDraft((d) => d || text); }), []);
   useEffect(() => { reportHelpUnread(unread); }, [unread]);
   useEffect(() => {
     if (!open) return undefined;

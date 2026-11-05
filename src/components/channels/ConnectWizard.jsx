@@ -6,7 +6,7 @@
  * (phone + WhatsApp with the pasted link already in the message, from V2).
  */
 import React, { useState } from 'react';
-import { ExternalLink, Check, ChevronLeft, Phone, RefreshCw } from 'lucide-react';
+import { ExternalLink, Check, ChevronLeft, MessageCircle, RefreshCw } from 'lucide-react';
 import { CHANNELS, ATLAS_EVERY, SUPPORT, checkPasted } from './channelKit';
 import ChannelLogo from './ChannelLogo';
 import ScreenMock from './ScreenMock';
@@ -61,10 +61,14 @@ function PickChannel({ unit, onPick }) {
   );
 }
 
-function HelpLine() {
+function HelpLine({ unit }) {
+  if (!SUPPORT.enabled) return null;
   return (
     <p className="ch-help">
-      תקועים? <a href={SUPPORT.phoneHref} className="ch-a"><Phone strokeWidth={2} aria-hidden />התקשרו אלינו ונחבר יחד</a>
+      תקועים?{' '}
+      <button type="button" className="ch-a" onClick={() => SUPPORT.open(`שלום, צריך עזרה בחיבור Airbnb או Booking ליחידה "${unit}".`)}>
+        <MessageCircle strokeWidth={2} aria-hidden />כתבו לנו ונחבר יחד
+      </button>
     </p>
   );
 }
@@ -107,7 +111,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
   let footer = null;
   if (!channel) {
     body = <PickChannel unit={unit} onPick={(k) => { setChannel(k); setI(0); }} />;
-    footer = <HelpLine />;
+    footer = <HelpLine unit={unit} />;
   } else if (step?.kind === 'guide') {
     body = (
       <>
@@ -129,7 +133,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         <button type="button" className={`ch-btn ${step.open ? 'is-ghost' : 'is-primary'} ch-press`} onClick={() => setI(i + 1)}>
           {step.open ? 'כבר פתוח אצלי' : 'עשיתי, הלאה'}
         </button>
-        {step.note ? null : <HelpLine />}
+        {step.note ? null : <HelpLine unit={unit} />}
       </>
     );
   } else if (step?.kind === 'paste') {

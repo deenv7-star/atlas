@@ -1,8 +1,7 @@
 /** Shared pieces of the channel connection flows: full-screen sheet, paste field, big copy button, save + live check. */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowRight, X, ClipboardPaste, Check, Copy, AlertCircle, Phone } from 'lucide-react';
-import { WHATSAPP } from '@/components/landing/v5/brandPaths';
+import { ArrowRight, X, ClipboardPaste, Check, Copy, AlertCircle, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { DB_FEATURES } from '@/config/dbFeatures';
 import { callEdge, icalExportUrl } from '@/lib/real/edge';
@@ -16,7 +15,7 @@ export function Sheet({ title, onClose, onBack, children, footer, progress, labe
   useEffect(() => {
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
-    const onKey = (e) => { if (e.key === 'Escape') onClose?.(); };
+    const onKey = (e) => { if (e.key === 'Escape' && !document.getElementById('atlas-support')) onClose?.(); };
     window.addEventListener('keydown', onKey);
     return () => { document.documentElement.style.overflow = prev; window.removeEventListener('keydown', onKey); };
   }, [onClose]);
@@ -148,24 +147,25 @@ export function Bidi({ text }) {
   return <>{parts.map((p, i) => (i % 2 ? <bdi key={i} dir="ltr">{p}</bdi> : p))}</>;
 }
 
-function WaIcon() {
-  return <svg viewBox="0 0 24 24" aria-hidden><path d={WHATSAPP} fill="currentColor" /></svg>;
-}
-
 /**
- * The navy help box (from V2): a person connects it with you, by phone or WhatsApp. When a link was pasted, the
- * WhatsApp message already carries it. "24/7" only, no promise about how fast we answer.
+ * The navy help box: help comes from the in-app help chat (bot + "שיחה עם נציג"), no phone number (05.11.2026).
+ * When a link was pasted, the chat box opens with it already written, ready to send.
+ * Without the help chat (VITE_SUPPORT_CHAT=off) only the note stays, without a button.
  */
-export function HelpBox({ unit, link = '', title = 'צריכים עזרה? נחבר יחד בטלפון', text = 'בשיחה אחת מחברים את כל הערוצים.', id = 'ch-help-h' }) {
+export function HelpBox({ unit, link = '', title = 'צריכים עזרה בחיבור?', text = 'כתבו לנו כאן באפליקציה, ונעזור לחבר את הערוצים.', id = 'ch-help-h' }) {
   const msg = link
     ? `שלום, צריך עזרה בחיבור היחידה "${unit}". זה הקישור שהעתקתי:\n${link}`
     : `שלום, צריך עזרה בחיבור Airbnb או Booking ליחידה "${unit}".`;
+  if (!SUPPORT.enabled && !text) return null;
   return (
     <section className="ch-helpbox" aria-labelledby={id}>
       <h2 id={id}>{title}</h2>
-      <p>{text} {SUPPORT.line}.</p>
-      <a href={SUPPORT.phoneHref} className="ch-btn is-white ch-press"><Phone strokeWidth={2} aria-hidden />התקשרו: <bdi dir="ltr">{SUPPORT.phoneDisplay}</bdi></a>
-      <a href={SUPPORT.whatsapp(msg)} target="_blank" rel="noopener noreferrer" className="ch-btn is-line ch-press"><WaIcon />{link ? 'שלחו לנו בוואטסאפ' : 'כתבו לנו בוואטסאפ'}</a>
+      <p>{text}</p>
+      {SUPPORT.enabled ? (
+        <button type="button" className="ch-btn is-white ch-press" onClick={() => SUPPORT.open(msg)}>
+          <MessageCircle strokeWidth={2} aria-hidden />{link ? 'שלחו לנו את הקישור' : 'כתבו לנו באפליקציה'}
+        </button>
+      ) : null}
     </section>
   );
 }
