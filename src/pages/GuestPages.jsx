@@ -147,14 +147,12 @@ function PhotoCard({ property }) {
   );
 }
 
-function Actions3({ openUrl, copyUrl, selfText, hostPhone, openHint }) {
+function Actions3({ openUrl, copyUrl, sendSelf, openHint }) {
   return (
     <div className="gp-actions">
-      <Btn variant="primary" icon={ExternalLink} onClick={openUrl} disabled={!openUrl}>פתחו לדוגמה</Btn>
-      <Btn variant="secondary" icon={Copy} onClick={copyUrl} disabled={!copyUrl}>העתיקו לינק</Btn>
-      <a className={cn('ab-btn ab-btn-secondary', !selfText && 'pointer-events-none opacity-50')} href={selfText ? waLink(hostPhone || '', selfText) : undefined} target="_blank" rel="noreferrer" aria-disabled={!selfText}>
-        <MessageCircle size={18} strokeWidth={1.75} /> שלחו לעצמי בוואטסאפ
-      </a>
+      <Btn variant="primary" icon={ExternalLink} onClick={openUrl || undefined} disabled={!openUrl}>פתחו לדוגמה</Btn>
+      <Btn variant="secondary" icon={Copy} onClick={copyUrl || undefined} disabled={!copyUrl}>העתיקו לינק</Btn>
+      <Btn variant="secondary" icon={MessageCircle} onClick={sendSelf || undefined} disabled={!sendSelf}>שלחו לעצמי בוואטסאפ</Btn>
       {openHint ? <p className="ab-meta w-full">{openHint}</p> : null}
     </div>
   );
@@ -205,8 +203,7 @@ function UnitEditor({ property, tab, upcoming, onSend }) {
               <Actions3
                 openUrl={next ? async () => { const u = await getGuestUrl(); if (u) window.open(u, '_blank', 'noopener'); } : null}
                 copyUrl={next ? async () => { const u = await getGuestUrl(); if (u) copy(u, 'הקישור לדף האורח הועתק'); } : null}
-                selfText={guestUrl ? `דף האורח של ${property.name}: ${guestUrl}` : null}
-                hostPhone={info.host_phone}
+                sendSelf={next ? async () => { const u = await getGuestUrl(); if (u) window.open(waLink(info.host_phone || '', `דף האורח של ${property.name}: ${u}`), '_blank', 'noopener'); } : null}
                 openHint={next ? null : 'הקישור נוצר לכל הזמנה. אחרי ההזמנה הקרובה הראשונה אפשר לפתוח אותו מכאן.'}
               />
             </section>
@@ -267,7 +264,7 @@ function UnitEditor({ property, tab, upcoming, onSend }) {
             {enabled && link ? (
               <>
                 <div className="ab-input mt-4 flex items-center min-w-0 ab-num text-[15px]" dir="ltr"><span className="truncate">{link}</span></div>
-                <Actions3 openUrl={() => window.open(link, '_blank', 'noopener')} copyUrl={() => copy(link)} selfText={`דף ההזמנה של ${property.name}: ${link}`} hostPhone={info.host_phone} />
+                <Actions3 openUrl={() => window.open(link, '_blank', 'noopener')} copyUrl={() => copy(link)} sendSelf={() => window.open(waLink(info.host_phone || '', `דף ההזמנה של ${property.name}: ${link}`), '_blank', 'noopener')} />
                 <p className="ab-meta mt-3">איפה לשים: בביו של האינסטגרם, בפייסבוק, באתר, ובחתימה בוואטסאפ.</p>
               </>
             ) : null}
@@ -327,7 +324,7 @@ function GuestPagesScreen({ user, orgId }) {
             </div>
             {properties.length > 1 ? (
               <div className="gp-unit-pick">
-                <label htmlFor="gp-unit" className="ab-label !mb-0">בחרו יחידה</label>
+                <label htmlFor="gp-unit" className="ab-label !mb-0 whitespace-nowrap">בחרו יחידה</label>
                 <Select value={selected} onValueChange={setSelected}>
                   <SelectTrigger id="gp-unit" className="min-w-[200px]"><SelectValue /></SelectTrigger>
                   <SelectContent>{properties.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>

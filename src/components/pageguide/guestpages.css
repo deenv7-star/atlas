@@ -44,3 +44,11 @@
 .gp-photo-empty-t { margin: 0; font-size: 17px; font-weight: 700; color: #1B2656; }
 .gp-photo-empty-l { margin: 0; font-size: 15px; color: #4A5578; max-width: 30em; }
 @media (max-width: 480px) { .gp-photo-empty { aspect-ratio: auto; min-height: 180px; } }
+/* phone first on small screens: "what the guest sees" before the fields, a little smaller */
+@media (max-width: 1023px) {
+  .gp-grid { display: flex; flex-direction: column; }
+  .gp-grid > .gp-phone-wrap { order: -1; }
+  .gp-phone { width: 260px; }
+  .gp-screen { min-height: 440px; }
+  .gp-hero { height: 130px; }
+}

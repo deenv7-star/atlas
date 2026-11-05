@@ -339,7 +339,7 @@ export default function Contracts({ selectedPropertyId, orgId }) {
             <div>
               <p className="text-[15px] font-semibold text-navy-900">לחצו כדי להוסיף לחוזה</p>
               <p className="text-[14px] text-ink-600">בכל חוזה זה יתחלף בפרט האמיתי מההזמנה.</p>
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="ct-chips mt-2">
                 {MERGE_FIELDS.map((f) => (
                   <button key={f.token} type="button" className="ct-chip ct-chip--btn" onMouseDown={(e) => e.preventDefault()} onClick={() => insertField(f)}>
                     <Plus className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />{f.label}

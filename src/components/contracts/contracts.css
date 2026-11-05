@@ -25,3 +25,5 @@
 .ct-editor .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before, .ct-editor .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before { content: 'כותרת משנה'; }
 .ct-editor .ql-toolbar button { width: 44px; height: 44px; padding: 12px; }
 .ct-editor .ql-snow .ql-picker { height: 44px; line-height: 44px; }
+.ct-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 639px) { .ct-chips { flex-wrap: nowrap; overflow-x: auto; margin-inline: -24px; padding: 2px 24px 6px; scrollbar-width: none; } .ct-chips::-webkit-scrollbar { display: none; } .ct-chips > * { flex: none; } }
