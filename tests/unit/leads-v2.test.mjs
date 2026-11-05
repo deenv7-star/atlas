@@ -89,7 +89,7 @@ test('reply text: dates + availability, Hebrew prefix rules', () => {
 test('sources catalog for the integrations hub', () => {
   assert.ok(LEAD_SOURCES.find((s) => s.id === 'link').status === 'live');
   for (const id of ['whatsapp', 'instagram', 'messenger']) assert.equal(LEAD_SOURCES.find((s) => s.id === id).status, 'meta_review');
-  assert.equal(SOURCE_STATUS_LABEL.meta_review, 'בתהליך אישור מול Meta');
+  assert.equal(SOURCE_STATUS_LABEL.meta_review, 'בקרוב');
   assert.equal(taggedLink('https://atlas-il.com/book/x', 'instagram'), 'https://atlas-il.com/book/x?src=instagram');
   assert.match(siteButtonSnippet('https://a/b'), /^<a href="https:\/\/a\/b"/);
   assert.equal(webhookUrl('https://x.supabase.co/', 'ab'), 'https://x.supabase.co/functions/v1/lead-intake?t=ab');

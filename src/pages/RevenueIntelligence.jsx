@@ -1,13 +1,11 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { PageHeader, EmptyState } from '@/components/ds';
 import { GuideEmpty, GuideHint } from '@/components/pageguide/PageGuide';
 import { GUIDES } from '@/components/pageguide/guides';
-import { ArrowUpRight, ArrowDownRight, TrendingUp, BarChart3 } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, BarChart3 } from 'lucide-react';
 import { useStayData } from '@/hooks/useStayData';
 import { buildMonthlyReport } from '@/lib/stay/report';
 import { formatMoney } from '@/lib/stay/format';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 /**
