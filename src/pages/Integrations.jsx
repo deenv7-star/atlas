@@ -1,4 +1,9 @@
 /**
+ * חיבורים (integrations hub, 05.11.2026): every connection an owner may want, each with one plain line of what it
+ * does and an honest status (מחובר / חברו עכשיו / בקרוב / לפי בקשה). Claims: qa/integrations/CATALOG.md.
+ * Calendar links per unit are still managed here (below the calendar tiles).
+ *
+ * Before:
  * ערוצים וחיבורים: only what really works is shown as working.
  *   יומנים (real, 013): per unit, import Airbnb / Booking.com / any iCal feed (server sync every 15 minutes + "עדכון עכשיו"),
  *            and an export feed to paste into each channel. Status, last sync, errors and conflicts come from the server.
@@ -12,7 +17,7 @@ import {
   AlertTriangle, ChevronDown, Info,
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { PageHeader, SegmentedControl, SkelLine, Card, StatusPill } from '@/components/ds';
+import { PageHeader, SkelLine, Card, StatusPill } from '@/components/ds';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { UnitPhoto } from '@/components/app/atoms';
@@ -23,6 +28,13 @@ import { formatDayHe } from '@/lib/stay/format';
 import { cn } from '@/lib/utils';
 import ConnectFlow from '@/components/channels/ConnectWizard';
 import ChannelLogo from '@/components/channels/ChannelLogo';
+import { INTEGRATIONS, CATEGORIES, statusOf } from '@/components/integrations/catalog';
+import { HubA, HubB } from '@/components/integrations/Hubs';
+import { HUB_VARIANT } from '@/components/integrations/variant';
+import { useIntegrations } from '@/components/integrations/useIntegrations';
+import { CalendarConnect, CalendarExport, InfoSheet, InvoiceConnect, AutomationConnect } from '@/components/integrations/sheets';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 const PROVIDERS = {
   AIRBNB: { name: 'Airbnb', short: 'A', tone: 'bg-[#FFE8EA] text-[#C2273B]', channel: 'airbnb' },
@@ -186,36 +198,19 @@ function CONNECT_LABEL(n, has) {
   return 'חיבור ערוץ נוסף';
 }
 
-function ProviderStatus({ items }) {
-  return (
-    <ul className="space-y-3">
-      {items.map((it) => (
-        <li key={it.name}>
-          <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-start md:px-6">
-            <div className="min-w-0 flex-1">
-              <p className="flex flex-wrap items-center gap-2 text-[16px] font-bold text-navy-900">
-                {it.name}
-                <StatusPill tone={it.live ? 'mint' : 'slate'} label={it.live ? 'פעיל' : 'בקרוב'} />
-              </p>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-ink-600">{it.text}</p>
-              {it.needs ? <p className="mt-1.5 text-[13px] text-ink-400">דורש חיבור: {it.needs}</p> : null}
-            </div>
-            {it.action ? <div className="shrink-0">{it.action}</div> : null}
-          </Card>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 export default function IntegrationsPage({ orgId: orgIdProp, user }) {
   const qc = useQueryClient();
   const [params, setParams] = useSearchParams();
   // ?tab= deep links (the help bot links messaging / accounting too): aliases map to our four tabs.
+  // Old deep links (?tab=messages …) land on the matching category; no tab = everything.
   const TAB_ALIAS = { messaging: 'messages', whatsapp: 'messages', accounting: 'invoices', pms: 'calendars', ical: 'calendars' };
-  const rawTab = params.get('tab') || 'calendars';
-  const tab = ['calendars', 'messages', 'payments', 'invoices'].includes(TAB_ALIAS[rawTab] || rawTab) ? (TAB_ALIAS[rawTab] || rawTab) : 'calendars';
-  const setTab = (t) => setParams((p) => { const n = new URLSearchParams(p); n.set('tab', t); return n; }, { replace: true });
+  const rawTab = params.get('tab') || 'all';
+  const tab = ['all', ...CATEGORIES.map((c) => c.id)].includes(TAB_ALIAS[rawTab] || rawTab) ? (TAB_ALIAS[rawTab] || rawTab) : 'all';
+  const setTab = (t) => setParams((p) => { const n = new URLSearchParams(p); if (t === 'all') n.delete('tab'); else n.set('tab', t); return n; }, { replace: true });
+  const [q, setQ] = useState('');
+  const [openItem, setOpenItem] = useState(null);
+  const integ = useIntegrations();
+  const navigate = useNavigate();
   const orgId = orgIdProp ?? user?.organization_id ?? user?.org_id ?? null;
   const [syncingId, setSyncingId] = useState(null);
   const [connectFor, setConnectFor] = useState(null);
@@ -297,77 +292,80 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
   });
 
   const loading = propsQ.isLoading || syncsQ.isLoading;
+  const imports = syncs.filter((s) => String(s.sync_direction || '').toUpperCase() !== 'EXPORT');
+  const has = (fn) => imports.some(fn);
+  const lbl = (s) => String(s.label || '').toLowerCase();
+  const CONNECTED = {
+    airbnb: has((s) => s.provider === 'AIRBNB'),
+    booking: has((s) => s.provider === 'BOOKING_COM'),
+    vrbo: has((s) => lbl(s) === 'vrbo'),
+    expedia: has((s) => lbl(s) === 'expedia'),
+    'gcal-in': has((s) => s.provider === 'GOOGLE'),
+    'ical-any': has((s) => (s.provider === 'ICAL' || s.provider === 'OUTLOOK') && !['vrbo', 'expedia'].includes(lbl(s))),
+    morning: !!integ.has('MORNING'),
+    icount: !!integ.has('ICOUNT'),
+    zapier: !!integ.has('WEBHOOK') && /zapier/i.test(integ.has('WEBHOOK')?.hint || ''),
+    make: !!integ.has('WEBHOOK') && /make\.com|integromat/i.test(integ.has('WEBHOOK')?.hint || ''),
+    n8n: !!integ.has('WEBHOOK') && !/zapier|make\.com|integromat/i.test(integ.has('WEBHOOK')?.hint || ''),
+  };
+  const items = INTEGRATIONS.map((it) => ({ ...it, s: statusOf(it, { connected: !!CONNECTED[it.id] }) }));
+  const counts = items.reduce((m, it) => { if (it.s === 'connected') { m[it.cat] = (m[it.cat] || 0) + 1; m.all = (m.all || 0) + 1; } return m; }, {});
+  const Hub = HUB_VARIANT === 'B' ? HubB : HubA;
+  const openFor = (it) => {
+    if (it.flow === 'link') { navigate(createPageUrl(it.to.replace('/', ''))); return; }
+    setOpenItem(it);
+  };
+  const askOther = () => setOpenItem({ id: 'other-request', name: 'חיבור אחר', cat: 'more', mono: '?', flow: 'request', status: 'request', gain: 'ספרו לנו מה אתם רוצים לחבר, ונבדוק אם אפשר.', why: '' });
+  const closeSheet = () => setOpenItem(null);
+
+  const calendarsManager = loading ? (
+    <div className="space-y-3" role="status" aria-busy="true" aria-label="טוען"><SkelLine className="h-40 rounded-[24px]" /></div>
+  ) : properties.length && imports.length ? (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="text-[18px] font-bold text-navy-900">היומנים שלכם לפי יחידה</h3>
+        {DB_FEATURES.realCore ? (
+          <Button variant="outline" className="h-11" onClick={() => runSync(null)} disabled={!!syncingId}>
+            <RefreshCw className={cn('h-4 w-4', syncingId === 'all' && 'animate-spin')} strokeWidth={1.75} />
+            עדכון עכשיו
+          </Button>
+        ) : null}
+      </div>
+      {ordered.map((p) => (
+        <UnitChannels
+          key={p.id}
+          property={p}
+          syncs={imports.filter((s) => s.property_id === p.id)}
+          onSync={runSync}
+          syncingId={syncingId}
+          onToggle={(sync, on) => toggle.mutate({ sync, on })}
+          onDelete={(sync) => remove.mutate(sync)}
+          onConnect={(prop) => setConnectFor(prop.id)}
+        />
+      ))}
+    </div>
+  ) : null;
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-6 px-5 pb-16 pt-6 md:px-10 md:pt-10" dir="rtl">
       <PageHeader
         title="ערוצים וחיבורים"
         help="integrations.page"
-        subtitle={<>הזמנות מ-<bdi>Airbnb</bdi> וגם מ-<bdi>Booking</bdi> נכנסות ליומן לבד. כאן רואים שכל חיבור עובד.</>}
+        subtitle="מחברים את מה שאתם כבר עובדים איתו, ו-atlas מסדר הכול במקום אחד."
         className="!mb-0"
-        actions={tab === 'calendars' && DB_FEATURES.realCore && syncs.length ? (
-          <Button variant="outline" className="h-11" onClick={() => runSync(null)} disabled={!!syncingId}>
-            <RefreshCw className={cn('h-4 w-4', syncingId === 'all' && 'animate-spin')} strokeWidth={1.75} />
-            עדכון עכשיו
-          </Button>
-        ) : null}
-      />
-      <SegmentedControl
-        ariaLabel="סוג חיבור"
-        value={tab}
-        onChange={setTab}
-        options={[
-          { value: 'calendars', label: 'יומנים' },
-          { value: 'messages', label: 'הודעות' },
-          { value: 'payments', label: 'תשלומים' },
-          { value: 'invoices', label: 'הנהלת חשבונות' },
-        ]}
       />
 
-      {tab === 'calendars' ? (
-        loading ? (
-          <div className="space-y-3" role="status" aria-busy="true" aria-label="טוען"><SkelLine className="h-64 rounded-[24px]" /><SkelLine className="h-64 rounded-[24px]" /></div>
-        ) : properties.length === 0 ? (
-          <Card className="p-6 text-center"><p className="text-[16px] font-semibold text-navy-900">עוד אין יחידות</p><p className="mt-1 text-[14px] text-ink-400">הוסיפו יחידה ואז חברו לה את Airbnb או Booking.com.</p></Card>
-        ) : (
-          <div className="space-y-4">
-            {ordered.map((p) => (
-              <UnitChannels
-                key={p.id}
-                property={p}
-                syncs={syncs.filter((s) => s.property_id === p.id && String(s.sync_direction || '').toUpperCase() !== 'EXPORT')}
-                onSync={runSync}
-                syncingId={syncingId}
-                onToggle={(sync, on) => toggle.mutate({ sync, on })}
-                onDelete={(sync) => remove.mutate(sync)}
-                onConnect={(prop) => setConnectFor(prop.id)}
-              />
-            ))}
-          </div>
-        )
-      ) : null}
+      <Hub items={items} q={q} setQ={setQ} cat={tab} setCat={setTab} onOpen={openFor} onAsk={askOther} counts={counts}>
+        {calendarsManager}
+      </Hub>
 
-      {tab === 'messages' ? (
-        <ProviderStatus items={[
-          { name: 'WhatsApp בלחיצה אחת', live: true, text: 'atlas מכין את ההודעות לפי שלבי השהייה (אישור, יום לפני, יום ההגעה, בקשת ביקורת) ושומר על שקט בשבת ובחג. בלוח "היום" כל הודעה מוכנה נפתחת בוואטסאפ עם הטקסט, ושולחים בלחיצה.' },
-          { name: 'WhatsApp אוטומטי', live: false, text: 'שליחה בלי לגעת: ההודעות יוצאות לבד מהמספר העסקי של המתחם, עם תבניות מאושרות.', needs: 'חשבון WhatsApp Business מאומת אצל Meta ומספר ייעודי.' },
-          { name: 'SMS', live: false, text: 'גיבוי לאורחים בלי וואטסאפ.', needs: 'ספק SMS ישראלי (חבילת הודעות).' },
-          { name: 'אימייל יוצא', live: false, text: 'עד שיחובר שירות דיוור, "שליחה במייל" פותחת את תוכנת המייל שלכם עם הטקסט מוכן.', needs: 'שירות שליחת מיילים.' },
-        ]} />
+      {openItem && openItem.flow === 'ical' ? (
+        <CalendarConnect item={openItem} units={properties} orgId={orgId} syncs={syncs} onClose={closeSheet} onDone={refresh} />
       ) : null}
-
-      {tab === 'payments' ? (
-        <ProviderStatus items={[
-          { name: 'תיעוד תשלומים ויתרות', live: true, text: 'רושמים מקדמה ויתרה לכל הזמנה, רואים מה פתוח במסך "יתרות", ושולחים תזכורת בוואטסאפ.' },
-          { name: 'קישור תשלום למקדמה (Grow / PayPlus)', live: false, text: 'האורח משלם בקישור, וההזמנה מתעדכנת ל"שולם" לבד.', needs: 'מסוף סליקה על שם העסק.' },
-        ]} />
-      ) : null}
-
-      {tab === 'invoices' ? (
-        <ProviderStatus items={[
-          { name: 'חשבונית ירוקה (Morning) / iCount', live: false, text: 'מסמך מס חוקי לכל תשלום, נשלח לאורח לבד. מסמך חוקי מופק רק בתוכנה רשומה ברשות המסים, ולכן עד החיבור atlas רק מתעד מספרי מסמכים שהופקו אצלכם.', needs: 'חשבון Morning או iCount עם גישת API.' },
-        ]} />
-      ) : null}
+      {openItem && openItem.flow === 'ical-export' ? <CalendarExport item={openItem} units={properties} onClose={closeSheet} /> : null}
+      {openItem && openItem.flow === 'apikey' ? <InvoiceConnect item={openItem} integ={integ} orgId={orgId} onClose={closeSheet} /> : null}
+      {openItem && openItem.flow === 'webhook' ? <AutomationConnect item={openItem} integ={integ} onClose={closeSheet} /> : null}
+      {openItem && (openItem.flow === 'request' || openItem.flow === 'builtin') ? <InfoSheet item={openItem} user={user} onClose={closeSheet} /> : null}
 
       {(() => {
         const id = connectFor || connectParam;
@@ -382,9 +380,8 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
           />
         );
       })()}
-      {tab === 'calendars' && !DB_FEATURES.realCore ? <p className="text-[14px] text-ink-500">חשבון דוגמה: אפשר לעבור על כל החיבור, אבל שום דבר לא נשלח לערוצים.</p> : null}
-      <p className="flex items-center gap-2 text-[13px] text-ink-400"><CalendarDays className="h-4 w-4" strokeWidth={1.75} aria-hidden />חיבור שמסומן "בקרוב" לא שולח ולא גובה כלום עדיין.</p>
+      {!DB_FEATURES.realCore ? <p className="text-[14px] text-ink-500">חשבון דוגמה: אפשר לעבור על כל חיבור, אבל שום דבר לא נשלח החוצה.</p> : null}
+      <p className="flex items-center gap-2 text-[14px] text-ink-500"><CalendarDays className="h-4 w-4" strokeWidth={1.75} aria-hidden />חיבור שמסומן "בקרוב" או "לפי בקשה" עוד לא שולח ולא גובה כלום.</p>
     </div>
   );
 }
-
