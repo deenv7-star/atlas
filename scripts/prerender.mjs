@@ -243,7 +243,10 @@ function chunkAssets(manifest, key) {
    script: the URLs change every build and inline scripts are pinned by hash in the CSP (scripts/check-csp.mjs). */
 function withTodayPreload(manifest, html) {
   const files = [];
-  for (const key of ['src/Layout.jsx', 'src/pages/Dashboard.jsx']) {
+  // src/Layout.jsx is a shared dynamic chunk in the manifest ("_Layout-<hash>.js", name "Layout"), not a src key
+  const layoutKey = manifest['src/Layout.jsx'] ? 'src/Layout.jsx'
+    : Object.keys(manifest).find((k) => manifest[k].name === 'Layout' && manifest[k].isDynamicEntry && k.endsWith('.js'));
+  for (const key of [layoutKey, 'src/pages/Dashboard.jsx']) {
     const { css, js } = chunkAssets(manifest, key);
     for (const f of [...js, ...css]) if (!files.includes(f)) files.push(f);
   }
