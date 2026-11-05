@@ -12,7 +12,7 @@ import { Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { heCount } from '@/lib/hebrewCount';
 import { HE_MONTHS, parseIso, shortDay } from '@/lib/calendar/calendarModel';
-import { computeBrief } from './calendarBrief';
+import { computeBrief } from './briefModel';
 
 const KEY = 'atlas-cal-brief';
 export function briefVariant() {
