@@ -1,0 +1,66 @@
+/* C: one navy hero; everything else white */
+.hvc-hero { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 26px; background: #1B2656; color: #fff; box-shadow: 0 24px 44px -30px rgba(27,38,86,.9); }
+@media (min-width: 1024px) { .hvc-hero { padding: 26px 28px; border-radius: 32px; } }
+.hvc-k { margin: 0; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.72); }
+.hvc-hero h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
+@media (min-width: 1024px) { .hvc-hero h2 { font-size: 26px; } }
+.hvc-line { margin: 0; font-size: 14px; color: rgba(255,255,255,.75); }
+.hvc-dots { list-style: none; margin: 8px 0 8px; padding: 0; display: flex; gap: 6px; }
+.hvc-dots li { width: 28px; height: 5px; border-radius: 99px; background: rgba(255,255,255,.18); }
+.hvc-dots li.is-done { background: #fff; }
+.hvc-dots li.is-next { background: #3E2BF1; }
+@media (min-width: 1024px) { .hvc-hero .hv-acts { max-width: 440px; } }
+.hvc-hit { position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
+.hvc-who { display: flex; align-items: center; gap: 14px; }
+.hvc-who > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.hvc-who h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hvc-chev { width: 22px; height: 22px; color: rgba(255,255,255,.7); flex: none; }
+.hvc-stats { margin: 14px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.hvc-stats > div { padding: 12px 14px; border-radius: 18px; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); min-width: 0; }
+.hvc-stats dt { font-size: 12px; color: rgba(255,255,255,.7); }
+.hvc-stats dd { margin: 2px 0 0; font-size: 20px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; text-align: end; }
+@media (min-width: 1024px) { .hvc-stats { max-width: 560px; } .hvc-stats dd { font-size: 24px; } }
+
+/* calendar column + bookings panel go white so the hero is the only navy */
+.y2-shell .y2.hv-c .y2-side, .y2-shell .y2.hv-c .y3-panel, .y2.hv-c .y2-side, .y2.hv-c .y3-panel { background: #fff !important; color: #1B2656; box-shadow: inset 0 0 0 1px rgba(27,38,86,.06), 0 18px 36px -30px rgba(27,38,86,.4); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.y2.hv-c .y2-me small, .y2.hv-c .y2-cal-k, .y2.hv-c .y2-arr-t small, .y2.hv-c .y3-row-n small, .y2.hv-c .y3d-stay span, .y2.hv-c .y3d-t > span:first-child, .y2.hv-c .y3-empty { color: rgba(27,38,86,.62) !important; }
+.y2.hv-c .y2-cal, .y2.hv-c .y2-arr-row, .y2.hv-c .y3-row, .y2.hv-c .y3d-t, .y2.hv-c .y3-seg { background: #F7F8FB; box-shadow: inset 0 0 0 1px rgba(27,38,86,.05); color: #1B2656; }
+.y2.hv-c .y2-arr-row:hover, .y2.hv-c .y3-row:hover { background: #EEF0F6; }
+.y2.hv-c .y3-row.on { background: #fff; box-shadow: inset 0 0 0 1.5px #3E2BF1; }
+.y2.hv-c .y2-cal-g b { color: rgba(27,38,86,.5); }
+.y2.hv-c .y2-cd { color: #1B2656; }
+.y2.hv-c .y2-cd.occ { background: rgba(62,43,241,.1); color: #1B2656; }
+.y2.hv-c .y2-cd.today { box-shadow: 0 0 0 2px #1B2656; }
+.y2.hv-c .y2-cal-k i.occ { background: rgba(62,43,241,.2); }
+.y2.hv-c .y2-cal-k i.today { box-shadow: 0 0 0 1.5px #1B2656; }
+.y2.hv-c .y2-cal-nav { color: #1B2656; }
+.y2-shell .y2.hv-c .y2-cal-nav::before { box-shadow: inset 0 0 0 1px rgba(27,38,86,.16); }
+.y2.hv-c .y2-sec-h--d .y2-link { color: #3E2BF1; text-decoration-color: rgba(62,43,241,.3); }
+.y2.hv-c .y2-arr-time, .y2.hv-c .y3-pay { color: #1B2656; }
+.y2.hv-c .y3-pay { box-shadow: inset 0 0 0 1px rgba(27,38,86,.14); }
+.y2.hv-c .y2-src { background: #fff; box-shadow: inset 0 0 0 1px rgba(27,38,86,.12); }
+.y2.hv-c .y2-src--booking, .y2.hv-c .y2-src--airbnb { background: #3E2BF1; box-shadow: none; }
+.y2.hv-c .y3-panel-t::before { background: #3E2BF1; }
+.y2.hv-c .y3-st { color: rgba(27,38,86,.7); }
+.y2.hv-c .y3-st.on { color: #fff; }
+.y2.hv-c .y3-st-on { background: #1B2656; box-shadow: none; }
+.y2.hv-c .y3-st em { background: rgba(27,38,86,.08); }
+.y2.hv-c .y3-more { color: #1B2656; box-shadow: inset 0 0 0 1px rgba(27,38,86,.12); }
+.y2.hv-c .y3-cb { color: #1B2656; background: #F7F8FB; box-shadow: inset 0 0 0 1px rgba(27,38,86,.1); }
+.y2.hv-c .y3d-t .y-num { color: #1B2656; }
+.y2-shell .y2.hv-c .y3-empty b { color: #1B2656; }
+.y2.hv-c .y3d-photo--none { background: #F7F8FB !important; }
+.y2.hv-c .hvc-hero h2 { color: #fff; }
+.y2.hv-c .y2-side h2, .y2.hv-c .y3-panel-t, .y2.hv-c .y2-cal-h p, .y2.hv-c .y2-arr-t b, .y2.hv-c .y3-row-n b, .y2.hv-c .y3-row-a,
+.y2.hv-c .y3d-stay b, .y2.hv-c .y3j, .y2.hv-c .y3j-h p, .y2.hv-c .y2-me b, .y2.hv-c .y3-split-d { color: #1B2656; }
+.y2.hv-c .y2-sec-h--d h2::before { background: #3E2BF1; }
+.y2.hv-c .y3j { background: #F7F8FB; box-shadow: inset 0 0 0 1px rgba(27,38,86,.05); }
+.y2.hv-c .y3j-h span, .y2.hv-c .y3j-steps li { color: rgba(27,38,86,.62); }
+.y2.hv-c .y3j-steps li i { background: rgba(27,38,86,.1); }
+.y2.hv-c .y3j-steps li.ok { color: #1B2656; }
+.y2.hv-c .y3j-steps li.ok i { background: #1B2656; }
+.y2.hv-c .y3j-steps li.cur { color: #3E2BF1; }
+.y2.hv-c .y3j-steps li.cur i { background: #3E2BF1; box-shadow: none; }
+.y2.hv-c .y3d-t .y-stripe { background: rgba(27,38,86,.08); }
+.y2.hv-c .y2-cd.arr { color: #fff; }
+.y2.hv-c .y3-st.on em { background: #3E2BF1; color: #fff; }

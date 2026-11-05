@@ -22,7 +22,10 @@ import { useTodayModel, money, moneyNum, guestLabel, MONTHS } from './model';
 import Face from './Face';
 import { Num, Ticks, Wave, DotGrid, Ring, FaceStack, useBookingList, whenOf } from './ui';
 import { BookingsPanel, BookingSheet, isPhone } from './Bookings';
-import { ArrivalsSheet, IncomeSheet, OccupancySheet, PendingSheet, RevenueSheet, DaySheet, NoBookingsCard } from './TodaySheets';
+import { ArrivalsSheet, IncomeSheet, OccupancySheet, PendingSheet, RevenueSheet, DaySheet } from './TodaySheets';
+import HomeTop, { HOME_VAR, HIDE_PHOTO } from './home/HomeTop';
+import { ChartPlaceholder } from './home/shared';
+import './home/home.css';
 import { useQuickBooking } from '@/components/app/QuickBooking';
 import './y3.css';
 import './y-fix.css';
@@ -142,13 +145,13 @@ export default function DashboardView({ user, orgId }) {
   // reducedMotion="user": with reduced motion the entrance keeps only the fade, no scale(.985) shrinking 44px targets to 43
   return (
     <MotionConfig reducedMotion="user">
-    <div className="y2" dir="rtl">
+    <div className={cn('y2 hv', `hv-${HOME_VAR}`, noBookings && 'hv-empty')} dir="rtl">
       <motion.div className="y2-win" {...rise(0)}>
         <div className="y2-main">
           <div className="y2-hello">
             <div>
               <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
-              <p className="y2-sub">{formatDayHe(m.day)}{boardKnown ? ` · ${arrivals.length} מגיעים, ${departures.length} יוצאים` : ''}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
+              <p className="y2-sub">{formatDayHe(m.day)}{boardKnown && !noBookings ? ` · ${arrivals.length} מגיעים, ${departures.length} יוצאים` : ''}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
             </div>
             {noUnits || !boardKnown ? null : (
               <button type="button" className="y2-hello-chip press" aria-haspopup="dialog" onClick={() => setTileSheet('day')}><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'אין משימות להיום'}</button>
@@ -160,21 +163,23 @@ export default function DashboardView({ user, orgId }) {
           {/* 0 units: one way in, the import card (ייבוא מתחם → /import); manual setup stays inside /import */}
           {noUnits ? <ImportEntryCard where="today" className="y-first-unit-import" /> : null}
 
-          {noBookings ? <NoBookingsCard onAdd={() => quick.open()} /> : null}
+          {noUnits ? null : <HomeTop m={m} noBookings={noBookings} onAdd={() => quick.open()} hero={hero} heroUnit={heroUnit} heroBal={heroBal} openBooking={openBooking} />}
 
-          {noUnits || noBookings ? null : (
-          <section className="y2-tiles" aria-label="היום במספרים">
+          {noUnits ? null : (
+          <section className={cn('y2-tiles', noBookings && 'is-empty')} aria-label="היום במספרים">
             <motion.div className="y2-tile" {...rise(1)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="מגיעים היום: פירוט" onClick={() => setTileSheet('arrivals')} />
               <p className="y2-tk">מגיעים היום<FaceStack names={arrivals.map((a) => a.booking.guest_name || '')} size={26} max={3} /></p>
               <Ticks values={hours} hot={hotHour} height={50} className="y2-tile-viz" />
-              <p className="y2-tn"><Num value={arrivals.length} /><span>אורחים · {departures.length} יוצאים</span></p>
+              <p className="y2-tn"><Num value={arrivals.length} /><span>{noBookings ? 'אורחים' : `אורחים · ${departures.length} יוצאים`}</span></p>
+              {noBookings ? <p className="hv-hint">יופיעו כאן ביום ההגעה</p> : null}
             </motion.div>
             <motion.div className="y2-tile" {...rise(2)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label={`הכנסות ${m.money.month} מהזמנות החודש: פירוט`} onClick={() => setTileSheet('income')} />
-              <p className="y2-tk">הכנסות {m.money.month}</p>
-              <div className="y2-tile-viz"><Wave values={[...wave].reverse()} h={50} /></div>
+              <p className="y2-tk">הכנסות ב{m.money.month}</p>
+              <div className="y2-tile-viz">{hasRevenue ? <Wave values={[...wave].reverse()} h={50} /> : <svg className="hv-flat" viewBox="0 0 160 50" preserveAspectRatio="none" width="100%" height="50" aria-hidden><path d="M4,40 C40,38 60,30 92,30 C122,30 136,20 156,16" /></svg>}</div>
               <p className="y2-tn"><Num value={m.money.received} pre="₪" delay={80} /></p>
+              {noBookings ? <p className="hv-hint">נספרות מכל הזמנה</p> : null}
             </motion.div>
             <motion.div className="y2-tile y2-tile--ring" {...rise(3)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label={`תפוסה ב${m.money.month}: פירוט לפי יחידה`} onClick={() => setTileSheet('occupancy')} />
@@ -183,18 +188,20 @@ export default function DashboardView({ user, orgId }) {
                 <Num value={m.money.occupancy} post="%" delay={160} className="y2-ring-n" />
               </Ring>
               <p className="y2-tn y2-tn--s"><span>{(m.data.properties || []).length ? heCount((m.data.properties || []).length, 'unit') : 'עוד אין יחידות'}</span></p>
+              {noBookings ? <p className="hv-hint">לפי הלילות התפוסים</p> : null}
             </motion.div>
             <motion.div className="y2-tile" {...rise(4)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="ממתינים לתשלום: פירוט" onClick={() => setTileSheet('pending')} />
               <p className="y2-tk">ממתינים לתשלום<i className="y2-amber" aria-hidden /></p>
               <DotGrid total={20} on={m.moneyKnown ? Math.min(20, Math.round((m.money.received / Math.max(1, m.money.expected)) * 20)) : 0} cols={10} className="y2-tile-viz y2-dots" />
-              <p className="y2-tn"><Num value={m.pendingTotal} pre="₪" delay={240} />{m.moneyKnown ? <span>{dueCount} {dueCount === 1 ? 'הזמנה' : 'הזמנות'}</span> : null}</p>
+              <p className="y2-tn"><Num value={m.pendingTotal} pre="₪" delay={240} />{m.moneyKnown && !noBookings ? <span>{dueCount} {dueCount === 1 ? 'הזמנה' : 'הזמנות'}</span> : null}</p>
+              {noBookings ? <p className="hv-hint">יתרות פתוחות יופיעו כאן</p> : null}
             </motion.div>
           </section>
           )}
 
-          {noBookings ? null : (
-          <div className="y2-mid">
+          {noUnits ? null : (
+          <div className={cn('y2-mid', (HIDE_PHOTO || !hero) && 'is-solo')}>
             <motion.section className="y2-card y2-chart" aria-label="הכנסות" {...rise(5)}>
               <button type="button" className="y2-hit" aria-haspopup="dialog" aria-label="הכנסות: פירוט לפי חודש" onClick={() => setTileSheet('revenue')} />
               <div className="y2-card-h"><h2>הכנסות</h2><span className="y2-seg">6 חודשים</span></div>
@@ -205,10 +212,7 @@ export default function DashboardView({ user, orgId }) {
                   {m.paymentsState === 'error' ? <span>לא הצלחנו לקרוא את ההכנסות כרגע</span> : null}
                 </div>
               ) : !hasRevenue ? (
-                <div className="y2-chart-empty">
-                  <b>עוד אין הכנסות להצגה</b>
-                  <span>הגרף יתמלא מההזמנה הראשונה</span>
-                </div>
+                <ChartPlaceholder />
               ) : (
               <div className="y2-chart-b">
                 <div className="y2-chart-y" aria-hidden>{[1, 0.66, 0.33, 0].map((t) => <span key={t}>{tick(mx * t)}</span>)}</div>
@@ -225,7 +229,7 @@ export default function DashboardView({ user, orgId }) {
               <div className="y2-chart-x" aria-hidden>{months.map((x, i) => <span key={i}>{x.label || ''}</span>)}</div>
             </motion.section>
 
-            {hero ? (
+            {hero && !HIDE_PHOTO ? (
               <motion.button type="button" className={cn('y2-photo press', !unitPhoto(heroUnit) && 'y2-photo--none')} onClick={() => openBooking(hero)}
                 initial={{ y: 16, scale: 0.985 }} animate={{ y: 0, scale: 1 }} transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}>
                 {unitPhoto(heroUnit) ? <img src={unitPhoto(heroUnit)} alt="" fetchPriority="high" /> : null}
@@ -284,6 +288,7 @@ export default function DashboardView({ user, orgId }) {
           </div>
           {/* M7 (audit 04.11): the side column's own 3 numbers repeated the tiles; removed for a calmer desktop. */}
           <MonthCal model={m} />
+          {noBookings ? null : <>
           <div className="y2-sec-h y2-sec-h--d"><h2>היום</h2><Link to="/bookings" className="y2-link">כל ההזמנות</Link></div>
           <ul className="y2-arr">
             {[...today.map((x) => ({ b: x.booking, dir: x.dir })), ...upcoming.map((b) => ({ b, dir: 'soon' }))].slice(0, 5).map(({ b, dir }, i) => {
@@ -303,10 +308,11 @@ export default function DashboardView({ user, orgId }) {
               );
             })}
           </ul>
+          </>}
         </aside>
 
-        <BookingsPanel ref={panelRef} model={m} list={list} selId={selId} setSelId={setSelId} onOpen={setSheet} delay={0.45}
-          onWhatsApp={(b, t) => setComposer({ booking: b, template: t })} />
+        {noBookings ? null : <BookingsPanel ref={panelRef} model={m} list={list} selId={selId} setSelId={setSelId} onOpen={setSheet} delay={0.45}
+          onWhatsApp={(b, t) => setComposer({ booking: b, template: t })} />}
       </motion.div>
 
       <ArrivalsSheet open={tileSheet === 'arrivals'} onOpenChange={closeTile} model={m} onOpenBooking={fromTile} />
