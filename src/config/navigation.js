@@ -4,7 +4,7 @@
  * Labels follow the glossary in docs/brand.md.
  */
 import {
-  Sun, CalendarRange, BedDouble, Users, MessageSquare, Star,
+  Sun, CalendarRange, BedDouble, Users, Star,
   Brush, Headset, FileSignature, Send, Wallet, BarChart3,
   Tags, Link2, Globe, CreditCard, Settings, Shield,
 } from 'lucide-react';
@@ -23,9 +23,8 @@ export const NAV_GROUPS = [
       { page: 'Dashboard', label: 'היום', icon: Sun },
       { page: 'MultiCalendar', label: 'יומן', icon: CalendarRange },
       { page: 'Bookings', label: 'הזמנות', icon: BedDouble },
-      { page: 'Leads', label: 'פניות', icon: Users },
+      { page: 'Leads', label: 'שיחות', icon: Users },
       { page: 'Payments', label: 'כסף', icon: Wallet },
-      { page: 'Messages', label: 'הודעות', icon: MessageSquare },
       { page: 'Settings', label: 'הגדרות', icon: Settings },
     ],
   },
@@ -81,7 +80,7 @@ export const FINANCE_TABS = [
 export const NAV_PARENT = {
   Today: 'Dashboard',
   Balances: 'Payments', Invoices: 'Payments', ExpenseTracker: 'Payments', MonthlyReport: 'Payments',
-  BookingDetail: 'Bookings', LeadDetail: 'Leads',
+  BookingDetail: 'Bookings', LeadDetail: 'Leads', Messages: 'Leads',
 };
 
 export const PLATFORM_ITEM = { page: 'PlatformAdmin', label: 'פלטפורמה', icon: Shield };
@@ -97,6 +96,7 @@ Object.assign(PAGE_TITLES, {
   Balances: 'כסף', Invoices: 'כסף', ExpenseTracker: 'כסף', MonthlyReport: 'כסף', Payments: 'כסף',
   BookingDetail: 'פרטי הזמנה',
   LeadDetail: 'פרטי פנייה',
+  Messages: 'שיחות',
   Onboarding: 'הקמת החשבון',
 });
 

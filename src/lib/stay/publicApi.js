@@ -11,6 +11,7 @@ import { guestInfoOf } from './guestInfo';
 import { balanceOf, isActiveBooking, checkOutOf } from './bookings';
 import { todayISO, addDays, nightsBetween } from './format';
 import { DB_FEATURES } from '@/config/dbFeatures';
+import { viaLine } from '@/lib/inbox/model';
 
 export class PublicNotFoundError extends Error {
   constructor(msg = 'not_found') { super(msg); this.code = 'not_found'; }
@@ -105,7 +106,8 @@ export async function submitDirectInquiry(slug, form) {
     check_out_date: form.check_out_date || null,
     adults: Math.max(1, Math.min(30, Number(form.adults) || 2)),
     children: Math.max(0, Math.min(30, Number(form.children) || 0)),
-    notes: String(form.notes || '').trim().slice(0, 1000),
+    // leads-v2: a tagged inquiry link (?src=instagram) says where the guest came from, as a notes line.
+    notes: [viaLine(form.via), String(form.notes || '').trim()].filter(Boolean).join('\n').slice(0, 1000),
   };
   if (!payload.full_name || !payload.phone) throw new Error('missing_fields');
   if (!DB_FEATURES.directBooking) throw new PublicNotFoundError();

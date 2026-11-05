@@ -96,7 +96,7 @@ export function Header({ user, selectedPropertyId, onPropertyChange, onOpenComma
         <IconButton label="חיפוש" onClick={onOpenCommandPalette} className="lg:hidden">
           <Search strokeWidth={1.75} />
         </IconButton>
-        <IconButton as={Link} to={createPageUrl('Messages')} label="הודעות">
+        <IconButton as={Link} to={createPageUrl('Leads')} label="שיחות">
           <Bell strokeWidth={1.75} />
         </IconButton>
         <div className="hidden lg:block">

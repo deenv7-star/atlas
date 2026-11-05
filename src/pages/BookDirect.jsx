@@ -3,9 +3,11 @@
  * Shows free dates and an inquiry form that creates a Lead, so owners skip the commission.
  */
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Users, BedDouble, Clock, Check, CalendarSearch, Send } from 'lucide-react';
+import { Users, BedDouble, Clock, Check, CalendarSearch, Send, MessageCircle } from 'lucide-react';
+import { whatsappHref } from '@/lib/phone';
+import { LINK_SOURCES } from '@/lib/inbox/model';
 import { fetchPublicProperty, submitDirectInquiry } from '@/lib/stay/publicApi';
 import { formatDayHe, formatMoney, nightsBetween } from '@/lib/stay/format';
 import { AvailabilityCalendar } from '@/components/stay/AvailabilityCalendar';
@@ -30,6 +32,9 @@ const PHONE_RE = /^[\d\s+\-()]{9,}$/;
 
 export default function BookDirectPage() {
   const { slug } = useParams();
+  const [params] = useSearchParams();
+  // leads-v2: ?src=instagram|facebook|google|whatsapp|site|directory tags the inquiry (owner sees where it came from)
+  const via = LINK_SOURCES[String(params.get('src') || '').toLowerCase()] ? String(params.get('src')).toLowerCase() : '';
   const q = useQuery({ queryKey: ['public-property', slug], queryFn: () => fetchPublicProperty(slug), retry: false, staleTime: 60_000 });
   const [range, setRange] = useState({ ci: '', co: '' });
   const [form, setForm] = useState({ full_name: '', phone: '', email: '', adults: 2, children: 0, notes: '' });
@@ -85,7 +90,7 @@ export default function BookDirectPage() {
       if (!errors.full_name && !errors.phone && !errors.dates && !errors.guests && errors.consent) document.getElementById('bd-consent')?.focus();
       return;
     }
-    submit.mutate({ ...form, check_in_date: range.ci, check_out_date: range.co });
+    submit.mutate({ ...form, via, check_in_date: range.ci, check_out_date: range.co });
   };
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -116,6 +121,16 @@ export default function BookDirectPage() {
             <p className="mt-2" style={{ color: 'var(--ink-600)' }}>
               ביקשתם {formatDayHe(range.ci)} עד {formatDayHe(range.co)}. המארחים יחזרו אליכם לטלפון {form.phone} בהקדם.
             </p>
+            {host?.whatsapp && whatsappHref(host.whatsapp) ? (
+              <a
+                href={whatsappHref(host.whatsapp, `שלום, שלחתי עכשיו בקשה לתאריכים ${formatDayHe(range.ci)} עד ${formatDayHe(range.co)}. שמי ${form.full_name.trim()}.`)}
+                target="_blank" rel="noopener noreferrer"
+                className="mt-4 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-5 text-[15px] font-semibold text-white"
+                style={{ background: '#1F8F55' }}
+              >
+                <MessageCircle size={18} strokeWidth={2} aria-hidden /> רוצים לזרז? כתבו לנו בוואטסאפ
+              </a>
+            ) : null}
           </section>
         ) : (
           <form onSubmit={onSubmit} noValidate className="space-y-3">
