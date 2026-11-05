@@ -24,6 +24,7 @@ import './y2.css';
 import './y-bg.css';
 import './y-bg-story.css';
 import './y-atlas-tab.css';
+import './y-nav-clean.css';
 import './y-nav.css';
 
 export const shellClass = 'y2-shell';
@@ -174,7 +175,20 @@ function AskFaceDesk() {
   );
 }
 
+/** today/wow (05.11.2026): atlas sits beside the capsule as its own round button (where the landing mockup had "+"),
+ *  so the capsule is five calm tabs. One tap opens straight into a live voice conversation. */
+function AtlasFab() {
+  const { isOpen } = useAssistantOpen();
+  return (
+    <button type="button" className="y2-fab press" aria-label="דברו עם atlas" aria-expanded={isOpen} aria-haspopup="dialog"
+      onClick={(e) => openAssistant('voice', e.currentTarget)}>
+      <AtlasFace live size={40} decorative />
+    </button>
+  );
+}
+
 /** The centre of the phone tab bar: atlas itself, raised. One tap opens straight into a live voice conversation. */
+// eslint-disable-next-line no-unused-vars
 function AtlasTab({ hot }) {
   const { isOpen } = useAssistantOpen();
   return (
@@ -196,11 +210,9 @@ export function TabBar({ user }) {
   const active = useActive();
   const navigate = useNavigate();
   const moreOpen = useMoreOpen();
-  // היום · יומן · [atlas] · פניות · עוד  (RTL: first item is rightmost)
+  // today/wow (05.11.2026): היום · יומן · פניות · כסף · עוד in one clean capsule, atlas as a round button beside it (RTL: first item is rightmost)
   const MORE = { page: null, more: true, label: 'עוד', icon: LayoutGrid };
-  const tabs = [...NAV.filter((n) => ['Dashboard', 'MultiCalendar', 'Leads'].includes(n.page)), MORE];
-  const left = tabs.slice(0, 2); const right = tabs.slice(2);
-  const all = [...left, { page: null, atlas: true, label: 'atlas' }, ...right];
+  const all = [...NAV.filter((n) => ['Dashboard', 'MultiCalendar', 'Leads', 'Payments'].includes(n.page)), MORE];
   const barRef = useRef(null);
   const lensRef = useRef(null);
   const tintRef = useRef(null);
@@ -236,12 +248,10 @@ export function TabBar({ user }) {
   return (
     <>
       <div className="y2-tab-scrim" aria-hidden="true" />
-      <nav aria-label="ניווט" className="y2-tab y2-nav" data-lens={lifted ? 'on' : undefined}>
+      <nav aria-label="ניווט" className="y2-tab y2-nav y2-nav--clean" data-lens={lifted ? 'on' : undefined}>
         <div className="y2-tab-cap">
           <ul ref={barRef}>
-            {left.map((t, i) => tab(t, i))}
-            <AtlasTab hot={hot === 2} />
-            {right.map((t, i) => tab(t, i + 3))}
+            {all.map((t, i) => tab(t, i))}
           </ul>
           {enabled ? (
             <div ref={lensRef} className="y2-lens" aria-hidden="true">
@@ -254,6 +264,7 @@ export function TabBar({ user }) {
             </div>
           ) : null}
         </div>
+        <AtlasFab />
       </nav>
       {/* one sheet for both layouts (the tab bar is mounted at every width, hidden by CSS on desktop) */}
       <MoreSheetHost user={user} />
