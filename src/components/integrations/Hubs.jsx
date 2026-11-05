@@ -11,7 +11,7 @@ import BrandTile from './BrandTile';
 import { CATEGORIES, STATUS_LABEL, matches } from './catalog';
 import './hub.css';
 
-const ACTION = { connected: 'פתיחה', live: 'פתיחה', ready: 'חיבור', soon: 'פרטים', meta: 'פרטים', request: 'פרטים' };
+const ACTION = { connected: 'פתיחה', live: 'פתיחה', ready: 'חברו עכשיו', soon: 'פרטים', meta: 'פרטים', request: 'פרטים' };
 
 function Pill({ s }) {
   return <span className={`ih-pill is-${s}`}>{s === 'connected' ? <Check strokeWidth={2.5} aria-hidden /> : null}{STATUS_LABEL[s]}</span>;
@@ -113,7 +113,7 @@ function RowB({ it, onOpen }) {
           <span>{it.gain}</span>
         </span>
         <span className="ih-row-end">
-          <Pill s={it.s} />
+          {it.s !== 'ready' ? <Pill s={it.s} /> : null}
           <span className={`ih-act ${it.s === 'ready' ? 'is-primary' : ''}`}>{ACTION[it.s]}<ChevronLeft strokeWidth={2} aria-hidden /></span>
         </span>
       </button>
