@@ -6,6 +6,7 @@
  * Calm on purpose (brand/atlas-brand.md): white surfaces, navy text, indigo only for the primary action.
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { LifeBuoy, X, Headset, ArrowUp, Clock, SquarePen, ChevronLeft, ThumbsUp, ThumbsDown, WifiOff, RotateCw, MessageCircle, ArrowUpLeft } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
@@ -176,7 +177,12 @@ export default function SupportWidget() {
     }, 0);
   }, []);
   // opened from the navigation (openHelp)
-  useEffect(() => onHelpOpen(({ opener }) => { openerRef.current = opener || null; setOpen(true); setView('chat'); }), []);
+  // panel is portalled to <body> so it also opens above full-screen sheets (channels wizard) that call openHelp({ text })
+  const prefillRef = useRef('');
+  useEffect(() => onHelpOpen(({ opener, text }) => {
+    openerRef.current = opener || null; setOpen(true); setView('chat');
+    if (text) setDraft((d) => { const keep = d && d !== prefillRef.current; prefillRef.current = text; return keep ? d : text; });
+  }), []);
   useEffect(() => { reportHelpUnread(unread); }, [unread]);
   useEffect(() => {
     if (!open) return undefined;
@@ -263,7 +269,7 @@ export default function SupportWidget() {
     <>
       {/* no floating launcher (APP-020): help opens from the navigation via openHelp() */}
 
-      {open ? (
+      {open ? createPortal(
         <section id="atlas-support" className={`sp-panel ${isDesktop ? 'sp-panel--desk' : 'sp-panel--sheet'}`} role="dialog" aria-modal={!isDesktop} aria-labelledby="sp-title" dir="rtl">
           <header className="sp-head">
             <div className="sp-head-row">
@@ -381,7 +387,7 @@ export default function SupportWidget() {
             </form>
           ) : null}
         </section>
-      ) : null}
+      , document.body) : null}
     </>
   );
 }

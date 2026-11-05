@@ -22,7 +22,8 @@ function useIlHolidays() {
         .select('day, kind, title_he, title_en, yomtov')
         .eq('kind', 'holiday').gte('day', `${y - 1}-01-01`).lte('day', `${y + 1}-12-31`).order('day');
       if (error) throw error;
-      return data || [];
+      // DATA-1 (05.11.2026): Hebcal writes the Hebrew maqaf (U+05BE), which Heebo draws almost invisible ("יום בןגוריון").
+      return (data || []).map((r) => (r.title_he ? { ...r, title_he: r.title_he.replace(/\u05BE/g, '-') } : r));
     },
   });
 }

@@ -12,9 +12,10 @@ const OPEN = 'atlas:help-open';
 const UNREAD = 'atlas:help-unread';
 let lastUnread = 0;
 
-export function openHelp() {
+/** `text` (optional) is put in the chat box, ready to send; the user still presses send. */
+export function openHelp({ text = '' } = {}) {
   const opener = typeof document !== 'undefined' ? document.activeElement : null;
-  window.dispatchEvent(new CustomEvent(OPEN, { detail: { opener } }));
+  window.dispatchEvent(new CustomEvent(OPEN, { detail: { opener, text: typeof text === 'string' ? text : '' } }));
 }
 
 export function onHelpOpen(fn) {

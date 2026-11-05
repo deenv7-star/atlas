@@ -77,7 +77,7 @@ export async function refreshIlCalendar(db: SupabaseClient, force = false) {
       day: String(it.date).slice(0, 10),
       kind: it.category,
       title_en: it.category === "holiday" ? it.title : it.category,
-      title_he: it.hebrew || null,
+      title_he: it.hebrew ? it.hebrew.replace(/\u05BE/g, "-") : null, // DATA-1: maqaf renders invisible in Heebo
       subcat: it.subcat || null,
       yomtov: !!it.yomtov,
       price_relevant: it.category === "holiday" ? priceRelevant(it) : false,

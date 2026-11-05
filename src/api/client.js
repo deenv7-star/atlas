@@ -940,7 +940,10 @@ const integrations = {
       if (isSupabaseConfigured) {
         // Upload to Supabase Storage
         const ext      = file.name?.split('.').pop() || 'bin';
-        const path     = `uploads/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+        // SEC-5 (05.11.2026): the bucket only accepts paths under the caller's own org folder (<org_id>/...).
+        const orgId    = await getCurrentOrgId();
+        if (!orgId) throw new Error('לא הצלחנו להעלות את הקובץ. התחברו מחדש ונסו שוב.');
+        const path     = `${orgId}/uploads/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
         const { data, error } = await supabase.storage.from('atlas-files').upload(path, file);
         if (error) throw new Error(error.message);
         const { data: { publicUrl } } = supabase.storage.from('atlas-files').getPublicUrl(data.path);
