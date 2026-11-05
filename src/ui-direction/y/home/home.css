@@ -42,3 +42,5 @@
 /* WCAG AA over the hills photo and the frosted cards (05.11.2026 release QA): quiet text is navy at 80%, never lighter */
 .y2.hv .y2-nc:not(.is-hot) :is(.y2-nc-k, .y2-nc-s) { color: rgba(27,38,86,.8); }
 .y2.hv .y2-nc.is-hot .y2-nc-s { color: rgba(255,255,255,.88); }
+.y2.hv .y3j-steps li:not(.ok):not(.cur) { color: rgba(255,255,255,.72); }
+.y2.hv .hv6-dock.is-steps .hv6-di.is-next .hv6-dl { color: rgba(255,255,255,.92); }
