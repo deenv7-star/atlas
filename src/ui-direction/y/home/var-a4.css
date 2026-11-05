@@ -36,3 +36,13 @@
 .hv4-steps li.is-next { color: #1B2656; font-weight: 600; } .hv4-steps li.is-next i { box-shadow: inset 0 0 0 2px #3E2BF1; color: #3E2BF1; }
 .hv4.is-empty .hv4-s { font-size: 19px; }
 @media (min-width: 1024px) { .hv4.is-empty .hv4-s { font-size: 24px; } }
+/* desktop (05.11.2026): the sentence uses the card's width instead of a narrow 30ch column; the card is a flex
+   column so the horizon always sits on its bottom edge, also when the empty card stretches to the side column */
+@media (min-width: 1024px) {
+  .hv4 { display: flex; flex-direction: column; gap: 22px; padding: 34px 40px 0; }
+  .hv4-s { font-size: clamp(28px, 2.1vw, 36px); max-width: 34ch; }
+  .hv4.is-empty .hv4-s { font-size: clamp(24px, 1.8vw, 30px); max-width: 36ch; }
+  .hv4-hz { margin: auto -40px 0; width: calc(100% + 80px); }
+  .hv4-hz-k { inset-inline-start: 40px; }
+}
+@media (min-width: 1600px) { .hv4 { padding: 44px 52px 0; } .hv4-hz { margin: auto -52px 0; width: calc(100% + 104px); height: 130px; } .hv4-hz svg { height: 130px; } }

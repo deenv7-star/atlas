@@ -52,3 +52,18 @@
   .y2.hv .y2-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .y2.hv .y2-tile--ring { display: flex; }
 }
+
+/* ── desktop layout (05.11.2026, Deen: "on desktop it looks bad"). The greeting is its own full-width row; the main
+   column and the side column start on one line under it; the page widens on big screens instead of floating in the
+   middle; on an empty account the first card stretches to the side column's height, so nothing hangs in the air. ── */
+@media (max-width: 1023px) { .y2.hv .y2-hello { order: -1; } }
+@media (min-width: 1024px) {
+  .y2.hv .y2-win { grid-template-columns: minmax(0, 1fr) 340px; column-gap: 24px; row-gap: 18px; align-items: stretch; }
+  .y2.hv .y2-hello { grid-column: 1 / -1; padding: 6px 8px 0; align-items: center; }
+  .y2.hv .y2-main { grid-column: 1; padding: 0; }
+  .y2.hv .y2-side { grid-column: 2; }
+  .y2.hv.hv-empty .y2-main > section[class^="hv"] { flex: 1 1 auto; }
+  .y2.hv.hv-empty .y2-side { align-self: stretch; }
+}
+@media (min-width: 1280px) { .y2.hv .y2-win { grid-template-columns: minmax(0, 1fr) 360px; column-gap: 28px; } }
+@media (min-width: 1600px) { .y2.hv { max-width: 1520px; } .y2.hv .y2-win { grid-template-columns: minmax(0, 1fr) 380px; column-gap: 32px; row-gap: 22px; } }

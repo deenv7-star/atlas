@@ -147,17 +147,18 @@ export default function DashboardView({ user, orgId }) {
     <MotionConfig reducedMotion="user">
     <div className={cn('y2 hv', `hv-${HOME_VAR}`, noBookings && 'hv-empty')} dir="rtl">
       <motion.div className="y2-win" {...rise(0)}>
-        <div className="y2-main">
-          <div className="y2-hello">
-            <div>
-              <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
-              <p className="y2-sub">{formatDayHe(m.day)}{boardKnown && !noBookings ? ` · ${arrivals.length} מגיעים, ${departures.length} יוצאים` : ''}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
-            </div>
-            {noUnits || !boardKnown ? null : (
-              <button type="button" className="y2-hello-chip press" aria-haspopup="dialog" onClick={() => setTileSheet('day')}><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'אין משימות להיום'}</button>
-            )}
+        {/* home/var desktop (05.11.2026): the greeting is the full-width first row, so the side column and the first card share one top edge */}
+        <div className="y2-hello">
+          <div>
+            <h1 className="y2-h1">{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
+            <p className="y2-sub">{formatDayHe(m.day)}{boardKnown && !noBookings ? ` · ${arrivals.length} מגיעים, ${departures.length} יוצאים` : ''}<StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
           </div>
+          {noUnits || !boardKnown ? null : (
+            <button type="button" className="y2-hello-chip press" aria-haspopup="dialog" onClick={() => setTileSheet('day')}><i aria-hidden />{m.queue.length ? (m.queue.length === 1 ? 'דבר אחד מחכה לכם' : `${m.queue.length} דברים מחכים לכם`) : 'אין משימות להיום'}</button>
+          )}
+        </div>
 
+        <div className="y2-main">
           {m.paymentsState === 'error' ? <MoneyLoadBanner onRetry={m.retryLoad} /> : null}
 
           {/* 0 units: one way in, the import card (ייבוא מתחם → /import); manual setup stays inside /import */}
