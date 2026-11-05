@@ -11,6 +11,8 @@
 .hv6-top { position: relative; z-index: 1; pointer-events: none; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .hv6-k { margin: 0; font-size: 14px; font-weight: 700; color: #3E2BF1; letter-spacing: .01em; }
 .hv6-big { margin: 2px 0 0; display: flex; align-items: baseline; gap: 10px; font-size: 64px; line-height: 1; font-weight: 800; letter-spacing: -.055em; color: #1B2656; font-variant-numeric: tabular-nums; }
+.hv6-amt { display: inline-flex; align-items: baseline; }
+.hv6-cur { font-size: .46em; font-weight: 600; letter-spacing: 0; margin-inline-end: .12em; color: rgba(27,38,86,.72); }
 .hv6-big small { font-size: 22px; font-weight: 600; letter-spacing: -.01em; color: rgba(27,38,86,.8); }
 .hv6-sub { margin: 8px 0 0; font-size: 15px; line-height: 1.45; color: rgba(27,38,86,.8); text-wrap: pretty; }
 .hv6-cmp { margin: 4px 0 0; flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; padding: 8px 12px; border-radius: 16px; background: rgba(27,38,86,.05); }

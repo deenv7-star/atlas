@@ -1,164 +1,31 @@
-// Inspired by react-hot-toast library
-import { useState, useEffect } from "react";
+/**
+ * Legacy shadcn-style `toast({ title, description, variant })` API, kept for the pages that still call it
+ * (Payments, Messages, Reviews, Settings).
+ *
+ * Deen 05.11.2026: "התשלום נשמר" toasts stayed on screen forever, the X did nothing, and a second save stacked a
+ * second identical toast. Root cause: this file used to drive its own toast list rendered by a second <Toaster/>
+ * built from plain <div>s (not Radix): no auto-dismiss timer (TOAST_REMOVE_DELAY 1,000,000 ms, `open` and
+ * `onOpenChange` were spread onto a div and never fired), and the close button had no onClick at all.
+ *
+ * Now there is ONE toaster in the app (AtlasToaster / sonner). This adapter forwards to atlasToastApi, which gives
+ * every toast a timer, a working 44px close button, and dedupes identical messages by id.
+ */
+import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
 
-const TOAST_LIMIT = 20;
-const TOAST_REMOVE_DELAY = 1000000;
+const text = (v) => (typeof v === 'string' ? v : v == null ? '' : String(v));
 
-const actionTypes = {
-  ADD_TOAST: "ADD_TOAST",
-  UPDATE_TOAST: "UPDATE_TOAST",
-  DISMISS_TOAST: "DISMISS_TOAST",
-  REMOVE_TOAST: "REMOVE_TOAST",
-};
-
-let count = 0;
-
-function genId() {
-  count = (count + 1) % Number.MAX_VALUE;
-  return count.toString();
-}
-
-const toastTimeouts = new Map();
-
-const addToRemoveQueue = (toastId) => {
-  if (toastTimeouts.has(toastId)) {
-    return;
-  }
-
-  const timeout = setTimeout(() => {
-    toastTimeouts.delete(toastId);
-    dispatch({
-      type: actionTypes.REMOVE_TOAST,
-      toastId,
-    });
-  }, TOAST_REMOVE_DELAY);
-
-  toastTimeouts.set(toastId, timeout);
-};
-
-const _clearFromRemoveQueue = (toastId) => {
-  const timeout = toastTimeouts.get(toastId);
-  if (timeout) {
-    clearTimeout(timeout);
-    toastTimeouts.delete(toastId);
-  }
-};
-
-export const reducer = (state, action) => {
-  switch (action.type) {
-    case actionTypes.ADD_TOAST:
-      return {
-        ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
-      };
-
-    case actionTypes.UPDATE_TOAST:
-      return {
-        ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === action.toast.id ? { ...t, ...action.toast } : t
-        ),
-      };
-
-    case actionTypes.DISMISS_TOAST: {
-      const { toastId } = action;
-
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
-      if (toastId) {
-        addToRemoveQueue(toastId);
-      } else {
-        state.toasts.forEach((toast) => {
-          addToRemoveQueue(toast.id);
-        });
-      }
-
-      return {
-        ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === toastId || toastId === undefined
-            ? {
-                ...t,
-                open: false,
-              }
-            : t
-        ),
-      };
-    }
-    case actionTypes.REMOVE_TOAST:
-      if (action.toastId === undefined) {
-        return {
-          ...state,
-          toasts: [],
-        };
-      }
-      return {
-        ...state,
-        toasts: state.toasts.filter((t) => t.id !== action.toastId),
-      };
-  }
-};
-
-const listeners = [];
-
-let memoryState = { toasts: [] };
-
-function dispatch(action) {
-  memoryState = reducer(memoryState, action);
-  listeners.forEach((listener) => {
-    listener(memoryState);
-  });
-}
-
-function toast({ ...props }) {
-  const id = genId();
-
-  const update = (props) =>
-    dispatch({
-      type: actionTypes.UPDATE_TOAST,
-      toast: { ...props, id },
-    });
-
-  const dismiss = () =>
-    dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id });
-
-  dispatch({
-    type: actionTypes.ADD_TOAST,
-    toast: {
-      ...props,
-      id,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss();
-      },
-    },
-  });
-
-  return {
-    id,
-    dismiss,
-    update,
-  };
+function toast({ title, description, variant } = {}) {
+  const message = text(title) || text(description);
+  const desc = title && description ? text(description) : undefined;
+  if (!message) return { id: null, dismiss: () => {}, update: () => {} };
+  const id = variant === 'destructive'
+    ? atlasToastApi.error(message, undefined, { description: desc })
+    : atlasToastApi.success(message, { description: desc });
+  return { id, dismiss: () => atlasToastApi.dismiss(id), update: () => {} };
 }
 
 function useToast() {
-  const [state, setState] = useState(memoryState);
-
-  useEffect(() => {
-    listeners.push(setState);
-    return () => {
-      const index = listeners.indexOf(setState);
-      if (index > -1) {
-        listeners.splice(index, 1);
-      }
-    };
-  }, [state]);
-
-  return {
-    ...state,
-    toast,
-    dismiss: (toastId) => dispatch({ type: actionTypes.DISMISS_TOAST, toastId }),
-  };
+  return { toasts: [], toast, dismiss: (id) => atlasToastApi.dismiss(id) };
 }
 
-export { useToast, toast }; 
+export { useToast, toast };

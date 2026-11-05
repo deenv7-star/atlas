@@ -8,8 +8,12 @@ import '@/styles/atlas-brand.css';
 
 export function StayPage({ children, className, wide = false }) {
   return (
-    <div dir="rtl" className={cn('ab-root ab-canvas min-h-full', className)}>
-      <div className={cn('mx-auto px-5 pb-16 pt-3 md:px-10 md:pt-5', wide ? 'max-w-[var(--page-max,1200px)]' : 'max-w-[960px]')}>{children}</div>
+    // Deen 05.11.2026 (כסף → יתרות): `ab-canvas` painted an opaque #F7F8FB block over the shell's photo background,
+    // only as tall as the content and only as wide as the main column, so photo strips showed around it. Money pages
+    // built on <Page> (תשלומים, הוצאות) are transparent. StayPage now matches <Page>: no own background, same widths,
+    // so every money tab sits on the same backdrop at the same width.
+    <div dir="rtl" className={cn('ab-root', className)}>
+      <div className={cn('mx-auto w-full px-5 pb-16 pt-3 md:px-10 md:pt-5', wide ? 'max-w-[1400px]' : 'max-w-[var(--page-max,1200px)]')}>{children}</div>
     </div>
   );
 }
