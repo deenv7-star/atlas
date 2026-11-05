@@ -19,8 +19,9 @@ export function profileView(p, s = {}) {
     where: { address: clip(loc.address, 140), locality: clip(loc.locality, 40), region: clip(loc.region, 40) },
     directions: clip(p.directions, 500),
     parking: clip(p.parking, 200),
-    check_in: s.check_in_time || p.check_in_time || null,
-    check_out: s.check_out_time || p.check_out_time || null,
+    // audit 05.11 AI-1: same defaults the app shows on the booking page (15:00 / 11:00) when the owner set none
+    check_in: s.check_in_time || p.check_in_time || '15:00 (ברירת המחדל באפליקציה)',
+    check_out: s.check_out_time || p.check_out_time || '11:00 (ברירת המחדל באפליקציה)',
     saturday_checkout: clip(p.saturday_checkout, 120),
     arrival_instructions: clip(p.arrival_instructions, 500),
     house_rules: list(p.house_rules, 12),

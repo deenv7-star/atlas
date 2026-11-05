@@ -279,7 +279,7 @@ const EXEC = {
       units: units.map((u) => ({ name: u.name, base_price: u.base_price, max_guests: u.max_guests })),
       calendar_channels: syncs.map((c) => ({ unit: names.get(c.property_id) || '', provider: c.provider, active: !!c.is_active, status: c.sync_status || null, last_ok: c.last_success_at || null, error: c.error_message ? clip(c.error_message, 80) : null })),
       guest_messages_on: rules.filter((r) => r.is_active).map((r) => clip(r.name || r.trigger, 50)),
-      check_in_time: s.check_in_time || s.checkin_time || null, check_out_time: s.check_out_time || s.checkout_time || null,
+      check_in_time: s.check_in_time || s.checkin_time || '15:00 (ברירת המחדל באפליקציה)', check_out_time: s.check_out_time || s.checkout_time || '11:00 (ברירת המחדל באפליקציה)', // AI-1
     };
   },
 
