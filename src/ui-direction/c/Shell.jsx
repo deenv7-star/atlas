@@ -201,7 +201,7 @@ export function Header({ user, currentPageName, selectedPropertyId, onPropertyCh
           <UnitSwitcher properties={properties} selectedPropertyId={selectedPropertyId} onPropertyChange={onPropertyChange} />
         </div>
         <AskAtlasButton />
-        <IconButton as={Link} to={createPageUrl('Messages')} label="הודעות" className="ring-0">
+        <IconButton as={Link} to={createPageUrl('Leads')} label="שיחות" className="ring-0">
           <Bell strokeWidth={1.75} />
         </IconButton>
         <IconButton as={Link} to={createPageUrl('Settings')} label="הגדרות" className="hidden ring-0 lg:inline-flex">
@@ -228,7 +228,7 @@ export function Header({ user, currentPageName, selectedPropertyId, onPropertyCh
 const TABS = [
   { page: 'Dashboard', label: 'היום', icon: 'today', also: ['Today'] },
   { page: 'MultiCalendar', label: 'יומן', icon: 'calendar' },
-  { page: 'Leads', label: 'פניות', icon: 'inbox' },
+  { page: 'Leads', label: 'שיחות', icon: 'inbox' },
   { page: 'Payments', label: 'כסף', icon: 'coin' },
 ];
 

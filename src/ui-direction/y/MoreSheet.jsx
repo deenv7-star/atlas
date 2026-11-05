@@ -24,7 +24,7 @@ const ALIASES = {
   ExpenseTracker: 'הוצאות',
   Invoices: 'קבלות חשבוניות מסמכים',
   Bookings: 'הזמנה אורחים',
-  Messages: 'וואטסאפ הודעות',
+  Leads: 'פניות הודעות וואטסאפ אורחים',
   Settings: 'יחידות פרטים הגדרות',
   Integrations: 'booking airbnb ערוצים סנכרון',
   Cleaning: 'ניקיון מנקה',
