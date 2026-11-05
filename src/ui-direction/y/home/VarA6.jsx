@@ -52,7 +52,7 @@ function DaySentence({ m, arrivals, departures, dueCount, onTile }) {
       {a || dd ? (
         <>
           <span className="hv6-nw">היום{NB}<Tok onClick={() => onTile('arrivals')} label={`מגיעים היום: ${a}. פירוט`}>{a}</Tok>
-            {a ? <FaceStack names={arrivals.map((x) => x.booking.guest_name || '')} size={28} max={3} className="hv6-sfaces" /> : null}
+            {a ? <FaceStack names={arrivals.map((x) => x.booking.guest_name || '').filter((n) => n.trim())} size={28} max={3} className="hv6-sfaces" /> : null}
             {NB}{one(a, 'הגעה', 'הגעות')}</span>{' '}
           <span className="hv6-nw">ו־<Tok tight onClick={() => onTile('arrivals')} label={`יוצאים היום: ${dd}. פירוט`}>{dd}</Tok>{NB}{one(dd, 'יציאה', 'יציאות')}.</span>
         </>

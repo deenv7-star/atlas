@@ -42,7 +42,7 @@ function Sentence({ arrivals, departures, onTile, tasks = 0 }) {
       {a || d ? (
         <>
           <span className="hm-nw">היום{NB}<N onClick={() => onTile('arrivals')} label={`מגיעים היום: ${a}. פירוט`}>{a}</N>
-            {a ? <FaceStack names={arrivals.map((x) => x.booking.guest_name || '')} size={24} max={3} className="hm-faces" /> : null}
+            {a ? <FaceStack names={arrivals.map((x) => x.booking.guest_name || '').filter((n) => n.trim())} size={24} max={3} className="hm-faces" /> : null}
             {NB}{one(a, 'הגעה', 'הגעות')}</span>{' '}
           <span className="hm-nw">ו־<N tight onClick={() => onTile('arrivals')} label={`יוצאים היום: ${d}. פירוט`}>{d}</N>{NB}{one(d, 'יציאה', 'יציאות')}.</span>
         </>
