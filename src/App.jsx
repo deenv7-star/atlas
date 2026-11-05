@@ -1,7 +1,8 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { useOptimisticConflictModalState } from '@/lib/optimistic/conflictModalState';
-import { preloadForInitialRoute } from '@/lib/appPreload';
+import { preloadForInitialRoute, prefetchDataForInitialRoute } from '@/lib/appPreload';
+import { BootDone, hideBoot } from '@/lib/boot';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AtlasToaster } from '@/components/ui/AtlasToast';
 import { QueryClientProvider } from '@tanstack/react-query'
@@ -25,6 +26,7 @@ import { isNativeApp } from '@/lib/nativePlatform';
 // Stored session, network down on the first load: offline screen with retry (audit 04.11), never /login.
 // Static import: when the network is down a lazy chunk may not load either.
 import OfflineAuthScreen from '@/components/common/OfflineAuthScreen';
+import AppFallback from '@/components/common/AppFallback';
 // Code-split: the landing page should not download the app shell or the auth screens.
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
@@ -62,6 +64,8 @@ const { Pages } = pagesConfig;
 
 // Signed-in owner reloading an app screen: fetch the shell + that screen's code now, in parallel with auth.
 preloadForInitialRoute();
+// …and Today's data: its queries start as soon as the session is restored, not after the Today screen has mounted.
+prefetchDataForInitialRoute(queryClientInstance);
 
 // The 409 conflict dialog (and its animation library) is only downloaded the first time it is needed.
 const OptimisticConflictModal = lazy(() => import('@/components/common/OptimisticConflictModal').then((m) => ({ default: m.OptimisticConflictModal })));
@@ -105,40 +109,14 @@ function LockCover() {
   return <div aria-hidden className="fixed inset-0 z-[2147483000]" style={{ background: '#1B2656' }} />;
 }
 
-/**
- * Audit 04.11 #9 / m15: while the shell or the session loads, show the shape of the app (top bar, title,
- * cards, tab bar) instead of a lone spinner on a blank canvas. Static, so it is also calm with reduced motion.
- */
-function AppFallback() {
-  const bar = { background: '#E8EAF1' };
-  return (
-    <div className="fixed inset-0 overflow-hidden" style={{ background: '#F7F8FB' }} role="status" aria-busy="true" aria-label="טוען" dir="rtl">
-      <div className="flex h-16 items-center justify-between px-5">
-        <span className="h-[22px] w-[76px] rounded-lg" style={bar} />
-        <span className="h-10 w-10 rounded-full" style={bar} />
-      </div>
-      <div className="mx-auto w-full max-w-[1200px] px-5 pt-2.5">
-        <div className="h-[30px] w-[58%] max-w-[320px] rounded-[10px]" style={bar} />
-        <div className="mt-3 h-3.5 w-[82%] max-w-[440px] rounded-md" style={{ background: '#EEF0F5' }} />
-        <div className="mt-[22px] grid grid-cols-2 gap-2.5 lg:grid-cols-3">
-          <div className="h-28 rounded-[24px] bg-white" />
-          <div className="h-28 rounded-[24px] bg-white" />
-          <div className="hidden h-28 rounded-[24px] bg-white lg:block" />
-        </div>
-        <div className="mt-3 h-[220px] rounded-[24px] bg-white" />
-      </div>
-      <div className="absolute inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] h-16 rounded-[28px] bg-white/90 shadow-[0_8px_24px_-12px_rgba(27,38,86,.25)] lg:hidden" />
-    </div>
-  );
-}
-
 /** Public pages render bare (lazy page + Suspense); app pages load the shell lazily. */
 const LayoutWrapper = ({ children, currentPageName }) => (
   PUBLIC_LAYOUT_PAGES.has(currentPageName)
-    ? <Suspense fallback={<PublicFallback />}>{children}</Suspense>
+    ? <Suspense fallback={<PublicFallback />}>{children}<BootDone /></Suspense>
     : <Suspense fallback={<AppFallback />}><AppLayout currentPageName={currentPageName}>{children}</AppLayout></Suspense>
 );
-const S = ({ children }) => <Suspense fallback={<PublicFallback />}>{children}</Suspense>;
+/** Full-screen page: its own Suspense; the boot overlay leaves once it has rendered (src/lib/boot.js). */
+const S = ({ children }) => <Suspense fallback={<PublicFallback />}>{children}<BootDone /></Suspense>;
 
 // Fallback when DB update failed: allow through if user just completed onboarding (localStorage flag)
 function hasOnboardingBypass(user) {
@@ -157,7 +135,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = f
   const { isLoadingAuth, isAuthenticated, user, authOffline, retryAuth } = useAuth();
   if (isLoadingAuth) return <AppFallback />;
   if (!isAuthenticated && authOffline) {
-    return <OfflineAuthScreen onRetry={retryAuth} />;
+    return <><OfflineAuthScreen onRetry={retryAuth} /><BootDone /></>;
   }
   if (!isAuthenticated) {
     const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
@@ -180,7 +158,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = f
 function BillingWhileLocked() {
   const { user } = useAuth();
   if (isNativeApp()) return <Paywall />;
-  return <LockedFrame><Suspense fallback={<AppFallback />}><Pages.Billing user={user} /></Suspense></LockedFrame>;
+  return <LockedFrame><Suspense fallback={<AppFallback />}><Pages.Billing user={user} /><BootDone /></Suspense></LockedFrame>;
 }
 
 /** Signed-in / iOS 404: what happened + one way back, never the marketing 404 with pricing links (ecosystem v1 #24). */
@@ -204,7 +182,7 @@ function NotFoundRoute({ isAuthenticated }) {
   const loc = useLocation();
   const to = canonicalPathFor(loc.pathname, loc.search, loc.hash);
   if (to) return <Navigate to={to} replace />;
-  if (isNativeApp() && !isAuthenticated) return <div style={{ background: '#F7F8FB', minHeight: '100dvh' }}><AppNotFound /></div>;
+  if (isNativeApp() && !isAuthenticated) return <div style={{ background: '#F7F8FB', minHeight: '100dvh' }}><AppNotFound /><BootDone /></div>;
   if (isAuthenticated || isNativeApp()) return <LayoutWrapper currentPageName="NotFound"><AppNotFound /></LayoutWrapper>;
   return <S><SiteNotFound /></S>;
 }
@@ -266,10 +244,10 @@ const AuthenticatedApp = () => {
       <Route path="/pricing" element={isNativeApp() ? <Navigate to="/login" replace /> : <LayoutWrapper currentPageName="PricingPlans"><Pages.PricingPlans /></LayoutWrapper>} />
 
       {/* Public guest page per booking + direct-booking page per property (no login) */}
-      <Route path="/g/:token" element={<Suspense fallback={<PublicFallback />}><GuestStayPage /></Suspense>} />
-      <Route path="/book/:slug" element={<Suspense fallback={<PublicFallback />}><BookDirectPage /></Suspense>} />
+      <Route path="/g/:token" element={<Suspense fallback={<PublicFallback />}><GuestStayPage /><BootDone /></Suspense>} />
+      <Route path="/book/:slug" element={<Suspense fallback={<PublicFallback />}><BookDirectPage /><BootDone /></Suspense>} />
       {/* Print / PDF view of the monthly accountant report (no app chrome) */}
-      <Route path="/monthly-report/print" element={<ProtectedRoute><Suspense fallback={<PublicFallback />}><MonthlyReportPrintPage /></Suspense></ProtectedRoute>} />
+      <Route path="/monthly-report/print" element={<ProtectedRoute><Suspense fallback={<PublicFallback />}><MonthlyReportPrintPage /><BootDone /></Suspense></ProtectedRoute>} />
 
       {/* Onboarding — requires auth but NOT onboarding_completed (user lands here after verification) */}
       <Route
@@ -329,7 +307,7 @@ const AuthenticatedApp = () => {
       {/* While locked, /subscription IS the paywall (plan choice + request; no purchase UI in the iOS app). */}
       <Route path="/subscription" element={<ProtectedRoute requireOnboarding={false} allowSuspended lockedRender={<Paywall />}>{isNativeApp() ? <Navigate to="/settings" replace /> : <LayoutWrapper currentPageName="Subscription"><Pages.Subscription /></LayoutWrapper>}</ProtectedRoute>} />
       {/* Platform admin console. Access is checked server-side (admin_whoami + every admin_* RPC). */}
-      <Route path="/admin/*" element={<Suspense fallback={<PublicFallback />}><AdminRoot /></Suspense>} />
+      <Route path="/admin/*" element={<Suspense fallback={<PublicFallback />}><AdminRoot /><BootDone /></Suspense>} />
       <Route path="/platform-admin" element={<Navigate to="/admin" replace />} />
       {/* Legacy routes — redirect to canonical lowercase paths */}
       {/* caseSensitive is required: React Router matches case-insensitively by default,
@@ -395,7 +373,7 @@ const AuthenticatedApp = () => {
  * which serves "/" and /pricing (lean public pages) without this module. Every other URL renders this, lazily.
  */
 function App() {
-  if (!isProductionBackendConfigured()) return <BackendNotConfigured />;
+  if (!isProductionBackendConfigured()) { hideBoot(); return <BackendNotConfigured />; }
   return (
     <GlobalErrorBoundary>
       <AuthProvider>

@@ -12,6 +12,7 @@ import { Sidebar, Header, TabBar, shellClass } from '@/ui-direction';
 import TourHost from '@/components/tour/TourHost';
 import { prefetchMainPagesWhenIdle } from '@/lib/appPreload';
 import { useAssistantOpen } from '@/assistant/launcher';
+import { useBootDone } from '@/lib/boot';
 
 // Help bot + human handoff (supabase/functions/support-chat). Lazy: not part of the first paint.
 const SupportWidget = React.lazy(() => import('@/support/SupportWidget'));
@@ -58,6 +59,21 @@ function LayoutContent({ children, currentPageName }) {
     const id = ric(() => setPaletteReady(true), { timeout: 3000 });
     return () => cancel(id);
   }, [commandPaletteOpen, paletteReady]);
+  // perf/cold-start: the help bot (its code + a support query) is not part of the first paint either; it mounts
+  // once the browser is idle after the shell is up.
+  const [supportReady, setSupportReady] = useState(false);
+  useEffect(() => {
+    if (supportReady) return undefined;
+    const ric = window.requestIdleCallback || ((cb) => window.setTimeout(cb, 2500));
+    const cancel = window.cancelIdleCallback || window.clearTimeout;
+    const id = ric(() => setSupportReady(true), { timeout: 4000 });
+    // a help button tapped before that: mount now and open once it is up (SupportWidget reads the flag)
+    const early = () => { window.__atlasSupportPending = true; setSupportReady(true); };
+    window.addEventListener('atlas:open-support', early);
+    return () => { cancel(id); window.removeEventListener('atlas:open-support', early); };
+  }, [supportReady]);
+  // The shell is on screen: the branded boot overlay leaves now (src/lib/boot.js).
+  useBootDone();
   const queryClient = useQueryClient();
   const orgId = user?.organization_id ?? user?.org_id ?? null;
 
@@ -144,7 +160,7 @@ function LayoutContent({ children, currentPageName }) {
             <TabBar user={user} onLogout={handleLogout} />
           </div>
           <ErrorBoundary section="support-widget" variant="silent">
-            <Suspense fallback={null}><SupportWidget /></Suspense>
+            {supportReady ? <Suspense fallback={null}><SupportWidget /></Suspense> : null}
           </ErrorBoundary>
           {assistant.mounted ? (
             <ErrorBoundary section="assistant-panel" variant="silent">

@@ -35,3 +35,12 @@ export function offlineAccess(access, last) {
   const state = last?.state && last.state !== 'expired' ? last.state : (access.state === 'expired' ? 'grace' : access.state);
   return { ...access, state, locked: false, isAdmin: Boolean(last?.isAdmin) || access.isAdmin, reason: '' };
 }
+
+/**
+ * perf/cold-start: while the platform-admin lookup for an expired account is still running, may the app open from
+ * what this device last saw? Only when that was this same account (readLastAccess checks the uid), open, as staff.
+ * A trial user whose trial has since ended is never opened early.
+ */
+export function trustLastStaffAccess(last) {
+  return Boolean(last && last.locked === false && last.isAdmin === true);
+}

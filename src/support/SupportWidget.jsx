@@ -201,6 +201,8 @@ export default function SupportWidget() {
   // screens that hide the floating launcher (phone Today) open help from an in-page button
   useEffect(() => {
     const onOpen = () => { setOpen(true); setView('chat'); };
+    // asked for before this widget had mounted (it mounts when the browser is idle, src/Layout.jsx)
+    if (window.__atlasSupportPending) { window.__atlasSupportPending = false; onOpen(); }
     window.addEventListener('atlas:open-support', onOpen);
     return () => window.removeEventListener('atlas:open-support', onOpen);
   }, []);

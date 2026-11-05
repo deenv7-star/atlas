@@ -3,15 +3,13 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useAccess } from '@/hooks/useAccess';
 import BrandWordmark from '@/components/common/BrandWordmark';
+import AppFallback from '@/components/common/AppFallback';
 
 const TrialPaywall = lazy(() => import('./TrialPaywall'));
 
+/** perf/cold-start: never a bare spinner on a blank canvas. While access is decided, the shape of the app. */
 function Wait() {
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#F7F8FB]" role="status" aria-label="טוען">
-      <div className="h-8 w-8 rounded-full border-[3px] border-[#E6E8F0] border-t-[#3E2BF1] motion-safe:animate-spin" />
-    </div>
-  );
+  return <AppFallback />;
 }
 
 export function Paywall(props) {

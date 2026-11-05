@@ -5,10 +5,12 @@ import { DEFER_CLASS, revealDeferredParts } from '@/lib/prerenderDefer'
 import '@/index.css'
 import '@/ui-direction/flag'
 import { registerServiceWorker } from '@/lib/swUpdate'
-import { isNativeApp, nativeStartRedirect } from '@/lib/native'
+import { isNativeApp, nativeStartRedirect, hasStoredSupabaseSession } from '@/lib/native'
+import { liftBoot, hideBoot } from '@/lib/boot'
 
 // Minimal fallback when app crashes (no external deps)
 function CrashFallback({ error }) {
+  hideBoot()
   return (
     <div dir="rtl" style={{
       minHeight: '100vh', padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -24,7 +26,7 @@ function CrashFallback({ error }) {
 }
 
 // iOS app (Capacitor): never open on the marketing landing / pricing. Rewrite the first URL to /login before
-// anything reads it; /login sends a signed-in owner straight on to /dashboard (src/App.jsx).
+// anything reads it: with a stored session straight to /dashboard (Today), else /login (src/lib/native.js).
 const nativeStart = nativeStartRedirect()
 if (nativeStart) window.history.replaceState(null, '', nativeStart)
 if (isNativeApp()) document.documentElement.classList.add('atlas-native')
@@ -58,6 +60,15 @@ if (ssrEl) {
 const lean = isLeanUrl(window.location)
 if (!lean) loadFullApp()
 
+// perf/cold-start: a returning owner opening Today (also every iOS cold start with a stored session, see
+// nativeStartRedirect) gets the shell and Today's code requested now, in parallel with the app code, instead of
+// after App.jsx has loaded and auth has answered (entry → App → Layout → Dashboard was a 4-step waterfall).
+// Same modules as the lazy() imports in App.jsx / pages.config.js, so each is fetched once.
+if (!lean && /^\/dashboard\/?$/.test(window.location.pathname) && hasStoredSupabaseSession()) {
+  import('@/Layout.jsx').catch(() => {})
+  import('@/pages/Dashboard').catch(() => {})
+}
+
 // Sign-in screens: request the screen's own code together with the app code, not after the app has
 // rendered (entry → App → Login was a 3-step waterfall; Lighthouse mobile /login 66, LCP 5 s).
 // Same module as the lazy() in src/App.jsx, so it is fetched once and the route renders without waiting.
@@ -73,6 +84,9 @@ const hydrate = lean && rootEl.hasAttribute('data-hydrate')
 // The prerendered landing does not lay out its below-the-fold parts before hydration (src/lib/prerenderDefer.js).
 if (!hydrate) document.documentElement.classList.remove(DEFER_CLASS)
 if (!hydrate && rootEl.hasAttribute('data-hydrate')) rootEl.textContent = ''
+// The branded boot screen (index.html / app.html) becomes a fixed overlay above React: React renders the app under
+// it, and it leaves the moment a real screen is up (src/lib/boot.js). Its animation never restarts or waits.
+if (!hydrate && !ssrEl) liftBoot(rootEl)
 
 // PERF-002: a prerendered lean page inlines only the CSS its HTML uses (scripts/critical-css.mjs) and keeps the
 // full sheets linked but inert. Turn them on now (the browser fetches them, cached across pages and the app) and
