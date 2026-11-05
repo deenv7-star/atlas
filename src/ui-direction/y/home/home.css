@@ -38,3 +38,7 @@
   .y2.hv .y3-panel:not(.y3-panel--page) .y3j { grid-column: 1; grid-row: 2; margin: 0; }
   .y2.hv .y3-panel:not(.y3-panel--page) .y3j-steps li { white-space: normal; font-size: 12px !important; line-height: 1.25; text-wrap: balance; }
 }
+
+/* WCAG AA over the hills photo and the frosted cards (05.11.2026 release QA): quiet text is navy at 80%, never lighter */
+.y2.hv .y2-nc:not(.is-hot) :is(.y2-nc-k, .y2-nc-s) { color: rgba(27,38,86,.8); }
+.y2.hv .y2-nc.is-hot .y2-nc-s { color: rgba(255,255,255,.88); }
