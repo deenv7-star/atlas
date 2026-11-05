@@ -238,6 +238,23 @@ function chunkAssets(manifest, key) {
   return { css, js };
 }
 
+/* perf/cold-start: the app shell's and Today's chunk list, for src/main.jsx to modulepreload (download + compile,
+   no evaluation) at boot when a signed-in owner opens Today (also the iOS app's cold start). A <meta>, not an inline
+   script: the URLs change every build and inline scripts are pinned by hash in the CSP (scripts/check-csp.mjs). */
+function withTodayPreload(manifest, html) {
+  const files = [];
+  // src/Layout.jsx is a shared dynamic chunk in the manifest ("_Layout-<hash>.js", name "Layout"), not a src key
+  const layoutKey = manifest['src/Layout.jsx'] ? 'src/Layout.jsx'
+    : Object.keys(manifest).find((k) => manifest[k].name === 'Layout' && manifest[k].isDynamicEntry && k.endsWith('.js'));
+  for (const key of [layoutKey, 'src/pages/Dashboard.jsx']) {
+    const { css, js } = chunkAssets(manifest, key);
+    for (const f of [...js, ...css]) if (!files.includes(f)) files.push(f);
+  }
+  const out = html.replace('</head>', `    <meta name="atlas-today-preload" content="${files.join(' ')}" />\n  </head>`);
+  if (out === html) throw new Error('app.html has no </head>');
+  return out;
+}
+
 function cssLinks({ css }) {
   return css.map((h) => `<link rel="stylesheet" crossorigin href="${h}">`).join('\n    ');
 }
@@ -364,7 +381,7 @@ function prerenderLean(mod, template, index) {
   const manifest = readManifest();
   // every URL that is not a prerendered file gets the plain SPA shell (vercel.json / _redirects / netlify.toml).
   // App screens, /admin and guest links are private: noindex, and no canonical pointing at the landing.
-  fs.writeFileSync(path.join(DIST, 'app.html'), spaShell(index, 'noindex,nofollow'));
+  fs.writeFileSync(path.join(DIST, 'app.html'), withTodayPreload(manifest, spaShell(index, 'noindex,nofollow')));
   // /book/:slug is a host's public direct-booking page: indexable, but it is not the landing (no canonical to "/").
   fs.writeFileSync(path.join(DIST, 'book.html'), spaShell(index, 'index,follow'));
 

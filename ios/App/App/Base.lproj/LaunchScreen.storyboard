@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- perf/cold-start (05.11.2026): canvas #F7F8FB + the app icon (96 pt, Splash.imageset) centred in the area under the
+     status bar, navy #1B2656 behind the status bar: the same picture the web boot screen paints (index.html #atlas-boot),
+     where the WebView starts under the navy status bar (StatusBar overlaysWebView false). No flash on hand-over. -->
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17132" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17105"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -11,11 +15,45 @@
         <scene sceneID="EHf-IW-A2E">
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
-                    <imageView key="view" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Splash" id="snD-IY-ifK">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" red="0.10588235294117647" green="0.14901960784313725" blue="0.33725490196078434" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </imageView>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nvy-Sb-001" userLabel="Status bar band">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="20"/>
+                                <color key="backgroundColor" red="0.10588235294117647" green="0.14901960784313725" blue="0.33725490196078434" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Are-Wv-001" userLabel="WebView area">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Splash" translatesAutoresizingMaskIntoConstraints="NO" id="Ico-Sp-001">
+                                        <rect key="frame" x="139.5" y="275.5" width="96" height="96"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="96" id="Ico-Wd-001"/>
+                                            <constraint firstAttribute="height" constant="96" id="Ico-Ht-001"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" red="0.96862745098039216" green="0.97254901960784312" blue="0.98431372549019602" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="Ico-Sp-001" firstAttribute="centerX" secondItem="Are-Wv-001" secondAttribute="centerX" id="Ico-Cx-001"/>
+                                    <constraint firstItem="Ico-Sp-001" firstAttribute="centerY" secondItem="Are-Wv-001" secondAttribute="centerY" id="Ico-Cy-001"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Saf-Ar-001"/>
+                        <color key="backgroundColor" red="0.96862745098039216" green="0.97254901960784312" blue="0.98431372549019602" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Nvy-Sb-001" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="Nvy-Tp-001"/>
+                            <constraint firstItem="Nvy-Sb-001" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="Nvy-Ld-001"/>
+                            <constraint firstAttribute="trailing" secondItem="Nvy-Sb-001" secondAttribute="trailing" id="Nvy-Tr-001"/>
+                            <constraint firstItem="Saf-Ar-001" firstAttribute="top" secondItem="Nvy-Sb-001" secondAttribute="bottom" id="Nvy-Bt-001"/>
+                            <constraint firstItem="Are-Wv-001" firstAttribute="top" secondItem="Saf-Ar-001" secondAttribute="top" id="Are-Tp-001"/>
+                            <constraint firstItem="Are-Wv-001" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="Are-Ld-001"/>
+                            <constraint firstAttribute="trailing" secondItem="Are-Wv-001" secondAttribute="trailing" id="Are-Tr-001"/>
+                            <constraint firstAttribute="bottom" secondItem="Are-Wv-001" secondAttribute="bottom" id="Are-Bt-001"/>
+                        </constraints>
+                    </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -23,6 +61,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Splash" width="1366" height="1366"/>
+        <image name="Splash" width="96" height="96"/>
     </resources>
 </document>

@@ -58,3 +58,15 @@ export function prefetchMainPagesWhenIdle(delayMs = 2500) {
     idle(next);
   }, delayMs);
 }
+
+const DATA_PAGES = new Set(['Dashboard', 'Today']);
+/**
+ * perf/cold-start: a signed-in owner opening Today gets its data requested at boot (with the code), not after the
+ * screen mounts. Only with a stored session; supabase-js restores (or refreshes) it before the first request.
+ */
+export function prefetchDataForInitialRoute(queryClient) {
+  if (typeof window === 'undefined' || !isSupabaseConfigured) return;
+  const key = getPageKeyFromPathname(window.location.pathname);
+  if (!DATA_PAGES.has(key) || !hasStoredSession()) return;
+  import('@/hooks/useStayData').then((m) => m.prefetchStayData(queryClient)).catch(() => {});
+}
