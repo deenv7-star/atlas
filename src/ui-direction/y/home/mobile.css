@@ -17,6 +17,9 @@
 .hm-row-h { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 24px; }
 .hm-link { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; margin: -10px -8px; padding: 0 8px; font-size: 14px; font-weight: 600; color: #1B2656; }
 .hm-link svg { width: 16px; height: 16px; }
+.hm-link { white-space: nowrap; flex: none; }
+/* 320–359px: the kicker keeps "הדבר הבא" and drops the kind, so it and "כל המשימות" stay on one line each */
+@media (max-width: 359px) { .hm-kind { display: none; } }
 
 /* the sentence */
 .hm-s { margin: 0; font-size: 21px; line-height: 1.6; font-weight: 400; letter-spacing: -.012em; color: #1B2656; text-wrap: pretty; }
