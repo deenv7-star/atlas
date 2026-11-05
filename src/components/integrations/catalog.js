@@ -35,7 +35,7 @@ export const ICAL_SITES = {
   vrbo: {
     name: 'Vrbo', provider: 'ICAL',
     open: 'https://www.vrbo.com/p/calendar',
-    copy: { title: 'העתיקו את קישור הייצוא מ-Vrbo', text: 'ב-Vrbo: לוח שנה ← הגדרות ← זמינות ← חיבור יומנים ← "ייצוא יומן" (Export calendar) ← "העתקת קישור" (Copy URL).' },
+    copy: { title: 'מעתיקים קישור מ-Vrbo', steps: ['היכנסו ל-Vrbo ופתחו את לוח השנה (Calendar).', 'לחצו "הגדרות" ← "זמינות" (Availability).', 'לחצו "חיבור יומנים" (Connect calendars) ← "ייצוא יומן" (Export calendar).', 'לחצו "העתקת קישור" (Copy URL).'] },
     back: ['באותו חלון ב-Vrbo בחרו "ניהול יומנים מיובאים" (Manage imported calendars).', 'לחצו "ייבוא יומן" (Import a calendar), הדביקו את הקישור, ובשם כתבו atlas.'],
     pullsEvery: 'בקצב של Vrbo',
     note: 'עובד רק כשמנהלים את הנכס ישירות ב-Vrbo, לא דרך מערכת ניהול אחרת.',
@@ -43,7 +43,7 @@ export const ICAL_SITES = {
   expedia: {
     name: 'Expedia', provider: 'ICAL',
     open: 'https://apps.expediapartnercentral.com/',
-    copy: { title: 'העתיקו את קישור הייצוא מ-Expedia', text: 'ב-Partner Central: חדרים ותעריפים ← "חיבור יומנים" (Connect calendars) ← בחרו את היחידה ← "יצירת קישור" (Create link) ← העתקה.' },
+    copy: { title: 'מעתיקים קישור מ-Expedia', steps: ['היכנסו לאתר של Expedia לבעלי נכסים (Partner Central).', 'פתחו "חדרים ותעריפים" ← "חיבור יומנים" (Connect calendars).', 'בחרו את היחידה.', 'לחצו "יצירת קישור" (Create link) ואז "העתקה" (Copy link).'] },
     back: ['באותו מסך ב-Expedia בחרו להוסיף יומן קיים.', 'הדביקו את הקישור של atlas ושמרו.'],
     pullsEvery: 'בקצב של Expedia',
     note: 'Expedia מציגה חיבור יומנים בעיקר לנכסי נופש קטנים. אם אין אצלכם "חיבור יומנים", כתבו לנו ונבדוק.',
@@ -51,7 +51,7 @@ export const ICAL_SITES = {
   google: {
     name: 'Google Calendar', provider: 'GOOGLE',
     open: 'https://calendar.google.com/calendar/r/settings',
-    copy: { title: 'העתיקו את הכתובת הסודית מ-Google', text: 'במחשב: Google Calendar ← הגדרות ← בחרו את היומן ← "שילוב יומן" ← "כתובת סודית בפורמט iCal" ← העתקה.' },
+    copy: { title: 'מעתיקים קישור מ-Google', steps: ['במחשב, פתחו את Google Calendar ולחצו על גלגל ההגדרות.', 'בצד, בחרו את היומן שאתם רוצים לחבר.', 'גללו עד "שילוב יומן".', 'העתיקו את השורה "כתובת סודית בפורמט iCal" (כך Google קורא לה).'] },
     back: null,
     pullsEvery: '',
     note: 'כל אירוע ביומן הזה יחסום את התאריכים ביחידה. חברו יומן שמיועד רק להזמנות.',

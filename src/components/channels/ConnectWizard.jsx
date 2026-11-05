@@ -43,10 +43,10 @@ const FLOWS = {
 function icalFlowFor(site) {
   if (!site || !site.copy) return FLOWS.ICAL;
   const steps = [
-    { kind: 'guide', mock: 'o-copy', title: site.copy.title, text: () => site.copy.text, open: !!site.open, siteNote: site.note },
+    { kind: 'guide', mock: null, title: site.copy.title, text: () => '', steps: site.copy.steps, open: !!site.open, siteNote: site.note },
     { kind: 'paste' },
   ];
-  if (site.back) steps.push({ kind: 'export', mock: 'o-import', items: site.back });
+  if (site.back) steps.push({ kind: 'export', mock: null, items: site.back });
   return steps;
 }
 
@@ -134,8 +134,10 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         <p className="ch-kicker">שלב {i + 1} מתוך {total}</p>
         <h1 className="ch-h1" tabIndex={-1}>{step.title}</h1>
         {step.en ? <p className="ch-en">באנגלית: <bdi dir="ltr">{step.en}</bdi></p> : null}
-        <p className="ch-sub"><Bidi text={step.text(unit)} /></p>
-        <ScreenMock id={step.mock} caption={step.title} />
+        {step.steps ? (
+          <ol className="ch-list">{step.steps.map((t) => <li key={t}><Bidi text={t} /></li>)}</ol>
+        ) : <p className="ch-sub"><Bidi text={step.text(unit)} /></p>}
+        {step.mock ? <ScreenMock id={step.mock} caption={step.title} /> : null}
         {step.siteNote ? <p className="ch-note">{step.siteNote}</p> : null}
         {step.note ? <HelpBox unit={unit} title={step.note.title} text={step.note.text} /> : null}
       </>
@@ -183,7 +185,7 @@ export default function ConnectWizard({ property, orgId, existing, onClose, onDo
         <p className="ch-sub">{channel === 'ICAL' ? 'כדי שגם האתר השני יחסום תאריכים שנתפסו אצלכם.' : `כדי ש-${name} יחסום תאריכים שנתפסו אצלכם בטלפון או בערוץ אחר.`}</p>
         <CopyBig value={exportLinkFor(property, result?.channel || channel)} />
         <ol className="ch-list">{step.items.map((t) => <li key={t}><Bidi text={t} /></li>)}</ol>
-        <ScreenMock id={step.mock} caption="הדבקת הקישור של atlas בערוץ" />
+        {step.mock ? <ScreenMock id={step.mock} caption="הדבקת הקישור של atlas בערוץ" /> : null}
       </>
     );
     footer = (

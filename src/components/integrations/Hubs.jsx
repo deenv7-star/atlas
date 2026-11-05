@@ -58,7 +58,8 @@ function TileA({ it, onOpen }) {
   return (
     <li>
       <button type="button" className={`ih-tile ch-press is-${it.s}`} onClick={() => onOpen(it)} aria-label={`${it.name}. ${it.gain}. ${STATUS_LABEL[it.s]}`}>
-        <span className="ih-tile-top"><BrandTile item={it} size={48} /><Pill s={it.s} /></span>
+        <span className="ih-tile-m"><BrandTile item={it} size={48} /></span>
+        <span className="ih-tile-p"><Pill s={it.s} /></span>
         <span className="ih-tile-n">{it.name}{it.sub ? <small>{it.sub}</small> : null}</span>
         <span className="ih-tile-g">{it.gain}</span>
       </button>
