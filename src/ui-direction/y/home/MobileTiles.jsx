@@ -5,6 +5,8 @@
  * then the one next thing to do.
  * A quiet day never shows a dead ₪0 / 0%: each tile swaps to what is true and useful instead — the next arrival as a
  * countdown, the nights booked this week, units free tonight, a booking without a price (the reason money reads 0).
+ * V2 "לוח חי" adds: the day as a moving line in the greeting card, the guests as a swipeable photo stack, a prep checklist
+ * for the next arrival on a quiet day (what is ready, what is one tap away), and the next thing counting what got done.
  * Nothing invented: every number comes from the account. Reduced motion: no growth/draw, values shown at once.
  */
 import React from 'react';
@@ -24,7 +26,9 @@ import { createPageUrl } from '@/utils';
 import ImportEntryCard from '@/components/import/EntryCard';
 import { MoneyLoadBanner } from '@/components/app/MoneyLoadBanner';
 import StaleIndicator from '@/components/app/StaleIndicator';
+import { DayLine } from './live';
 import './tiles.css';
+import './live.css';
 
 const one = (n, s, p) => (n === 1 ? s : p);
 const BTN = { message: 'שליחה', clean: 'סימון', lead: 'מענה', balance: 'תזכורת' };
@@ -58,13 +62,16 @@ function WeekBars({ week }) {
 
 function Hello({ m, name, arrivals, departures, quiet, onTile }) {
   const n = m.queue.length;
+  const ev = [...departures.map((x) => ({ t: m.prop(x.booking.property_id)?.check_out_time || '11:00', dir: 'out', name: x.booking.guest_name || '' })),
+    ...arrivals.map((x) => ({ t: m.prop(x.booking.property_id)?.check_in_time || '15:00', dir: 'in', name: x.booking.guest_name || '' }))];
   return (
     <header className="tl-hello">
       <h1>{dayPart().greeting}{name ? <>, <b>{name}</b></> : null}</h1>
       <p>{formatDayHe(m.day)}{quiet ? ' · יום שקט' : ` · ${arrivals.length} ${one(arrivals.length, 'מגיע', 'מגיעים')}, ${departures.length} ${one(departures.length, 'יוצא', 'יוצאים')}`}
         <StaleIndicator queries={m.data.queries} onRetry={m.retryLoad} className="y-stale-inline" /></p>
+      {quiet ? null : <DayLine events={ev} />}
       {n ? (
-        <button type="button" className="tl-chip press" aria-haspopup="dialog" onClick={() => onTile('day')}><i aria-hidden />{n === 1 ? 'דבר אחד מחכה לכם' : `${n} דברים מחכים לכם`}</button>
+        <button type="button" className="tl-chip press" aria-haspopup="dialog" onClick={() => onTile('day')}><i aria-hidden />{n === 1 ? 'דבר אחד מחכה לכם' : <><Num value={n} />{'\u00A0'}דברים מחכים לכם</>}</button>
       ) : (
         <span className="tl-chip is-ok"><Check strokeWidth={2.6} aria-hidden />הכל מוכן להיום</span>
       )}
@@ -102,15 +109,42 @@ function Hero({ m, b, today, onOpen, onWhatsApp }) {
             <span><b dir="ltr">{bal && !bal.unknown && bal.total ? money(bal.total) : '—'}</b><small>{!bal || bal.unknown || !bal.total ? 'בלי מחיר' : bal.balance > 0 ? `יתרה ${money(bal.balance)}` : 'שולם'}</small></span>
           </>
         ) : (
-          <>
-            <span><b>{formatDayHe(b.check_in_date)}</b><small>כניסה ב-<bdi dir="ltr">{p?.check_in_time || '15:00'}</bdi></small></span>
-            <button type="button" className={cn('tl-prep press', sent && 'is-sent')} onClick={() => onWhatsApp(b, 'arrival_eve')}>
-              {sent ? <><Check strokeWidth={2.6} aria-hidden />הוראות הגעה נשלחו</> : <><Send strokeWidth={2} aria-hidden />הוראות הגעה{who ? ` ל${who}` : ''}</>}
-            </button>
-          </>
+          <span className="lv-when"><b>{formatDayHe(b.check_in_date)}</b><small>כניסה ב-<bdi dir="ltr">{p?.check_in_time || '15:00'}</bdi></small></span>
         )}
       </div>
+      {today ? null : (() => {
+        const priced = !!priceOf(b);
+        const ready = 1 + (sent ? 1 : 0) + (priced ? 1 : 0);
+        return (
+          <div className="lv-prep">
+            <p className="lv-prep-h"><span>מוכנים לקראת{who ? ` ${who}` : ''}</span><b dir="ltr">{ready}/3</b><span className="lv-prep-bar" aria-hidden><i style={{ transform: `scaleX(${ready / 3})` }} /></span></p>
+            <ul>
+              <li className="is-done"><i aria-hidden><Check strokeWidth={3} /></i><span>ההזמנה ביומן</span></li>
+              <li className={cn(sent && 'is-done')}><i aria-hidden>{sent ? <Check strokeWidth={3} /> : null}</i><span>הוראות הגעה לאורח</span>
+                {sent ? null : <button type="button" className="lv-act press" onClick={() => onWhatsApp(b, 'arrival_eve')}><Send strokeWidth={2} aria-hidden />הכנה</button>}</li>
+              <li className={cn(priced && 'is-done')}><i aria-hidden>{priced ? <Check strokeWidth={3} /> : null}</i><span>{priced ? `מחיר ${money(priceOf(b))}` : 'מחיר להזמנה'}</span>
+                {priced ? null : <button type="button" className="lv-act press" onClick={() => onOpen(b)}>הוספה</button>}</li>
+            </ul>
+          </div>
+        );
+      })()}
     </section>
+  );
+}
+
+/** several guests today: a swipeable stack (scroll-snap), the dots say where you are */
+function HeroStack({ m, items, today, onOpen, onWhatsApp }) {
+  const [at, setAt] = React.useState(0);
+  if (!items.length) return null;
+  if (items.length === 1) return <Hero m={m} b={items[0]} today={today} onOpen={onOpen} onWhatsApp={onWhatsApp} />;
+  const onScroll = (e) => { const el = e.currentTarget; const w = el.firstChild?.getBoundingClientRect().width || 1; setAt(Math.round(Math.abs(el.scrollLeft) / (w + 10))); };
+  return (
+    <div className="lv-stack">
+      <div className="lv-rail" onScroll={onScroll}>
+        {items.map((b) => <div key={b.id} className="lv-slide"><Hero m={m} b={b} today={today} onOpen={onOpen} onWhatsApp={onWhatsApp} /></div>)}
+      </div>
+      <p className="lv-dots" aria-hidden>{items.map((b, i) => <i key={b.id} className={cn(i === at && 'on')} />)}</p>
+    </div>
   );
 }
 
@@ -120,6 +154,9 @@ function Next({ m, q, onDo, going }) {
   return (
     <section className="tl-next" aria-label="הדבר הבא">
       <div className="tl-row-h"><p className="tl-k">הדבר הבא<span className="tl-kind"> · {KICK[q.kind]}</span></p>{m.queue.length > 1 ? <Link to="/messages" className="tl-link">כל המשימות<ChevronLeft strokeWidth={1.75} /></Link> : null}</div>
+      {m.doneCount ? (
+        <div className="lv-prog" aria-live="polite"><span>בוצעו <b><Num value={m.doneCount} /></b> מתוך {m.total}</span><span className="lv-prog-b" aria-hidden><i style={{ transform: `scaleX(${m.doneCount / Math.max(1, m.total)})` }} /></span></div>
+      ) : null}
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div key={q.id} className="tl-next-b" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 380, damping: 34 }}>
           <span className="tl-thumb">{photo ? <img src={photo} alt="" loading="lazy" decoding="async" /> : <Face name={q.kind === 'lead' ? q.lead.full_name : (q.booking?.guest_name || '')} size={52} />}</span>
@@ -246,7 +283,7 @@ export default function MobileTiles(props) {
             )}
           </section>
 
-          <Hero m={m} b={arrivals[0]?.booking || next} today={!!arrivals[0]} onOpen={openBooking} onWhatsApp={onWhatsApp} />
+          <HeroStack m={m} items={arrivals.length ? arrivals.map((a) => a.booking) : (next ? [next] : [])} today={!!arrivals.length} onOpen={openBooking} onWhatsApp={onWhatsApp} />
           <Next m={m} q={m.queue[0]} onDo={onDo} going={going} />
         </>
       )}

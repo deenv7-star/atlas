@@ -1,0 +1,73 @@
+/* Today phone "לוח חי" (today/wow-v2, 05.11.2026): the day line in the greeting card, the guest stack, the prep checklist,
+   the next thing's progress. Composite-only motion (transform/opacity). Palette: navy, indigo, white. */
+.tl-chip .y-num { font-size: 1em; font-weight: 800; letter-spacing: 0; }
+
+/* the day line */
+.lv-line { position: relative; align-self: stretch; height: 58px; margin: 14px 18px 2px; }
+.lv-line::before { content: ''; position: absolute; inset-inline: -18px; top: 15px; height: 4px; border-radius: 4px; background: rgba(27,38,86,.1); }
+.lv-fill { position: absolute; inset-inline-start: -18px; top: 15px; height: 4px; width: calc(var(--p) + 18px); border-radius: 4px; background: #3E2BF1; transform-origin: right center; animation: lv-grow 1.3s cubic-bezier(.23,1,.32,1) .4s both; }
+@keyframes lv-grow { from { transform: scaleX(0); } }
+.lv-ev { position: absolute; top: 0; width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; animation: lv-pop .5s cubic-bezier(.34,1.56,.64,1) both; animation-delay: calc(.55s + var(--i) * .1s); }
+@keyframes lv-pop { from { opacity: 0; transform: scale(.5); } }
+.lv-dot { position: relative; display: inline-flex; padding: 2px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1.5px #3E2BF1, 0 6px 14px -8px rgba(27,38,86,.5); }
+.lv-dot .y-stack { display: inline-flex; }
+.lv-ev.is-done .lv-dot { box-shadow: 0 0 0 1.5px rgba(27,38,86,.2); }
+.lv-ev.is-done .y-stack { opacity: .5; filter: grayscale(1); }
+.lv-ck { position: absolute; z-index: 1; inset-inline-end: -6px; top: -5px; width: 16px; height: 16px; border-radius: 99px; background: #1B2656; color: #fff; display: grid; place-items: center; }
+.lv-ck svg { width: 10px; height: 10px; }
+.lv-t { font-size: 12px; font-weight: 700; color: #1B2656; font-variant-numeric: tabular-nums; }
+.lv-ev.is-done .lv-t { color: rgba(27,38,86,.65); }
+.lv-now { position: absolute; top: 9px; width: 0; animation: lv-fade .4s ease 1.4s both; }
+.lv-now::before { content: ''; position: absolute; left: -7px; top: 0; width: 14px; height: 14px; border-radius: 99px; background: #3E2BF1; box-shadow: 0 0 0 3px #fff; }
+.lv-now::after { content: ''; position: absolute; left: -7px; top: 0; width: 14px; height: 14px; border-radius: 99px; animation: lv-pulse 2.4s ease-out 1.8s infinite; }
+.lv-now span { position: absolute; top: 22px; left: 0; transform: translateX(-50%); font-size: 12px; font-weight: 800; color: #3E2BF1; font-variant-numeric: tabular-nums; }
+@keyframes lv-pulse { 0% { box-shadow: 0 0 0 0 rgba(62,43,241,.5); } 70%, 100% { box-shadow: 0 0 0 12px rgba(62,43,241,0); } }
+@keyframes lv-fade { from { opacity: 0; } }
+
+/* the guest stack */
+.lv-stack { display: flex; flex-direction: column; gap: 10px; }
+.lv-rail { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 0 16px; scrollbar-width: none; overscroll-behavior-x: contain; }
+.lv-rail::-webkit-scrollbar { display: none; }
+.lv-slide { flex: 0 0 calc(100% - 28px); scroll-snap-align: center; }
+.lv-slide .tl-hero { height: 100%; }
+.lv-dots { display: flex; justify-content: center; gap: 6px; margin: 0; }
+.lv-dots i { width: 6px; height: 6px; border-radius: 99px; background: rgba(27,38,86,.25); transition: width .3s cubic-bezier(.23,1,.32,1), background-color .3s; }
+.lv-dots i.on { width: 18px; background: #3E2BF1; }
+
+/* the next arrival: when + the prep checklist */
+.tl-hero .lv-when { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; padding: 0; background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; min-height: 0; flex-direction: row; }
+.tl-hero .lv-when b { font-size: 19px; }
+.tl-hero .lv-when small { font-size: 14px; }
+.tl-hero:has(.lv-prep) .tl-hero-s { margin-top: 8px; }
+.lv-prep { position: relative; z-index: 1; margin-top: 14px; padding: 14px 14px 6px; border-radius: 20px; background: #fff; color: #1B2656; box-shadow: 0 16px 30px -20px rgba(0,0,0,.5);
+  animation: tl-in .6s cubic-bezier(.23,1,.32,1) .45s both; }
+.lv-prep-h { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; font-size: 14px; font-weight: 700; }
+.lv-prep-h b { color: #3E2BF1; font-variant-numeric: tabular-nums; }
+.lv-prep-bar { flex: 1; height: 4px; border-radius: 4px; background: rgba(27,38,86,.1); overflow: hidden; }
+.lv-prep-bar i { display: block; height: 100%; border-radius: 4px; background: #3E2BF1; transform-origin: right center; animation: lv-grow 1s cubic-bezier(.23,1,.32,1) .8s both; transition: transform .6s cubic-bezier(.23,1,.32,1); }
+.lv-prep ul { list-style: none; margin: 0; padding: 0; }
+.lv-prep li { display: flex; align-items: center; gap: 10px; min-height: 48px; font-size: 15px; }
+.lv-prep li + li { border-top: 1px solid rgba(27,38,86,.08); }
+.lv-prep li > i { flex: none; width: 22px; height: 22px; border-radius: 99px; display: grid; place-items: center; box-shadow: inset 0 0 0 1.5px rgba(27,38,86,.3); }
+.lv-prep li.is-done > i { background: #3E2BF1; color: #fff; box-shadow: none; }
+.lv-prep li.is-done > i svg { width: 13px; height: 13px; }
+.lv-prep li > span { flex: 1; min-width: 0; font-weight: 600; }
+.lv-prep li.is-done > span { color: rgba(27,38,86,.7); font-weight: 500; }
+.lv-act { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: 14px; background: #3E2BF1; color: #fff; font-size: 14px; font-weight: 700; justify-content: center; }
+.lv-act svg { width: 15px; height: 15px; }
+
+/* the next thing: counts what got done */
+.lv-prog { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; color: rgba(27,38,86,.8); animation: tl-in .5s cubic-bezier(.23,1,.32,1) both; }
+.lv-prog > span:first-child { white-space: nowrap; }
+.lv-prog b { color: #3E2BF1; font-weight: 800; }
+.lv-prog b .y-num { font-size: 1em; font-weight: 800; letter-spacing: 0; }
+.lv-prog-b { flex: 1; height: 4px; border-radius: 4px; background: rgba(27,38,86,.1); overflow: hidden; }
+.lv-prog-b i { display: block; height: 100%; border-radius: 4px; background: #3E2BF1; transform-origin: right center; transition: transform .6s cubic-bezier(.23,1,.32,1); }
+
+/* livelier press on tiles: a little lift back after the press */
+.tl .tl-tile.press:active { transform: scale(.96); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lv-fill, .lv-ev, .lv-now, .lv-now::after, .lv-prep, .lv-prep-bar i, .lv-prog { animation: none !important; }
+  .lv-dots i, .lv-prog-b i { transition: none; }
+}
