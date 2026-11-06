@@ -22,7 +22,7 @@ export default function AppFallback() {
         </div>
         <div className="mt-3 h-[220px] rounded-[24px] bg-white" />
       </div>
-      <div className="absolute inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] h-16 rounded-[28px] bg-white/90 shadow-[0_8px_24px_-12px_rgba(27,38,86,.25)] lg:hidden" />
+      <div className="absolute inset-x-3 bottom-[calc(10px+env(safe-area-inset-bottom))] h-16 rounded-[28px] bg-white/90 shadow-[0_8px_24px_-12px_rgba(27,38,86,.25)] lg:hidden" />
     </div>
   );
 }
