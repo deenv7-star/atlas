@@ -1,0 +1,378 @@
+{
+ "device-before": {
+  "geo": {
+   "vh": 751,
+   "shellPadTop": "0px",
+   "tab": {
+    "t": 641,
+    "b": 705,
+    "h": 64
+   },
+   "tabGapToEdge": 46,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 751,
+    "h": 751
+   },
+   "header": {
+    "t": 10,
+    "b": 66,
+    "h": 56
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  },
+  "console": []
+ },
+ "device-after": {
+  "geo": {
+   "vh": 844,
+   "shellPadTop": "59px",
+   "tab": {
+    "t": 736,
+    "b": 800,
+    "h": 64
+   },
+   "tabGapToEdge": 44,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 844,
+    "h": 844
+   },
+   "header": {
+    "t": 69,
+    "b": 125,
+    "h": 56
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  },
+  "console": []
+ },
+ "today-390": {
+  "url": "/today",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 844,
+   "shellPadTop": "59px",
+   "tab": {
+    "t": 736,
+    "b": 800,
+    "h": 64
+   },
+   "tabGapToEdge": 44,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 844,
+    "h": 844
+   },
+   "header": {
+    "t": 69,
+    "b": 125,
+    "h": 56
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "calendar-390": {
+  "url": "/calendar",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 844,
+   "shellPadTop": "59px",
+   "tab": {
+    "t": 736,
+    "b": 800,
+    "h": 64
+   },
+   "tabGapToEdge": 44,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 844,
+    "h": 844
+   },
+   "header": {
+    "t": 69,
+    "b": 125,
+    "h": 56
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "login-390": {
+  "url": "/login",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 844,
+   "shellPadTop": null,
+   "tab": null,
+   "tabGapToEdge": null,
+   "atlasBtn": null,
+   "bg": null,
+   "header": null,
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "today-375": {
+  "url": "/today",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 667,
+   "shellPadTop": "59px",
+   "tab": {
+    "t": 559,
+    "b": 623,
+    "h": 64
+   },
+   "tabGapToEdge": 44,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 667,
+    "h": 667
+   },
+   "header": {
+    "t": 69,
+    "b": 125,
+    "h": 56
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "calendar-375": {
+  "url": "/calendar",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 667,
+   "shellPadTop": "59px",
+   "tab": {
+    "t": 559,
+    "b": 623,
+    "h": 64
+   },
+   "tabGapToEdge": 44,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 667,
+    "h": 667
+   },
+   "header": {
+    "t": 69,
+    "b": 125,
+    "h": 56
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "login-375": {
+  "url": "/login",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 667,
+   "shellPadTop": null,
+   "tab": null,
+   "tabGapToEdge": null,
+   "atlasBtn": null,
+   "bg": null,
+   "header": null,
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "today-320": {
+  "url": "/today",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 568,
+   "shellPadTop": "59px",
+   "tab": {
+    "t": 460,
+    "b": 524,
+    "h": 64
+   },
+   "tabGapToEdge": 44,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 568,
+    "h": 568
+   },
+   "header": {
+    "t": 69,
+    "b": 125,
+    "h": 56
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "calendar-320": {
+  "url": "/calendar",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 568,
+   "shellPadTop": "59px",
+   "tab": {
+    "t": 460,
+    "b": 524,
+    "h": 64
+   },
+   "tabGapToEdge": 44,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 568,
+    "h": 568
+   },
+   "header": {
+    "t": 69,
+    "b": 125,
+    "h": 56
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "login-320": {
+  "url": "/login",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 568,
+   "shellPadTop": null,
+   "tab": null,
+   "tabGapToEdge": null,
+   "atlasBtn": null,
+   "bg": null,
+   "header": null,
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "today-1440": {
+  "url": "/today",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 900,
+   "shellPadTop": "0px",
+   "tab": {
+    "t": 0,
+    "b": 0,
+    "h": 0
+   },
+   "tabGapToEdge": 900,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 900,
+    "h": 900
+   },
+   "header": {
+    "t": 22,
+    "b": 82,
+    "h": 60
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "calendar-1440": {
+  "url": "/calendar",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 900,
+   "shellPadTop": "0px",
+   "tab": {
+    "t": 0,
+    "b": 0,
+    "h": 0
+   },
+   "tabGapToEdge": 900,
+   "atlasBtn": null,
+   "bg": {
+    "t": 0,
+    "b": 900,
+    "h": 900
+   },
+   "header": {
+    "t": 22,
+    "b": 82,
+    "h": 60
+   },
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ },
+ "login-1440": {
+  "url": "/login",
+  "ov": 0,
+  "offs": [],
+  "small": [],
+  "nsmall": 0,
+  "console": [],
+  "geo": {
+   "vh": 900,
+   "shellPadTop": null,
+   "tab": null,
+   "tabGapToEdge": null,
+   "atlasBtn": null,
+   "bg": null,
+   "header": null,
+   "htmlBg": "rgba(0, 0, 0, 0)",
+   "bodyBg": "rgb(247, 248, 251)"
+  }
+ }
+}

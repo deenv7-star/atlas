@@ -85,7 +85,7 @@ export default function AuthShell({ children, caption = 'כל הצימר שלכ�
     <div className="min-h-[100dvh] bg-white lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]" dir="rtl" onKeyDown={onKeyDown}>
       {/* form side (right in RTL) */}
       <main className="relative flex min-h-[100dvh] flex-col lg:min-h-0">
-        <div className="flex h-16 shrink-0 items-center px-5 pt-[env(safe-area-inset-top)] lg:h-[88px] lg:px-16">
+        <div className="flex h-[calc(4rem+env(safe-area-inset-top))] shrink-0 items-center px-5 pt-[env(safe-area-inset-top)] lg:h-[88px] lg:px-16">
           <Link to="/" aria-label="atlas, לדף הבית" className="inline-flex min-h-[44px] items-center rounded-lg"><Wordmark size={21} /></Link>
         </div>
         <div className="flex flex-1 flex-col px-5 pb-10 pt-6 lg:px-16 lg:pt-0">

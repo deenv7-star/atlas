@@ -7,7 +7,7 @@
     "appStartPath": "app.html"
   },
   "ios": {
-    "contentInset": "automatic",
+    "contentInset": "never",
     "preferredContentMode": "mobile",
     "allowsLinkPreview": false,
     "scrollEnabled": true,
@@ -16,9 +16,9 @@
   },
   "plugins": {
     "StatusBar": {
-      "style": "Dark",
-      "backgroundColor": "#1B2656",
-      "overlaysWebView": false
+      "style": "Light",
+      "backgroundColor": "#F7F8FB",
+      "overlaysWebView": true
     },
     "Keyboard": {
       "resize": "body",
