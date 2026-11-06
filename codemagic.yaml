@@ -130,8 +130,7 @@ workflows:
       - name: Set up code signing profiles
         script: |
           xcode-project use-profiles \
-            --project "$XCODE_PROJECT" \
-            --custom-export-options='{"testFlightInternalTestingOnly": true}'
+            --project "$XCODE_PROJECT"
 
       - name: Build signed IPA
         script: |
