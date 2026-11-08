@@ -1,9 +1,9 @@
 /**
  * /early: pre-launch waitlist (teaser period, IG bio link). Two versions: ?v=a (default) | ?v=b.
- *  v2 (08.11 feedback "הכאב לא מעניין… להמחיש את הבלאגן של המון פלטפורמות נכנסות לכלי אחד"):
- *  A "מגנט" : platform tiles (Booking, Airbnb, וואטסאפ, מחברת, אקסל…) magnetized on scroll into one lit phone.
- *  B "סערה" : a notification storm that collapses on scroll into bookings on one calendar.
- *  Heroes live in src/features/early/Chaos.jsx (scroll-scrubbed, transform/opacity only, static under reduced motion).
+ *  v3 (08.11, Deen rejected v1 pain hero + v2 tiles: "מכוער… לא מיוחד"): the IG launch feed come alive.
+ *  A "עולם אמיתי": real licensed photography, enormous type, a scroll story Booking → Airbnb → וואטסאפ → מחברת → atlas.
+ *  B "הקרן": near-black, one indigo light beam pulls the platform names in, a real 3D render of the app rises from it.
+ *  Heroes/story live in src/features/early/V3.jsx (transform/opacity only, static under reduced motion).
  * Offer decided for Deen (08.11.2026): first 50 get personal setup + founding price (annual-plan monthly price on
  * monthly billing, locked while subscribed) + the regular 14-day free trial. No fake counter: spots-left and
  * place-in-line show only when the DB returns them (see src/features/early/submit.js).
@@ -12,12 +12,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PRICING_PLANS, TRIAL_DAYS } from '@/config/pricing';
 import { FOUNDING_SPOTS, joinWaitlist, fetchSpotsLeft } from '@/features/early/submit';
-import { HeroMagnet, HeroStorm } from '@/features/early/Chaos';
+import { HeroA, StoryA, HandA, StripA, HeroB, ScenesB } from '@/features/early/V3';
 import { useRoll } from '@/features/early/spells';
 import '@/features/early/early.css';
-import '@/features/early/chaos.css';
+import '@/features/early/v3.css';
 
-const UI = '/landing-v8/ui/';
 const fmt = (n) => `₪${n.toLocaleString('he-IL')}`;
 const UNIT_OPTIONS = [
   { v: '1', label: 'יחידה אחת' },
@@ -64,16 +63,6 @@ function useReveal(rootRef) {
   }, [rootRef]);
 }
 
-function Phone({ src, alt, className = '', eager = false }) {
-  return (
-    <figure className={`ew-phone ${className}`}>
-      <div className="ew-phone-body">
-        <img src={src} alt={alt} width="780" height="1688" loading={eager ? 'eager' : 'lazy'} decoding="async" fetchPriority={eager ? 'high' : undefined} />
-      </div>
-    </figure>
-  );
-}
-
 function scrollToForm() {
   const el = document.getElementById('join');
   if (!el) return;
@@ -95,37 +84,6 @@ function SpotsPill({ spotsLeft, dark = true }) {
 
 /* ---------------- sections ---------------- */
 
-function Benefits() {
-  const items = [
-    { img: 'd-calendar.webp', alt: 'לוח שנה של atlas עם הזמנות מכמה ערוצים', h: 'כל ההזמנות. יומן אחד.', p: 'Booking, Airbnb וההזמנות שלכם על לוח אחד. תאריך תפוס נשאר תפוס.' },
-    { img: 'd-thread.webp', alt: 'הודעה מוכנה לאורח באפליקציה', h: 'הודעה לאורח? מוכנה.', p: 'נוסח מוכן בעברית. לחיצה אחת, והוא נפתח בוואטסאפ שלכם.' },
-    { img: 'd-paid.webp', alt: 'מסך תשלומים עם מקדמות ויתרות', h: 'מי שילם. מה פתוח.', p: 'כל מקדמה וכל יתרה רשומות. לא שוכחים אף שקל.' },
-  ];
-  return (
-    <section className="ew-light" aria-labelledby="ew-ben-h">
-      <div className="ew-reveal-line" data-rv>
-        <img src="/atlas-logo-navy.svg" alt="" width="96" height="30" aria-hidden="true" />
-        <h2 id="ew-ben-h" className="ew-h2 dark">הכל בטלפון אחד.</h2>
-        <p className="ew-sub">בלי מחברת, בלי אקסל, בלי לבדוק בשלוש אפליקציות.</p>
-      </div>
-      <ul className="ew-ben-list">
-        {items.map((it) => (
-          <li key={it.img} className="ew-ben" data-rv>
-            <div className="ew-ben-shot">
-              <Phone src={`${UI}${it.img}`} alt={it.alt} className="ew-phone-sm" />
-            </div>
-            <div className="ew-ben-txt">
-              <h3>{it.h}</h3>
-              <p>{it.p}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <p className="ew-sample dark">מסכים אמיתיים מהאפליקציה · נתוני דוגמה</p>
-    </section>
-  );
-}
-
 function RollPrice({ from, to }) {
   const ref = useRef(null);
   useRoll(ref, from, to, fmt);
@@ -134,49 +92,50 @@ function RollPrice({ from, to }) {
 
 function Offer({ spotsLeft }) {
   return (
-    <section className="ew-offer" aria-labelledby="ew-offer-h">
-      <div className="ew-offer-card" data-rv>
-        <SpotsPill spotsLeft={spotsLeft} />
-        <h2 id="ew-offer-h" className="ew-h2">50 המקומות הראשונים.</h2>
-        <p className="ew-offer-lede">מי שנכנס עכשיו מקבל את מה שלא יינתן אחרי ההשקה.</p>
-        <ol className="ew-gifts">
-          <li>
-            <span className="ew-gift-n" aria-hidden="true">1</span>
-            <div>
-              <h3>הקמה אישית</h3>
-              <p>דין, המייסד של <span dir="ltr">atlas</span>, מקים לכם את החשבון: מחבר את Booking ו-Airbnb, מגדיר את היחידות ומכין את נוסחי ההודעות.</p>
-            </div>
+    <section className="v3-offer" aria-labelledby="ew-offer-h">
+      <div className="v3-offer-in">
+        <p className="v3-eyebrow" data-rv>לפני ההשקה</p>
+        <h2 id="ew-offer-h" className="v3-offer-h" data-rv>
+          <span className="v3-fifty" aria-hidden="true">50</span>
+          <span className="v3-offer-t">המקומות הראשונים.</span>
+        </h2>
+        <p className="v3-lede" data-rv>מי שנכנס עכשיו מקבל את מה שלא יינתן אחרי ההשקה.</p>
+        <ol className="v3-gifts">
+          <li data-rv>
+            <span className="v3-n" aria-hidden="true">01</span>
+            <h3>הקמה אישית</h3>
+            <p>דין, המייסד של <span dir="ltr">atlas</span>, מקים לכם את החשבון: מחבר את Booking ו-Airbnb, מגדיר את היחידות ומכין את נוסחי ההודעות.</p>
           </li>
-          <li>
-            <span className="ew-gift-n" aria-hidden="true">2</span>
-            <div>
-              <h3>מחיר מייסדים, נעול</h3>
-              <p>מחיר המסלול השנתי, בתשלום חודשי. נעול לכל זמן שאתם איתנו.</p>
-              <table className="ew-prices">
-                <caption className="ew-vh">מחיר מייסדים לחודש לעומת המחיר הרגיל</caption>
-                <thead><tr><th scope="col">מסלול</th><th scope="col">מחיר מייסדים</th><th scope="col">אחרי ההשקה</th></tr></thead>
-                <tbody>
-                  {PRICING_PLANS.map((p) => (
-                    <tr key={p.key}>
-                      <th scope="row">{p.nameHe}<small>{p.limit}</small></th>
-                      <td><RollPrice from={p.price} to={p.priceYearly} /><small>לחודש</small></td>
-                      <td><s>{fmt(p.price)}</s></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <li data-rv>
+            <span className="v3-n" aria-hidden="true">02</span>
+            <h3>מחיר מייסדים, נעול</h3>
+            <p>מחיר המסלול השנתי, בתשלום חודשי. נעול לכל זמן שאתם איתנו.</p>
+            <table className="v3-prices">
+              <caption className="ew-vh">מחיר מייסדים לחודש לעומת המחיר הרגיל</caption>
+              <thead className="ew-vh"><tr><th scope="col">מסלול</th><th scope="col">מחיר מייסדים לחודש</th><th scope="col">אחרי ההשקה</th></tr></thead>
+              <tbody>
+                {PRICING_PLANS.map((p) => (
+                  <tr key={p.key}>
+                    <th scope="row">{p.nameHe}<small>{p.limit}</small></th>
+                    <td className="v3-now"><RollPrice from={p.price} to={p.priceYearly} /></td>
+                    <td className="v3-was"><s>{fmt(p.price)}</s></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="v3-per">לחודש · המחיר הרגיל מחוק</p>
           </li>
-          <li>
-            <span className="ew-gift-n" aria-hidden="true">3</span>
-            <div>
-              <h3>{TRIAL_DAYS} יום חינם</h3>
-              <p>הכל פתוח, בלי כרטיס אשראי. מפסיקים מתי שרוצים.</p>
-            </div>
+          <li data-rv>
+            <span className="v3-n" aria-hidden="true">03</span>
+            <h3>{TRIAL_DAYS} יום חינם</h3>
+            <p>הכל פתוח, בלי כרטיס אשראי. מפסיקים מתי שרוצים.</p>
           </li>
         </ol>
-        <p className="ew-never">אחרי 50 המקומות, המחיר הזה לא יחזור.</p>
-        <button type="button" className="ew-cta" onClick={scrollToForm}>שמרו לי מקום</button>
+        <p className="v3-never" data-rv>אחרי 50 המקומות,<br />המחיר הזה לא יחזור.</p>
+        <div className="v3-offer-cta" data-rv>
+          <button type="button" className="v3-btn indigo" onClick={scrollToForm}>שמרו לי מקום</button>
+          <SpotsPill spotsLeft={spotsLeft} dark={false} />
+        </div>
       </div>
     </section>
   );
@@ -300,6 +259,7 @@ export default function Early() {
   const [done, setDone] = useState(null);
   const [joinVisible, setJoinVisible] = useState(false);
   const [heroVisible, setHeroVisible] = useState(true);
+  const [offerVisible, setOfferVisible] = useState(false);
   useMeta();
   useReveal(rootRef);
 
@@ -307,26 +267,28 @@ export default function Early() {
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return undefined;
     const join = joinRef.current; const hero = rootRef.current?.querySelector('.cx-cta');
+    const offer = rootRef.current?.querySelector('.v3-offer');
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (e.target === join) setJoinVisible(e.isIntersecting);
+      else if (e.target === offer) setOfferVisible(e.isIntersecting);
       else setHeroVisible(e.isIntersecting);
     }), { threshold: 0 });
     if (join) io.observe(join);
+    if (offer) io.observe(offer); // the offer has its own CTA; the sticky pill would cover the price rows
     if (hero) io.observe(hero);
     return () => io.disconnect();
   }, []);
   useEffect(() => { if (done) setTimeout(() => document.getElementById('ew-done')?.focus(), 50); }, [done]);
 
-  const showSticky = !done && !joinVisible && !heroVisible;
+  const showSticky = !done && !joinVisible && !heroVisible && !offerVisible;
   const go = useCallback(() => scrollToForm(), []);
-  const pill = <SpotsPill spotsLeft={spotsLeft} />;
 
   return (
-    <div className={`ew ew-v-${variant}`} ref={rootRef} dir="rtl" lang="he">
+    <div className={`ew v3 v3-${variant}`} ref={rootRef} dir="rtl" lang="he">
       <a href="#join" className="ew-skip">דלגו לטופס</a>
-      {variant === 'b' ? <HeroStorm onCta={go} pill={pill} /> : <HeroMagnet onCta={go} pill={pill} />}
+      {variant === 'b' ? <HeroB onCta={go} /> : <HeroA onCta={go} />}
       <main>
-        <Benefits />
+        {variant === 'b' ? <ScenesB /> : <><StoryA /><HandA /><StripA /></>}
         <Offer spotsLeft={spotsLeft} />
         <section className="ew-join" id="join" ref={joinRef} aria-labelledby="ew-form-h">
           <JoinForm variant={variant} done={done} onDone={setDone} />
