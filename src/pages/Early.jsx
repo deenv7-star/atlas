@@ -1,17 +1,21 @@
 /**
  * /early: pre-launch waitlist (teaser period, IG bio link). Two versions: ?v=a (default) | ?v=b.
- *  A "הקרן"   : cinematic dark hero, pain headline, a real app screen rising in an indigo beam.
- *  B "23:40"  : dark hero where the pain plays out as notifications (WhatsApp at 23:40, Booking + Airbnb on the
- *               same Friday), then the reveal.
+ *  v2 (08.11 feedback "הכאב לא מעניין… להמחיש את הבלאגן של המון פלטפורמות נכנסות לכלי אחד"):
+ *  A "מגנט" : platform tiles (Booking, Airbnb, וואטסאפ, מחברת, אקסל…) magnetized on scroll into one lit phone.
+ *  B "סערה" : a notification storm that collapses on scroll into bookings on one calendar.
+ *  Heroes live in src/features/early/Chaos.jsx (scroll-scrubbed, transform/opacity only, static under reduced motion).
  * Offer decided for Deen (08.11.2026): first 50 get personal setup + founding price (annual-plan monthly price on
  * monthly billing, locked while subscribed) + the regular 14-day free trial. No fake counter: spots-left and
  * place-in-line show only when the DB returns them (see src/features/early/submit.js).
  * Screens are real app screens with sample data, labelled "נתוני דוגמה".
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PRICING_PLANS, TRIAL_DAYS } from '@/config/pricing';
 import { FOUNDING_SPOTS, joinWaitlist, fetchSpotsLeft } from '@/features/early/submit';
+import { HeroMagnet, HeroStorm } from '@/features/early/Chaos';
+import { useRoll } from '@/features/early/spells';
 import '@/features/early/early.css';
+import '@/features/early/chaos.css';
 
 const UI = '/landing-v8/ui/';
 const fmt = (n) => `₪${n.toLocaleString('he-IL')}`;
@@ -89,102 +93,7 @@ function SpotsPill({ spotsLeft, dark = true }) {
   );
 }
 
-/* ---------------- heroes ---------------- */
-
-function HeroA({ spotsLeft }) {
-  return (
-    <header className="ew-hero ew-hero-a">
-      <div className="ew-beam" aria-hidden="true" />
-      <nav className="ew-top">
-        <img src="/atlas-logo-white.svg" alt="atlas" width="88" height="28" />
-        <span className="ew-soon">בקרוב</span>
-      </nav>
-      <div className="ew-hero-copy">
-        <p className="ew-eyebrow">לבעלי צימרים ומתחמי נופש</p>
-        <h1 className="ew-h1">
-          <span className="ew-time">שישי, 15:00.</span>
-          <span>שתי משפחות. צימר אחד.</span>
-        </h1>
-        <p className="ew-lede">הזמנה מ-Booking, הזמנה מ-Airbnb, אותו תאריך. וגיליתם את זה בחניה.</p>
-        <p className="ew-tag">אתם מארחים. <span dir="ltr">atlas</span> מסדר.</p>
-        <button type="button" className="ew-cta" onClick={scrollToForm}>שמרו לי מקום</button>
-        <SpotsPill spotsLeft={spotsLeft} />
-      </div>
-      <div className="ew-hero-visual" aria-hidden="true">
-        <Phone src={`${UI}d-today.webp`} alt="" className="ew-phone-hero" eager />
-        <p className="ew-sample">מסך אמיתי · נתוני דוגמה</p>
-      </div>
-    </header>
-  );
-}
-
-const PINGS = [
-  { k: 'wa', app: 'WhatsApp', time: '23:40', title: 'אורח חדש', body: 'היי, יש לכם פנוי בשישי? 2 מבוגרים ו-3 ילדים' },
-  { k: 'bk', app: 'Booking.com', time: '23:52', title: 'הזמנה חדשה', body: 'יחידת הגפן · שישי עד ראשון' },
-  { k: 'ab', app: 'Airbnb', time: '00:07', title: 'הזמנה חדשה', body: 'יחידת הגפן · שישי עד ראשון' },
-];
-
-function HeroB({ spotsLeft }) {
-  return (
-    <header className="ew-hero ew-hero-b">
-      <div className="ew-beam" aria-hidden="true" />
-      <nav className="ew-top">
-        <img src="/atlas-logo-white.svg" alt="atlas" width="88" height="28" />
-        <span className="ew-soon">בקרוב</span>
-      </nav>
-      <div className="ew-hero-copy ew-center">
-        <p className="ew-eyebrow">לבעלי צימרים ומתחמי נופש</p>
-        <h1 className="ew-h1">
-          <span className="ew-time">23:40.</span>
-          <span>עוד הודעה. עוד הזמנה.</span>
-        </h1>
-      </div>
-      <ol className="ew-pings" aria-label="דוגמה ללילה רגיל של מארח">
-        {PINGS.map((p, i) => (
-          <li key={p.k} className={`ew-ping ew-ping-${p.k}`} style={{ '--i': i }}>
-            <span className={`ew-app ew-app-${p.k}`} aria-hidden="true">{p.k === 'wa' ? 'W' : p.k === 'bk' ? 'B' : 'A'}</span>
-            <span className="ew-ping-txt">
-              <span className="ew-ping-head"><b dir="ltr">{p.app}</b><time>{p.time}</time></span>
-              <span className="ew-ping-title">{p.title}</span>
-              <span className="ew-ping-body">{p.body}</span>
-            </span>
-          </li>
-        ))}
-        <li className="ew-clash" style={{ '--i': 3 }}>אותה יחידה. אותו שישי.</li>
-      </ol>
-      <div className="ew-hero-copy ew-hero-after">
-        <p className="ew-tag">אתם מארחים. <span dir="ltr">atlas</span> מסדר.</p>
-        <button type="button" className="ew-cta" onClick={scrollToForm}>שמרו לי מקום</button>
-        <SpotsPill spotsLeft={spotsLeft} />
-      </div>
-    </header>
-  );
-}
-
 /* ---------------- sections ---------------- */
-
-function Pains() {
-  const items = [
-    { t: '23:40', h: '״יש לכם פנוי בשישי?״', p: 'ואתם בודקים במחברת, בטלפון ובזיכרון.' },
-    { t: 'שישי, 15:00', h: 'שתי משפחות בחניה.', p: 'Booking ו-Airbnb לא מדברים אחד עם השני.' },
-    { t: 'מוצאי שבת', h: 'מי שילם מקדמה?', p: 'הכסף מפוזר בין המחברת, הביט והבנק.' },
-  ];
-  return (
-    <section className="ew-pains" aria-labelledby="ew-pains-h">
-      <h2 id="ew-pains-h" className="ew-h2" data-rv>מכירים את זה?</h2>
-      <ul className="ew-pain-list">
-        {items.map((it) => (
-          <li key={it.t} className="ew-pain" data-rv>
-            <span className="ew-pain-t">{it.t}</span>
-            <span className="ew-pain-h">{it.h}</span>
-            <span className="ew-pain-p">{it.p}</span>
-          </li>
-        ))}
-      </ul>
-      <p className="ew-turn" data-rv>זה נגמר.</p>
-    </section>
-  );
-}
 
 function Benefits() {
   const items = [
@@ -196,8 +105,8 @@ function Benefits() {
     <section className="ew-light" aria-labelledby="ew-ben-h">
       <div className="ew-reveal-line" data-rv>
         <img src="/atlas-logo-navy.svg" alt="" width="96" height="30" aria-hidden="true" />
-        <h2 id="ew-ben-h" className="ew-h2 dark">אתם מארחים. <span dir="ltr">atlas</span> מסדר.</h2>
-        <p className="ew-sub">היומן, הכסף והוואטסאפ במקום שבו כבר יש לכם הכל: בטלפון.</p>
+        <h2 id="ew-ben-h" className="ew-h2 dark">הכל בטלפון אחד.</h2>
+        <p className="ew-sub">בלי מחברת, בלי אקסל, בלי לבדוק בשלוש אפליקציות.</p>
       </div>
       <ul className="ew-ben-list">
         {items.map((it) => (
@@ -215,6 +124,12 @@ function Benefits() {
       <p className="ew-sample dark">מסכים אמיתיים מהאפליקציה · נתוני דוגמה</p>
     </section>
   );
+}
+
+function RollPrice({ from, to }) {
+  const ref = useRef(null);
+  useRoll(ref, from, to, fmt);
+  return <b ref={ref}>{fmt(to)}</b>;
 }
 
 function Offer({ spotsLeft }) {
@@ -244,7 +159,7 @@ function Offer({ spotsLeft }) {
                   {PRICING_PLANS.map((p) => (
                     <tr key={p.key}>
                       <th scope="row">{p.nameHe}<small>{p.limit}</small></th>
-                      <td><b>{fmt(p.priceYearly)}</b><small>לחודש</small></td>
+                      <td><RollPrice from={p.price} to={p.priceYearly} /><small>לחודש</small></td>
                       <td><s>{fmt(p.price)}</s></td>
                     </tr>
                   ))}
@@ -391,7 +306,7 @@ export default function Early() {
   useEffect(() => { fetchSpotsLeft().then((n) => { if (typeof n === 'number') setSpotsLeft(n); }); }, []);
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return undefined;
-    const join = joinRef.current; const hero = rootRef.current?.querySelector('.ew-hero .ew-cta');
+    const join = joinRef.current; const hero = rootRef.current?.querySelector('.cx-cta');
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (e.target === join) setJoinVisible(e.isIntersecting);
       else setHeroVisible(e.isIntersecting);
@@ -403,13 +318,14 @@ export default function Early() {
   useEffect(() => { if (done) setTimeout(() => document.getElementById('ew-done')?.focus(), 50); }, [done]);
 
   const showSticky = !done && !joinVisible && !heroVisible;
+  const go = useCallback(() => scrollToForm(), []);
+  const pill = <SpotsPill spotsLeft={spotsLeft} />;
 
   return (
     <div className={`ew ew-v-${variant}`} ref={rootRef} dir="rtl" lang="he">
       <a href="#join" className="ew-skip">דלגו לטופס</a>
-      {variant === 'b' ? <HeroB spotsLeft={spotsLeft} /> : <HeroA spotsLeft={spotsLeft} />}
+      {variant === 'b' ? <HeroStorm onCta={go} pill={pill} /> : <HeroMagnet onCta={go} pill={pill} />}
       <main>
-        <Pains />
         <Benefits />
         <Offer spotsLeft={spotsLeft} />
         <section className="ew-join" id="join" ref={joinRef} aria-labelledby="ew-form-h">

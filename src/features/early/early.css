@@ -1,5 +1,7 @@
 /* /early waitlist. Palette strictly: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white (+ their alphas). */
 .ew-html, .ew-html body { background: #0E1430; }
+/* the app shell sets overflow-x:hidden on html/body, which turns body into a scroll container and breaks position:sticky */
+.ew-html, .ew-html body { overflow: visible !important; }
 .ew {
   --in: #3E2BF1; --nv: #1B2656; --cv: #F7F8FB; --wh: #fff;
   --nv-deep: #0E1430; /* navy darkened toward black for the cinematic hero */
