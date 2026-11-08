@@ -46,7 +46,7 @@ function Calendar() {
         {DAYS.map((d) => {
           const isNew = NEW.includes(d);
           const cls = isNew ? `v4-d new n${NEW.indexOf(d)}` : AIRBNB.has(d) ? 'v4-d air' : BOOKED.has(d) ? 'v4-d bk' : 'v4-d';
-          return <span key={d} className={cls}><em>{d}</em>{isNew && <i />}</span>;
+          return <span key={d} className={cls}><em>{d}</em>{isNew && <b className="v4-dw" aria-hidden="true">{d}</b>}</span>;
         })}
       </div>
       <div className="v4-legend"><span><i className="bk" />Booking</span><span><i className="air" />Airbnb</span></div>
@@ -85,7 +85,7 @@ export function PhoneMagic() {
         <Status />
         <Calendar />
         <Notif app="bk" cls="a-n" title="הזמנה חדשה: רוני פרץ" body="13–15 בנובמבר · 2 לילות · הזית" />
-        <span className="v4-fly" aria-hidden="true">13–15.11 · הזית</span>
+        <span className="v4-fly" aria-hidden="true">הזית · 2 לילות</span>
         <MsgCard cls="a-m" />
       </div>
       <figcaption>נתוני דוגמה</figcaption>
