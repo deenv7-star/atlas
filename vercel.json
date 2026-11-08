@@ -48,6 +48,10 @@
       "destination": "/:page/index.html"
     },
     {
+      "source": "/early",
+      "destination": "/early/index.html"
+    },
+    {
       "source": "/book/:slug",
       "destination": "/book.html"
     },
