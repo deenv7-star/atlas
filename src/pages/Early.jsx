@@ -1,18 +1,15 @@
 /**
- * /early: pre-launch waitlist (teaser period, IG bio link). Three versions: ?v=a (default) | ?v=b | ?v=c.
- *  v4 (08.11.2026, Deen rejected v1–v3 as "boring, unclear what the point is"): the product working, in 3 seconds.
- *  A "הקסם בפעולה": a Booking notification lands in the atlas calendar, a guest message is ready.
- *  B "הכל במקום אחד": Booking / Airbnb / WhatsApp notifications fold into one atlas Today card.
- *  C "ההצעה קודם": the founders card is the hero, the A loop right under it.
- *  Heroes live in src/features/early/V4.jsx (CSS keyframes, transform/opacity only, static under reduced motion).
+ * /early: pre-launch waitlist (teaser period, IG bio link). Version A "הקסם בפעולה" only (Deen, 08.11.2026 13:27:
+ * "תעלה עם a בינתיים"). Versions B and C and the ?v= switch were removed; they live in git history (commit 49d15fee).
+ * Hero + body in src/features/early/V4.jsx (CSS keyframes, transform/opacity only, static under reduced motion).
  * Offer decided for Deen (08.11.2026): first 50 get personal setup + founding price (annual-plan monthly price on
  * monthly billing, locked while subscribed) + the regular 14-day free trial. No fake counter, no queue position:
  * spots-left shows only when the DB returns it (see src/features/early/submit.js). No founder name on the page.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { TRIAL_DAYS } from '@/config/pricing';
 import { FOUNDING_SPOTS, joinWaitlist, fetchSpotsLeft } from '@/features/early/submit';
-import { HeroA4, HeroB4, HeroC4, RealScreens, Offer4 } from '@/features/early/V4';
+import { HeroA4, RealScreens, Offer4 } from '@/features/early/V4';
 import '@/features/early/early.css';
 import '@/features/early/v4.css';
 
@@ -24,16 +21,12 @@ const UNIT_OPTIONS = [
 ];
 const SITE = 'https://atlas-il.com/early';
 
-function useVariant() {
-  return useMemo(() => {
-    try { const v = new URLSearchParams(window.location.search).get('v'); return v === 'b' || v === 'c' ? v : 'a'; } catch { return 'a'; }
-  }, []);
-}
+const VARIANT = 'a';
 
 function useMeta() {
   useEffect(() => {
     const prev = document.title;
-    document.title = 'atlas · רשימת המתנה · 50 מקומות ראשונים';
+    document.title = 'atlas · 50 המקומות הראשונים לבעלי צימרים';
     let robots = document.querySelector('meta[name="robots"]');
     const prevRobots = robots?.getAttribute('content');
     if (!robots) { robots = document.createElement('meta'); robots.setAttribute('name', 'robots'); document.head.appendChild(robots); }
@@ -90,7 +83,7 @@ function ShareBlock({ refCode }) {
   );
 }
 
-function JoinForm({ variant, onDone, done }) {
+function JoinForm({ onDone, done }) {
   const [f, setF] = useState({ name: '', phone: '', units: '', complex: '', consent: false, website: '' });
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
@@ -99,7 +92,7 @@ function JoinForm({ variant, onDone, done }) {
     e.preventDefault();
     if (busy) return;
     setErr(''); setBusy(true);
-    const r = await joinWaitlist({ ...f, variant }).catch(() => ({ ok: false, error: 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.' }));
+    const r = await joinWaitlist({ ...f, variant: VARIANT }).catch(() => ({ ok: false, error: 'לא הצלחנו לשמור. בדקו את החיבור ונסו שוב.' }));
     setBusy(false);
     if (r.ok) onDone(r); else setErr(r.error || 'לא הצלחנו לשמור. נסו שוב בעוד רגע.');
   };
@@ -179,7 +172,6 @@ function Faq() {
 }
 
 export default function Early() {
-  const variant = useVariant();
   const rootRef = useRef(null);
   const joinRef = useRef(null);
   const [spotsLeft, setSpotsLeft] = useState(null);
@@ -197,13 +189,15 @@ export default function Early() {
     const offer = rootRef.current?.querySelector('.v4-offer');
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (e.target === join) setJoinVisible(e.isIntersecting);
-      else if (e.target === offer) setOfferVisible(e.isIntersecting);
       else setHeroVisible(e.isIntersecting);
     }), { threshold: 0 });
+    // The offer has its own CTA and the pill would cover its price rows: hide the pill once the offer fills the
+    // upper 70% of the screen (not the moment its top edge peeks in, or the pill would almost never show).
+    const io2 = new IntersectionObserver((es) => es.forEach((e) => setOfferVisible(e.isIntersecting)), { threshold: 0, rootMargin: '0px 0px -30% 0px' });
     if (join) io.observe(join);
-    if (offer) io.observe(offer); // the offer has its own CTA; the sticky pill would cover the price rows
     if (hero) io.observe(hero);
-    return () => io.disconnect();
+    if (offer) io2.observe(offer);
+    return () => { io.disconnect(); io2.disconnect(); };
   }, []);
   useEffect(() => { if (done) setTimeout(() => document.getElementById('ew-done')?.focus(), 50); }, [done]);
 
@@ -211,14 +205,14 @@ export default function Early() {
   const go = useCallback(() => scrollToForm(), []);
 
   return (
-    <div className={`ew v4 v4-${variant}`} ref={rootRef} dir="rtl" lang="he">
+    <div className="ew v4 v4-a" ref={rootRef} dir="rtl" lang="he">
       <a href="#join" className="ew-skip">דלגו לטופס</a>
-      {variant === 'b' ? <HeroB4 onCta={go} /> : variant === 'c' ? <HeroC4 onCta={go} /> : <HeroA4 onCta={go} />}
+      <HeroA4 onCta={go} />
       <main>
         <RealScreens />
-        {variant !== 'c' && <Offer4 onCta={go} />}
+        <Offer4 onCta={go} />
         <section className="ew-join" id="join" ref={joinRef} aria-labelledby="ew-form-h">
-          <JoinForm variant={variant} done={done} onDone={setDone} />
+          <JoinForm done={done} onDone={setDone} />
         </section>
         <Faq />
       </main>

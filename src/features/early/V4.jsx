@@ -1,9 +1,9 @@
 /**
- * /early v4 heroes (08.11.2026). Deen rejected v1–v3 as "boring, unclear what the point is".
+ * /early hero + body (version A "הקסם בפעולה", shipped 08.11.2026; B and C live in git history, commit 49d15fee).
  * Goal: in 3 seconds the visitor sees (1) what atlas does, working, and (2) why to sign up now.
- *  A "הקסם בפעולה": a Booking notification lands, flies into the atlas calendar, the dates fill, a guest message is ready.
- *  B "הכל במקום אחד": Booking / Airbnb / WhatsApp notifications pile up, then fold into one atlas Today card.
- *  C "ההצעה קודם": the founders card is the hero; the A loop runs right under it.
+ * A Booking notification lands, the dates fill in the atlas calendar, a guest message draft is ready to open in WhatsApp.
+ * Copy honesty (checked against the app 08.11.2026): ical-sync runs every 15 min, Booking iCal carries no guest name,
+ * guest messages are wa.me drafts the owner sends. So: no "instant", no "sent", the fly chip shows dates not a name.
  * The phone UI is drawn in HTML with the app's own layout and colors (sample data, labelled "נתוני דוגמה").
  * Motion: CSS keyframes, transform/opacity only, one shared 7.5s loop. Reduced motion: the finished state, static.
  */
@@ -57,9 +57,9 @@ function Calendar() {
 function Notif({ app, title, body, cls = '', time = 'עכשיו' }) {
   return (
     <div className={`v4-notif ${cls}`}>
-      <span className={`v4-app ${app}`} aria-hidden="true">{app === 'bk' ? 'B.' : app === 'air' ? 'A' : app === 'wa' ? 'W' : ''}</span>
+      <span className={`v4-app ${app}`} aria-hidden="true">B.</span>
       <div className="v4-notif-t">
-        <p className="v4-notif-top"><b dir="ltr">{app === 'bk' ? 'Booking.com' : app === 'air' ? 'Airbnb' : 'WhatsApp'}</b><span>{time}</span></p>
+        <p className="v4-notif-top"><b dir="ltr">Booking.com</b><span>{time}</span></p>
         <p className="v4-notif-h">{title}</p>
         <p className="v4-notif-b">{body}</p>
       </div>
@@ -70,51 +70,23 @@ function Notif({ app, title, body, cls = '', time = 'עכשיו' }) {
 function MsgCard({ cls = '' }) {
   return (
     <div className={`v4-msg ${cls}`}>
-      <p className="v4-msg-k"><span className="v4-ok" aria-hidden="true">✓</span>הודעה לרוני מוכנה</p>
-      <p className="v4-msg-t">שלום רוני, מחכים לכם בשישי 13.11 בצימר הזית. הכניסה מ-15:00. נתראה!</p>
+      <p className="v4-msg-k"><span className="v4-ok" aria-hidden="true">✓</span>נוסח הודעה לאורח מוכן</p>
+      <p className="v4-msg-t">שלום, מחכים לכם בשישי בצימר הזית. אפשר להגיע מ-15:00. נסיעה טובה.</p>
       <span className="v4-msg-btn">פתיחה בוואטסאפ שלכם</span>
     </div>
   );
 }
 
 /** A loop: notification → flies into the calendar → dates fill → guest message ready. */
-export function PhoneMagic({ size = 'lg' }) {
+export function PhoneMagic() {
   return (
-    <figure className={`v4-phone ${size} loop-a`}>
-      <div className="v4-screen" role="img" aria-label="הדגמה: הזמנה מ-Booking נכנסת ליומן של atlas, התאריכים 13 עד 15 בנובמבר מתמלאים, והודעה לאורח מוכנה לפתיחה בוואטסאפ">
+    <figure className="v4-phone loop-a">
+      <div className="v4-screen" role="img" aria-label="הדגמה עם נתוני דוגמה: הזמנה מ-Booking מופיעה ביומן של atlas, התאריכים 13 עד 15 בנובמבר מתמלאים, ונוסח הודעה לאורח מוכן לפתיחה בוואטסאפ">
         <Status />
         <Calendar />
         <Notif app="bk" cls="a-n" title="הזמנה חדשה: רוני פרץ" body="13–15 בנובמבר · 2 לילות · הזית" />
-        <span className="v4-fly" aria-hidden="true">רוני · 2 לילות</span>
+        <span className="v4-fly" aria-hidden="true">13–15.11 · הזית</span>
         <MsgCard cls="a-m" />
-      </div>
-      <figcaption>נתוני דוגמה</figcaption>
-    </figure>
-  );
-}
-
-/** B loop: notifications from three places pile up → fold into one Today card. */
-export function PhoneStack() {
-  return (
-    <figure className="v4-phone lg loop-b">
-      <div className="v4-screen" role="img" aria-label="הדגמה: התראות מ-Booking, מ-Airbnb ומוואטסאפ מתאספות לכרטיס אחד של היום ב-atlas">
-        <Status />
-        <div className="v4-lock" aria-hidden="true"><b dir="ltr">9:41</b><span>שישי, 13 בנובמבר</span></div>
-        <div className="v4-pile" aria-hidden="true">
-          <Notif app="bk" cls="p p0" title="הזמנה חדשה: רוני פרץ" body="13–15 בנובמבר · 2 לילות" />
-          <Notif app="air" cls="p p1" title="בקשת הזמנה: משפחת לוי" body="20–22 בנובמבר · 4 אורחים" time="לפני 2 דק׳" />
-          <Notif app="wa" cls="p p2" title="דנה כהן" body="היי, מתי אפשר להגיע מחר?" time="לפני 5 דק׳" />
-          <Notif app="bk" cls="p p3" title="הזמנה חדשה: יעל שמעוני" body="27–28 בנובמבר · לילה אחד" time="לפני 9 דק׳" />
-        </div>
-        <div className="v4-today" aria-hidden="true">
-          <div className="v4-today-h"><Logo tone="indigo" w={52} /><span>היום · שישי 13.11</span></div>
-          <ul>
-            <li><span className="tag in">כניסה</span><b>רוני פרץ</b><small>הזית · Booking</small></li>
-            <li><span className="tag out">יציאה</span><b>משפחת אברהם</b><small>הגפן · Airbnb</small></li>
-            <li><span className="tag msg">הודעה</span><b>הוראות הגעה לדנה</b><small>מוכנה, נפתחת בוואטסאפ שלכם</small></li>
-          </ul>
-          <div className="v4-today-f"><span>הבא בתור</span><b>משפחת לוי · 20.11</b></div>
-        </div>
       </div>
       <figcaption>נתוני דוגמה</figcaption>
     </figure>
@@ -123,18 +95,18 @@ export function PhoneStack() {
 
 /* ---------------- heroes ---------------- */
 
-function TopBar({ dark }) {
+function TopBar() {
   return (
     <div className="v4-top">
-      <Logo tone={dark ? 'white' : 'navy'} w={78} />
-      <span className={`v4-soon ${dark ? 'dk' : ''}`}>בקרוב</span>
+      <Logo w={78} />
+      <span className="v4-soon">בקרוב</span>
     </div>
   );
 }
 
-function OfferPill({ dark }) {
+function OfferPill() {
   return (
-    <p className={`v4-pill ${dark ? 'dk' : ''}`}>
+    <p className="v4-pill">
       <span className="v4-dot" aria-hidden="true" />
       50 הראשונים: הקמה אישית ומחיר מייסדים
     </p>
@@ -148,33 +120,13 @@ export function HeroA4({ onCta }) {
       <div className="h4-copy">
         <p className="h4-kicker">לבעלי צימרים ומתחמי נופש</p>
         <h1 className="h4-h1"><span>הזמנה נכנסה.</span><span className="lit"><A /> כבר סידר.</span></h1>
-        <p className="h4-sub">הזמנות מ-Booking ו-Airbnb נכנסות ליומן אחד, וההודעה לאורח כבר מוכנה.</p>
+        <p className="h4-sub">התאריכים מ-Booking ו-Airbnb נכנסים לבד ליומן אחד, ונוסח ההודעה לאורח כבר מחכה.</p>
       </div>
       <div className="h4-cta">
         <OfferPill />
         <button type="button" className="v4-btn cx-cta" onClick={onCta}>שמרו לי מקום</button>
       </div>
       <PhoneMagic />
-    </header>
-  );
-}
-
-export function HeroB4({ onCta }) {
-  return (
-    <header className="h4 h4-b">
-      <img className="h4-bg" src="/early/v3/p-39297000.webp" alt="" width="1200" height="1600" fetchpriority="high" decoding="async" />
-      <div className="h4-scrim" aria-hidden="true" />
-      <TopBar dark />
-      <div className="h4-copy">
-        <p className="h4-kicker">לבעלי צימרים ומתחמי נופש</p>
-        <h1 className="h4-h1"><span>כל ההזמנות.</span><span className="lit">מקום אחד.</span></h1>
-        <p className="h4-sub">Booking ו-Airbnb ביומן אחד, והודעות לאורחים שנפתחות בוואטסאפ שלכם.</p>
-      </div>
-      <div className="h4-cta">
-        <OfferPill dark />
-        <button type="button" className="v4-btn light cx-cta" onClick={onCta}>שמרו לי מקום</button>
-      </div>
-      <PhoneStack />
     </header>
   );
 }
@@ -197,31 +149,6 @@ function PriceRows({ dark }) {
   );
 }
 
-export function HeroC4({ onCta }) {
-  return (
-    <header className="h4 h4-c">
-      <TopBar dark />
-      <div className="c4-card">
-        <p className="c4-eyebrow"><span className="v4-dot" aria-hidden="true" />לפני ההשקה · לבעלי צימרים</p>
-        <h1 className="c4-h1"><span className="c4-50">50</span><span>המקומות<br />הראשונים.</span></h1>
-        <p className="c4-sub">מחיר מייסדים, נעול כל עוד המנוי פעיל.</p>
-        <PriceRows dark />
-        <ul className="c4-plus">
-          <li><b>הקמה אישית.</b> מחברים לכם את <span className="v4-nw">Booking ו-Airbnb</span>, היחידות ונוסחי ההודעות.</li>
-          <li><b>{TRIAL_DAYS} יום חינם.</b> בלי כרטיס אשראי.</li>
-        </ul>
-        <p className="c4-never">המחיר הזה לא יחזור.</p>
-        <button type="button" className="v4-btn light cx-cta" onClick={onCta}>שמרו לי מקום</button>
-      </div>
-      <div className="c4-demo">
-        <p className="c4-what">ומה זה <A />?</p>
-        <p className="c4-what-s">הזמנה נכנסת, היומן מתעדכן, וההודעה לאורח מוכנה.</p>
-        <PhoneMagic size="md" />
-      </div>
-    </header>
-  );
-}
-
 /* ---------------- shared body ---------------- */
 
 export function RealScreens() {
@@ -234,8 +161,8 @@ export function RealScreens() {
           <figcaption><b>יומן אחד</b>לכל היחידות</figcaption>
         </figure>
         <figure data-rv>
-          <img src="/landing-v8/ui/d-thread.webp" alt="מסך הודעות לאורח באפליקציית atlas" width="780" height="1688" loading="lazy" decoding="async" />
-          <figcaption><b>הודעות לאורחים</b>נפתחות בוואטסאפ שלכם</figcaption>
+          <img src="/landing-v8/ui/d-today.webp" alt="מסך היום של atlas עם המשימות, הכניסות והיציאות של היום" width="780" height="1688" loading="lazy" decoding="async" />
+          <figcaption><b>מסך היום</b>כניסות, יציאות וניקיון</figcaption>
         </figure>
       </div>
       <p className="v4-sample">מסכים אמיתיים מהאפליקציה · נתוני דוגמה</p>
@@ -254,7 +181,7 @@ export function Offer4({ onCta }) {
           <li data-rv><span className="n" aria-hidden="true">2</span><div><h3>מחיר מייסדים, נעול</h3><p>מחיר המסלול השנתי, בתשלום חודשי. נעול כל עוד המנוי פעיל.</p><PriceRows dark /></div></li>
           <li data-rv><span className="n" aria-hidden="true">3</span><div><h3>{TRIAL_DAYS} יום חינם</h3><p>הכל פתוח, בלי כרטיס אשראי.</p></div></li>
         </ol>
-        <p className="c4-never" data-rv>אחרי 50 המקומות, המחיר הזה לא יחזור.</p>
+        <p className="c4-never" data-rv>אחרי 50 המקומות, חוזרים למחיר הרגיל.</p>
         <button type="button" className="v4-btn light" onClick={onCta} data-rv>שמרו לי מקום</button>
       </div>
     </section>
