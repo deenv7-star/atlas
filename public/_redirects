@@ -5,6 +5,7 @@
 /changelog    /   301
 /api-docs    /   301
 /book/*    /book.html   200
+/early    /early/index.html   200
 /AIAssistant    /app.html   200
 /AIAssistant/*    /app.html   200
 /Automations    /app.html   200

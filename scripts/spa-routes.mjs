@@ -20,7 +20,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
 /** Served from prerendered files (or redirected), never by the SPA shell. */
 const STATIC = new Set(['', 'pricing', 'register', 'login', 'blog', 'about', 'contact', 'privacy', 'terms', 'cookies',
-  'cancellation', 'data-processing', 'data-security', 'accessibility']);
+  'cancellation', 'data-processing', 'data-security', 'accessibility', 'early']);
 
 export function spaSegments() {
   const segs = new Set();
@@ -50,7 +50,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // Netlify: _redirects runs before netlify.toml; a non-forced 200 rewrite only applies when no file exists.
   const head = ['/    /index.html   200', '/pricing    /pricing/index.html   200',
     '/register    /register/index.html   200', '/login    /login/index.html   200',
-    '/changelog    /   301', '/api-docs    /   301', '/book/*    /book.html   200'];
+    '/changelog    /   301', '/api-docs    /   301', '/book/*    /book.html   200', '/early    /early/index.html   200'];
   fs.writeFileSync(path.join(ROOT, 'public/_redirects'), `${[...head, ...redirects, '/*    /404.html   404'].join('\n')}\n`);
   const nt = read('netlify.toml').replace(/\[\[redirects\]\][\s\S]*?status = 200\n/, `[[redirects]]
   from = "/*"

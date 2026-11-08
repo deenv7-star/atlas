@@ -399,6 +399,15 @@ function prerenderLean(mod, template, index) {
     fs.mkdirSync(path.join(DIST, route.slice(1)), { recursive: true });
     fs.writeFileSync(path.join(DIST, route.slice(1), 'index.html'), appShellWithText(headFor(template, appMeta(mod, route)), mod.appRouteBody(route)));
   }
+  // /early: pre-launch waitlist (teasers, IG bio). Own head for WhatsApp / IG link previews; noindex until launch.
+  fs.mkdirSync(path.join(DIST, 'early'), { recursive: true });
+  fs.writeFileSync(path.join(DIST, 'early', 'index.html'), headFor(template, {
+    title: 'atlas · 50 המקומות הראשונים לבעלי צימרים',
+    description: 'אתם מארחים. atlas מסדר. רשימת המתנה: הקמה אישית ומחיר מייסדים נעול ל-50 המקומות הראשונים.',
+    canonical: `${ORIGIN}/early`,
+    ogImage: `${ORIGIN}/og/og-early.png`,
+    robots: 'noindex,follow',
+  }));
   fs.rmSync(path.join(DIST, '.vite'), { recursive: true, force: true }); // build-time only, not deployed
   log('lean pages: / and /pricing prerendered (hydrated); app.html shell; /register, /login heads');
 }

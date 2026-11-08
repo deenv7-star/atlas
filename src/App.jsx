@@ -48,6 +48,7 @@ const AccountSuspended = lazy(() => import('@/components/common/AccountSuspended
 
 const GuestStayPage = lazy(() => import('@/pages/GuestStay'));
 const BookDirectPage = lazy(() => import('@/pages/BookDirect'));
+const EarlyPage = lazy(() => import('@/pages/Early'));
 const MonthlyReportPrintPage = lazy(() => import('@/pages/MonthlyReportPrint'));
 // Public site (blog + legal + trust pages). Prerendered to static HTML at build (scripts/prerender.mjs).
 const SitePage = lazy(() => import('@/site/SitePage'));
@@ -246,6 +247,7 @@ const AuthenticatedApp = () => {
 
       {/* Public guest page per booking + direct-booking page per property (no login) */}
       <Route path="/g/:token" element={<Suspense fallback={<PublicFallback />}><GuestStayPage /><BootDone /></Suspense>} />
+      <Route path="/early" element={<Suspense fallback={<PublicFallback />}><EarlyPage /><BootDone /></Suspense>} />
       <Route path="/book/:slug" element={<Suspense fallback={<PublicFallback />}><BookDirectPage /><BootDone /></Suspense>} />
       {/* Print / PDF view of the monthly accountant report (no app chrome) */}
       <Route path="/monthly-report/print" element={<ProtectedRoute><Suspense fallback={<PublicFallback />}><MonthlyReportPrintPage /><BootDone /></Suspense></ProtectedRoute>} />
