@@ -18,25 +18,12 @@
  * Without Supabase (local QA build): demo mode, nothing leaves the browser.
  */
 import { supabase, isSupabaseConfigured } from '@/api/supabaseClient';
+import { normalizePhone, makeRefCode } from './phone.js';
+
+export { normalizePhone, makeRefCode };
 
 export const FOUNDING_SPOTS = 50;
 const RPC_ON = import.meta.env.VITE_WAITLIST_RPC === '1';
-
-/** Israeli mobile → 05XXXXXXXX, or null. */
-export function normalizePhone(raw) {
-  let d = String(raw || '').replace(/[^\d+]/g, '');
-  if (d.startsWith('+972')) d = '0' + d.slice(4);
-  else if (d.startsWith('972')) d = '0' + d.slice(3);
-  d = d.replace(/\D/g, '');
-  return /^05\d{8}$/.test(d) ? d : null;
-}
-
-const ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
-export function makeRefCode() {
-  const a = new Uint8Array(6);
-  (globalThis.crypto || window.crypto).getRandomValues(a);
-  return Array.from(a, (n) => ALPHABET[n % ALPHABET.length]).join('');
-}
 
 /** ?ref=<code> from the URL, sanitized. */
 export function incomingRef() {

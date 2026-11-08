@@ -64,7 +64,7 @@ function Phone({ src, alt, className = '', eager = false }) {
   return (
     <figure className={`ew-phone ${className}`}>
       <div className="ew-phone-body">
-        <img src={src} alt={alt} width="780" height="1688" loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : undefined} />
+        <img src={src} alt={alt} width="780" height="1688" loading={eager ? 'eager' : 'lazy'} decoding="async" fetchPriority={eager ? 'high' : undefined} />
       </div>
     </figure>
   );
