@@ -20,7 +20,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
 /** Served from prerendered files (or redirected), never by the SPA shell. */
 const STATIC = new Set(['', 'pricing', 'register', 'login', 'blog', 'about', 'contact', 'privacy', 'terms', 'cookies',
-  'cancellation', 'data-processing', 'data-security', 'accessibility']);
+  'cancellation', 'data-processing', 'data-security', 'accessibility', 'early']);
 
 export function spaSegments() {
   const segs = new Set();
