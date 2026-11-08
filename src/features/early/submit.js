@@ -87,7 +87,7 @@ export async function joinWaitlist({ name, phone, units, complex, consent, websi
     });
     if (!error && data) {
       const row = Array.isArray(data) ? data[0] : data;
-      return { ok: true, position: row?.position ?? null, refCode: row?.ref_code || refCode };
+      return { ok: true, position: row?.place ?? null, refCode: row?.ref_code || refCode };
     }
     // fall through to the contact path so a signup is never lost
   }
