@@ -44,6 +44,8 @@ import LazyGrowth from './growth/LazyGrowth';
 import { useLandingMotion } from './motion/landingMotion';
 import './motion/landing-motion.css';
 import './motion/landing-motion-m2.css';
+import { useLandingMotion3 } from './motion/landingMotion3';
+import './motion/landing-motion-v3.css';
 
 const loadGrowth = () => import('./growth/GrowthS');
 
@@ -241,8 +243,10 @@ export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
   useLandingMotion(root);
+  useLandingMotion3(root);
   return (
     <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
+      <div className="mo-prog" aria-hidden="true"><i /></div>
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <V7Header links={NAV} />
       <main id="main">

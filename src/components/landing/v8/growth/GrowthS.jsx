@@ -12,6 +12,7 @@ import React, { useRef } from 'react';
 import { ArrowDown, Play, Film, Megaphone, BarChart3 } from 'lucide-react';
 import { Mark } from '../../v5/ui';
 import { useReveal } from '../../v5/motion';
+import { useGrowthMotion } from '../motion/landingMotion3';
 import { GROWTH_NAME, GROWTH_STATUS, GROWTH_LINKS, ROI, nis } from '@/config/growth';
 import './growth-s.css';
 
@@ -121,10 +122,11 @@ export default function GrowthS() {
   // mounted lazily, after the page-level reveal ran: reveal its own tiles
   const ref = useRef(null);
   useReveal(ref);
+  useGrowthMotion(ref);
   return (
     <section ref={ref} id="growth" className="gs" aria-labelledby="growth-title">
       <div className="l5-wrap">
-        <header className="gs-head">
+        <header className="gs-head" data-reveal>
           <p className="gs-kick"><span>{GROWTH_NAME}</span><span className="gs-soon">בקרוב, קודם למייסדים</span></p>
           <h2 id="growth-title" className="gs-h">יותר הזמנות ישירות. <span>בלי עמלה.</span></h2>
           <p className="gs-lede">קמפיינים ודף נחיתה או אתר למתחם, מהתמונות שכבר יש לכם. מתחילים בשיחה קצרה.</p>
