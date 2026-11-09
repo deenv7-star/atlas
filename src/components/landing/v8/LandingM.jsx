@@ -69,7 +69,7 @@ const TILES = [
     vis: (
       <div className="lm-tile-vis is-msg">
         <img className="lm-next-card" src={`${UI}/y3-next.webp`} alt="כרטיס ״הדבר הבא״ במסך היום של atlas: הודעת ״ברוכים הבאים״ למיכל לוי מוכנה לשליחה (נתוני דוגמה)" width="676" height="304" loading="lazy" decoding="async" />
-        <WaBubble who="מיכל לוי" text="שלום מיכל, ברוכים הבאים לזית. מקווים שהגעתם בשלום. אם חסר משהו, כתבו לנו כאן ונדאג לזה." time="15:20" />
+        <WaBubble who="מיכל לוי" text="שלום מיכל, ברוכים הבאים לזית. מקווים שהגעתם בשלום. אם חסר משהו, כתבו לנו כאן ונדאג לזה." time="15:20" typing />
       </div>
     ),
   },

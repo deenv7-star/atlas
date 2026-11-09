@@ -4,7 +4,7 @@
    Loops run only on screen (.mo-live from landingMotion3.js). Reduced motion: none of this runs and the
    progress bar is not shown. See qa/landing-motion-v1/MAPPING.md. */
 
-.mo-prog { display: none; }
+.mo-prog, .mo-typing { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {
   /* ---- scroll progress (reference: none; asked for in the brief): a 3px indigo line at the very top ---- */
@@ -36,7 +36,8 @@
   .lm .v8-wa .v8-wa-meta svg { transition: opacity 240ms var(--mo-ease) 420ms, transform 360ms var(--mo-ease) 420ms; }
   .lm .v8-wa.mo-wa-wait .v8-wa-msg { opacity: 0; transform: translateY(8px) scale(0.97); }
   .lm .v8-wa.mo-wa-wait .v8-wa-meta svg { opacity: 0; transform: scale(0.6); }
-  .mo-typing { position: absolute; z-index: 2; top: 50px; inset-inline-start: 12px; display: inline-flex; align-items: center; gap: 5px; height: 36px; padding: 0 14px; border-radius: 18px 18px 6px 18px; background: #3e2bf1; opacity: 0; transform: translateY(6px) scale(0.96); transform-origin: 100% 100%; transition: opacity 200ms var(--mo-ease), transform 280ms var(--mo-ease); pointer-events: none; }
+  .lm.mo-on .mo-typing { display: inline-flex; }
+  .mo-typing { position: absolute; z-index: 2; top: 50px; inset-inline-start: 12px; align-items: center; gap: 5px; height: 36px; padding: 0 14px; border-radius: 18px 18px 6px 18px; background: #3e2bf1; opacity: 0; transform: translateY(6px) scale(0.96); transform-origin: 100% 100%; transition: opacity 200ms var(--mo-ease), transform 280ms var(--mo-ease); pointer-events: none; }
   .mo-typing i { width: 6px; height: 6px; border-radius: 50%; background: #fff; opacity: 0.55; }
   .mo-wa-typing .mo-typing { opacity: 1; transform: none; }
   .mo-wa-typing .mo-typing i { animation: mo-bob 1s ease-in-out infinite; }
