@@ -1,0 +1,84 @@
+/* Landing motion v3, version A "עדין" (9.11.2026), mapped from Deen's reference atlas-v3.html.
+   Adds motion only: layout, colours, type, copy and images are untouched. Transform and opacity only
+   (one exception: the season chip highlight in B is a 300ms colour fade on a small chip).
+   Loops run only on screen (.mo-live from landingMotion3.js). Reduced motion: none of this runs and the
+   progress bar is not shown. See qa/landing-motion-v1/MAPPING.md. */
+
+.mo-prog, .mo-typing { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---- scroll progress (reference: none; asked for in the brief): a 3px indigo line at the very top ---- */
+  .mo-prog { display: block; position: fixed; z-index: 70; top: env(safe-area-inset-top, 0px); inset-inline: 0; height: 3px; pointer-events: none; }
+  .mo-prog i { display: block; height: 100%; background: #3e2bf1; transform-origin: 100% 50%; transform: scaleX(0); will-change: transform; }
+  @supports (animation-timeline: scroll()) {
+    .mo-prog i { animation: mo-prog-x linear both; animation-timeline: scroll(root block); }
+  }
+
+  /* ---- reveals, staggered (reference [data-reveal] + --i stagger): children of blocks that already fade in ---- */
+  .lm.mo-on .v8p-plans > li,
+  .lm.mo-on .l5-faq details,
+  .lm.mo-on .gs-head > * {
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 520ms var(--mo-ease), transform 620ms var(--mo-ease), translate 360ms var(--mo-ease);
+    transition-delay: var(--mo-k, 0ms), var(--mo-k, 0ms), 0ms;
+  }
+  .lm.mo-on :is(.v8p-plans > li, .l5-faq details, .gs-head > *):nth-child(2) { --mo-k: 80ms; }
+  .lm.mo-on :is(.v8p-plans > li, .l5-faq details, .gs-head > *):nth-child(3) { --mo-k: 160ms; }
+  .lm.mo-on :is(.v8p-plans > li, .l5-faq details):nth-child(4) { --mo-k: 220ms; }
+  .lm.mo-on :is(.v8p-plans > li, .l5-faq details):nth-child(5) { --mo-k: 280ms; }
+  .lm.mo-on :is(.v8p-plans.is-in > li, .l5-faq.is-in details, .gs-head.is-in > *) { opacity: 1; transform: none; }
+
+  /* ---- calendar tile (reference .sync.spin): the sync icon turns once as the tile arrives ---- */
+  .lm.mo-on .lm-tile.is-in .lm-sync svg { animation: mo-spin 900ms cubic-bezier(0.65, 0, 0.35, 1) 520ms both; }
+
+  /* ---- messages tile (reference whatsapp: typing, then the message, then the ticks) ---- */
+  .lm .v8-wa .v8-wa-msg { transform-origin: 100% 100%; transition: opacity 320ms var(--mo-ease), transform 440ms var(--mo-ease); }
+  .lm .v8-wa .v8-wa-meta svg { transition: opacity 240ms var(--mo-ease) 420ms, transform 360ms var(--mo-ease) 420ms; }
+  .lm .v8-wa.mo-wa-wait .v8-wa-msg { opacity: 0; transform: translateY(8px) scale(0.97); }
+  .lm .v8-wa.mo-wa-wait .v8-wa-meta svg { opacity: 0; transform: scale(0.6); }
+  .lm.mo-on .mo-typing { display: inline-flex; }
+  .mo-typing { position: absolute; z-index: 2; top: 50px; inset-inline-start: 12px; align-items: center; gap: 5px; height: 36px; padding: 0 14px; border-radius: 18px 18px 6px 18px; background: #3e2bf1; opacity: 0; transform: translateY(6px) scale(0.96); transform-origin: 100% 100%; transition: opacity 200ms var(--mo-ease), transform 280ms var(--mo-ease); pointer-events: none; }
+  .mo-typing i { width: 6px; height: 6px; border-radius: 50%; background: #fff; opacity: 0.55; }
+  .mo-wa-typing .mo-typing { opacity: 1; transform: none; }
+  .mo-wa-typing .mo-typing i { animation: mo-bob 1s ease-in-out infinite; }
+  .mo-wa-typing .mo-typing i:nth-child(2) { animation-delay: 120ms; }
+  .mo-wa-typing .mo-typing i:nth-child(3) { animation-delay: 240ms; }
+
+  /* ---- people photo with the phone (reference .stamp): "הגפן מוכנה לאורחים" pops on after the phone ---- */
+  .lm.mo-on .lm-feat-today .lm-chip.is-d .lm-done { opacity: 0; transform: translateY(6px) scale(0.92); transition: opacity 360ms var(--mo-ease) 700ms, transform 520ms var(--mo-ease) 700ms; }
+  .lm.mo-on .lm-feat-today.is-in .lm-chip.is-d .lm-done { opacity: 1; transform: none; }
+
+  /* ---- growth: the sample story (reference .reel + .prog): the current bar fills and the photo zooms slowly, on screen only ---- */
+  .lm.mo-on .gs-reel-bars i.is-on::after { animation: mo-prog-x 7s linear -3.85s infinite; animation-play-state: paused; }
+  .lm.mo-on .gs-reel-ph { animation: mo-reel 14s ease-in-out infinite alternate; animation-play-state: paused; }
+  .lm.mo-on .gs-tile.mo-live .gs-reel-bars i.is-on::after,
+  .lm.mo-on .gs-tile.mo-live .gs-reel-ph { animation-play-state: running; }
+
+  /* ---- scroll-driven parallax (reference .ph img par + .orb) ---- */
+  @supports (animation-timeline: view()) {
+    .lm .gs-ad-ph img { animation: mo-par linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+    .lm .lm-x-face { animation: mo-orb linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+    .lm .lm-x-face.is-2, .lm .lm-x-face.is-4 { animation-name: mo-orb2; }
+    /* phones: lighter parallax (half the travel), so nothing drifts far from where the layout puts it */
+    @media (max-width: 899px) {
+      .lm .gs-ad-ph img { animation-name: mo-par-m; }
+      .lm .lm-x-face { animation-name: mo-orb-m; }
+      .lm .lm-x-face.is-2, .lm .lm-x-face.is-4 { animation-name: mo-orb2-m; }
+    }
+  }
+
+  /* ---- tap feedback where it was missing (touch: :active, no hover needed; no grey iOS tap flash on top of it) ---- */
+  .lm :is(.lm-sticky a, .v8x-link, .gs-ad-btn, .gs-link) { -webkit-tap-highlight-color: transparent; }
+  .lm :is(.lm-sticky a, .v8x-link, .gs-ad-btn, .gs-link) { transition-property: background-color, color, box-shadow, transform; transition-duration: 200ms, 200ms, 200ms, 160ms; transition-timing-function: var(--mo-ease); }
+  .lm :is(.lm-sticky a, .v8x-link, .gs-ad-btn, .gs-link):active { transform: scale(0.97); }
+}
+
+@keyframes mo-prog-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes mo-spin { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+@keyframes mo-bob { 50% { transform: translateY(-3px); opacity: 1; } }
+@keyframes mo-reel { from { transform: none; } to { transform: scale(1.1) translateY(-3%); } }
+@keyframes mo-orb { from { transform: translateY(18px) rotate(-4deg); } to { transform: translateY(-18px) rotate(4deg); } }
+@keyframes mo-par-m { from { transform: translateY(-6px) scale(1.04); } to { transform: translateY(6px) scale(1.04); } }
+@keyframes mo-orb-m { from { transform: translateY(9px) rotate(-2deg); } to { transform: translateY(-9px) rotate(2deg); } }
+@keyframes mo-orb2-m { from { transform: translateY(-7px) rotate(2deg); } to { transform: translateY(7px) rotate(-2deg); } }
+@keyframes mo-orb2 { from { transform: translateY(-14px) rotate(3deg); } to { transform: translateY(14px) rotate(-3deg); } }

@@ -50,11 +50,16 @@ export function FaceStack({ keys, size = 34, className = '' }) {
 }
 
 /** WhatsApp bubble card: the real message text the demo app sends (example guest). */
-export function WaBubble({ who = 'משפחת לוי', text = 'שלום משפחת לוי, ההזמנה שלכם בצימר הזית מאושרת: יום ו׳ 16 באוק׳ עד יום ב׳ 19 באוק׳. מחכים לכם, צימרי הזית', time = '09:00', className = '', style }) {
+/* `typing`: also renders the (hidden) typing dots the landing motion shows before the message (motion v3);
+   `split`: the same text as one span per word, so it can appear word by word. Both are static markup,
+   identical on the server and the client, and invisible unless the motion runs. */
+export function WaBubble({ who = 'משפחת לוי', text = 'שלום משפחת לוי, ההזמנה שלכם בצימר הזית מאושרת: יום ו׳ 16 באוק׳ עד יום ב׳ 19 באוק׳. מחכים לכם, צימרי הזית', time = '09:00', className = '', style, typing = false, split = false }) {
+  const words = split ? text.split(' ') : null;
   return (
-    <div className={`v8-wa ${className}`} style={style}>
+    <div className={`v8-wa ${className}`} style={words ? { ...style, '--wn': words.length } : style}>
       <p className="v8-wa-top"><span className="v8-wa-ic"><Mark ch="whatsapp" size={15} /></span><b>{who}</b><small>וואטסאפ</small></p>
-      <p className="v8-wa-msg">{text}<span className="v8-wa-meta"><span className="num" dir="ltr">{time}</span><CheckCheck size={14} strokeWidth={2.4} aria-hidden="true" /></span></p>
+      <p className="v8-wa-msg">{words ? words.map((w, i) => <React.Fragment key={i}>{i > 0 && ' '}<span className="mo-w" style={{ '--w': i }}>{w}</span></React.Fragment>) : text}<span className="v8-wa-meta"><span className="num" dir="ltr">{time}</span><CheckCheck size={14} strokeWidth={2.4} aria-hidden="true" /></span></p>
+      {typing && <span className="mo-typing" aria-hidden="true"><i /><i /><i /></span>}
     </div>
   );
 }

@@ -44,6 +44,9 @@ import LazyGrowth from './growth/LazyGrowth';
 import { useLandingMotion } from './motion/landingMotion';
 import './motion/landing-motion.css';
 import './motion/landing-motion-m2.css';
+import { useLandingMotion3 } from './motion/landingMotion3';
+import './motion/landing-motion-v3.css';
+import './motion/landing-motion-v3b.css';
 
 const loadGrowth = () => import('./growth/GrowthS');
 
@@ -67,7 +70,7 @@ const TILES = [
     vis: (
       <div className="lm-tile-vis is-msg">
         <img className="lm-next-card" src={`${UI}/y3-next.webp`} alt="כרטיס ״הדבר הבא״ במסך היום של atlas: הודעת ״ברוכים הבאים״ למיכל לוי מוכנה לשליחה (נתוני דוגמה)" width="676" height="304" loading="lazy" decoding="async" />
-        <WaBubble who="מיכל לוי" text="שלום מיכל, ברוכים הבאים לזית. מקווים שהגעתם בשלום. אם חסר משהו, כתבו לנו כאן ונדאג לזה." time="15:20" />
+        <WaBubble who="מיכל לוי" text="שלום מיכל, ברוכים הבאים לזית. מקווים שהגעתם בשלום. אם חסר משהו, כתבו לנו כאן ונדאג לזה." time="15:20" typing split />
       </div>
     ),
   },
@@ -241,8 +244,10 @@ export default function LandingM() {
   const root = useRef(null);
   useReveal(root);
   useLandingMotion(root);
+  useLandingMotion3(root);
   return (
     <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
+      <div className="mo-prog" aria-hidden="true"><i /></div>
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <V7Header links={NAV} />
       <main id="main">
