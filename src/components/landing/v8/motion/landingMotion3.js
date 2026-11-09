@@ -5,7 +5,8 @@
  *
  * - Scroll progress bar: CSS scroll timeline; this hook drives it with rAF only where that is missing.
  * - WhatsApp tile: the bubble that is already there is "sent" when it comes into view
- *   (typing dots, then the same message, then the ticks). The text never changes.
+ *   (typing dots, then the same message, then the ticks). The text never changes, and no node is added:
+ *   the dots are static markup (WaBubble `typing`), so hydration of the prerendered page is untouched.
  * - Loops (story progress, slow photo zoom, sync icon) run only while their card is on screen.
  * Reduced motion / no IntersectionObserver: nothing runs, everything stays in its final, static state.
  * Every node touched here is one React never re-renders, so the prerendered HTML hydrates unchanged.
@@ -57,33 +58,11 @@ function progressFallback(root) {
 }
 
 /** WhatsApp bubble: typing dots, then the same message, then the ticks. Layout never moves (opacity/transform). */
-function waSim(root, level) {
+function waSim(root) {
   const wa = root.querySelector('.lm-tile-vis.is-msg .v8-wa');
   if (!wa || inView(wa)) return null;
   const msg = wa.querySelector('.v8-wa-msg');
   if (!msg) return null;
-  if (level === 'b') {
-    // word by word: the text node is wrapped in spans, same words, same order
-    const node = [...msg.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
-    if (node) {
-      const words = node.textContent.split(/(\s+)/);
-      const frag = document.createDocumentFragment();
-      let k = 0;
-      words.forEach((w) => {
-        if (!w) return;
-        if (/^\s+$/.test(w)) { frag.appendChild(document.createTextNode(w)); return; }
-        const s = document.createElement('span');
-        s.className = 'mo-w'; s.style.setProperty('--w', String(k++)); s.textContent = w;
-        frag.appendChild(s);
-      });
-      msg.replaceChild(frag, node);
-      wa.style.setProperty('--wn', String(k));
-    }
-  }
-  const dots = document.createElement('span');
-  dots.className = 'mo-typing'; dots.setAttribute('aria-hidden', 'true');
-  dots.innerHTML = '<i></i><i></i><i></i>';
-  wa.appendChild(dots);
   wa.classList.add('mo-wa-wait');
   let t1 = 0; let t2 = 0;
   const io = once(wa, () => {
@@ -103,7 +82,7 @@ export function useLandingMotion3(rootRef, level = MOTION_LEVEL) {
     const undo = [];
     const scrollTL = typeof CSS !== 'undefined' && CSS.supports && CSS.supports('animation-timeline: scroll()');
     if (!scrollTL) undo.push(progressFallback(root));
-    const wa = waSim(root, level);
+    const wa = waSim(root);
     if (wa) undo.push(wa);
     const live = watchLive([...root.querySelectorAll('.lm-tile, .ph-hero')]);
     undo.push(() => live.disconnect());
