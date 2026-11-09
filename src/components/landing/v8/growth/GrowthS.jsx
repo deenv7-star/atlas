@@ -12,7 +12,7 @@ import React, { useRef } from 'react';
 import { ArrowDown, Play, Film, Megaphone, BarChart3 } from 'lucide-react';
 import { Mark } from '../../v5/ui';
 import { useReveal } from '../../v5/motion';
-import { useGrowthMotion } from '../motion/landingMotion3';
+import { useGrowthMotion } from '../motion/growthMotion';
 import { GROWTH_NAME, GROWTH_STATUS, GROWTH_LINKS, ROI, nis } from '@/config/growth';
 import './growth-s.css';
 
