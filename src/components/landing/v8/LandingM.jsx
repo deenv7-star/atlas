@@ -46,6 +46,7 @@ import './motion/landing-motion.css';
 import './motion/landing-motion-m2.css';
 import { useLandingMotion3 } from './motion/landingMotion3';
 import './motion/landing-motion-v3.css';
+import './motion/landing-motion-v3b.css';
 
 const loadGrowth = () => import('./growth/GrowthS');
 

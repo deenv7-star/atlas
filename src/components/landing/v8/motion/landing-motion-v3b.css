@@ -1,0 +1,49 @@
+/* Landing motion v3, version B "חי" (9.11.2026): everything in A (landing-motion-v3.css) plus every other
+   reference animation that maps onto something already on the landing. Scoped to .mo-b (set by
+   landingMotion3.js when MOTION_LEVEL is 'b'). Reduced motion: none of this runs. */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---- hero (reference .pending ping): the newest notification gets a soft ring, three times, after it lands ---- */
+  .lm.mo-b .ph-ntf:nth-child(3) .ph-ntf-ic { position: relative; }
+  .lm.mo-b .ph-ntf:nth-child(3) .ph-ntf-ic::after {
+    content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 2px #3e2bf1; opacity: 0; pointer-events: none;
+    animation: mo-ping 1.6s cubic-bezier(0.23, 1, 0.32, 1) 2.2s 3;
+  }
+
+  /* ---- feature tiles (reference reveal --i stagger): label, title and line come in one after another ---- */
+  .lm.mo-b .lm-tile[data-reveal] .lm-tile-copy > * { opacity: 0; transform: translateY(10px); transition: opacity 460ms var(--mo-ease), transform 560ms var(--mo-ease); }
+  .lm.mo-b .lm-tile[data-reveal] .lm-tile-copy > :nth-child(2) { transition-delay: 70ms; }
+  .lm.mo-b .lm-tile[data-reveal] .lm-tile-copy > :nth-child(3) { transition-delay: 140ms; }
+  .lm.mo-b .lm-tile[data-reveal].is-in .lm-tile-copy > * { opacity: 1; transform: none; }
+
+  /* ---- calendar tile (reference .sync.spin on every pull): after the first turn, the sync icon turns again every 8s while on screen ---- */
+  .lm.mo-b .lm-tile.is-in .lm-sync svg { animation: mo-spin 900ms cubic-bezier(0.65, 0, 0.35, 1) 520ms both, mo-spin-r 8s cubic-bezier(0.65, 0, 0.35, 1) 1.42s infinite; animation-play-state: running, paused; }
+  .lm.mo-b .lm-tile.is-in.mo-live .lm-sync svg { animation-play-state: running, running; }
+
+  /* ---- messages tile (reference typing text): the message appears word by word, ticks after the last word ---- */
+  .lm.mo-b .v8-wa .mo-w { opacity: 0; transition: opacity 200ms ease; transition-delay: calc(var(--w, 0) * 32ms + 140ms); }
+  .lm.mo-b .v8-wa.mo-wa-sent .mo-w { opacity: 1; }
+  .lm.mo-b .v8-wa .v8-wa-meta svg { transition-delay: calc(var(--wn, 0) * 32ms + 360ms); }
+
+  /* ---- facts (reference .stack hover): the guest faces spread a little on hover ---- */
+  @media (hover: hover) and (pointer: fine) {
+    .lm.mo-b .lm-facts-people .v8f { transition: opacity 420ms var(--mo-ease), transform 480ms var(--mo-ease), translate 320ms var(--mo-ease); }
+    .lm.mo-b .lm-facts-people:hover .v8f:nth-child(1) { translate: 8px 0; }
+    .lm.mo-b .lm-facts-people:hover .v8f:nth-child(2) { translate: 4px 0; }
+    .lm.mo-b .lm-facts-people:hover .v8f:nth-child(4) { translate: -4px 0; }
+    .lm.mo-b .lm-facts-people:hover .v8f:nth-child(5) { translate: -8px 0; }
+  }
+
+  /* ---- growth (reference .seasons knob): the season highlight walks to the sample ad's season, once ---- */
+  .lm.mo-b .gs-seasons li { transition: background-color 300ms var(--mo-ease), color 300ms var(--mo-ease), box-shadow 300ms var(--mo-ease); }
+  .lm.mo-b .gs-rep :is(.gs-rep-n, dd) { font-variant-numeric: tabular-nums; }
+
+  /* ---- Today tile (reference .peek): the Today phone screen rises a little into its tile ---- */
+  @supports (animation-timeline: view()) {
+    .lm.mo-b .lm-tile-vis.is-today img { animation: mo-peek linear both; animation-timeline: view(); animation-range: entry 0% cover 50%; }
+  }
+}
+
+@keyframes mo-ping { from { opacity: 0.8; transform: scale(1); } to { opacity: 0; transform: scale(1.55); } }
+@keyframes mo-spin-r { 0% { transform: rotate(0deg); } 11%, 100% { transform: rotate(-360deg); } }
+@keyframes mo-peek { from { transform: translateY(36px); } to { transform: none; } }

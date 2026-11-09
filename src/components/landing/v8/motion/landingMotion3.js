@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import { prefersReducedMotion } from '../../v5/motion';
 
 /** 'a' = עדין (subtle), 'b' = חי (fuller). */
-export const MOTION_LEVEL = 'a';
+export const MOTION_LEVEL = 'b';
 
 const inView = (el) => { const r = el.getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0; };
 const off = () => prefersReducedMotion() || typeof window === 'undefined' || !('IntersectionObserver' in window);
