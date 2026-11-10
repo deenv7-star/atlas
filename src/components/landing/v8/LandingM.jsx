@@ -23,14 +23,16 @@
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
+import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles, Mic, Check } from 'lucide-react';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { Faq, Footer } from '../v5/LandingV5';
-import { LANDING_FAQ, CTA_SIGNUP, CTA_NOTE } from '../v5/content';
+import { LANDING_FAQ } from '../v5/content';
+import { SignupButton } from '../v5/LandingV5';
 import { V7Header } from '../v7/shared7';
-import { UI, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8 } from './shared8';
+import { UI, FACES, Face, FaceStack, WaBubble, Pricing8, Credits8 } from './shared8';
+import './voice-v1.css';
 import { Pic } from './people/Pic';
 import '../v5/landing-v5.css';
 import '../v7/landing-v7.css';
@@ -50,13 +52,16 @@ import './motion/landing-motion-v3b.css';
 
 const loadGrowth = () => import('./growth/GrowthS');
 
-const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
+/* voice copy v1 (10.11.2026): Deen's labels; "נגד" not "בלי/אפס" (calendar sync is iCal, not instant),
+   "הודעות לאורחים" not "וואטסאפ בקליק" so nothing reads as if atlas lives in WhatsApp */
+const NAV = [['#calendar', 'נגד דאבל בוקינג'], ['#messages', 'הודעות לאורחים'], ['#payments', 'הכסף מול העיניים'], ['#voice', 'העוזר הקולי'], ['#pricing', 'מחירים']];
+const DEEN_WA = `https://wa.me/972525979520?text=${encodeURIComponent('היי דין, ראיתי את atlas באתר. יש לי מתחם ורציתי לדבר על התאמה אליו.')}`;
 
 /* ---------------- features: the four colour blocks as a bento of tiles + photos + channels ---------------- */
 const TILES = [
   {
-    tone: 'indigo', I: CalendarDays, id: 'calendar', k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
-    d: 'Airbnb, Booking.com והזמנות ישירות על לוח אחד. תאריך תפוס מסומן לפני שמאשרים.',
+    tone: 'indigo', I: CalendarDays, id: 'calendar', k: 'נגד דאבל בוקינג', t: 'סגרתם אורח? התאריך נחסם.',
+    d: 'הזמנה שנכנסת נחסמת גם ב-Booking וגם ב-Airbnb, לבד. ותאריך תפוס מסומן לפני שמאשרים.',
     vis: (
       <div className="lm-tile-vis is-cal">
         <img src={`${UI}/y3-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2182" height="934" loading="lazy" decoding="async" />
@@ -65,8 +70,8 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: MessageCircle, id: 'messages', k: 'הודעות', t: 'וואטסאפ לאורחים. מוכן מראש.',
-    d: 'atlas מכין כל הודעה בזמן. אתם שולחים בלחיצה, מהוואטסאפ שלכם.',
+    tone: 'canvas', I: MessageCircle, id: 'messages', k: 'הודעות לאורחים', t: 'הודעה לאורח, בלי להקליד אות.',
+    d: 'אישור הזמנה ופרטי הגעה מוכנים מראש. נפתחים בוואטסאפ שלכם, ואתם לוחצים שלח.',
     vis: (
       <div className="lm-tile-vis is-msg">
         <img className="lm-next-card" src={`${UI}/y3-next.webp`} alt="כרטיס ״הדבר הבא״ במסך היום של atlas: הודעת ״ברוכים הבאים״ למיכל לוי מוכנה לשליחה (נתוני דוגמה)" width="676" height="304" loading="lazy" decoding="async" />
@@ -75,8 +80,8 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: Wallet, id: 'payments', k: 'תשלומים', t: 'הכסף בשליטה. רואים הכל.',
-    d: 'רושמים כל מקדמה ויתרה בלחיצה, ורואים מה פתוח ומה נכנס החודש.',
+    tone: 'canvas', I: Wallet, id: 'payments', k: 'הכסף מול העיניים', t: 'מי שילם, ומי עוד חייב.',
+    d: 'רושמים מקדמה בלחיצה, ורואים בדיוק מי שילם ומי חייב יתרה. בלי פתקים.',
     vis: (
       <div className="lm-tile-vis is-chart">
         <img src={`${UI}/y3-money.webp`} alt="כרטיסי הכסף במסך היום של atlas: כמה נכנס החודש וכמה ממתין לתשלום (נתוני דוגמה)" width="676" height="340" loading="lazy" decoding="async" />
@@ -93,6 +98,22 @@ const TILES = [
     ),
   },
 ];
+
+/* voice copy v1: the phone mockup in the features photo becomes the voice assistant (in the atlas app, mic button).
+   It prepares the booking; the owner approves. Example data. Pulse is CSS only and off under reduced motion. */
+function VoiceCard() {
+  return (
+    <div id="voice" className="vc-card" data-sd="lift" role="img" aria-label="העוזר הקולי באפליקציה של atlas: דין אומר ״סגור לי את הבקתה למחר״, וההזמנה מוכנה לאישור, חסומה ב-Booking וב-Airbnb, עם וואטסאפ מוכן לשליחה (נתוני דוגמה)">
+      <p className="vc-said"><small>דין אמר:</small>״סגור לי את הבקתה למחר״</p>
+      <span className="vc-mic" aria-hidden="true"><i /><Mic size={30} strokeWidth={2.2} /></span>
+      <p className="vc-res" aria-hidden="true">ההזמנה מוכנה לאישור</p>
+      <ul className="vc-chips" aria-hidden="true">
+        {['נחסם ב-Booking', 'נחסם ב-Airbnb', 'וואטסאפ מוכן לשליחה'].map((c) => <li key={c}><Check size={12} strokeWidth={3} />{c}</li>)}
+      </ul>
+      <small className="vc-demo" aria-hidden="true">נתוני דוגמה</small>
+    </div>
+  );
+}
 
 function Features() {
   return (
@@ -115,16 +136,14 @@ function Features() {
         <div className="lm-feat-ppl">
           <div className="lm-feat-today pp-b-today" data-reveal>
             <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 1200px) 480px, (min-width: 900px) 40vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
-            <div className="pp-b-phone" data-sd="lift" role="img" aria-label="מסך ״היום״ של atlas בטלפון: מי מגיע היום, כמה נכנס החודש ותפוסה (נתוני דוגמה)">
-              <img src="/landing-hero/ui-m-today-y3.webp" srcSet="/landing-hero/ui-m-today-y3-540.webp 540w, /landing-hero/ui-m-today-y3.webp 780w" sizes="230px" alt="" width="780" height="1688" loading="lazy" decoding="async" />
-            </div>
+            <VoiceCard />
             <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
           </div>
           <div className="lm-feat-pay" data-reveal>
             <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
             <img className="lm-feat-paid" data-sd="lift" src={`${UI}/y3-paid.webp`} alt="כרטיס הזמנה באפליקציה של atlas: ‏₪2,440 סה״כ, ‏₪1,200 שולם ו-‏₪1,240 יתרה (נתוני דוגמה)" width="740" height="642" loading="lazy" decoding="async" />
           </div>
-          <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
+          <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: אומרים משפט אחד באפליקציה, וההזמנה מחכה לאישור.</p>
         </div>
         <div className="lm-feat-ch" data-reveal>
           <p>עובד עם מה שכבר יש לכם</p>
@@ -134,6 +153,7 @@ function Features() {
             <li style={{ '--i': 2 }}><Mark ch="whatsapp" size={20} />WhatsApp</li>
             <li style={{ '--i': 3 }}><Mark ch="google" size={20} />Google Calendar</li>
           </ul>
+          <Link to="/early" className="vc-founders">תוכנית המייסדים: 50 המקומות הראשונים, הקמה אישית ומחיר מייסדים</Link>
         </div>
       </div>
     </section>
@@ -183,8 +203,14 @@ function Final() {
             {['noa', 'tom', 'maya', 'yossi'].map((k, i) => <Face key={k} f={FACES[k]} size={64} className={`lm-x-face is-${i + 1}`} />)}
           </div>
           <h2 id="final-title" className="lm-x-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
-          <p className="lm-x-sub" data-reveal>14 יום חינם. מחברים את Booking ו-Airbnb ב-10 דקות, ותמיכה אנושית 24/7 לאורך כל הדרך.</p>
-          <div data-reveal><CtaLinks /></div>
+          <p className="lm-x-sub" data-reveal>יש לכם מתחם מיוחד או צרכים שאין לאף אחד? אנחנו בונים את atlas איתכם, יד ביד. דברו ישירות עם דין, המייסד, ונתאים את atlas למתחם שלכם.</p>
+          <div data-reveal>
+            <div className="v8x-cta">
+              <SignupButton className="is-lg is-white" />
+              <a href={DEEN_WA} target="_blank" rel="noopener noreferrer" className="v8x-link"><Mark ch="whatsapp" size={18} />דברו עם דין בוואטסאפ<span className="sr-only"> (נפתח בוואטסאפ)</span></a>
+            </div>
+            <p className="v8x-note"><Check size={14} strokeWidth={2.6} aria-hidden="true" />14 יום חינם, בלי כרטיס אשראי · ביטול בכל עת</p>
+          </div>
           <div className="lm-x-shot" data-sd="tilt" aria-hidden="true">
             <img src="/landing-hero/ui-d-today-y3.webp" srcSet="/landing-hero/ui-d-today-y3-1200.webp 1200w, /landing-hero/ui-d-today-y3-1600.webp 1600w, /landing-hero/ui-d-today-y3-2080.webp 2080w, /landing-hero/ui-d-today-y3.webp 2400w" sizes="min(1040px, 90vw)" alt="" width="2400" height="1500" loading="lazy" decoding="async" />
           </div>
@@ -226,9 +252,9 @@ function StickyCta() {
   }, []);
   const show = on && answered;
   return (
-    <aside className={`lm-sticky${show ? ' is-on' : ''}`} aria-label="התחלת ניסיון חינם" aria-hidden={show ? undefined : 'true'}>
-      <Link to="/register" tabIndex={show ? 0 : -1}>{CTA_SIGNUP}</Link>
-      <span className="lm-sticky-note">{CTA_NOTE}</span>
+    <aside className={`lm-sticky${show ? ' is-on' : ''}`} aria-label="הצטרפות לתוכנית המייסדים" aria-hidden={show ? undefined : 'true'}>
+      <Link to="/early" tabIndex={show ? 0 : -1}>תפסו מקום במייסדים</Link>
+      <span className="lm-sticky-note">14 יום חינם, בלי כרטיס</span>
     </aside>
   );
 }
@@ -260,7 +286,7 @@ export default function LandingM() {
         <Part><Final /></Part>
         <Part><Credits8 /></Part>
       </main>
-      <Part><Footer /></Part>
+      <Part><Footer tagline="לארח בכיף, לנהל בקול" /></Part>
       <Part><StickyCta /></Part>
       <CookieConsent revealAfter=".ph-hero" variant="row" />
     </div>

@@ -326,7 +326,7 @@ export function FinalCta({ title }) {
   );
 }
 
-export function Footer() {
+export function Footer({ tagline } = {}) {
   const learn = FOOTER_GROUPS.find((g) => g.title === 'ללמוד');
   const legal = FOOTER_GROUPS.find((g) => g.title === 'מידע משפטי');
   return (
@@ -349,7 +349,7 @@ export function Footer() {
         <nav aria-label={legal.title} className="l5-ftr-b-legal">
           <ul>{legal.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}</ul>
         </nav>
-        <p className="l5-ftr-copy" suppressHydrationWarning>© {new Date().getFullYear()} atlas (אטלס) · מערכת ניהול לצימרים · נבנה בישראל{BUSINESS_LINE ? ` · מופעל על ידי ${BUSINESS_LINE}` : ''}</p>
+        <p className="l5-ftr-copy" suppressHydrationWarning>© {new Date().getFullYear()} atlas{tagline ? ` · ${tagline}` : ' (אטלס) · מערכת ניהול לצימרים'} · נבנה בישראל{BUSINESS_LINE ? ` · מופעל על ידי ${BUSINESS_LINE}` : ''}</p>
       </div>
     </footer>
   );

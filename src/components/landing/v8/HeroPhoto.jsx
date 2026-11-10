@@ -22,9 +22,9 @@
  */
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Mic } from 'lucide-react';
 import { Mark } from '../v5/ui';
-import { CTA_SIGNUP, CTA_NOTE } from '../v5/content';
+
 import { prefersReducedMotion } from '../v5/motion';
 import { FACES } from './shared8';
 import { heroGeometry, heroGeometryScript } from './heroGeometry';
@@ -37,10 +37,12 @@ const PORT = [['pool-p480', 480], ['pool-p720', 720], ['pool-p1080', 1080]];
 /* 4K source (Pexels 14546304, 4000x3000): sharp on 1920 DPR2 / 4K screens; phones stay on the portrait set (max 1080w, ~180KB AVIF) */
 const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['pool-2560', 2560], ['pool-3840', 3840]];
 
+/* voice copy v1 (10.11.2026): what one spoken sentence prepares. Never "נשלח": the booking waits for the
+   owner's tap and the WhatsApp opens ready in the owner's own WhatsApp. Example data. */
 const NTFS = [
-  { ch: 'booking', title: 'לילות תפוסים מ-Booking.com', sub: 'הזית · 2 לילות נכנסו ללוח', time: '08:12' },
-  { ch: 'whatsapp', title: 'אישור נשלח בוואטסאפ', sub: 'משפחת לוי · עם הוראות הגעה', time: '09:00' },
-  { face: 'noa', title: 'נועה ל. · מקדמה ‏₪1,250', sub: 'האלון · נרשמה בלחיצה', time: '10:24' },
+  { mic: true, title: 'אמרתם: ״סגור את האלון למשה, שישי־שבת״', sub: 'ההזמנה מוכנה. אישרתם בלחיצה', time: '08:12' },
+  { ch: 'booking', title: 'התאריכים נחסמו', sub: 'האלון · שישי עד שבת', time: '08:13', chips: ['נחסם ב-Booking', 'נחסם ב-Airbnb'] },
+  { ch: 'whatsapp', title: 'וואטסאפ מוכן לשליחה', sub: 'משה כהן · אישור ופרטי השהייה', time: '08:13' },
 ];
 
 /** Scroll segments (progress 0..1 through the sticky run). */
@@ -88,15 +90,19 @@ const cancelIdle = (id) => { if (!id) return; if (typeof window.cancelIdleCallba
 
 const viewTimelineOK = () => typeof window !== 'undefined' && 'ViewTimeline' in window && typeof Element.prototype.animate === 'function';
 
-function Notif({ ch, face, title, sub, time, i }) {
+function Notif({ ch, face, mic, title, sub, time, chips, i }) {
   return (
     <div className="ph-ntf" style={{ '--i': i }}>
       <span className="ph-ntf-ic" aria-hidden="true">
-        {face
+        {mic
+          ? <span className="ph-ntf-mk is-mic"><Mic size={20} strokeWidth={2.2} /></span>
+          : face
           ? <img className="ph-face" src={FACES[face].src} alt="" width="40" height="40" decoding="async" />
           : <span className={`ph-ntf-mk is-${ch}`}><Mark ch={ch} size={ch === 'booking' ? 22 : 20} /></span>}
       </span>
-      <span className="ph-ntf-tx"><b>{title}</b><small>{sub}</small></span>
+      <span className="ph-ntf-tx"><b>{title}</b>{chips
+        ? <span className="ph-chips">{chips.map((c) => <span key={c} className="ph-chip"><Check size={12} strokeWidth={3} />{c}</span>)}</span>
+        : <small>{sub}</small>}</span>
       <span className="ph-ntf-t num" dir="ltr">{time}</span>
     </div>
   );
@@ -126,16 +132,17 @@ function Photo({ imgRef }) {
 function Copy({ copyRef, onShow }) {
   return (
     <div ref={copyRef} className="ph-copy">
-      <h1 id="hero-title" className="ph-h1"><span className="ph-l">כל המתחם.</span><br /><span className="ph-l" style={{ '--l': 1 }}>במבט אחד.</span></h1>
-      <p className="ph-sub">הזמנות מכל הערוצים, הודעות לאורחים ומקדמות. הכל על מסך אחד.</p>
+      <p className="ph-eyebrow">נבנה במיוחד למארחים בישראל שלא רוצים לגעת במחשב</p>
+      <h1 id="hero-title" className="ph-h1"><span className="ph-l">הצימר מסודר.</span><br /><span className="ph-l" style={{ '--l': 1 }}>במשפט אחד.</span></h1>
+      <p className="ph-sub">לוחצים על המיקרופון באפליקציה ואומרים מה לעשות. atlas מכין את ההזמנה, חוסם את התאריכים ב-Booking וב-Airbnb ומנסח וואטסאפ לאורח. אתם רק מאשרים.</p>
       <div className="ph-ctas">
-        <Link to="/register" className="ph-btn">
-          <span>{CTA_SIGNUP}</span>
+        <Link to="/early" className="ph-btn">
+          <span>תפסו מקום במייסדים</span>
           <ArrowLeft size={18} strokeWidth={2.2} aria-hidden="true" className="ph-btn-ar" />
         </Link>
         <a href="#product" className="ph-ghost" onClick={onShow}>איך זה נראה</a>
       </div>
-      <p className="ph-note"><Check size={15} strokeWidth={2.6} aria-hidden="true" />{CTA_NOTE} · הגדרה תוך 10 דקות</p>
+      <p className="ph-note"><Check size={15} strokeWidth={2.6} aria-hidden="true" />14 יום חינם, בלי כרטיס · הקמה אישית ל-50 הראשונים</p>
     </div>
   );
 }
