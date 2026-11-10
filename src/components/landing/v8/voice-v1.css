@@ -36,7 +36,7 @@
 .vc-how-k { margin: 0 0 10px; text-align: center; font-size: 15px; font-weight: 700; color: var(--indigo, #3E2BF1); }
 .vc-how h2 { text-align: center; max-width: 18ch; margin-inline: auto; text-wrap: balance; }
 .vc-steps { list-style: none; margin: 40px auto 0; padding: 0; display: grid; gap: 14px; max-width: 1080px; }
-.vc-steps li { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; padding: 20px; border-radius: 22px; background: var(--canvas, #F7F8FB); }
+.vc-steps li { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; align-content: start; padding: 20px; border-radius: 22px; background: var(--canvas, #F7F8FB); }
 .vc-n { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--indigo, #3E2BF1); color: #fff; font-weight: 800; font-size: 17px; }
 .vc-steps h3 { margin: 0 0 4px; font-size: 19px; font-weight: 800; color: var(--navy, #1B2656); }
 .vc-steps p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink, #3b4266); }
