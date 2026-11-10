@@ -40,8 +40,8 @@ const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['poo
 /* voice copy v1 (10.11.2026): what one spoken sentence prepares. Never "נשלח": the booking waits for the
    owner's tap and the WhatsApp opens ready in the owner's own WhatsApp. Example data. */
 const NTFS = [
-  { mic: true, title: 'אמרתם: ״סגור את האלון למשה, שישי־שבת״', sub: 'ההזמנה מוכנה. אישרתם בלחיצה', time: '08:12' },
-  { ch: 'booking', title: 'התאריכים נחסמו', sub: 'האלון · שישי עד שבת', time: '08:13', chips: ['נחסם ב-Booking', 'נחסם ב-Airbnb'] },
+  { mic: true, title: 'אמרתם: ״סגור את האלון למשה״', sub: 'ההזמנה מוכנה. אישרתם בלחיצה', time: '08:12' },
+  { ch: 'booking', title: 'נחסם ב-Booking וב-Airbnb', sub: 'האלון · שישי עד שבת · נתוני דוגמה', time: '08:13' },
   { ch: 'whatsapp', title: 'וואטסאפ מוכן לשליחה', sub: 'משה כהן · אישור ופרטי השהייה', time: '08:13' },
 ];
 
@@ -134,7 +134,7 @@ function Copy({ copyRef, onShow }) {
     <div ref={copyRef} className="ph-copy">
       <p className="ph-eyebrow">נבנה במיוחד למארחים בישראל שלא רוצים לגעת במחשב</p>
       <h1 id="hero-title" className="ph-h1"><span className="ph-l">הצימר מסודר.</span><br /><span className="ph-l" style={{ '--l': 1 }}>במשפט אחד.</span></h1>
-      <p className="ph-sub">לוחצים על המיקרופון באפליקציה ואומרים מה לעשות. atlas מכין את ההזמנה, חוסם את התאריכים ב-Booking וב-Airbnb ומנסח וואטסאפ לאורח. אתם רק מאשרים.</p>
+      <p className="ph-sub">מדברים עם atlas באפליקציה. ההזמנה מוכנה, התאריכים נחסמים ב-Booking וב-Airbnb, והוואטסאפ לאורח מנוסח. אתם רק מאשרים.</p>
       <div className="ph-ctas">
         <Link to="/early" className="ph-btn">
           <span>תפסו מקום במייסדים</span>
