@@ -103,7 +103,7 @@ const TILES = [
    It prepares the booking; the owner approves. Example data. Pulse is CSS only and off under reduced motion. */
 function VoiceCard() {
   return (
-    <div id="voice" className="vc-card" data-sd="lift" role="img" aria-label="העוזר הקולי באפליקציה של atlas: דין אומר ״סגור לי את הבקתה למחר״, וההזמנה מוכנה לאישור, חסומה ב-Booking וב-Airbnb, עם וואטסאפ מוכן לשליחה (נתוני דוגמה)">
+    <div className="vc-card" data-sd="lift" role="img" aria-label="העוזר הקולי באפליקציה של atlas: דין אומר ״סגור לי את הבקתה למחר״, וההזמנה מוכנה לאישור, חסומה ב-Booking וב-Airbnb, עם וואטסאפ מוכן לשליחה (נתוני דוגמה)">
       <p className="vc-said"><small>דין אמר:</small>״סגור לי את הבקתה למחר״</p>
       <span className="vc-mic" aria-hidden="true"><i /><Mic size={30} strokeWidth={2.2} /></span>
       <p className="vc-res" aria-hidden="true">ההזמנה מוכנה לאישור</p>
@@ -112,6 +112,38 @@ function VoiceCard() {
       </ul>
       <small className="vc-demo" aria-hidden="true">נתוני דוגמה</small>
     </div>
+  );
+}
+
+/* version B: "איך זה עובד" — three steps, truthful to the code: the assistant prepares a booking card
+   (propose_booking) and the owner approves; channels pick up the blocked dates through the calendar link;
+   the guest message opens ready in the owner's own WhatsApp. The sentence is an example. */
+const STEPS = [
+  { t: 'אומרים בקול', d: 'לוחצים על המיקרופון באפליקציה ואומרים מה קרה. ההזמנה מוכנה, ואתם מאשרים בלחיצה.', ex: '״תוסיף הזמנה ליוסי, חמישי עד שבת, 3,500 ש״ח״' },
+  { t: 'התאריכים נחסמים', d: 'גם ב-Booking וגם ב-Airbnb, כדי שאף אחד אחר לא יזמין אותם בטעות.' },
+  { t: 'ההודעה לאורח מוכנה', d: 'אישור עם התאריכים ופרטי השהייה נפתח בוואטסאפ שלכם. לוחצים שלח, וחוזרים לקפה.' },
+];
+
+function HowItWorks() {
+  return (
+    <section id="voice" className="vc-how" aria-labelledby="how-title">
+      <div className="l5-wrap">
+        <p className="vc-how-k" data-reveal>איך זה עובד? פשוט מדברים.</p>
+        <h2 id="how-title" className="v8-h2" data-reveal>יודעים לשלוח הודעה קולית לחבר? <span className="is-ind">יודעים להפעיל את atlas.</span></h2>
+        <ol className="vc-steps">
+          {STEPS.map(({ t, d, ex }, i) => (
+            <li key={t} data-reveal style={{ '--d': `${i * 80}ms` }}>
+              <span className="vc-n num" aria-hidden="true">{i + 1}</span>
+              <div>
+                <h3>{t}</h3>
+                <p>{d}</p>
+                {ex && <p className="vc-ex"><small>דוגמה</small>{ex}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
   );
 }
 
@@ -278,6 +310,7 @@ export default function LandingM() {
       <V7Header links={NAV} />
       <main id="main">
         <HeroPhoto />
+        <Part><HowItWorks /></Part>
         <Part><Features /></Part>
         <Part><Facts /></Part>
         <LazyGrowth load={loadGrowth} className="lg-ph-s" />
