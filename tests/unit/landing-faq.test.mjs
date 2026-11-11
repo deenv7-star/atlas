@@ -7,8 +7,8 @@ import { PRICING_PLANS, TRIAL_DAYS } from '../../src/config/pricing.js';
 const text = FAQ.map((f) => `${f.q} ${f.a}`).join(' ');
 const answers = FAQ.map((f) => f.a).join(' ');
 
-test('6 to 9 sales questions, each a question with a short answer', () => {
-  assert.ok(FAQ.length >= 6 && FAQ.length <= 9, `got ${FAQ.length}`);
+test('6 to 10 sales questions, each a question with a short answer', () => {
+  assert.ok(FAQ.length >= 6 && FAQ.length <= 10, `got ${FAQ.length}`);
   for (const f of FAQ) {
     assert.ok(f.q.trim().endsWith('?'), f.q);
     assert.ok(f.q.length <= 60, `${f.q}: question too long`);
@@ -34,8 +34,9 @@ test('no promises atlas cannot keep, no invented numbers', () => {
   for (const re of banned) assert.ok(!re.test(answers), `claim ${re}`);
   // tax invoices: only ever said honestly (still issued in the owner's own software)
   if (/חשבונית מס/.test(answers)) assert.match(answers, /חשבונית מס רשמית עדיין מפיקים בתוכנת החשבוניות שלכם/);
-  // 24/7 support (Deen, 01.11.2026) and the plan-2 complex limit are real numbers too
-  const allowedNumbers = new Set([String(TRIAL_DAYS), String(PRICING_PLANS[0].price), String(PRICING_PLANS[1].complexes), '24', '7', ...PHONE_DISPLAY.split('-')]);
+  // 24/7 support (Deen, 01.11.2026) and the plan-2 complex limit are real numbers too;
+  // 15 = the channel calendar import interval (pg_cron '*/15', supabase/migrations/015_cron_jobs.sql)
+  const allowedNumbers = new Set([String(TRIAL_DAYS), String(PRICING_PLANS[0].price), String(PRICING_PLANS[1].complexes), '24', '7', '15', ...PHONE_DISPLAY.split('-')]);
   for (const n of text.match(/\d+/g) || []) assert.ok(allowedNumbers.has(n), `unexpected number ${n}`);
 });
 

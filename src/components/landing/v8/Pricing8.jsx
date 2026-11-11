@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { Check, ChevronDown, MessageCircle, MapPin, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE, VAT_LINE, SUPPORT_LINE, yearlyTotal } from '@/config/pricing';
 import { GROWTH_OFFER, FOUNDING, GROWTH_SCOPE, GROWTH_CTA, GROWTH_LINKS, nis } from '@/config/growth';
+import { Link } from 'react-router-dom';
 import { fmt } from '../v5/motion';
 import { SignupButton } from '../v5/LandingV5';
 import { BillingToggle8 } from './pricing/BillingToggle8';
@@ -74,7 +75,7 @@ function GrowthAddon({ H }) {
         <p className="v8p-add-line">
           <span className="v8p-nw"><bdi className="num" dir="ltr">{nis(GROWTH_OFFER.price)}</bdi> לחודש,</span>{' '}
           <span className="v8p-nw">כולל את כל מערכת הניהול</span><span> · </span>
-          <span className="v8p-nw"><bdi className="num is-found" dir="ltr">{nis(FOUNDING.monthly)}</bdi> למייסדים</span>
+          <span className="v8p-nw"><bdi className="num is-found" dir="ltr">{nis(FOUNDING.monthly)}</bdi> מחיר השקה</span>
         </p>
         <p className="v8p-add-terms">
           <span className="v8p-nw">{`${FOUNDING.cap} ראשונים, עד ${FOUNDING.deadline}`}</span><span> · </span>
@@ -136,7 +137,7 @@ export function CompareTable() {
   );
 }
 
-export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2', growth = false }) {
+export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2', growth = false, founders = true }) {
   const [yearly, setYearlyState] = useState(false);
   const [said, setSaid] = useState('');
   const setYearly = (y) => {
@@ -208,6 +209,8 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{TRIAL_LINE}</p>
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{CANCEL_LINE}</p>
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{VAT_LINE}</p>
+          {/* founders offer (Deen, 08.11.2026; details and capture on /early): first 50, personal setup, annual price on monthly billing, locked */}
+          {growth && founders && <p className="v8p-founders"><Check size={16} strokeWidth={2.6} aria-hidden="true" /><span>50 המצטרפים הראשונים: הקמה אישית ומחיר מייסדים נעול. <Link to="/early">פרטים</Link></span></p>}
         </div>
 
         <ul className="v8p-trust" data-reveal>

@@ -61,7 +61,7 @@ export const TRUST = [
 const FROM_PRICE = PRICING_PLANS[0].price;
 export const FAQ = [
   // 05-channels (two-way calendar link, import every 15 min), BookingOverlapGuard (same unit, same nights: warns and asks for an explicit 'save anyway')
-  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד. atlas מתריע לפני שרושמים הזמנה על לילות תפוסים. הערוצים מתעדכנים זה מזה מדי פעם ולא ברגע, ולכן כדאי להציץ בלוח לפני שמאשרים הזמנה.' },
+  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד. atlas מתריע לפני שרושמים הזמנה על לילות תפוסים. התאריכים מהערוצים נכנסים ללוח בערך כל 15 דקות, וכל ערוץ מעדכן את הלוח שלו בקצב שלו, ולכן כדאי להציץ בלוח לפני שמאשרים הזמנה.' },
   // 01-getting-started (one question per screen, about five minutes), 15-support (a person on WhatsApp)
   { q: 'קשה להתחיל? מישהו יעזור לי?', a: `לא קשה: atlas שואל שאלה אחת בכל פעם, בעברית פשוטה, ותוך כמה דקות הלוח שלכם מוכן. נתקעתם? בן אדם אמיתי עונה לכם בוואטסאפ ב-${PHONE_DISPLAY}, ${SUPPORT_247}, ועוזר להעביר את מה שיש לכם היום.` },
   // 06-whatsapp-messages (guest journey prepared on schedule, one tap from the owner's own WhatsApp, Shabbat quiet), 13 #2
@@ -78,6 +78,9 @@ export const FAQ = [
   { q: 'כמה זה עולה?', a: `₪${FROM_PRICE} לחודש למתחם אחד, וכל המערכת כלולה. יש חבילה לעד ${PRICING_PLANS[1].complexes} מתחמים וחבילה ללא הגבלה, ובתשלום שנתי מראש המחיר לחודש נמוך יותר. חבילת הצמיחה, קמפיינים ואתר למתחם, נקבעת בשיחה.` },
   // 11-subscription (no card, no automatic charge, account and data kept), terms #cancellation, cancellation.md #how
   { q: 'ומה קורה אחרי 14 ימי הניסיון?', a: '14 הימים הראשונים חינם, בלי כרטיס אשראי, ובסופם לא יורד שקל לבד. ממשיכים רק אם בוחרים חבילה, חודשית או שנתית מראש, והחשבון וכל הנתונים נשמרים. בלי התחייבות: מפסיקים בהודעה אחת בוואטסאפ.' },
+  // landing voice ship (11.11.2026): brain/tools.js (read tools; write tools only PROPOSE), src/assistant/actions.js
+  // (saved only after the owner's tap; a guest message opens in the owner's WhatsApp), voice-session core.js (Hebrew)
+  { q: 'מה עושה העוזר הקולי?', a: 'פותחים את atlas באפליקציה ואומרים בעברית מה צריך: מי מגיע היום, מי עוד חייב, הזמנה חדשה או הודעה לאורח. atlas מכין, ושום דבר לא נשמר בלי אישור שלכם בלחיצה אחת. הודעה לאורח נפתחת בוואטסאפ שלכם, ואתם שולחים.' },
 ];
 
 /** Example data shown inside the HTML/CSS product UI. */
@@ -126,6 +129,6 @@ export const CHANNEL_LABEL = { airbnb: 'Airbnb', booking: 'Booking.com', direct:
 
 /** The 5 questions the landing shows (research 20.10.2026: 9 → 5). Price is answered by the pricing section;
  *  receipts, data and per-unit prices stay in FAQ (llms.txt, support). The FAQPage JSON-LD uses this list. */
-export const LANDING_FAQ = [0, 1, 2, 4, 8].map((i) => FAQ[i]);
+export const LANDING_FAQ = [0, 9, 1, 2, 4, 8].map((i) => FAQ[i]);
 /** /pricing: the same 5 plus the price question, in one order (SEO-005: one FAQ source for /, /pricing, llms.txt). */
 export const PRICING_FAQ = [7, 8, 0, 1, 2, 4].map((i) => FAQ[i]);

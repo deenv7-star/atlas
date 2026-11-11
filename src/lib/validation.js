@@ -164,7 +164,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateEmail(value) {
   const v = (value || '').trim();
-  if (!v) return { valid: false, error: 'צריך למלא כאן' };
+  if (!v) return { valid: false, error: 'כתבו את המייל שלכם' };
   if (!EMAIL_REGEX.test(v)) return { valid: false, error: 'בדקו את כתובת המייל' };
   return { valid: true };
 }
