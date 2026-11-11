@@ -56,11 +56,11 @@ const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing
 const TILES = [
   {
     tone: 'indigo', I: CalendarDays, id: 'calendar', k: 'לוח שנה', t: 'כל הערוצים. לוח אחד.',
-    d: 'Airbnb, Booking.com והזמנות ישירות על לוח אחד. תאריך תפוס מסומן לפני שמאשרים.',
+    d: 'Booking, Airbnb והזמנות ישירות על לוח אחד. atlas מתריע לפני שרושמים הזמנה על לילה תפוס.',
     vis: (
       <div className="lm-tile-vis is-cal">
         <img src={`${UI}/y3-cal.webp`} alt="לוח השנה של atlas: ארבע יחידות, הזמנות מכל הערוצים על ציר אחד (נתוני דוגמה)" width="2182" height="934" loading="lazy" decoding="async" />
-        <span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />Booking.com מושך את הלוח ב-iCal</span>
+        <span className="lm-sync"><RefreshCw size={16} strokeWidth={2.4} aria-hidden="true" />הלוח מתעדכן בערך כל 15 דקות</span>
       </div>
     ),
   },
@@ -75,7 +75,7 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: Wallet, id: 'payments', k: 'תשלומים', t: 'הכסף בשליטה. רואים הכל.',
+    tone: 'canvas', I: Wallet, id: 'payments', k: 'תשלומים', t: 'מי שילם, ומי עוד חייב.',
     d: 'רושמים כל מקדמה ויתרה בלחיצה, ורואים מה פתוח ומה נכנס החודש.',
     vis: (
       <div className="lm-tile-vis is-chart">
@@ -143,7 +143,7 @@ function Features() {
 /* ---------------- facts ---------------- */
 const FACTS = [
   { n: '3', u: 'ערוצים', t: 'Airbnb, Booking.com וישיר על לוח אחד' },
-  { n: '10', u: 'דקות', t: 'מההרשמה ועד ערוצים מחוברים' },
+  { n: '15', u: 'דקות', t: 'בערך כל כמה זמן הלוח מתעדכן מ-Booking ו-Airbnb' },
   { n: '14', u: 'ימים', t: 'ניסיון חינם, בלי כרטיס אשראי' },
   { n: '₪0', u: 'עמלה', t: 'על פניות מדף ההזמנה הישירה שלכם, כלול בכל חבילה' },
 ];
@@ -153,7 +153,7 @@ function Facts() {
     <section id="facts" className="lm-facts" aria-labelledby="facts-title">
       <div className="l5-wrap">
         <div className="lm-facts-top" data-reveal>
-          <h2 id="facts-title" className="v8-h2">אתם מארחים. <span className="is-ind">atlas מסדר.</span></h2>
+          <h2 id="facts-title" className="v8-h2">מה מקבלים, <span className="is-ind">בלי אותיות קטנות.</span></h2>
           <div className="lm-facts-people">
             <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={48} />
             <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
@@ -183,7 +183,7 @@ function Final() {
             {['noa', 'tom', 'maya', 'yossi'].map((k, i) => <Face key={k} f={FACES[k]} size={64} className={`lm-x-face is-${i + 1}`} />)}
           </div>
           <h2 id="final-title" className="lm-x-h" data-reveal>הלוח מסודר.<br />אפשר לארח.</h2>
-          <p className="lm-x-sub" data-reveal>14 יום חינם. מחברים את Booking ו-Airbnb ב-10 דקות, ותמיכה אנושית 24/7 לאורך כל הדרך.</p>
+          <p className="lm-x-sub" data-reveal>מחברים את Booking ו-Airbnb פעם אחת, ובן אדם עונה לכם בוואטסאפ 24/7, גם בשבת.</p>
           <div data-reveal><CtaLinks /></div>
           <div className="lm-x-shot" data-sd="tilt" aria-hidden="true">
             <img src="/landing-hero/ui-d-today-y3.webp" srcSet="/landing-hero/ui-d-today-y3-1200.webp 1200w, /landing-hero/ui-d-today-y3-1600.webp 1600w, /landing-hero/ui-d-today-y3-2080.webp 2080w, /landing-hero/ui-d-today-y3.webp 2400w" sizes="min(1040px, 90vw)" alt="" width="2400" height="1500" loading="lazy" decoding="async" />

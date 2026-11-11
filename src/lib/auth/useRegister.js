@@ -45,7 +45,7 @@ export function useRegister() {
     if (field === 'business') return;
     if (errors[field]) {
       const v = field === 'email' ? validateEmail(value) : field === 'password' ? validatePassword(value) : { valid: value === form.password };
-      setErrors((x) => ({ ...x, [field]: v.valid ? null : (v.error || 'הסיסמאות לא תואמות') }));
+      setErrors((x) => ({ ...x, [field]: v.valid ? null : (v.error || 'הסיסמאות שונות. הקלידו שוב.') }));
     }
   };
 
@@ -53,7 +53,7 @@ export function useRegister() {
     const e = {};
     if (fields.includes('email')) { const r = validateEmail(form.email); if (!r.valid) e.email = r.error; }
     if (fields.includes('password')) { const r = validatePassword(form.password); if (!r.valid) e.password = r.error; }
-    if (fields.includes('confirmPassword') && form.password !== form.confirmPassword) e.confirmPassword = 'הסיסמאות לא תואמות';
+    if (fields.includes('confirmPassword') && form.password !== form.confirmPassword) e.confirmPassword = 'הסיסמאות שונות. הקלידו שוב.';
     setErrors((x) => {
       const next = { ...x };
       fields.forEach((f) => { next[f] = e[f] || null; });
@@ -76,7 +76,7 @@ export function useRegister() {
       const r = validatePassword(form.password);
       setErrors((e) => ({ ...e, password: r.valid ? null : r.error }));
     } else if (field === 'confirmPassword') {
-      setErrors((e) => ({ ...e, confirmPassword: form.password === form.confirmPassword ? null : 'הסיסמאות לא תואמות' }));
+      setErrors((e) => ({ ...e, confirmPassword: form.password === form.confirmPassword ? null : 'הסיסמאות שונות. הקלידו שוב.' }));
     }
   };
 

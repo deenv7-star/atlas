@@ -61,7 +61,7 @@ export const TRUST = [
 const FROM_PRICE = PRICING_PLANS[0].price;
 export const FAQ = [
   // 05-channels (two-way calendar link, import every 15 min), BookingOverlapGuard (same unit, same nights: warns and asks for an explicit 'save anyway')
-  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד. atlas מתריע לפני שרושמים הזמנה על לילות תפוסים. הערוצים מתעדכנים זה מזה מדי פעם ולא ברגע, ולכן כדאי להציץ בלוח לפני שמאשרים הזמנה.' },
+  { q: 'זה עובד עם Booking ו-Airbnb? לא יהיו לי הזמנות כפולות?', a: 'כן, התאריכים התפוסים מ-Booking.com ומ-Airbnb נכנסים לבד ללוח אחד. atlas מתריע לפני שרושמים הזמנה על לילות תפוסים. הערוצים מתעדכנים זה מזה בערך כל 15 דקות ולא ברגע, ולכן כדאי להציץ בלוח לפני שמאשרים הזמנה.' },
   // 01-getting-started (one question per screen, about five minutes), 15-support (a person on WhatsApp)
   { q: 'קשה להתחיל? מישהו יעזור לי?', a: `לא קשה: atlas שואל שאלה אחת בכל פעם, בעברית פשוטה, ותוך כמה דקות הלוח שלכם מוכן. נתקעתם? בן אדם אמיתי עונה לכם בוואטסאפ ב-${PHONE_DISPLAY}, ${SUPPORT_247}, ועוזר להעביר את מה שיש לכם היום.` },
   // 06-whatsapp-messages (guest journey prepared on schedule, one tap from the owner's own WhatsApp, Shabbat quiet), 13 #2

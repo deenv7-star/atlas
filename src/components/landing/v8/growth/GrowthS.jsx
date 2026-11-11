@@ -127,7 +127,7 @@ export default function GrowthS() {
     <section ref={ref} id="growth" className="gs" aria-labelledby="growth-title">
       <div className="l5-wrap">
         <header className="gs-head" data-reveal>
-          <p className="gs-kick"><span>{GROWTH_NAME}</span><span className="gs-soon">בקרוב, קודם למייסדים</span></p>
+          <p className="gs-kick"><span>{GROWTH_NAME}</span><span className="gs-soon">בקרוב</span></p>
           <h2 id="growth-title" className="gs-h">יותר הזמנות ישירות. <span>בלי עמלה.</span></h2>
           <p className="gs-lede">קמפיינים ודף נחיתה או אתר למתחם, מהתמונות שכבר יש לכם. מתחילים בשיחה קצרה.</p>
         </header>

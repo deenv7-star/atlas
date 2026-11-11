@@ -79,7 +79,7 @@ export const GROWTH_TIERS = [
 /** What exists today vs. opening to founding members first (keeps the landing honest). */
 export const GROWTH_STATUS = {
   ready: ['דף הזמנה ישירה', 'בקשת ביקורת בוואטסאפ'],
-  soon: ['סרטונים לקמפיינים', 'קמפיין לכל עונה', 'דוח "כמה הביא"'],
+  soon: ['סרטונים לקמפיינים', 'קמפיין לכל עונה', 'דוח ״כמה הביא״'],
 };
 
 /** ROI example (assumptions stated next to it on the page). */

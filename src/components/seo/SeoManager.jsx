@@ -4,6 +4,8 @@ import { getRouteMeta } from '@/seo/routeMeta';
 import { SITE_ORIGIN } from '@/seo/siteConfig';
 
 const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og/og-default.png`;
+/** The landing's own social card: the prerendered HTML (scripts/prerender.mjs, index.html) uses it, so keep it after hydration too (marketingskills v1, 11.11.2026). */
+const LANDING_OG_IMAGE = `${SITE_ORIGIN}/og-image.png?v=8`;
 const SITE_ROUTE = /^\/(blog(\/[a-z0-9-]+)?|about|contact|privacy|terms|cookies|cancellation|data-processing|data-security|accessibility)\/?$/;
 
 function upsertMeta(attr, key, value) {
@@ -81,6 +83,7 @@ export default function SeoManager() {
       description,
       canonical: notFound ? null : canonicalUrl,
       robots: notFound ? 'noindex, follow' : robots,
+      ogImage: canonicalPath === '/' && !notFound ? LANDING_OG_IMAGE : undefined,
       jsonLd: null,
     });
     return () => { alive = false; };

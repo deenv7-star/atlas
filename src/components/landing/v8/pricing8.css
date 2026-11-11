@@ -79,3 +79,5 @@
 @media (prefers-reduced-motion: reduce) {
   .v8p-more summary svg, .v8p-diff summary svg { transition: none; }
 }
+/* founders line (marketingskills v1, 11.11.2026): link keeps a 44px tap height */
+.v8p-founders a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin-block: -12px; color: var(--indigo); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }

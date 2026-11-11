@@ -39,7 +39,8 @@ const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['poo
 
 const NTFS = [
   { ch: 'booking', title: 'לילות תפוסים מ-Booking.com', sub: 'הזית · 2 לילות נכנסו ללוח', time: '08:12' },
-  { ch: 'whatsapp', title: 'אישור נשלח בוואטסאפ', sub: 'משפחת לוי · עם הוראות הגעה', time: '09:00' },
+  /* marketingskills v1 (11.11.2026): never "נשלח": atlas prepares the message, the owner sends it from their own WhatsApp */
+  { ch: 'whatsapp', title: 'אישור הזמנה מוכן בוואטסאפ', sub: 'משפחת לוי · לוחצים ושולחים', time: '09:00' },
   { face: 'noa', title: 'נועה ל. · מקדמה ‏₪1,250', sub: 'האלון · נרשמה בלחיצה', time: '10:24' },
 ];
 
@@ -126,8 +127,8 @@ function Photo({ imgRef }) {
 function Copy({ copyRef, onShow }) {
   return (
     <div ref={copyRef} className="ph-copy">
-      <h1 id="hero-title" className="ph-h1"><span className="ph-l">כל המתחם.</span><br /><span className="ph-l" style={{ '--l': 1 }}>במבט אחד.</span></h1>
-      <p className="ph-sub">הזמנות מכל הערוצים, הודעות לאורחים ומקדמות. הכל על מסך אחד.</p>
+      <h1 id="hero-title" className="ph-h1"><span className="ph-l">אתם מארחים.</span><br /><span className="ph-l" style={{ '--l': 1 }}>atlas מסדר.</span></h1>
+      <p className="ph-sub">מערכת הניהול לצימרים ולמתחמי נופש. הזמנות מ-Booking ו-Airbnb בלוח אחד, וואטסאפ מוכן לכל אורח, וכל מקדמה במעקב.</p>
       <div className="ph-ctas">
         <Link to="/register" className="ph-btn">
           <span>{CTA_SIGNUP}</span>
@@ -135,7 +136,7 @@ function Copy({ copyRef, onShow }) {
         </Link>
         <a href="#product" className="ph-ghost" onClick={onShow}>איך זה נראה</a>
       </div>
-      <p className="ph-note"><Check size={15} strokeWidth={2.6} aria-hidden="true" />{CTA_NOTE} · הגדרה תוך 10 דקות</p>
+      <p className="ph-note"><Check size={15} strokeWidth={2.6} aria-hidden="true" />{CTA_NOTE} · לא יורד שקל בסוף הניסיון</p>
     </div>
   );
 }
