@@ -218,14 +218,14 @@ function Founders() {
     <section id="founders" className="mb-fnd" aria-labelledby="fnd-title">
       <div className="l5-wrap">
         <div className="mb-fnd-box" data-reveal>
-          <div className="mb-fnd-top">
-            <p className="mb-fnd-50 num" aria-hidden="true">50</p>
-            <h2 id="fnd-title" className="mb-fnd-h">תוכנית המייסדים:<br />50 המצטרפים הראשונים מקבלים</h2>
-          </div>
+          <h2 id="fnd-title" className="mb-fnd-top">
+            <span className="mb-fnd-50 num">50</span>
+            <span className="mb-fnd-h">המצטרפים הראשונים לתוכנית המייסדים מקבלים:</span>
+          </h2>
           <ul className="mb-fnd-list">
             <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>הקמה אישית</h3><p>מחברים לכם את Booking ו-Airbnb, מגדירים את היחידות ומכינים את נוסחי ההודעות.</p></div></li>
             <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>מחיר מייסדים, נעול</h3><p>מחיר המסלול השנתי, בתשלום חודשי. נעול כל עוד המנוי פעיל.</p>
-              <p className="mb-fnd-prices">{PRICING_PLANS.map((p) => <span key={p.key}><bdi className="num" dir="ltr">₪{fmt(p.priceYearly)}</bdi> {p.nameHe} <s><bdi className="num" dir="ltr">₪{fmt(p.price)}</bdi></s></span>)}</p></div></li>
+              <p className="mb-fnd-prices">{PRICING_PLANS.map((p) => <span key={p.key}>{p.nameHe} <bdi className="num" dir="ltr">₪{fmt(p.priceYearly)}</bdi> <s><bdi className="num" dir="ltr">₪{fmt(p.price)}</bdi></s></span>)}</p></div></li>
             <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>{TRIAL_DAYS} יום חינם</h3><p>הכל פתוח, בלי כרטיס אשראי. לא יורד שקל בסוף הניסיון.</p></div></li>
           </ul>
           <div className="mb-fnd-cta">
@@ -272,7 +272,7 @@ function StickyCta() {
   }, []);
   useEffect(() => {
     const hero = document.querySelector('.ph-hero');
-    const ends = [...document.querySelectorAll('#pricing, .lm-x, .l5-ftr')];
+    const ends = [...document.querySelectorAll('#founders, #pricing, .lm-x, .l5-ftr')];
     if (!hero || typeof IntersectionObserver === 'undefined') return undefined;
     let heroVisible = true;
     const endVisible = new Set();
