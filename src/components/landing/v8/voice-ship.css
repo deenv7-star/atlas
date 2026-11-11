@@ -34,3 +34,6 @@
   .vs-copy h3 { font-size: 21px; }
   .vs-asks { margin-top: 40px; }
 }
+
+/* hero sub: no one-word last line */
+.l5.l7.v8.lm .ph-sub { text-wrap: pretty; }

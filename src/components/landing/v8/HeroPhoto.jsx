@@ -42,8 +42,8 @@ const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['poo
    calendar link on their own schedule (05-channels: "כל ערוץ מעדכן את הקישור בקצב שלו"), so never "נחסם" as if
    instant; the WhatsApp opens ready in the owner's own WhatsApp and the owner sends it (never "נשלח"). */
 const NTFS = [
-  { mic: true, title: 'אמרתם: ״הזמנה למשה, שישי־שבת״', sub: 'atlas הכין אותה · אישרתם בלחיצה', time: '08:12' },
-  { cal: true, title: 'האלון תפוס בשישי־שבת', sub: 'Booking ו-Airbnb יסמנו בעדכון הבא שלהם', time: '08:12' },
+  { mic: true, title: 'אמרתם: ״הזמנה למשה לסופ״ש״', sub: 'atlas הכין אותה · אישרתם בלחיצה', time: '08:12' },
+  { cal: true, title: 'האלון תפוס בסופ״ש', sub: 'יתעדכן ב-Booking וב-Airbnb', time: '08:12' },
   { ch: 'whatsapp', title: 'אישור לאורח מוכן בוואטסאפ', sub: 'משה כהן · לוחצים ושולחים', time: '08:13' },
 ];
 
