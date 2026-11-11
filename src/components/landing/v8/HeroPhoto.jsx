@@ -22,7 +22,7 @@
  */
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Mic, CalendarCheck } from 'lucide-react';
 import { Mark } from '../v5/ui';
 import { CTA_SIGNUP, CTA_NOTE } from '../v5/content';
 import { prefersReducedMotion } from '../v5/motion';
@@ -37,11 +37,14 @@ const PORT = [['pool-p480', 480], ['pool-p720', 720], ['pool-p1080', 1080]];
 /* 4K source (Pexels 14546304, 4000x3000): sharp on 1920 DPR2 / 4K screens; phones stay on the portrait set (max 1080w, ~180KB AVIF) */
 const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['pool-2560', 2560], ['pool-3840', 3840]];
 
+/* landing voice ship (11.11.2026): the voice story, example data. Truth rules: the assistant PREPARES a booking
+   (propose_booking) and only the owner's tap saves it; Booking and Airbnb pick the dates up from atlas's export
+   calendar link on their own schedule (05-channels: "כל ערוץ מעדכן את הקישור בקצב שלו"), so never "נחסם" as if
+   instant; the WhatsApp opens ready in the owner's own WhatsApp and the owner sends it (never "נשלח"). */
 const NTFS = [
-  { ch: 'booking', title: 'לילות תפוסים מ-Booking.com', sub: 'הזית · 2 לילות נכנסו ללוח', time: '08:12' },
-  /* marketingskills v1 (11.11.2026): never "נשלח": atlas prepares the message, the owner sends it from their own WhatsApp */
-  { ch: 'whatsapp', title: 'אישור הזמנה מוכן בוואטסאפ', sub: 'משפחת לוי · לוחצים ושולחים', time: '09:00' },
-  { face: 'noa', title: 'נועה ל. · מקדמה ‏₪1,250', sub: 'האלון · נרשמה בלחיצה', time: '10:24' },
+  { mic: true, title: 'אמרתם: ״הזמנה למשה, שישי־שבת״', sub: 'atlas הכין אותה · אישרתם בלחיצה', time: '08:12' },
+  { cal: true, title: 'האלון תפוס בשישי־שבת', sub: 'Booking ו-Airbnb יסמנו בעדכון הבא שלהם', time: '08:12' },
+  { ch: 'whatsapp', title: 'אישור לאורח מוכן בוואטסאפ', sub: 'משה כהן · לוחצים ושולחים', time: '08:13' },
 ];
 
 /** Scroll segments (progress 0..1 through the sticky run). */
@@ -89,11 +92,13 @@ const cancelIdle = (id) => { if (!id) return; if (typeof window.cancelIdleCallba
 
 const viewTimelineOK = () => typeof window !== 'undefined' && 'ViewTimeline' in window && typeof Element.prototype.animate === 'function';
 
-function Notif({ ch, face, title, sub, time, i }) {
+function Notif({ ch, face, mic, cal, title, sub, time, i }) {
   return (
     <div className="ph-ntf" style={{ '--i': i }}>
       <span className="ph-ntf-ic" aria-hidden="true">
-        {face
+        {mic || cal
+          ? <span className="ph-ntf-mk is-voice">{mic ? <Mic size={20} strokeWidth={2.2} /> : <CalendarCheck size={20} strokeWidth={2.2} />}</span>
+          : face
           ? <img className="ph-face" src={FACES[face].src} alt="" width="40" height="40" decoding="async" />
           : <span className={`ph-ntf-mk is-${ch}`}><Mark ch={ch} size={ch === 'booking' ? 22 : 20} /></span>}
       </span>
@@ -128,7 +133,7 @@ function Copy({ copyRef, onShow }) {
   return (
     <div ref={copyRef} className="ph-copy">
       <h1 id="hero-title" className="ph-h1"><span className="ph-l">אתם מארחים.</span><br /><span className="ph-l" style={{ '--l': 1 }}>atlas מסדר.</span></h1>
-      <p className="ph-sub">מערכת הניהול לצימרים ולמתחמי נופש. הזמנות מ-Booking ו-Airbnb בלוח אחד, וואטסאפ מוכן לכל אורח, וכל מקדמה במעקב.</p>
+      <p className="ph-sub">מערכת הניהול לצימרים ולמתחמי נופש, עם עוזר קולי. אומרים באפליקציה מה צריך, atlas מכין את ההזמנה או את ההודעה לאורח, ואתם מאשרים בלחיצה.</p>
       <div className="ph-ctas">
         <Link to="/register" className="ph-btn">
           <span>{CTA_SIGNUP}</span>

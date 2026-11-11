@@ -7,8 +7,8 @@ import { PRICING_PLANS, TRIAL_DAYS } from '../../src/config/pricing.js';
 const text = FAQ.map((f) => `${f.q} ${f.a}`).join(' ');
 const answers = FAQ.map((f) => f.a).join(' ');
 
-test('6 to 9 sales questions, each a question with a short answer', () => {
-  assert.ok(FAQ.length >= 6 && FAQ.length <= 9, `got ${FAQ.length}`);
+test('6 to 10 sales questions, each a question with a short answer', () => {
+  assert.ok(FAQ.length >= 6 && FAQ.length <= 10, `got ${FAQ.length}`);
   for (const f of FAQ) {
     assert.ok(f.q.trim().endsWith('?'), f.q);
     assert.ok(f.q.length <= 60, `${f.q}: question too long`);

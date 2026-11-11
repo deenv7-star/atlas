@@ -20,6 +20,7 @@
 /** What every plan includes (same list for all three, shown on the landing). */
 export const INCLUDED_FEATURES = [
   'לוח שנה אחד לכל היחידות',
+  'עוזר קולי בעברית: אומרים מה צריך, ומאשרים בלחיצה',
   'התאריכים התפוסים מ-Booking.com ו-Airbnb, וההזמנות הישירות, על לוח אחד',
   'התראה כשהזמנות חופפות',
   'דף הזמנה ישירה משלכם, בלי עמלה',
