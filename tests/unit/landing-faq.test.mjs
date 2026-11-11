@@ -34,8 +34,9 @@ test('no promises atlas cannot keep, no invented numbers', () => {
   for (const re of banned) assert.ok(!re.test(answers), `claim ${re}`);
   // tax invoices: only ever said honestly (still issued in the owner's own software)
   if (/חשבונית מס/.test(answers)) assert.match(answers, /חשבונית מס רשמית עדיין מפיקים בתוכנת החשבוניות שלכם/);
-  // 24/7 support (Deen, 01.11.2026) and the plan-2 complex limit are real numbers too
-  const allowedNumbers = new Set([String(TRIAL_DAYS), String(PRICING_PLANS[0].price), String(PRICING_PLANS[1].complexes), '24', '7', ...PHONE_DISPLAY.split('-')]);
+  // 24/7 support (Deen, 01.11.2026) and the plan-2 complex limit are real numbers too;
+  // 15 = the channel calendar import interval (pg_cron '*/15', supabase/migrations/015_cron_jobs.sql)
+  const allowedNumbers = new Set([String(TRIAL_DAYS), String(PRICING_PLANS[0].price), String(PRICING_PLANS[1].complexes), '24', '7', '15', ...PHONE_DISPLAY.split('-')]);
   for (const n of text.match(/\d+/g) || []) assert.ok(allowedNumbers.has(n), `unexpected number ${n}`);
 });
 

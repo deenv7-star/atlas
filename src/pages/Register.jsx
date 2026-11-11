@@ -84,11 +84,11 @@ export default function Register() {
                 <AuthField id="business" label="איך קוראים למתחם?" hint="לא חובה. אפשר גם אחר כך." value={form.business} onChange={set('business')} placeholder="למשל: צימרי הגליל" maxLength={50} autoComplete="organization" ok={form.business.trim().length >= 2} />
                 <AuthField id="email" label="מייל" type="email" inputMode="email" dir="ltr" inputClassName="text-right" placeholder="name@example.com" autoComplete="email" maxLength={255}
                   value={form.email} onChange={set('email')} onBlur={handleBlur('email')} error={touched.email ? errors.email : null} ok={touched.email && r.emailOk} />
-                <AuthField id="password" label="סיסמה" password placeholder="לפחות 8 תווים, ספרה ואות" autoComplete="new-password" maxLength={128}
+                <AuthField id="password" label="סיסמה" password hint="לפחות 8 תווים, עם ספרה ואות" autoComplete="new-password" maxLength={128}
                   value={form.password} onChange={set('password')} onBlur={handleBlur('password')} error={touched.password ? errors.password : null}>
                   <StrengthMeter strength={r.strength} value={form.password} />
                 </AuthField>
-                <AuthField id="confirmPassword" label="אימות סיסמה" password placeholder="הקלידו שוב את הסיסמה" autoComplete="new-password" maxLength={128}
+                <AuthField id="confirmPassword" label="הקלידו שוב את הסיסמה" password autoComplete="new-password" maxLength={128}
                   value={form.confirmPassword} onChange={set('confirmPassword')} onBlur={handleBlur('confirmPassword')} error={touched.confirmPassword ? errors.confirmPassword : null} />
 
                 <TermsConsent checked={r.agreed} onChange={r.onConsent} error={r.consentError} className="pt-1" />
