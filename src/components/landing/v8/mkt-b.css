@@ -1,0 +1,60 @@
+/* marketingskills v1 B (11.11.2026): how it works + founders offer + compact header CTA on phones.
+   Palette: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white. Motion: the landing's own data-reveal
+   (transform/opacity, reduced motion handled there). Taps ≥44px. */
+
+/* header: a short CTA on phones (the long label from 640px up) */
+.l7-cta-s { display: none; }
+@media (max-width: 639px) {
+  .l5.l7.v8.lm .l7-hdr-cta { display: inline-flex; min-height: 44px; padding: 0 14px; font-size: 14px; }
+  .l5.l7.v8.lm .l7-cta-s { display: inline; }
+  .l5.l7.v8.lm .l7-cta-l { display: none; }
+}
+
+/* how it works */
+.mb-steps { padding: 72px 0 24px; background: var(--canvas); }
+.mb-steps-head { max-width: 640px; margin: 0 auto; text-align: center; }
+.mb-steps-head .v8-txt { margin-top: 12px; }
+.mb-steps-list { display: grid; gap: 14px; margin: 32px auto 0; padding: 0; max-width: 1040px; list-style: none; counter-reset: none; }
+.mb-steps-list li { position: relative; padding: 22px 22px 24px; border-radius: 20px; background: #fff; box-shadow: 0 1px 2px rgba(27, 38, 86, 0.05), 0 12px 32px -20px rgba(27, 38, 86, 0.25); }
+.mb-step-n { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--indigo); color: #fff; font-size: 18px; font-weight: 800; }
+.mb-steps-list h3 { margin-top: 14px; font-size: 20px; line-height: 1.25; font-weight: 800; color: var(--navy); text-wrap: balance; }
+.mb-steps-list p { margin-top: 6px; font-size: 16px; line-height: 1.5; color: var(--ink, #4A5578); text-wrap: pretty; }
+.mb-steps-cta { display: flex; justify-content: center; margin-top: 28px; }
+@media (min-width: 900px) {
+  .mb-steps { padding: 112px 0 40px; }
+  .mb-steps-list { grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; }
+  .mb-steps-list li { padding: 28px 28px 30px; }
+}
+
+/* founders offer: one quiet, bold moment (the big 50) on navy */
+.mb-fnd { padding: 56px 0 8px; }
+.mb-fnd-box { max-width: 1040px; margin: 0 auto; padding: 32px 22px; border-radius: 28px; background: var(--navy); color: #fff; }
+.mb-fnd-top { display: flex; align-items: center; gap: 18px; }
+.mb-fnd-50 { flex: none; font-size: 88px; line-height: 0.85; font-weight: 800; letter-spacing: -0.05em; color: #fff; }
+.mb-fnd-h { font-size: 22px; line-height: 1.25; font-weight: 800; color: #fff; text-wrap: balance; }
+.mb-fnd-list { display: grid; gap: 18px; margin: 28px 0 0; padding: 0; list-style: none; }
+.mb-fnd-list li { display: flex; gap: 12px; align-items: flex-start; }
+.mb-fnd-list svg { flex: none; width: 32px; height: 32px; padding: 6px; border-radius: 50%; background: var(--indigo); color: #fff; }
+.mb-fnd-list h3 { font-size: 18px; font-weight: 800; color: #fff; }
+.mb-fnd-list p { margin-top: 4px; font-size: 16px; line-height: 1.5; color: rgba(255, 255, 255, 0.82); }
+.mb-fnd-prices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px !important; }
+.mb-fnd-prices span { display: inline-flex; align-items: baseline; gap: 6px; min-height: 36px; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 15px; font-weight: 700; }
+.mb-fnd-prices s { font-weight: 500; color: rgba(255, 255, 255, 0.6); }
+.mb-fnd-cta { margin-top: 28px; }
+.mb-fnd-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 24px; border-radius: 999px; background: #fff; color: var(--indigo); font-size: 17px; font-weight: 800; transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+.mb-fnd-btn:active { transform: scale(0.97); }
+.mb-fnd-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.mb-fnd-note { margin-top: 12px; font-size: 15px; color: rgba(255, 255, 255, 0.75); text-align: center; }
+@media (min-width: 900px) {
+  .mb-fnd { padding: 96px 0 16px; }
+  .mb-fnd-box { display: grid; grid-template-columns: 1fr 1.25fr; gap: 24px 56px; padding: 56px; }
+  .mb-fnd-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .mb-fnd-50 { font-size: 160px; }
+  .mb-fnd-h { font-size: 30px; }
+  .mb-fnd-list { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+  .mb-fnd-cta { grid-column: 1; align-self: end; margin: 0; }
+  .mb-fnd-btn { width: auto; }
+  .mb-fnd-note { text-align: start; }
+}
+@media (hover: hover) and (pointer: fine) { .mb-fnd-btn:hover { transform: translateY(-1px); } }
+@media (prefers-reduced-motion: reduce) { .mb-fnd-btn { transition: none; } }

@@ -137,7 +137,7 @@ export function CompareTable() {
   );
 }
 
-export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2', growth = false }) {
+export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2', growth = false, founders = true }) {
   const [yearly, setYearlyState] = useState(false);
   const [said, setSaid] = useState('');
   const setYearly = (y) => {
@@ -210,7 +210,7 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{CANCEL_LINE}</p>
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{VAT_LINE}</p>
           {/* founders offer (Deen, 08.11.2026; details and capture on /early): first 50, personal setup, annual price on monthly billing, locked */}
-          {growth && <p className="v8p-founders"><Check size={16} strokeWidth={2.6} aria-hidden="true" /><span>50 המצטרפים הראשונים: הקמה אישית ומחיר מייסדים נעול. <Link to="/early">פרטים</Link></span></p>}
+          {growth && founders && <p className="v8p-founders"><Check size={16} strokeWidth={2.6} aria-hidden="true" /><span>50 המצטרפים הראשונים: הקמה אישית ומחיר מייסדים נעול. <Link to="/early">פרטים</Link></span></p>}
         </div>
 
         <ul className="v8p-trust" data-reveal>

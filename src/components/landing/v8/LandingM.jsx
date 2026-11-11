@@ -23,7 +23,10 @@
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles } from 'lucide-react';
+import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles, ArrowLeft, Check } from 'lucide-react';
+import { PRICING_PLANS, TRIAL_DAYS } from '@/config/pricing';
+import { SignupButton } from '../v5/LandingV5';
+import { fmt } from '../v5/motion';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
 import { useReveal } from '../v5/motion';
 import { Mark } from '../v5/ui';
@@ -44,13 +47,14 @@ import LazyGrowth from './growth/LazyGrowth';
 import { useLandingMotion } from './motion/landingMotion';
 import './motion/landing-motion.css';
 import './motion/landing-motion-m2.css';
+import './mkt-b.css';
 import { useLandingMotion3 } from './motion/landingMotion3';
 import './motion/landing-motion-v3.css';
 import './motion/landing-motion-v3b.css';
 
 const loadGrowth = () => import('./growth/GrowthS');
 
-const NAV = [['#features', 'המוצר'], ['#facts', 'למה atlas'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
+const NAV = [['#how', 'איך מתחילים'], ['#features', 'המוצר'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
 /* ---------------- features: the four colour blocks as a bento of tiles + photos + channels ---------------- */
 const TILES = [
@@ -173,6 +177,67 @@ function Facts() {
   );
 }
 
+/* ---------------- how it works (marketingskills v1 B, 11.11.2026) ----------------
+   Answers "is this easy for me?" for non-technical owners. Every step is true today: register asks for
+   email and password only (no card), channels connect by pasting each calendar link once (05-channels),
+   and atlas prepares the guest messages the owner picked; the owner sends them in one tap. No time promises. */
+const STEPS_B = [
+  { t: 'נרשמים', d: 'מייל וסיסמה. בלי כרטיס אשראי.' },
+  { t: 'מחברים את Booking ו-Airbnb', d: 'מדביקים את קישור היומן מכל ערוץ, פעם אחת. ההזמנות נכנסות ללוח.' },
+  { t: 'בוחרים הודעות לאורחים', d: 'מסמנים אילו הודעות atlas יכין לכל אורח, ומתי. אתם שולחים בלחיצה.' },
+];
+
+function Steps() {
+  return (
+    <section id="how" className="mb-steps" aria-labelledby="how-title">
+      <div className="l5-wrap">
+        <div className="mb-steps-head" data-reveal>
+          <h2 id="how-title" className="v8-h2">ככה מתחילים.</h2>
+          <p className="v8-txt">בלי התקנה ובלי כרטיס אשראי. נתקעתם? בן אדם עונה בוואטסאפ.</p>
+        </div>
+        <ol className="mb-steps-list">
+          {STEPS_B.map((s, i) => (
+            <li key={s.t} data-reveal style={{ '--d': `${i * 80}ms` }}>
+              <span className="mb-step-n num" aria-hidden="true">{i + 1}</span>
+              <h3>{s.t}</h3>
+              <p>{s.d}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="mb-steps-cta" data-reveal><SignupButton className="is-lg" /></div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- founders offer (Deen, 08.11.2026; capture and details on /early) ----------------
+   The first 50: personal setup by Deen, the annual monthly price on monthly billing locked while the
+   subscription is active, 14 days free. Real cap, no remaining-spots number until a real counter exists. */
+function Founders() {
+  return (
+    <section id="founders" className="mb-fnd" aria-labelledby="fnd-title">
+      <div className="l5-wrap">
+        <div className="mb-fnd-box" data-reveal>
+          <div className="mb-fnd-top">
+            <p className="mb-fnd-50 num" aria-hidden="true">50</p>
+            <h2 id="fnd-title" className="mb-fnd-h">תוכנית המייסדים:<br />50 המצטרפים הראשונים מקבלים</h2>
+          </div>
+          <ul className="mb-fnd-list">
+            <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>הקמה אישית</h3><p>מחברים לכם את Booking ו-Airbnb, מגדירים את היחידות ומכינים את נוסחי ההודעות.</p></div></li>
+            <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>מחיר מייסדים, נעול</h3><p>מחיר המסלול השנתי, בתשלום חודשי. נעול כל עוד המנוי פעיל.</p>
+              <p className="mb-fnd-prices">{PRICING_PLANS.map((p) => <span key={p.key}><bdi className="num" dir="ltr">₪{fmt(p.priceYearly)}</bdi> {p.nameHe} <s><bdi className="num" dir="ltr">₪{fmt(p.price)}</bdi></s></span>)}</p></div></li>
+            <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>{TRIAL_DAYS} יום חינם</h3><p>הכל פתוח, בלי כרטיס אשראי. לא יורד שקל בסוף הניסיון.</p></div></li>
+          </ul>
+          <div className="mb-fnd-cta">
+            <Link to="/early" className="mb-fnd-btn"><span>שמרו לי מקום</span><ArrowLeft size={18} strokeWidth={2.2} aria-hidden="true" /></Link>
+            <p className="mb-fnd-note">אחרי 50 המקומות, חוזרים למחיר הרגיל.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------------- final CTA ---------------- */
 function Final() {
   return (
@@ -249,13 +314,17 @@ export default function LandingM() {
     <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
       <div className="mo-prog" aria-hidden="true"><i /></div>
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
-      <V7Header links={NAV} />
+      <V7Header links={NAV} ctaShort="14 יום חינם" />
       <main id="main">
         <HeroPhoto />
+        {/* marketingskills v1 B: how it works first, the founders offer right before the price, and the
+            "בקרוב" growth section after pricing so it never stands between the decision and the price */}
+        <Part><Steps /></Part>
         <Part><Features /></Part>
         <Part><Facts /></Part>
+        <Part><Founders /></Part>
+        <Part><Pricing8 growth founders={false} /></Part>
         <LazyGrowth load={loadGrowth} className="lg-ph-s" />
-        <Part><Pricing8 growth /></Part>
         <Part><Faq items={LANDING_FAQ} openFirst cta /></Part>
         <Part><Final /></Part>
         <Part><Credits8 /></Part>

@@ -21,7 +21,7 @@ export const AV = {
 
 const DEFAULT_NAV = [['#product', 'המוצר'], ['#how', 'איך מתחילים'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
-export function V7Header({ links = DEFAULT_NAV }) {
+export function V7Header({ links = DEFAULT_NAV, ctaShort = '' }) {
   const [solid, setSolid] = useState(false);
   useEffect(() => {
     const on = () => setSolid(window.scrollY > 16);
@@ -38,7 +38,7 @@ export function V7Header({ links = DEFAULT_NAV }) {
         </nav>
         <div className="l7-hdr-end">
           <Link to="/login" className="l7-login">כניסה</Link>
-          <Link to="/register" className="l7-hdr-cta">התחילו 14 יום חינם</Link>
+          <Link to="/register" className="l7-hdr-cta" aria-label={ctaShort ? 'התחילו 14 יום חינם' : undefined}>{ctaShort ? <><span className="l7-cta-s" aria-hidden="true">{ctaShort}</span><span className="l7-cta-l">התחילו 14 יום חינם</span></> : 'התחילו 14 יום חינם'}</Link>
         </div>
       </div>
     </header>
