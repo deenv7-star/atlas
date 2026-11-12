@@ -86,7 +86,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-8wUgboqOByFQSfQnkulH/WVMpxa7+2Wa1GgGVihhv5c=' 'sha256-e9XP6SKV9EzR14Fv23MiVnaIrYJ751gESaQ3xrkN3Jg=' 'sha256-80pQrz9mqZC1xHY6m27O9NPvhl9O8+qVXfPT6k3e07M=' 'sha256-Q8hShK5LJ7JlzCCGzbFh1HwBOScIEfZTJo65iCrj+Ro='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://romvmqbcinurscwdsskx.supabase.co https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://romvmqbcinurscwdsskx.supabase.co wss://romvmqbcinurscwdsskx.supabase.co wss://api.elevenlabs.io; worker-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'sha256-8wUgboqOByFQSfQnkulH/WVMpxa7+2Wa1GgGVihhv5c=' 'sha256-e9XP6SKV9EzR14Fv23MiVnaIrYJ751gESaQ3xrkN3Jg=' 'sha256-TlsXJ+OOhBMWJpKH6qCQmq+uLtEPw/3UPDguhktn+lE=' 'sha256-Q8hShK5LJ7JlzCCGzbFh1HwBOScIEfZTJo65iCrj+Ro='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://romvmqbcinurscwdsskx.supabase.co https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://romvmqbcinurscwdsskx.supabase.co wss://romvmqbcinurscwdsskx.supabase.co wss://api.elevenlabs.io; worker-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         },
         {
           "key": "Cache-Control",
