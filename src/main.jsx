@@ -100,16 +100,54 @@ if (!hydrate && !ssrEl) liftBoot(rootEl)
 // full sheets linked but inert. Turn them on now (the browser fetches them, cached across pages and the app) and
 // hydrate once they are in, so anything that appears after hydration (menus, dialogs, the cookie notice) is styled.
 // The page is already painted, so this waits on nothing the visitor sees; 1.5 s is the safety net.
+// CLS: the full entry sheet repeats the Heebo @font-face rules the inlined part already declared. Applied as is, they
+// register as new faces that load again, and until they do the hero headline paints in the fallback font, re-wraps
+// to three lines and back (Lighthouse/live mobile CLS ~0.2-0.28 whenever the reload is not an instant cache hit).
+// So the sheet is fetched and parsed while its media is still "not all" (rules inert), the @font-face rules the page
+// already has are dropped from it, and only then is it switched on. Any failure falls back to applying it unchanged.
+function fontFaceTexts() {
+  const seen = new Set()
+  document.querySelectorAll('style[data-critical]').forEach((s) => {
+    try { for (const r of s.sheet.cssRules) if (r.type === 5) seen.add(r.cssText) } catch { /* not readable: keep all */ }
+  })
+  return seen
+}
+function applyFullCss(l, seen) {
+  if (l.dataset.atlasOn) return
+  l.dataset.atlasOn = '1'
+  const sheet = l.sheet
+  // not loaded yet (the 1.5 s safety net): apply it the plain way
+  if (!sheet) { l.media = 'all'; return }
+  try {
+    // the faces sit at the top of the sheet (src/styles/brand.css): scan only up to the first style rule instead of
+    // touching all ~2,300, then delete from the end so the indexes hold
+    const rules = sheet.cssRules
+    const hit = []
+    for (let i = 0; i < rules.length && hit.length < seen.size; i++) {
+      const r = rules[i]
+      if (r.type === 1) break
+      if (r.type === 5 && seen.has(r.cssText)) hit.push(i)
+    }
+    for (let k = hit.length - 1; k >= 0; k--) sheet.deleteRule(hit[k])
+    // Switch it on through the sheet's own media list. Changing the media attribute instead makes the browser rebuild
+    // the sheet from the file (the dropped rules come back) and, without a fresh cache entry, fetch it again. The
+    // attribute keeps saying "not all"; nothing re-processes these links after this.
+    sheet.media.mediaText = 'all'
+  } catch { l.media = 'all' }
+}
 function enableFullCss() {
   const links = [...document.querySelectorAll('link[data-atlas-full]')]
   if (!links.length) return Promise.resolve()
+  const seen = fontFaceTexts()
   return Promise.race([
     Promise.all(links.map((l) => new Promise((done) => {
-      l.addEventListener('load', done, { once: true })
-      l.addEventListener('error', done, { once: true })
-      l.removeAttribute('disabled'); l.disabled = false; l.media = 'all'; l.removeAttribute('data-atlas-full')
+      const finish = () => { applyFullCss(l, seen); done() }
+      l.addEventListener('load', finish, { once: true })
+      l.addEventListener('error', finish, { once: true })
+      // media stays "not all" until it has loaded: fetched and parsed, not applied
+      l.removeAttribute('data-atlas-full'); l.removeAttribute('disabled'); l.disabled = false
     }))),
-    new Promise((done) => window.setTimeout(done, 1500)),
+    new Promise((done) => window.setTimeout(() => { links.forEach((l) => applyFullCss(l, seen)); done() }, 1500)),
   ])
 }
 
