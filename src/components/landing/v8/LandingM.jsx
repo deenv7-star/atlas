@@ -86,7 +86,7 @@ function VoiceStage() {
         <div className="vt-grid">
           <div className="vt-copy">
             <p className="vt-k"><Mic size={16} strokeWidth={2.2} aria-hidden="true" />העוזר הקולי</p>
-            <h2 id="voice-title" className="v8-h2 vt-h">אומרים. atlas מכין. <span className="is-ind">אתם מאשרים.</span></h2>
+            <h2 id="voice-title" className="v8-h2 vt-h">בלי טפסים. <span className="is-ind">בלי להקליד.</span></h2>
             <ol className="vt-steps">
               {STAGE.map((s, i) => (
                 <li key={s.img}>

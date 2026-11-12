@@ -132,8 +132,8 @@ function Photo({ imgRef }) {
 function Copy({ copyRef }) {
   return (
     <div ref={copyRef} className="ph-copy">
-      <h1 id="hero-title" className="ph-h1"><span className="ph-l">אומרים מה צריך.</span><br /><span className="ph-l" style={{ '--l': 1 }}>atlas מכין.</span></h1>
-      <p className="ph-sub">מערכת הניהול לצימרים, עם עוזר קולי בעברית. הזמנות, הודעות לאורחים ותשלומים, ואתם מאשרים בלחיצה.</p>
+      <h1 id="hero-title" className="ph-h1"><span className="ph-l">אומרים.</span><br /><span className="ph-l" style={{ '--l': 1 }}>atlas מכין.</span></h1>
+      <p className="ph-sub">מערכת הניהול לצימרים, עם עוזר קולי בעברית. אומרים מה צריך, atlas מכין את ההזמנה או את ההודעה לאורח, ואתם מאשרים בלחיצה.</p>
       <div className="ph-ctas">
         <Link to="/register" className="ph-btn">
           <span>{CTA_SIGNUP}</span>
