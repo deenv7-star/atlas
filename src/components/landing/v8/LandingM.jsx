@@ -23,18 +23,14 @@
  */
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Sparkles, ArrowLeft, Check, Mic } from 'lucide-react';
-import { PRICING_PLANS, TRIAL_DAYS } from '@/config/pricing';
-import { SignupButton } from '../v5/LandingV5';
-import { fmt } from '../v5/motion';
+import { CalendarDays, MessageCircle, Wallet, Sun, RefreshCw, Mic } from 'lucide-react';
 import CookieConsent, { readChoice } from '@/components/landing/CookieConsent';
-import { useReveal } from '../v5/motion';
+import { useReveal, prefersReducedMotion } from '../v5/motion';
 import { Mark } from '../v5/ui';
 import { Faq, Footer } from '../v5/LandingV5';
 import { LANDING_FAQ, CTA_SIGNUP, CTA_NOTE } from '../v5/content';
 import { V7Header } from '../v7/shared7';
-import { UI, FACES, Face, FaceStack, WaBubble, Pricing8, CtaLinks, Credits8 } from './shared8';
-import { Pic } from './people/Pic';
+import { UI, FACES, Face, WaBubble, Pricing8, CtaLinks, Credits8 } from './shared8';
 import '../v5/landing-v5.css';
 import '../v7/landing-v7.css';
 import './shared8.css';
@@ -43,64 +39,76 @@ import './faq-m.css';
 import './landing-ux-1020.css';
 import './landing-visual-v2.css';
 import HeroPhoto from './HeroPhoto';
-import LazyGrowth from './growth/LazyGrowth';
 import { useLandingMotion } from './motion/landingMotion';
 import './motion/landing-motion.css';
 import './motion/landing-motion-m2.css';
-import './mkt-b.css';
 import './voice-ship.css';
+import './voice-stage.css';
 import { useLandingMotion3 } from './motion/landingMotion3';
 import './motion/landing-motion-v3.css';
 import './motion/landing-motion-v3b.css';
 
-const loadGrowth = () => import('./growth/GrowthS');
 
-const NAV = [['#voice', 'העוזר הקולי'], ['#how', 'איך מתחילים'], ['#features', 'המוצר'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
+const NAV = [['#voice', 'העוזר הקולי'], ['#features', 'המוצר'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
 
-/* ---------------- the voice assistant (landing voice ship, 11.11.2026) ----------------
-   Three REAL screens of the in-app assistant (src/assistant/screen/AssistantScreen.jsx + LiveCards LiveProposal),
-   rendered from the component with example data (video/teaser-voice-v3 frames 205 / 244 / 296).
-   Every line is checked in code: Hebrew speech (voice-session core.js transcription 'he'); write tools only
-   PROPOSE and the owner's tap performs (brain/tools.js WRITE_TOOLS, src/assistant/actions.js); propose_booking
-   checks the unit is free; read tools answer arrivals, money, balances, availability; a guest message opens in
-   the owner's own WhatsApp; writing mode one tap away; no plan gate (voice-session has none, every plan
-   "כל היכולות כלולות"). Never: a voice name, wake word, sending, push, "replaces you". */
-const VOICE_STEPS = [
-  { img: 'say', t: 'אומרים מה צריך', d: 'במילים שלכם, בעברית. בלי טפסים ובלי להקליד.', alt: 'העוזר הקולי באפליקציה של atlas: בעל המתחם אמר ״תוסיף לי הזמנה לצימר מיום חמישי לסופ״ש ליוסי ב-3,500 ש״ח״, והעוזר מכין הזמנה (נתוני דוגמה)' },
-  { img: 'card', t: 'atlas מכין את ההזמנה', d: 'בודק שהיחידה פנויה ומראה כרטיס עם התאריכים והמחיר.', alt: 'כרטיס הזמנה חדשה שמחכה לאישור: צימר הזית, יום ה׳ 12.11 עד יום ש׳ 14.11, ‏₪3,500, עם כפתורי אישור וביטול (נתוני דוגמה)' },
-  { img: 'saved', t: 'מאשרים בלחיצה', d: 'רק אז ההזמנה נשמרת ונכנסת ללוח. לא מתאים? מבטלים.', alt: 'אחרי האישור: ההזמנה נשמרה ומופיעה בלוח, עם כפתור לפתיחת ההזמנה (נתוני דוגמה)' },
+/* ---------------- the voice stage (landing simplify V2, 12.11.2026) ----------------
+   The voice assistant is the story: one phone with the three REAL AssistantScreen stills (video/teaser-voice-v3
+   frames 205 / 244 / 296, example data) playing say -> card -> saved while the section is on screen.
+   Truth: Hebrew speech (voice-session core.js 'he'); write tools only PROPOSE and the owner's tap saves
+   (brain/tools.js, src/assistant/actions.js); propose_booking checks the unit is free. Reduced motion: no autoplay. */
+const STAGE = [
+  { img: 'say', t: 'אומרים', d: 'במילים שלכם, בעברית. בלי טפסים.', alt: 'העוזר הקולי באפליקציה של atlas: בעל המתחם אמר ״תוסיף לי הזמנה לצימר מיום חמישי לסופ״ש ליוסי ב-3,500 ש״ח״ (נתוני דוגמה)' },
+  { img: 'card', t: 'atlas מכין', d: 'בודק שהיחידה פנויה ומכין את ההזמנה.', alt: 'כרטיס הזמנה חדשה שמחכה לאישור: צימר הזית, יום ה׳ 12.11 עד יום ש׳ 14.11, ‏₪3,500 (נתוני דוגמה)' },
+  { img: 'saved', t: 'מאשרים', d: 'בלחיצה אחת. רק אז זה נשמר בלוח.', alt: 'אחרי האישור: ההזמנה נשמרה ומופיעה בלוח (נתוני דוגמה)' },
 ];
-const VOICE_ASKS = ['מי מגיע היום?', 'כמה נכנס החודש?', 'מי עוד חייב יתרה?', 'יש יחידה פנויה בסופ״ש?', 'תכין הודעת הגעה למשפחת לוי'];
+const STAGE_MS = 3200;
 
-function Voice() {
+function VoiceStage() {
+  const ref = useRef(null);
+  const [cur, setCur] = useState(0);
+  const [auto, setAuto] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') return undefined;
+    // a fast scroll can batch several records for this one target: the LAST one is the current state
+    const io = new IntersectionObserver((entries) => setAuto(entries[entries.length - 1].isIntersecting), { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!auto) return undefined;
+    const t = window.setTimeout(() => setCur((c) => (c + 1) % STAGE.length), STAGE_MS);
+    return () => window.clearTimeout(t);
+  }, [auto, cur]);
   return (
-    <section id="voice" className="vs" aria-labelledby="voice-title">
+    <section ref={ref} id="voice" className={`vt${auto ? ' is-auto' : ''}`} aria-labelledby="voice-title">
       <div className="l5-wrap">
-        <div className="vs-head" data-reveal>
-          <p className="vs-k"><Mic size={18} strokeWidth={2.2} aria-hidden="true" />העוזר הקולי</p>
-          <h2 id="voice-title" className="v8-h2">אומרים. atlas מכין. <span className="is-ind">אתם מאשרים.</span></h2>
-          <p className="v8-txt">פותחים את atlas באפליקציה ומדברים בעברית רגילה. שום דבר לא נשמר בלי האישור שלכם.</p>
-        </div>
-        <ol className="vs-steps">
-          {VOICE_STEPS.map((s, i) => (
-            <li key={s.img} data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <div className="vs-phone">
-                <img src={`/landing-voice/vs-${s.img}-600.webp`} srcSet={`/landing-voice/vs-${s.img}-300.webp 300w, /landing-voice/vs-${s.img}-600.webp 600w`} sizes="(min-width: 900px) 260px, 150px" alt={s.alt} width="600" height="1067" loading="lazy" decoding="async" />
-              </div>
-              <div className="vs-copy">
-                <span className="vs-n num" aria-hidden="true">{i + 1}</span>
-                <h3>{s.t}</h3>
-                <p>{s.d}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-        <div className="vs-asks" data-reveal>
-          <p className="vs-asks-h">אפשר גם לשאול ולבקש, למשל:</p>
-          <ul>{VOICE_ASKS.map((q) => <li key={q}>״{q}״</li>)}</ul>
-          <p className="vs-note">הודעה לאורח נפתחת בוואטסאפ שלכם, ואתם שולחים. מעדיפים לכתוב? יש גם כתיבה. כלול בכל החבילות.</p>
-          <p className="vs-demo">צילומי מסך מהאפליקציה, נתוני דוגמה</p>
+        <div className="vt-grid">
+          <div className="vt-copy">
+            <p className="vt-k"><Mic size={16} strokeWidth={2.2} aria-hidden="true" />העוזר הקולי</p>
+            <h2 id="voice-title" className="v8-h2 vt-h">בלי טפסים. <span className="is-ind">בלי להקליד.</span></h2>
+            <ol className="vt-steps">
+              {STAGE.map((s, i) => (
+                <li key={s.img}>
+                  <button type="button" className={`vt-step${i === cur ? ' is-on' : ''}`} aria-current={i === cur ? 'step' : undefined} onClick={() => { setCur(i); setAuto(false); }}>
+                    <span className="vt-n num" aria-hidden="true">{i + 1}</span>
+                    <span className="vt-t">{s.t}</span>
+                    <span className="vt-bar" aria-hidden="true"><i key={`${cur}-${auto}`} /></span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+            <p className="vt-d">{STAGE[cur].d}</p>
+          </div>
+          <figure className="vt-phone">
+            <div className="vt-scr">
+              {STAGE.map((s, i) => (
+                <img key={s.img} className={i === cur ? 'is-on' : ''} aria-hidden={i === cur ? undefined : 'true'} src={`/landing-voice/vs-${s.img}-600.webp`} srcSet={`/landing-voice/vs-${s.img}-300.webp 300w, /landing-voice/vs-${s.img}-600.webp 600w`} sizes="(min-width: 900px) 300px, 230px" alt={s.alt} width="600" height="1067" loading="lazy" decoding="async" />
+              ))}
+            </div>
+            <figcaption>צילומי מסך מהאפליקציה, נתוני דוגמה</figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -130,7 +138,7 @@ const TILES = [
     ),
   },
   {
-    tone: 'canvas', I: Wallet, id: 'payments', k: 'תשלומים', t: 'מי שילם, ומי עוד חייב.',
+    tone: 'canvas', I: Wallet, id: 'payments', k: 'תשלומים', t: 'הכסף בשליטה. רואים הכל.',
     d: 'רושמים כל מקדמה ויתרה בלחיצה, ורואים מה פתוח ומה נכנס החודש.',
     vis: (
       <div className="lm-tile-vis is-chart">
@@ -166,21 +174,6 @@ function Features() {
             </li>
           ))}
         </ul>
-        {/* people photos B (#144): the owner in action with the real Today screen, and the host checking payments */}
-        <div className="lm-feat-ppl">
-          <div className="lm-feat-today pp-b-today" data-reveal>
-            <figure className="pp-b-host"><Pic name="p-hostess" widths={[560, 1000]} ratio={0.8} sizes="(min-width: 1200px) 480px, (min-width: 900px) 40vw, 80vw" alt="בעלת מתחם מגישה מאפים לאורחים במרפסת" /></figure>
-            <div className="pp-b-phone" data-sd="lift" role="img" aria-label="מסך ״היום״ של atlas בטלפון: מי מגיע היום, כמה נכנס החודש ותפוסה (נתוני דוגמה)">
-              <img src="/landing-hero/ui-m-today-y3.webp" srcSet="/landing-hero/ui-m-today-y3-540.webp 540w, /landing-hero/ui-m-today-y3.webp 780w" sizes="230px" alt="" width="780" height="1688" loading="lazy" decoding="async" />
-            </div>
-            <div className="lm-chip is-d"><span className="lm-done"><Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />הגפן מוכנה לאורחים</span></div>
-          </div>
-          <div className="lm-feat-pay" data-reveal>
-            <figure className="lm-feat-host"><Pic name="p-host" widths={[480, 840]} ratio={840 / 903} alt="בעל מתחם בודק את התשלומים במחשב, בשולחן עץ בחוץ" sizes="(min-width: 1200px) 400px, (min-width: 900px) 34vw, 70vw" /></figure>
-            <img className="lm-feat-paid" data-sd="lift" src={`${UI}/y3-paid.webp`} alt="כרטיס הזמנה באפליקציה של atlas: ‏₪2,440 סה״כ, ‏₪1,200 שולם ו-‏₪1,240 יתרה (נתוני דוגמה)" width="740" height="642" loading="lazy" decoding="async" />
-          </div>
-          <p className="pp-b-cap lm-feat-cap">תרחיש לדוגמה, להמחשה: האורחים מגיעים, והיום כבר מסודר בטלפון.</p>
-        </div>
         <div className="lm-feat-ch" data-reveal>
           <p>עובד עם מה שכבר יש לכם</p>
           <ul>
@@ -189,100 +182,6 @@ function Features() {
             <li style={{ '--i': 2 }}><Mark ch="whatsapp" size={20} />WhatsApp</li>
             <li style={{ '--i': 3 }}><Mark ch="google" size={20} />Google Calendar</li>
           </ul>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- facts ---------------- */
-const FACTS = [
-  { n: '3', u: 'ערוצים', t: 'Airbnb, Booking.com וישיר על לוח אחד' },
-  { n: '15', u: 'דקות', t: 'בערך כל כמה זמן הלוח מתעדכן מ-Booking ו-Airbnb' },
-  { n: '14', u: 'ימים', t: 'ניסיון חינם, בלי כרטיס אשראי' },
-  { n: '₪0', u: 'עמלה', t: 'על פניות מדף ההזמנה הישירה שלכם, כלול בכל חבילה' },
-];
-
-function Facts() {
-  return (
-    <section id="facts" className="lm-facts" aria-labelledby="facts-title">
-      <div className="l5-wrap">
-        <div className="lm-facts-top" data-reveal>
-          <h2 id="facts-title" className="v8-h2">מה מקבלים, <span className="is-ind">בלי אותיות קטנות.</span></h2>
-          <div className="lm-facts-people">
-            <FaceStack keys={['noa', 'tom', 'shir', 'ben', 'yossi']} size={48} />
-            <p>כל הערוצים בלוח אחד, והודעות וואטסאפ מוכנות לכל אורח.<small className="pp-b-note">אורחים לדוגמה, להמחשה</small></p>
-          </div>
-        </div>
-        <ul className="lm-facts-row">
-          {FACTS.map((f, i) => (
-            <li key={f.u} data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <b className="num" dir="ltr" data-count={/^\d+$/.test(f.n) ? f.n : undefined}>{f.n}</b>
-              <span>{f.u}</span>
-              <p>{f.t}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- how it works (marketingskills v1 B, 11.11.2026) ----------------
-   Answers "is this easy for me?" for non-technical owners. Every step is true today: register asks for
-   email and password only (no card), channels connect by pasting each calendar link once (05-channels),
-   and atlas prepares the guest messages the owner picked; the owner sends them in one tap. No time promises. */
-const STEPS_B = [
-  { t: 'נרשמים', d: 'מייל וסיסמה. בלי כרטיס אשראי.' },
-  { t: 'מחברים את Booking ו-Airbnb', d: 'מדביקים את קישור היומן מכל ערוץ, פעם אחת. ההזמנות נכנסות ללוח.' },
-  { t: 'בוחרים הודעות לאורחים', d: 'מסמנים אילו הודעות atlas יכין לכל אורח, ומתי. אתם שולחים בלחיצה.' },
-];
-
-function Steps() {
-  return (
-    <section id="how" className="mb-steps" aria-labelledby="how-title">
-      <div className="l5-wrap">
-        <div className="mb-steps-head" data-reveal>
-          <h2 id="how-title" className="v8-h2">ככה מתחילים.</h2>
-          <p className="v8-txt">בלי התקנה ובלי כרטיס אשראי. נתקעתם? בן אדם עונה בוואטסאפ.</p>
-        </div>
-        <ol className="mb-steps-list">
-          {STEPS_B.map((s, i) => (
-            <li key={s.t} data-reveal style={{ '--d': `${i * 80}ms` }}>
-              <span className="mb-step-n num" aria-hidden="true">{i + 1}</span>
-              <h3>{s.t}</h3>
-              <p>{s.d}</p>
-            </li>
-          ))}
-        </ol>
-        <div className="mb-steps-cta" data-reveal><SignupButton className="is-lg" /></div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- founders offer (Deen, 08.11.2026; capture and details on /early) ----------------
-   The first 50: personal setup by Deen, the annual monthly price on monthly billing locked while the
-   subscription is active, 14 days free. Real cap, no remaining-spots number until a real counter exists. */
-function Founders() {
-  return (
-    <section id="founders" className="mb-fnd" aria-labelledby="fnd-title">
-      <div className="l5-wrap">
-        <div className="mb-fnd-box" data-reveal>
-          <h2 id="fnd-title" className="mb-fnd-top">
-            <span className="mb-fnd-50 num">50</span>
-            <span className="mb-fnd-h">המצטרפים הראשונים לתוכנית המייסדים מקבלים:</span>
-          </h2>
-          <ul className="mb-fnd-list">
-            <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>הקמה אישית</h3><p>מחברים לכם את Booking ו-Airbnb, מגדירים את היחידות ומכינים את נוסחי ההודעות.</p></div></li>
-            <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>מחיר מייסדים, נעול</h3><p>מחיר המסלול השנתי, בתשלום חודשי. נעול כל עוד המנוי פעיל.</p>
-              <p className="mb-fnd-prices">{PRICING_PLANS.map((p) => <span key={p.key}>{p.nameHe} <bdi className="num" dir="ltr">₪{fmt(p.priceYearly)}</bdi> <s><bdi className="num" dir="ltr">₪{fmt(p.price)}</bdi></s></span>)}</p></div></li>
-            <li><Check size={20} strokeWidth={2.6} aria-hidden="true" /><div><h3>{TRIAL_DAYS} יום חינם</h3><p>הכל פתוח, בלי כרטיס אשראי. לא יורד שקל בסוף הניסיון.</p></div></li>
-          </ul>
-          <div className="mb-fnd-cta">
-            <Link to="/early" className="mb-fnd-btn"><span>שמרו לי מקום</span><ArrowLeft size={18} strokeWidth={2.2} aria-hidden="true" /></Link>
-            <p className="mb-fnd-note">אחרי 50 המקומות, חוזרים למחיר הרגיל.</p>
-          </div>
         </div>
       </div>
     </section>
@@ -323,7 +222,7 @@ function StickyCta() {
   }, []);
   useEffect(() => {
     const hero = document.querySelector('.ph-hero');
-    const ends = [...document.querySelectorAll('#founders, #pricing, .lm-x, .l5-ftr')];
+    const ends = [...document.querySelectorAll('#pricing, .lm-x, .l5-ftr')];
     if (!hero || typeof IntersectionObserver === 'undefined') return undefined;
     let heroVisible = true;
     const endVisible = new Set();
@@ -365,18 +264,12 @@ export default function LandingM() {
     <div ref={root} className="l5 l7 v8 lm has-ph" dir="rtl" lang="he">
       <div className="mo-prog" aria-hidden="true"><i /></div>
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
-      <V7Header links={NAV} ctaShort="14 יום חינם" />
+      <V7Header links={NAV} />
       <main id="main">
         <HeroPhoto />
-        <Part><Voice /></Part>
-        {/* marketingskills v1 B: how it works first, the founders offer right before the price, and the
-            "בקרוב" growth section after pricing so it never stands between the decision and the price */}
-        <Part><Steps /></Part>
+        <Part><VoiceStage /></Part>
         <Part><Features /></Part>
-        <Part><Facts /></Part>
-        <Part><Founders /></Part>
-        <Part><Pricing8 growth founders={false} /></Part>
-        <LazyGrowth load={loadGrowth} className="lg-ph-s" />
+        <Part><Pricing8 /></Part>
         <Part><Faq items={LANDING_FAQ} openFirst cta /></Part>
         <Part><Final /></Part>
         <Part><Credits8 /></Part>
