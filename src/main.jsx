@@ -119,8 +119,16 @@ function applyFullCss(l, seen) {
   // not loaded yet (the 1.5 s safety net): apply it the plain way
   if (!sheet) { l.media = 'all'; return }
   try {
+    // the faces sit at the top of the sheet (src/styles/brand.css): scan only up to the first style rule instead of
+    // touching all ~2,300, then delete from the end so the indexes hold
     const rules = sheet.cssRules
-    if (seen.size) for (let i = rules.length - 1; i >= 0; i--) if (rules[i].type === 5 && seen.has(rules[i].cssText)) sheet.deleteRule(i)
+    const hit = []
+    for (let i = 0; i < rules.length && hit.length < seen.size; i++) {
+      const r = rules[i]
+      if (r.type === 1) break
+      if (r.type === 5 && seen.has(r.cssText)) hit.push(i)
+    }
+    for (let k = hit.length - 1; k >= 0; k--) sheet.deleteRule(hit[k])
     // Switch it on through the sheet's own media list. Changing the media attribute instead makes the browser rebuild
     // the sheet from the file (the dropped rules come back) and, without a fresh cache entry, fetch it again. The
     // attribute keeps saying "not all"; nothing re-processes these links after this.
