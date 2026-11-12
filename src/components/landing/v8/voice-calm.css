@@ -1,0 +1,24 @@
+/* landing simplify V1 (12.11.2026): one calm voice moment after the hero. One real assistant screen, one line.
+   Palette: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white. Motion: the landing's own data-reveal / data-sd. */
+.vc { padding: 56px 0 8px; background: #fff; }
+.vc-box { display: grid; grid-template-columns: 1fr 132px; gap: 20px; align-items: center; max-width: 980px; margin: 0 auto; padding: 24px 20px 24px 24px; border-radius: 28px; background: var(--canvas, #F7F8FB); }
+.vc-copy { min-width: 0; }
+.vc-k { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 12px; color: var(--indigo); font-size: 15px; font-weight: 800; }
+.l5.l7.v8.lm .vc-h { font-size: 30px; }
+.vc-txt { margin-top: 12px; font-size: 16px; line-height: 1.55; color: var(--ink, #4A5578); text-wrap: pretty; }
+.vc-phone { margin: 0; text-align: center; }
+.vc-phone img { display: block; width: 100%; height: auto; aspect-ratio: 600 / 1067; border-radius: 20px; background: var(--navy); box-shadow: 0 0 0 4px var(--navy), 0 22px 40px -24px rgba(27, 38, 86, 0.6); }
+.vc-phone figcaption { margin-top: 10px; font-size: 12px; color: var(--ink-2, #646c8a); }
+
+@media (min-width: 900px) {
+  .vc { padding: 112px 0 16px; }
+  .vc-box { grid-template-columns: 1fr 240px; gap: 64px; padding: 48px 72px 48px 64px; border-radius: 40px; }
+  .l5.l7.v8.lm .vc-h { font-size: 52px; }
+  .vc-txt { margin-top: 18px; font-size: 19px; max-width: 30ch; }
+  .vc-phone img { border-radius: 34px; }
+}
+@media (max-width: 359px) {
+  .vc-box { grid-template-columns: 1fr 104px; gap: 14px; padding: 20px 14px 20px 18px; }
+  .l5.l7.v8.lm .vc-h { font-size: 26px; }
+  .vc-txt { font-size: 16px; }
+}

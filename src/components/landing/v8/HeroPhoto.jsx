@@ -42,9 +42,9 @@ const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['poo
    calendar link on their own schedule (05-channels: "כל ערוץ מעדכן את הקישור בקצב שלו"), so never "נחסם" as if
    instant; the WhatsApp opens ready in the owner's own WhatsApp and the owner sends it (never "נשלח"). */
 const NTFS = [
-  { mic: true, title: 'אמרתם: ״הזמנה למשה לסופ״ש״', sub: 'atlas הכין · אישרתם בלחיצה', time: '08:12' },
-  { cal: true, title: 'האלון תפוס בסופ״ש', sub: 'יתעדכן ב-Booking וב-Airbnb', time: '08:12' },
-  { ch: 'whatsapp', title: 'אישור לאורח מוכן בוואטסאפ', sub: 'משה כהן · לוחצים ושולחים', time: '08:13' },
+  { ch: 'booking', title: 'לילות תפוסים מ-Booking.com', sub: 'הזית · 2 לילות נכנסו ללוח', time: '08:12' },
+  { mic: true, title: 'אמרתם: ״הזמנה ליוסי לסופ״ש״', sub: 'atlas הכין · אישרתם בלחיצה', time: '09:00' },
+  { face: 'noa', title: 'נועה ל. · מקדמה ‏₪1,250', sub: 'האלון · נרשמה בלחיצה', time: '10:24' },
 ];
 
 /** Scroll segments (progress 0..1 through the sticky run). */
@@ -132,8 +132,8 @@ function Photo({ imgRef }) {
 function Copy({ copyRef, onShow }) {
   return (
     <div ref={copyRef} className="ph-copy">
-      <h1 id="hero-title" className="ph-h1"><span className="ph-l">אתם מארחים.</span><br /><span className="ph-l" style={{ '--l': 1 }}>atlas מסדר.</span></h1>
-      <p className="ph-sub">מערכת הניהול לצימרים ולמתחמי נופש, עם עוזר קולי. אומרים באפליקציה מה צריך, atlas מכין את ההזמנה או את ההודעה לאורח, ואתם מאשרים בלחיצה.</p>
+      <h1 id="hero-title" className="ph-h1"><span className="ph-l">כל המתחם.</span><br /><span className="ph-l" style={{ '--l': 1 }}>במבט אחד.</span></h1>
+      <p className="ph-sub">הזמנות מכל הערוצים, הודעות לאורחים ומקדמות על מסך אחד. ועוזר קולי: אומרים מה צריך, ומאשרים בלחיצה.</p>
       <div className="ph-ctas">
         <Link to="/register" className="ph-btn">
           <span>{CTA_SIGNUP}</span>

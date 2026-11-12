@@ -129,6 +129,6 @@ export const CHANNEL_LABEL = { airbnb: 'Airbnb', booking: 'Booking.com', direct:
 
 /** The 5 questions the landing shows (research 20.10.2026: 9 → 5). Price is answered by the pricing section;
  *  receipts, data and per-unit prices stay in FAQ (llms.txt, support). The FAQPage JSON-LD uses this list. */
-export const LANDING_FAQ = [0, 9, 1, 2, 4, 8].map((i) => FAQ[i]);
+export const LANDING_FAQ = [0, 9, 1, 2, 8].map((i) => FAQ[i]);
 /** /pricing: the same 5 plus the price question, in one order (SEO-005: one FAQ source for /, /pricing, llms.txt). */
 export const PRICING_FAQ = [7, 8, 0, 1, 2, 4].map((i) => FAQ[i]);
