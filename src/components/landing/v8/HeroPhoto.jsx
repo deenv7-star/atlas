@@ -42,9 +42,9 @@ const LAND = [['pool-960', 960], ['pool-1280', 1280], ['pool-1920', 1920], ['poo
    calendar link on their own schedule (05-channels: "כל ערוץ מעדכן את הקישור בקצב שלו"), so never "נחסם" as if
    instant; the WhatsApp opens ready in the owner's own WhatsApp and the owner sends it (never "נשלח"). */
 const NTFS = [
-  { mic: true, title: 'אמרתם: ״הזמנה למשה לסופ״ש״', sub: 'atlas הכין · אישרתם בלחיצה', time: '08:12' },
-  { cal: true, title: 'האלון תפוס בסופ״ש', sub: 'יתעדכן ב-Booking וב-Airbnb', time: '08:12' },
-  { ch: 'whatsapp', title: 'אישור לאורח מוכן בוואטסאפ', sub: 'משה כהן · לוחצים ושולחים', time: '08:13' },
+  { mic: true, title: 'אמרתם: ״הזמנה ליוסי לסופ״ש״', sub: 'atlas בודק שהזית פנוי ומכין', time: '09:00' },
+  { cal: true, title: 'ההזמנה נשמרה בלוח', sub: 'הזית · אישרתם בלחיצה', time: '09:01' },
+  { ch: 'whatsapp', title: 'אישור ליוסי מוכן בוואטסאפ', sub: 'לוחצים ושולחים', time: '09:01' },
 ];
 
 /** Scroll segments (progress 0..1 through the sticky run). */
@@ -129,17 +129,17 @@ function Photo({ imgRef }) {
   );
 }
 
-function Copy({ copyRef, onShow }) {
+function Copy({ copyRef }) {
   return (
     <div ref={copyRef} className="ph-copy">
-      <h1 id="hero-title" className="ph-h1"><span className="ph-l">אתם מארחים.</span><br /><span className="ph-l" style={{ '--l': 1 }}>atlas מסדר.</span></h1>
-      <p className="ph-sub">מערכת הניהול לצימרים ולמתחמי נופש, עם עוזר קולי. אומרים באפליקציה מה צריך, atlas מכין את ההזמנה או את ההודעה לאורח, ואתם מאשרים בלחיצה.</p>
+      <h1 id="hero-title" className="ph-h1"><span className="ph-l">אומרים מה צריך.</span><br /><span className="ph-l" style={{ '--l': 1 }}>atlas מכין.</span></h1>
+      <p className="ph-sub">מערכת הניהול לצימרים, עם עוזר קולי בעברית. הזמנות, הודעות לאורחים ותשלומים, ואתם מאשרים בלחיצה.</p>
       <div className="ph-ctas">
         <Link to="/register" className="ph-btn">
           <span>{CTA_SIGNUP}</span>
           <ArrowLeft size={18} strokeWidth={2.2} aria-hidden="true" className="ph-btn-ar" />
         </Link>
-        <a href="#product" className="ph-ghost" onClick={onShow}>איך זה נראה</a>
+        <a href="#voice" className="ph-ghost">איך זה עובד</a>
       </div>
       <p className="ph-note"><Check size={15} strokeWidth={2.6} aria-hidden="true" />{CTA_NOTE} · לא יורד שקל בסוף הניסיון</p>
     </div>

@@ -1,0 +1,58 @@
+/* landing simplify V2 (12.11.2026): the voice stage right after the hero. One phone, three real assistant
+   screens crossfading say -> card -> saved, three steps that follow it. Calm: white, lots of air.
+   Palette: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white. Motion: opacity/transform only. */
+.vt { padding: 64px 0 24px; background: #fff; }
+.vt-grid { display: grid; gap: 32px; justify-items: center; max-width: 1040px; margin: 0 auto; }
+.vt-copy { width: 100%; max-width: 560px; text-align: center; }
+.vt-k { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 14px; color: var(--indigo); font-size: 15px; font-weight: 800; }
+.l5.l7.v8.lm .vt-h { font-size: 34px; }
+
+.vt-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 28px 0 0; padding: 0; list-style: none; }
+.vt-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; min-height: 72px; padding: 10px 6px 14px; border: 0; border-radius: 18px; background: transparent; color: var(--ink-2, #646c8a); font: inherit; cursor: pointer; transition: background-color .3s ease, color .3s ease; -webkit-tap-highlight-color: transparent; }
+.vt-step.is-on { background: var(--canvas, #F7F8FB); color: var(--navy); }
+.vt-step:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+.vt-n { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--canvas, #F7F8FB); color: var(--ink-2, #646c8a); font-size: 14px; font-weight: 800; transition: background-color .3s ease, color .3s ease; }
+.vt-step.is-on .vt-n { background: var(--indigo); color: #fff; }
+.vt-t { font-size: 16px; font-weight: 800; line-height: 1.2; }
+.vt-bar { position: absolute; inset-inline: 18px; bottom: 6px; height: 2px; border-radius: 2px; overflow: hidden; background: transparent; }
+.vt-bar i { display: block; height: 100%; width: 100%; background: var(--indigo); transform: scaleX(0); transform-origin: right; }
+.vt.is-auto .vt-step.is-on .vt-bar { background: rgba(62, 43, 241, 0.12); }
+.vt.is-auto .vt-step.is-on .vt-bar i { animation: vt-fill 3.2s linear forwards; }
+@keyframes vt-fill { to { transform: scaleX(1); } }
+.vt-d { min-height: 3em; margin-top: 14px; font-size: 17px; line-height: 1.5; color: var(--ink, #4A5578); }
+
+.vt-phone { margin: 0; text-align: center; }
+.vt-scr { position: relative; width: 230px; aspect-ratio: 600 / 1067; overflow: hidden; border-radius: 34px; background: var(--navy); box-shadow: 0 0 0 5px var(--navy), 0 40px 70px -36px rgba(27, 38, 86, 0.6); }
+.vt-scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.02); transition: opacity .6s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+.vt-scr img.is-on { opacity: 1; transform: none; }
+.vt-phone figcaption { margin-top: 14px; font-size: 13px; color: var(--ink-2, #646c8a); }
+
+@media (min-width: 900px) {
+  .vt { padding: 140px 0 40px; }
+  .vt-grid { grid-template-columns: 1fr 320px; gap: 96px; align-items: center; justify-items: stretch; }
+  .vt-copy { text-align: start; max-width: 540px; }
+  .l5.l7.v8.lm .vt-h { font-size: 58px; }
+  .vt-steps { margin-top: 44px; gap: 10px; }
+  .vt-step { align-items: flex-start; padding: 14px 16px 18px; }
+  .vt-t { font-size: 18px; }
+  .vt-d { font-size: 19px; margin-top: 18px; }
+  .vt-scr { width: 300px; border-radius: 44px; }
+}
+@media (max-width: 359px) {
+  .l5.l7.v8.lm .vt-h { font-size: 29px; }
+  .vt-t { font-size: 15px; }
+  .vt-scr { width: 200px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vt-scr img, .vt-step, .vt-n { transition: none; }
+  .vt-bar i { animation: none !important; }
+}
+
+/* phones: heading, then the phone, then the steps under it (the copy box dissolves into the grid) */
+@media (max-width: 899px) {
+  .vt-grid { gap: 0; }
+  .vt-copy { display: contents; }
+  .vt-k { order: 1; } .vt-h { order: 2; text-align: center; } .vt-phone { order: 3; margin-top: 32px; }
+  .vt-steps { order: 4; width: 100%; max-width: 420px; margin-top: 28px; }
+  .vt-d { order: 5; text-align: center; max-width: 30ch; }
+}
