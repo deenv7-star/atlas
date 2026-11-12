@@ -71,7 +71,8 @@ function VoiceStage() {
   useEffect(() => {
     const el = ref.current;
     if (!el || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(([e]) => setAuto(e.isIntersecting), { threshold: 0.4 });
+    // a fast scroll can batch several records for this one target: the LAST one is the current state
+    const io = new IntersectionObserver((entries) => setAuto(entries[entries.length - 1].isIntersecting), { threshold: 0.4 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
