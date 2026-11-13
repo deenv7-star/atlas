@@ -199,6 +199,14 @@ export default function Early() {
     if (offer) io2.observe(offer);
     return () => { io.disconnect(); io2.disconnect(); };
   }, []);
+  // Pause the hero loop while the phone is off screen (saves main-thread work and battery).
+  useEffect(() => {
+    const ph = rootRef.current?.querySelector('.v4-phone');
+    if (!ph || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([e]) => ph.classList.toggle('off', !e.isIntersecting), { threshold: 0 });
+    io.observe(ph);
+    return () => io.disconnect();
+  }, []);
   useEffect(() => { if (done) setTimeout(() => document.getElementById('ew-done')?.focus(), 50); }, [done]);
 
   const showSticky = !done && !joinVisible && !heroVisible && !offerVisible;

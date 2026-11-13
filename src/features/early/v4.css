@@ -74,7 +74,9 @@
 .v4-d.bk { background: rgba(62, 43, 241, .12); color: var(--in); }
 .v4-d.air { background: rgba(27, 38, 86, .1); }
 .v4-d.new::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--in); transform: scale(0); opacity: 0; }
-.v4-d.new { transition: color .2s; }
+.v4-dw { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; color: #fff; font-weight: inherit; opacity: 0; }
+/* hero phone off screen: pause the loop (Early.jsx toggles .off) */
+.v4-phone.off *, .v4-phone.off *::before { animation-play-state: paused !important; }
 .v4-legend { display: flex; gap: 4cqw; margin-top: 3.5cqw; padding: 0 2cqw; font-size: 3.2cqw; font-weight: 600; opacity: .72; }
 .v4-legend i { display: inline-block; width: 2.4cqw; height: 2.4cqw; border-radius: 50%; margin-inline-end: 1.4cqw; vertical-align: middle; }
 .v4-legend .bk { background: var(--in); }
@@ -103,7 +105,7 @@
 .loop-a .v4-fly { animation: a-fly 7.5s cubic-bezier(.5, 0, .2, 1) infinite; }
 .loop-a .v4-d.n0::before { animation: a-fill 7.5s var(--spring) infinite; }
 .loop-a .v4-d.n1::before { animation: a-fill2 7.5s var(--spring) infinite; }
-.loop-a .v4-d.new { animation: a-txt 7.5s linear infinite; }
+.loop-a .v4-dw { animation: a-w 7.5s linear infinite; }
 .loop-a .a-m { animation: a-m 7.5s var(--ease) infinite; }
 @keyframes a-n {
   0%, 4% { transform: translateY(-140%); opacity: 0; }
@@ -113,12 +115,13 @@
 @keyframes a-fly {
   0%, 31% { opacity: 0; transform: translateY(2cqw) scale(.8); }
   35% { opacity: 1; transform: translateY(14cqw) scale(1); }
-  44% { opacity: 1; transform: translateY(var(--fly-y, 71cqw)) translateX(-31cqw) scale(.7); }
-  48%, 100% { opacity: 0; transform: translateY(var(--fly-y, 71cqw)) translateX(-31cqw) scale(.3); }
+  44% { opacity: 1; transform: translateY(var(--fly-y, 50cqw)) translateX(-31cqw) scale(.7); }
+  48%, 100% { opacity: 0; transform: translateY(var(--fly-y, 50cqw)) translateX(-31cqw) scale(.3); }
 }
 @keyframes a-fill { 0%, 44% { transform: scale(0); opacity: 0; } 49%, 93% { transform: scale(1); opacity: 1; } 98%, 100% { transform: scale(.6); opacity: 0; } }
 @keyframes a-fill2 { 0%, 46% { transform: scale(0); opacity: 0; } 51%, 93% { transform: scale(1); opacity: 1; } 98%, 100% { transform: scale(.6); opacity: 0; } }
-@keyframes a-txt { 0%, 45% { color: var(--nv); } 47%, 94% { color: #fff; } 97%, 100% { color: var(--nv); } }
+/* white digits fade in over the fill (opacity = compositor only; animating color re-styled every frame) */
+@keyframes a-w { 0%, 45% { opacity: 0; } 47%, 94% { opacity: 1; } 97%, 100% { opacity: 0; } }
 @keyframes a-m {
   0%, 54% { transform: translateY(120%); opacity: 0; }
   62%, 92% { transform: none; opacity: 1; }
@@ -179,6 +182,6 @@
   .h4 > *, .loop-a * { animation: none !important; }
   .loop-a .a-n, .loop-a .v4-fly { opacity: 0; }
   .loop-a .v4-d.new::before { transform: none; opacity: 1; }
-  .loop-a .v4-d.new { color: #fff; }
+  .loop-a .v4-dw { opacity: 1; }
   .ew.v4 [data-rv] { opacity: 1; transform: none; transition: none; }
 }
