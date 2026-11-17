@@ -85,7 +85,7 @@ export const SUBPROCESSORS = [
   // support-chat (help widget) uses the same OPENAI_API_KEY for its answers.
   { name: 'OpenAI', role: 'מענה בצ׳אט העזרה ובעוזר "שאלו את atlas" (השאלה ונתוני העסק הנדרשים לתשובה)', where: 'ארצות הברית', url: 'https://openai.com/policies/privacy-policy' },
   // ImprovMX: MX for atlas-il.com, forwards support@ to the team inbox (live since 18.10.2026).
-  { name: 'ImprovMX', role: 'העברת מיילים שנשלחים לכתובת התמיכה', where: 'ארצות הברית', url: 'https://improvmx.com/privacy/' },
+  { name: 'ImprovMX', role: 'העברת מיילים שנשלחים לכתובת התמיכה', where: 'ארצות הברית', url: 'https://improvmx.com/privacy-policy/' },
   // Google: optional "המשך עם Google" sign-in, and the Gmail inbox that support@ forwards to.
   { name: 'Google', role: 'התחברות עם חשבון Google (למי שבוחר בה) ותיבת הדואר של התמיכה', where: 'ארצות הברית', url: 'https://policies.google.com/privacy' },
   // Apple: optional "המשך עם Apple" sign-in.
