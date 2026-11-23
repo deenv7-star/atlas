@@ -154,12 +154,14 @@ export function Count({ to, pre = '', suf = '', ms = 1200 }) {
     setV(0);
     let raf = 0;
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
+      // count when it comes into view; if a fast scroll already carried it past, just show the value
+      if (!e.isIntersecting && e.boundingClientRect.top > 0) return;
       io.disconnect();
+      if (!e.isIntersecting) { setV(to); return; }
       const t0 = performance.now();
       const step = (t) => { const k = Math.min(1, (t - t0) / ms); setV(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
       raf = requestAnimationFrame(step);
-    }, { threshold: 0.4 });
+    }, { threshold: 0.15 });
     io.observe(el);
     return () => { io.disconnect(); cancelAnimationFrame(raf); };
   }, [to, ms]);
