@@ -1,0 +1,67 @@
+/* landing t9 · shared tokens and parts. Palette strict: indigo #3E2BF1, navy #1B2656, canvas #F7F8FB, white.
+   Motion: transform / opacity / filter only; every effect has a reduced-motion fallback. */
+.t9 { --ind: #3E2BF1; --navy: #1B2656; --cv: #F7F8FB; --ink: #1B2656; --ink2: #4A5578; --ink3: #6B7391; --line: rgba(27, 38, 86, 0.10);
+  --ease: cubic-bezier(.22, 1, .36, 1); --spring: cubic-bezier(.34, 1.4, .64, 1);
+  font-family: Heebo, system-ui, sans-serif; color: var(--ink); background: var(--cv); overflow-x: clip; }
+.t9 *, .t9 *::before, .t9 *::after { box-sizing: border-box; }
+.t9 img { max-width: 100%; }
+.t9 .num { font-variant-numeric: tabular-nums; }
+/* the app's base sheet colours every h1–h4 navy-900; here headings take the colour of their section */
+.t9 :is(h1, h2, h3, h4) { color: inherit; }
+
+/* entrance reveal (fade + rise + de-blur, like the references' fade-up) */
+.t9.t9-anim [data-r] { opacity: 0; transform: translateY(18px); filter: blur(6px); transition: opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease); transition-delay: var(--d, 0ms); }
+.t9.t9-anim [data-r].is-in { opacity: 1; transform: none; filter: none; }
+
+/* scroll-lit words: each word fades in with --p of the nearest [data-scrub] */
+.t9-w { opacity: clamp(0.16, calc(var(--p, 1) * (var(--n) + 3) - var(--i)), 1); filter: blur(calc((1 - clamp(0, calc(var(--p, 1) * (var(--n) + 3) - var(--i)), 1)) * 6px)); transition: opacity .2s linear; }
+
+/* buttons: pill + round arrow chip (references' CTA), sheen on hover */
+.t9-btn, .t9-ghost { position: relative; display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 22px 6px 6px; border-radius: 999px; font-size: 17px; font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; isolation: isolate; transition: transform .25s var(--ease), box-shadow .25s var(--ease), background-color .25s; -webkit-tap-highlight-color: transparent; }
+.t9-btn { background: var(--ind); color: #fff; box-shadow: 0 10px 30px -12px rgba(62, 43, 241, .55), inset 0 1px 0 rgba(255,255,255,.25); }
+.t9-btn::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.28) 50%, transparent 70%); background-size: 250% 100%; background-position: 130% 0; transition: background-position .9s var(--ease); }
+.t9-btn:hover::after { background-position: -30% 0; }
+.t9-btn:hover, .t9-ghost:hover { transform: translateY(-1px); }
+.t9-btn:active, .t9-ghost:active { transform: scale(.98); }
+.t9-btn.is-dark { background: var(--navy); box-shadow: 0 12px 30px -14px rgba(27, 38, 86, .7); }
+.t9-btn.is-white { background: #fff; color: var(--navy); box-shadow: 0 12px 30px -14px rgba(0,0,0,.35); }
+.t9-ghost { background: #fff; color: var(--navy); box-shadow: inset 0 0 0 1px var(--line), 0 6px 18px -12px rgba(27,38,86,.3); }
+.t9-btn-ar { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--ind); order: -1; transition: transform .35s var(--spring); }
+.t9-btn.is-dark .t9-btn-ar { color: var(--navy); }
+.t9-btn.is-white .t9-btn-ar { background: var(--ind); color: #fff; }
+.t9-ghost .t9-btn-ar { background: var(--navy); color: #fff; }
+.t9-btn:hover .t9-btn-ar, .t9-ghost:hover .t9-btn-ar { transform: translateX(-4px); }
+.t9-btn:focus-visible, .t9-ghost:focus-visible, .t9 a:focus-visible, .t9 button:focus-visible { outline: 2px solid var(--ind); outline-offset: 3px; }
+
+.t9-logo { display: inline-flex; align-items: center; min-height: 44px; color: var(--navy); }
+.t9-logo .l5-wm svg, .t9-logo svg { height: 26px; width: auto; }
+.t9-logo.is-white { color: #fff; }
+.t9-logo.is-white svg path { fill: #fff; }
+
+/* official store badges with a "בקרוב" tag; not links */
+.t9-stores { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.t9-store { position: relative; display: inline-flex; padding: 0; line-height: 0; }
+.t9-store img { height: 44px; width: auto; display: block; }
+.t9-store em { position: absolute; top: -9px; inset-inline-start: -8px; padding: 3px 8px; border-radius: 999px; background: var(--ind); color: #fff; font-style: normal; font-size: 11px; font-weight: 700; line-height: 1.2; box-shadow: 0 4px 12px -4px rgba(62,43,241,.6); }
+
+/* desktop window + phone */
+.t9-win { position: relative; overflow: hidden; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px rgba(27,38,86,.08), 0 50px 100px -40px rgba(27,38,86,.45); }
+.t9-win-bar { display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px; background: #fff; border-bottom: 1px solid var(--line); }
+.t9-win-bar i { width: 10px; height: 10px; border-radius: 50%; background: #E3E6EF; }
+.t9-win-bar span { margin-inline: auto; padding: 3px 14px; border-radius: 8px; background: var(--cv); color: var(--ink3); font-size: 12px; }
+.t9-win img { display: block; width: 100%; height: auto; }
+.t9-phone { position: relative; width: 280px; aspect-ratio: 390 / 844; border-radius: 46px; padding: 9px; background: #0d1230; box-shadow: inset 0 0 0 2px #3a4166, 0 40px 80px -30px rgba(13,18,48,.7); }
+.t9-phone-scr { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 38px; background: var(--navy); }
+.t9-phone-scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s var(--ease); }
+.t9-phone-scr img.is-on { opacity: 1; }
+.t9-phone-isl { position: absolute; z-index: 2; top: 10px; left: 50%; width: 32%; height: 22px; margin-left: -16%; border-radius: 20px; background: #000; }
+
+.t9-credits { max-width: 1100px; margin: 0 auto; padding: 24px 20px 8px; text-align: center; color: var(--ink3); font-size: 13px; }
+
+/* the reused FAQ / pricing sit on the t9 canvas */
+.t9 .l5-faq-sec, .t9 .v8-pr, .t9 #pricing { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .t9 *, .t9 *::before, .t9 *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  .t9-w { opacity: 1; filter: none; }
+}
