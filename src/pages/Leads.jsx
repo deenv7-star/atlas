@@ -38,6 +38,7 @@ import {
   buildThreads, filterThreads, countThreads, availabilityFor, leadReplyText, STATE_TO_STATUS, LEAD_STATES,
 } from '@/lib/inbox/model';
 import { SOURCE_STATUS_LABEL } from '@/lib/leads/sources';
+import { isNativeApp } from '@/lib/native';
 import {
   ThreadRow, ThreadView, ThreadAvatar, AvailabilityChip, WaitingChip, StateChip, stayLine,
 } from '@/components/inbox/parts';
@@ -150,7 +151,7 @@ function SourcesLine({ properties, onOpen }) {
       <Link2 size={18} strokeWidth={1.9} className="shrink-0 text-brand-600" aria-hidden />
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[15px] font-semibold text-navy-900">{live ? 'הקישור לפניות פעיל' : 'עוד לא חיברתם מקור פניות'}</span>
-        <span className="block text-[13px] leading-snug text-ink-600">{`וואטסאפ, אינסטגרם ומסנג׳ר: ${SOURCE_STATUS_LABEL.meta_review}`}</span>
+        <span className="block text-[13px] leading-snug text-ink-600">{isNativeApp() ? 'וואטסאפ, אתר הצימר ושיחות טלפון' : `וואטסאפ, אינסטגרם ומסנג׳ר: ${SOURCE_STATUS_LABEL.meta_review}`}</span>
       </span>
       <span className="shrink-0 text-[14px] font-semibold text-brand-700">{live ? 'ניהול' : 'חיבור'}</span>
       <ChevronLeft size={16} className="shrink-0 text-brand-700" aria-hidden />

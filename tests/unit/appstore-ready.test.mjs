@@ -74,3 +74,18 @@ test('iOS bundle: privacy manifest in the app target, Hebrew usage strings, push
   assert.match(rel, /aps-environment<\/key>\s*<string>production/);
   assert.match(rel, /com\.apple\.developer\.applesignin/);
 });
+
+test('2.1 / 2.3.1: no "בקרוב" promise and no e-signing claim in the iOS app (source guards)', () => {
+  const integ = read('src/pages/Integrations.jsx');
+  assert.match(integ, /filter\(\(it\) => !\(native && \(it\.s === 'soon' \|\| it\.s === 'meta'\)\)\)/);
+  const src = read('src/components/inbox/Sources.jsx');
+  assert.match(src, /const meta = native \? \[\] :/);
+  assert.match(src, /native && !webhookLive \? null : <Card id="webhook"/);
+  assert.match(read('src/pages/Leads.jsx'), /isNativeApp\(\) \? 'וואטסאפ, אתר הצימר ושיחות טלפון'/);
+  const sj = read('src/components/onboarding/v2/setup/SetupJourney.jsx');
+  assert.match(sj, /filter\(\(s\) => !\(isNativeApp\(\) && s\.status === 'soon'\)\)/);
+  assert.match(sj, /\.\.\.\(isNativeApp\(\) \? \[\] : \['שליחה אוטומטית בלי לגעת תגיע בקרוב\.'\]\)/);
+  assert.match(read('src/components/import/b/ImportB.jsx'), /\{isNativeApp\(\) \? null : <p className="imb-voice">/);
+  assert.match(read('src/components/pageguide/guides.js'), /get hint\(\) \{ return isNativeApp\(\) \? 'כל חוזה נמלא מפרטי ההזמנה\.'/);
+  assert.match(read('src/config/navigation.js'), /desc: isNativeApp\(\) \? 'חוזה לאורח, נמלא מפרטי ההזמנה' : 'חוזה לאורח, נחתם בטלפון'/);
+});

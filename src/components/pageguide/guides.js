@@ -3,6 +3,8 @@
  * Voice: "אתם", short, no slang; "atlas" lowercase, never glued to a Hebrew letter. Every claim here was checked
  * against the code on 05.11 (see the PR): nothing promises auto-send, e-signature or anything not built.
  */
+import { isNativeApp } from '@/lib/native';
+
 export const GUIDES = {
   cleaning: {
     what: 'כאן מסדרים את הניקיון בין אורח לאורח.',
@@ -78,6 +80,7 @@ export const GUIDES = {
       { title: 'נועה לוי · הסכם אירוח', sub: 'יום ו׳ 13.11 עד יום א׳ 15.11 · צימר הזית', tag: 'נשלח' },
       { title: 'משפחת כהן · תקנון וכללי בית', sub: 'יום ה׳ 19.11 · סוויטת הגפן', tag: 'טיוטה', tone: 'muted' },
     ],
-    hint: 'כל חוזה נמלא מפרטי ההזמנה. חתימה דיגיטלית מהטלפון: בקרוב.',
+    // iOS app (App Store 2.1): no "בקרוב" promise in the reviewed build.
+    get hint() { return isNativeApp() ? 'כל חוזה נמלא מפרטי ההזמנה.' : 'כל חוזה נמלא מפרטי ההזמנה. חתימה דיגיטלית מהטלפון: בקרוב.'; },
   },
 };

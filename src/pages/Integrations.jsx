@@ -35,6 +35,7 @@ import { useIntegrations } from '@/components/integrations/useIntegrations';
 import { CalendarConnect, CalendarExport, InfoSheet, InvoiceConnect, AutomationConnect } from '@/components/integrations/sheets';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { isNativeApp } from '@/lib/native';
 
 const PROVIDERS = {
   AIRBNB: { name: 'Airbnb', short: 'A', tone: 'bg-[#FFE8EA] text-[#C2273B]', channel: 'airbnb' },
@@ -308,7 +309,12 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
     make: !!integ.has('WEBHOOK') && /make\.com|integromat/i.test(integ.has('WEBHOOK')?.hint || ''),
     n8n: !!integ.has('WEBHOOK') && !/zapier|make\.com|integromat/i.test(integ.has('WEBHOOK')?.hint || ''),
   };
-  const items = INTEGRATIONS.map((it) => ({ ...it, s: statusOf(it, { connected: !!CONNECTED[it.id] }) }));
+  const native = isNativeApp();
+  // iOS app (App Store 2.1, appstore-ready 26.11.2026): no "בקרוב" tiles in the reviewed build, so a connection that is not
+  // ready yet is left out of the list there. The web keeps showing them honestly.
+  const items = INTEGRATIONS
+    .map((it) => ({ ...it, s: statusOf(it, { connected: !!CONNECTED[it.id] }) }))
+    .filter((it) => !(native && (it.s === 'soon' || it.s === 'meta')));
   const counts = items.reduce((m, it) => { if (it.s === 'connected') { m[it.cat] = (m[it.cat] || 0) + 1; m.all = (m.all || 0) + 1; } return m; }, {});
   const Hub = HUB_VARIANT === 'B' ? HubB : HubA;
   const openFor = (it) => {
@@ -381,7 +387,7 @@ export default function IntegrationsPage({ orgId: orgIdProp, user }) {
         );
       })()}
       {!DB_FEATURES.realCore ? <p className="text-[14px] text-ink-500">חשבון דוגמה: אפשר לעבור על כל חיבור, אבל שום דבר לא נשלח החוצה.</p> : null}
-      <p className="flex items-center gap-2 text-[14px] text-ink-500"><CalendarDays className="h-4 w-4" strokeWidth={1.75} aria-hidden />חיבור שמסומן "בקרוב" או "לפי בקשה" עוד לא שולח ולא גובה כלום.</p>
+      <p className="flex items-center gap-2 text-[14px] text-ink-500"><CalendarDays className="h-4 w-4" strokeWidth={1.75} aria-hidden />{native ? 'חיבור שמסומן "לפי בקשה" עוד לא שולח ולא גובה כלום.' : 'חיבור שמסומן "בקרוב" או "לפי בקשה" עוד לא שולח ולא גובה כלום.'}</p>
     </div>
   );
 }
