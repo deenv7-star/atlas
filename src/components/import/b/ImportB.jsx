@@ -11,6 +11,7 @@ import { HELP_WA } from '@/components/onboarding/v2/ui';
 import { firstName } from '@/components/onboarding/y/model';
 import { linkOk, linkKind, stillMissing } from '@/lib/import/model';
 import { useImportFlow, useSave, LinksEditor, ReadingList, PreviewCard, QuestionInput, FallbackInputs, SaveList, foundSentence } from '../shared';
+import { isNativeApp } from '@/lib/native';
 import './b.css';
 
 const EASE = [0.23, 1, 0.32, 1];
@@ -123,7 +124,7 @@ export default function ImportB({ user }) {
           </div>
         ) : null}
         {left.length ? <p className="imb-note">{left.length === 1 ? 'פרט אחד' : `${left.length} פרטים`} אפשר להשלים אחר כך בהגדרות, תחת העסק.</p> : null}
-        <p className="imb-voice"><Mic aria-hidden />בקרוב: להשלים את הפרטים בקול, בשיחה עם atlas.</p>
+        {isNativeApp() ? null : <p className="imb-voice"><Mic aria-hidden />בקרוב: להשלים את הפרטים בקול, בשיחה עם atlas.</p>}
       </>
     );
     foot = <button type="button" className="im-btn im-press" onClick={() => { f.reset(); nav('/today'); }}>לעמוד היום</button>;

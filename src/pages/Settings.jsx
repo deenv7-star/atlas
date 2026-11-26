@@ -374,7 +374,9 @@ export default function SettingsPage({ user }) {
           {activeTab === 'notifications' && isNativeApp() && (
             <Suspense fallback={null}><NativeNotifySetting /></Suspense>
           )}
-          {activeTab === 'notifications' && (
+          {/* iOS app: the phone alerts above are live; the email card below is still "בקרוב", so the app does not show it
+              (App Store 2.1: no "coming soon" placeholders in the reviewed build). */}
+          {activeTab === 'notifications' && !isNativeApp() && (
             <Card>
               <CardHeader>
                 {/* COPY-053 (01.11.2026): nothing sends these yet (no reader in supabase/functions or src/lib),

@@ -39,6 +39,19 @@ export const NATIVE_START_PATH = '/login';
 export const NATIVE_HOME_PATH = '/dashboard';
 export const NATIVE_BLOCKED_PATHS = ['/', '/pricing', '/app.html', '/index.html'];
 
+/**
+ * App Store 3.1.1 (appstore-ready 26.11.2026): marketing pages that show plan prices, a trial offer or a sign-up CTA.
+ * Inside the iOS app they are never shown (a link or a typed URL lands on /login, which forwards a signed-in owner
+ * to Today). Legal pages (/privacy, /terms, /cookies, …) and /contact stay reachable.
+ */
+export const NATIVE_MARKETING_PATHS = ['/about', '/blog', '/how-it-works', '/early', '/sla', '/status'];
+
+/** True for a marketing page (or a blog post under /blog/…) that the iOS app must not show. */
+export function isNativeMarketingPath(pathname = '') {
+  const path = String(pathname || '/').replace(/\/+$/, '') || '/';
+  return NATIVE_MARKETING_PATHS.some((p) => path === p || path.startsWith(`${p}/`));
+}
+
 /** A Supabase session is stored on this device (sb-<ref>-auth-token with a user id). No network, no supabase-js. */
 export function hasStoredSupabaseSession(storage = typeof window !== 'undefined' ? window.localStorage : null) {
   if (!storage) return false;
@@ -57,7 +70,7 @@ export function hasStoredSupabaseSession(storage = typeof window !== 'undefined'
 export function nativeStartRedirect(loc = typeof window !== 'undefined' ? window.location : null, storage) {
   if (!loc || !isNativeApp()) return null;
   const path = (loc.pathname || '/').replace(/\/+$/, '') || '/';
-  if (!NATIVE_BLOCKED_PATHS.includes(path)) return null;
+  if (!NATIVE_BLOCKED_PATHS.includes(path) && !isNativeMarketingPath(path)) return null;
   const search = loc.search || '';
   const hash = loc.hash || '';
   const authInUrl = /[?&]code=|access_token=|error_code=|[?&]error=/.test(search + hash);

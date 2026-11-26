@@ -9,6 +9,7 @@ import {
   Tags, Link2, Globe, CreditCard, Settings, Shield,
 } from 'lucide-react';
 import { DB_FEATURES } from '@/config/dbFeatures';
+import { isNativeApp } from '@/lib/native';
 
 /**
  * Simplicity rules (16.10.2026): the sidebar shows exactly seven places. Everything else
@@ -38,7 +39,8 @@ export const NAV_GROUPS = [
       { page: 'Cleaning', label: 'ניקיון', icon: Brush, desc: 'מה לנקות היום ומי מנקה' },
       { page: 'ServiceRequests', label: 'תקלות ותחזוקה', icon: Wrench, desc: 'מה התקלקל ומה אורחים ביקשו, עד שמטפלים' },
       { page: 'Reviews', label: 'ביקורות', icon: Star, desc: 'מה אורחים כתבו עליכם, ובקשת ביקורת' },
-      { page: 'Contracts', label: 'חוזים', icon: FileSignature, desc: 'חוזה לאורח, נחתם בטלפון' },
+      // iOS app: there is no e-signing yet, so the app does not claim "נחתם בטלפון" (App Store 2.3.1 accurate metadata).
+      { page: 'Contracts', label: 'חוזים', icon: FileSignature, desc: isNativeApp() ? 'חוזה לאורח, נמלא מפרטי ההזמנה' : 'חוזה לאורח, נחתם בטלפון' },
     ],
   },
   {

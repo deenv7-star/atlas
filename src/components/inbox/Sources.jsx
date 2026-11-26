@@ -16,6 +16,7 @@ import {
   LEAD_SOURCES, SOURCE_STATUS_LABEL, taggedLink, siteButtonSnippet, whatsappAutoReply, webhookUrl,
 } from '@/lib/leads/sources';
 import { CopyButton } from './parts';
+import { isNativeApp } from '@/lib/native';
 
 const ICONS = { link: Link2, 'whatsapp-reply': MessageCircle, 'site-button': Globe, webhook: Zap, phone: Phone, whatsapp: MessageCircle, instagram: Instagram, messenger: MessageCircle, email: Mail };
 const TAGS = [
@@ -158,7 +159,9 @@ export function SourcesList({ properties, focus, hostName, onNewLead }) {
     setToken(t);
   };
 
-  const meta = LEAD_SOURCES.filter((s) => s.status === 'meta_review' || s.status === 'soon');
+  // iOS app (App Store 2.1): sources that are not live yet ("בקרוב") are not listed in the reviewed build.
+  const native = isNativeApp();
+  const meta = native ? [] : LEAD_SOURCES.filter((s) => s.status === 'meta_review' || s.status === 'soon');
   const by = (id) => LEAD_SOURCES.find((s) => s.id === id);
 
   return (
@@ -179,7 +182,7 @@ export function SourcesList({ properties, focus, hostName, onNewLead }) {
         {firstUrl ? <CopyButton text={siteButtonSnippet(taggedLink(firstUrl, 'site'))} label="העתקת הקוד לאתר" /> : <p className="text-[14px] text-ink-600">קודם מפעילים את הקישור למעלה.</p>}
       </Card>
 
-      <Card id="webhook" icon={Zap} title={by('webhook').title} line={by('webhook').line} status={webhookLive ? 'live' : 'needs_deploy'} highlight={focus === 'webhook'}>
+      {native && !webhookLive ? null : <Card id="webhook" icon={Zap} title={by('webhook').title} line={by('webhook').line} status={webhookLive ? 'live' : 'needs_deploy'} highlight={focus === 'webhook'}>
         {webhookLive ? (
           token ? (
             <>
@@ -189,13 +192,13 @@ export function SourcesList({ properties, focus, hostName, onNewLead }) {
             </>
           ) : <Button type="button" variant="outline" className="min-h-[44px]" onClick={makeToken}>יצירת כתובת אישית</Button>
         ) : null}
-      </Card>
+      </Card>}
 
       <Card id="phone" icon={Phone} title={by('phone').title} line={by('phone').line} highlight={focus === 'phone'}>
         <Button type="button" variant="outline" className="min-h-[44px]" onClick={onNewLead}>רישום פנייה</Button>
       </Card>
 
-      <div className="rounded-[20px] border border-[#E8EAF2] bg-white">
+      {meta.length ? <div className="rounded-[20px] border border-[#E8EAF2] bg-white">
         {meta.map((s, i) => {
           const Icon = ICONS[s.id] || MessageCircle;
           return (
@@ -209,7 +212,7 @@ export function SourcesList({ properties, focus, hostName, onNewLead }) {
             </div>
           );
         })}
-      </div>
+      </div> : null}
     </div>
   );
 }
