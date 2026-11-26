@@ -93,15 +93,15 @@ function NativeLocked() {
   return (
     <section className="flex w-full flex-1 flex-col items-center justify-center text-center">
       <LockKeyhole className="h-9 w-9 text-[#3E2BF1]" strokeWidth={1.75} aria-hidden />
-      <h1 className="mt-5 text-[28px] font-bold leading-tight tracking-[-0.01em] text-[#1B2656]">המנוי לא פעיל</h1>
+      <h1 className="mt-5 text-[28px] font-bold leading-tight tracking-[-0.01em] text-[#1B2656]">החשבון לא פעיל</h1>
       <p className="mt-3 max-w-[340px] text-[16px] leading-relaxed text-[#4A5170]">
-        המידע שלכם שמור. לחידוש המנוי דברו איתנו.
+        כרגע אי אפשר לעבוד בחשבון. המידע שלכם שמור.
       </p>
       <SavedLine />
-      {/* iOS (Apple 3.1.1): the same words, but plain text with no link out of the app. */}
+      {/* iOS (Apple 3.1.1 / 3.1.3): support contact only, plain text, no renewal call to action and no link out. */}
       <p className="mt-8 flex w-full max-w-[340px] items-center justify-center gap-2 text-[16px] font-semibold text-[#1B2656]">
         <MessageCircle className="h-5 w-5 shrink-0" strokeWidth={1.75} aria-hidden />
-        <span>שאלות? דברו איתנו: <bdi dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</bdi></span>
+        <span>תמיכה: <bdi dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</bdi></span>
       </p>
     </section>
   );
@@ -273,7 +273,7 @@ export default function TrialPaywall({ reason = 'trial_ended', native: nativePro
   const native = nativeProp ?? isNativeApp();
   useEffect(() => {
     const prev = document.title;
-    document.title = native ? 'המנוי לא פעיל · atlas' : 'בחירת חבילה · atlas';
+    document.title = native ? 'החשבון לא פעיל · atlas' : 'בחירת חבילה · atlas';
     return () => { document.title = prev; };
   }, [native]);
   return (

@@ -18,6 +18,9 @@ import { socialProviders } from '@/lib/auth/socialAuth';
 import { SOCIAL_LAYOUT } from '@/config/socialAuth';
 import { TERMS_VERSION } from '@/config/consent';
 import { PRICING_PLANS } from '@/config/pricing';
+import { isNativeApp } from '@/lib/native';
+
+const NATIVE = isNativeApp();
 
 export default function Register() {
   const r = useRegister();
@@ -58,8 +61,9 @@ export default function Register() {
             <div className="mb-5 lg:hidden"><LivePreviewCompact business={form.business} level={level} /></div>
 
             <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-navy-900 sm:text-[36px]">פותחים לכם חשבון</h1>
-            <p className="mt-2 text-[16px] text-ink-600">14 יום חינם, ואז מחליטים. החשבון מוכן בדקה.</p>
-            {picked ? (
+            {/* iOS app (App Store 3.1.1): no trial offer, no plan line. */}
+            <p className="mt-2 text-[16px] text-ink-600">{NATIVE ? 'החשבון מוכן בדקה.' : '14 יום חינם, ואז מחליטים. החשבון מוכן בדקה.'}</p>
+            {picked && !NATIVE ? (
               <p className="mt-3 rounded-[16px] bg-brand-50 px-3.5 py-2.5 text-[15px] leading-snug text-navy-900" data-plan={picked.key}>
                 בחרתם בחבילת <b>{picked.nameHe}</b> ({picked.limit}). 14 הימים הראשונים חינם, ואת החבילה משלימים בסוף הניסיון.
               </p>

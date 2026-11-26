@@ -22,6 +22,8 @@ import { SUPPORT_ENABLED, SUPPORT_WHATSAPP_DISPLAY, suggestionsFor, waSupportLin
 import Markdown from './Markdown';
 import { onHelpOpen, reportHelpUnread } from './openHelp';
 import { heError } from '@/lib/heError';
+import { needsAiConsent, setAiConsent } from '@/lib/aiConsent';
+import { AiConsentBody } from '@/components/privacy/AiConsentSheet.jsx';
 import './support.css';
 
 const DESK = '(min-width: 1024px)';
@@ -138,6 +140,7 @@ export default function SupportWidget() {
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false);
   const [offer, setOffer] = useState(false);
+  const [consentFor, setConsentFor] = useState(null); // App Store 5.1.2(i): text waiting for the AI consent (iOS app)
   const [handingOff, setHandingOff] = useState(false);
   const [draft, setDraft] = useState('');
   const [notice, setNotice] = useState('');
@@ -241,6 +244,8 @@ export default function SupportWidget() {
     const text = String(textIn ?? draft).trim();
     if (!text || typing) return;
     if (!online) { setNotice('אין חיבור לאינטרנט. ההודעה תישלח כשהחיבור יחזור.'); return; }
+    // The bot answers through OpenAI: in the iOS app ask once before the first question leaves the device.
+    if (mode !== 'human' && needsAiConsent(user?.id)) { setConsentFor({ text, retryOf }); return; }
     setNotice('');
     setOffer(false);
     if (!retryOf) setDraft('');
@@ -416,6 +421,16 @@ export default function SupportWidget() {
               ) : null}
             </div>
           )}
+
+          {consentFor ? (
+            <div className="sp-consent" role="dialog" aria-modal="false" aria-labelledby="sp-ai-consent-t">
+              <AiConsentBody
+                titleId="sp-ai-consent-t"
+                onAccept={() => { const c = consentFor; setAiConsent(user?.id); setConsentFor(null); send(c.text, c.retryOf); }}
+                onDecline={() => { setConsentFor(null); setNotice('העזרה האוטומטית לא נפתחה. אפשר לכתוב לנציג מהצוות.'); }}
+              />
+            </div>
+          ) : null}
 
           {notice ? <div className="sp-notice" role="alert">{notice}</div> : null}
 

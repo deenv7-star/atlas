@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { atlasToastApi } from '@/components/ui/AtlasToast/atlasToastApi';
+import { isNativeApp } from '@/lib/native';
 import { validatePassword, getPasswordStrength } from '@/lib/validation';
 import { cn } from '@/lib/utils';
 
@@ -200,20 +201,25 @@ export default function SecuritySettings({ user, onDeleted }) {
     <Card>
       <CardHeader>
         <CardTitle className="text-[18px] font-bold">אבטחה</CardTitle>
-        <CardDescription>הסיסמה, אימות דו-שלבי ומחיקת החשבון</CardDescription>
+        <CardDescription>{isNativeApp() ? 'הסיסמה ומחיקת החשבון' : 'הסיסמה, אימות דו-שלבי ומחיקת החשבון'}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <ChangePassword user={user} />
-        <div className="h-px bg-line" />
-        <div className="flex items-start gap-3">
-          <Shield className="mt-0.5 h-[18px] w-[18px] flex-shrink-0 text-ink-400" aria-hidden />
-          <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-bold text-navy-900">אימות דו-שלבי</p>
-            <p className="mt-0.5 text-[14px] text-ink-600">עוד לא זמין. נעדכן אתכם כשאפשר יהיה להפעיל.</p>
+        {/* iOS app (App Store 2.1): no "בקרוב" row in the reviewed build. */}
+        {isNativeApp() ? <div className="h-px bg-line" /> : (
+          <>
+          <div className="h-px bg-line" />
+          <div className="flex items-start gap-3">
+            <Shield className="mt-0.5 h-[18px] w-[18px] flex-shrink-0 text-ink-400" aria-hidden />
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] font-bold text-navy-900">אימות דו-שלבי</p>
+              <p className="mt-0.5 text-[14px] text-ink-600">עוד לא זמין. נעדכן אתכם כשאפשר יהיה להפעיל.</p>
+            </div>
+            <span className="inline-flex h-7 flex-shrink-0 items-center rounded-full bg-[#EEF0FF] px-3 text-[13px] font-semibold text-brand-700">בקרוב</span>
           </div>
-          <span className="inline-flex h-7 flex-shrink-0 items-center rounded-full bg-[#EEF0FF] px-3 text-[13px] font-semibold text-brand-700">בקרוב</span>
-        </div>
-        <div className="h-px bg-line" />
+          <div className="h-px bg-line" />
+          </>
+        )}
         <DeleteAccount onDeleted={onDeleted} />
       </CardContent>
     </Card>

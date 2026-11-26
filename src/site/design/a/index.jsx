@@ -7,6 +7,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Clock, CalendarDays } from 'lucide-react';
 import { LEGAL, BUSINESS_LINE } from '@/config/legal';
+import { isNativeApp } from '@/lib/native';
 import { POSTS } from '@/site/content/posts';
 import { FOOTER_GROUPS } from '@/site/pages';
 import { ATLAS_ONE_LINER, crumbsFor } from '@/site/seo';
@@ -20,7 +21,22 @@ import './site-a.css';
 
 export const DESIGN = 'a';
 
+/** iOS app (App Store 3.1.1): legal pages open inside the app with no prices link, no trial CTA and no site nav. */
+function NativeHeader() {
+  return (
+    <header className="a-hdr">
+      <div className="a-wrap a-hdr-in">
+        <span className="a-logo" aria-label="atlas"><Wordmark /></span>
+        <nav className="a-nav" aria-label="ניווט">
+          <Link to="/settings">חזרה לאפליקציה</Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
 function Header() {
+  if (isNativeApp()) return <NativeHeader />;
   return (
     <header className="a-hdr">
       <div className="a-wrap a-hdr-in">
@@ -47,7 +63,7 @@ export function Footer() {
             <p>{ATLAS_ONE_LINER}</p>
             <WhatsAppButton className="a-ftr-wa">וואטסאפ <span dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</span></WhatsAppButton>
           </div>
-          {FOOTER_GROUPS.map((g) => (
+          {(isNativeApp() ? [] : FOOTER_GROUPS).map((g) => (
             <nav key={g.title} className="a-ftr-col" aria-label={g.title}>
               <p className="a-ftr-h">{g.title}</p>
               <ul>{g.links.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}</ul>

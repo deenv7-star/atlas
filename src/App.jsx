@@ -156,6 +156,9 @@ const ProtectedRoute = ({ children, requireOnboarding = true, allowSuspended = f
   return <AccessGate locked={lockedRender}>{inner}</AccessGate>;
 };
 
+/** App Store 3.1.1: marketing pages (prices, trial offer, sign-up CTA) never render inside the iOS app. */
+const nativeOff = (element) => (isNativeApp() ? <Navigate to="/login" replace /> : element);
+
 /** /billing while locked: the web keeps the billing page (no app shell); the iOS app gets the no-purchase screen. */
 function BillingWhileLocked() {
   const { user } = useAuth();
@@ -228,8 +231,8 @@ const AuthenticatedApp = () => {
       <Route path="/auth/callback" element={<S><AuthCallback /></S>} />
 
       {/* Public static pages — no auth required */}
-      <Route path="/about" element={<S><SitePage /></S>} />
-      <Route path="/status" element={<LayoutWrapper currentPageName="Status"><Pages.Status /></LayoutWrapper>} />
+      <Route path="/about" element={nativeOff(<S><SitePage /></S>)} />
+      <Route path="/status" element={nativeOff(<LayoutWrapper currentPageName="Status"><Pages.Status /></LayoutWrapper>)} />
       <Route path="/privacy" element={<S><SitePage /></S>} />
       <Route path="/terms" element={<S><SitePage /></S>} />
       <Route path="/contact" element={<S><SitePage /></S>} />
@@ -239,15 +242,15 @@ const AuthenticatedApp = () => {
       <Route path="/cookies" element={<S><SitePage /></S>} />
       <Route path="/cancellation" element={<S><SitePage /></S>} />
       <Route path="/data-processing" element={<S><SitePage /></S>} />
-      <Route path="/blog" element={<S><SitePage /></S>} />
-      <Route path="/blog/:slug" element={<S><SitePage /></S>} />
-      <Route path="/sla" element={<LayoutWrapper currentPageName="SLA"><Pages.SLA /></LayoutWrapper>} />
-      <Route path="/how-it-works" element={<LayoutWrapper currentPageName="HowItWorks"><Pages.HowItWorks /></LayoutWrapper>} />
+      <Route path="/blog" element={nativeOff(<S><SitePage /></S>)} />
+      <Route path="/blog/:slug" element={nativeOff(<S><SitePage /></S>)} />
+      <Route path="/sla" element={nativeOff(<LayoutWrapper currentPageName="SLA"><Pages.SLA /></LayoutWrapper>)} />
+      <Route path="/how-it-works" element={nativeOff(<LayoutWrapper currentPageName="HowItWorks"><Pages.HowItWorks /></LayoutWrapper>)} />
       <Route path="/pricing" element={isNativeApp() ? <Navigate to="/login" replace /> : <LayoutWrapper currentPageName="PricingPlans"><Pages.PricingPlans /></LayoutWrapper>} />
 
       {/* Public guest page per booking + direct-booking page per property (no login) */}
       <Route path="/g/:token" element={<Suspense fallback={<PublicFallback />}><GuestStayPage /><BootDone /></Suspense>} />
-      <Route path="/early" element={<Suspense fallback={<PublicFallback />}><EarlyPage /><BootDone /></Suspense>} />
+      <Route path="/early" element={nativeOff(<Suspense fallback={<PublicFallback />}><EarlyPage /><BootDone /></Suspense>)} />
       <Route path="/book/:slug" element={<Suspense fallback={<PublicFallback />}><BookDirectPage /><BootDone /></Suspense>} />
       {/* Print / PDF view of the monthly accountant report (no app chrome) */}
       <Route path="/monthly-report/print" element={<ProtectedRoute><Suspense fallback={<PublicFallback />}><MonthlyReportPrintPage /><BootDone /></Suspense></ProtectedRoute>} />
