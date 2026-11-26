@@ -89,3 +89,13 @@ test('2.1 / 2.3.1: no "בקרוב" promise and no e-signing claim in the iOS app
   assert.match(read('src/components/pageguide/guides.js'), /get hint\(\) \{ return isNativeApp\(\) \? 'כל חוזה נמלא מפרטי ההזמנה\.'/);
   assert.match(read('src/config/navigation.js'), /desc: isNativeApp\(\) \? 'חוזה לאורח, נמלא מפרטי ההזמנה' : 'חוזה לאורח, נחתם בטלפון'/);
 });
+
+test('3.1.1: the legal-page footer line in the app drops the trial clause', () => {
+  const seo = read('src/site/seo.js');
+  const line = seo.match(/ATLAS_ONE_LINER =\s*'([^']+)'/)[1];
+  const cut = line.slice(0, line.indexOf(' עובד מהדפדפן'));
+  assert.ok(line.indexOf(' עובד מהדפדפן') > 0);
+  assert.doesNotMatch(cut, /חינם|ניסיון|₪/);
+  assert.match(cut, /דוח הכנסות חודשי\.$/);
+  assert.match(read('src/site/design/a/index.jsx'), /isNativeApp\(\) \? ATLAS_ONE_LINER\.slice\(0, ATLAS_ONE_LINER\.indexOf\(' עובד מהדפדפן'\)\)/);
+});

@@ -60,7 +60,8 @@ export function Footer() {
         <div className="a-ftr-top">
           <div className="a-ftr-brand">
             <Wordmark />
-            <p>{ATLAS_ONE_LINER}</p>
+            {/* iOS app (App Store 3.1.1): the line without its "14 יום חינם" trial clause. */}
+            <p>{isNativeApp() ? ATLAS_ONE_LINER.slice(0, ATLAS_ONE_LINER.indexOf(' עובד מהדפדפן')) : ATLAS_ONE_LINER}</p>
             <WhatsAppButton className="a-ftr-wa">וואטסאפ <span dir="ltr">{LEGAL.WHATSAPP_DISPLAY}</span></WhatsAppButton>
           </div>
           {(isNativeApp() ? [] : FOOTER_GROUPS).map((g) => (
