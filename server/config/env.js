@@ -27,9 +27,18 @@ const schema = z.object({
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   STRIPE_PRICE_STARTER: z.string().optional(),
+  /** C1/C2: Stripe price IDs for the Pro and Business plans (no values hardcoded in code). */
+  STRIPE_PRICE_PROFESSIONAL: z.string().optional(),
+  STRIPE_PRICE_BUSINESS: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
+  /** C7: per-user daily cap for POST /api/ai/chat (matches the ai-chat edge function's perDay). */
+  AI_CHAT_DAILY_LIMIT: z.coerce.number().int().positive().default(150),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
+  /** C8: per-org daily cap for POST /api/email/send. */
+  EMAIL_DAILY_LIMIT_PER_ORG: z.coerce.number().int().positive().default(50),
+  /** C8: comma-separated extra recipients allowed for /api/email/send (in addition to the user's own email and the org's own guest/lead/user records). */
+  EMAIL_ALLOWED_RECIPIENTS: z.string().optional(),
   /** Inbox for /api/public/contact (Resend). Required together with RESEND_API_KEY + EMAIL_FROM for email delivery. */
   CONTACT_INBOX_EMAIL: z.string().email().optional(),
   PLATFORM_ADMIN_EMAILS: z.string().optional(),

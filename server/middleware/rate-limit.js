@@ -15,9 +15,17 @@ async function ensureTable() {
 }
 
 function buildKey(req) {
-  const ip = req.ip || 'unknown';
   const route = req.baseUrl + req.path;
-  return createHash('sha256').update(`${ip}:${route}`).digest('hex');
+  // H3: per-user when the request is already authenticated (requireAuth ran
+  // before this middleware and set req.userId), so one abusive account cannot
+  // hide behind a shared IP — and one IP cannot burn another user's budget.
+  // Otherwise fall back to IP + route. NOTE: apiRateLimit is mounted globally
+  // in app.js before the routers, so on most routes req.userId is not set yet
+  // and the IP key applies; the per-user key takes effect wherever this
+  // middleware runs after requireAuth.
+  const userId = req.userId || req.authUser?.id;
+  const who = userId ? `user:${userId}` : `ip:${req.ip || 'unknown'}`;
+  return createHash('sha256').update(`${who}:${route}`).digest('hex');
 }
 
 export async function apiRateLimit(req, res, next) {
@@ -52,7 +60,10 @@ export async function apiRateLimit(req, res, next) {
 
     return next();
   } catch (error) {
-    logger.error('rate_limit.failed_open', { error, requestId: req.requestId });
-    return next();
+    // H3: fail CLOSED. The old code logged and called next(), so if the
+    // api_rate_limits table (or the DB) went down, there was no rate limit
+    // at all. A 503 keeps the API safe while the limiter is unavailable.
+    logger.error('rate_limit.failed_closed', { error, requestId: req.requestId });
+    return res.status(503).json({ error: 'Rate limiter unavailable. Try again shortly.' });
   }
 }
