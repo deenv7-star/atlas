@@ -135,7 +135,7 @@ function useScrolled(y = 24) {
 }
 
 function useSpy(ids) {
-  const [cur, setCur] = useState(ids[0]);
+  const [cur, setCur] = useState('');
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return undefined;
     const els = ids.map((i) => document.getElementById(i)).filter(Boolean);
@@ -251,10 +251,10 @@ const TODAY_FRAME = [{ src: '/landing-hero/ui-m-today-y3-540.webp', srcSet: '/la
 
 /** Glass cards around the hero phone: the real voice flow, example data. */
 const FLOATS = [
-  { k: 'אמרתם', t: '״הזמנה ליוסי לסופ״ש, 3,500״', I: Mic, cls: 'f1' },
-  { k: 'atlas בדק', t: 'צימר הזית פנוי ביום ה׳ עד ש׳', I: CalendarCheck, cls: 'f2' },
-  { k: 'מוכן לשליחה בלחיצה', t: 'הודעת אישור ליוסי בוואטסאפ', I: MessageCircle, cls: 'f3' },
-  { k: 'אחרי האישור שלכם', t: 'ההזמנה נשמרה בלוח', I: Check, cls: 'f4' },
+  { k: 'אמרתם', t: '״הזמנה ליוסי לסופ״ש״', I: Mic, cls: 'f1' },
+  { k: 'atlas בדק', t: 'הזית פנוי, ה׳ עד ש׳', I: CalendarCheck, cls: 'f2' },
+  { k: 'וואטסאפ ליוסי מוכן', t: 'שולחים בלחיצה', I: MessageCircle, cls: 'f3' },
+  { k: 'אחרי האישור שלכם', t: 'ההזמנה נשמרה', I: Check, cls: 'f4' },
 ];
 function Floats() {
   return (
@@ -276,11 +276,12 @@ const NAV = [['voice', 'העוזר הקולי'], ['where', 'אייפון ומח�
 function HeaderA({ onCta }) {
   const scrolled = useScrolled(40);
   const cur = useSpy(NAV.map((n) => n[0]));
-  const idx = Math.max(0, NAV.findIndex((n) => n[0] === cur));
+  const found = NAV.findIndex((n) => n[0] === cur);
+  const idx = Math.max(0, found);
   return (
     <header className={`e5-hdr e5-hdr-a ${scrolled ? 'is-scrolled' : ''}`}>
       <a href="#top" className="e5-hdr-logo" aria-label="atlas, לראש העמוד"><Logo w={78} /></a>
-      <nav className="e5-seg" aria-label="ניווט בעמוד" style={{ '--i': idx }}>
+      <nav className="e5-seg" aria-label="ניווט בעמוד" style={{ '--i': idx, '--on': found >= 0 ? 1 : 0 }}>
         <span className="e5-seg-pill" aria-hidden="true" />
         {NAV.map(([id, l]) => <a key={id} href={`#${id}`} aria-current={cur === id ? 'true' : undefined}>{l}</a>)}
       </nav>
