@@ -1,9 +1,15 @@
+/**
+ * /how-it-works — its own page, not a copy of the home page (H6, audit 28.11.2026).
+ * The home page sells the product; this page explains, honestly and step by step, how a booking gets
+ * onto one calendar — and how the voice assistant fits in: say it, atlas prepares, you approve.
+ * Own title/meta live in src/seo/routeMeta.js ('/how-it-works'); the page is listed in the sitemap.
+ */
 import { Wordmark } from '@/components/app/shell/shared';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { GitBranch, Shield, RefreshCw, Database, Link2 } from 'lucide-react';
+import { GitBranch, Shield, RefreshCw, Database, Link2, Mic } from 'lucide-react';
 
 const STEPS = [
   {
@@ -29,6 +35,25 @@ const STEPS = [
     title: 'לוח אחד שאפשר לסמוך עליו',
     body: 'אחרי שהחלטתם, הלוח מראה תמונה אחת וברורה. כל שינוי נרשם, כך שתמיד אפשר לבדוק מה קרה.',
     icon: Database,
+  },
+];
+
+/** The voice flow, in the same three steps the home page shows: say it, atlas prepares, you approve. */
+const VOICE_STEPS = [
+  {
+    n: 1,
+    title: 'אומרים מה צריך',
+    body: 'בעברית, במילים שלכם — למשל: "הזמנה חדשה לשבת, זוג ושני ילדים".',
+  },
+  {
+    n: 2,
+    title: 'atlas מכין',
+    body: 'atlas מכין את ההזמנה, את ההודעה לאורח ואת משימת הניקיון.',
+  },
+  {
+    n: 3,
+    title: 'מאשרים בלחיצה אחת',
+    body: 'שום דבר לא נשמר בלי אישור שלכם.',
   },
 ];
 
@@ -98,6 +123,24 @@ export default function HowItWorks() {
                 </article>
               );
             })}
+          </div>
+
+          <div className="mt-12 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="flex items-center gap-2 text-[#2A1AC9] text-sm font-bold mb-3">
+              <Mic className="w-5 h-5" aria-hidden />
+              העוזר הקולי
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">אומרים. atlas מכין. מאשרים.</h2>
+            <p className="text-gray-600 leading-relaxed mb-6">
+              לא צריך לפתוח טפסים בשביל הזמנה חדשה. אומרים מה צריך בעברית, ומאשרים בלחיצה אחת.
+            </p>
+            <ol className="space-y-3 text-gray-700 text-sm sm:text-base leading-relaxed list-decimal list-inside marker:font-bold marker:text-[#2A1AC9]">
+              {VOICE_STEPS.map((s) => (
+                <li key={s.n}>
+                  <span className="font-bold text-gray-900">{s.title}:</span> {s.body}
+                </li>
+              ))}
+            </ol>
           </div>
 
           <div className="mt-14 rounded-2xl bg-[#F4F3FF] text-navy-900 p-8 text-center">

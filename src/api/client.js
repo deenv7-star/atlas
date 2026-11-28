@@ -7,6 +7,13 @@
  *                       responds at http://localhost:3001 in dev mode)
  *   3. localStorage    (zero-config fallback for pure frontend demos)
  *
+ * H12 (audit 28.11.2026): tier 3 is OPT-IN ONLY. It used to be the silent fallback whenever
+ * Supabase was not configured and the local REST server did not answer, so a user could see a
+ * working-looking app whose data would vanish. Now the localStorage demo runs only when
+ * VITE_ALLOW_LOCAL_DEMO=true (explicit, default off in every environment, including production);
+ * otherwise backend calls fail loudly with a clear Hebrew error instead of serving demo data.
+ * The intentional local-demo dev flow still works — set VITE_ALLOW_LOCAL_DEMO=true in .env.local.
+ *
  * The public interface is identical in all three modes:
  *   client.entities.Booking.list()
  *   client.entities.Booking.filter({ property_id })
@@ -949,7 +956,10 @@ const integrations = {
         const { data: { publicUrl } } = supabase.storage.from('atlas-files').getPublicUrl(data.path);
         return { file_url: publicUrl, file_id: data.path };
       }
-      // localStorage fallback
+      // H12: the localStorage "upload" is part of the demo backend — it only runs when the demo is
+      // explicitly opted in (VITE_ALLOW_LOCAL_DEMO=true). Otherwise fail loudly instead of
+      // pretending the file was stored somewhere real.
+      if (!LOCAL_DEMO_ALLOWED) throw backendUnavailableError();
       return new Promise((resolve, reject) => {
         if (!file) return reject(new Error('No file provided'));
         const reader = new FileReader();
@@ -981,7 +991,48 @@ const appLogs = {
 
 // We probe the local server once and cache the result.  The first call to
 // createClient() starts the probe in the background; subsequent calls use the
-// cached result.  If the server isn't running we fall through to localStorage.
+// cached result.  If the server isn't running and the local demo is opted in
+// (VITE_ALLOW_LOCAL_DEMO=true) we fall through to localStorage; otherwise
+// calls fail loudly instead of silently serving demo data (H12).
+
+// =============================================================================
+// H12 — the localStorage demo backend is opt-in only (audit 28.11.2026)
+// =============================================================================
+
+/** True only when the build explicitly opts into the local demo (default off everywhere, including production). */
+export const LOCAL_DEMO_ALLOWED = import.meta.env.VITE_ALLOW_LOCAL_DEMO === 'true';
+
+/** Thrown instead of silently serving local demo data when no real backend answers. */
+export function backendUnavailableError() {
+  const e = new Error('לא הצלחנו להתחבר לשרת, אז לא מציגים נתונים — במקום להראות נתוני הדגמה שייעלמו. בדקו את החיבור ונסו שוב.');
+  e.code = 'BACKEND_UNAVAILABLE';
+  return e;
+}
+
+/** A client whose every call fails loudly (H12): used when no backend is reachable and the local demo is not opted in. */
+function unavailableClient() {
+  const fail = async () => { throw backendUnavailableError(); };
+  const failCollection = new Proxy({}, { get: () => fail });
+  const failEntities = new Proxy({}, { get: () => failCollection });
+  return {
+    entities: failEntities,
+    auth: {
+      me: fail,
+      signUp: fail,
+      signIn: fail,
+      logout: async () => ({ success: true }),
+      updateMe: fail,
+      deleteAccount: fail,
+      redirectToLogin(u) { window.location.href = u ? `/login?return=${encodeURIComponent(u)}` : '/login'; },
+      setUser() {},
+      hasUser() { return false; },
+      onAuthStateChange() { return () => {}; },
+    },
+    integrations,
+    appLogs,
+  };
+}
+
 let _restClientCache = null;
 
 export function createClient(_options = {}) {
@@ -1006,30 +1057,34 @@ export function createClient(_options = {}) {
   if (allowHybridRest) {
     if (_restClientCache) return _restClientCache;
 
-    // Build a transparent proxy that routes to REST when available, else localStorage
+    // H12: REST when it answers; the localStorage demo ONLY when explicitly opted in
+    // (VITE_ALLOW_LOCAL_DEMO=true); otherwise fail loudly — never serve demo data silently.
+    async function restOrLocal(restFn, localFn) {
+      if (await checkLocalApi()) return restFn();
+      if (!LOCAL_DEMO_ALLOWED) throw backendUnavailableError();
+      return localFn();
+    }
+
+    // Build a transparent proxy that routes to REST when available, else the opt-in local demo
     const makeRestOrLocal = (restColl, localColl) => {
       return new Proxy({}, {
         get(_, method) {
-          return async (...args) => {
-            const useRest = await checkLocalApi();
-            return useRest
-              ? restColl[method](...args)
-              : localColl[method](...args);
-          };
+          return async (...args) => restOrLocal(() => restColl[method](...args), () => localColl[method](...args));
         },
       });
     };
 
     const hybridAuth = {
-      async me()                       { return (await checkLocalApi()) ? restAuth.me()                       : localAuth.me(); },
-      async signUp(p)                  { return (await checkLocalApi()) ? restAuth.signUp(p)                  : localAuth.signUp(p); },
-      async signIn(p)                  { return (await checkLocalApi()) ? restAuth.signIn(p)                  : localAuth.signIn(p); },
-      async logout()                   { return (await checkLocalApi()) ? restAuth.logout()                   : localAuth.logout(); },
-      async updateMe(d)                { return (await checkLocalApi()) ? restAuth.updateMe(d)                : localAuth.updateMe(d); },
-      async deleteAccount()            { return (await checkLocalApi()) ? restAuth.deleteAccount()            : localAuth.deleteAccount(); },
+      async me()                       { return restOrLocal(() => restAuth.me(), () => localAuth.me()); },
+      async signUp(p)                  { return restOrLocal(() => restAuth.signUp(p), () => localAuth.signUp(p)); },
+      async signIn(p)                  { return restOrLocal(() => restAuth.signIn(p), () => localAuth.signIn(p)); },
+      async logout()                   { return restOrLocal(() => restAuth.logout(), () => localAuth.logout()); },
+      async updateMe(d)                { return restOrLocal(() => restAuth.updateMe(d), () => localAuth.updateMe(d)); },
+      async deleteAccount()            { return restOrLocal(() => restAuth.deleteAccount(), () => localAuth.deleteAccount()); },
       redirectToLogin(u)               { return restAuth.redirectToLogin(u); },
-      setUser(u)                       { localAuth.setUser(u); },
-      hasUser()                        { return restAuth.hasUser() || localAuth.hasUser(); },
+      // H12: never create or claim a local demo user unless the demo is opted in.
+      setUser(u)                       { if (LOCAL_DEMO_ALLOWED) localAuth.setUser(u); },
+      hasUser()                        { return restAuth.hasUser() || (LOCAL_DEMO_ALLOWED && localAuth.hasUser()); },
       onAuthStateChange(cb)            { return localAuth.onAuthStateChange(cb); },
     };
 
@@ -1045,7 +1100,9 @@ export function createClient(_options = {}) {
     return _restClientCache;
   }
 
-  // 3. Pure localStorage fallback
+  // 3. Pure localStorage demo — only when explicitly opted in (H12). Otherwise fail loudly:
+  // a production build with no backend must show an error, never demo data.
+  if (!LOCAL_DEMO_ALLOWED) return unavailableClient();
   return {
     entities:     guardEntities(localEntitiesProxy),
     auth:         localAuth,

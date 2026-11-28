@@ -141,10 +141,13 @@ function outPath(route) {
 
 function sitemap(routes, posts) {
   // bump a page here when its content changes (Google uses lastmod only when it is accurate)
-  const lastmod = { '/': '2026-11-05', '/about': '2026-11-05', '/contact': '2026-11-05' };
+  // H11 (audit 28.11.2026): /early and /how-it-works were missing from the sitemap; both added below.
+  // NOTE: /early is still served with robots "noindex,follow" until launch (see prerenderLean below),
+  // so Google will only start indexing it once that tag flips to index — the sitemap entry alone is not enough.
+  const lastmod = { '/': '2026-11-05', '/about': '2026-11-05', '/contact': '2026-11-05', '/early': '2026-11-28', '/how-it-works': '2026-11-28' };
   posts.forEach((p) => { lastmod[`/blog/${p.slug}`] = p.updated; });
-  const all = ['/', '/pricing', ...routes]; // /register and /login are noindex (A18/SEO-003), so not in the sitemap
-  const prio = (r) => (r === '/' ? '1.0' : r === '/blog' || r === '/pricing' ? '0.9' : r.startsWith('/blog/') ? '0.8' : r === '/register' ? '0.8' : '0.5');
+  const all = ['/', '/pricing', '/early', '/how-it-works', ...routes]; // /register and /login are noindex (A18/SEO-003), so not in the sitemap
+  const prio = (r) => (r === '/' ? '1.0' : r === '/blog' || r === '/pricing' ? '0.9' : r.startsWith('/blog/') || r === '/early' || r === '/how-it-works' ? '0.8' : r === '/register' ? '0.8' : '0.5');
   const urls = all.map((r) => [
     '  <url>',
     `    <loc>${ORIGIN}${r === '/' ? '/' : r}</loc>`,
@@ -156,7 +159,8 @@ function sitemap(routes, posts) {
 }
 
 function llms(mod) {
-  const { POSTS, SITE_PAGES, ATLAS_ONE_LINER, PRICING_FAQ, PRICING_PLANS, GROWTH_OFFER, GROWTH_NAME, GROWTH_SCOPE, yearlyTotal } = mod;
+  // H10 (audit 28.11.2026): the growth-plan line was removed with the "צמיחה — בקרוב" offer card.
+  const { POSTS, SITE_PAGES, ATLAS_ONE_LINER, PRICING_FAQ, PRICING_PLANS, yearlyTotal } = mod;
   const plan = (p) => `- ${p.nameHe} (${p.name}): ‏₪${p.price} לחודש, או ‏₪${p.priceYearly} לחודש בחיוב שנתי מראש (‏₪${yearlyTotal(p).toLocaleString('en-US')} לשנה). ${p.limit}.`;
   return [
     '# atlas',
@@ -176,7 +180,6 @@ function llms(mod) {
     '',
     '## מחירים',
     ...PRICING_PLANS.map(plan),
-    `- ${GROWTH_NAME}: ${GROWTH_SCOPE}. חבילה נפרדת מחבילות הניהול, שמתחילה בשיחת תיאום בוואטסאפ (לא בהרשמה עצמית). ‏₪${GROWTH_OFFER.price} לחודש, בקרוב.`,
     `- פרטים: ${ORIGIN}/pricing`,
     '',
     '## שאלות נפוצות (מדף הבית ומעמוד המחירים)',

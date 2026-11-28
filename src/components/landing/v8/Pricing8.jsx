@@ -5,11 +5,16 @@
  * previous plan, with the full list one tap away. Under the cards: a "מה ההבדל בין החבילות"
  * accordion with a compact comparison table (fits 320px, no horizontal scroll), then trial and
  * cancellation lines. Copy lives in src/config/pricing.js.
+ *
+ * H8 (audit 28.11.2026): the large amount (₪399 / ₪699 / ₪999, from pricing.js) sits at the TOP of
+ * every card, right under the plan name, as real text (see PriceNumber in ./pricing/PriceRoll8.jsx).
+ * H10 (audit 28.11.2026, product decision): the "atlas צמיחה — בקרוב" offer block was removed from
+ * this component (it was rendered only when `growth` was passed, i.e. on /pricing). The growth
+ * config in src/config/growth.js is untouched, so the offer can return if Deen decides to sell it.
  */
 import React, { useState } from 'react';
-import { Check, ChevronDown, MessageCircle, MapPin, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Check, ChevronDown, MessageCircle, MapPin, ShieldCheck } from 'lucide-react';
 import { PRICING_PLANS, INCLUDED_FEATURES, TRIAL_LINE, CANCEL_LINE, VAT_LINE, SUPPORT_LINE, yearlyTotal } from '@/config/pricing';
-import { GROWTH_OFFER, FOUNDING, GROWTH_SCOPE, GROWTH_CTA, GROWTH_LINKS, nis } from '@/config/growth';
 import { Link } from 'react-router-dom';
 import { fmt } from '../v5/motion';
 import { SignupButton } from '../v5/LandingV5';
@@ -17,7 +22,6 @@ import { BillingToggle8 } from './pricing/BillingToggle8';
 import { PriceNumber } from './pricing/PriceRoll8';
 import './pricing8.css';
 import './pricing/pricing-motion.css';
-import './pricing/pricing-growth.css';
 
 const TRUST = [
   { I: MessageCircle, t: SUPPORT_LINE },
@@ -59,37 +63,6 @@ function FeatList({ items }) {
   );
 }
 
-/**
- * The growth plan as one line under the plans (landing, 20.10.2026): the only place the page shows the
- * growth price, so there is one pricing story. ₪749 INCLUDES the whole management system (a higher plan,
- * not an extra on top), as Deen approved live. Prices and founding terms come from src/config/growth.js.
- */
-function GrowthAddon({ H }) {
-  return (
-    <div id="pricing-growth" className="v8p-add" data-reveal>
-      <div className="v8p-add-main">
-        <div className="v8p-add-top">
-          <H className="v8p-add-h">{GROWTH_OFFER.name}</H>
-          <span className="v8p-add-soon">בקרוב</span>
-        </div>
-        <p className="v8p-add-line">
-          <span className="v8p-nw"><bdi className="num" dir="ltr">{nis(GROWTH_OFFER.price)}</bdi> לחודש,</span>{' '}
-          <span className="v8p-nw">כולל את כל מערכת הניהול</span><span> · </span>
-          <span className="v8p-nw"><bdi className="num is-found" dir="ltr">{nis(FOUNDING.monthly)}</bdi> מחיר השקה</span>
-        </p>
-        <p className="v8p-add-terms">
-          <span className="v8p-nw">{`${FOUNDING.cap} ראשונים, עד ${FOUNDING.deadline}`}</span><span> · </span>
-          <span className="v8p-nw">{`המחיר נעול ל-${FOUNDING.lockMonths} חודשים`}</span>
-        </p>
-        <p className="v8p-add-what">{`${GROWTH_SCOPE}. חבילה נפרדת, שמתחילים בשיחה קצרה. תקציב הפרסום שלכם, משולם ישירות `}<span className="v8p-nw">ל-Meta ול-Google</span>.</p>
-      </div>
-      <a className="v8p-add-cta" href={GROWTH_LINKS.call} target="_blank" rel="noopener noreferrer">
-        <span>{GROWTH_CTA}</span><ArrowLeft size={18} strokeWidth={2} aria-hidden="true" /><span className="sr-only"> (נפתח בחלון חדש)</span>
-      </a>
-    </div>
-  );
-}
-
 export function CompareTable() {
   return (
     <table className="v8p-table">
@@ -124,12 +97,17 @@ export function CompareTable() {
         </tr>
         <tr>
           <th scope="row">14 יום ניסיון חינם</th>
-          {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} role="img" aria-label="כלול" /></td>)}
+          {/* H9 (audit 28.11.2026): a check icon alone is empty text for screen readers and
+              crawlers. Every check cell carries the word "כלול" as real (visually hidden) text
+              in addition to the icon's aria-label. There are no "not included" (dash) cells
+              in this table — every plan includes everything; if one is ever added, give it
+              aria-label="לא כלול" plus a visually hidden "לא כלול" the same way. */}
+          {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} role="img" aria-label="כלול" /><span className="sr-only">כלול</span></td>)}
         </tr>
         {['כל היכולות', 'תמיכה אנושית 24/7'].map((f) => (
           <tr key={f}>
             <th scope="row">{f}</th>
-            {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} role="img" aria-label="כלול" /></td>)}
+            {PRICING_PLANS.map((p) => <td key={p.key}><Check size={16} strokeWidth={2.6} role="img" aria-label="כלול" /><span className="sr-only">כלול</span></td>)}
           </tr>
         ))}
       </tbody>
@@ -137,7 +115,7 @@ export function CompareTable() {
   );
 }
 
-export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2', growth = false, founders = true }) {
+export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', tone = '', as: H = 'h2', founders = true }) {
   const [yearly, setYearlyState] = useState(false);
   const [said, setSaid] = useState('');
   const setYearly = (y) => {
@@ -164,9 +142,10 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
                   <PlanH>{p.nameHe}</PlanH>
                   {p.popular && <span className="v8p-tag">מומלץ</span>}
                 </div>
+                {/* H8: the amount is the first thing on the card, as real text from pricing.js. */}
+                <Price p={p} yearly={yearly} />
                 <p className="v8p-limit">{p.limit}</p>
                 <p className="v8p-desc">{p.desc}</p>
-                <Price p={p} yearly={yearly} />
                 <SignupButton plan={p.key} className={`is-block${p.popular ? ' is-white' : ' is-quiet'}`} />
                 {i === 0 ? (
                   <>
@@ -191,8 +170,6 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
           })}
         </ul>
 
-        {growth && <GrowthAddon H={PlanH} />}
-
         <details className="v8p-diff" data-reveal>
           <summary>
             <span>מה ההבדל בין החבילות?</span>
@@ -201,7 +178,6 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
           <div className="v8p-diff-body">
             <p className="v8p-diff-note">בכל חבילה מקבלים את כל היכולות. בוחרים לפי מספר המתחמים שלכם.</p>
             <CompareTable />
-            {growth && <p className="v8p-diff-note is-after">{'קמפיינים ואתר למתחם? '}<a href="#pricing-growth">חבילת הצמיחה</a>{' נפרדת, ומתחילים בשיחה.'}</p>}
           </div>
         </details>
 
@@ -209,8 +185,11 @@ export function Pricing8({ title = 'מחיר פשוט. 14 יום עלינו.', t
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{TRIAL_LINE}</p>
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{CANCEL_LINE}</p>
           <p><Check size={16} strokeWidth={2.6} aria-hidden="true" />{VAT_LINE}</p>
-          {/* founders offer (Deen, 08.11.2026; details and capture on /early): first 50, personal setup, annual price on monthly billing, locked */}
-          {growth && founders && <p className="v8p-founders"><Check size={16} strokeWidth={2.6} aria-hidden="true" /><span>50 המצטרפים הראשונים: הקמה אישית ומחיר מייסדים נעול. <Link to="/early">פרטים</Link></span></p>}
+          {/* founders offer (Deen, 08.11.2026; details and capture on /early): first 50, personal setup, annual price on monthly billing, locked.
+              H10: this line used to be gated on the removed growth block; it is the /early founding offer, not
+              the growth plan, so it now renders whenever `founders` is true. The home page passes
+              founders={false} to keep its previous behaviour (no founders line on /). */}
+          {founders && <p className="v8p-founders"><Check size={16} strokeWidth={2.6} aria-hidden="true" /><span>50 המצטרפים הראשונים: הקמה אישית ומחיר מייסדים נעול. <Link to="/early">פרטים</Link></span></p>}
         </div>
 
         <ul className="v8p-trust" data-reveal>

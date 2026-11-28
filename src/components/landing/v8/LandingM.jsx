@@ -51,16 +51,18 @@ import './motion/landing-motion-v3b.css';
 
 const NAV = [['#voice', 'העוזר הקולי'], ['#features', 'המוצר'], ['#pricing', 'מחירים'], ['#faq', 'שאלות']];
 
-
 /* ---------------- the voice stage (landing simplify V2, 12.11.2026) ----------------
    The voice assistant is the story: one phone with the three REAL AssistantScreen stills (video/teaser-voice-v3
    frames 205 / 244 / 296, example data) playing say -> card -> saved while the section is on screen.
    Truth: Hebrew speech (voice-session core.js 'he'); write tools only PROPOSE and the owner's tap saves
-   (brain/tools.js, src/assistant/actions.js); propose_booking checks the unit is free. Reduced motion: no autoplay. */
+   (brain/tools.js, src/assistant/actions.js); propose_booking checks the unit is free. Reduced motion: no autoplay.
+   H7 (audit 28.11.2026): every step now carries its full sentence as real text (title + description),
+   and each step button has an aria-label with the whole step, so the steps can never render as bare
+   "1., 2., 3." again. */
 const STAGE = [
-  { img: 'say', t: 'אומרים', d: 'במילים שלכם, בעברית. בלי טפסים.', alt: 'העוזר הקולי באפליקציה של atlas: בעל המתחם אמר ״תוסיף לי הזמנה לצימר מיום חמישי לסופ״ש ליוסי ב-3,500 ש״ח״ (נתוני דוגמה)' },
-  { img: 'card', t: 'atlas מכין', d: 'בודק שהיחידה פנויה ומכין את ההזמנה.', alt: 'כרטיס הזמנה חדשה שמחכה לאישור: צימר הזית, יום ה׳ 12.11 עד יום ש׳ 14.11, ‏₪3,500 (נתוני דוגמה)' },
-  { img: 'saved', t: 'מאשרים', d: 'בלחיצה אחת. רק אז זה נשמר בלוח.', alt: 'אחרי האישור: ההזמנה נשמרה ומופיעה בלוח (נתוני דוגמה)' },
+  { img: 'say', t: 'אומרים מה צריך', d: 'בעברית, במילים שלכם — למשל: "הזמנה חדשה לשבת, זוג ושני ילדים".', alt: 'העוזר הקולי באפליקציה של atlas: בעל המתחם אמר ״תוסיף לי הזמנה לצימר מיום חמישי לסופ״ש ליוסי ב-3,500 ש״ח״ (נתוני דוגמה)' },
+  { img: 'card', t: 'atlas מכין', d: 'atlas מכין את ההזמנה, את ההודעה לאורח ואת משימת הניקיון.', alt: 'כרטיס הזמנה חדשה שמחכה לאישור: צימר הזית, יום ה׳ 12.11 עד יום ש׳ 14.11, ‏₪3,500 (נתוני דוגמה)' },
+  { img: 'saved', t: 'מאשרים בלחיצה אחת', d: 'שום דבר לא נשמר בלי אישור שלכם.', alt: 'אחרי האישור: ההזמנה נשמרה ומופיעה בלוח (נתוני דוגמה)' },
 ];
 const STAGE_MS = 3200;
 
@@ -91,7 +93,7 @@ function VoiceStage() {
             <ol className="vt-steps">
               {STAGE.map((s, i) => (
                 <li key={s.img}>
-                  <button type="button" className={`vt-step${i === cur ? ' is-on' : ''}`} aria-current={i === cur ? 'step' : undefined} onClick={() => { setCur(i); setAuto(false); }}>
+                  <button type="button" className={`vt-step${i === cur ? ' is-on' : ''}`} aria-current={i === cur ? 'step' : undefined} aria-label={`שלב ${i + 1}: ${s.t} — ${s.d}`} onClick={() => { setCur(i); setAuto(false); }}>
                     <span className="vt-n num" aria-hidden="true">{i + 1}</span>
                     <span className="vt-t">{s.t}</span>
                     <span className="vt-bar" aria-hidden="true"><i key={`${cur}-${auto}`} /></span>
@@ -269,7 +271,9 @@ export default function LandingM() {
         <HeroPhoto />
         <Part><VoiceStage /></Part>
         <Part><Features /></Part>
-        <Part><Pricing8 /></Part>
+        {/* H10: founders={false} keeps the home page exactly as before (no /early founders line on /);
+            the line renders on /pricing, where it always lived. */}
+        <Part><Pricing8 founders={false} /></Part>
         <Part><Faq items={LANDING_FAQ} openFirst cta /></Part>
         <Part><Final /></Part>
         <Part><Credits8 /></Part>
