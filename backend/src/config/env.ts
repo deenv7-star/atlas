@@ -16,7 +16,9 @@ const envSchema = z.object({
   S3_ACCESS_KEY: z.string().optional(),
   S3_SECRET_KEY: z.string().optional(),
   S3_BUCKET: z.string().optional(),
-  S3_REGION: z.string().default('us-east-1')
+  S3_REGION: z.string().default('us-east-1'),
+  /** Comma-separated CORS allowlist for backend/src/app.ts (audit C6). Unset = http://localhost:5173 only. Never set to `*` with credentials. */
+  CORS_ORIGINS: z.string().optional()
 });
 
 export const env = envSchema.parse(process.env);

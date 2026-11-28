@@ -17,10 +17,22 @@ import { invoicesRoutes } from './routes/invoices.routes.js';
 import { integrationsRoutes } from './routes/integrations.routes.js';
 import { calendarRoutes } from './routes/calendar.routes.js';
 
+// CORS allowlist (audit C6, 2026-11-28): the previous `origin: true` reflected
+// ANY origin while sending credentials — any website could call this API with the
+// user's cookies. Now only explicitly listed origins are allowed, and credentials
+// are sent only for those origins.
+// Set CORS_ORIGINS as a comma-separated list, e.g.:
+//   CORS_ORIGINS=https://atlas-il.com,https://app.atlas-il.com
+// Default when unset: the local Vite dev server only.
+const CORS_ORIGINS = (env.CORS_ORIGINS ?? 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 export function buildApp() {
   const app = Fastify({ logger: true });
 
-  app.register(cors, { origin: true, credentials: true });
+  app.register(cors, { origin: CORS_ORIGINS, credentials: true });
   app.register(helmet);
   app.register(rateLimit, { max: 100, timeWindow: '1 minute' });
   app.register(jwt, { secret: env.JWT_ACCESS_SECRET });
