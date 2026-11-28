@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { pool } from '../db.js';
 import { requireAuth, requireRole, ROLE } from '../auth.js';
 import { logger } from '../utils/logger.js';
+import { requireActiveSubscription } from '../middleware/require-active-subscription.js';
 
 const router = Router({ mergeParams: true });
 
@@ -194,7 +195,10 @@ router.get('/:entity/:id', async (req, res) => {
   }
 });
 
-router.post('/:entity', ensureWritePermissions, async (req, res) => {
+// C3: writes are blocked server-side when the trial has ended and there is no
+// active subscription (402). Reads above stay open so a locked org can still
+// see its data and reach the billing pages.
+router.post('/:entity', ensureWritePermissions, requireActiveSubscription, async (req, res) => {
   try {
     const { tableName } = req;
     const payload = sanitize(req.body);
@@ -227,7 +231,7 @@ router.post('/:entity', ensureWritePermissions, async (req, res) => {
   }
 });
 
-router.put('/:entity/:id', ensureWritePermissions, async (req, res) => {
+router.put('/:entity/:id', ensureWritePermissions, requireActiveSubscription, async (req, res) => {
   try {
     const { tableName } = req;
     const payload = sanitize(req.body);
@@ -259,7 +263,7 @@ router.put('/:entity/:id', ensureWritePermissions, async (req, res) => {
   }
 });
 
-router.delete('/:entity/:id', ensureWritePermissions, async (req, res) => {
+router.delete('/:entity/:id', ensureWritePermissions, requireActiveSubscription, async (req, res) => {
   try {
     const { tableName } = req;
 

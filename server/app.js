@@ -21,6 +21,7 @@ import emailRouter from './routes/email.js';
 import publicApiRouter from './routes/public.js';
 import platformRouter from './routes/platform.js';
 import { handleStripeWebhook } from './routes/stripe-webhook.js';
+import { requireAuth, requirePlatformAdmin } from './auth.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 import { requestContext } from './middleware/request-context.js';
@@ -93,7 +94,13 @@ export function createApp() {
     }
   });
 
-  app.get('/api/metrics', (_req, res) => {
+  // /api/metrics was open without auth: Prometheus output (request counts,
+  // latencies, error rates) is internal data. Same protection as the other
+  // platform routes — signed-in platform admin only (PLATFORM_ADMIN_EMAILS).
+  // NOTE: if a Prometheus scraper polls this endpoint, give it a platform
+  // admin's JWT (Authorization: Bearer …) or move scraping behind the
+  // reverse proxy instead of opening the route again.
+  app.get('/api/metrics', requireAuth, requirePlatformAdmin, (_req, res) => {
     res.setHeader('content-type', 'text/plain; version=0.0.4; charset=utf-8');
     return res.send(renderPrometheusMetrics());
   });

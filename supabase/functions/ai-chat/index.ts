@@ -9,7 +9,7 @@
 //   - Backward compatible: v3/v4 bodies ({prompt} or {messages} without tools) still work.
 // NOT DEPLOYED by this branch. Deploy: supabase functions deploy ai-chat (needs Deen's approval).
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
-import { buildRequest, corsHeaders, isAllowedOrigin, makeMinuteLimiter, sanitizeMessages, frame, LIMITS } from "./core.js";
+import { ALLOWED_MODELS, buildRequest, corsHeaders, isAllowedOrigin, makeMinuteLimiter, sanitizeMessages, frame, LIMITS } from "./core.js";
 import { brainPrompt } from "../_shared/brain/prompt.js";
 import { runBrain, openaiChat } from "../_shared/brain/loop.js";
 import { runTool, forModel, TOOL_NAMES } from "../_shared/brain/tools.js";
@@ -17,8 +17,14 @@ import { todayIL } from "../_shared/brain/dates.js";
 
 const minuteOk = makeMinuteLimiter(LIMITS.perMinute);
 const toolMinuteOk = makeMinuteLimiter(40); // voice: a few tool calls per spoken question
-const MODEL = Deno.env.get("BRAIN_MODEL") || "gpt-6-luna";
-const EFFORT = Deno.env.get("BRAIN_REASONING") || "none"; // luna + tools on chat/completions needs "none"
+// H1: the old default here was "gpt-6-luna", a model name that does not exist —
+// with BRAIN_MODEL unset every OpenAI call failed (502). Default is now
+// gpt-4o-mini, the same single source of truth as server/routes/ai.js, and a
+// BRAIN_MODEL value outside the core.js allowlist is ignored (so a stale
+// gpt-6-luna secret cannot break the function again).
+const _brainModel = Deno.env.get("BRAIN_MODEL") || "";
+const MODEL = ALLOWED_MODELS.includes(_brainModel) ? _brainModel : "gpt-4o-mini";
+const EFFORT = Deno.env.get("BRAIN_REASONING") || "none"; // chat model + tools on chat/completions needs "none"
 const SEARCH_EFFORT = Deno.env.get("BRAIN_SEARCH_REASONING") || "none"; // Responses + web_search: "none" ~3-6 s, "low" ~7 s (04.11.2026)
 
 Deno.serve(async (req) => {
@@ -69,7 +75,10 @@ Deno.serve(async (req) => {
 
   const turns = sanitizeMessages(body.messages);
   if (!turns.length) {
-    // v3 legacy body {prompt}: answer without tools, as before
+    // v3 legacy body {prompt}: answer without tools, as before.
+    // The client `system` field is ignored here too: buildRequest() always
+    // builds the system message from the server-side SYSTEM_PROMPT in core.js,
+    // so the v3-compat path keeps working unchanged (verified in core.js).
     const plan = buildRequest(body);
     if ("error" in plan) return json({ error: plan.error }, 400);
     const res = await fetch("https://api.openai.com/v1/chat/completions", {

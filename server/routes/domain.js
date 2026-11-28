@@ -1,7 +1,11 @@
 import { Router } from 'express';
+import Stripe from 'stripe';
 import { z } from 'zod';
 import { pool } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { env } from '../config/env.js';
+import { logger } from '../utils/logger.js';
+import { requireActiveSubscription } from '../middleware/require-active-subscription.js';
 
 const router = Router();
 
@@ -16,7 +20,11 @@ const leadSchema = z.object({
   check_out_date: z.string().optional()
 });
 
-router.post('/leads', requireAuth, async (req, res) => {
+// C3: every write below requires an active trial/subscription (402 when the
+// trial has ended and nothing is paid). Reads (GET /compliance/export) and
+// account deletion stay open — a locked org must still see its data and be
+// able to delete its account.
+router.post('/leads', requireAuth, requireActiveSubscription, async (req, res) => {
   const parsed = leadSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
 
@@ -40,7 +48,7 @@ router.post('/leads', requireAuth, async (req, res) => {
   return res.status(201).json(rows[0]);
 });
 
-router.patch('/leads/:id/status', requireAuth, async (req, res) => {
+router.patch('/leads/:id/status', requireAuth, requireActiveSubscription, async (req, res) => {
   const schema = z.object({ status: z.enum(['NEW', 'CONTACTED', 'OFFER_SENT', 'WON', 'LOST']) });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
@@ -54,7 +62,7 @@ router.patch('/leads/:id/status', requireAuth, async (req, res) => {
   return res.json(rows[0]);
 });
 
-router.post('/leads/:id/convert', requireAuth, async (req, res) => {
+router.post('/leads/:id/convert', requireAuth, requireActiveSubscription, async (req, res) => {
   const { rows: leadRows } = await pool.query('SELECT * FROM public.leads WHERE id = $1 AND org_id = $2', [req.params.id, req.orgId]);
   const lead = leadRows[0];
   if (!lead) return res.status(404).json({ error: 'Lead not found' });
@@ -65,7 +73,10 @@ router.post('/leads/:id/convert', requireAuth, async (req, res) => {
     [req.orgId, lead.property_id, lead.full_name, lead.email, lead.phone, lead.check_in_date, lead.check_out_date, lead.budget || 0]
   );
 
-  await pool.query(`UPDATE public.leads SET status = 'WON' WHERE id = $1`, [lead.id]);
+  // Lead-convert bug (audit): the UPDATE was unscoped (WHERE id=$1 only). The
+  // lead was already fetched with org_id above, but scope the write too so a
+  // future refactor cannot flip another org's lead to WON.
+  await pool.query(`UPDATE public.leads SET status = 'WON' WHERE id = $1 AND org_id = $2`, [lead.id, req.orgId]);
 
   return res.status(201).json(bookingRows[0]);
 });
@@ -80,7 +91,7 @@ const bookingSchema = z.object({
   status: z.enum(['PENDING', 'CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED']).default('PENDING')
 });
 
-router.post('/bookings', requireAuth, async (req, res) => {
+router.post('/bookings', requireAuth, requireActiveSubscription, async (req, res) => {
   const parsed = bookingSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
   const b = parsed.data;
@@ -92,7 +103,7 @@ router.post('/bookings', requireAuth, async (req, res) => {
   return res.status(201).json(rows[0]);
 });
 
-router.patch('/bookings/:id/status', requireAuth, async (req, res) => {
+router.patch('/bookings/:id/status', requireAuth, requireActiveSubscription, async (req, res) => {
   const schema = z.object({ status: z.enum(['PENDING', 'CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED']) });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
@@ -104,7 +115,7 @@ router.patch('/bookings/:id/status', requireAuth, async (req, res) => {
   return res.json(rows[0]);
 });
 
-router.post('/payments', requireAuth, async (req, res) => {
+router.post('/payments', requireAuth, requireActiveSubscription, async (req, res) => {
   const schema = z.object({
     booking_id: z.string().uuid(),
     amount: z.coerce.number().positive(),
@@ -124,7 +135,7 @@ router.post('/payments', requireAuth, async (req, res) => {
   return res.status(201).json(rows[0]);
 });
 
-router.post('/automations/booking-confirmed', requireAuth, async (req, res) => {
+router.post('/automations/booking-confirmed', requireAuth, requireActiveSubscription, async (req, res) => {
   const schema = z.object({ booking_id: z.string().uuid() });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
@@ -162,12 +173,70 @@ router.get('/compliance/export', requireAuth, async (req, res) => {
 });
 
 router.delete('/compliance/delete-account', requireAuth, async (req, res) => {
-  await pool.query('DELETE FROM public.refresh_tokens WHERE user_id = $1', [req.userId]);
-  await pool.query('DELETE FROM public.users WHERE id = $1 AND organization_id = $2', [req.userId, req.orgId]);
+  // H13: the old code deleted only refresh_tokens + the users row, leaving the
+  // org's business data and the Stripe subscription behind. This deletes the
+  // whole org. Deliberately NOT gated by requireActiveSubscription — a locked
+  // or past-due org must still be able to delete its account.
+  const { rows: subRows } = await pool.query(
+    'SELECT stripe_subscription_id FROM public.subscriptions WHERE org_id = $1 LIMIT 1',
+    [req.orgId]
+  );
+  const stripeSubscriptionId = subRows[0]?.stripe_subscription_id || null;
+
+  // Cancel the Stripe subscription first. Best effort: a failed cancel must not
+  // trap the user, but it is logged so billing can be cancelled manually.
+  if (stripeSubscriptionId && env.STRIPE_SECRET_KEY) {
+    try {
+      const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+      await stripe.subscriptions.cancel(stripeSubscriptionId);
+    } catch (e) {
+      logger.error('domain.delete_account.stripe_cancel_failed', {
+        orgId: req.orgId,
+        subscriptionId: stripeSubscriptionId,
+        error: String(e?.message || e)
+      });
+    }
+  }
+
+  // Delete the org's data rows (children first). Each table is best-effort so
+  // a missing/renamed table cannot block the deletion; failures are logged.
+  const orgTables = [
+    'message_logs', 'messages', 'payments', 'bookings', 'leads',
+    'review_requests', 'cleaning_tasks', 'contract_instances', 'contract_templates',
+    'guest_requests', 'automation_rules', 'calendar_syncs', 'messaging_integrations',
+    'accounting_integrations', 'pms_integrations', 'payment_gateways', 'invoices',
+    'properties', 'units', 'subscriptions'
+  ];
+  for (const table of orgTables) {
+    try {
+      await pool.query(`DELETE FROM public.${table} WHERE org_id = $1`, [req.orgId]);
+    } catch (e) {
+      logger.error('domain.delete_account.table_delete_failed', {
+        orgId: req.orgId,
+        table,
+        error: String(e?.message || e)
+      });
+    }
+  }
+
+  await pool.query(
+    'DELETE FROM public.refresh_tokens WHERE user_id IN (SELECT id FROM public.users WHERE organization_id = $1)',
+    [req.orgId]
+  );
+  await pool.query('DELETE FROM public.users WHERE organization_id = $1', [req.orgId]);
+  await pool.query('DELETE FROM public.organizations WHERE id = $1', [req.orgId]);
+
+  // TODO (Deen): also delete the user in Supabase Auth. That needs the Supabase
+  // service-role key, which this Express server does not hold — call
+  // supabase.auth.admin.deleteUser(userId) from a service that holds it, or
+  // delete via the Supabase dashboard. Until then the Auth user remains, but
+  // it can no longer reach any org data (deleted above) and its refresh
+  // tokens are gone. (The Supabase path already deletes fully via the
+  // delete_my_account RPC, migration 013b.)
   return res.json({ deleted: true });
 });
 
-router.post('/compliance/retention/run', requireAuth, async (req, res) => {
+router.post('/compliance/retention/run', requireAuth, requireActiveSubscription, async (req, res) => {
   const schema = z.object({ older_than_days: z.coerce.number().int().positive() });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });

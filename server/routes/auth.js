@@ -127,15 +127,25 @@ router.post('/signin', ipAbuseProtection, async (req, res) => {
   return res.json({ user: profile, access_token, refresh_token });
 });
 
-router.post('/refresh', async (req, res) => {
+// H3: /refresh was the one auth route without ip-abuse protection, so stolen
+// refresh tokens could be brute-forced from a single IP without limit. It now
+// gets the same protection as /signup and /signin, and failed rotations count
+// toward the abuse counter so the block can actually engage.
+router.post('/refresh', ipAbuseProtection, async (req, res) => {
   const parsed = refreshSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
 
   const rotated = await rotateRefreshToken(parsed.data.refresh_token);
-  if (!rotated) return res.status(401).json({ error: 'Invalid refresh token' });
+  if (!rotated) {
+    recordAuthFailure(req.ip);
+    return res.status(401).json({ error: 'Invalid refresh token' });
+  }
 
   const profile = await getUserWithOrg(rotated.userId);
-  if (!profile) return res.status(401).json({ error: 'Invalid session' });
+  if (!profile) {
+    recordAuthFailure(req.ip);
+    return res.status(401).json({ error: 'Invalid session' });
+  }
 
   const access_token = signToken({
     userId: profile.id,
