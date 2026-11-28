@@ -1,3 +1,13 @@
+# API proxy (audit finding H5, 2026-11-28): /api/* is proxied to the Express API host.
+# TODO (Deen): replace api-origin-placeholder.invalid with the real API origin
+# (no trailing slash), e.g. https://api.atlas-il.com — or set VITE_API_URL at build
+# time so the frontend calls the API directly. The placeholder uses the .invalid
+# TLD (RFC 2606), which can never resolve — do NOT deploy it as-is.
+# This line MUST stay first: _redirects is processed before netlify.toml, and the
+# /* -> /404.html rule at the bottom would otherwise swallow /api/*.
+# NOTE: if you re-run scripts/spa-routes.mjs, re-add this line — the generator does
+# not emit it yet (see infra/NOTES.md).
+/api/*  https://api-origin-placeholder.invalid/api/:splat  200
 /    /index.html   200
 /pricing    /pricing/index.html   200
 /register    /register/index.html   200

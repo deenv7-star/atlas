@@ -54,4 +54,4 @@ BACKUP_FILE=./ops/backups/atlas_YYYYMMDD_HHMMSS.dump bash ops/verify-backup.sh
 ## Notes
 
 - Active runtime is `server/` via `npm run dev`.
-- `backend/` Fastify/Prisma scaffold remains available for future migration/expansion.
+- `backend/` and `base44/` are FROZEN as of 2026-11-28 — do not develop or deploy them; see `backend/DEPRECATED.md` and `base44/DEPRECATED.md` (pre-launch audit finding C6).
