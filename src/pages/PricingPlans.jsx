@@ -2,6 +2,11 @@
  * /pricing: the same pricing component as the landing (Pricing8, prices from src/config/pricing.js:
  * ₪399 / ₪699 / ₪999, Hebrew plan names). The old page had its own ₪299 / ₪599 / "Enterprise"
  * illustration that no longer matched what we sell.
+ *
+ * H10 (audit 28.11.2026, product decision): the "atlas צמיחה — בקרוב" offer block is gone from
+ * /pricing — Pricing8 no longer takes a `growth` prop, so the GrowthAddon card cannot render here
+ * (or on the home page, where it never rendered). The growth config in src/config/growth.js is
+ * untouched, so the offer can return if Deen decides to sell it.
  */
 import React, { Suspense, useRef } from 'react';
 import { useReveal } from '@/components/landing/v5/motion';
@@ -24,7 +29,7 @@ export default function PricingPlans() {
       <a href="#main" className="l5-skip">דלגו לתוכן</a>
       <V7Header links={NAV} />
       <main id="main" className="pt-[72px]">
-        <Pricing8 as="h1" title="מחיר לפי מספר המתחמים. זה הכל." growth />
+        <Pricing8 as="h1" title="מחיר לפי מספר המתחמים. זה הכל." />
         <Suspense fallback={null}><Faq items={PRICING_FAQ} /></Suspense>
       </main>
       <Suspense fallback={null}><Footer /></Suspense>

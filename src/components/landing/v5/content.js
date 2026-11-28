@@ -75,7 +75,8 @@ export const FAQ = [
   // security.md (isolation per business, encrypted connection), privacy.md (no selling, no ads), terms #your-data + csvExport.js
   { q: 'המידע שלי ושל האורחים שמור?', a: 'כן. כל עסק רואה רק את המידע שלו, החיבור מוצפן, יש גיבוי יומי מוצפן, ואנחנו לא מוכרים מידע. הנתונים שייכים לכם, ואפשר להוריד אותם לאקסל בכל רגע.' },
   // pricing.js PRICING_PLANS[0] (one complex, whole system included); yearly and multi-complex plans shown in #pricing
-  { q: 'כמה זה עולה?', a: `₪${FROM_PRICE} לחודש למתחם אחד, וכל המערכת כלולה. יש חבילה לעד ${PRICING_PLANS[1].complexes} מתחמים וחבילה ללא הגבלה, ובתשלום שנתי מראש המחיר לחודש נמוך יותר. חבילת הצמיחה, קמפיינים ואתר למתחם, נקבעת בשיחה.` },
+  // H10 (audit 28.11.2026): the "חבילת הצמיחה … נקבעת בשיחה" clause was removed with the growth plan card.
+  { q: 'כמה זה עולה?', a: `₪${FROM_PRICE} לחודש למתחם אחד, וכל המערכת כלולה. יש חבילה לעד ${PRICING_PLANS[1].complexes} מתחמים וחבילה ללא הגבלה, ובתשלום שנתי מראש המחיר לחודש נמוך יותר.` },
   // 11-subscription (no card, no automatic charge, account and data kept), terms #cancellation, cancellation.md #how
   { q: 'ומה קורה אחרי 14 ימי הניסיון?', a: '14 הימים הראשונים חינם, בלי כרטיס אשראי, ובסופם לא יורד שקל לבד. ממשיכים רק אם בוחרים חבילה, חודשית או שנתית מראש, והחשבון וכל הנתונים נשמרים. בלי התחייבות: מפסיקים בהודעה אחת בוואטסאפ.' },
   // landing voice ship (11.11.2026): brain/tools.js (read tools; write tools only PROPOSE), src/assistant/actions.js

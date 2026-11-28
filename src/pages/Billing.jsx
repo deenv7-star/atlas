@@ -9,6 +9,16 @@ import { heError } from '@/lib/heError';
 import { isSupabaseConfigured, LOCAL_API_URL } from '@/api/supabaseClient';
 import TermsConsent from '@/components/legal/TermsConsent';
 
+/**
+ * H2 TODO (audit 28.11.2026) — do NOT "fix" by guessing: `propertyLimit` below reads the LEGACY
+ * `properties` field (starter 3 / pro 10 / business null), while the limit atlas actually sells is
+ * `complexes` (starter 1 / pro 5 / business unlimited) — see src/config/pricing.js, which keeps
+ * `properties` unchanged on purpose "until the app and platform_plans count complexes"
+ * (qa/pricing-v1/report.md, "DB/admin mismatch"). Unifying this to `complexes` needs a product
+ * decision + a DB/admin migration: what does platform_plans.max_properties mean now, and what
+ * happens to existing orgs that are over the new limit? Until Deen decides, this stays on the
+ * legacy field, deliberately. (Subscription.jsx has the same legacy read.)
+ */
 const PLANS = Object.fromEntries(
   PRICING_PLANS.map((p) => [
     p.key,
@@ -41,6 +51,15 @@ export default function BillingPage({ user }) {
     return true;
   };
 
+  /**
+   * C4 (audit 28.11.2026, known gap — no behaviour change): this checkout reads
+   * localStorage['atlas_jwt_token'], which only exists in local-REST mode. In Supabase mode there is
+   * no such token (Supabase keeps its own session), so `token` is null here, the "צריך להתחבר שוב"
+   * toast below fires and checkout never starts. The Stripe buttons only render when Supabase is
+   * NOT configured (!isSupabaseConfigured below), so this path is unreachable in production today —
+   * but it will fail the same way if it ever is. Self-serve billing needs a real Supabase/Stripe
+   * flow (or the buttons stay hidden) before it can go live.
+   */
   const goStripeCheckout = async () => {
     if (needConsent('billing-consent')) return;
     const token = localStorage.getItem('atlas_jwt_token');
